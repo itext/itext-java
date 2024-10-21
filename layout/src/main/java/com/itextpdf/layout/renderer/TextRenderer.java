@@ -516,8 +516,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                     for (int i = hyph.length() - 1; i >= 0; i--) {
                                         String pre = hyph.getPreHyphenText(i);
                                         String pos = hyph.getPostHyphenText(i);
+                                        char hyphen = hyphenationConfig.getHyphenSymbol();
+                                        String glyphLine = text.toUnicodeString(currentTextPos, wordBounds[0]) + pre;
+                                        if (font.containsGlyph(hyphen)) {
+                                            glyphLine += hyphen;
+                                        }
                                         float currentHyphenationChoicePreTextWidth =
-                                                getGlyphLineWidth(convertToGlyphLine(text.toUnicodeString(currentTextPos, wordBounds[0]) + pre + hyphenationConfig.getHyphenSymbol()), fontSize.getValue(), hScale, characterSpacing, wordSpacing);
+                                                getGlyphLineWidth(convertToGlyphLine(glyphLine),
+                                                        fontSize.getValue(), hScale, characterSpacing, wordSpacing);
                                         if (currentLineWidth + currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
                                             hyphenationApplied = true;
 
@@ -525,10 +531,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                                 line.setStart(currentTextPos);
                                             }
                                             line.setEnd(Math.max(line.getEnd(), wordBounds[0] + pre.length()));
-                                            GlyphLine lineCopy = line.copy(line.getStart(), line.getEnd());
-                                            lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
-                                            lineCopy.setEnd(lineCopy.getEnd() +1);
-                                            line = lineCopy;
+                                            if (font.containsGlyph(hyphen)) {
+                                                GlyphLine lineCopy = line.copy(line.getStart(), line.getEnd());
+                                                lineCopy.add(font.getGlyph(hyphen));
+                                                lineCopy.setEnd(lineCopy.getEnd() + 1);
+                                                line = lineCopy;
+                                            }
 
                                             // TODO DEVSIX-7010 recalculate line properties in case of word hyphenation.
                                             // These values are based on whole word. Recalculate properly based on hyphenated part.

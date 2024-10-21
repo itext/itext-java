@@ -286,4 +286,23 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
+
+    @Test
+    public void wordsBreakingWordSoftHyphenTest() throws Exception {
+        String outFileName = destinationFolder + "wordsBreakingWordSoftHyphenTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_wordsBreakingWordSoftHyphenTest.pdf";
+        String SOFT_HYPHEN = "\u00AD";
+
+        String text = "Soft hyphen at the mid" + SOFT_HYPHEN + "dle,\nhyphen at the end: abcdef" + SOFT_HYPHEN +
+                "ghijklmnopqrst\n" + SOFT_HYPHEN + "hyphen at the beginning.";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            document.add(new Paragraph(text)
+                    .setWidth(150)
+                    .setBorder(new SolidBorder(1))
+                    .setHyphenation(new HyphenationConfig(1, 1)));
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
 }

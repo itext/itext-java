@@ -43,8 +43,8 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
                 "L with accent: \u004f\u0301\u0302 abc");
         Assertions.assertEquals(3, result.size());
         Assertions.assertEquals("L with accent: ", result.get(0).getFirst().toString());
-        Assertions.assertEquals("\u004f\u0301\u0302", result.get(1).getFirst().toString());
-        Assertions.assertEquals(" abc", result.get(2).getFirst().toString());
+        Assertions.assertEquals("\u004f\u0301\u0302 ", result.get(1).getFirst().toString());
+        Assertions.assertEquals("abc", result.get(2).getFirst().toString());
         // Diacritics and symbol were separated, but the font is the same
         Assertions.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
     }
@@ -57,8 +57,8 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
                 "L with accent: \u004f\u0302 abc");
         Assertions.assertEquals(3, result.size());
         Assertions.assertEquals("L with accent: ", result.get(0).getFirst().toString());
-        Assertions.assertEquals("\u004f\u0302", result.get(1).getFirst().toString());
-        Assertions.assertEquals(" abc", result.get(2).getFirst().toString());
+        Assertions.assertEquals("\u004f\u0302 ", result.get(1).getFirst().toString());
+        Assertions.assertEquals("abc", result.get(2).getFirst().toString());
         Assertions.assertNotEquals(result.get(0).getSecond(), result.get(1).getSecond());
     }
 
@@ -85,8 +85,8 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
         Assertions.assertEquals(6, result.size());
         Assertions.assertEquals("Ми", result.get(0).getFirst().toString());
         Assertions.assertEquals("\u0301", result.get(1).getFirst().toString());
-        Assertions.assertEquals("ръ", result.get(2).getFirst().toString());
-        Assertions.assertEquals(" (mír", result.get(3).getFirst().toString());
+        Assertions.assertEquals("ръ (", result.get(2).getFirst().toString());
+        Assertions.assertEquals("mír", result.get(3).getFirst().toString());
         Assertions.assertEquals("ə", result.get(4).getFirst().toString());
         Assertions.assertEquals(")", result.get(5).getFirst().toString());
         Assertions.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
@@ -112,8 +112,8 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "text \uD800\uDF10\uD800\uDF00\uD800\uDF11 text");
         Assertions.assertEquals(3, result.size());
-        Assertions.assertEquals("text", result.get(0).getFirst().toString());
-        Assertions.assertEquals(" \uD800\uDF10\uD800\uDF00\uD800\uDF11 ", result.get(1).getFirst().toString());
+        Assertions.assertEquals("text ", result.get(0).getFirst().toString());
+        Assertions.assertEquals("\uD800\uDF10\uD800\uDF00\uD800\uDF11 ", result.get(1).getFirst().toString());
         Assertions.assertEquals("text", result.get(2).getFirst().toString());
         Assertions.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
     }
@@ -134,12 +134,21 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
         IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithLimitedThreeFonts(new BestMatchFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(" axadefa ");
-        Assertions.assertEquals(6, result.size());
+        Assertions.assertEquals(5, result.size());
         Assertions.assertEquals(" a", result.get(0).getFirst().toString());
         Assertions.assertEquals("x", result.get(1).getFirst().toString());
         Assertions.assertEquals("a", result.get(2).getFirst().toString());
         Assertions.assertEquals("def", result.get(3).getFirst().toString());
-        Assertions.assertEquals("a", result.get(4).getFirst().toString());
-        Assertions.assertEquals(" ", result.get(5).getFirst().toString());
+        Assertions.assertEquals("a ", result.get(4).getFirst().toString());
+    }
+
+    @Test
+    public void windowsLineEndingsTest() {
+        IFontSelectorStrategy strategy =
+                FontSelectorTestsUtil.createStrategyWithFreeSans(new BestMatchFontSelectorStrategyFactory());
+
+        final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines("Hello\r\n   World!\r\n ");
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("Hello\r\n   World!\r\n ", result.get(0).getFirst().toString());
     }
 }

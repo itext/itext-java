@@ -103,7 +103,8 @@ public abstract class AbstractFontSelectorStrategy implements IFontSelectorStrat
                     if (codePoint > 0xFFFF) {
                         i++;
                     }
-                    if (isCurrentFontCheckRequired() && (i != indexDiacritic - 1)) {
+                    if (isCurrentFontCheckRequired() && (i != indexDiacritic - 1)
+                            && !TextUtil.isWhitespaceOrNonPrintable(codePoint)) {
                         if (currentFont != matchFont(codePoint, fontSelector, fontProvider, additionalFonts)) {
                             breakRequested = true;
                         }
@@ -190,8 +191,7 @@ public abstract class AbstractFontSelectorStrategy implements IFontSelectorStrat
         for (FontInfo fontInfo : fontSelector.getFonts()) {
             if (fontInfo.getFontUnicodeRange().contains(codePoint)) {
                 PdfFont temptFont = getPdfFont(fontInfo, fontProvider, additionalFonts);
-                Glyph glyph = temptFont.getGlyph(codePoint);
-                if (null != glyph && 0 != glyph.getCode()) {
+                if (temptFont.containsGlyph(codePoint)) {
                     matchedFont = temptFont;
                     break;
                 }
