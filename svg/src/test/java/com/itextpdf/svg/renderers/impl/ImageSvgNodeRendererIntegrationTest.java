@@ -119,7 +119,7 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void imageWithTransparencyTest() throws IOException, InterruptedException {
-        //TODO: update cmp_ when DEVSIX-2250, DEVSIX-2258 fixed
+        //TODO: update cmp_ when DEVSIX-2258 fixed
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithTransparency", properties);
     }
 

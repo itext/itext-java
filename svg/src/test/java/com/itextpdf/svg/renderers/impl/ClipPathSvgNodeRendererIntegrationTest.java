@@ -104,6 +104,7 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    //TODO: update after DEVSIX-2828
     public void clipPathCssProperty() throws IOException, InterruptedException {
         properties = new SvgConverterProperties().setBaseUri(sourceFolder);
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathCssProperty", properties);

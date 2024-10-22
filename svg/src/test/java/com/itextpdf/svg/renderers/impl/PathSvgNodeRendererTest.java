@@ -304,7 +304,6 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
 
-    //TODO DEVSIX-2242. This test should fail when the ticket is resolved
     @Test
     public void pathLOperatorMultipleCoordinates() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "pathLOperatorMultipleCoordinates");

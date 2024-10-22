@@ -92,21 +92,16 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-2331 Update the cmp after the issue is resolved
-    // UPD: Seems to be fixed now, but leaving the remark and issue open because the scope of the issue might be bigger than
-    // this test
     public void moreThanOneHParam() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "moreThanOneHParam");
     }
 
     @Test
-    //TODO update after DEVSIX-2331 - several (negative) line operators
     public void negativeAfterPositiveHandlingTest01() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "negativeAfterPositiveHandling");
     }
 
     @Test
-    //TODO update after DEVSIX-2333 (negative viewbox) fix
     public void negativeAfterPositiveHandlingTest02() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "negativeAfterPositiveHandlingExtendedViewbox");
     }

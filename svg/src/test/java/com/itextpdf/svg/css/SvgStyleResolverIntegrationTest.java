@@ -253,4 +253,14 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     public void textTagNoFontSizeTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "textTagNoFontSize");
     }
+
+    @Test
+    public void chartWithText1Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "chartWithText1");
+    }
+
+    @Test
+    public void chartWithText2Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "chartWithText2");
+    }
 }

@@ -262,6 +262,11 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void squareInNotSquareViewBoxTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "squareInNotSquareViewBox");
+    }
+
+    @Test
     public void markerOverflowVisibleNestedSvgViewBoxes2Test() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOverflowVisibleNestedSvgViewBoxes2");
     }

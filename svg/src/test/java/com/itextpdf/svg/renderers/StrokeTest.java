@@ -65,6 +65,12 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
+    //TODO: update cmp-file after DEVSIX-2247 - SVG: Attributes override style declarations in style tags
+    public void overrideStrokeWidthTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "overrideStrokeWidth");
+    }
+
+    @Test
     //TODO: update cmp-file after DEVSIX-2258
     public void advancedStrokeTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeAdvanced");

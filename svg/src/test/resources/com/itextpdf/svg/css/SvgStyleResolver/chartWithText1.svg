@@ -1,0 +1,457 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="overflow: hidden; cursor: wait;" aria-label="A chart." width="580" height="305">    
+    <defs id="defs" style="cursor: wait;">        
+        <!-- *** Uncomment when RND-1024 is fixed  ***                               
+        <clipPath id="_ABSTRACT_RENDERER_ID_0" style="cursor: wait;">            
+            <rect style="cursor: wait;" x="75" y="30" width="455" height="185" />        
+        </clipPath>
+        -->
+    </defs>    
+    <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="0" y="0" width="580" height="305" />    
+    <g style="cursor: wait;">        
+        <text font-family="Arial" font-size="14" font-weight="bold" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="start" x="183" y="19.9">Industry Weightings in HSI          
+        </text>        
+        <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="75" y="8" width="455" height="14" />    
+    </g>    
+    <g style="cursor: wait;">        
+        <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="#000000" stroke-width="2" x="75" y="30" width="455" height="185" />        
+        <g style="cursor: wait;" clip-path="url(&quot;http://localhost:8080/GenerateFactsheet/Main.html#_ABSTRACT_RENDERER_ID_0&quot;)">            
+            <g style="cursor: wait;">                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="83" y="107" width="13" height="107" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="125" y="188" width="12" height="26" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="166" y="191" width="12" height="23" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="207" y="198" width="12" height="16" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="248" y="200" width="13" height="14" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="290" y="202" width="12" height="12" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="331" y="204" width="12" height="10" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="372" y="207" width="13" height="7" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="414" y="209" width="12" height="5" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="455" y="213.803" width="12" height="0.696624" />                
+                <rect style="cursor: wait;" fill="#283977" stroke="none" stroke-width="0" x="496" y="214" width="12" height="0.5" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="97" y="115" width="12" height="99" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="138" y="190" width="12" height="24" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="179" y="131" width="12" height="83" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="220" y="198" width="13" height="16" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="262" y="173" width="12" height="41" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="303" y="173" width="12" height="41" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="344" y="190" width="13" height="24" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="386" y="182" width="12" height="32" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="427" y="173" width="12" height="41" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="468" y="207" width="12" height="7" />                
+                <rect style="cursor: wait;" fill="#50619f" stroke="none" stroke-width="0" x="509" y="214" width="13" height="0.5" />            
+            </g>            
+            <g style="cursor: wait;">                
+                <rect style="cursor: wait;" fill="#333333" stroke="none" stroke-width="0" x="75" y="214" width="455" height="1" />                
+                <rect style="cursor: wait;" fill="#333333" stroke="none" stroke-width="0" x="75" y="214" width="455" height="1" />            
+            </g>            
+            <g style="cursor: wait;">                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="89" y="95" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="131" y="176" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="172" y="179" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="213" y="186" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="254" y="188" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="296" y="190" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="337" y="192" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="378" y="195" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="420" y="197" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="461" y="201.803" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="502" y="202" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="103" y="103" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="144" y="178" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="185" y="119" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="226" y="186" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="268" y="161" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="309" y="161" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="350" y="178" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="392" y="170" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="433" y="161" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="474" y="195" width="1" height="12" />                
+                <rect style="cursor: wait;" fill="#ffffff" stroke="none" stroke-width="0" x="515" y="202" width="1" height="12" />            
+            </g>        
+        </g>        
+        <g style="cursor: wait;" />        
+        <g style="cursor: wait;">            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 98.0612 230.834)" x="98.0614" y="230.8342">Financials                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 139.334 230.834)" x="139.3341" y="230.8342">Information Technology                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 180.607 230.834)" x="180.6068" y="230.8342">Properties &amp; Construction                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 221.879 230.834)" x="221.8796" y="230.8342">Telecommunications                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 263.152 230.834)" x="263.1523" y="230.8342">Energy                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 304.425 230.834)" x="304.425" y="230.8342">Utilities                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 345.698 230.834)" x="345.6977" y="230.8342">Conglomerates                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 386.97 230.834)" x="386.9705" y="230.8342">Consumer Services                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 428.243 230.834)" x="428.2432" y="230.8342">Consumer Goods                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 469.516 230.834)" x="469.5159" y="230.8342">Industrials                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="end" transform="rotate(-30 510.789 230.834)" x="510.7887" y="230.8342">Materials                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#444444" stroke="none" stroke-width="0" text-anchor="end" x="64" y="218.35">0%                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#444444" stroke="none" stroke-width="0" text-anchor="end" x="64" y="172.35">20%                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#444444" stroke="none" stroke-width="0" text-anchor="end" x="64" y="126.35">40%                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#444444" stroke="none" stroke-width="0" text-anchor="end" x="64" y="80.35">60%                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#444444" stroke="none" stroke-width="0" text-anchor="end" x="64" y="34.35">80%                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#444444" stroke="none" stroke-width="0" text-anchor="start" x="539" y="218.35">0                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#444444" stroke="none" stroke-width="0" text-anchor="start" x="539" y="134.7136">10                  
+                </text>            
+            </g>            
+            <g style="cursor: wait;">                
+                <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#444444" stroke="none" stroke-width="0" text-anchor="start" x="539" y="51.0773">20                  
+                </text>            
+            </g>        
+        </g>        
+        <g style="cursor: wait;">            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="71.5" y="85.5" width="36" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 89 93.65)" x="89" y="93.65">46.97%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 89 93.65)" x="89" y="93.65">46.97%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="73.5" y="86" width="31" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="113.5" y="166.5" width="36" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 131 174.65)" x="131" y="174.65">11.91%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 131 174.65)" x="131" y="174.65">11.91%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="115.5" y="167" width="31" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="154.5" y="169.5" width="36" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 172 177.65)" x="172" y="177.65">10.45%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 172 177.65)" x="172" y="177.65">10.45%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="156.5" y="170" width="31" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="197.5" y="176.5" width="32" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 213 184.65)" x="213" y="184.65">7.41%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 213 184.65)" x="213" y="184.65">7.41%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="200" y="177" width="26" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="238.5" y="178.5" width="32" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 254 186.65)" x="254" y="186.65">6.73%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 254 186.65)" x="254" y="186.65">6.73%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="241" y="179" width="26" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="280.5" y="180.5" width="32" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 296 188.65)" x="296" y="188.65">5.49%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 296 188.65)" x="296" y="188.65">5.49%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="283" y="181" width="26" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="321.5" y="182.5" width="32" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 337 190.65)" x="337" y="190.65">4.58%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 337 190.65)" x="337" y="190.65">4.58%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="324" y="183" width="26" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="362.5" y="185.5" width="32" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 378 193.65)" x="378" y="193.65">3.33%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 378 193.65)" x="378" y="193.65">3.33%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="365" y="186" width="26" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="404.5" y="187.5" width="32" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 420 195.65)" x="420" y="195.65">2.75%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 420 195.65)" x="420" y="195.65">2.75%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="407" y="188" width="26" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="445.5" y="191.5" width="32" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 461 200.453)" x="461" y="200.4534">0.38%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 461 200.453)" x="461" y="200.4534">0.38%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="448" y="192.803" width="26" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="486.5" y="192.5" width="32" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 502 200.65)" x="502" y="200.65">0.00%                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 502 200.65)" x="502" y="200.65">0.00%                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="489" y="193" width="26" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="95.5" y="93.5" width="16" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 103 101.65)" x="103" y="101.65"> 12                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 103 101.65)" x="103" y="101.65"> 12                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="98" y="94" width="10" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="139.5" y="168.5" width="10" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 144 176.65)" x="144" y="176.65"> 3                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 144 176.65)" x="144" y="176.65"> 3                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="141.5" y="169" width="5" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="177.5" y="109.5" width="16" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 185 117.65)" x="185" y="117.65"> 10                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 185 117.65)" x="185" y="117.65"> 10                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="180" y="110" width="10" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="221.5" y="176.5" width="10" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 226 184.65)" x="226" y="184.65"> 2                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 226 184.65)" x="226" y="184.65"> 2                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="223.5" y="177" width="5" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="263.5" y="151.5" width="10" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 268 159.65)" x="268" y="159.65"> 5                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 268 159.65)" x="268" y="159.65"> 5                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="265.5" y="152" width="5" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="304.5" y="151.5" width="10" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 309 159.65)" x="309" y="159.65"> 5                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 309 159.65)" x="309" y="159.65"> 5                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="306.5" y="152" width="5" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="345.5" y="168.5" width="10" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 350 176.65)" x="350" y="176.65"> 3                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 350 176.65)" x="350" y="176.65"> 3                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="347.5" y="169" width="5" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="387.5" y="160.5" width="10" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 392 168.65)" x="392" y="168.65"> 4                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 392 168.65)" x="392" y="168.65"> 4                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="389.5" y="161" width="5" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="428.5" y="151.5" width="10" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 433 159.65)" x="433" y="159.65"> 5                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 433 159.65)" x="433" y="159.65"> 5                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="430.5" y="152" width="5" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="469.5" y="185.5" width="10" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 474 193.65)" x="474" y="193.65"> 1                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 474 193.65)" x="474" y="193.65"> 1                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="471.5" y="186" width="5" height="9" />                
+                </g>            
+            </g>            
+            <g style="cursor: wait;">                
+                <g style="cursor: wait;">                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="510.5" y="192.5" width="10" height="11" />                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="#ffffff" stroke-width="3" text-anchor="middle" transform="rotate(-45 515 200.65)" x="515" y="200.65"> 0                          
+                        </text>                        
+                        <text font-family="Arial" font-size="9" style="cursor: wait;" fill="#000000" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-45 515 200.65)" x="515" y="200.65"> 0                          
+                        </text>                    
+                    </g>                    
+                    <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="512.5" y="193" width="5" height="9" />                
+                </g>            
+            </g>        
+        </g>        
+        <g style="cursor: wait;">            
+            <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="279" y="37" width="251" height="12" />            
+            <g style="cursor: wait;">                
+                <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="279" y="37" width="82" height="12" />                
+                <g style="cursor: wait;">                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="12" style="cursor: wait;" fill="#222222" stroke="#ffffff" stroke-width="3" text-anchor="start" x="308" y="47.2">Weighting                          
+                        </text>                        
+                        <text font-family="Arial" font-size="12" style="cursor: wait;" fill="#222222" stroke="none" stroke-width="0" text-anchor="start" x="308" y="47.2">Weighting                          
+                        </text>                    
+                    </g>                
+                </g>                
+                <rect style="cursor: wait;" fill="#283977" stroke="#ffffff" stroke-width="1" x="279" y="37" width="24" height="12" />            
+            </g>            
+            <g style="cursor: wait;">                
+                <rect style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" x="380" y="37" width="150" height="12" />                
+                <g style="cursor: wait;">                    
+                    <g style="cursor: wait;">                        
+                        <text aria-hidden="true" font-family="Arial" font-size="12" style="cursor: wait;" fill="#222222" stroke="#ffffff" stroke-width="3" text-anchor="start" x="409" y="47.2">No. Of Constituents ? ? ? ? ?                          
+                        </text>                        
+                        <text font-family="Arial" font-size="12" style="cursor: wait;" fill="#222222" stroke="none" stroke-width="0" text-anchor="start" x="409" y="47.2">No. Of Constituents ? ? ? ? ?                          
+                        </text>                    
+                    </g>                
+                </g>                
+                <rect style="cursor: wait;" fill="#50619f" stroke="#ffffff" stroke-width="1" x="380" y="37" width="24" height="12" />            
+            </g>        
+        </g>    
+    </g>    
+    <g style="cursor: wait;">        
+        <g style="cursor: wait;">            
+            <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#222222" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-90 24.85 122.5)" x="24.85" y="122.5">Weighting              
+            </text>            
+            <path style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" d="M 15.5 215 L 15.5 30 L 26.5 30 L 26.5 215 Z" />        
+        </g>        
+        <g style="cursor: wait;">            
+            <text font-family="Arial" font-size="11" style="cursor: wait;" fill="#222222" stroke="none" stroke-width="0" text-anchor="middle" transform="rotate(-90 569.35 122.5)" x="569.35" y="122.5">No. Of Constituents              
+            </text>            
+            <path style="cursor: wait;" fill="#ffffff" fill-opacity="0" stroke="none" stroke-width="0" d="M 560 215 L 560 30 L 571 30 L 571 215 Z" />        
+        </g>    
+    </g>    
+    <g style="cursor: wait;" />
+</svg>

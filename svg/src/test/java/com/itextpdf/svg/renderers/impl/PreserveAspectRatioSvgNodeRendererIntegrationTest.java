@@ -65,7 +65,6 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
             @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 19)
     })
     public void differentAspectRatiosTest() throws IOException, InterruptedException {
-        //TODO: update cmp_ when DEVSIX-2250 fixed
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "differentAspectRatios");
     }
 

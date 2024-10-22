@@ -22,6 +22,9 @@
  */
 package com.itextpdf.svg.css;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
@@ -29,12 +32,14 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -84,5 +89,26 @@ public class XLinkTest extends ExtendedITextTest {
         sr = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         attr = sr.resolveStyles(node, new SvgCssContext());
         Assertions.assertEquals(value3, attr.get("xlink:href"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI))
+    public void svgCssResolveMalformedXlink2Test() {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        pdfDoc.addNewPage();
+
+        String svg = "<?xml version=\"1.0\" standalone=\"no\"?>\n" +
+                "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n" +
+                "        \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n" +
+                "<svg width=\"500\" height=\"400\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n" +
+                "    <image x=\"0\" y=\"300\" width=\"350\" height=\"80.98\" preserveAspectRatio=\"xMidYMid\" xlink:href=\"//usb.svg\" />\n" +
+                "</svg>";
+
+        int pagenr = 1;
+
+        // Does not throw
+        SvgConverter.drawOnDocument(svg, pdfDoc, pagenr);
+        pdfDoc.close();
     }
 }
