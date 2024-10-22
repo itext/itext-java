@@ -43,4 +43,48 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>with-sharpen</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>sharpen</groupId>
+            <artifactId>sharpen-maven-plugin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <phase>install</phase>
+                <goals>
+                  <goal>sharpen</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>sharpen</groupId>
+                <artifactId>standard-framework-mapping</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <projectName>pdfa</projectName>
+              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
+              <cSharpSourceCodeDestination>itext/itext.pdfa</cSharpSourceCodeDestination>
+              <cSharpTestCodeDestination>itext.tests/itext.pdfa.tests</cSharpTestCodeDestination>
+              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
+              <showDiff>${sharpen.showdiff}</showDiff>
+              <sourceCodeFiles>
+                <file>**/src/main/java/**/*.java</file>
+              </sourceCodeFiles>
+              <testCodeFiles>
+                <file>**/src/test/java/**/*.java</file>
+              </testCodeFiles>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

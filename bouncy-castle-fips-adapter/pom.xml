@@ -57,6 +57,51 @@
           <groups>${unittests}</groups>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>with-sharpen</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>sharpen</groupId>
+            <artifactId>sharpen-maven-plugin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <phase>install</phase>
+                <goals>
+                  <goal>sharpen</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>sharpen</groupId>
+                <artifactId>standard-framework-mapping</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <projectName>bouncy-castle-fips-adapter</projectName>
+              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
+              <cSharpSourceCodeDestination>itext/itext.bouncy-castle-fips-adapter</cSharpSourceCodeDestination>
+              <cSharpTestCodeDestination>itext.tests/itext.bouncy-castle-fips-adapter.tests</cSharpTestCodeDestination>
+              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
+              <showDiff>${sharpen.showdiff}</showDiff>
+              <sourceCodeFiles>
+                <file>**/src/main/java/**/*.java</file>
+              </sourceCodeFiles>
+              <testCodeFiles>
+                <file>**/src/test/java/**/*.java</file>
+              </testCodeFiles>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

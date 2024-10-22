@@ -11,7 +11,9 @@
   <artifactId>svg</artifactId>
 
   <name>iText - SVG</name>
-  <description>svg is a module for iText that allows you to integrate SVG images in your PDF creation and manipulation process</description>
+  <description>svg is a module for iText that allows you to integrate SVG images in your PDF creation and manipulation
+    process
+  </description>
   <url>https://itextpdf.com/</url>
 
   <dependencies>
@@ -44,4 +46,53 @@
       </resource>
     </resources>
   </build>
+
+  <profiles>
+    <profile>
+      <id>with-sharpen</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>sharpen</groupId>
+            <artifactId>sharpen-maven-plugin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <phase>install</phase>
+                <goals>
+                  <goal>sharpen</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>sharpen</groupId>
+                <artifactId>standard-framework-mapping</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </dependency>
+              <dependency>
+                <groupId>sharpen</groupId>
+                <artifactId>svg-sharpen-mapping</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <projectName>svg</projectName>
+              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
+              <cSharpSourceCodeDestination>itext/itext.svg</cSharpSourceCodeDestination>
+              <cSharpTestCodeDestination>itext.tests/itext.svg.tests</cSharpTestCodeDestination>
+              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
+              <showDiff>${sharpen.showdiff}</showDiff>
+              <sourceCodeFiles>
+                <file>**/src/main/java/**/*.java</file>
+              </sourceCodeFiles>
+              <testCodeFiles>
+                <file>**/src/test/java/**/*.java</file>
+              </testCodeFiles>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
