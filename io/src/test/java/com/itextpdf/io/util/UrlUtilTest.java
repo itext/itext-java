@@ -33,6 +33,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 // Android-Conversion-Skip-Line (Security provider is required for working getFinalConnection through SSL on Android)
@@ -64,7 +65,7 @@ public class UrlUtilTest extends ExtendedITextTest {
         URLConnection finalConnection = null;
 
         try {
-            finalConnection = UrlUtil.getFinalConnection(initialUrl);
+            finalConnection = UrlUtil.getFinalConnection(initialUrl, 0, 0);
 
             Assertions.assertNotNull(finalConnection);
             Assertions.assertNotEquals(initialUrl, finalConnection.getURL());
@@ -123,6 +124,47 @@ public class UrlUtilTest extends ExtendedITextTest {
 
         String actual = new String(StreamUtil.inputStreamToArray(openStream), StandardCharsets.UTF_8);
         Assertions.assertEquals("Hello world from text file!", actual);
+    }
 
+    @Test
+    // Android-Conversion-Ignore-Test Some different random connect exceptions on Android
+    public void openStreamReadTimeoutTest() throws IOException, InterruptedException {
+        URL url = new URL("http://127.0.0.1:8080/");
+        Thread thread = new TestResource();
+        thread.start();
+
+        Thread.sleep(250);
+
+        Exception e = Assertions.assertThrows(java.net.SocketTimeoutException.class,
+                () -> UrlUtil.getInputStreamOfFinalConnection(url, 0, 500)
+        );
+        Assertions.assertEquals("read timed out", e.getMessage().toLowerCase());
+    }
+
+    @Test
+    // Android-Conversion-Ignore-Test Some different random connect exceptions on Android
+    public void openStreamConnectTimeoutTest() throws IOException {
+        URL url = new URL("http://10.255.255.1/");
+
+        Exception e = Assertions.assertThrows(java.net.SocketTimeoutException.class,
+                () -> UrlUtil.getInputStreamOfFinalConnection(url, 500, 0)
+        );
+        Assertions.assertEquals("connect timed out", e.getMessage().toLowerCase());
+    }
+
+    private static class TestResource extends Thread {
+        @Override
+        public void run() {
+            try {
+                startServer();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private void startServer() throws IOException {
+            ServerSocket server = new ServerSocket(8080);
+            server.accept();
+        }
     }
 }

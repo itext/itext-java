@@ -44,6 +44,10 @@ public class DefaultResourceRetriever implements IResourceRetriever{
     private static final Logger logger = LoggerFactory.getLogger(DefaultResourceRetriever.class);
 
     private long resourceSizeByteLimit;
+    private int connectTimeout;
+    private int readTimeout;
+    private static final int DEFAULT_CONNECT_TIMEOUT = 300000;
+    private static final int DEFAULT_READ_TIMEOUT = 300000;
 
     /**
      * Creates a new {@link DefaultResourceRetriever} instance.
@@ -51,6 +55,8 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      */
     public DefaultResourceRetriever() {
         resourceSizeByteLimit = Long.MAX_VALUE;
+        connectTimeout = DEFAULT_CONNECT_TIMEOUT;
+        readTimeout = DEFAULT_READ_TIMEOUT;
     }
 
     /**
@@ -78,6 +84,56 @@ public class DefaultResourceRetriever implements IResourceRetriever{
     }
 
     /**
+     * Gets the connect timeout.
+     *
+     * The connect timeout is used to create input stream with a limited time to establish connection to resource.
+     *
+     * @return the connect timeout in milliseconds
+     */
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Sets the connect timeout.
+     *
+     * The connect timeout is used to create input stream with a limited time to establish connection to resource.
+     *
+     * @param connectTimeout the connect timeout in milliseconds
+     *
+     * @return the {@link IResourceRetriever} instance
+     */
+    public IResourceRetriever setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+        return this;
+    }
+
+    /**
+     * Gets the read timeout.
+     *
+     * The read timeout is used to create input stream with a limited time to receive data from resource.
+     *
+     * @return the read timeout in milliseconds
+     */
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Sets the read timeout.
+     *
+     * The read timeout is used to create input stream with a limited time to receive data from resource.
+     *
+     * @param readTimeout the read timeout in milliseconds
+     *
+     * @return the {@link IResourceRetriever} instance
+     */
+    public IResourceRetriever setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+        return this;
+    }
+
+    /**
      * Gets the input stream with current limit on the number of bytes read,
      * that connect with source URL for retrieving data from that connection.
      *
@@ -91,7 +147,8 @@ public class DefaultResourceRetriever implements IResourceRetriever{
                             url));
             return null;
         }
-        return new LimitedInputStream(UrlUtil.getInputStreamOfFinalConnection(url), resourceSizeByteLimit);
+        return new LimitedInputStream(UrlUtil.getInputStreamOfFinalConnection(url, connectTimeout, readTimeout),
+                resourceSizeByteLimit);
     }
 
     /**

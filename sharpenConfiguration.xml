@@ -564,6 +564,9 @@
                 <file path="com/itextpdf/styledxmlparser/resolver/resource/UriResolverTest.java" />
                 <file path="com/itextpdf/styledxmlparser/resolver/resource/ResourceResolverTest.java" />
             </fileset>
+            <fileset reason="This test uses threads and sockets which are not autoportable">
+                <file path="com/itextpdf/styledxmlparser/resolver/resource/DefaultResourceRetrieverTest.java" />
+            </fileset>
 
             <!-- svg -->
             <fileset reason="InputStream has different interfaces in Java and .NET">
@@ -668,7 +671,6 @@
         <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">
             <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/grayImages.png" />
         </fileset>
-        
     </resource>
     <src>
         <module name="pdftest" />
