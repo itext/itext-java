@@ -2927,6 +2927,19 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
     }
 
+    //TODO DEVSIX-8695: Update after bug is fixed.
+    @LogMessages(messages = @LogMessage(messageTemplate =
+            IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE))
+    @Test
+    public void trailerMissingBytesTest() throws IOException {
+        File file = new File(SOURCE_FOLDER + "encryptedDocWithFlateDecodeError.pdf");
+        PdfReader pdfReader = new PdfReader(file);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        PdfWriter pdfWriter = new PdfWriter(byteArrayOutputStream);
+        Exception e = Assertions.assertThrows(PdfException.class, () -> new PdfDocument(pdfReader, pdfWriter));
+        Assertions.assertEquals(KernelExceptionMessageConstant.TRAILER_NOT_FOUND, e.getMessage());
+    }
+
     private static PdfDictionary getTestPdfDictionary() {
         HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
         tmpMap.put(new PdfName("b"), new PdfName("c"));
