@@ -635,4 +635,9 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     public void parseDoubleValues() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "svgStackOver");
     }
+
+    @Test
+    public void parsePathWithNewLinesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "pathWithNewLines");
+    }
 }

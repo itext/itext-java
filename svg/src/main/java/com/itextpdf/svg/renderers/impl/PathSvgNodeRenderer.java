@@ -283,6 +283,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                     .setMessageParams(pathString);
         }
 
+        pathString = pathString.replaceAll("\\s+", " ").trim();
         String[] operators = splitPathStringIntoOperators(pathString);
 
         for (String inst : operators) {
