@@ -30,6 +30,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -261,6 +262,37 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.add(div);
 
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void collapsingMarginsTest06() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "collapsingMarginsTest06.pdf";
+        String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest06.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        drawPageBorders(pdfDocument, 1);
+
+        Document doc = new Document(pdfDocument);
+        doc.setProperty(Property.COLLAPSING_MARGINS, true);
+
+        Div container = new Div();
+        container.setBackgroundColor(new DeviceRgb(209, 247, 29));
+        container.setMarginBottom(30.0f);
+        container.setMarginTop(30.0f);
+
+        com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List();
+        ListItem listItem = new ListItem("test");
+        listItem.setProperty(Property.COLLAPSING_MARGINS, null);
+        listItem.setMargins(20.0f, 5.0f, 20.0f, 5.0f);
+        listItem.setBackgroundColor(new DeviceRgb(65, 151, 29));
+        list.add(listItem);
+
+        container.add(list);
+
+        doc.add(container);
         doc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
