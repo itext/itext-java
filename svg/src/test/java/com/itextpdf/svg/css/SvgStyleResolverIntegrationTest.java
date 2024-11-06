@@ -38,14 +38,12 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
@@ -175,7 +173,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-2058
     public void fontResolverIntegrationTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontssvg");
     }
@@ -194,7 +191,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
-    // TODO DEVSIX-4275 investigate why fill style not processed
     public void externalStyleSheetWithFillStyleTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithFillStyleTest");
     }
@@ -262,5 +258,95 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     public void chartWithText2Test() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "chartWithText2");
+    }
+
+    @Test
+    // TODO DEVSIX-2264 Support CSS @import url() rule to reference external resources
+    public void importStyleSheetWithStrokeStyleTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "importStyleSheetWithStrokeStyleTest");
+    }
+
+    @Test
+    public void styleInCdataTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "styleInCDATA");
+    }
+
+    @Test
+    public void styleInCdataWithNewLineBeforeTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "styleInCdataWithNewLineBefore");
+    }
+
+    @Test
+    public void cssStylesResolverOrder1Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder1");
+    }
+
+    @Test
+    public void cssStylesResolverOrder2Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder2");
+    }
+
+    @Test
+    public void cssStylesResolverOrder3Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder3");
+    }
+
+    @Test
+    public void cssStylesResolverOrder4Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder4");
+    }
+
+    @Test
+    public void cssStylesResolverOrder5Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder5");
+    }
+
+    @Test
+    public void cssStylesResolverOrder6Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder6");
+    }
+
+    @Test
+    public void cssStylesResolverOrder7Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder7");
+    }
+
+    @Test
+    public void cssStylesResolverOrder8Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder8");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
+    public void cssStylesResolverOrder9Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder9");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
+    public void cssStylesResolverOrder10Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder10");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
+    public void cssStylesResolverOrder11Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder11");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
+    public void cssStylesResolverOrder12Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder12");
+    }
+
+    @Test
+    public void cssStylesResolverOrder13Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder13");
+    }
+
+    @Test
+    public void cssStylesResolverOrder14Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder14");
     }
 }

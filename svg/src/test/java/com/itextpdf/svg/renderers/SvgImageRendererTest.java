@@ -35,14 +35,14 @@ import com.itextpdf.svg.converter.SvgConverter;
 import com.itextpdf.svg.element.SvgImage;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.xobject.SvgImageXObject;
+
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.io.FileInputStream;
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class SvgImageRendererTest extends SvgIntegrationTest {
@@ -82,7 +82,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
-            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, new SvgConverterProperties().setBaseUri(svgFileName));
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
             float[] wh = SvgConverter.extractWidthAndHeight(topSvgRenderer);
             SvgImageXObject svgImageXObject = new SvgImageXObject(new Rectangle(0, 0, wh[0], wh[1]),

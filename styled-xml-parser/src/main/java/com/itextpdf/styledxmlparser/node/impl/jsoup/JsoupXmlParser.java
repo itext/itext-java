@@ -24,7 +24,6 @@ package com.itextpdf.styledxmlparser.node.impl.jsoup;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.IXmlParser;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Comment;
 import com.itextpdf.styledxmlparser.jsoup.nodes.DataNode;
@@ -35,18 +34,20 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.nodes.XmlDeclaration;
 import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDataNode;
+import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupXmlDeclarationNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentTypeNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that uses JSoup to parse HTML.
@@ -105,7 +106,9 @@ public class JsoupXmlParser implements IXmlParser {
             resultNode = new JsoupDataNode((DataNode) jsoupNode);
         } else if (jsoupNode instanceof DocumentType) {
             resultNode = new JsoupDocumentTypeNode((DocumentType) jsoupNode);
-        } else if (jsoupNode instanceof Comment || jsoupNode instanceof XmlDeclaration) {
+        } else if (jsoupNode instanceof XmlDeclaration) {
+            resultNode = new JsoupXmlDeclarationNode((XmlDeclaration) jsoupNode);
+        } else if (jsoupNode instanceof Comment) {
             // Ignore. We should do this to avoid redundant log message
         } else {
             logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.ERROR_PARSING_COULD_NOT_MAP_NODE,

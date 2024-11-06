@@ -10,9 +10,9 @@ Q
 endstream
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 9 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 10 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
 endobj
-8 0 obj
+9 0 obj
 <</Length 30>>stream
 q
 1 0 0 1 36 356 cm
@@ -21,23 +21,26 @@ Q
 
 endstream
 endobj
-7 0 obj
-<</Contents 8 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 9 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+8 0 obj
+<</Contents 9 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 10 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
 endobj
 1 0 obj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20230816170343+03'00')/ModDate(D:20230816170343+03'00')/Producer(iText® Core 8.0.2-SNAPSHOT \(AGPL version\) ©2000-2023 Apryse Group NV)>>
+<</CreationDate(D:20241114163809+03'00')/ModDate(D:20241114163809+03'00')/Producer(iText® Core 9.0.1-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
+<</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
-<</Count 2/Kids[4 0 R 7 0 R]/Type/Pages>>
+<</Count 2/Kids[4 0 R 8 0 R]/Type/Pages>>
 endobj
-9 0 obj
-<</BBox[0 0 450 450]/Length 75/Resources<</XObject<</Fm1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+10 0 obj
+<</BBox[0 0 450 450]/Length 75/Resources<</XObject<</Fm1 11 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 450 cm
 % svg root
 1 0 0 1 225 225 cm
@@ -48,8 +51,8 @@ Q
 
 endstream
 endobj
-10 0 obj
-<</BBox[-225 -225 225 225]/Length 11127/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+11 0 obj
+<</BBox[-225 -225 225 225]/Length 11142/Resources<</ExtGState<</Gs1 12 0 R/Gs2 13 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -225 -225 450 450 re
 W
 n
@@ -59,7 +62,7 @@ q
 BT
 1 0 0 -1 -210 -202.5 Tm
 0 Tr
-/F1 12 Tf
+/F1 18 Tf
 0 0 Td
 (SVG demonstration)Tj
 ET
@@ -71,7 +74,7 @@ q
 BT
 1 0 0 -1 -210 -187.5 Tm
 0 Tr
-/F1 12 Tf
+/F2 9 Tf
 0 0 Td
 (Move your mouse pointer over the flower.)Tj
 ET
@@ -89,6 +92,8 @@ q
 f
 Q
 q
+/Gs1 gs
+/Gs2 gs
 q
 q
 q
@@ -871,22 +876,31 @@ Q
 
 endstream
 endobj
+12 0 obj
+<</ca 0.75>>
+endobj
+13 0 obj
+<</ca 0.75>>
+endobj
 xref
-0 11
+0 14
 0000000000 65535 f 
-0000000443 00000 n 
-0000000750 00000 n 
-0000000488 00000 n 
+0000000445 00000 n 
+0000000841 00000 n 
+0000000490 00000 n 
 0000000092 00000 n 
 0000000015 00000 n 
-0000000660 00000 n 
-0000000306 00000 n 
-0000000229 00000 n 
-0000000807 00000 n 
-0000001010 00000 n 
+0000000662 00000 n 
+0000000751 00000 n 
+0000000307 00000 n 
+0000000230 00000 n 
+0000000898 00000 n 
+0000001102 00000 n 
+0000012422 00000 n 
+0000012451 00000 n 
 trailer
-<</ID [<1bd816ee12b11fd34fbfafed298a4531f81af4bad73acfbf06cca81507d77675c00ac05509225120aaec92e90acf235a1090655ef9674e6a9b3e1508dbbdfd7e><1bd816ee12b11fd34fbfafed298a4531f81af4bad73acfbf06cca81507d77675c00ac05509225120aaec92e90acf235a1090655ef9674e6a9b3e1508dbbdfd7e>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-Core-8.0.2-SNAPSHOT
+<</ID [<cfb78ea1c80018a3aa95b1fccf0cbdc1860cde486472684bc86b57a075f4af7e6902e3a73cf7aca0c151d78e5f296ae5545f6350027e680bf55d723ad2669f28><cfb78ea1c80018a3aa95b1fccf0cbdc1860cde486472684bc86b57a075f4af7e6902e3a73cf7aca0c151d78e5f296ae5545f6350027e680bf55d723ad2669f28>]/Info 3 0 R/Root 1 0 R/Size 14>>
+%iText-Core-9.0.1-SNAPSHOT
 startxref
-12270
+12480
 %%EOF

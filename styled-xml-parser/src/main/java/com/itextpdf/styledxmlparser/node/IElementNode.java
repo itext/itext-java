@@ -29,30 +29,7 @@ import java.util.Map;
  * Interface for node classes that have a parent and children, and for which
  * styles can be defined; each of these nodes can also have a name and attributes.
  */
-public interface IElementNode extends INode, IStylesContainer {
-
-    /**
-     * Gets the name of the element node.
-     *
-     * @return the string
-     */
-    String name();
-
-    /**
-     * Gets the attributes.
-     *
-     * @return the attributes
-     */
-    IAttributes getAttributes();
-
-    /**
-     * Gets an attribute.
-     *
-     * @param key the key of the attribute we want to get
-     * @return the value of the attribute
-     */
-    String getAttribute(String key);
-
+public interface IElementNode extends INode, IStylesContainer, IAttributesContainer, INameContainer {
     /**
      * Gets additional styles, more specifically styles that affect an element
      * based on its position in the HTML DOM, e.g. cell borders that are set

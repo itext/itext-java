@@ -23,6 +23,7 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
@@ -52,6 +53,8 @@ public class SvgConverterProperties implements ISvgConverterProperties {
     private ISvgNodeRendererFactory rendererFactory;
 
     private String charset = StandardCharsets.UTF_8.name();
+
+    private CssStyleSheet cssStyleSheet = null;
 
     /**
      * Creates a new {@link SvgConverterProperties} instance.
@@ -155,6 +158,24 @@ public class SvgConverterProperties implements ISvgConverterProperties {
      */
     public SvgConverterProperties setResourceRetriever(IResourceRetriever resourceRetriever) {
         this.resourceRetriever = resourceRetriever;
+        return this;
+    }
+
+    @Override
+    public CssStyleSheet getCssStyleSheet() {
+        return cssStyleSheet;
+    }
+
+    /**
+     * Sets the CSS style sheet.
+     * Style sheet is used to apply CSS statements to elements.
+     *
+     * @param cssStyleSheet the CSS style sheet
+     *
+     * @return the {@link SvgConverterProperties} instance
+     */
+    public SvgConverterProperties setCssStyleSheet(CssStyleSheet cssStyleSheet) {
+        this.cssStyleSheet = cssStyleSheet;
         return this;
     }
 }

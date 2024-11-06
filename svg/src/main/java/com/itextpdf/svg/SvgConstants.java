@@ -470,6 +470,11 @@ public final class SvgConstants {
          * Tag defining the vertical kerning values in between two glyphs.
          */
         public static final String VKERN = "vkern";
+
+        /**
+         * Tag defining the xml stylesheet declaration.
+         */
+        public static final String XML_STYLESHEET = "xml-stylesheet";
     }
 
     /**

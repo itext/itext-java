@@ -23,7 +23,6 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
@@ -32,6 +31,7 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
@@ -47,7 +47,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -202,7 +201,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
     public void overrideDefaultStyleTest() {
         ICssResolver styleResolver = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         Element svg = new Element(Tag.valueOf("svg"), "");
-        svg.attributes().put(SvgConstants.Attributes.STROKE, "white");
+        svg.attributes().put(SvgConstants.Attributes.STYLE, "stroke:white");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 

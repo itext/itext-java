@@ -22,22 +22,24 @@
  */
 package com.itextpdf.styledxmlparser.jsoup;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.INode;
+import com.itextpdf.styledxmlparser.node.ITextNode;
+import com.itextpdf.styledxmlparser.node.IXmlDeclarationNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 @org.junit.jupiter.api.Tag("UnitTest")
 public class JsoupXmlParserTest extends ExtendedITextTest {
@@ -47,8 +49,9 @@ public class JsoupXmlParserTest extends ExtendedITextTest {
                 "<!-- just declaration and comment -->";
         InputStream stream = new ByteArrayInputStream(xml.getBytes());
         IDocumentNode node = new JsoupXmlParser().parse(stream, "UTF-8");
-        // only text (whitespace) child node shall be fetched.
-        Assertions.assertEquals(1, node.childNodes().size());
+        Assertions.assertEquals(2, node.childNodes().size());
+        Assertions.assertTrue(node.childNodes().get(0) instanceof IXmlDeclarationNode);
+        Assertions.assertTrue(node.childNodes().get(1) instanceof ITextNode);
     }
 
     @Test

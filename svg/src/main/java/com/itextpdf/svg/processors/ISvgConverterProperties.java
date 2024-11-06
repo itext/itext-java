@@ -23,6 +23,7 @@
 package com.itextpdf.svg.processors;
 
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 import com.itextpdf.svg.converter.SvgConverter;
@@ -84,4 +85,12 @@ public interface ISvgConverterProperties {
      * @return the resource retriever
      */
     IResourceRetriever getResourceRetriever();
+
+    /**
+     * Gets the CSS style sheet.
+     * Style sheet is used to apply CSS statements to elements.
+     *
+     * @return the CSS style sheet
+     */
+    CssStyleSheet getCssStyleSheet();
 }

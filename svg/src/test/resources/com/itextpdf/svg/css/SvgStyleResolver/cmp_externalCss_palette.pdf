@@ -15,16 +15,16 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018114925+03'00')/ModDate(D:20211018114925+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241113153017+03'00')/ModDate(D:20241113153017+03'00')/Producer(iText® Core 9.0.1-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 6 0 obj
-<</BBox[0 0 450 450]/Length 71/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
-1 0 0 -1 0 450 cm
+<</BBox[0 0 75 75]/Length 74/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 75 cm
 % svg root
-3 0 0 3 0 0 cm
+0.5 0 0 0.5 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm1 Do
@@ -33,29 +33,38 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 150 150]/Length 143/Resources<</XObject<</Fm1 8 0 R/Fm2 9 0 R/Fm3 10 0 R/Fm4 11 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 150 150]/Length 251/Resources<</ExtGState<</Gs1 8 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 150 150 re
 W
 n
 q
+0 0 0 RG
+1.5 w
+/Gs1 gs
 q
 1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 Q
 q
+0.13333 0.13333 0.13333 RG
+0.375 w
 q
 1 0 0 1 0 0 cm
 /Fm2 Do
 Q
 Q
 q
+1 1 1 RG
+0.75 w
 q
 1 0 0 1 0 0 cm
 /Fm3 Do
 Q
 Q
 q
+0.66667 0.66667 0.66667 RG
+1.12 w
 q
 1 0 0 1 0 0 cm
 /Fm4 Do
@@ -65,13 +74,21 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 150 150]/Length 678/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 150 150 re
+<</CA 0.7>>
+endobj
+9 0 obj
+<</BBox[0 0 75 75]/Length 784/Resources<</ExtGState<</Gs1 13 0 R/Gs2 14 0 R/Gs3 15 0 R/Gs4 16 0 R/Gs5 17 0 R/Gs6 18 0 R/Gs7 19 0 R/Gs8 20 0 R/Gs9 21 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 75 75 re
 W
 n
 q
-0 0 0 rg
+1 0.98039 0.86275 rg
+0 0 0 RG
+1.5 w
+/Gs1 gs
+/Gs2 gs
 q
+/Gs3 gs
 % path
 3.75 67.5 m
 3.75 33.75 30 -3.75 56.25 7.5 c
@@ -80,61 +97,70 @@ q
 15 56.25 12.75 71.25 9 71.25 c
 7.5 71.25 3.75 71.25 3.75 67.5 c
 h
-f
+B
 Q
 q
+0 0 0 rg
+/Gs4 gs
 q
+/Gs5 gs
 % path
 22.5 37.5 m
 15 37.5 7.5 52.5 18.75 48.75 c
 30 45 30 37.5 22.5 37.5 c
 h
-f
+B
 Q
 q
+/Gs6 gs
 % path
 33.75 22.5 m
 26.25 22.5 22.5 33.75 30 33.75 c
 37.5 33.75 37.5 22.5 33.75 22.5 c
 h
-f
+B
 Q
 q
+/Gs7 gs
 % path
 52.5 15 m
 45 15 37.5 26.25 48.75 26.25 c
 60 26.25 56.25 15 52.5 15 c
 h
-f
+B
 Q
 q
+/Gs8 gs
 % path
 56.25 33.75 m
 48.75 33.75 41.25 45 52.5 45 c
 63.75 45 63.75 33.75 56.25 33.75 c
 h
-f
+B
 Q
 q
+/Gs9 gs
 % path
 48.75 48.75 m
 41.25 48.75 37.5 67.5 45 63.75 c
 52.5 60 52.5 48.75 48.75 48.75 c
 h
-f
+B
 Q
 Q
 Q
 
 endstream
 endobj
-9 0 obj
-<</BBox[0 0 150 150]/Length 694/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 150 150 re
+10 0 obj
+<</BBox[0 0 75 75]/Length 754/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 0 75 75 re
 W
 n
 q
-0 0 0 rg
+0.87059 0.72157 0.52941 rg
+0.13333 0.13333 0.13333 RG
+0.375 w
 1 0 0 1 0 75 cm
 q
 % path
@@ -145,16 +171,17 @@ q
 15 56.25 12.75 71.25 9 71.25 c
 7.5 71.25 3.75 71.25 3.75 67.5 c
 h
-f
+B
 Q
 q
+0 0 0 rg
 q
 % path
 22.5 37.5 m
 15 37.5 7.5 52.5 18.75 48.75 c
 30 45 30 37.5 22.5 37.5 c
 h
-f
+B
 Q
 q
 % path
@@ -162,7 +189,7 @@ q
 26.25 22.5 22.5 33.75 30 33.75 c
 37.5 33.75 37.5 22.5 33.75 22.5 c
 h
-f
+B
 Q
 q
 % path
@@ -170,7 +197,7 @@ q
 45 15 37.5 26.25 48.75 26.25 c
 60 26.25 56.25 15 52.5 15 c
 h
-f
+B
 Q
 q
 % path
@@ -178,7 +205,7 @@ q
 48.75 33.75 41.25 45 52.5 45 c
 63.75 45 63.75 33.75 56.25 33.75 c
 h
-f
+B
 Q
 q
 % path
@@ -186,20 +213,22 @@ q
 41.25 48.75 37.5 67.5 45 63.75 c
 52.5 60 52.5 48.75 48.75 48.75 c
 h
-f
+B
 Q
 Q
 Q
 
 endstream
 endobj
-10 0 obj
-<</BBox[0 0 150 150]/Length 694/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 150 150 re
+11 0 obj
+<</BBox[0 0 75 75]/Length 729/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 0 75 75 re
 W
 n
 q
-0 0 0 rg
+1 0.92157 0.80392 rg
+1 1 1 RG
+0.75 w
 1 0 0 1 75 0 cm
 q
 % path
@@ -210,16 +239,17 @@ q
 15 56.25 12.75 71.25 9 71.25 c
 7.5 71.25 3.75 71.25 3.75 67.5 c
 h
-f
+B
 Q
 q
+0 0 0 rg
 q
 % path
 22.5 37.5 m
 15 37.5 7.5 52.5 18.75 48.75 c
 30 45 30 37.5 22.5 37.5 c
 h
-f
+B
 Q
 q
 % path
@@ -227,7 +257,7 @@ q
 26.25 22.5 22.5 33.75 30 33.75 c
 37.5 33.75 37.5 22.5 33.75 22.5 c
 h
-f
+B
 Q
 q
 % path
@@ -235,7 +265,7 @@ q
 45 15 37.5 26.25 48.75 26.25 c
 60 26.25 56.25 15 52.5 15 c
 h
-f
+B
 Q
 q
 % path
@@ -243,7 +273,7 @@ q
 48.75 33.75 41.25 45 52.5 45 c
 63.75 45 63.75 33.75 56.25 33.75 c
 h
-f
+B
 Q
 q
 % path
@@ -251,20 +281,22 @@ q
 41.25 48.75 37.5 67.5 45 63.75 c
 52.5 60 52.5 48.75 48.75 48.75 c
 h
-f
+B
 Q
 Q
 Q
 
 endstream
 endobj
-11 0 obj
-<</BBox[0 0 150 150]/Length 695/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 150 150 re
+12 0 obj
+<</BBox[0 0 75 75]/Length 754/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0 0 75 75 re
 W
 n
 q
-0 0 0 rg
+0.96078 0.96078 0.86275 rg
+0.66667 0.66667 0.66667 RG
+1.12 w
 1 0 0 1 75 75 cm
 q
 % path
@@ -275,16 +307,17 @@ q
 15 56.25 12.75 71.25 9 71.25 c
 7.5 71.25 3.75 71.25 3.75 67.5 c
 h
-f
+B
 Q
 q
+0 0 0 rg
 q
 % path
 22.5 37.5 m
 15 37.5 7.5 52.5 18.75 48.75 c
 30 45 30 37.5 22.5 37.5 c
 h
-f
+B
 Q
 q
 % path
@@ -292,7 +325,7 @@ q
 26.25 22.5 22.5 33.75 30 33.75 c
 37.5 33.75 37.5 22.5 33.75 22.5 c
 h
-f
+B
 Q
 q
 % path
@@ -300,7 +333,7 @@ q
 45 15 37.5 26.25 48.75 26.25 c
 60 26.25 56.25 15 52.5 15 c
 h
-f
+B
 Q
 q
 % path
@@ -308,7 +341,7 @@ q
 48.75 33.75 41.25 45 52.5 45 c
 63.75 45 63.75 33.75 56.25 33.75 c
 h
-f
+B
 Q
 q
 % path
@@ -316,30 +349,67 @@ q
 41.25 48.75 37.5 67.5 45 63.75 c
 52.5 60 52.5 48.75 48.75 48.75 c
 h
-f
+B
 Q
 Q
 Q
 
 endstream
 endobj
+13 0 obj
+<</CA 0.7/ca 0.4>>
+endobj
+14 0 obj
+<</CA 0.7/ca 0.4>>
+endobj
+15 0 obj
+<</CA 0.7/ca 0.4>>
+endobj
+16 0 obj
+<</CA 0.7>>
+endobj
+17 0 obj
+<</CA 0.7>>
+endobj
+18 0 obj
+<</CA 0.7>>
+endobj
+19 0 obj
+<</CA 0.7>>
+endobj
+20 0 obj
+<</CA 0.7>>
+endobj
+21 0 obj
+<</CA 0.7>>
+endobj
 xref
-0 12
+0 22
 0000000000 65535 f 
 0000000213 00000 n 
-0000000429 00000 n 
+0000000430 00000 n 
 0000000258 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000480 00000 n 
-0000000678 00000 n 
-0000000981 00000 n 
-0000001765 00000 n 
-0000002565 00000 n 
-0000003366 00000 n 
+0000000481 00000 n 
+0000000680 00000 n 
+0000001116 00000 n 
+0000001143 00000 n 
+0000002144 00000 n 
+0000003003 00000 n 
+0000003837 00000 n 
+0000004696 00000 n 
+0000004731 00000 n 
+0000004766 00000 n 
+0000004801 00000 n 
+0000004829 00000 n 
+0000004857 00000 n 
+0000004885 00000 n 
+0000004913 00000 n 
+0000004941 00000 n 
 trailer
-<</ID [<ffab11989b9509ff6e8060412d632c7e><ffab11989b9509ff6e8060412d632c7e>]/Info 3 0 R/Root 1 0 R/Size 12>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<14be3f0e46d326f18f227034824dacbc1e95566078d1249b00790eed96fa6ad42626d66ac2f7f5bcd8b1faa8f7b8a64a57e85fc663baf08b6b17fdc24a434d8a><14be3f0e46d326f18f227034824dacbc1e95566078d1249b00790eed96fa6ad42626d66ac2f7f5bcd8b1faa8f7b8a64a57e85fc663baf08b6b17fdc24a434d8a>]/Info 3 0 R/Root 1 0 R/Size 22>>
+%iText-Core-9.0.1-SNAPSHOT
 startxref
-4168
+4969
 %%EOF

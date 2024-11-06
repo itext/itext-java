@@ -27,6 +27,7 @@ import com.itextpdf.layout.font.FontInfo;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.font.Range;
+import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.font.BasicFontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
@@ -57,6 +58,8 @@ public class SvgProcessorContext {
      */
     private final SvgCssContext cssContext;
 
+    private CssStyleSheet cssStyleSheet;
+
     /**
      * Instantiates a new {@link SvgProcessorContext} instance.
      *
@@ -74,6 +77,11 @@ public class SvgProcessorContext {
         }
         resourceResolver = new ResourceResolver(converterProperties.getBaseUri(),
                 converterProperties.getResourceRetriever());
+
+        cssStyleSheet = converterProperties.getCssStyleSheet();
+        if (cssStyleSheet == null) {
+            cssStyleSheet = new CssStyleSheet();
+        }
 
         cssContext = new SvgCssContext();
     }
@@ -160,5 +168,14 @@ public class SvgProcessorContext {
     public void addTemporaryFont(FontInfo fontInfo, String alias) {
         if (tempFonts == null) tempFonts = new FontSet();
         tempFonts.addFont(fontInfo, alias);
+    }
+
+    /**
+     * Gets the CSS style sheet.
+     *
+     * @return the CSS style sheet
+     */
+    public CssStyleSheet getCssStyleSheet() {
+        return cssStyleSheet;
     }
 }

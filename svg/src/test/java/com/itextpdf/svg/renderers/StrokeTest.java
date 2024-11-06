@@ -28,10 +28,9 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class StrokeTest extends SvgIntegrationTest {
@@ -65,7 +64,6 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-2247 - SVG: Attributes override style declarations in style tags
     public void overrideStrokeWidthTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "overrideStrokeWidth");
     }
