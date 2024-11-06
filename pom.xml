@@ -202,6 +202,11 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <groupId>sharpen</groupId>
+        <artifactId>sharpen-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </plugin>
+      <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <version>5.1.6</version>
@@ -308,6 +313,8 @@
 
             <!-- svg -->
             <sourceFileExclude>com/itextpdf/svg/utils/SvgCoordinateUtils.java</sourceFileExclude>
+            <!-- sharpen mapping -->
+            <sourceFileExclude>**/SharpenMapping.java</sourceFileExclude>
           </sourceFileExcludes>
           <groups>
             <group>
@@ -782,6 +789,85 @@
         <maven.main.skip>true</maven.main.skip>
         <maven.test.skip>true</maven.test.skip>
       </properties>
+    </profile>
+    <profile>
+      <id>sharpen-configuration</id>
+      <activation>
+        <file>
+          <missing>noSharpen.txt</missing>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>add-sharpenConfiguration-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-source</goal>
+                  <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>${project.basedir}/src/sharpenconfig/java</source>
+                  </sources>
+                  <resources>
+                    <resource>
+                      <directory>${project.basedir}/src/sharpenconfig/resources</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.4.2</version>
+            <executions>
+              <execution>
+                <id>default-jar</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <excludes>
+                    <exclude>**/SharpenMapping.class</exclude>
+                    <exclude>**/sharpen.config.MappingConfiguration</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>sharpen-config-jar</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <classifier>sharpen-configuration</classifier>
+                  <includes>
+                    <include>**/SharpenMapping.class</include>
+                    <include>**/sharpen.config.MappingConfiguration</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>sharpen-config</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>

@@ -48,7 +48,8 @@ public final class UrlUtil {
      * to a JDK1.1.x-version easier.
      * @param filename a given filename
      * @return a valid URL
-     * @throws java.net.MalformedURLException
+     * @throws java.net.MalformedURLException  If a protocol handler for the URL could not be found,
+     * or if some other error occurred while constructing the URL
      */
     public static URL toURL(String filename) throws MalformedURLException {
         URL url;
@@ -96,6 +97,8 @@ public final class UrlUtil {
      * This method gets uri string from a file.
      * @param filename a given filename
      * @return a uri string
+     * @throws MalformedURLException  If a protocol handler for the URL could not be found,
+     * or if some other error occurred while constructing the URL
      */
     public static String getFileUriString(String filename) throws MalformedURLException {
         return new File(filename).toURI().toURL().toExternalForm();

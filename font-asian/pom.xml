@@ -52,7 +52,6 @@
       </plugin>
     </plugins>
   </build>
-
   <profiles>
     <profile>
       <id>with-sharpen</id>

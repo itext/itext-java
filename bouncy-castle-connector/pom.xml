@@ -84,7 +84,6 @@
           <plugin>
             <groupId>sharpen</groupId>
             <artifactId>sharpen-maven-plugin</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <executions>
               <execution>
                 <phase>install</phase>
