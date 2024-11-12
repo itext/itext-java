@@ -27,7 +27,6 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.crypto.CryptoUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -98,19 +97,12 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
-            if (signingOperation.equals("signExternalContainerBlank")) {
-                Assertions.assertThrows(PdfException.class,
-                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
-            } else {
-                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
-            }
+            performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
         }
 
-        if (!signingOperation.equals("signExternalContainerBlank")) {
-            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-            Assertions.assertNull(
-                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
-        }
+        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+        Assertions.assertNull(
+                SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
     }
 
     @ParameterizedTest(name = "Signing operation: {1}")
@@ -130,19 +122,12 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
-            if (signingOperation.equals("signExternalContainerBlank")) {
-                Assertions.assertThrows(PdfException.class,
-                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
-            } else {
-                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
-            }
+            performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
         }
 
-        if (!signingOperation.equals("signExternalContainerBlank")) {
-            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-            Assertions.assertNull(
-                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
-        }
+        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+        Assertions.assertNull(
+                SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
     }
 
     @ParameterizedTest(name = "Signing operation: {1}")
@@ -165,7 +150,6 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
             performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
         }
 
-        // TODO DEVSIX-8637 Add else statement for empty signature container
         if (!signingOperation.equals("signExternalContainerBlank")) {
             ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
             Assertions.assertNull(
@@ -194,7 +178,6 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
             performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
         }
 
-        // TODO DEVSIX-8637 Add else statement for empty signature container
         if (!signingOperation.equals("signExternalContainerBlank")) {
             ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
             Assertions.assertNull(
@@ -219,19 +202,12 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties().useAppendMode());
-            if (signingOperation.equals("signExternalContainerBlank")) {
-                Assertions.assertThrows(PdfException.class,
-                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
-            } else {
-                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
-            }
+            performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
         }
 
-        if (!signingOperation.equals("signExternalContainerBlank")) {
-            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-            Assertions.assertNull(
-                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
-        }
+        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+        Assertions.assertNull(
+                SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
     }
 
     @ParameterizedTest(name = "Signing operation: {1}")
@@ -251,19 +227,12 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, new ReaderProperties().setPassword(ENCRYPTION_PASSWORD));
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
-            if (signingOperation.equals("signExternalContainerBlank")) {
-                Assertions.assertThrows(PdfException.class,
-                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
-            } else {
-                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
-            }
+            performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
         }
 
-        if (!signingOperation.equals("signExternalContainerBlank")) {
-            ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
-            Assertions.assertNull(
-                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
-        }
+        ReaderProperties properties = new ReaderProperties().setPassword(ENCRYPTION_PASSWORD);
+        Assertions.assertNull(
+                SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
     }
 
     @ParameterizedTest(name = "Signing operation: {1}")
@@ -291,18 +260,11 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(srcFileName, properties);
                 OutputStream outputStream = FileUtil.getFileOutputStream(outputFileName)) {
             PdfSigner pdfSigner = new PdfSigner(reader, outputStream, new StampingProperties());
-            if (signingOperation.equals("signExternalContainerBlank")) {
-                Assertions.assertThrows(PdfException.class,
-                        () -> performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain));
-            } else {
-                performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
-            }
+            performSigningOperation(signingOperation, pdfSigner, signRsaPrivateKey, signRsaChain);
         }
 
-        if (!signingOperation.equals("signExternalContainerBlank")) {
-            Assertions.assertNull(
-                    SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
-        }
+        Assertions.assertNull(
+                SignaturesCompareTool.compareSignatures(outputFileName, cmpFileName, properties, properties));
     }
 
     private static void performSigningOperation(String signingOperation, PdfSigner pdfSigner, PrivateKey privateKey, Certificate[] chain)

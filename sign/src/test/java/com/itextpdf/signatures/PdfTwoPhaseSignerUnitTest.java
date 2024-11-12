@@ -115,25 +115,54 @@ public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
 
         int estimatedSize = 8079;
         SignerProperties signerProperties = new SignerProperties();
-        byte[] digest = signer.prepareDocumentForSignature(signerProperties, DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
+        signer.prepareDocumentForSignature(signerProperties, DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
                 PdfName.Adbe_pkcs7_detached, estimatedSize, false);
         String fieldName = signerProperties.getFieldName();
 
-        PdfReader resultReader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()));
-        PdfDocument resultDoc = new PdfDocument(resultReader);
+        try (PdfReader resultReader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()))) {
+            ByteArrayOutputStream completedOutputStream = new ByteArrayOutputStream();
+            byte[] testData = ByteUtils.getIsoBytes("Some data to test the signature addition with");
+            PdfTwoPhaseSigner.addSignatureToPreparedDocument(resultReader, fieldName, completedOutputStream, testData);
 
-        ByteArrayOutputStream completedOutputStream = new ByteArrayOutputStream();
-        byte[] testData = ByteUtils.getIsoBytes("Some data to test the signature addition with");
-        PdfTwoPhaseSigner.addSignatureToPreparedDocument(resultDoc, fieldName, completedOutputStream, testData);
+            try (PdfDocument resultDoc = new PdfDocument(new PdfReader(
+                    new ByteArrayInputStream(completedOutputStream.toByteArray())))) {
+                SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
+                PdfSignature signature = signatureUtil.getSignature(fieldName);
+                byte[] content = signature.getContents().getValueBytes();
+                for (int i = 0; i < testData.length; i++) {
+                    Assertions.assertEquals(testData[i], content[i]);
+                }
+            }
+        }
+    }
 
-        resultReader = new PdfReader(new ByteArrayInputStream(completedOutputStream.toByteArray()));
-        resultDoc = new PdfDocument(resultReader);
+    @Test
+    public void addSignatureToPreparedDocumentDeprecatedApiTest() throws IOException, GeneralSecurityException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimpleDocument()));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfTwoPhaseSigner signer = new PdfTwoPhaseSigner(reader, outputStream);
 
-        SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
-        PdfSignature signature = signatureUtil.getSignature(fieldName);
-        byte[] content = signature.getContents().getValueBytes();
-        for (int i = 0; i < testData.length; i++) {
-            Assertions.assertEquals(testData[i], content[i]);
+
+        int estimatedSize = 8079;
+        SignerProperties signerProperties = new SignerProperties();
+        signer.prepareDocumentForSignature(signerProperties, DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
+                PdfName.Adbe_pkcs7_detached, estimatedSize, false);
+        String fieldName = signerProperties.getFieldName();
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())))) {
+            ByteArrayOutputStream completedOutputStream = new ByteArrayOutputStream();
+            byte[] testData = ByteUtils.getIsoBytes("Some data to test the signature addition with");
+            PdfTwoPhaseSigner.addSignatureToPreparedDocument(document, fieldName, completedOutputStream, testData);
+
+            try (PdfDocument resultDoc = new PdfDocument(new PdfReader(
+                    new ByteArrayInputStream(completedOutputStream.toByteArray())))) {
+                SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
+                PdfSignature signature = signatureUtil.getSignature(fieldName);
+                byte[] content = signature.getContents().getValueBytes();
+                for (int i = 0; i < testData.length; i++) {
+                    Assertions.assertEquals(testData[i], content[i]);
+                }
+            }
         }
     }
 

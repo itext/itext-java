@@ -183,11 +183,35 @@ public class SignDeferredTest extends ExtendedITextTest {
         IExternalSignatureContainer extSigContainer = new CmsDeferredSigner(signPrivateKey, signChain);
 
         String sigFieldName = "DeferredSignature1";
-        PdfDocument docToSign = new PdfDocument(new PdfReader(srcFileName));
-        OutputStream outStream = FileUtil.getFileOutputStream(outFileName);
-        PdfSigner.signDeferred(docToSign, sigFieldName, outStream, extSigContainer);
-        docToSign.close();
-        outStream.close();
+        try (PdfReader reader = new PdfReader(srcFileName);
+                OutputStream outStream = FileUtil.getFileOutputStream(outFileName)) {
+            PdfSigner.signDeferred(reader, sigFieldName, outStream, extSigContainer);
+        }
+
+
+        // validate result
+        TestSignUtils.basicCheckSignedDoc(outFileName, sigFieldName);
+        Assertions.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, destinationFolder, null));
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+    }
+
+    @Test
+    public void deferredDeprecatedApiTest() throws IOException, GeneralSecurityException, InterruptedException,
+            AbstractPKCSException, AbstractOperatorCreationException {
+        String srcFileName = sourceFolder + "templateForSignCMSDeferred.pdf";
+        String outFileName = destinationFolder + "deferredDeprecatedApiTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_deferredDeprecatedApiTest.pdf";
+
+        String signCertFileName = certsSrc + "signCertRsa01.pem";
+        Certificate[] signChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
+        IExternalSignatureContainer extSigContainer = new CmsDeferredSigner(signPrivateKey, signChain);
+
+        String sigFieldName = "DeferredSignature1";
+        try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName));
+                OutputStream outStream = FileUtil.getFileOutputStream(outFileName)) {
+            PdfSigner.signDeferred(document, sigFieldName, outStream, extSigContainer);
+        }
 
 
         // validate result
@@ -236,11 +260,10 @@ public class SignDeferredTest extends ExtendedITextTest {
         // fill the signature to the presigned document
         ReadySignatureSigner extSigContainer = new ReadySignatureSigner(cmsSignature);
 
-        PdfDocument docToSign = new PdfDocument(new PdfReader(new ByteArrayInputStream(preSignedBytes)));
-        OutputStream outStream = FileUtil.getFileOutputStream(outFileName);
-        PdfSigner.signDeferred(docToSign, sigFieldName, outStream, extSigContainer);
-        docToSign.close();
-        outStream.close();
+        try (PdfReader newReader = new PdfReader(new ByteArrayInputStream(preSignedBytes));
+                OutputStream outStream = FileUtil.getFileOutputStream(outFileName)) {
+            PdfSigner.signDeferred(newReader, sigFieldName, outStream, extSigContainer);
+        }
 
 
         // validate result

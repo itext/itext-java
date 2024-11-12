@@ -110,11 +110,33 @@ public class PdfTwoPhaseSigner {
      *
      * @throws IOException              if some I/O problem occurs.
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
+     *
+     * @deprecated
+     * {@link PdfTwoPhaseSigner#addSignatureToPreparedDocument(PdfReader, String, OutputStream, CMSContainer)}
+     * should be used instead.
      */
+    @Deprecated
     public static void addSignatureToPreparedDocument(PdfDocument document, String fieldName, OutputStream outs,
                                                       CMSContainer cmsContainer)
             throws IOException, GeneralSecurityException {
         PdfSigner.SignatureApplier applier = new PdfSigner.SignatureApplier(document, fieldName, outs);
+        applier.apply(a -> cmsContainer.serialize());
+    }
+
+    /**
+     * Adds an existing signature to a PDF where space was already reserved.
+     *
+     * @param reader        {@link PdfReader} that reads the PDF file
+     * @param fieldName     the field to sign. It must be the last field
+     * @param outs          the output PDF
+     * @param cmsContainer  the finalized CMS container
+     *
+     * @throws IOException              if some I/O problem occurs.
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
+     */
+    public static void addSignatureToPreparedDocument(PdfReader reader, String fieldName, OutputStream outs,
+            CMSContainer cmsContainer) throws IOException, GeneralSecurityException {
+        PdfSigner.SignatureApplier applier = new PdfSigner.SignatureApplier(reader, fieldName, outs);
         applier.apply(a -> cmsContainer.serialize());
     }
 
@@ -128,11 +150,33 @@ public class PdfTwoPhaseSigner {
      *
      * @throws IOException              if some I/O problem occurs.
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
+     *
+     * @deprecated {@link PdfTwoPhaseSigner#addSignatureToPreparedDocument(PdfReader, String, OutputStream, byte[])}
+     * should be used instead.
      */
+    @Deprecated
     public static void addSignatureToPreparedDocument(PdfDocument document, String fieldName, OutputStream outs,
                                                       byte[] signedContent)
             throws IOException, GeneralSecurityException {
         PdfSigner.SignatureApplier applier = new PdfSigner.SignatureApplier(document, fieldName, outs);
+        applier.apply(a -> signedContent);
+    }
+
+    /**
+     * Adds an existing signature to a PDF where space was already reserved.
+     *
+     * @param reader        {@link PdfReader} that reads the PDF file
+     * @param fieldName     the field to sign. It must be the last field
+     * @param outs          the output PDF
+     * @param signedContent the bytes for the signed data
+     *
+     * @throws IOException              if some I/O problem occurs.
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs.
+     */
+    public static void addSignatureToPreparedDocument(PdfReader reader, String fieldName, OutputStream outs,
+            byte[] signedContent)
+            throws IOException, GeneralSecurityException {
+        PdfSigner.SignatureApplier applier = new PdfSigner.SignatureApplier(reader, fieldName, outs);
         applier.apply(a -> signedContent);
     }
 
@@ -175,9 +219,6 @@ public class PdfTwoPhaseSigner {
 
 
         PdfDocument document = pdfSigner.getDocument();
-        if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
-            throw new PdfException(SignExceptionMessageConstant.NOT_POSSIBLE_TO_EMBED_MAC_TO_SIGNATURE);
-        }
         if (document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) < 0) {
             document.getCatalog().addDeveloperExtension(PdfDeveloperExtension.ESIC_1_7_EXTENSIONLEVEL2);
         }
@@ -198,6 +239,14 @@ public class PdfTwoPhaseSigner {
         InputStream data = pdfSigner.getRangeStream();
         byte[] digest = DigestAlgorithms.digest(data, messageDigest);
         byte[] paddedSig = new byte[estimatedSize];
+
+        if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
+            byte[] encodedSig = pdfSigner.embedMacTokenIntoSignatureContainer(paddedSig);
+            if (estimatedSize < encodedSig.length) {
+                throw new IOException(SignExceptionMessageConstant.NOT_ENOUGH_SPACE);
+            }
+            System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
+        }
 
         PdfDictionary dic2 = new PdfDictionary();
         dic2.put(PdfName.Contents, new PdfString(paddedSig).setHexWriting(true));

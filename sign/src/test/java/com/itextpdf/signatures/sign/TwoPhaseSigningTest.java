@@ -139,12 +139,27 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
     public void testCompletionWithWrongFieldName() throws IOException {
         byte[] signData = new byte[4096];
         // open prepared document
-        try (PdfDocument preparedDoc =
-                     new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "2PhasePreparedSignature.pdf")));
+        try (PdfReader reader = new PdfReader(new File(SOURCE_FOLDER + "2PhasePreparedSignature.pdf"));
              OutputStream signedDoc = new ByteArrayOutputStream()) {
             // add signature
             Exception e = Assertions.assertThrows(PdfException.class, () ->
-                    PdfTwoPhaseSigner.addSignatureToPreparedDocument(preparedDoc, "wrong" + FIELD_NAME, signedDoc, signData));
+                    PdfTwoPhaseSigner.addSignatureToPreparedDocument(reader, "wrong" + FIELD_NAME, signedDoc, signData));
+
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    SignExceptionMessageConstant.THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME,
+                    "wrong" + FIELD_NAME), e.getMessage());
+        }
+    }
+
+    @Test
+    public void testCompletionWithWrongFieldNameAndDeprecatedApiTest() throws IOException {
+        byte[] signData = new byte[4096];
+        // open prepared document
+        try (PdfDocument document = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "2PhasePreparedSignature.pdf")));
+                OutputStream signedDoc = new ByteArrayOutputStream()) {
+            // add signature
+            Exception e = Assertions.assertThrows(PdfException.class, () ->
+                    PdfTwoPhaseSigner.addSignatureToPreparedDocument(document, "wrong" + FIELD_NAME, signedDoc, signData));
 
             Assertions.assertEquals(MessageFormatUtil.format(
                     SignExceptionMessageConstant.THERE_IS_NO_FIELD_IN_THE_DOCUMENT_WITH_SUCH_NAME,
@@ -156,12 +171,11 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
     public void testCompletionWithNotEnoughSpace() throws IOException {
         byte[] signData = new byte[20000];
         // open prepared document
-        try (PdfDocument preparedDoc =
-                     new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "2PhasePreparedSignature.pdf")));
+        try (PdfReader reader = new PdfReader(new File(SOURCE_FOLDER + "2PhasePreparedSignature.pdf"));
              OutputStream signedDoc = new ByteArrayOutputStream()) {
             // add signature
             Exception e = Assertions.assertThrows(PdfException.class, () ->
-                    PdfTwoPhaseSigner.addSignatureToPreparedDocument(preparedDoc, FIELD_NAME, signedDoc, signData));
+                    PdfTwoPhaseSigner.addSignatureToPreparedDocument(reader, FIELD_NAME, signedDoc, signData));
 
             Assertions.assertEquals(SignExceptionMessageConstant.AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE,
                     e.getMessage());
@@ -180,10 +194,10 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
 
             byte[] signData = new byte[1024];
             try (OutputStream outputStreamPhase2 = FileUtil.getFileOutputStream(DESTINATION_FOLDER + "2PhaseCompleteCycle.pdf");
-                 PdfDocument doc = new PdfDocument(new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())))) {
+                    PdfReader newReader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()))) {
 
                 Exception e = Assertions.assertThrows(PdfException.class, () ->
-                        PdfTwoPhaseSigner.addSignatureToPreparedDocument(doc, FIELD_NAME, outputStreamPhase2, signData));
+                        PdfTwoPhaseSigner.addSignatureToPreparedDocument(newReader, FIELD_NAME, outputStreamPhase2, signData));
 
                 Assertions.assertEquals(MessageFormatUtil.format(SignExceptionMessageConstant.
                         SIGNATURE_WITH_THIS_NAME_IS_NOT_THE_LAST_IT_DOES_NOT_COVER_WHOLE_DOCUMENT, FIELD_NAME), e.getMessage());
@@ -242,8 +256,8 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
             byte[] signData = signDigest(digest, DIGEST_ALGORITHM);
 
             try (OutputStream outputStreamPhase2 = FileUtil.getFileOutputStream(DESTINATION_FOLDER + "2PhaseCompleteCycle.pdf");
-                 PdfDocument doc = new PdfDocument(new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())))) {
-                PdfTwoPhaseSigner.addSignatureToPreparedDocument(doc, fieldName, outputStreamPhase2, signData);
+                    PdfReader newReader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()))) {
+                PdfTwoPhaseSigner.addSignatureToPreparedDocument(newReader, fieldName, outputStreamPhase2, signData);
             }
             Assertions.assertNull(SignaturesCompareTool.compareSignatures(DESTINATION_FOLDER + "2PhaseCompleteCycle.pdf",
                     SOURCE_FOLDER + "cmp_2PhaseCompleteCycle.pdf"));
@@ -258,11 +272,10 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
             signdataS.read(signData);
         }
         // open prepared document
-        try (PdfDocument preparedDoc =
-                     new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "2PhasePreparedSignature.pdf")));
+        try (PdfReader reader = new PdfReader(new File(SOURCE_FOLDER + "2PhasePreparedSignature.pdf"));
              OutputStream signedDoc = FileUtil.getFileOutputStream(DESTINATION_FOLDER + "2PhaseCompletion.pdf")) {
             // add signature
-            PdfTwoPhaseSigner.addSignatureToPreparedDocument(preparedDoc, FIELD_NAME, signedDoc, signData);
+            PdfTwoPhaseSigner.addSignatureToPreparedDocument(reader, FIELD_NAME, signedDoc, signData);
         }
 
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(DESTINATION_FOLDER + "2PhaseCompletion.pdf",
@@ -285,7 +298,8 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
             String signedDocumentName = DESTINATION_FOLDER + "2PhaseCompleteCycleCMS.pdf";
             //phase 2.1 extract CMS from the prepared document
             try (OutputStream outputStreamPhase2 = FileUtil.getFileOutputStream(signedDocumentName);
-                 PdfDocument doc = new PdfDocument(new PdfReader(new ByteArrayInputStream(phaseOneOS.toByteArray())))) {
+                    PdfReader inputDoc = new PdfReader(new ByteArrayInputStream(phaseOneOS.toByteArray()));
+                    PdfDocument doc = new PdfDocument(inputDoc)) {
 
                 SignatureUtil su = new SignatureUtil(doc);
                 PdfSignature sig = su.getSignature(signatureName);
@@ -299,7 +313,9 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
                 //if needed a time stamp could be added here
 
                 //Phase 2.3 add the updated CMS to the document
-                PdfTwoPhaseSigner.addSignatureToPreparedDocument(doc, signatureName, outputStreamPhase2, cmsToUpdate);
+                PdfTwoPhaseSigner.addSignatureToPreparedDocument(
+                        new PdfReader(new ByteArrayInputStream(phaseOneOS.toByteArray())),
+                        signatureName, outputStreamPhase2, cmsToUpdate);
             }
 
             // validate signature
@@ -373,9 +389,8 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
             // now we store signedAttributesToSign together with the prepared document and send
             // dataToSign to the signing instance
 
-            try (PdfDocument doc = new PdfDocument(new PdfReader(
-                    new ByteArrayInputStream(outputStream.toByteArray())))) {
-                PdfTwoPhaseSigner.addSignatureToPreparedDocument(doc, fieldName, preparedOS, cms.serialize());
+            try (PdfReader newReader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()))) {
+                PdfTwoPhaseSigner.addSignatureToPreparedDocument(newReader, fieldName, preparedOS, cms.serialize());
             }
 
             return dataToSign;

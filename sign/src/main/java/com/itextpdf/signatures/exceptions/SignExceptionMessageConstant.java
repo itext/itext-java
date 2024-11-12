@@ -69,7 +69,7 @@ public final class SignExceptionMessageConstant {
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE = "Not a valid PKCS#7 object - not a sequence";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_SIGNED_DATA = "Not a valid PKCS#7 object - not signed "
             + "data.";
-    public static final String NOT_ENOUGH_SPACE = "Not enough space.";
+    public static final String NOT_ENOUGH_SPACE = "Not enough space allocated for the signature.";
     public static final String NOT_POSSIBLE_TO_EMBED_MAC_TO_SIGNATURE =
             "It was not possible to embed MAC token into signature. Most likely signature container is empty.";
     public static final String PATH_IS_NOT_DIRECTORY = "Provided path: {0} is not a directory. "

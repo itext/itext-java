@@ -252,6 +252,7 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -354,7 +355,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * Creates {@link IBouncyCastleFactory} for usual bouncy-castle module.
      */
     public BouncyCastleFactory() {
-        // Empty constructor.
+        Security.addProvider(getProvider());
     }
 
     /**

@@ -285,8 +285,9 @@ public class PadesTwoPhaseSigningHelper {
             OutputStream outputStream, String signatureFieldName, CMSContainer cmsContainer) throws Exception {
         setSignatureAlgorithmAndSignature(externalSignature, cmsContainer);
 
-        try (PdfDocument document = new PdfDocument(inputDocument, stampingProperties)) {
-            PdfTwoPhaseSigner.addSignatureToPreparedDocument(document, signatureFieldName, outputStream, cmsContainer);
+        try {
+            PdfTwoPhaseSigner.addSignatureToPreparedDocument(
+                    inputDocument, signatureFieldName, outputStream, cmsContainer);
         } finally {
             outputStream.close();
         }
@@ -319,8 +320,9 @@ public class PadesTwoPhaseSigningHelper {
             cmsContainer.getSignerInfo().addUnSignedAttribute(timestampAttribute);
         }
 
-        try (PdfDocument document = new PdfDocument(inputDocument, stampingProperties)) {
-            PdfTwoPhaseSigner.addSignatureToPreparedDocument(document, signatureFieldName, outputStream, cmsContainer);
+        try {
+            PdfTwoPhaseSigner.addSignatureToPreparedDocument(
+                    inputDocument, signatureFieldName, outputStream, cmsContainer);
         } finally {
             outputStream.close();
         }

@@ -42,9 +42,12 @@ import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RASInputStream;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.io.source.WindowRandomAccessSource;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
+import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -68,6 +71,7 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.utils.IdleOutputStream;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
 import com.itextpdf.kernel.validation.context.SignatureValidationContext;
@@ -82,8 +86,10 @@ import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.pdfa.PdfADocumentInfoHelper;
 import com.itextpdf.pdfa.PdfAPageFactory;
 import com.itextpdf.pdfa.checker.PdfAChecker;
+import com.itextpdf.signatures.cms.AlgorithmIdentifier;
 import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.cms.CmsAttribute;
+import com.itextpdf.signatures.cms.SignerInfo;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.mac.SignatureContainerGenerationEvent;
 import com.itextpdf.signatures.mac.SignatureDocumentClosingEvent;
@@ -96,6 +102,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
@@ -725,7 +732,9 @@ public class PdfSigner {
 
         InputStream data = getRangeStream();
         byte[] encodedSig = externalSignatureContainer.sign(data);
-        encodedSig = embedMacTokenIntoSignatureContainer(encodedSig);
+        if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
+            encodedSig = embedMacTokenIntoSignatureContainer(encodedSig);
+        }
 
         if (estimatedSize < encodedSig.length) {
             throw new IOException(SignExceptionMessageConstant.NOT_ENOUGH_SPACE);
@@ -795,7 +804,9 @@ public class PdfSigner {
             throw new GeneralSecurityException(e.getMessage(), e);
         }
 
-        tsToken = embedMacTokenIntoSignatureContainer(tsToken);
+        if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
+            tsToken = embedMacTokenIntoSignatureContainer(tsToken);
+        }
 
         if (contentEstimated + 2 < tsToken.length) {
             throw new IOException(MessageFormatUtil.format(
@@ -824,11 +835,34 @@ public class PdfSigner {
      *
      * @throws IOException              if some I/O problem occurs
      * @throws GeneralSecurityException if some problem during apply security algorithms occurs
+     *
+     * @deprecated {@link PdfSigner#signDeferred(PdfReader, String, OutputStream, IExternalSignatureContainer)}
+     * should be used instead.
      */
+    @Deprecated
     public static void signDeferred(PdfDocument document, String fieldName, OutputStream outs,
                                     IExternalSignatureContainer externalSignatureContainer)
             throws IOException, GeneralSecurityException {
         SignatureApplier applier = new SignatureApplier(document, fieldName, outs);
+        applier.apply(a -> externalSignatureContainer.sign(a.getDataToSign()));
+    }
+
+    /**
+     * Signs a PDF where space was already reserved.
+     *
+     * @param reader                     {@link PdfReader} that reads the PDF file
+     * @param fieldName                  the field to sign. It must be the last field
+     * @param outs                       the output PDF
+     * @param externalSignatureContainer the signature container doing the actual signing. Only the
+     *                                   method ExternalSignatureContainer.sign is used
+     *
+     * @throws IOException              if some I/O problem occurs
+     * @throws GeneralSecurityException if some problem during apply security algorithms occurs
+     */
+    public static void signDeferred(PdfReader reader, String fieldName, OutputStream outs,
+            IExternalSignatureContainer externalSignatureContainer)
+            throws IOException, GeneralSecurityException {
+        SignatureApplier applier = new SignatureApplier(reader, fieldName, outs);
         applier.apply(a -> externalSignatureContainer.sign(a.getDataToSign()));
     }
 
@@ -1347,6 +1381,50 @@ public class PdfSigner {
         return dic;
     }
 
+    byte[] embedMacTokenIntoSignatureContainer(byte[] signatureContainer) throws IOException {
+        try (InputStream rangeStream = getRangeStream()) {
+            return embedMacTokenIntoSignatureContainer(signatureContainer, rangeStream, document);
+        }
+    }
+
+    static byte[] embedMacTokenIntoSignatureContainer(byte[] signatureContainer, InputStream rangeStream,
+            PdfDocument document) {
+        try {
+            CMSContainer cmsContainer;
+            if (Arrays.equals(new byte[signatureContainer.length], signatureContainer)) {
+                // Signature container is empty most likely due two two-step signing process.
+                // We will create blank signature container in order to add MAC in there.
+                cmsContainer = new CMSContainer();
+                SignerInfo signerInfo = new SignerInfo();
+                String digestAlgorithmOid = DigestAlgorithms.getAllowedDigest(DigestAlgorithms.SHA256);
+                signerInfo.setDigestAlgorithm(new AlgorithmIdentifier(digestAlgorithmOid));
+                signerInfo.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSA));
+                signerInfo.setSignature(
+                        "This is a placeholder signature. It's value shall be replaced with a real signature."
+                                .getBytes(StandardCharsets.UTF_8));
+                cmsContainer.setSignerInfo(signerInfo);
+            } else {
+                cmsContainer = new CMSContainer(signatureContainer);
+            }
+            // If MAC is in the signature already, we regenerate it anyway.
+            cmsContainer.getSignerInfo().removeUnSignedAttribute(ID_ATTR_PDF_MAC_DATA);
+            IASN1EncodableVector unsignedVector = FACTORY.createASN1EncodableVector();
+            document.dispatchEvent(new SignatureContainerGenerationEvent(unsignedVector,
+                    cmsContainer.getSignerInfo().getSignatureData(), rangeStream));
+            if (FACTORY.createDERSequence(unsignedVector).size() != 0) {
+                IASN1Sequence sequence =
+                        FACTORY.createASN1Sequence(FACTORY.createDERSequence(unsignedVector).getObjectAt(0));
+                cmsContainer.getSignerInfo().addUnSignedAttribute(new CmsAttribute(
+                        FACTORY.createASN1ObjectIdentifier(sequence.getObjectAt(0)).getId(),
+                        sequence.getObjectAt(1).toASN1Primitive()));
+                return cmsContainer.serialize();
+            }
+        } catch (Exception exception) {
+            throw new PdfException(SignExceptionMessageConstant.NOT_POSSIBLE_TO_EMBED_MAC_TO_SIGNATURE, exception);
+        }
+        return signatureContainer;
+    }
+
     private static String getSignerName(X509Certificate certificate) {
         String name = null;
         CertificateInfo.X500Name x500name = CertificateInfo.getSubjectFields(certificate);
@@ -1404,30 +1482,6 @@ public class PdfSigner {
         if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
             formField.setAlternativeName(alternativeDescription);
         }
-    }
-
-    private byte[] embedMacTokenIntoSignatureContainer(byte[] signatureContainer) {
-        if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
-            try {
-                CMSContainer cmsContainer = new CMSContainer(signatureContainer);
-                // If MAC is in the signature already, we regenerate it anyway.
-                cmsContainer.getSignerInfo().removeUnSignedAttribute(ID_ATTR_PDF_MAC_DATA);
-                IASN1EncodableVector unsignedVector = FACTORY.createASN1EncodableVector();
-                document.dispatchEvent(new SignatureContainerGenerationEvent(unsignedVector,
-                        cmsContainer.getSignerInfo().getSignatureData(), getRangeStream()));
-                if (FACTORY.createDERSequence(unsignedVector).size() != 0) {
-                    IASN1Sequence sequence =
-                            FACTORY.createASN1Sequence(FACTORY.createDERSequence(unsignedVector).getObjectAt(0));
-                    cmsContainer.getSignerInfo().addUnSignedAttribute(new CmsAttribute(
-                            FACTORY.createASN1ObjectIdentifier(sequence.getObjectAt(0)).getId(),
-                            sequence.getObjectAt(1).toASN1Primitive()));
-                    return cmsContainer.serialize();
-                }
-            } catch (Exception exception) {
-                throw new PdfException(SignExceptionMessageConstant.NOT_POSSIBLE_TO_EMBED_MAC_TO_SIGNATURE, exception);
-            }
-        }
-        return signatureContainer;
     }
 
     private void applyDefaultPropertiesForTheNewField(PdfSignatureFormField sigField) {
@@ -1516,20 +1570,52 @@ public class PdfSigner {
     }
 
     static class SignatureApplier {
-
         private final PdfDocument document;
+        private final PdfReader reader;
         private final String fieldName;
         private final OutputStream outs;
         private IRandomAccessSource readerSource;
         private long[] gaps;
 
+        public SignatureApplier(PdfReader reader, String fieldName, OutputStream outs) {
+            this.reader = reader;
+            this.fieldName = fieldName;
+            this.outs = outs;
+            this.document = null;
+        }
+
         public SignatureApplier(PdfDocument document, String fieldName, OutputStream outs) {
             this.document = document;
             this.fieldName = fieldName;
             this.outs = outs;
+            this.reader = null;
         }
 
         public void apply(ISignatureDataProvider signatureDataProvider) throws IOException, GeneralSecurityException {
+            StampingProperties properties = new StampingProperties().preserveEncryption();
+            properties.registerDependency(IMacContainerLocator.class, new SignatureMacContainerLocator());
+            // This IdleOutputStream writer does nothing and only required to be able to apply MAC if needed.
+            try (PdfWriter dummyWriter = new PdfWriter(new IdleOutputStream())) {
+                if (document == null) {
+                    try (PdfDocument newDocument = new PdfDocument(reader, dummyWriter, properties)) {
+                        apply(newDocument, signatureDataProvider);
+                    }
+                } else {
+                    RandomAccessFileOrArray raf = document.getReader().getSafeFile();
+                    WindowRandomAccessSource source = new WindowRandomAccessSource(
+                            raf.createSourceView(), 0, raf.length());
+
+                    try (InputStream inputStream = new RASInputStream(source);
+                            PdfReader newReader = new PdfReader(inputStream, document.getReader().getPropertiesCopy());
+                            PdfDocument newDocument = new PdfDocument(newReader, dummyWriter, properties)) {
+                        apply(newDocument, signatureDataProvider);
+                    }
+                }
+            }
+        }
+
+        void apply(PdfDocument document, ISignatureDataProvider signatureDataProvider)
+                throws IOException, GeneralSecurityException {
             SignatureUtil signatureUtil = new SignatureUtil(document);
             PdfSignature signature = signatureUtil.getSignature(fieldName);
             if (signature == null) {
@@ -1553,6 +1639,15 @@ public class PdfSigner {
             }
 
             byte[] signedContent = signatureDataProvider.sign(this);
+
+            if (document.getDiContainer().getInstance(IMacContainerLocator.class).isMacContainerLocated()) {
+                RandomAccessSourceFactory fac = new RandomAccessSourceFactory();
+                IRandomAccessSource randomAccessSource = fac.createRanged(readerSource, gaps);
+                RASInputStream signedDocumentStream = new RASInputStream(randomAccessSource);
+
+                signedContent = embedMacTokenIntoSignatureContainer(signedContent, signedDocumentStream, document);
+            }
+
             spaceAvailable /= 2;
             if (spaceAvailable < signedContent.length) {
                 throw new PdfException(SignExceptionMessageConstant.AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE);

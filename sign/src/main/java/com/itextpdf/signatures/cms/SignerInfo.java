@@ -484,8 +484,10 @@ public class SignerInfo {
         signerInfoV.add(BC_FACTORY.createASN1Integer(getCmsVersion()));
         // sid
         IASN1EncodableVector issuerAndSerialNumberV = BC_FACTORY.createASN1EncodableVector();
-        issuerAndSerialNumberV.add(CertificateInfo.getIssuer(signerCertificate.getTBSCertificate()));
-        issuerAndSerialNumberV.add(BC_FACTORY.createASN1Integer(signerCertificate.getSerialNumber()));
+        if (signerCertificate != null) {
+            issuerAndSerialNumberV.add(CertificateInfo.getIssuer(signerCertificate.getTBSCertificate()));
+            issuerAndSerialNumberV.add(BC_FACTORY.createASN1Integer(signerCertificate.getSerialNumber()));
+        }
         signerInfoV.add(BC_FACTORY.createDERSequence(issuerAndSerialNumberV));
         // digest algorithm
         IASN1EncodableVector digestalgorithmV = BC_FACTORY.createASN1EncodableVector();
