@@ -638,19 +638,25 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (rectangle == null) {
             return;
         }
+
+        //Apply rotation
         final int fieldRotation = getRotation();
         PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
         rectangle = applyRotation(fieldRotation, rectangle);
-        float width = rectangle.getWidth();
-        float height = rectangle.getHeight();
 
         createInputButton();
         setModelElementProperties(rectangle);
 
+        float fontSize = getFontSize(new PdfArray(rectangle), parent.getDisplayValue());
+        formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(fontSize));
+
+        float width = rectangle.getWidth();
+        float height = rectangle.getHeight();
         PdfFormXObject xObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
         if (matrix != null) {
             xObject.put(PdfName.Matrix, matrix);
         }
+
         Canvas canvas = new Canvas(xObject, this.getDocument());
         setMetaInfoToCanvas(canvas);
 
@@ -802,6 +808,11 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return;
         }
 
+        //Apply rotation
+        final int fieldRotation = getRotation();
+        PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
+        rectangle = applyRotation(fieldRotation, rectangle);
+
         boolean multiselect = parent.getFieldFlag(PdfChoiceFormField.FF_MULTI_SELECT);
         if (!(formFieldElement instanceof ListBoxField)) {
             // Create it once and reset properties during each widget regeneration.
@@ -814,17 +825,24 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         PdfArray indices = getParent().getAsArray(PdfName.I);
         PdfArray options = parent.getOptions();
+        String longestOption = "";
         for (int index = 0; index < options.size(); ++index) {
             final PdfObject option = options.get(index);
             String exportValue = null;
             String displayValue = null;
             if (option.isString()) {
                 exportValue = option.toString();
+                if (longestOption.length() < exportValue.length()) {
+                    longestOption = exportValue;
+                }
             } else if (option.isArray()) {
                 PdfArray optionArray = (PdfArray) option;
                 if (optionArray.size() > 1) {
                     exportValue = optionArray.get(0).toString();
                     displayValue = optionArray.get(1).toString();
+                    if (longestOption.length() < displayValue.length()) {
+                        longestOption = displayValue;
+                    }
                 }
             }
             if (exportValue == null) {
@@ -854,6 +872,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             }
         }
 
+        float fontSize = getFontSize(new PdfArray(rectangle), longestOption);
+        formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(fontSize));
+        updateParentFontSize(fontSize);
+
         formFieldElement.setProperty(Property.FONT, getFont());
         if (getColor() != null) {
             formFieldElement.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
@@ -863,6 +885,9 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         PdfFormXObject xObject = new PdfFormXObject(
                 new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight()));
+        if (matrix != null) {
+            xObject.put(PdfName.Matrix, matrix);
+        }
 
         Canvas canvas = new Canvas(xObject, this.getDocument());
         setMetaInfoToCanvas(canvas);
@@ -884,6 +909,11 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return;
         }
 
+        //Apply rotation
+        final int fieldRotation = getRotation();
+        PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
+        rectangle = applyRotation(fieldRotation, rectangle);
+
         String value = parent.getDisplayValue();
         if (!(parent.isMultiline() && formFieldElement instanceof TextArea ||
                 !parent.isMultiline() && formFieldElement instanceof InputField)) {
@@ -892,6 +922,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
                     (IFormField) new TextArea("") :
                     (IFormField) new InputField("");
         }
+
         if (parent.isMultiline()) {
             formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
         } else {
@@ -917,10 +948,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             formFieldElement.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
         }
 
-        // Rotation
-        final int fieldRotation = getRotation();
-        PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
-        rectangle = applyRotation(fieldRotation, rectangle);
 
         setModelElementProperties(rectangle);
 
@@ -950,6 +977,11 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             formFieldElement = new ComboBoxField(parent.getPartialFieldName().toUnicodeString());
         }
 
+        //Apply rotation
+        final int fieldRotation = getRotation();
+        PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
+        rectangle = applyRotation(fieldRotation, rectangle);
+
         ComboBoxField comboBoxField = (ComboBoxField) formFieldElement;
         prepareComboBoxFieldWithCorrectOptionsAndValues(comboBoxField);
         comboBoxField.setFont(getFont());
@@ -972,6 +1004,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
 
         Rectangle pdfXobjectRectangle = new Rectangle(0, 0, rectangle.getWidth(), rectangle.getHeight());
         final PdfFormXObject xObject = new PdfFormXObject(pdfXobjectRectangle);
+        if (matrix != null) {
+            xObject.put(PdfName.Matrix, matrix);
+        }
+
         final Canvas canvas = new Canvas(xObject, getDocument());
         canvas.setProperty(Property.APPEARANCE_STREAM_LAYOUT, Boolean.TRUE);
         setMetaInfoToCanvas(canvas);
@@ -1012,18 +1048,29 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * @param onStateName the name of the appearance state for the checked state
      */
     protected void drawCheckBoxAndSaveAppearance(String onStateName) {
-        final Rectangle rect = getRect(this.getPdfObject());
+        Rectangle rect = getRect(this.getPdfObject());
         if (rect == null) {
             return;
         }
+
+        //Apply rotation
+        final int fieldRotation = getRotation();
+        PdfArray matrix = getRotationMatrix(fieldRotation, rect.getHeight(), rect.getWidth());
+        rect = applyRotation(fieldRotation, rect);
+
         reconstructCheckBoxType();
         createCheckBox();
+        setModelElementProperties(rect);
         final boolean wasChecked = Boolean.TRUE.equals(
                 formFieldElement.<Boolean>getProperty(FormProperty.FORM_FIELD_CHECKED));
         final PdfDictionary normalAppearance = new PdfDictionary();
         ((CheckBox) formFieldElement).setChecked(false);
         final PdfFormXObject xObjectOff = new PdfFormXObject(
                 new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
+        if (matrix != null) {
+            xObjectOff.put(PdfName.Matrix, matrix);
+        }
+
         final Canvas canvasOff = new Canvas(xObjectOff, getDocument());
         setMetaInfoToCanvas(canvasOff);
         canvasOff.add(formFieldElement);
@@ -1040,6 +1087,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         ((CheckBox) formFieldElement).setChecked(true);
         final PdfFormXObject xObject = new PdfFormXObject(
                 new Rectangle(0, 0, rect.getWidth(), rect.getHeight()));
+        if (matrix != null) {
+            xObject.put(PdfName.Matrix, matrix);
+        }
+
         final Canvas canvas = new Canvas(xObject, this.getDocument());
         setMetaInfoToCanvas(canvas);
         canvas.add(formFieldElement);
@@ -1054,6 +1105,10 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         mk.put(PdfName.CA,
                 new PdfString(PdfCheckBoxRenderingStrategy.ZAPFDINGBATS_CHECKBOX_MAPPING.getByKey(
                         parent.checkType.getValue())));
+        if (fieldRotation != 0) {
+            mk.put(PdfName.R, new PdfNumber(fieldRotation));
+        }
+
         getWidget().put(PdfName.MK, mk);
         formFieldElement.setInteractive(true);
         ((CheckBox) formFieldElement).setChecked(wasChecked);
@@ -1126,8 +1181,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
 
         ((Button) formFieldElement).setFont(getFont());
-        ((Button) formFieldElement).setFontSize(getFontSize(getPdfObject()
-                .getAsArray(PdfName.Rect), parent.getDisplayValue()));
         if (getColor() != null) {
             ((Button) formFieldElement).setFontColor(color);
         }
@@ -1242,7 +1295,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         }
 
         formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(getFontSize()));
-        setModelElementProperties(getRect(getPdfObject()));
         ((CheckBox) formFieldElement).setPdfConformance(getPdfConformance());
         ((CheckBox) formFieldElement).setCheckBoxType(parent.checkType.getValue());
     }
@@ -1469,5 +1521,12 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             rectangle = invertedRectangle;
         }
         return rectangle;
+    }
+
+    private void updateParentFontSize(float fontSize) {
+        if (parent != null) {
+            parent.updateFontAndFontSize(parent.getFont(), fontSize);
+            parent.updateDefaultAppearance();
+        }
     }
 }

@@ -127,7 +127,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test Some different random connect exceptions on Android
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void openStreamReadTimeoutTest() throws IOException, InterruptedException {
         URL url = new URL("http://127.0.0.1:8080/");
         Thread thread = new TestResource();
@@ -142,7 +142,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test Some different random connect exceptions on Android
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void openStreamConnectTimeoutTest() throws IOException {
         URL url = new URL("http://10.255.255.1/");
 

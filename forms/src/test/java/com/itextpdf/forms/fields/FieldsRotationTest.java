@@ -23,24 +23,31 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.properties.CheckBoxType;
 import com.itextpdf.forms.form.element.Button;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @Tag("IntegrationTest")
 public class FieldsRotationTest extends ExtendedITextTest {
@@ -111,6 +118,140 @@ public class FieldsRotationTest extends ExtendedITextTest {
                 form.addField(signature);
             }
         }
+    }
+
+    @Test
+    public void fillRotated90TextFormFieldTest() throws IOException, InterruptedException {
+        String inPdf = SOURCE_FOLDER + "rotated90TextFormField.pdf";
+        String outPdf = DESTINATION_FOLDER + "filledRotated90TextFormField.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_filledRotated90TextFormField.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inPdf), CompareTool.createTestPdfWriter(outPdf))) {
+            Map<String, String> fieldValues = new HashMap<>();
+            fieldValues.put("textForm", "some text");
+            fillAndFlattenForm(pdfDoc, fieldValues);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void fillRotated270TextFormFieldTest() throws IOException, InterruptedException {
+        String inPdf = SOURCE_FOLDER + "rotated270TextFormField.pdf";
+        String outPdf = DESTINATION_FOLDER + "filledRotated270TextFormField.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_filledRotated270TextFormField.pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(inPdf), CompareTool.createTestPdfWriter(outPdf))) {
+            Map<String, String> fieldValues = new HashMap<>();
+            fieldValues.put("textForm", "some text");
+            fillAndFlattenForm(pdfDoc, fieldValues);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void rotatedButtonWithDisplayValueTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "rotatedButtonWithDisplayValue.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_rotatedButtonWithDisplayValue.pdf";
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            doc.addNewPage();
+            Rectangle rectangle = new Rectangle(150, 300, 150, 400);
+            PdfDictionary chars = new PdfDictionary();
+            chars.put(PdfName.R, new PdfNumber(90));
+            PdfButtonFormField button = new PushButtonFormFieldBuilder(doc, "button")
+                    .setWidgetRectangle(rectangle).setPage(1).createPushButton();
+            button.getWidgets().get(0).setAppearanceCharacteristics(chars);
+            button.setFontSize(0);
+            button.setValue("value", "this text should take all space");
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, true);
+            acroForm.addField(button);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void rotatedCheckBoxTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "rotatedCheckBox.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_rotatedCheckBox.pdf";
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            doc.addNewPage();
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, true);
+            PdfDictionary chars = new PdfDictionary();
+            chars.put(PdfName.R, new PdfNumber(90));
+            Rectangle rectangle1 = new Rectangle(0, 300, 100, 100);
+            PdfButtonFormField box1 = new CheckBoxFormFieldBuilder(doc, "checkBox1")
+                    .setPage(1).setWidgetRectangle(rectangle1).createCheckBox();
+            box1.getWidgets().get(0).setAppearanceCharacteristics(chars);
+            box1.setCheckType(CheckBoxType.CHECK);
+            box1.setValue("ON");
+            box1.setFontSize(0);
+            acroForm.addField(box1);
+
+            Rectangle rectangle2 = new Rectangle(100, 300, 100, 100);
+            PdfButtonFormField box2 = new CheckBoxFormFieldBuilder(doc, "checkBox2")
+                    .setPage(1).setWidgetRectangle(rectangle2).createCheckBox();
+            box2.getWidgets().get(0).setAppearanceCharacteristics(chars);
+            box2.setCheckType(CheckBoxType.STAR);
+            box2.setValue("ON");
+            box2.setFontSize(0);
+            acroForm.addField(box2);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void rotatedChoiceBoxTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "rotatedChoiceBox.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_rotatedChoiceBox.pdf";
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            doc.addNewPage();
+            Rectangle rectangle = new Rectangle(150, 500, 200, 150);
+            PdfDictionary chars = new PdfDictionary();
+            chars.put(PdfName.R, new PdfNumber(90));
+            PdfChoiceFormField choiceBoxField = new ChoiceFormFieldBuilder(doc, "choiceBox")
+                    .setPage(1).setWidgetRectangle(rectangle)
+                    .setOptions(new String[]{"option1", "option2", "option3", "option4", "option5"}).createList();
+            choiceBoxField.getWidgets().get(0).setAppearanceCharacteristics(chars);
+            choiceBoxField.setFontSize(0);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, true);
+            acroForm.addField(choiceBoxField);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void rotatedComboBoxTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "rotatedComboBox.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_rotatedComboBox.pdf";
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            doc.addNewPage();
+            Rectangle rectangle = new Rectangle(150, 500, 75, 150);
+            PdfDictionary chars = new PdfDictionary();
+            chars.put(PdfName.R, new PdfNumber(90));
+            PdfChoiceFormField choiceBoxField = new ChoiceFormFieldBuilder(doc, "choiceBox")
+                    .setPage(1).setWidgetRectangle(rectangle)
+                    .setOptions(new String[]{"option1", "option2", "longOption", "option3", "option4", "option5"}).createComboBox();
+            choiceBoxField.getWidgets().get(0).setAppearanceCharacteristics(chars);
+            choiceBoxField.setValue("option1", true);
+            choiceBoxField.setFontSize(0);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, true);
+            acroForm.addField(choiceBoxField);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    static private void fillAndFlattenForm(PdfDocument document, Map<String, String> fields) {
+        PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
+        form.setNeedAppearances(true);
+        for (Map.Entry<String, String> field : fields.entrySet()) {
+            PdfFormField acroField = form.getField(field.getKey());
+            acroField.setValue(field.getValue());
+        }
+
+        form.flattenFields();
     }
 
     private String generateCaption(int pageRotation, int fieldRotation) {

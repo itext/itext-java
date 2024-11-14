@@ -37,7 +37,7 @@ import java.net.URL;
 class DefaultResourceRetrieverTest extends ExtendedITextTest {
 
     @Test
-    // Android-Conversion-Ignore-Test Some different random connect exceptions on Android
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void retrieveResourceReadTimeoutTest() throws IOException, InterruptedException {
         URL url = new URL("http://127.0.0.1:8080/");
         Thread thread = new TestResource();
@@ -54,7 +54,7 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test Some different random connect exceptions on Android
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void retrieveResourceConnectTimeoutTest() throws IOException {
         URL url = new URL("http://10.255.255.1/");
 
