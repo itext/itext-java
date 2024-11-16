@@ -32,8 +32,22 @@ public interface ISvgTextNodeRenderer extends ISvgNodeRenderer {
 
     float getTextContentLength(float parentFontSize, PdfFont font);
 
+    /**
+     * This method is deprecated and will be replaced with new signature {@code getRelativeTranslation(SvgDrawContext)}.
+     * This is needed because xMove/yMove can contain relative values, so SvgDrawContext is needed to resolve them.
+     *
+     * @return text relative translation
+     */
+    @Deprecated
     float[] getRelativeTranslation();
 
+    /**
+     * This method is deprecated and will be replaced with new signature {@code containsRelativeMove(SvgDrawContext)}.
+     * This is needed because xMove/yMove can contain relative values, so SvgDrawContext is needed to resolve them.
+     *
+     * @return {@code true} if there is a relative move, {@code false} otherwise
+     */
+    @Deprecated
     boolean containsRelativeMove();
 
     boolean containsAbsolutePositionChange();

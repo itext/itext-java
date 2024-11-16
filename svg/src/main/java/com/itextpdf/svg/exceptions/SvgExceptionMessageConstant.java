@@ -73,6 +73,9 @@ public final class SvgExceptionMessageConstant {
     public static final String TRANSFORM_NULL = "The transformation value is null.";
     public static final String UNKNOWN_TRANSFORMATION_TYPE = "Unsupported type of transformation.";
 
+    public static final String ILLEGAL_RELATIVE_VALUE_NO_VIEWPORT_IS_SET
+            = "Relative value can't be resolved, no viewport is set.";
+
     private SvgExceptionMessageConstant() {
     }
 }

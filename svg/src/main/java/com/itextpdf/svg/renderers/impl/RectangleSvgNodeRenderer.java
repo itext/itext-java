@@ -24,7 +24,6 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -57,7 +56,7 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
     protected void doDraw(SvgDrawContext context) {
         PdfCanvas cv = context.getCurrentCanvas();
         cv.writeLiteral("% rect\n");
-        setParameters();
+        setParameters(context);
         boolean singleValuePresent = (rxPresent && !ryPresent) || (!rxPresent && ryPresent);
 
         if (!rxPresent && !ryPresent) {
@@ -103,26 +102,26 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        setParameters();
+        setParameters(context);
         return new Rectangle(this.x, this.y, this.width, this.height);
     }
 
-    private void setParameters() {
+    private void setParameters(SvgDrawContext context) {
         if(getAttribute(SvgConstants.Attributes.X)!=null) {
-            x = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.X));
+            x = parseHorizontalLength(getAttribute(SvgConstants.Attributes.X), context);
         }
         if(getAttribute(SvgConstants.Attributes.Y)!=null) {
-            y = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.Y));
+            y = parseVerticalLength(getAttribute(SvgConstants.Attributes.Y), context);
         }
-        width = CssDimensionParsingUtils.parseAbsoluteLength(getAttributeOrDefault(SvgConstants.Attributes.WIDTH, "0"));
-        height = CssDimensionParsingUtils.parseAbsoluteLength(getAttributeOrDefault(SvgConstants.Attributes.HEIGHT, "0"));
+        width = parseHorizontalLength(getAttribute(SvgConstants.Attributes.WIDTH), context);
+        height = parseVerticalLength(getAttribute(SvgConstants.Attributes.HEIGHT), context);
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.RX)) {
-            rx = checkRadius(CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)), width);
+            rx = checkRadius(parseHorizontalLength(getAttribute(SvgConstants.Attributes.RX), context), width);
             rxPresent = true;
         }
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.RY)) {
-            ry = checkRadius(CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY)), height);
+            ry = checkRadius(parseVerticalLength(getAttribute(SvgConstants.Attributes.RY), context), height);
             ryPresent = true;
         }
     }

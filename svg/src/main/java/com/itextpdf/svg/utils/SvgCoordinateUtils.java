@@ -30,7 +30,12 @@ import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 
+/**
+ * Utility class that facilitates various methods for calculating/transforming coordinates.
+ */
 public class SvgCoordinateUtils {
 
     /**
@@ -126,6 +131,40 @@ public class SvgCoordinateUtils {
             }
         }
         return defaultValue;
+    }
+
+    /**
+     * Calculate normalized diagonal length.
+     *
+     * @param context svg draw context.
+     * @return diagonal length in px.
+     */
+    public static float calculateNormalizedDiagonalLength(SvgDrawContext context) {
+        final float viewPortHeight = context.getCurrentViewPort().getHeight();
+        final float viewPortWidth = context.getCurrentViewPort().getWidth();
+        return (float) (Math.sqrt(viewPortHeight * viewPortHeight +
+                viewPortWidth * viewPortWidth) / Math.sqrt(2));
+    }
+
+    /**
+     * Calculate percent base value if provided length is percent value.
+     *
+     * @param context svg draw context.
+     * @param length length to check
+     * @param isXAxis if {@code true} viewport's width will be used (x-axis), otherwise viewport's height will be
+     *             used (y-axis)
+     * @return percent base value if provided length is percent value, 0.0F otherwise
+     */
+    public static float calculatePercentBaseValueIfNeeded(SvgDrawContext context, String length, boolean isXAxis) {
+        float percentBaseValue = 0.0F;
+        if (CssTypesValidationUtils.isPercentageValue(length)) {
+            if (context.getCurrentViewPort() == null) {
+                throw new SvgProcessingException(SvgExceptionMessageConstant.ILLEGAL_RELATIVE_VALUE_NO_VIEWPORT_IS_SET);
+            }
+            percentBaseValue = isXAxis
+                    ? context.getCurrentViewPort().getWidth() : context.getCurrentViewPort().getHeight();
+        }
+        return percentBaseValue;
     }
 
     /**

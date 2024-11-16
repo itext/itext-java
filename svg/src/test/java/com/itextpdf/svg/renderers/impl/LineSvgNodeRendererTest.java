@@ -29,6 +29,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -106,8 +107,9 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
     }
 
     @Test
-    public void invalidAttributeTest01() {
-        PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    public void invalidAttributeTest01() throws IOException, InterruptedException {
+        String filename = "invalidAttributeTest01.pdf";
+        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
         doc.addNewPage();
         ISvgNodeRenderer root = new LineSvgNodeRenderer();
         Map<String, String> lineProperties = new HashMap<>();
@@ -119,16 +121,13 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
         SvgDrawContext context = new SvgDrawContext(null, null);
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
-
-        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
-                () -> root.draw(context)
-        );
-        Assertions.assertEquals(MessageFormatUtil.format(StyledXMLParserException.NAN, "notAnum"), e.getMessage());
+        root.draw(context);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
     }
 
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2))
     public void invalidAttributeTest02() throws IOException {
         Map<String, String> lineProperties = new HashMap<>();
         lineProperties.put("x1", "100");

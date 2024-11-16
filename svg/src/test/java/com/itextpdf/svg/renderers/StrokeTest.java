@@ -77,9 +77,6 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-3432 relative values doesn't support correctly for stroke-width attribute
-    @LogMessages(messages = @LogMessage
-            (messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 12))
     public void strokeWidthMeasureUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWidthMeasureUnitsTest");
     }

@@ -50,14 +50,14 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
         PdfCanvas canvas = context.getCurrentCanvas();
         canvas.writeLiteral("% line\n");
 
-        if (setParameterss()) {
+        if (setParameters(context)) {
             canvas.moveTo(x1, y1).lineTo(x2, y2);
         }
     }
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        if (setParameterss()) {
+        if (setParameters(context)) {
             float x = Math.min(x1, x2);
             float y = Math.min(y1, y2);
 
@@ -108,31 +108,28 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
 
     @Override
     public double getAutoOrientAngle(MarkerSvgNodeRenderer marker, boolean reverse) {
-        Vector v = new Vector(getAttribute(this.attributesAndStyles, SvgConstants.Attributes.X2) - getAttribute(
-                this.attributesAndStyles, SvgConstants.Attributes.X1),
-                getAttribute(this.attributesAndStyles, SvgConstants.Attributes.Y2) - getAttribute(
-                        this.attributesAndStyles, SvgConstants.Attributes.Y1), 0f);
+        Vector v = new Vector(this.x2 - this.x1, this.y2 - this.y1, 0.0F);
         Vector xAxis = new Vector(1, 0, 0);
         double rotAngle = SvgCoordinateUtils.calculateAngleBetweenTwoVectors(xAxis, v);
         return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1f;
     }
 
-    private boolean setParameterss() {
+    private boolean setParameters(SvgDrawContext context) {
         if (attributesAndStyles.size() > 0) {
             if (attributesAndStyles.containsKey(SvgConstants.Attributes.X1)) {
-                this.x1 = getAttribute(attributesAndStyles, SvgConstants.Attributes.X1);
+                this.x1 = parseHorizontalLength(attributesAndStyles.get(SvgConstants.Attributes.X1), context);
             }
 
             if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y1)) {
-                this.y1 = getAttribute(attributesAndStyles, SvgConstants.Attributes.Y1);
+                this.y1 = parseVerticalLength(attributesAndStyles.get(SvgConstants.Attributes.Y1), context);
             }
 
             if (attributesAndStyles.containsKey(SvgConstants.Attributes.X2)) {
-                this.x2 = getAttribute(attributesAndStyles, SvgConstants.Attributes.X2);
+                this.x2 = parseHorizontalLength(attributesAndStyles.get(SvgConstants.Attributes.X2), context);
             }
 
             if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y2)) {
-                this.y2 = getAttribute(attributesAndStyles, SvgConstants.Attributes.Y2);
+                this.y2 = parseVerticalLength(attributesAndStyles.get(SvgConstants.Attributes.Y2), context);
             }
             return true;
         }

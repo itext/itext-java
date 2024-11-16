@@ -22,7 +22,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Matrix;
@@ -34,7 +33,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
@@ -61,7 +59,9 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
 
     /**
      * The number of viewBox values.
+     * Deprecate in favour of {@code SvgConstants.Values.VIEWBOX_VALUES_NUMBER}
      */
+    @Deprecated
     protected final static int VIEWBOX_VALUES_NUMBER = 4;
 
     private final List<ISvgNodeRenderer> children = new ArrayList<>();
@@ -145,8 +145,8 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
      * @param context current svg draw context
      */
     void applyViewBox(SvgDrawContext context) {
-        float[] viewBoxValues = getViewBoxValues();
-        if (viewBoxValues.length < VIEWBOX_VALUES_NUMBER) {
+        float[] viewBoxValues = SvgCssUtils.parseViewBox(this);
+        if (viewBoxValues == null || viewBoxValues.length < SvgConstants.Values.VIEWBOX_VALUES_NUMBER) {
             float[] values = {0, 0, context.getCurrentViewPort().getWidth(), context.getCurrentViewPort().getHeight()};
             Rectangle currentViewPort = context.getCurrentViewPort();
             calculateAndApplyViewBox(context, values, currentViewPort);
@@ -406,43 +406,6 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
                     .setX(currentViewPort.getX() + -1 * (float) transform.getTranslateX())
                     .setY(currentViewPort.getY() + -1 * (float) transform.getTranslateY());
         }
-    }
-
-    float[] getViewBoxValues() {
-        if (this.attributesAndStyles == null) {
-            return new float[]{};
-        }
-        String viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX);
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        if (viewBoxValues == null) {
-            viewBoxValues = attributesAndStyles.get(SvgConstants.Attributes.VIEWBOX.toLowerCase());
-        }
-        if (viewBoxValues == null) {
-            return new float[]{};
-        }
-        List<String> valueStrings = SvgCssUtils.splitValueList(viewBoxValues);
-        float[] values = new float[valueStrings.size()];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = CssDimensionParsingUtils.parseAbsoluteLength(valueStrings.get(i));
-        }
-        // the value for viewBox should be 4 numbers according to the viewBox documentation
-        if (values.length != VIEWBOX_VALUES_NUMBER) {
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(MessageFormatUtil.format(
-                        SvgLogMessageConstant.VIEWBOX_VALUE_MUST_BE_FOUR_NUMBERS, viewBoxValues));
-            }
-            return new float[]{};
-        }
-        // case when viewBox width or height is negative value is an error and
-        // invalidates the ‘viewBox’ attribute (according to the viewBox documentation)
-        if (values[2] < 0 || values[3] < 0) {
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(MessageFormatUtil.format(
-                        SvgLogMessageConstant.VIEWBOX_WIDTH_AND_HEIGHT_CANNOT_BE_NEGATIVE, viewBoxValues));
-            }
-            return new float[]{};
-        }
-        return values;
     }
 
     private static float[] scaleViewBoxValues(float[] values, float scaleWidth, float scaleHeight) {

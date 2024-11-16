@@ -65,9 +65,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void TSpanRelativeMoveInvalidXTest() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidX")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidX");
     }
 
     @Test
@@ -87,9 +85,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void TSpanRelativeMoveInvalidYTest() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidY")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidY");
     }
 
     @Test
@@ -171,19 +167,13 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update after DEVSIX-2507 and DEVSIX-3005 fix
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
-    })
+    //TODO: update after DEVSIX-2507 fix
     public void tspanBasicExample() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanBasicExample");
     }
 
     @Test
-    //TODO: update after DEVSIX-2507 and DEVSIX-3005 fix
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
-    })
+    //TODO: update after DEVSIX-2507 fix
     public void tspanNestedExample() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanNestedExample");
     }

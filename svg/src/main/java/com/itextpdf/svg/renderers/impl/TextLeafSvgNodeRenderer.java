@@ -88,7 +88,7 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     @Override
     public TextRectangle getTextRectangle(SvgDrawContext context, Point basePoint) {
         if (getParent() instanceof TextSvgBranchRenderer && basePoint != null) {
-            final float parentFontSize = ((AbstractSvgNodeRenderer) getParent()).getCurrentFontSize();
+            final float parentFontSize = ((AbstractSvgNodeRenderer) getParent()).getCurrentFontSize(context);
             final PdfFont parentFont = ((TextSvgBranchRenderer) getParent()).getFont();
             final float textLength = getTextContentLength(parentFontSize, parentFont);
             final float[] fontAscenderDescenderFromMetrics = TextRenderer

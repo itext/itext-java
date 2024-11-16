@@ -77,7 +77,6 @@ public class FontSizeTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-2884 rem in font-size doesn't support correctly
     public void diffUnitsOfMeasure() throws IOException, InterruptedException {
         String name = "diff_units_of_measure";
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, name);

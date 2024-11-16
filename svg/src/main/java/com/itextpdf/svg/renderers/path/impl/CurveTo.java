@@ -26,7 +26,6 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
@@ -41,7 +40,7 @@ public class CurveTo extends AbstractPathShape implements IControlPointCurve {
 
     static final int ARGUMENT_SIZE = 6;
 
-    private static double ZERO_EPSILON = 1e-12;
+    private static final double ZERO_EPSILON = 1e-12;
 
     public CurveTo() {
         this(false);
@@ -56,14 +55,14 @@ public class CurveTo extends AbstractPathShape implements IControlPointCurve {
     }
 
     @Override
-    public void draw(PdfCanvas canvas) {
-        float x1 = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[0]);
-        float y1 = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[1]);
-        float x2 = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[2]);
-        float y2 = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[3]);
-        float x = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[4]);
-        float y = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[5]);
-        canvas.curveTo(x1, y1, x2, y2, x, y);
+    public void draw() {
+        float x1 = parseHorizontalLength(coordinates[0]);
+        float y1 = parseVerticalLength(coordinates[1]);
+        float x2 = parseHorizontalLength(coordinates[2]);
+        float y2 = parseVerticalLength(coordinates[3]);
+        float x = parseHorizontalLength(coordinates[4]);
+        float y = parseVerticalLength(coordinates[5]);
+        context.getCurrentCanvas().curveTo(x1, y1, x2, y2, x, y);
     }
 
     @Override

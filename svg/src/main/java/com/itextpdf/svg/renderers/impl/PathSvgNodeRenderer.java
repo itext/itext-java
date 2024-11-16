@@ -90,12 +90,23 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
      */
     private ClosePath zOperator = null;
 
+    /**
+     * Draws this element to a canvas-like object maintained in the context.
+     *
+     * @param context the object that knows the place to draw this element and maintains its state
+     */
     @Override
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
         canvas.writeLiteral("% path\n");
         for (IPathShape item : getShapes()) {
-            item.draw(canvas);
+            if (item instanceof AbstractPathShape) {
+                AbstractPathShape shape = (AbstractPathShape) item;
+                shape.setParent(this);
+                shape.setContext(context);
+            }
+
+            item.draw(context.getCurrentCanvas());
         }
     }
 

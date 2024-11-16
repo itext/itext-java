@@ -22,8 +22,6 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-
 /***
  * Implements closePath(Z) attribute of SVG's path element
  * */
@@ -39,7 +37,7 @@ public class ClosePath extends LineTo {
     }
 
     @Override
-    public void draw(PdfCanvas canvas) {
-        canvas.closePath();
+    public void draw() {
+        context.getCurrentCanvas().closePath();
     }
 }

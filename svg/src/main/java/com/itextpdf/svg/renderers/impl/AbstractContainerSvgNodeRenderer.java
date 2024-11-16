@@ -49,6 +49,10 @@ public abstract class AbstractContainerSvgNodeRenderer extends AbstractBranchSvg
      * @return the viewport that applies to this renderer
      */
     Rectangle calculateViewPort(SvgDrawContext context) {
+        //TODO: DEVSIX-8775 the logic below should be refactored, first of all it shouldn't be applied to root svg tag
+        // (though depending on implementation maybe it won't be a problem), also it need to be adjusted to support em/rem
+        // which seems possible for all cases, and as for percents, I'm not sure it's possible for nested svg tags, but
+        // it should be possible for symbols
         Rectangle currentViewPort = context.getCurrentViewPort();
 
         // Set default values to parent viewport in the case of a nested svg tag
@@ -58,7 +62,6 @@ public abstract class AbstractContainerSvgNodeRenderer extends AbstractBranchSvg
         float portWidth = currentViewPort.getWidth();
         // Default should be parent height if not outermost
         float portHeight = currentViewPort.getHeight();
-
 
         if (attributesAndStyles != null) {
             if (attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {

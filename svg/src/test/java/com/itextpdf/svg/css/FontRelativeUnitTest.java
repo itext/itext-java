@@ -77,10 +77,6 @@ public class FontRelativeUnitTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 6)
-    })
-    // TODO DEVSIX-2607 relative font-size value is not supported for tspan element
     public void textFontSizeInheritanceFromUseTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"textFontSizeInheritanceFromUseTest");
     }

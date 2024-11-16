@@ -50,6 +50,11 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void relativeHelloWorldTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_relative");
+    }
+
+    @Test
     public void tooLongTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "too_long");
     }
@@ -180,9 +185,7 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void textRelativeMoveInvalidXTest() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidX")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidX");
     }
 
     //Y
@@ -203,9 +206,7 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void textRelativeMoveInvalidYTest() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY");
     }
 
     @Test

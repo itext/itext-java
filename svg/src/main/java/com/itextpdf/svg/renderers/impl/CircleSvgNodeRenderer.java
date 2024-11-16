@@ -22,37 +22,35 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.svg.SvgConstants;
 
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
+import com.itextpdf.svg.utils.SvgCssUtils;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;circle&gt; tag.
  */
 public class CircleSvgNodeRenderer extends EllipseSvgNodeRenderer {
 
-
     @Override
-    protected boolean setParameters(){
-        cx = 0;
-        cy = 0;
-        if(getAttribute(SvgConstants.Attributes.CX) != null){
-            cx = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CX));
+    protected boolean setParameters(SvgDrawContext context) {
+        initCenter(context);
+        String r = getAttribute(SvgConstants.Attributes.R);
+        float percentBaseValue = 0.0F;
+        if (CssTypesValidationUtils.isPercentageValue(r)) {
+            if (context.getCurrentViewPort() == null) {
+                throw new SvgProcessingException(SvgExceptionMessageConstant.ILLEGAL_RELATIVE_VALUE_NO_VIEWPORT_IS_SET);
+            }
+            percentBaseValue = SvgCoordinateUtils.calculateNormalizedDiagonalLength(context);
         }
-        if(getAttribute(SvgConstants.Attributes.CY) != null){
-            cy = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CY));
-        }
-
-        if(getAttribute(SvgConstants.Attributes.R) != null
-                && CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.R)) >0){
-            rx = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.R));
-            ry=rx;
-        }else{
-            return false; //No drawing if rx is absent
-        }
-        return true;
-
+        rx = SvgCssUtils.parseAbsoluteLength(this, r, percentBaseValue, 0.0F, context);
+        ry = rx;
+        return rx > 0.0F;
     }
 
     @Override

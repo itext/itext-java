@@ -138,6 +138,9 @@ public class SvgDrawContext {
      * @return the viewbox as it is currently set
      */
     public Rectangle getCurrentViewPort() {
+        if (viewports.isEmpty()) {
+            return null;
+        }
         return viewports.getFirst();
     }
 

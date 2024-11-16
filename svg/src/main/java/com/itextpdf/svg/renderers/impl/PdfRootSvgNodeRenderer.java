@@ -65,7 +65,7 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
     @Override
     public void draw(SvgDrawContext context) {
         //Set viewport and transformation for pdf-context
-        context.addViewPort(this.calculateViewPort(context));
+        context.addViewPort(calculateViewPort(context));
         PdfCanvas currentCanvas = context.getCurrentCanvas();
         currentCanvas.concatMatrix(this.calculateTransformation(context));
         currentCanvas.writeLiteral("% svg root\n");
@@ -109,7 +109,7 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         return transform;
     }
 
-    Rectangle calculateViewPort(SvgDrawContext context){
+    static Rectangle calculateViewPort(SvgDrawContext context){
         float portX = 0f;
         float portY = 0f;
         float portWidth = 0f;

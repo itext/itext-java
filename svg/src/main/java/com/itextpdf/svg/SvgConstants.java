@@ -1057,5 +1057,20 @@ public final class SvgConstants {
         public static final String XMAX_YMAX = "xmaxymax";
 
         public static final String VERSION1_1 = "1.1";
+
+        /**
+         * Default svg view box width value.
+         */
+        public static final String DEFAULT_VIEWBOX_WIDTH = "300px";
+
+        /**
+         * Default svg view box height value.
+         */
+        public static final String DEFAULT_VIEWBOX_HEIGHT = "150px";
+
+        /**
+         * The number of viewBox values.
+         */
+        public static final int VIEWBOX_VALUES_NUMBER = 4;
     }
 }

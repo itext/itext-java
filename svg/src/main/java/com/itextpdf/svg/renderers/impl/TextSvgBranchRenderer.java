@@ -123,13 +123,25 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     @Override
     public float[] getRelativeTranslation() {
-        if (!moveResolved) resolveTextMove();
+        return getRelativeTranslation(new SvgDrawContext(null, null));
+    }
+
+    public float[] getRelativeTranslation(SvgDrawContext context) {
+        if (!moveResolved) {
+            resolveTextMove(context);
+        }
         return new float[]{xMove, yMove};
     }
 
     @Override
     public boolean containsRelativeMove() {
-        if (!moveResolved) resolveTextMove();
+        return containsRelativeMove(new SvgDrawContext(null, null));
+    }
+
+    public boolean containsRelativeMove(SvgDrawContext context) {
+        if (!moveResolved) {
+            resolveTextMove(context);
+        }
         boolean isNullMove = CssUtils.compareFloats(0f, xMove) && CssUtils.compareFloats(0f, yMove); // comparision to 0
         return !isNullMove;
     }
@@ -166,7 +178,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                 y = basePoint.getY();
             }
             basePoint = new Point(x, y);
-            basePoint.move(getRelativeTranslation()[0], getRelativeTranslation()[1]);
+            basePoint.move(getRelativeTranslation(context)[0], getRelativeTranslation(context)[1]);
             Rectangle commonRect = null;
             for (ISvgTextNodeRenderer child : getChildren()) {
                 if (child != null) {
@@ -219,8 +231,8 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
         for (ISvgTextNodeRenderer child : children) {
             // Apply relative move
-            if (this.containsRelativeMove()) {
-                float[] rootMove = this.getRelativeTranslation();
+            if (this.containsRelativeMove(context)) {
+                float[] rootMove = this.getRelativeTranslation(context);
                 //-y to account for the text-matrix transform we do in the text root to account for the coordinates
                 context.addTextMove(rootMove[0], -rootMove[1]);
             }
@@ -255,10 +267,15 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         if (!CssUtils.compareFloats(0f, textAnchorCorrection)) {
             context.addTextMove(textAnchorCorrection, 0);
         }
+
         // Move needs to happen before the saving of the state in order for it to cascade beyond
-        if (c.containsRelativeMove()) {
-            // -y to account for the text-matrix transform we do in the text root to account for the coordinates
-            float[] childMove = c.getRelativeTranslation();
+        boolean containsRelativeMove = c instanceof TextSvgBranchRenderer
+                ? ((TextSvgBranchRenderer)c).containsRelativeMove(context) : c.containsRelativeMove();
+        if (containsRelativeMove) {
+            float[] childMove = c instanceof TextSvgBranchRenderer
+                    ? ((TextSvgBranchRenderer)c).getRelativeTranslation(context) : c.getRelativeTranslation();
+            //-y to account for the text-matrix transform we do
+            // in the text root to account for the coordinates
             context.addTextMove(childMove[0], -childMove[1]);
         }
 
@@ -404,7 +421,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         context.setRootTransform(rootTf);
     }
 
-    private void resolveTextMove() {
+    private void resolveTextMove(SvgDrawContext context) {
         if (this.attributesAndStyles != null) {
             String xRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.DX);
             String yRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.DY);
@@ -416,11 +433,11 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             yMove = 0f;
 
             if (!xValuesList.isEmpty()) {
-                xMove = CssDimensionParsingUtils.parseAbsoluteLength(xValuesList.get(0));
+                xMove = parseHorizontalLength(xValuesList.get(0), context);
             }
 
             if (!yValuesList.isEmpty()) {
-                yMove = CssDimensionParsingUtils.parseAbsoluteLength(yValuesList.get(0));
+                yMove = parseVerticalLength(yValuesList.get(0), context);
             }
             moveResolved = true;
         }
@@ -485,7 +502,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     private void deepCopyChildren(TextSvgBranchRenderer deepCopy) {
         for (ISvgTextNodeRenderer child : children) {
             ISvgTextNodeRenderer newChild = (ISvgTextNodeRenderer) child.createDeepCopy();
-            child.setParent(deepCopy);
+            newChild.setParent(deepCopy);
             deepCopy.addChild(newChild);
         }
     }

@@ -36,6 +36,7 @@ import com.itextpdf.svg.element.SvgImage;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
+import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.xobject.SvgImageXObject;
 
 import java.io.IOException;
@@ -64,8 +65,8 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
-            float[] wh = SvgConverter.extractWidthAndHeight(topSvgRenderer);
-            SvgImageXObject svgImageXObject = new SvgImageXObject(new Rectangle(0, 0, wh[0], wh[1]),
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, 0.0F);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(wh,
                     result, new ResourceResolver(SOURCE_FOLDER));
             SvgImage svgImage = new SvgImage(svgImageXObject);
             document.add(svgImage);
@@ -84,8 +85,8 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, new SvgConverterProperties().setBaseUri(svgFileName));
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
-            float[] wh = SvgConverter.extractWidthAndHeight(topSvgRenderer);
-            SvgImageXObject svgImageXObject = new SvgImageXObject(new Rectangle(0, 0, wh[0], wh[1]),
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, 0.0F);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(wh,
                     result, new ResourceResolver(SOURCE_FOLDER));
             SvgImage svgImage = new SvgImage(svgImageXObject);
             document.add(svgImage);

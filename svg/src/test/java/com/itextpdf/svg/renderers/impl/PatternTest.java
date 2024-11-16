@@ -201,17 +201,11 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
-    // TODO DEVSIX-4834 support relative units in attributes of svg elements
     public void patternContentUnitsObjBoundBoxAbsoluteCoordTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternContentUnitsObjBoundBoxAbsoluteCoord");
     }
 
     @Test
-    //TODO DEVSIX-4834 support relative units in attributes of svg elements
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
     public void viewBoxAndAbsoluteCoordinatesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxAndAbsoluteCoordinates");
     }
@@ -312,9 +306,6 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2)})
-    // TODO DEVSIX-4834 support relative units in attributes of svg elements
     public void severalComplexElementsInsidePatternTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "severalComplexElementsInsidePattern");
     }

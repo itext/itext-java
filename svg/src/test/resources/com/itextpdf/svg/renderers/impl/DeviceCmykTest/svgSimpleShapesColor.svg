@@ -4,7 +4,7 @@
              223,431 150,380 77,431 103,345
              31,291 121,291"/>
     <rect width="100" height="200" fill="device-cmyk(70%, 0%, 100%, 40%)" stroke="device-cmyk(0 81% 81% 30%)"/>
-    <line x1="200" y1=50" x2="420" y2="85" stroke="device-cmyk(0 81% 81% 30%)"/>
+    <line x1="200" y1="50" x2="420" y2="85" stroke="device-cmyk(0 81% 81% 30%)"/>
     <polyline points="400 500, 450 470, 460 440, 420 400" stroke="device-cmyk(0 81% 81% 30%)" fill="device-cmyk(70%, 0%, 100%, 40%)"/>
     <circle cx="100" cy="500" r="80" fill="device-cmyk(70%, 0%, 100%, 40%)" stroke="device-cmyk(0 81% 81% 30%)"/>
     <ellipse cx="300" cy="500" rx="40" ry="80"  fill="device-cmyk(70%, 0%, 100%, 40%)" stroke="device-cmyk(0 81% 81% 30%)"/>

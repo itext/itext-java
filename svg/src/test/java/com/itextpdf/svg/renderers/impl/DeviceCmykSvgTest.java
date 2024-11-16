@@ -79,8 +79,6 @@ public class DeviceCmykSvgTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
     public void svgSimpleShapesColorTest() throws IOException, InterruptedException {
             convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svgSimpleShapesColor");
     }

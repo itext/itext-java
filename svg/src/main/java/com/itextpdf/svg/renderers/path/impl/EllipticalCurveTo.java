@@ -88,10 +88,10 @@ public class EllipticalCurveTo extends AbstractPathShape {
     }
 
     @Override
-    public void draw(PdfCanvas canvas) {
+    public void draw() {
         Point start = new Point(startPoint.getX() * .75, startPoint.getY() * .75); // pixels to points
-        double rx = Math.abs(CssDimensionParsingUtils.parseAbsoluteLength(coordinates[0]));
-        double ry = Math.abs(CssDimensionParsingUtils.parseAbsoluteLength(coordinates[1]));
+        double rx = Math.abs(parseHorizontalLength(coordinates[0]));
+        double ry = Math.abs(parseVerticalLength(coordinates[1]));
 
         // φ is taken mod 360 degrees.
         double rotation = Double.parseDouble(coordinates[2]) % 360.0;
@@ -102,7 +102,7 @@ public class EllipticalCurveTo extends AbstractPathShape {
         boolean largeArc = !CssUtils.compareFloats((float) CssDimensionParsingUtils.parseFloat(coordinates[3]), 0);
         boolean sweep = !CssUtils.compareFloats((float) CssDimensionParsingUtils.parseFloat(coordinates[4]), 0);
 
-        Point end = new Point(CssDimensionParsingUtils.parseAbsoluteLength(coordinates[5]), CssDimensionParsingUtils.parseAbsoluteLength(coordinates[6]));
+        Point end = new Point(parseHorizontalLength(coordinates[5]), parseVerticalLength(coordinates[6]));
 
         if (CssUtils.compareFloats(start.getX(), end.getX()) && CssUtils.compareFloats(start.getY(), end.getY())) {
             /* edge case: If the endpoints (x1, y1) and (x2, y2) are identical,
@@ -114,7 +114,7 @@ public class EllipticalCurveTo extends AbstractPathShape {
             /* edge case: If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto")
              * joining the endpoints.
              */
-            canvas.lineTo(end.getX(), end.getY());
+            context.getCurrentCanvas().lineTo(end.getX(), end.getY());
         } else {
             /* This is the first step of calculating a rotated elliptical path.
             We must simulate a transformation on the end-point in order to calculate appropriate EllipseArc angles;
@@ -143,12 +143,12 @@ public class EllipticalCurveTo extends AbstractPathShape {
             if (sweep) {
                 points = rotate(points, rotation, points[0][0]);
                 for (int i = 0; i < points.length; i++) {
-                    drawCurve(canvas, points[i][1], points[i][2], points[i][3]);
+                    drawCurve(context.getCurrentCanvas(), points[i][1], points[i][2], points[i][3]);
                 }
             } else {
                 points = rotate(points, rotation, points[points.length - 1][3]);
                 for (int i = points.length - 1; i >= 0; i--) {
-                    drawCurve(canvas, points[i][2], points[i][1], points[i][0]);
+                    drawCurve(context.getCurrentCanvas(), points[i][2], points[i][1], points[i][0]);
                 }
             }
         }

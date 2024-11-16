@@ -24,10 +24,14 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -41,5 +45,17 @@ public class EllipseSvgNodeRendererUnitTest extends ExtendedITextTest {
         SvgDrawContext context = new SvgDrawContext(new ResourceResolver(""), new FontProvider());
         renderer.setAttributesAndStyles(new HashMap<>());
         Assertions.assertNull(renderer.getObjectBoundingBox(context));
+    }
+
+    @Test
+    public void noViewPortTest() {
+        EllipseSvgNodeRenderer renderer = new EllipseSvgNodeRenderer();
+        SvgDrawContext context = new SvgDrawContext(new ResourceResolver(""), new FontProvider());
+        Map<String, String> styles = new HashMap<>();
+        styles.put("rx", "50%");
+        styles.put("ry", "50%");
+        renderer.setAttributesAndStyles(styles);
+        Exception e = Assertions.assertThrows(SvgProcessingException.class, () -> renderer.setParameters(context));
+        Assertions.assertEquals(SvgExceptionMessageConstant.ILLEGAL_RELATIVE_VALUE_NO_VIEWPORT_IS_SET, e.getMessage());
     }
 }

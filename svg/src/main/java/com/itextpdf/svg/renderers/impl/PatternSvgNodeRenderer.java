@@ -34,12 +34,12 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Values;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
+import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.TransformUtils;
 
 import org.slf4j.Logger;
@@ -114,9 +114,9 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
 
         patternMatrixTransform.translate(originalPatternRectangle.getX(), originalPatternRectangle.getY());
 
-        final float[] viewBoxValues = getViewBoxValues();
+        final float[] viewBoxValues = SvgCssUtils.parseViewBox(this);
         Rectangle bbox;
-        if (viewBoxValues.length < VIEWBOX_VALUES_NUMBER) {
+        if (viewBoxValues == null || viewBoxValues.length < SvgConstants.Values.VIEWBOX_VALUES_NUMBER) {
             if (isObjectBoundingBoxInPatternUnits != isObjectBoundingBoxInPatternContentUnits) {
                 // If pattern units are not the same as pattern content units, then we need to scale
                 // the resulted space into a space to draw pattern content. The pattern rectangle origin
@@ -210,7 +210,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             final double viewPortY = currentViewPort.getY();
             final double viewPortWidth = currentViewPort.getWidth();
             final double viewPortHeight = currentViewPort.getHeight();
-            final float em = getCurrentFontSize();
+            final float em = getCurrentFontSize(context);
             final float rem = context.getCssContext().getRootFontSize();
             // get pattern coordinates in userSpaceOnUse coordinate system
             xOffset = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(

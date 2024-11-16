@@ -26,7 +26,6 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
@@ -57,12 +56,12 @@ public class QuadraticCurveTo extends AbstractPathShape implements IControlPoint
      * Draws a quadratic Bezier curve from the current point to (x,y) using (x1,y1) as the control point
      */
     @Override
-    public void draw(PdfCanvas canvas) {
-        float x1 = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[0]);
-        float y1 = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[1]);
-        float x = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[2]);
-        float y = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[3]);
-        canvas.curveTo(x1, y1, x, y);
+    public void draw() {
+        float x1 = parseHorizontalLength(coordinates[0]);
+        float y1 = parseVerticalLength(coordinates[1]);
+        float x = parseHorizontalLength(coordinates[2]);
+        float y = parseVerticalLength(coordinates[3]);
+        context.getCurrentCanvas().curveTo(x1, y1, x, y);
     }
 
     @Override

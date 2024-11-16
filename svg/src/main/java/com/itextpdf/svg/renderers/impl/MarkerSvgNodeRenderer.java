@@ -29,11 +29,11 @@ import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.SvgTextUtil;
 
 import org.slf4j.Logger;
@@ -217,18 +217,13 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             String parentValue = this.getParent().getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
             if (parentValue != null) {
                 // If stroke width is a percentage value is always computed as a percentage of the normalized viewBox diagonal length.
-                // TODO DEVSIX-3432 - the code below looks wrong. Issues:
-                // 1. Why root view port but not current?
-                // 2. Why do we convert to Pts. Viewport is already in points.
-                // 3. Diagonal length should be divided by sqrt(2) to be passed to parseAbsoluteLength and used as
-                // percentBaseValue.
-                // 4. Conversion to pixels at the end is in question either.
                 double rootViewPortHeight = context.getRootViewPort().getHeight();
                 double rootViewPortWidth = context.getRootViewPort().getWidth();
                 double viewBoxDiagonalLength = CssUtils.convertPxToPts(Math
                         .sqrt(rootViewPortHeight * rootViewPortHeight + rootViewPortWidth * rootViewPortWidth));
                 float strokeWidthScale = CssUtils
-                        .convertPtsToPx(parseAbsoluteLength(parentValue, (float) viewBoxDiagonalLength, 1f, context));
+                        .convertPtsToPx(SvgCssUtils.parseAbsoluteLength(
+                                this, parentValue, (float) viewBoxDiagonalLength, 1f, context));
                 context.getCurrentCanvas()
                         .concatMatrix(AffineTransform.getScaleInstance(strokeWidthScale, strokeWidthScale));
             }
@@ -238,33 +233,33 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     private void applyCoordinatesTranslation(SvgDrawContext context) {
         float xScale = 1;
         float yScale = 1;
-        float[] viewBox = getViewBoxValues();
-        if (viewBox.length == VIEWBOX_VALUES_NUMBER) {
+        float[] viewBox = SvgCssUtils.parseViewBox(this);
+        if (viewBox != null && viewBox.length == SvgConstants.Values.VIEWBOX_VALUES_NUMBER) {
             xScale = context.getCurrentViewPort().getWidth() / viewBox[2];
             yScale = context.getCurrentViewPort().getHeight() / viewBox[3];
         }
         float moveX = DEFAULT_REF_X;
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFX)) {
             String refX = this.attributesAndStyles.get(SvgConstants.Attributes.REFX);
-            moveX = parseAbsoluteLength(refX, context.getRootViewPort().getWidth(), moveX, context);
+            moveX = SvgCssUtils.parseAbsoluteLength(this, refX, context.getRootViewPort().getWidth(), moveX, context);
             //Apply scale
             moveX *= -1 * xScale;
         } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFX.toLowerCase())) {
             // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
             String refX = this.attributesAndStyles.get(SvgConstants.Attributes.REFX.toLowerCase());
-            moveX = parseAbsoluteLength(refX, context.getRootViewPort().getWidth(), moveX, context);
+            moveX = SvgCssUtils.parseAbsoluteLength(this, refX, context.getRootViewPort().getWidth(), moveX, context);
             //Apply scale
             moveX *= -1 * xScale;
         }
         float moveY = DEFAULT_REF_Y;
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFY)) {
             String refY = this.attributesAndStyles.get(SvgConstants.Attributes.REFY);
-            moveY = parseAbsoluteLength(refY, context.getRootViewPort().getHeight(), moveY, context);
+            moveY = SvgCssUtils.parseAbsoluteLength(this, refY, context.getRootViewPort().getHeight(), moveY, context);
             moveY *= -1 * yScale;
         } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFY.toLowerCase())) {
             // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
             String refY = this.attributesAndStyles.get(SvgConstants.Attributes.REFY.toLowerCase());
-            moveY = parseAbsoluteLength(refY, context.getRootViewPort().getHeight(), moveY, context);
+            moveY = SvgCssUtils.parseAbsoluteLength(this, refY, context.getRootViewPort().getHeight(), moveY, context);
             moveY *= -1 * yScale;
         }
         AffineTransform translation = AffineTransform.getTranslateInstance(moveX, moveY);
@@ -274,11 +269,10 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     }
 
     private float[] getViewBoxValues(float defaultWidth, float defaultHeight) {
-        float[] values = super.getViewBoxValues();
-        if (values.length < VIEWBOX_VALUES_NUMBER) {
+        float[] values = SvgCssUtils.parseViewBox(this);
+        if (values == null || values.length < SvgConstants.Values.VIEWBOX_VALUES_NUMBER) {
             //If viewBox is not specified or incorrect, it's width and height are the same as passed defaults
             return new float[] {0, 0, defaultWidth, defaultHeight};
-
         } else {
             return values;
         }

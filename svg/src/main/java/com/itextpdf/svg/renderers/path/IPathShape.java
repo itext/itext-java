@@ -25,6 +25,8 @@ package com.itextpdf.svg.renderers.path;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.renderers.path.impl.AbstractPathShape;
 
 /**
  * Interface for IPathShape, which draws the Path-data's d element instructions.
@@ -32,9 +34,14 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 public interface IPathShape {
     /**
      * Draws this instruction to a canvas object.
+     * <p>
+     * Deprecated in favour of {@link AbstractPathShape#draw()} and later this method should be introduced
+     * in this interface, along with {@link AbstractPathShape#setContext(SvgDrawContext)} method. Since
+     * canvas can be got from {@link SvgDrawContext} the {@link PdfCanvas} parameter is no more needed.
      *
      * @param canvas to which this instruction is drawn
      */
+    @Deprecated
     void draw(PdfCanvas canvas);
 
     /**

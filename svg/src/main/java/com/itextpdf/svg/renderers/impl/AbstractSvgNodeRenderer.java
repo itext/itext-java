@@ -35,6 +35,7 @@ import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
 import com.itextpdf.svg.MarkerVertexType;
@@ -47,6 +48,8 @@ import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
+import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.TransformUtils;
 
 import java.util.HashMap;
@@ -183,12 +186,36 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     }
 
     /**
-     * Return font-size of the current element
+     * Return font-size of the current element in px.
+     * <p>
+     * This method is deprecated in favour of {@link AbstractSvgNodeRenderer#getCurrentFontSize(SvgDrawContext)} because
+     * current one can't support relative values (em, rem) and those can't be resolved without {@link SvgDrawContext}.
      *
      * @return absolute value of font-size
      */
+    @Deprecated
     public float getCurrentFontSize() {
-        return CssDimensionParsingUtils.parseAbsoluteFontSize(getAttribute(SvgConstants.Attributes.FONT_SIZE));
+        return getCurrentFontSize(new SvgDrawContext(null, null));
+    }
+
+    /**
+     * Return font-size of the current element in px.
+     *
+     * @param context draw context from which root font size can be extracted
+     *
+     * @return absolute value of font-size
+     */
+    public float getCurrentFontSize(SvgDrawContext context) {
+        String fontSizeAttribute = getAttribute(SvgConstants.Attributes.FONT_SIZE);
+        if (CssTypesValidationUtils.isRemValue(fontSizeAttribute)) {
+            return CssDimensionParsingUtils.parseRelativeValue(fontSizeAttribute, context.getCssContext().getRootFontSize());
+        }
+        if (CssTypesValidationUtils.isEmValue(fontSizeAttribute) && getParent() != null
+                && parent instanceof AbstractSvgNodeRenderer) {
+            return CssDimensionParsingUtils.parseRelativeValue(fontSizeAttribute,
+                    ((AbstractSvgNodeRenderer)parent).getCurrentFontSize(context));
+        }
+        return CssDimensionParsingUtils.parseAbsoluteFontSize(fontSizeAttribute);
     }
 
     /**
@@ -333,7 +360,43 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     }
 
     /**
+     * Parse x-axis length value.
+     * If this method is called and there is no view port in {@link SvgDrawContext}, a default current viewport
+     * will be created. This can happen if svg is created manually
+     * (not through {@link com.itextpdf.svg.element.SvgImage} or {@link com.itextpdf.svg.xobject.SvgImageXObject})
+     * and don't have {@link PdfRootSvgNodeRenderer} as its parent.
+     *
+     * @param length {@link String} length for parsing
+     * @param context current {@link SvgDrawContext} instance
+     * @return absolute length in points
+     */
+    protected float parseHorizontalLength(String length, SvgDrawContext context) {
+        return SvgCssUtils.parseAbsoluteLength(this, length,
+                SvgCoordinateUtils.calculatePercentBaseValueIfNeeded(context, length, true), 0.0F, context);
+    }
+
+    /**
+     * Parse y-axis length value.
+     * If this method is called and there is no view port in {@link SvgDrawContext}, a default current viewport
+     * will be created. This can happen if svg is created manually
+     * (not through {@link com.itextpdf.svg.element.SvgImage} or {@link com.itextpdf.svg.xobject.SvgImageXObject})
+     * and don't have {@link PdfRootSvgNodeRenderer} as its parent.
+     *
+     * @param length {@link String} length for parsing
+     * @param context current {@link SvgDrawContext} instance
+     * @return absolute length in points
+     */
+    protected float parseVerticalLength(String length, SvgDrawContext context) {
+        return SvgCssUtils.parseAbsoluteLength(this, length,
+                SvgCoordinateUtils.calculatePercentBaseValueIfNeeded(context, length, false), 0.0F, context);
+    }
+
+    /**
      * Parse length attributes.
+     * <p>
+     * This method is deprecated and
+     * {@link SvgCssUtils#parseAbsoluteLength(AbstractSvgNodeRenderer, String, float, float, SvgDrawContext)} should
+     * be used instead.
      *
      * @param length {@link String} for parsing
      * @param percentBaseValue the value on which percent length is based on
@@ -341,11 +404,10 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context current {@link SvgDrawContext}
      * @return absolute value in points
      */
+    @Deprecated
     protected float parseAbsoluteLength(String length, float percentBaseValue, float defaultValue,
             SvgDrawContext context) {
-        final float em = getCurrentFontSize();
-        final float rem = context.getCssContext().getRootFontSize();
-        return CssDimensionParsingUtils.parseLength(length, percentBaseValue, defaultValue, em, rem);
+        return SvgCssUtils.parseAbsoluteLength(this, length, percentBaseValue, defaultValue, context);
     }
 
     private TransparentColor getColorFromAttributeValue(SvgDrawContext context, String rawColorValue,
@@ -465,7 +527,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             float strokeWidth = 0.75f;
 
             if (strokeWidthRawValue != null) {
-                strokeWidth = CssDimensionParsingUtils.parseAbsoluteLength(strokeWidthRawValue);
+                strokeWidth = parseHorizontalLength(strokeWidthRawValue, context);
             }
 
             float generalOpacity = getOpacity();
@@ -483,7 +545,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             String strokeDashOffsetRawValue = getAttribute(Attributes.STROKE_DASHOFFSET);
             SvgStrokeParameterConverter.PdfLineDashParameters lineDashParameters =
                     SvgStrokeParameterConverter.convertStrokeDashParameters(strokeDashArrayRawValue,
-                            strokeDashOffsetRawValue, getCurrentFontSize(), context);
+                            strokeDashOffsetRawValue, getCurrentFontSize(context), context);
 
             doStroke = true;
             return new StrokeProperties(strokeColor, strokeWidth, strokeOpacity, lineDashParameters);

@@ -323,10 +323,6 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
-    })
-    // TODO DEVSIX-4140 font-relative values doesn't support
     public void textTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "text");
     }
@@ -337,9 +333,6 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
-    })
     public void textRotatedTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "textRotatedTest");
     }

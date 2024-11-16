@@ -25,6 +25,7 @@ package com.itextpdf.svg.css;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
@@ -52,10 +53,7 @@ public final class SvgStrokeParameterConverter {
             float fontSize, SvgDrawContext context) {
         if (strokeDashArray != null && !SvgConstants.Values.NONE.equalsIgnoreCase(strokeDashArray)) {
             final float rem = context.getCssContext().getRootFontSize();
-            final float viewPortHeight = context.getCurrentViewPort().getHeight();
-            final float viewPortWidth = context.getCurrentViewPort().getWidth();
-            final float percentBaseValue = (float) (Math.sqrt(viewPortHeight * viewPortHeight +
-                    viewPortWidth * viewPortWidth) / Math.sqrt(2));
+            final float percentBaseValue = SvgCoordinateUtils.calculateNormalizedDiagonalLength(context);
 
             List<String> dashArray = SvgCssUtils.splitValueList(strokeDashArray);
             if (dashArray.size() > 0) {

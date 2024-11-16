@@ -111,7 +111,6 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update after DEVSIX-2377
     public void clipPathRulesCombined() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRulesCombined");
     }

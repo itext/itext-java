@@ -165,12 +165,7 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2),
-
-    })
     public void percentInMeasurement() throws IOException, InterruptedException {
-        //TODO: update after DEVSIX-2377
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "percentInMeasurement");
     }
 }
