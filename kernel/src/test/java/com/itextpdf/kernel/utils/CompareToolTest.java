@@ -335,6 +335,23 @@ public class CompareToolTest extends ExtendedITextTest {
     }
 
     @Test
+    public void memoryFirstWriterCmpMissingTest() throws IOException {
+        String firstPdf = destinationFolder + "memoryFirstWriterCmpMissingTest.pdf";
+        String secondPdf = destinationFolder + "cmp_memoryFirstWriterCmpMissingTest.pdf";
+        PdfDocument firstDocument = new PdfDocument(CompareTool.createTestPdfWriter(firstPdf));
+
+        PdfPage page1FirstDocument = firstDocument.addNewPage();
+        page1FirstDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 400, 50)).setDestination(
+                PdfExplicitDestination.createFit(page1FirstDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1FirstDocument.flush();
+        firstDocument.close();
+
+        Assertions.assertThrows(IOException.class,
+                () -> new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
+        Assertions.assertTrue(new File(firstPdf).exists());
+    }
+
+    @Test
     public void dumpMemoryFirstWriterOnDiskTest() throws InterruptedException, IOException {
         String firstPdf = destinationFolder + "dumpMemoryFirstWriterOnDiskTest.pdf";
         String secondPdf = destinationFolder + "dumpMemoryFirstWriterOnDiskTest2.pdf";

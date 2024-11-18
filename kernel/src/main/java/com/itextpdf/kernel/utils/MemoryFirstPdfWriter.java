@@ -36,17 +36,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * PdfWriter implementation which allows to create documents in memory and dump them on disk on purpose.
- * Currently it's private and used in automated tests only.
+ * Currently, it's private and used in automated tests only.
  */
 class MemoryFirstPdfWriter extends PdfWriter {
     private static final int MAX_ALLOWED_STREAMS = 100;
 
-    private static Map<String, MemoryFirstPdfWriter> waitingStreams = new ConcurrentHashMap<>();
+    private static final Map<String, MemoryFirstPdfWriter> waitingStreams = new ConcurrentHashMap<>();
 
-    private String filePath;
-    private ByteArrayOutputStream outStream;
+    private final String filePath;
+    private final ByteArrayOutputStream outStream;
 
-    MemoryFirstPdfWriter(String filename, WriterProperties properties) throws FileNotFoundException {
+    MemoryFirstPdfWriter(String filename, WriterProperties properties) {
         this(filename, MemoryFirstPdfWriter.createBAOutputStream(), properties);
     }
 
@@ -81,9 +81,9 @@ class MemoryFirstPdfWriter extends PdfWriter {
     }
 
     void dump() throws IOException {
-        OutputStream fos = FileUtil.getFileOutputStream(filePath);
-        outStream.writeTo(fos);
-        fos.close();
+        try (OutputStream fos = FileUtil.getFileOutputStream(filePath)) {
+            outStream.writeTo(fos);
+        }
     }
 
     ByteArrayOutputStream getBAOutputStream() {

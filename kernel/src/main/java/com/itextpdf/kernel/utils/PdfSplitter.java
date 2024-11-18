@@ -244,15 +244,6 @@ public class PdfSplitter {
         return new PdfWriter(new ByteArrayOutputStream());
     }
 
-    private PdfDocument createPdfDocument(PageRange currentPageRange) {
-        PdfDocument newDocument = new PdfDocument(getNextPdfWriter(currentPageRange), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-        if (pdfDocument.isTagged() && preserveTagged)
-            newDocument.setTagged();
-        if (pdfDocument.hasOutlines() && preserveOutlines)
-            newDocument.initializeOutlines();
-        return newDocument;
-    }
-
     /**
      * The event listener which is called when another document is ready.
      */
@@ -290,8 +281,18 @@ public class PdfSplitter {
         return documentList;
     }
 
-    private PdfDocument splitByOutline(String outlineTitle) {
+    private PdfDocument createPdfDocument(PageRange currentPageRange) {
+        PdfDocument newDocument = new PdfDocument(getNextPdfWriter(currentPageRange), new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+        if (pdfDocument.isTagged() && preserveTagged) {
+            newDocument.setTagged();
+        }
+        if (pdfDocument.hasOutlines() && preserveOutlines) {
+            newDocument.initializeOutlines();
+        }
+        return newDocument;
+    }
 
+    private PdfDocument splitByOutline(String outlineTitle) {
         int startPage = -1;
         int endPage = -1;
 
@@ -329,46 +330,6 @@ public class PdfSplitter {
         return toDocument;
     }
 
-    private PdfPage getPageByOutline(int fromPage, PdfOutline outline) {
-        int size = pdfDocument.getNumberOfPages();
-        for (int i = fromPage; i <= size; i++) {
-            PdfPage pdfPage = pdfDocument.getPage(i);
-            List<PdfOutline> outlineList = pdfPage.getOutlines(false);
-            if (outlineList != null) {
-                for (PdfOutline pdfOutline : outlineList) {
-                    if (pdfOutline.equals(outline)) {
-                        return pdfPage;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * the next element in the entire hierarchy
-     *
-     * @param outline *
-     */
-    private PdfOutline getAbsoluteTreeNextOutline(PdfOutline outline) {
-
-        PdfObject nextPdfObject = outline.getContent().get(PdfName.Next);
-        PdfOutline nextPdfOutline = null;
-
-        if (outline.getParent() != null && nextPdfObject != null) {
-            for (PdfOutline pdfOutline : outline.getParent().getAllChildren()) {
-                if (pdfOutline.getContent().getIndirectReference().equals(nextPdfObject.getIndirectReference())) {
-                    nextPdfOutline = pdfOutline;
-                    break;
-                }
-            }
-        }
-        if (nextPdfOutline == null && outline.getParent() != null) {
-            nextPdfOutline = getAbsoluteTreeNextOutline(outline.getParent());
-        }
-        return nextPdfOutline;
-    }
-
     private PageRange getNextRange(int startPage, int endPage, long size) {
         PdfResourceCounter counter = new PdfResourceCounter(pdfDocument.getTrailer());
         Map<Integer, PdfObject> resources = counter.getResources();
@@ -396,6 +357,46 @@ public class PdfSplitter {
         }
 
         return new PageRange().addPageSequence(startPage, currentPage - 1);
+    }
+
+    /**
+     * the next element in the entire hierarchy
+     *
+     * @param outline *
+     */
+    private PdfOutline getAbsoluteTreeNextOutline(PdfOutline outline) {
+
+        PdfObject nextPdfObject = outline.getContent().get(PdfName.Next);
+        PdfOutline nextPdfOutline = null;
+
+        if (outline.getParent() != null && nextPdfObject != null) {
+            for (PdfOutline pdfOutline : outline.getParent().getAllChildren()) {
+                if (pdfOutline.getContent().getIndirectReference().equals(nextPdfObject.getIndirectReference())) {
+                    nextPdfOutline = pdfOutline;
+                    break;
+                }
+            }
+        }
+        if (nextPdfOutline == null && outline.getParent() != null) {
+            nextPdfOutline = getAbsoluteTreeNextOutline(outline.getParent());
+        }
+        return nextPdfOutline;
+    }
+
+    private PdfPage getPageByOutline(int fromPage, PdfOutline outline) {
+        int size = pdfDocument.getNumberOfPages();
+        for (int i = fromPage; i <= size; i++) {
+            PdfPage pdfPage = pdfDocument.getPage(i);
+            List<PdfOutline> outlineList = pdfPage.getOutlines(false);
+            if (outlineList != null) {
+                for (PdfOutline pdfOutline : outlineList) {
+                    if (pdfOutline.equals(outline)) {
+                        return pdfPage;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private long xrefLength(int size) {

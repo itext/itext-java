@@ -25,6 +25,7 @@ package com.itextpdf.kernel.utils;
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.GhostscriptHelper;
@@ -73,6 +74,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -119,6 +121,7 @@ public class CompareTool {
     private static final String VERSION_REPLACEMENT = "<version>";
     private static final String COPYRIGHT_REGEXP = "\u00a9\\d+-\\d+ (?:iText Group NV|Apryse Group NV)";
     private static final String COPYRIGHT_REPLACEMENT = "\u00a9<copyright years> Apryse Group NV";
+    private static final boolean MEMORY_FIRST_WRITER_DISABLED;
 
     private static final String NEW_LINES = "\\r|\\n";
 
@@ -146,6 +149,11 @@ public class CompareTool {
 
     private String gsExec;
     private String compareExec;
+
+    static {
+        MEMORY_FIRST_WRITER_DISABLED = "true".equalsIgnoreCase(
+                SystemUtil.getPropertyOrEnvironmentVariable("DISABLE_MEMORY_FIRST_WRITER"));
+    }
 
     /**
      * Create new {@link CompareTool} instance.
@@ -182,18 +190,11 @@ public class CompareTool {
      *                               be created, or cannot be opened for any other reason.
      */
     public static PdfWriter createTestPdfWriter(String filename, WriterProperties properties) throws IOException {
-        return new MemoryFirstPdfWriter(filename, properties); // Android-Conversion-Replace return new PdfWriter(filename, properties);
-    }
-
-    /**
-     * Create {@link PdfReader} out of the data created recently or read from disk.
-     *
-     * @param filename File to read the data from when necessary.
-     * @return {@link PdfReader} to be used in tests.
-     * @throws IOException on error
-     */
-    public static PdfReader createOutputReader(String filename) throws IOException {
-        return CompareTool.createOutputReader(filename, new ReaderProperties());
+        if (MEMORY_FIRST_WRITER_DISABLED) {
+            return new PdfWriter(filename, properties);
+        } else {
+            return new MemoryFirstPdfWriter(filename, properties); // Android-Conversion-Replace return new PdfWriter(filename, properties);
+        }
     }
 
     /**
@@ -211,6 +212,17 @@ public class CompareTool {
         } else {
             return new PdfReader(filename, properties);
         }
+    }
+
+    /**
+     * Create {@link PdfReader} out of the data created recently or read from disk.
+     *
+     * @param filename File to read the data from when necessary.
+     * @return {@link PdfReader} to be used in tests.
+     * @throws IOException on error
+     */
+    public static PdfReader createOutputReader(String filename) throws IOException {
+        return CompareTool.createOutputReader(filename, new ReaderProperties());
     }
 
     /**
@@ -360,24 +372,6 @@ public class CompareTool {
     }
 
     /**
-     * Gets {@link ReaderProperties} to be passed later to the {@link PdfReader} of the output document.
-     * <p>
-     * Documents for comparison are opened in reader mode. This method is intended to alter {@link ReaderProperties}
-     * which are used to open the output document. This is particularly useful for comparison of encrypted documents.
-     * <p>
-     * For more explanations about what outDoc and cmpDoc are see last paragraph of the {@link CompareTool}
-     * class description.
-     *
-     * @return {@link ReaderProperties} instance to be passed later to the {@link PdfReader} of the output document.
-     */
-    public ReaderProperties getOutReaderProperties() {
-        if (outProps == null) {
-            outProps = new ReaderProperties();
-        }
-        return outProps;
-    }
-
-    /**
      * Gets {@link ReaderProperties} to be passed later to the {@link PdfReader} of the cmp document.
      * <p>
      * Documents for comparison are opened in reader mode. This method is intended to alter {@link ReaderProperties}
@@ -393,6 +387,24 @@ public class CompareTool {
             cmpProps = new ReaderProperties();
         }
         return cmpProps;
+    }
+
+    /**
+     * Gets {@link ReaderProperties} to be passed later to the {@link PdfReader} of the output document.
+     * <p>
+     * Documents for comparison are opened in reader mode. This method is intended to alter {@link ReaderProperties}
+     * which are used to open the output document. This is particularly useful for comparison of encrypted documents.
+     * <p>
+     * For more explanations about what outDoc and cmpDoc are see last paragraph of the {@link CompareTool}
+     * class description.
+     *
+     * @return {@link ReaderProperties} instance to be passed later to the {@link PdfReader} of the output document.
+     */
+    public ReaderProperties getOutReaderProperties() {
+        if (outProps == null) {
+            outProps = new ReaderProperties();
+        }
+        return outProps;
     }
 
     /**
@@ -1313,6 +1325,10 @@ public class CompareTool {
                 CompareTool.writeOnDiskIfNotExists(cmpPdf);
                 return compareVisuallyAndCombineReports(compareResult.getReport(), outPath, differenceImagePrefix, ignoredAreas, equalPages);
             }
+        } catch (Exception e) {
+            CompareTool.writeOnDisk(outPdf);
+            CompareTool.writeOnDiskIfNotExists(cmpPdf);
+            throw e;
         }
     }
 
