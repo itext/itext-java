@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="300">
+  <style>
+    line {
+      stroke: black;
+      stroke-width: 2;
+    }
+  </style>
+    
+  <!-- No dashes nor gaps -->
+  <line x1="100" y1="20" x2="600" y2="20" />
+
+  <!-- Dashes and gaps of the same size -->
+  <line x1="100" y1="40" x2="600" y2="40" stroke-dasharray="10" />
+
+  <!-- Dashes and gaps of different sizes -->
+  <line x1="100" y1="60" x2="600" y2="60" stroke-dasharray="15 5" />
+
+  <!-- Dashes and gaps of various sizes with an odd number of values -->
+  <line x1="100" y1="80" x2="600" y2="80" stroke-dasharray="15 5 10" />
+
+  <!-- Dashes and gaps of various sizes with an even number of values -->
+  <line x1="100" y1="100" x2="600" y2="100" stroke-dasharray="15 5 10 5" />
+
+  <!-- Dashes starting with a gap -->
+  <line x1="100" y1="120" x2="600" y2="120" stroke-dasharray="0 15 5" />
+</svg>

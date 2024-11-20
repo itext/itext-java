@@ -228,4 +228,111 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     public void tspanWithOneAbsoluteCoordinateTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanWithOneAbsoluteCoordinateTest");
     }
+
+    @Test
+    public void textDxDyAttributesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDxDyAttributes");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void textBaselineShiftTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textBaselineShift");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void textRotateTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textRotate");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void textLengthAdjustTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textLengthAdjust");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void textTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextLength");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void textStretchedTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textStretchedTextLength");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void textShrunkTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textShrunkTextLength");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void textCombinedAttributesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textCombinedAttributes");
+    }
+
+    @Test
+    //TODO: DEVSIX-8776 Support stroke dash pattern in layout
+    public void textStrokeDasharrayTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textStrokeDasharray");
+    }
+
+    @Test
+    //TODO: DEVSIX-8776 Support stroke dash pattern in layout
+    public void textComplexStrokeDasharrayTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textComplexStrokeDasharray");
+    }
+
+    @Test
+    //TODO: DEVSIX-2270, DEVSIX-4586 update cmp file after fix
+    public void textTextDecorationUnderlineTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextDecorationUnderline");
+    }
+
+    @Test
+    //TODO: DEVSIX-2270, DEVSIX-4586 update cmp file after fix
+    public void textTextDecorationLineThroughTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextDecorationLineThrough");
+    }
+
+    @Test
+    //TODO: DEVSIX-2270, DEVSIX-4586 update cmp file after fix
+    public void textTextDecorationOverlineTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextDecorationOverline");
+    }
+
+    @Test
+    //TODO: DEVSIX-2284 update cmp file after fix
+    public void textWhiteSpaceNormalTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpaceNormal");
+    }
+
+    @Test
+    //TODO: DEVSIX-2284 update cmp file after fix
+    public void textWhiteSpacePreTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePre");
+    }
+
+    @Test
+    //TODO: DEVSIX-2284 update cmp file after fix
+    public void textWhiteSpaceNoWrapTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpaceNoWrap");
+    }
+
+    @Test
+    //TODO: DEVSIX-2284 update cmp file after fix
+    public void textWhiteSpacePreWrapTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePreWrap");
+    }
+
+    @Test
+    //TODO: DEVSIX-2284 update cmp file after fix
+    public void textWhiteSpacePreLineTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePreLine");
+    }
 }

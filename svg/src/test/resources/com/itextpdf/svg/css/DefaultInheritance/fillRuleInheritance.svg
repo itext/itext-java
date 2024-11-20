@@ -1,0 +1,6 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="300" height="200">
+  <g fill="red" fill-rule="evenodd">
+    <path d="M50,50 L150,150 L50,150 Z M75,75 L125,125 L75,125 Z" />
+  </g>
+</svg>

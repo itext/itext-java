@@ -1,0 +1,16 @@
+<svg width="300" height="150" xmlns="http://www.w3.org/2000/svg">
+  <g font-face="sans-serif">
+    <text x="0" y="20">
+		<tspan textLength="300" lengthAdjust="spacing">Stretched using spacing only.</tspan>
+    </text>
+    <text x="0" y="50">
+		<tspan textLength="300" lengthAdjust="spacingAndGlyphs">Stretched using spacing and glyphs.</tspan>
+    </text>
+    <text x="0" y="80">
+		<tspan textLength="100" lengthAdjust="spacing">Shrunk using spacing only.</tspan>
+    </text>
+    <text x="0" y="110" textLength="100" lengthAdjust="spacingAndGlyphs">
+		<tspan textLength="100" lengthAdjust="spacingAndGlyphs">Shrunk using spacing and glyphs.</tspan>
+    </text>
+  </g>
+</svg>

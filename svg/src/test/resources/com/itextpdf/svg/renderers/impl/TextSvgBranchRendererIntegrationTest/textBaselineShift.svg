@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="100">
+  <text x="10" y="50" font-size="16">BaseLine</text>
+  
+  <text x="80" y="50" font-size="16" baseline-shift="super" fill="blue">Super</text>
+  
+  <text x="140" y="50" font-size="16" baseline-shift="sub" fill="green">Sub</text>
+</svg>

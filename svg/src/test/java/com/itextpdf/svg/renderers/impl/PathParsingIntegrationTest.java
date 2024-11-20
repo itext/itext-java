@@ -121,7 +121,7 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG),
     })
     //TODO: update cmp-file after DEVSIX-2255
-    public void text_path_Test() throws IOException, InterruptedException {
+    public void textPathTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "textpath");
     }
 
@@ -132,6 +132,15 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     public void textPathExample() throws IOException, InterruptedException {
         //TODO: update when DEVSIX-2255 implemented
         convertAndCompare(sourceFolder, destinationFolder, "textPathExample");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG),
+    })
+    public void tspanInTextPathTest() throws IOException, InterruptedException {
+        //TODO: update when DEVSIX-2255 implemented
+        convertAndCompare(sourceFolder, destinationFolder, "tspanInTextPath");
     }
 
     @Test

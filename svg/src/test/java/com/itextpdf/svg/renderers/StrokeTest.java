@@ -97,4 +97,10 @@ public class StrokeTest extends SvgIntegrationTest {
     public void heightWidthZeroTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"height-width-zero");
     }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-2258
+    public void strokeDashArrayLinesTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeDashArrayLines");
+    }
 }

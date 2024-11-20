@@ -62,4 +62,70 @@ public class DefaultStyleInheritanceIntegrationTest extends SvgIntegrationTest {
         convertAndCompare(sourceFolder,destinationFolder,"useInheritanceNotOverriding");
     }
 
+    @Test
+    public void usePropertiesInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"usePropertiesInheritance");
+    }
+
+    @Test
+    public void fillOpacityInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"fillOpacityInheritance");
+    }
+
+    @Test
+    public void fillRuleInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"fillRuleInheritance");
+    }
+
+    @Test
+    public void strokeInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"strokeInheritance");
+    }
+
+    @Test
+    public void strokeWidthInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"strokeWidthInheritance");
+    }
+
+    @Test
+    public void strokeOpacityInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"strokeOpacityInheritance");
+    }
+
+    @Test
+    //TODO DEVSIX-4857 support stroke-linecap attribute
+    public void strokeLinecapInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"strokeLinecapInheritance");
+    }
+
+    @Test
+    public void strokeLinejoinInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"strokeLinejoinInheritance");
+    }
+
+    @Test
+    public void strokeDasharrayInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"strokeDasharrayInheritance");
+    }
+
+    @Test
+    public void strokeDashoffsetInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"strokeDashoffsetInheritance");
+    }
+
+    @Test
+    public void opacityInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"opacityInheritance");
+    }
+
+    @Test
+    //TODO DEVSIX-4114 support vertical text attribute
+    public void textPropertiesInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"textPropertiesInheritance");
+    }
+
+    @Test
+    public void nestedInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder,destinationFolder,"nestedInheritance");
+    }
 }

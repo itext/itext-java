@@ -179,6 +179,53 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void tspanDxDyAttributesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanDxDyAttributes");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void tspanBaselineShiftTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanBaselineShift");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void tspanRotateTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanRotate");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void tspanLengthAdjustTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanLengthAdjust");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void tspanTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanTextLength");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void tspanStretchedTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanStretchedTextLengthTest");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void tspanShrunkTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanShrunkTextLengthTest");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void tspanCombinedAttributesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanCombinedAttributes");
+    }
+
+    @Test
     //TODO: update cmp-file after DEVSIX-2270 fixed
     public void text_decoration_Test() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "text_decoration");

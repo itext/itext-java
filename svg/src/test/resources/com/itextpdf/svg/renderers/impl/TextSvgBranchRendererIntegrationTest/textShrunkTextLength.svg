@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+  <text x="10" y="50" font-size="16" textLength="80" fill="blue">
+    TextWithLength
+  </text>
+    <text x="10" y="100" font-size="16" textLength="50" fill="green">
+    TextWithLength
+  </text>
+  <text x="10" y="150" font-size="16" textLength="10" fill="red">
+    TextWithLength
+  </text>
+</svg>

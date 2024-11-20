@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="200">
+  <text x="10" y="50" font-size="40" stroke="orange" fill="none" stroke-width="2" stroke-dasharray="20,5,10,5">
+    AbsoluteComplex
+  </text>
+  
+  <text x="10" y="100" font-size="40" stroke="brown" fill="none" stroke-width="2" stroke-dasharray="20%,5%,10%,5%">
+    PercentComplex
+  </text>
+</svg>

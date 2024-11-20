@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+  <text x="10" y="30" font-size="16">
+    Normal
+    <tspan dx="10" dy="20">Shifted</tspan>
+  </text>
+</svg>

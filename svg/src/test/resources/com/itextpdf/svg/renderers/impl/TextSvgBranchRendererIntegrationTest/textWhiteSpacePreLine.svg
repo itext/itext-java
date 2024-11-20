@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="200" style="border: 1px solid black;">
+  <text x="10" y="30" font-size="16" style="white-space: pre-line;">
+    This is an example where white
+	
+    space and line breaks are preserved.
+  </text>
+</svg>

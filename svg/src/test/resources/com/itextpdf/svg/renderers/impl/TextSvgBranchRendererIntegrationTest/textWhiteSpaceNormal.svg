@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="100" style="border: 1px solid black;">
+  <text x="10" y="20" font-size="16" style="white-space: normal;">
+    This is an example where    white space is normalized.
+  </text>
+</svg>
