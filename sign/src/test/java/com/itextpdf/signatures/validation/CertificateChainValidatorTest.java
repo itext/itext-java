@@ -339,8 +339,8 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 signingCert, DateTimeUtil.getCurrentTimeDate());
 
         AssertValidationReport.assertThat(report, a -> a
-                .hasNumberOfFailures(2)
-                .hasNumberOfLogs(3)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(la -> la
                     .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                     .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -352,14 +352,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                     .withMessage(CertificateChainValidator.EXTENSION_MISSING,
                                             l ->X509Extensions.KEY_USAGE)
                     .withCertificate(signingCert)
-                   )
-                .hasLogItem(la -> la
-                    .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                    .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                                    l -> X509Extensions.BASIC_CONSTRAINTS)
-                    .withCertificate(signingCert)
                    ));
-
     }
 
     @Test

@@ -55,13 +55,6 @@ public class DynamicBasicConstraintsExtension extends DynamicCertificateExtensio
      */
     @Override
     public boolean existsInCertificate(X509Certificate certificate) {
-        try {
-            if (CertificateUtil.getExtensionValue(certificate, OID.X509Extensions.BASIC_CONSTRAINTS) == null) {
-                return false;
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        return certificate.getBasicConstraints() >= getCertificateChainSize();
+        return certificate.getBasicConstraints() >= getCertificateChainSize() - 1;
     }
 }
