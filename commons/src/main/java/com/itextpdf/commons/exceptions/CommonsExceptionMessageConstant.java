@@ -56,6 +56,7 @@ public final class CommonsExceptionMessageConstant {
     public static final String UNKNOWN_ITEXT_EXCEPTION = "Unknown ITextException.";
 
     public static final String ZIP_ENTRY_NOT_FOUND = "Zip entry not found for name: {0}";
+    public static final String UNSUPPORTED_OPERATION = "This operation is not supported.";
 
     private CommonsExceptionMessageConstant() {
         // Empty constructor.

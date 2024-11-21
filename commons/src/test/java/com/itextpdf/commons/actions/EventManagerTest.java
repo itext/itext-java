@@ -69,15 +69,14 @@ public class EventManagerTest extends ExtendedITextTest {
         try {
             eventManager.onEvent(new ITextTestEvent(sequenceId, null, "test-event", ProductNameConstant.ITEXT_CORE));
         } catch (AggregatedException e) {
-            Assertions.assertEquals("Error during event processing:\n"
-                    + "0) ThrowArithmeticExpHandler\n"
-                    + "1) ThrowIllegalArgumentExpHandler\n", e.getMessage());
 
             List<Exception> aggregatedExceptions = e.getAggregatedExceptions();
 
             Assertions.assertEquals(2, aggregatedExceptions.size());
-            Assertions.assertEquals("ThrowArithmeticExpHandler", aggregatedExceptions.get(0).getMessage());
-            Assertions.assertEquals("ThrowIllegalArgumentExpHandler", aggregatedExceptions.get(1).getMessage());
+            Assertions.assertEquals("ThrowArithmeticExpHandler",
+                    findHandler(aggregatedExceptions, ArithmeticException.class).getMessage());
+            Assertions.assertEquals("ThrowIllegalArgumentExpHandler",
+                    findHandler(aggregatedExceptions, IllegalArgumentException.class).getMessage());
         }
 
         eventManager.unregister(handler1);
@@ -123,6 +122,16 @@ public class EventManagerTest extends ExtendedITextTest {
         EventManager.acknowledgeAgplUsageDisableWarningMessage();
         IProductProcessorFactory underAgplProductProcessorFactory1 = ProductProcessorFactoryKeeper.getProductProcessorFactory();
         Assertions.assertTrue(underAgplProductProcessorFactory1 instanceof UnderAgplProductProcessorFactory);
+    }
+
+    private Exception findHandler(List<Exception> events, Class<?> eventClass) {
+        for (Exception event : events) {
+            if (eventClass.isInstance(event)) {
+                return event;
+            }
+        }
+
+        return null;
     }
 
     private static class ThrowArithmeticExpHandler implements IEventHandler {

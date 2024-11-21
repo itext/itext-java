@@ -23,12 +23,11 @@
 package com.itextpdf.commons.actions;
 
 import com.itextpdf.commons.actions.processors.UnderAgplProductProcessorFactory;
+import com.itextpdf.commons.datastructures.ConcurrentHashSet;
 import com.itextpdf.commons.exceptions.AggregatedException;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Entry point for event handling mechanism. Class is a singleton,
@@ -37,7 +36,7 @@ import java.util.Set;
 public final class EventManager {
     private static final EventManager INSTANCE = new EventManager();
 
-    private final Set<IEventHandler> handlers = new LinkedHashSet<>();
+    private final ConcurrentHashSet<IEventHandler> handlers = new ConcurrentHashSet<>();
 
     private EventManager() {
         handlers.add(ProductEventHandler.INSTANCE);
@@ -69,13 +68,13 @@ public final class EventManager {
      */
     public void onEvent(IEvent event) {
         final List<RuntimeException> caughtExceptions = new ArrayList<>();
-        for (final IEventHandler handler : handlers) {
+        handlers.forEach((IEventHandler handler) -> {
             try {
                 handler.onEvent(event);
             } catch (RuntimeException ex) {
                 caughtExceptions.add(ex);
             }
-        }
+        });
         if (event instanceof AbstractITextConfigurationEvent) {
             try {
                 final AbstractITextConfigurationEvent itce = (AbstractITextConfigurationEvent) event;

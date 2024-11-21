@@ -58,6 +58,9 @@
             <fileset reason="Ignored because of different work with standard output on Java and .NET">
                 <file path="com/itextpdf/commons/actions/ProductEventHandlerIntegrationTest.java"/>
             </fileset>
+            <fileset reason="Different implementation of thread-safe set on Java and .NET">
+                <file path="com/itextpdf/commons/datastructures/ConcurrentHashSet.java"/>
+            </fileset>
             <!-- io -->
             <fileset reason="This class seems to be specific for java and used for getting an instance of an Image from java.awt.Image.
         In .Net it looks not trivial to port automatically as it needs java.awt.BufferedImage and java.awt.PixelGrabber alternative in .Net.
