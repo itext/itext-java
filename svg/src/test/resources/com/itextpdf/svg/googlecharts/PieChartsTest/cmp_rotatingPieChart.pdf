@@ -15,13 +15,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174745+03'00')/ModDate(D:20211108174745+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
-endobj
-6 0 obj
-<</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20241127144747+03'00')/ModDate(D:20241127144747+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 7 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+6 0 obj
+<</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -38,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 675 375]/Length 1191/Resources<</ExtGState<</Gs1 10 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 1143/Resources<</ExtGState<</Gs1 10 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -53,10 +53,8 @@ q
 q
 q
 BT
-1 0 0 -1 120.75 53.17 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 120.75 53.17 Tm
 (Swiss Language Use \(100 degree rotation\))Tj
 ET
 Q
@@ -97,13 +95,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 415.3 190.66 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 415.3 190.66 Tm
+1 1 1 rg
 (Italian)Tj
 ET
 Q
@@ -123,13 +119,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 384.1 127.83 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 384.1 127.83 Tm
+1 1 1 rg
 (French)Tj
 ET
 Q
@@ -151,13 +145,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 250.15 243.8 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 250.15 243.8 Tm
+1 1 1 rg
 (German)Tj
 ET
 Q
@@ -176,18 +168,18 @@ xref
 0 11
 0000000000 65535 f 
 0000000211 00000 n 
-0000000606 00000 n 
+0000000607 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000516 00000 n 
-0000000657 00000 n 
-0000000840 00000 n 
-0000002190 00000 n 
+0000000518 00000 n 
+0000000428 00000 n 
+0000000658 00000 n 
+0000000841 00000 n 
+0000002143 00000 n 
 trailer
-<</ID [<af5ee0e4bf45aa6a8ae4df4b8f8a9401><af5ee0e4bf45aa6a8ae4df4b8f8a9401>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<67dffb7e1cbfc1b2e6e613bde7b7c59a127cb5d63d3d173cdf2dfa7a6967b3bb4751a04e1ae87ace3b91dd2021d97b787c2bb694984fb0d45c5d1e8eb852b7d5><67dffb7e1cbfc1b2e6e613bde7b7c59a127cb5d63d3d173cdf2dfa7a6967b3bb4751a04e1ae87ace3b91dd2021d97b787c2bb694984fb0d45c5d1e8eb852b7d5>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-2216
+2169
 %%EOF

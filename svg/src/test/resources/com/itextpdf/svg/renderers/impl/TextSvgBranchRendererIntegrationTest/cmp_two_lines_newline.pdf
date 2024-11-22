@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108175055+03'00')/ModDate(D:20211108175055+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144838+03'00')/ModDate(D:20241127144838+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 375 300]/Length 341/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 300]/Length 329/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 375 300 re
 W
 n
@@ -58,13 +58,11 @@ q
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 0 26.25 Tm
-0 Tr
 /F1 26.25 Tf
-0 0 Td
+1 0 0 -1 0 26.25 Tm
+0 0 0 rg
 (So many ideas.\\n So little time.)Tj
 ET
 Q
@@ -76,16 +74,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
 trailer
-<</ID [<e1e5675a23f4f6f14e167e6f031b3c8b><e1e5675a23f4f6f14e167e6f031b3c8b>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<fbf4a37fd3b8fdab8631f03c53a222ffa886280847583da869e1cf80162abfff187a5809fe421023b4ca3df9f33d4a50006a9639ab9b3478bc76b297caa25419><fbf4a37fd3b8fdab8631f03c53a222ffa886280847583da869e1cf80162abfff187a5809fe421023b4ca3df9f33d4a50006a9639ab9b3478bc76b297caa25419>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-1216
+1205
 %%EOF

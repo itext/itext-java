@@ -68,8 +68,7 @@ public class FontSelector {
      * @return the best matched font
      */
     public final FontInfo bestMatch() {
-
-        // fonts is sorted best to worst, get(0) returns the best matched FontInfo
+        // Fonts are sorted best to worst, get(0) returns the best matched FontInfo
         return fonts.get(0);
     }
 

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174802+03'00')/ModDate(D:20211108174802+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144752+03'00')/ModDate(D:20241127144752+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 150]/Length 3852/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 150]/Length 3617/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 150 re
 W
 n
@@ -172,37 +172,31 @@ q
 S
 Q
 q
-0.30196 0.30196 0.30196 rg
 q
 BT
-1 0 0 -1 87.75 18.78 Tm
-0 Tr
 /F1 9.75 Tf
--36.29 0 Td
+1 0 0 -1 51.46 18.78 Tm
+0.30196 0.30196 0.30196 rg
 (President)Tj
 ET
 Q
 Q
 q
-0.30196 0.30196 0.30196 rg
 q
 BT
-1 0 0 -1 87.75 49.53 Tm
-0 Tr
 /F1 9.75 Tf
--57.13 0 Td
+1 0 0 -1 30.62 49.53 Tm
+0.30196 0.30196 0.30196 rg
 (Vice President)Tj
 ET
 Q
 Q
 q
-0.30196 0.30196 0.30196 rg
 q
 BT
-1 0 0 -1 87.75 80.27 Tm
-0 Tr
 /F1 9.75 Tf
--69.31 0 Td
+1 0 0 -1 18.44 80.27 Tm
+0.30196 0.30196 0.30196 rg
 (Secretary of State)Tj
 ET
 Q
@@ -220,10 +214,8 @@ q
 q
 q
 BT
-1 0 0 -1 112.76 108.02 Tm
-0 Tr
 /F1 9.75 Tf
--9.75 0 Td
+1 0 0 -1 103.01 108.02 Tm
 (1790)Tj
 ET
 Q
@@ -231,10 +223,8 @@ Q
 q
 q
 BT
-1 0 0 -1 331.25 108.02 Tm
-0 Tr
 /F1 9.75 Tf
--9.75 0 Td
+1 0 0 -1 321.5 108.02 Tm
 (1800)Tj
 ET
 Q
@@ -242,10 +232,8 @@ Q
 q
 q
 BT
-1 0 0 -1 549.75 108.02 Tm
-0 Tr
 /F1 9.75 Tf
--9.75 0 Td
+1 0 0 -1 540 108.02 Tm
 (1810)Tj
 ET
 Q
@@ -263,13 +251,11 @@ q
 f
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 105 18.52 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 105 18.52 Tm
+1 1 1 rg
 (George Washington)Tj
 ET
 Q
@@ -281,13 +267,11 @@ q
 f
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 276.2 18.52 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 276.2 18.52 Tm
+1 1 1 rg
 (John Adams)Tj
 ET
 Q
@@ -299,13 +283,11 @@ q
 f
 Q
 q
-0.12549 0.12549 0.12549 rg
 q
 BT
-1 0 0 -1 363.55 18.52 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 363.55 18.52 Tm
+0.12549 0.12549 0.12549 rg
 (Thomas Jefferson)Tj
 ET
 Q
@@ -317,13 +299,11 @@ q
 f
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 105 49.27 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 105 49.27 Tm
+1 1 1 rg
 (John Adams)Tj
 ET
 Q
@@ -335,13 +315,11 @@ q
 f
 Q
 q
-0.12549 0.12549 0.12549 rg
 q
 BT
-1 0 0 -1 276.2 49.27 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 276.2 49.27 Tm
+0.12549 0.12549 0.12549 rg
 (Thomas Jefferson)Tj
 ET
 Q
@@ -353,13 +331,11 @@ q
 f
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 363.55 49.27 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 363.55 49.27 Tm
+1 1 1 rg
 (Aaron Burr)Tj
 ET
 Q
@@ -371,13 +347,11 @@ q
 f
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 450.96 49.27 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 450.96 49.27 Tm
+1 1 1 rg
 (George Clinton)Tj
 ET
 Q
@@ -395,13 +369,11 @@ q
 f
 Q
 q
-0.12549 0.12549 0.12549 rg
 q
 BT
-1 0 0 -1 124.3 80.01 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 124.3 80.01 Tm
+0.12549 0.12549 0.12549 rg
 (Thomas Jefferson)Tj
 ET
 Q
@@ -413,13 +385,11 @@ q
 f
 Q
 q
-0.12549 0.12549 0.12549 rg
 q
 BT
-1 0 0 -1 206.98 80.01 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 206.98 80.01 Tm
+0.12549 0.12549 0.12549 rg
 (Ed)Tj
 ET
 Q
@@ -431,13 +401,11 @@ q
 f
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 242.57 80.01 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 242.57 80.01 Tm
+1 1 1 rg
 (Timothy Pickering)Tj
 ET
 Q
@@ -467,13 +435,11 @@ q
 f
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 367.08 80.01 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 367.08 80.01 Tm
+1 1 1 rg
 (James Madison)Tj
 ET
 Q
@@ -498,16 +464,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
 trailer
-<</ID [<6f4f33acc49bb9070a51b6910a3092a0><6f4f33acc49bb9070a51b6910a3092a0>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<f46e8f346731c427d61392ab6ed60851f58885d5d7f4bae3ce050c89119a9ec5df23e9165103557c8afdba9e82936f29c6c6c3daefe36248beff1a7fd75dd2e8><f46e8f346731c427d61392ab6ed60851f58885d5d7f4bae3ce050c89119a9ec5df23e9165103557c8afdba9e82936f29c6c6c3daefe36248beff1a7fd75dd2e8>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-4728
+4494
 %%EOF

@@ -15,13 +15,13 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174705+03'00')/ModDate(D:20211108174705+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
-endobj
-6 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20241127144735+03'00')/ModDate(D:20241127144735+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 7 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+6 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -38,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 824.25 300]/Length 10857/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 824.25 300]/Length 10362/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 824.25 300 re
 W
 n
@@ -223,10 +223,8 @@ Q
 q
 q
 BT
-1 0 0 -1 202.43 285.9 Tm
-0 Tr
 /F1 9.75 Tf
--6.23 0 Td
+1 0 0 -1 196.2 285.9 Tm
 (Jul)Tj
 ET
 Q
@@ -234,10 +232,8 @@ Q
 q
 q
 BT
-1 0 0 -1 293.38 285.9 Tm
-0 Tr
 /F1 9.75 Tf
--7.58 0 Td
+1 0 0 -1 285.8 285.9 Tm
 (Oct)Tj
 ET
 Q
@@ -245,10 +241,8 @@ Q
 q
 q
 BT
-1 0 0 -1 384.36 285.9 Tm
-0 Tr
 /F2 9.75 Tf
--8.4 0 Td
+1 0 0 -1 375.96 285.9 Tm
 (Jan)Tj
 ET
 Q
@@ -256,10 +250,8 @@ Q
 q
 q
 BT
-1 0 0 -1 384.36 297.15 Tm
-0 Tr
 /F2 9.75 Tf
--10.84 0 Td
+1 0 0 -1 373.52 297.15 Tm
 (2015)Tj
 ET
 Q
@@ -267,10 +259,8 @@ Q
 q
 q
 BT
-1 0 0 -1 473.29 285.9 Tm
-0 Tr
 /F1 9.75 Tf
--7.58 0 Td
+1 0 0 -1 465.7 285.9 Tm
 (Apr)Tj
 ET
 Q
@@ -278,10 +268,8 @@ Q
 q
 q
 BT
-1 0 0 -1 563.24 285.9 Tm
-0 Tr
 /F1 9.75 Tf
--6.23 0 Td
+1 0 0 -1 557.01 285.9 Tm
 (Jul)Tj
 ET
 Q
@@ -289,10 +277,8 @@ Q
 q
 q
 BT
-1 0 0 -1 654.18 285.9 Tm
-0 Tr
 /F1 9.75 Tf
--7.58 0 Td
+1 0 0 -1 646.6 285.9 Tm
 (Oct)Tj
 ET
 Q
@@ -300,10 +286,8 @@ Q
 q
 q
 BT
-1 0 0 -1 745.17 285.9 Tm
-0 Tr
 /F2 9.75 Tf
--8.4 0 Td
+1 0 0 -1 736.77 285.9 Tm
 (Jan)Tj
 ET
 Q
@@ -311,10 +295,8 @@ Q
 q
 q
 BT
-1 0 0 -1 745.17 297.15 Tm
-0 Tr
 /F2 9.75 Tf
--10.84 0 Td
+1 0 0 -1 734.33 297.15 Tm
 (2016)Tj
 ET
 Q
@@ -668,145 +650,121 @@ Q
 q
 0 0 0 rg
 q
-0.36863 0.59216 0.96471 rg
 q
 BT
-1 0 0 -1 90.63 14.86 Tm
-0 Tr
 /F1 10.5 Tf
--51.63 0 Td
+1 0 0 -1 39 14.86 Tm
+0.36863 0.59216 0.96471 rg
 (Spring 2014)Tj
 ET
 Q
 Q
 q
-0.85882 0.26667 0.21569 rg
 q
 BT
-1 0 0 -1 90.63 37.36 Tm
-0 Tr
 /F1 10.5 Tf
--59.21 0 Td
+1 0 0 -1 31.43 37.36 Tm
+0.85882 0.26667 0.21569 rg
 (Summer 2014)Tj
 ET
 Q
 Q
 q
-0.94902 0.65098 0 rg
 q
 BT
-1 0 0 -1 90.63 59.86 Tm
-0 Tr
 /F1 10.5 Tf
--67.37 0 Td
+1 0 0 -1 23.26 59.86 Tm
+0.94902 0.65098 0 rg
 (Football Season)Tj
 ET
 Q
 Q
 q
-0.05882 0.61569 0.3451 rg
 q
 BT
-1 0 0 -1 90.63 82.36 Tm
-0 Tr
 /F1 10.5 Tf
--58.04 0 Td
+1 0 0 -1 32.59 82.36 Tm
+0.05882 0.61569 0.3451 rg
 (Autumn 2014)Tj
 ET
 Q
 Q
 q
-0.94902 0.65098 0 rg
 q
 BT
-1 0 0 -1 90.63 104.86 Tm
-0 Tr
 /F1 10.5 Tf
--65.03 0 Td
+1 0 0 -1 25.61 104.86 Tm
+0.94902 0.65098 0 rg
 (Hockey Season)Tj
 ET
 Q
 Q
 q
-0.94902 0.65098 0 rg
 q
 BT
-1 0 0 -1 90.63 127.36 Tm
-0 Tr
 /F1 10.5 Tf
--76.69 0 Td
+1 0 0 -1 13.94 127.36 Tm
+0.94902 0.65098 0 rg
 (Basketball Season)Tj
 ET
 Q
 Q
 q
-0.67059 0.27843 0.73725 rg
 q
 BT
-1 0 0 -1 90.63 149.86 Tm
-0 Tr
 /F1 10.5 Tf
--52.36 0 Td
+1 0 0 -1 38.28 149.86 Tm
+0.67059 0.27843 0.73725 rg
 (Winter 2014)Tj
 ET
 Q
 Q
 q
-0.36863 0.59216 0.96471 rg
 q
 BT
-1 0 0 -1 90.63 172.36 Tm
-0 Tr
 /F1 10.5 Tf
--51.63 0 Td
+1 0 0 -1 39 172.36 Tm
+0.36863 0.59216 0.96471 rg
 (Spring 2015)Tj
 ET
 Q
 Q
 q
-0.94902 0.65098 0 rg
 q
 BT
-1 0 0 -1 90.63 194.86 Tm
-0 Tr
 /F1 10.5 Tf
--68.53 0 Td
+1 0 0 -1 22.11 194.86 Tm
+0.94902 0.65098 0 rg
 (Baseball Season)Tj
 ET
 Q
 Q
 q
-0.85882 0.26667 0.21569 rg
 q
 BT
-1 0 0 -1 90.63 217.36 Tm
-0 Tr
 /F1 10.5 Tf
--59.21 0 Td
+1 0 0 -1 31.43 217.36 Tm
+0.85882 0.26667 0.21569 rg
 (Summer 2015)Tj
 ET
 Q
 Q
 q
-0.05882 0.61569 0.3451 rg
 q
 BT
-1 0 0 -1 90.63 239.86 Tm
-0 Tr
 /F1 10.5 Tf
--58.04 0 Td
+1 0 0 -1 32.59 239.86 Tm
+0.05882 0.61569 0.3451 rg
 (Autumn 2015)Tj
 ET
 Q
 Q
 q
-0.67059 0.27843 0.73725 rg
 q
 BT
-1 0 0 -1 90.63 262.36 Tm
-0 Tr
 /F1 10.5 Tf
--52.36 0 Td
+1 0 0 -1 38.28 262.36 Tm
+0.67059 0.27843 0.73725 rg
 (Winter 2015)Tj
 ET
 Q
@@ -834,103 +792,86 @@ h
 B
 Q
 q
-0.25882 0.25882 0.25882 rg
 q
 BT
-1 0 0 -1 572.81 187.36 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 572.81 187.36 Tm
+0.25882 0.25882 0.25882 rg
 (Winter 2015: Dec 2015 - Mar 2016)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 572.81 214.36 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 572.81 214.36 Tm
+0.45882 0.45882 0.45882 rg
 (Duration:)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 723.04 214.36 Tm
-0 Tr
 /F1 10.5 Tf
--38.8 0 Td
+1 0 0 -1 684.25 214.36 Tm
+0.45882 0.45882 0.45882 rg
 (3 months)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 572.81 237.61 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 572.81 237.61 Tm
+0.45882 0.45882 0.45882 rg
 (Percent done:)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 723.04 237.61 Tm
-0 Tr
 /F1 10.5 Tf
--16.62 0 Td
+1 0 0 -1 706.42 237.61 Tm
+0.45882 0.45882 0.45882 rg
 (0 %)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 572.81 260.86 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 572.81 260.86 Tm
+0.45882 0.45882 0.45882 rg
 (Resource:)Tj
 ET
 Q
 Q
 q
-0.67059 0.27843 0.73725 rg
 q
 BT
-1 0 0 -1 723.04 260.86 Tm
-0 Tr
 /F1 10.5 Tf
--26.82 0 Td
+1 0 0 -1 696.22 260.86 Tm
+0.67059 0.27843 0.73725 rg
 (winter)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 572.81 284.11 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 572.81 284.11 Tm
+0.45882 0.45882 0.45882 rg
 (Is on critical path)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 Q
 Q
 Q
@@ -941,17 +882,17 @@ xref
 0 10
 0000000000 65535 f 
 0000000211 00000 n 
-0000000606 00000 n 
+0000000607 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
 0000000517 00000 n 
-0000000657 00000 n 
-0000000843 00000 n 
+0000000428 00000 n 
+0000000658 00000 n 
+0000000844 00000 n 
 trailer
-<</ID [<fd7f3ce183576e21fa24131fa2dbd9a8><fd7f3ce183576e21fa24131fa2dbd9a8>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<51737462e2f1b7b9e813825fca7d4ab6f2c5b55a9082413746600e9f5fbc05765727a4f6d1a8c5e365fc32c03e0b1e7201e9c5480fa94076f1090ee0b758389f><51737462e2f1b7b9e813825fca7d4ab6f2c5b55a9082413746600e9f5fbc05765727a4f6d1a8c5e365fc32c03e0b1e7201e9c5480fa94076f1090ee0b758389f>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-11838
+11344
 %%EOF

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174936+03'00')/ModDate(D:20211108174936+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144811+03'00')/ModDate(D:20241127144811+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,32 +35,28 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 1200 600]/Length 10413/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1200 600]/Length 10317/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1200 600 re
 W
 n
 q
 q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 22.5 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 22.5 Tm
+0 0 0 rg
 (Original Viewport: 5 * \(4,3\) = 20x15)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 30 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 30 Tm
+0 0 0 rg
 (Viewbox: 20x15, no scaling)Tj
 ET
 Q
@@ -404,25 +400,21 @@ Q
 q
 1 0 0 1 0 150 cm
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 22.5 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 22.5 Tm
+0 0 0 rg
 (Original Viewport: 5 * \(4,3\) = 20x15)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 30 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 30 Tm
+0 0 0 rg
 (Viewbox: 20x10)Tj
 ET
 Q
@@ -766,25 +758,21 @@ Q
 q
 1 0 0 1 225 150 cm
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 22.5 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 22.5 Tm
+0 0 0 rg
 (Original Viewport: 5 * \(4,3\) = 20x15)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 30 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 30 Tm
+0 0 0 rg
 (Viewbox: 10x10)Tj
 ET
 Q
@@ -1128,25 +1116,21 @@ Q
 q
 1 0 0 1 225 0 cm
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 22.5 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 22.5 Tm
+0 0 0 rg
 (Original Viewport: 5 * \(4,3\) = 20x15)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 30 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 30 Tm
+0 0 0 rg
 (Viewbox: 10x15)Tj
 ET
 Q
@@ -1971,20 +1955,20 @@ xref
 0 13
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000752 00000 n 
-0000011347 00000 n 
-0000012410 00000 n 
-0000013474 00000 n 
-0000014534 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000753 00000 n 
+0000011252 00000 n 
+0000012315 00000 n 
+0000013379 00000 n 
+0000014439 00000 n 
 trailer
-<</ID [<ea80f2d73c083627aac215ed8a7a6efc><ea80f2d73c083627aac215ed8a7a6efc>]/Info 3 0 R/Root 1 0 R/Size 13>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<64f7e1ac9f458ce417d6260834febd1abebfd55a28ab17cf287fa615e383fb34f2bd7a408989e909b6a0c3da0fa2e382aca51c9c86ee3593305c03b7923e3306><64f7e1ac9f458ce417d6260834febd1abebfd55a28ab17cf287fa615e383fb34f2bd7a408989e909b6a0c3da0fa2e382aca51c9c86ee3593305c03b7923e3306>]/Info 3 0 R/Root 1 0 R/Size 13>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-15598
+15503
 %%EOF

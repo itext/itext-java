@@ -59,6 +59,8 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO DEVSIX-8774 support stroke-opacity for text at layout level
+    // TODO DEVSIX-8776 support dash-pattern in layout
     public void strokeWithDashesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWithDashes");
     }

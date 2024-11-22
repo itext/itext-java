@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174742+03'00')/ModDate(D:20211108174742+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144746+03'00')/ModDate(D:20241127144746+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -38,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 675 375]/Length 4892/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 4760/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -53,10 +53,8 @@ q
 q
 q
 BT
-1 0 0 -1 120.75 53.17 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 120.75 53.17 Tm
 (My Daily Activities)Tj
 ET
 Q
@@ -88,13 +86,11 @@ f
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 420.75 80.93 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 420.75 80.93 Tm
+0.13333 0.13333 0.13333 rg
 (Work)Tj
 ET
 Q
@@ -121,13 +117,11 @@ f
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 420.75 98.18 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 420.75 98.18 Tm
+0.13333 0.13333 0.13333 rg
 (Eat)Tj
 ET
 Q
@@ -154,13 +148,11 @@ f
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 420.75 115.43 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 420.75 115.43 Tm
+0.13333 0.13333 0.13333 rg
 (Commute)Tj
 ET
 Q
@@ -187,13 +179,11 @@ f
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 420.75 132.68 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 420.75 132.68 Tm
+0.13333 0.13333 0.13333 rg
 (Watch TV)Tj
 ET
 Q
@@ -220,13 +210,11 @@ f
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 420.75 149.93 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 420.75 149.93 Tm
+0.13333 0.13333 0.13333 rg
 (Sleep)Tj
 ET
 Q
@@ -283,13 +271,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 328.38 171.3 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 328.38 171.3 Tm
+1 1 1 rg
 (45.8%)Tj
 ET
 Q
@@ -334,13 +320,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 169.44 138.15 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 169.44 138.15 Tm
+1 1 1 rg
 (29.2%)Tj
 ET
 Q
@@ -384,13 +368,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 163.98 215.96 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 163.98 215.96 Tm
+1 1 1 rg
 (8.3%)Tj
 ET
 Q
@@ -434,13 +416,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 196.53 243.15 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 196.53 243.15 Tm
+1 1 1 rg
 (8.3%)Tj
 ET
 Q
@@ -473,13 +453,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 243 256.49 Tm
-0 Tr
 /F2 10.5 Tf
-0 0 Td
+1 0 0 -1 243 256.49 Tm
+1 1 1 rg
 (8.3%)Tj
 ET
 Q
@@ -516,24 +494,24 @@ xref
 0 17
 0000000000 65535 f 
 0000000211 00000 n 
-0000000606 00000 n 
+0000000607 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000516 00000 n 
-0000000657 00000 n 
-0000000840 00000 n 
-0000005957 00000 n 
-0000005983 00000 n 
-0000006009 00000 n 
-0000006035 00000 n 
-0000006061 00000 n 
-0000006087 00000 n 
-0000006113 00000 n 
+0000000428 00000 n 
+0000000517 00000 n 
+0000000658 00000 n 
+0000000841 00000 n 
+0000005826 00000 n 
+0000005852 00000 n 
+0000005878 00000 n 
+0000005904 00000 n 
+0000005930 00000 n 
+0000005956 00000 n 
+0000005982 00000 n 
 trailer
-<</ID [<044394e4b230236c884bb5dfd4484ddc><044394e4b230236c884bb5dfd4484ddc>]/Info 3 0 R/Root 1 0 R/Size 17>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<96962158516055858c4a252069ddb283080023b346fe5af0a558d9cf94ff52ae2b268592f89ef49686e0297029718feb757708c2afb1eaeb0fdb9b68be1456c9><96962158516055858c4a252069ddb283080023b346fe5af0a558d9cf94ff52ae2b268592f89ef49686e0297029718feb757708c2afb1eaeb0fdb9b68be1456c9>]/Info 3 0 R/Root 1 0 R/Size 17>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-6139
+6008
 %%EOF

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108180050+03'00')/ModDate(D:20211108180050+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144733+03'00')/ModDate(D:20241127144733+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675 375]/Length 7204/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 6831/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -51,25 +51,21 @@ q
 B
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 0 11.7 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 11.7 Tm
+0.45882 0.45882 0.45882 rg
 (Nearby galaxies)Tj
 ET
 Q
 Q
 q
-0.74118 0.74118 0.74118 rg
 q
 BT
-1 0 0 -1 0 27.29 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 0 27.29 Tm
+0.74118 0.74118 0.74118 rg
 (distance on the left, brightness on the right)Tj
 ET
 Q
@@ -91,13 +87,11 @@ h
 f
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 617.85 75.08 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 617.85 75.08 Tm
+0.45882 0.45882 0.45882 rg
 (Distance)Tj
 ET
 Q
@@ -119,13 +113,11 @@ h
 f
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 617.85 101.47 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 617.85 101.47 Tm
+0.45882 0.45882 0.45882 rg
 (Brightness)Tj
 ET
 Q
@@ -451,255 +443,213 @@ Q
 q
 0 0 0 rg
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 88.53 346.88 Tm
-0 Tr
 /F1 9 Tf
--36.94 0 Td
+1 0 0 -1 51.59 346.88 Tm
+0.45882 0.45882 0.45882 rg
 (Canis Major Dwarf)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 189.02 346.88 Tm
-0 Tr
 /F1 9 Tf
--34.55 0 Td
+1 0 0 -1 154.47 346.88 Tm
+0.45882 0.45882 0.45882 rg
 (Sagittarius Dwarf)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 289.5 346.88 Tm
-0 Tr
 /F1 9 Tf
--38.44 0 Td
+1 0 0 -1 251.06 346.88 Tm
+0.45882 0.45882 0.45882 rg
 (Ursa Major II Dwarf)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 389.98 346.88 Tm
-0 Tr
 /F1 9 Tf
--41.81 0 Td
+1 0 0 -1 348.17 346.88 Tm
+0.45882 0.45882 0.45882 rg
 (Lg. Magellanic Cloud)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 490.47 346.88 Tm
-0 Tr
 /F1 9 Tf
--16.45 0 Td
+1 0 0 -1 474.02 346.88 Tm
+0.45882 0.45882 0.45882 rg
 (Bootes I)Tj
 ET
 Q
 Q
 q
-0.25882 0.25882 0.25882 rg
 q
 BT
-1 0 0 -1 287.24 372.07 Tm
-0 Tr
 /F1 9 Tf
--13.41 0 Td
+1 0 0 -1 273.83 372.07 Tm
+0.25882 0.25882 0.25882 rg
 (Galaxy)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 42.38 336.53 Tm
-0 Tr
 /F1 9 Tf
--5.05 0 Td
+1 0 0 -1 37.32 336.53 Tm
+0.45882 0.45882 0.45882 rg
 (0)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 42.38 291.53 Tm
-0 Tr
 /F1 9 Tf
--15.75 0 Td
+1 0 0 -1 26.63 291.53 Tm
+0.45882 0.45882 0.45882 rg
 (10K)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 42.38 246.53 Tm
-0 Tr
 /F1 9 Tf
--15.75 0 Td
+1 0 0 -1 26.63 246.53 Tm
+0.45882 0.45882 0.45882 rg
 (20K)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 42.38 201.53 Tm
-0 Tr
 /F1 9 Tf
--15.75 0 Td
+1 0 0 -1 26.63 201.53 Tm
+0.45882 0.45882 0.45882 rg
 (30K)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 42.38 156.53 Tm
-0 Tr
 /F1 9 Tf
--15.75 0 Td
+1 0 0 -1 26.63 156.53 Tm
+0.45882 0.45882 0.45882 rg
 (40K)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 42.38 111.53 Tm
-0 Tr
 /F1 9 Tf
--15.75 0 Td
+1 0 0 -1 26.63 111.53 Tm
+0.45882 0.45882 0.45882 rg
 (50K)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 42.38 66.53 Tm
-0 Tr
 /F1 9 Tf
--15.75 0 Td
+1 0 0 -1 26.63 66.53 Tm
+0.45882 0.45882 0.45882 rg
 (60K)Tj
 ET
 Q
 Q
 q
 0 -1 1 0 -185.91 210.84 cm
-0.25882 0.25882 0.25882 rg
 q
 BT
-1 0 0 -1 12.47 195.68 Tm
-0 Tr
 /F1 9 Tf
--15.88 0 Td
+1 0 0 -1 -3.41 195.68 Tm
+0.25882 0.25882 0.25882 rg
 (parsecs)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 536.63 336.53 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 536.63 336.53 Tm
+0.45882 0.45882 0.45882 rg
 (0)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 536.63 282.53 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 536.63 282.53 Tm
+0.45882 0.45882 0.45882 rg
 (5)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 536.63 228.53 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 536.63 228.53 Tm
+0.45882 0.45882 0.45882 rg
 (10)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 536.63 174.53 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 536.63 174.53 Tm
+0.45882 0.45882 0.45882 rg
 (15)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 536.63 120.53 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 536.63 120.53 Tm
+0.45882 0.45882 0.45882 rg
 (20)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 536.63 66.53 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 536.63 66.53 Tm
+0.45882 0.45882 0.45882 rg
 (25)Tj
 ET
 Q
 Q
 q
 0 1 -1 0 758.95 -362.2 cm
-0.25882 0.25882 0.25882 rg
 q
 BT
-1 0 0 -1 560.58 195.68 Tm
-0 Tr
 /F1 9 Tf
--40.24 0 Td
+1 0 0 -1 520.34 195.68 Tm
+0.25882 0.25882 0.25882 rg
 (apparent magnitude)Tj
 ET
 Q
@@ -727,18 +677,18 @@ xref
 0 11
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
-0000008115 00000 n 
-0000008140 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
+0000007743 00000 n 
+0000007768 00000 n 
 trailer
-<</ID [<f418e83e9246f70a0581110debae7984><f418e83e9246f70a0581110debae7984>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<d677dfb58eb67f7948ae0887596a23da52a8706c5f8c8685d28eba7bab6c4232e2593a95b6396ed5117703dfa6b9e8690f1c1a58a3a881e5e46cb17730558e61><d677dfb58eb67f7948ae0887596a23da52a8706c5f8c8685d28eba7bab6c4232e2593a95b6396ed5117703dfa6b9e8690f1c1a58a3a881e5e46cb17730558e61>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-8166
+7794
 %%EOF

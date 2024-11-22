@@ -118,4 +118,11 @@
            stroke-dasharray="30 30 5% 5% 2em 2rem 10 10"
            stroke-dashoffset="3%"
    />
+
+   <text dx="300" dy="425" font-size="100" stroke="teal"
+         stroke-opacity="0.5"
+         stroke-width="10"
+         stroke-dasharray="30 30 5% 5% 2em 2rem 10 10"
+         stroke-dashoffset="3%">H E L L O
+   </text>
 </svg>

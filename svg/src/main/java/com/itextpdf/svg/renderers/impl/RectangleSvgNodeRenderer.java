@@ -114,8 +114,8 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
         if(getAttribute(SvgConstants.Attributes.Y)!=null) {
             y = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.Y));
         }
-        width = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.WIDTH));
-        height = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.HEIGHT));
+        width = CssDimensionParsingUtils.parseAbsoluteLength(getAttributeOrDefault(SvgConstants.Attributes.WIDTH, "0"));
+        height = CssDimensionParsingUtils.parseAbsoluteLength(getAttributeOrDefault(SvgConstants.Attributes.HEIGHT, "0"));
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.RX)) {
             rx = checkRadius(CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)), width);

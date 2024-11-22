@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174818+03'00')/ModDate(D:20211108174818+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144755+03'00')/ModDate(D:20241127144755+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -38,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 375 225]/Length 9751/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 225]/Length 9643/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 375 225 re
 W
 n
@@ -74,10 +74,8 @@ W
 n
 q
 BT
-1 0 0 -1 98.67 15.76 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 98.67 15.76 Tm
 (Phones Revenues)Tj
 ET
 Q
@@ -239,13 +237,11 @@ q
 h
 W
 n
-0.25098 0.25098 0.25098 rg
 q
 BT
-1 0 0 -1 114.68 219.39 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 114.68 219.39 Tm
+0.25098 0.25098 0.25098 rg
 (1)Tj
 ET
 Q
@@ -314,13 +310,11 @@ q
 h
 W
 n
-0.25098 0.25098 0.25098 rg
 q
 BT
-1 0 0 -1 150.32 219.39 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 150.32 219.39 Tm
+0.25098 0.25098 0.25098 rg
 (2)Tj
 ET
 Q
@@ -389,13 +383,11 @@ q
 h
 W
 n
-0.25098 0.25098 0.25098 rg
 q
 BT
-1 0 0 -1 200.14 219.39 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 200.14 219.39 Tm
+0.25098 0.25098 0.25098 rg
 (3)Tj
 ET
 Q
@@ -464,13 +456,11 @@ q
 h
 W
 n
-0.25098 0.25098 0.25098 rg
 q
 BT
-1 0 0 -1 242.93 219.39 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 242.93 219.39 Tm
+0.25098 0.25098 0.25098 rg
 (Others)Tj
 ET
 Q
@@ -861,10 +851,8 @@ W
 n
 q
 BT
-1 0 0 -1 77.03 39.7 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 77.03 39.7 Tm
 (Others)Tj
 ET
 Q
@@ -955,10 +943,8 @@ W
 n
 q
 BT
-1 0 0 -1 71.44 68.99 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 71.44 68.99 Tm
 (1)Tj
 ET
 Q
@@ -1049,10 +1035,8 @@ W
 n
 q
 BT
-1 0 0 -1 64.54 163.33 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 64.54 163.33 Tm
 (2)Tj
 ET
 Q
@@ -1143,10 +1127,8 @@ W
 n
 q
 BT
-1 0 0 -1 275.16 117.24 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 275.16 117.24 Tm
 (3)Tj
 ET
 Q
@@ -1190,21 +1172,21 @@ xref
 0 14
 0000000000 65535 f 
 0000000211 00000 n 
-0000000606 00000 n 
+0000000607 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000516 00000 n 
-0000000657 00000 n 
-0000000840 00000 n 
-0000010783 00000 n 
-0000010815 00000 n 
-0000010847 00000 n 
-0000010879 00000 n 
+0000000428 00000 n 
+0000000517 00000 n 
+0000000658 00000 n 
+0000000841 00000 n 
+0000010676 00000 n 
+0000010708 00000 n 
+0000010740 00000 n 
+0000010772 00000 n 
 trailer
-<</ID [<20c4aabbb0579835403c796d045eb53f><20c4aabbb0579835403c796d045eb53f>]/Info 3 0 R/Root 1 0 R/Size 14>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<bcd26b443a66b3535aecf8eb3e16cc9afdf6ade6a74cfdbfb18363be73b206f3fb6be922bf133f5e807bb0c27ac7970268d3164a1109835f53d19eba89657ac6><bcd26b443a66b3535aecf8eb3e16cc9afdf6ade6a74cfdbfb18363be73b206f3fb6be922bf133f5e807bb0c27ac7970268d3164a1109835f53d19eba89657ac6>]/Info 3 0 R/Root 1 0 R/Size 14>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-10911
+10804
 %%EOF

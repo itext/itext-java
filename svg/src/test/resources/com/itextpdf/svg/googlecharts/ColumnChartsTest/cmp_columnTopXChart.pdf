@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108180049+03'00')/ModDate(D:20211108180049+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144734+03'00')/ModDate(D:20241127144734+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 450]/Length 4375/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 450]/Length 4098/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 450 re
 W
 n
@@ -51,25 +51,21 @@ q
 B
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 0 11.7 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 11.7 Tm
+0.45882 0.45882 0.45882 rg
 (Chess opening moves)Tj
 ET
 Q
 Q
 q
-0.74118 0.74118 0.74118 rg
 q
 BT
-1 0 0 -1 0 27.29 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 0 27.29 Tm
+0.74118 0.74118 0.74118 rg
 (popularity by percentage)Tj
 ET
 Q
@@ -279,193 +275,161 @@ Q
 q
 0 0 0 rg
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 76.38 92.18 Tm
-0 Tr
 /F1 9 Tf
--32.93 0 Td
+1 0 0 -1 43.45 92.18 Tm
+0.45882 0.45882 0.45882 rg
 (King's pawn \(e4\))Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 191.94 92.18 Tm
-0 Tr
 /F1 9 Tf
--36.76 0 Td
+1 0 0 -1 155.18 92.18 Tm
+0.45882 0.45882 0.45882 rg
 (Queen's pawn \(d4\))Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 307.5 92.18 Tm
-0 Tr
 /F1 9 Tf
--43.11 0 Td
+1 0 0 -1 264.39 92.18 Tm
+0.45882 0.45882 0.45882 rg
 (Knight to King 3 \(Nf3\))Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 423.06 92.18 Tm
-0 Tr
 /F1 9 Tf
--51.2 0 Td
+1 0 0 -1 371.86 92.18 Tm
+0.45882 0.45882 0.45882 rg
 (Queen's bishop pawn \(c4\))Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 538.62 92.18 Tm
-0 Tr
 /F1 9 Tf
--10.95 0 Td
+1 0 0 -1 527.67 92.18 Tm
+0.45882 0.45882 0.45882 rg
 (Other)Tj
 ET
 Q
 Q
 q
-0.25882 0.25882 0.25882 rg
 q
 BT
-1 0 0 -1 307.5 66.98 Tm
-0 Tr
 /F1 9 Tf
--28.65 0 Td
+1 0 0 -1 278.85 66.98 Tm
+0.25882 0.25882 0.25882 rg
 (White to move)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 447.53 Tm
-0 Tr
 /F1 9 Tf
--5.05 0 Td
+1 0 0 -1 5.82 447.53 Tm
+0.45882 0.45882 0.45882 rg
 (0)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 409.2 Tm
-0 Tr
 /F1 9 Tf
--5.05 0 Td
+1 0 0 -1 5.82 409.2 Tm
+0.45882 0.45882 0.45882 rg
 (5)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 370.87 Tm
-0 Tr
 /F1 9 Tf
--10.11 0 Td
+1 0 0 -1 0.76758 370.87 Tm
+0.45882 0.45882 0.45882 rg
 (10)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 332.54 Tm
-0 Tr
 /F1 9 Tf
--10.11 0 Td
+1 0 0 -1 0.76758 332.54 Tm
+0.45882 0.45882 0.45882 rg
 (15)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 294.2 Tm
-0 Tr
 /F1 9 Tf
--10.11 0 Td
+1 0 0 -1 0.76758 294.2 Tm
+0.45882 0.45882 0.45882 rg
 (20)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 255.87 Tm
-0 Tr
 /F1 9 Tf
--10.11 0 Td
+1 0 0 -1 0.76758 255.87 Tm
+0.45882 0.45882 0.45882 rg
 (25)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 217.53 Tm
-0 Tr
 /F1 9 Tf
--10.11 0 Td
+1 0 0 -1 0.76758 217.53 Tm
+0.45882 0.45882 0.45882 rg
 (30)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 179.2 Tm
-0 Tr
 /F1 9 Tf
--10.11 0 Td
+1 0 0 -1 0.76758 179.2 Tm
+0.45882 0.45882 0.45882 rg
 (35)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 140.86 Tm
-0 Tr
 /F1 9 Tf
--10.11 0 Td
+1 0 0 -1 0.76758 140.86 Tm
+0.45882 0.45882 0.45882 rg
 (40)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 10.88 102.53 Tm
-0 Tr
 /F1 9 Tf
--10.11 0 Td
+1 0 0 -1 0.76758 102.53 Tm
+0.45882 0.45882 0.45882 rg
 (45)Tj
 ET
 Q
@@ -493,18 +457,18 @@ xref
 0 11
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
-0000005286 00000 n 
-0000005311 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
+0000005010 00000 n 
+0000005035 00000 n 
 trailer
-<</ID [<6b49225644aa6a04cc9d27e2dde2865c><6b49225644aa6a04cc9d27e2dde2865c>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<51e7008d7a48b1df6610dd19f7678928d6e2db2711bf9e01f458bbb67d7f423c0fe8b85dd9706074f25402b91d75b3a0db3cc7992850b0c8f11d57987d7b39ca><51e7008d7a48b1df6610dd19f7678928d6e2db2711bf9e01f458bbb67d7f423c0fe8b85dd9706074f25402b91d75b3a0db3cc7992850b0c8f11d57987d7b39ca>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-5337
+5061
 %%EOF

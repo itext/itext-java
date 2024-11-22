@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174943+03'00')/ModDate(D:20211108174943+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144813+03'00')/ModDate(D:20241127144813+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 450]/Length 1546/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 450]/Length 1450/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 450 re
 W
 n
@@ -60,25 +60,21 @@ Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 112.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 15 112.5 Tm
+0 0 0 rg
 (markerUnits = strokeWidth)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 127.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 15 127.5 Tm
+0 0 0 rg
 (markerWidth|Height = 1)Tj
 ET
 Q
@@ -104,25 +100,21 @@ Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 187.5 112.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 187.5 112.5 Tm
+0 0 0 rg
 (markerUnits = strokeWidth)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 187.5 127.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 187.5 127.5 Tm
+0 0 0 rg
 (markerWidth|Height = 4)Tj
 ET
 Q
@@ -147,25 +139,21 @@ Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 292.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 15 292.5 Tm
+0 0 0 rg
 (markerUnits = userSpaceOnUse)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 307.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 15 307.5 Tm
+0 0 0 rg
 (markerWidth|Height = 15)Tj
 ET
 Q
@@ -190,25 +178,21 @@ Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 187.5 292.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 187.5 292.5 Tm
+0 0 0 rg
 (markerUnits = userSpaceOnUse)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 187.5 307.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 187.5 307.5 Tm
+0 0 0 rg
 (markerWidth|Height = 30)Tj
 ET
 Q
@@ -288,20 +272,20 @@ xref
 0 13
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
-0000002477 00000 n 
-0000002650 00000 n 
-0000002824 00000 n 
-0000002998 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
+0000002382 00000 n 
+0000002555 00000 n 
+0000002729 00000 n 
+0000002903 00000 n 
 trailer
-<</ID [<1755cfc2b67cc985a8761a8d210354da><1755cfc2b67cc985a8761a8d210354da>]/Info 3 0 R/Root 1 0 R/Size 13>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<6aa777654c7cc0a0d5e89a3dedcd07fb79807c4763c7fe92b5e4ff5ab2b5ab6057a4f20b7c34d71cc55e7cceab81a837e23abcb5977446bf73d92dd10fb9c07e><6aa777654c7cc0a0d5e89a3dedcd07fb79807c4763c7fe92b5e4ff5ab2b5ab6057a4f20b7c34d71cc55e7cceab81a837e23abcb5977446bf73d92dd10fb9c07e>]/Info 3 0 R/Root 1 0 R/Size 13>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-3172
+3077
 %%EOF

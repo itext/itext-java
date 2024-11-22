@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174801+03'00')/ModDate(D:20211108174801+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144752+03'00')/ModDate(D:20241127144752+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 150]/Length 2004/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 150]/Length 1897/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 150 re
 W
 n
@@ -148,37 +148,31 @@ q
 S
 Q
 q
-0.30196 0.30196 0.30196 rg
 q
 BT
-1 0 0 -1 15 18.78 Tm
-0 Tr
 /F1 9.75 Tf
--4.88 0 Td
+1 0 0 -1 10.13 18.78 Tm
+0.30196 0.30196 0.30196 rg
 (1)Tj
 ET
 Q
 Q
 q
-0.30196 0.30196 0.30196 rg
 q
 BT
-1 0 0 -1 15 49.53 Tm
-0 Tr
 /F1 9.75 Tf
--4.88 0 Td
+1 0 0 -1 10.13 49.53 Tm
+0.30196 0.30196 0.30196 rg
 (2)Tj
 ET
 Q
 Q
 q
-0.30196 0.30196 0.30196 rg
 q
 BT
-1 0 0 -1 15 80.27 Tm
-0 Tr
 /F1 9.75 Tf
--4.88 0 Td
+1 0 0 -1 10.13 80.27 Tm
+0.30196 0.30196 0.30196 rg
 (3)Tj
 ET
 Q
@@ -196,10 +190,8 @@ q
 q
 q
 BT
-1 0 0 -1 44.28 108.02 Tm
-0 Tr
 /F1 9.75 Tf
--9.75 0 Td
+1 0 0 -1 34.53 108.02 Tm
 (1790)Tj
 ET
 Q
@@ -207,10 +199,8 @@ Q
 q
 q
 BT
-1 0 0 -1 334.17 108.02 Tm
-0 Tr
 /F1 9.75 Tf
--9.75 0 Td
+1 0 0 -1 324.42 108.02 Tm
 (1800)Tj
 ET
 Q
@@ -228,13 +218,11 @@ q
 f
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 32.25 18.52 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 32.25 18.52 Tm
+1 1 1 rg
 (George Washington)Tj
 ET
 Q
@@ -246,13 +234,11 @@ q
 f
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 258.92 49.27 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 258.92 49.27 Tm
+1 1 1 rg
 (John Adams)Tj
 ET
 Q
@@ -264,13 +250,11 @@ q
 f
 Q
 q
-0.12549 0.12549 0.12549 rg
 q
 BT
-1 0 0 -1 374.81 80.01 Tm
-0 Tr
 /F1 9 Tf
-0 0 Td
+1 0 0 -1 374.81 80.01 Tm
+0.12549 0.12549 0.12549 rg
 (Thomas Jefferson)Tj
 ET
 Q
@@ -295,16 +279,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
 trailer
-<</ID [<24c274d2161eff60d174caa8afe49859><24c274d2161eff60d174caa8afe49859>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<c333f2298fafb249f49aa0b8f84b50a2fb89f44a4a165e51b0ac1b28c0029e12fb6326412aa12693b0780a5bedaf067b9fd8207a1871c99e0b6246843793d035><c333f2298fafb249f49aa0b8f84b50a2fb89f44a4a165e51b0ac1b28c0029e12fb6326412aa12693b0780a5bedaf067b9fd8207a1871c99e0b6246843793d035>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-2880
+2774
 %%EOF

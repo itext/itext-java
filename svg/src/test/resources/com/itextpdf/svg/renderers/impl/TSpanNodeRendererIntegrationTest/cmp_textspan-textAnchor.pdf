@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108175041+03'00')/ModDate(D:20211108175041+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144828+03'00')/ModDate(D:20241127144828+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 225 450]/Length 12499/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 225 450]/Length 11340/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 225 450 re
 W
 n
@@ -146,10 +146,8 @@ Q
 q
 q
 BT
-1 0 0 -1 22.5 7.5 Tm
-0 Tr
 /F1 7.5 Tf
-0 0 Td
+1 0 0 -1 22.5 7.5 Tm
 (no text anchor)Tj
 ET
 Q
@@ -157,10 +155,8 @@ Q
 q
 q
 BT
-1 0 0 -1 22.5 15 Tm
-0 Tr
 /F1 7.5 Tf
-0 0 Td
+1 0 0 -1 22.5 15 Tm
 (start text anchor)Tj
 ET
 Q
@@ -168,10 +164,8 @@ Q
 q
 q
 BT
-1 0 0 -1 22.5 22.5 Tm
-0 Tr
 /F1 7.5 Tf
--28.12 0 Td
+1 0 0 -1 -5.62 22.5 Tm
 (middle text anchor)Tj
 ET
 Q
@@ -179,10 +173,8 @@ Q
 q
 q
 BT
-1 0 0 -1 22.5 30 Tm
-0 Tr
 /F1 7.5 Tf
--46.24 0 Td
+1 0 0 -1 -23.74 30 Tm
 (end text anchor)Tj
 ET
 Q
@@ -288,57 +280,41 @@ Q
 q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
 1 0 0 -1 22.5 7.5 Tm
-1 0 0 RG
-0.19844 w
 2 Tr
-/F1 7.5 Tf
-0 0 Td
+0.19844 w
+1 0 0 RG
 (tspan no text anchor)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
 1 0 0 -1 22.5 15 Tm
-1 0 0 RG
-0.19844 w
 2 Tr
-/F1 7.5 Tf
-0 0 Td
+0.19844 w
+1 0 0 RG
 (tspan start text anchor)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 22.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -14.47 22.5 Tm
 2 Tr
-/F1 7.5 Tf
--36.97 0 Td
+0.19844 w
+1 0 0 RG
 (tspan middle text anchor)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 30 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -41.45 30 Tm
 2 Tr
-/F1 7.5 Tf
--63.94 0 Td
+0.19844 w
+1 0 0 RG
 (tspan end text anchor)Tj
 ET
 Q
@@ -444,57 +420,41 @@ Q
 q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 7.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -2.08 7.5 Tm
 2 Tr
-/F1 7.5 Tf
--24.58 0 Td
+0.19844 w
+1 0 0 RG
 (Water is waving)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 15 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -4.36 15 Tm
 2 Tr
-/F1 7.5 Tf
--26.86 0 Td
+0.19844 w
+1 0 0 RG
 (oceans are calling)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 22.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 1.25 22.5 Tm
 2 Tr
-/F1 7.5 Tf
--21.25 0 Td
+0.19844 w
+1 0 0 RG
 (fire is burning)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 30 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 5.52 30 Tm
 2 Tr
-/F1 7.5 Tf
--16.98 0 Td
+0.19844 w
+1 0 0 RG
 (deep inside)Tj
 ET
 Q
@@ -678,57 +638,41 @@ Q
 q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 7.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -30.76 11.25 Tm
 2 Tr
-/F1 7.5 Tf
--53.26 -3.75 Td
+0.19844 w
+1 0 0 RG
 (Heaven can wait for me as I'm grounded)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 15 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -19.47 18.75 Tm
 2 Tr
-/F1 7.5 Tf
--41.97 -3.75 Td
+0.19844 w
+1 0 0 RG
 (Here on earth eternally)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 22.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -23.11 18.75 Tm
 2 Tr
-/F1 7.5 Tf
--45.61 3.75 Td
+0.19844 w
+1 0 0 RG
 (Do I really see what I see)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 30 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -14.69 26.25 Tm
 2 Tr
-/F1 7.5 Tf
--37.19 3.75 Td
+0.19844 w
+1 0 0 RG
 (Or is it only true in my mind?)Tj
 ET
 Q
@@ -834,57 +778,41 @@ Q
 q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 7.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -16.35 7.5 Tm
 2 Tr
-/F1 7.5 Tf
--38.85 0 Td
+0.19844 w
+1 0 0 RG
 (Did I really open my eyes)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 15 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -22.4 15 Tm
 2 Tr
-/F1 7.5 Tf
--44.9 0 Td
+0.19844 w
+1 0 0 RG
 (Or is it still that I look inside?)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 22.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -25.93 22.5 Tm
 2 Tr
-/F1 7.5 Tf
--48.43 0 Td
+0.19844 w
+1 0 0 RG
 (For one moment I knew eternity)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 30 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -33 30 Tm
 2 Tr
-/F1 7.5 Tf
--55.5 0 Td
+0.19844 w
+1 0 0 RG
 (What I felt was so peaceful and calm)Tj
 ET
 Q
@@ -990,57 +918,41 @@ Q
 q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 7.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -30.73 7.5 Tm
 2 Tr
-/F1 7.5 Tf
--53.23 0 Td
+0.19844 w
+1 0 0 RG
 (But still I am here thanks to gravity)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 15 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -19.89 15 Tm
 2 Tr
-/F1 7.5 Tf
--42.39 0 Td
+0.19844 w
+1 0 0 RG
 (And so I keep wandering on)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 22.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -2.08 22.5 Tm
 2 Tr
-/F1 7.5 Tf
--24.58 0 Td
+0.19844 w
+1 0 0 RG
 (Water is waving)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 30 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -5.2 30 Tm
 2 Tr
-/F1 7.5 Tf
--27.7 0 Td
+0.19844 w
+1 0 0 RG
 (Oceans are calling)Tj
 ET
 Q
@@ -1146,87 +1058,62 @@ Q
 q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
 1 0 0 -1 22.5 7.5 Tm
-1 0 0 RG
-0.19844 w
 2 Tr
-/F1 7.5 Tf
-0 0 Td
+0.19844 w
+1 0 0 RG
 (tspan no text anchor)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 7.5 Tm
-60.62 0 Td
+1 0 0 -1 83.12 7.5 Tm
 (test)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 15 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -14.47 15 Tm
 2 Tr
-/F1 7.5 Tf
--36.97 0 Td
+0.19844 w
+1 0 0 RG
 (tspan middle text anchor)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 22.5 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -14.47 22.5 Tm
 2 Tr
-/F1 7.5 Tf
--36.97 0 Td
+0.19844 w
+1 0 0 RG
 (tspan middle text anchor)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 22.5 Tm
-36.97 0 Td
+1 0 0 -1 59.48 22.5 Tm
 ( test)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 22.5 30 Tm
-1 0 0 RG
-0.19844 w
+1 0 0 -1 -41.44 30 Tm
 2 Tr
-/F1 7.5 Tf
--63.94 0 Td
+0.19844 w
+1 0 0 RG
 (tspan end text anchor)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
 1 0 0 -1 22.5 30 Tm
-0 0 Td
 ( test)Tj
 ET
 Q
@@ -1239,16 +1126,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
 trailer
-<</ID [<105becb6013cd01963b3e33188842ec9><105becb6013cd01963b3e33188842ec9>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<6ba201bf6e3490bdf5fa72882608948d80de47b239b5ac5510dc7ba5f8dcd9b5cf20cc7da051815b0326d2c8e871842592b1340aceb3c612422bbec7baa6fd94><6ba201bf6e3490bdf5fa72882608948d80de47b239b5ac5510dc7ba5f8dcd9b5cf20cc7da051815b0326d2c8e871842592b1340aceb3c612422bbec7baa6fd94>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-13376
+12218
 %%EOF

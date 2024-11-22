@@ -115,4 +115,9 @@ public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
     public void noFillRectangleTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder,destinationFolder,"noFillRectangle");
     }
+
+    @Test
+    public void rectangleNoWidthNoHeightTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "rectangleNoWidthNoHeight");
+    }
 }

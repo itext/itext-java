@@ -238,4 +238,16 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void yWithoutXTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "yWithoutX");
     }
+
+    @Test
+    // TODO DEVSIX-2507 support x, y, dx, dy attributes
+    public void negativeAbsoluteAndRelativePositionTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "negativeAbsoluteAndRelativePosition");
+    }
+
+    @Test
+    // TODO DEVSIX-2507 support x, y, dx, dy attributes
+    public void noPositionAfterRelativeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "noPositionAfterRelative");
+    }
 }

@@ -24,14 +24,17 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.renderer.TextRenderer;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgTextProperties;
 import com.itextpdf.svg.utils.SvgTextUtil;
 import com.itextpdf.svg.utils.TextRectangle;
 
@@ -40,13 +43,14 @@ import com.itextpdf.svg.utils.TextRectangle;
  */
 public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer {
 
+    private final Text text = new Text("");
+
     @Override
     public ISvgNodeRenderer createDeepCopy() {
         TextLeafSvgNodeRenderer copy = new TextLeafSvgNodeRenderer();
         deepCopyAttributesAndStyles(copy);
         return copy;
     }
-
 
     @Override
     public float getTextContentLength(float parentFontSize, PdfFont font) {
@@ -110,15 +114,19 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     @Override
     protected void doDraw(SvgDrawContext context) {
         if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
-            PdfCanvas currentCanvas = context.getCurrentCanvas();
-            //TODO(DEVSIX-2507): Support for glyph by glyph handling of x, y and rotate
-            if (context.getPreviousElementTextMove() == null) {
-                currentCanvas.moveText(context.getTextMove()[0], context.getTextMove()[1]);
-            } else {
-                currentCanvas.moveText(context.getPreviousElementTextMove()[0],
-                        context.getPreviousElementTextMove()[1]);
-            }
-            currentCanvas.showText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
+            text.setText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
+
+            final float parentFontSize = ((AbstractSvgNodeRenderer) getParent()).getCurrentFontSize();
+            final PdfFont parentFont = ((TextSvgBranchRenderer) getParent()).getFont();
+            final float[] fontAscenderDescenderFromMetrics = TextRenderer
+                    .calculateAscenderDescender(parentFont, RenderingMode.HTML_MODE);
+            final float yLineOffset =
+                    FontProgram.convertTextSpaceToGlyphSpace(fontAscenderDescenderFromMetrics[0]) * parentFontSize;
+
+            applyTransform(context);
+            applyGraphicsState(context);
+            ((TextSvgBranchRenderer) getParent()).addTextChild(text, context, yLineOffset,
+                    getTextContentLength(parentFontSize, parentFont));
         }
     }
 
@@ -127,4 +135,29 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         return false;
     }
 
+    /**
+     * Retrieves {@link Text} element which will be drawn using layout.
+     *
+     * @return corresponding {@link Text} element
+     */
+    protected Text getText() {
+        return text;
+    }
+
+    private void applyTransform(SvgDrawContext context) {
+        AffineTransform transform = context.getLastTextTransform();
+        text.setHorizontalScaling((float) transform.getScaleX());
+        text.setProperty(Property.VERTICAL_SCALING, transform.getScaleY());
+        text.setProperty(Property.SKEW, new float[]{(float) transform.getShearX(), (float) transform.getShearY()});
+    }
+
+    private void applyGraphicsState(SvgDrawContext context) {
+        SvgTextProperties textProperties = context.getSvgTextProperties();
+        // TODO DEVSIX-8774 support stroke-opacity for text at layout level
+        // TODO DEVSIX-8776 support dash-pattern in layout
+        text.setFontColor(textProperties.getFillColor());
+        text.setStrokeWidth(textProperties.getLineWidth());
+        text.setStrokeColor(textProperties.getStrokeColor());
+        text.setOpacity(textProperties.getFillOpacity());
+    }
 }

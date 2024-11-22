@@ -28,7 +28,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241114163809+03'00')/ModDate(D:20241114163809+03'00')/Producer(iText® Core 9.0.1-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20241127144805+03'00')/ModDate(D:20241127144805+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -52,30 +52,26 @@ Q
 endstream
 endobj
 11 0 obj
-<</BBox[-225 -225 225 225]/Length 11142/Resources<</ExtGState<</Gs1 12 0 R/Gs2 13 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-225 -225 225 225]/Length 11118/Resources<</ExtGState<</Gs1 12 0 R/Gs2 13 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -225 -225 450 450 re
 W
 n
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 -210 -202.5 Tm
-0 Tr
 /F1 18 Tf
-0 0 Td
+1 0 0 -1 -210 -202.5 Tm
+0 0 0 rg
 (SVG demonstration)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 -210 -187.5 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 -210 -187.5 Tm
+0 0 0 rg
 (Move your mouse pointer over the flower.)Tj
 ET
 Q
@@ -896,11 +892,11 @@ xref
 0000000230 00000 n 
 0000000898 00000 n 
 0000001102 00000 n 
-0000012422 00000 n 
-0000012451 00000 n 
+0000012398 00000 n 
+0000012427 00000 n 
 trailer
-<</ID [<cfb78ea1c80018a3aa95b1fccf0cbdc1860cde486472684bc86b57a075f4af7e6902e3a73cf7aca0c151d78e5f296ae5545f6350027e680bf55d723ad2669f28><cfb78ea1c80018a3aa95b1fccf0cbdc1860cde486472684bc86b57a075f4af7e6902e3a73cf7aca0c151d78e5f296ae5545f6350027e680bf55d723ad2669f28>]/Info 3 0 R/Root 1 0 R/Size 14>>
-%iText-Core-9.0.1-SNAPSHOT
+<</ID [<7797af72dc82eba197540967d2fae9951ab4e30167e5fea66e360c56077de6329d2a3256bb947ddb94a887bc324bc36cb4261f3cdbc487c6473e712a27bca914><7797af72dc82eba197540967d2fae9951ab4e30167e5fea66e360c56077de6329d2a3256bb947ddb94a887bc324bc36cb4261f3cdbc487c6473e712a27bca914>]/Info 3 0 R/Root 1 0 R/Size 14>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-12480
+12456
 %%EOF

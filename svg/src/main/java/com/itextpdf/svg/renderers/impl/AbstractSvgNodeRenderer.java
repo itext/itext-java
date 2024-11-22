@@ -30,19 +30,18 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.layout.properties.TransparentColor;
-import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
-import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.css.SvgStrokeParameterConverter;
+import com.itextpdf.svg.css.SvgStrokeParameterConverter.PdfLineDashParameters;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -183,7 +182,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         return false;
     }
 
-
     /**
      * Return font-size of the current element
      *
@@ -227,7 +225,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         transform = AffineTransform.getTranslateInstance(viewPort.getX(), viewPort.getY());
         return transform;
     }
-
 
     /**
      * Operations to be performed after drawing the element.
@@ -296,50 +293,42 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context the svg draw context
      */
     void preDraw(SvgDrawContext context) {
-        if (this.attributesAndStyles != null) {
-            PdfCanvas currentCanvas = context.getCurrentCanvas();
+        if (this.attributesAndStyles != null && !partOfClipPath) {
+            FillProperties fillProperties = calculateFillProperties(context);
+            StrokeProperties strokeProperties = calculateStrokeProperties(context);
+            applyFillAndStrokeProperties(fillProperties, strokeProperties, context);
+        }
+    }
 
-            PdfExtGState opacityGraphicsState = new PdfExtGState();
-            if (!partOfClipPath) {
-                // fill
-                {
-                    float generalOpacity = getOpacity();
-                    String fillRawValue = getAttributeOrDefault(SvgConstants.Attributes.FILL, "black");
-                    this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
-
-                    if (doFill && canElementFill()) {
-                        float fillOpacity = getOpacityByAttributeName(
-                                SvgConstants.Attributes.FILL_OPACITY, generalOpacity);
-
-                        Color fillColor = null;
-                        TransparentColor transparentColor = getColorFromAttributeValue(
-                                context, fillRawValue, 0, fillOpacity);
-                        if (transparentColor != null) {
-                            fillColor = transparentColor.getColor();
-                            fillOpacity = transparentColor.getOpacity();
-                        }
-
-                        if (!CssUtils.compareFloats(fillOpacity, 1f)) {
-                            opacityGraphicsState.setFillOpacity(fillOpacity);
-                        }
-
-                        // set default if no color has been parsed
-                        if (fillColor == null) {
-                            fillColor = ColorConstants.BLACK;
-                        }
-                        currentCanvas.setFillColor(fillColor);
-                    }
-                }
-
-                applyStrokeProperties(context, currentCanvas, opacityGraphicsState);
-
-                // opacity
-                {
-                    if (!opacityGraphicsState.getPdfObject().isEmpty()) {
-                        currentCanvas.setExtGState(opacityGraphicsState);
-                    }
-                }
+    void applyFillAndStrokeProperties(FillProperties fillProperties, StrokeProperties strokeProperties,
+            SvgDrawContext context) {
+        PdfExtGState opacityGraphicsState = new PdfExtGState();
+        PdfCanvas currentCanvas = context.getCurrentCanvas();
+        if (fillProperties != null) {
+            currentCanvas.setFillColor(fillProperties.getColor());
+            if (!CssUtils.compareFloats(fillProperties.getOpacity(), 1f)) {
+                opacityGraphicsState.setFillOpacity(fillProperties.getOpacity());
             }
+        }
+
+        if (strokeProperties != null) {
+            if (strokeProperties.getLineDashParameters() != null) {
+                SvgStrokeParameterConverter.PdfLineDashParameters lineDashParameters = strokeProperties.getLineDashParameters();
+                currentCanvas.setLineDash(lineDashParameters.getDashArray(), lineDashParameters.getDashPhase());
+            }
+            // As default value for stroke is 'none' we should not set it in case value obtaining fails
+            if (strokeProperties.getColor() != null) {
+                currentCanvas.setStrokeColor(strokeProperties.getColor());
+            }
+            currentCanvas.setLineWidth(strokeProperties.getWidth());
+
+            if (!CssUtils.compareFloats(strokeProperties.getOpacity(), 1f)) {
+                opacityGraphicsState.setStrokeOpacity(strokeProperties.getOpacity());
+            }
+        }
+
+        if (!opacityGraphicsState.getPdfObject().isEmpty()) {
+            currentCanvas.setExtGState(opacityGraphicsState);
         }
     }
 
@@ -443,10 +432,32 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         return result;
     }
 
-    private void applyStrokeProperties(SvgDrawContext context, PdfCanvas currentCanvas,
-            PdfExtGState opacityGraphicsState) {
-        String strokeRawValue = getAttributeOrDefault(SvgConstants.Attributes.STROKE,
-                SvgConstants.Values.NONE);
+    private FillProperties calculateFillProperties(SvgDrawContext context) {
+        float generalOpacity = getOpacity();
+        String fillRawValue = getAttributeOrDefault(Attributes.FILL, "black");
+        this.doFill = !SvgConstants.Values.NONE.equalsIgnoreCase(fillRawValue);
+
+        if (doFill && canElementFill()) {
+            float fillOpacity = getOpacityByAttributeName(Attributes.FILL_OPACITY, generalOpacity);
+            Color fillColor = null;
+
+            TransparentColor transparentColor = getColorFromAttributeValue(context, fillRawValue, 0, fillOpacity);
+            if (transparentColor != null) {
+                fillColor = transparentColor.getColor();
+                fillOpacity = transparentColor.getOpacity();
+            }
+
+            // set default if no color has been parsed
+            if (fillColor == null) {
+                fillColor = ColorConstants.BLACK;
+            }
+            return new FillProperties(fillOpacity, fillColor);
+        }
+        return null;
+    }
+
+    private StrokeProperties calculateStrokeProperties(SvgDrawContext context) {
+        String strokeRawValue = getAttributeOrDefault(SvgConstants.Attributes.STROKE, SvgConstants.Values.NONE);
         if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
             String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
 
@@ -458,8 +469,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             }
 
             float generalOpacity = getOpacity();
-            float strokeOpacity = getOpacityByAttributeName(SvgConstants.Attributes.STROKE_OPACITY,
-                    generalOpacity);
+            float strokeOpacity = getOpacityByAttributeName(SvgConstants.Attributes.STROKE_OPACITY, generalOpacity);
 
             Color strokeColor = null;
             TransparentColor transparentColor = getColorFromAttributeValue(
@@ -469,28 +479,64 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 strokeOpacity = transparentColor.getOpacity();
             }
 
-            if (!CssUtils.compareFloats(strokeOpacity, 1f)) {
-                opacityGraphicsState.setStrokeOpacity(strokeOpacity);
-            }
-
             String strokeDashArrayRawValue = getAttribute(Attributes.STROKE_DASHARRAY);
             String strokeDashOffsetRawValue = getAttribute(Attributes.STROKE_DASHOFFSET);
             SvgStrokeParameterConverter.PdfLineDashParameters lineDashParameters =
                     SvgStrokeParameterConverter.convertStrokeDashParameters(strokeDashArrayRawValue,
                             strokeDashOffsetRawValue, getCurrentFontSize(), context);
-            if (lineDashParameters != null) {
-                currentCanvas.setLineDash(lineDashParameters.getDashArray(), lineDashParameters.getDashPhase());
-            }
-
-            // as default value for stroke is 'none' we should not set
-            // it in case when value obtaining fails
-            if (strokeColor != null) {
-                currentCanvas.setStrokeColor(strokeColor);
-            }
-
-            currentCanvas.setLineWidth(strokeWidth);
 
             doStroke = true;
+            return new StrokeProperties(strokeColor, strokeWidth, strokeOpacity, lineDashParameters);
+        }
+        return null;
+    }
+
+    static final class FillProperties {
+        final float opacity;
+        final Color color;
+
+        public FillProperties(float opacity, Color color) {
+            this.opacity = opacity;
+            this.color = color;
+        }
+
+        public float getOpacity() {
+            return opacity;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+    }
+
+    static final class StrokeProperties {
+        final Color color;
+        final float width;
+        final float opacity;
+        final SvgStrokeParameterConverter.PdfLineDashParameters lineDashParameters;
+
+        public StrokeProperties(Color color, float width, float opacity,
+                SvgStrokeParameterConverter.PdfLineDashParameters lineDashParameters) {
+            this.color = color;
+            this.width = width;
+            this.opacity = opacity;
+            this.lineDashParameters = lineDashParameters;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public float getWidth() {
+            return width;
+        }
+
+        public float getOpacity() {
+            return opacity;
+        }
+
+        public PdfLineDashParameters getLineDashParameters() {
+            return lineDashParameters;
         }
     }
 }

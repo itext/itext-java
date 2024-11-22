@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108175031+03'00')/ModDate(D:20211108175031+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144830+03'00')/ModDate(D:20241127144830+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -40,67 +40,65 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[-81.82 0 1881.82 900]/Length 618/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-81.82 0 1881.82 900]/Length 564/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -81.82 0 1963.64 900 re
 W
 n
 q
 1 0 0 1 -27 34.13 cm
-0 0.50196 0 rg
 q
 BT
-1 0 0 -1 7.5 150 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 7.5 150 Tm
+0 0.50196 0 rg
 (Text with)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 7.5 150 Tm
-0 Tr
 /F1 12 Tf
+1 0 0 -1 53.83 150 Tm
 1 0.64706 0 rg
-0 Tr
-/F1 12 Tf
-46.33 0 Td
 ( nested-1 tspan)Tj
-0 Tr
-/F1 12 Tf
+ET
+Q
+q
+BT
+/F2 12 Tf
 1 0 0 -1 22.5 37.5 Tm
 1 0 0 rg
-0 Tr
-/F2 12 Tf
-0 0 Td
 (nested-2 tspan)Tj
-0 Tr
+ET
+Q
+q
+BT
 /F2 12 Tf
+1 0 0 -1 73.67 52.5 Tm
 0 0 1 rg
-0 Tr
-/F2 12 Tf
-51.17 -15 Td
 (nested-3 tspan)Tj
-1 0 0 rg
-0 Tr
+ET
+Q
+q
+BT
 /F2 12 Tf
-73.67 0 Td
+1 0 0 -1 147.34 52.5 Tm
+1 0 0 rg
 ( nested-2 after)Tj
+ET
+Q
+q
+BT
+/F1 12 Tf
+1 0 0 -1 220.64 52.5 Tm
 1 0.64706 0 rg
-/F1 12 Tf
-0 Tr
-/F1 12 Tf
-73.31 0 Td
 ( nested-1 afters)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 7.5 150 Tm
-0 Tr
 /F1 12 Tf
-1 0 0 -1 22.5 37.5 Tm
-271.45 -15 Td
+1 0 0 -1 293.95 52.5 Tm
+0 0.50196 0 rg
 ( inside)Tj
 ET
 Q
@@ -112,17 +110,17 @@ xref
 0 10
 0000000000 65535 f 
 0000000223 00000 n 
-0000000618 00000 n 
+0000000619 00000 n 
 0000000268 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000439 00000 n 
-0000000529 00000 n 
-0000000669 00000 n 
-0000000908 00000 n 
+0000000440 00000 n 
+0000000530 00000 n 
+0000000670 00000 n 
+0000000909 00000 n 
 trailer
-<</ID [<ac7612a8c534a4eb333dc2244a7c78f4><ac7612a8c534a4eb333dc2244a7c78f4>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<c180d864e9c580da83e1015e5398d94a95b1a48dd339b4a455aae253774c6b7b1f9d078478e911bd6675dde3bcdfaa123750a61996dc850fde70318ae105fd13><c180d864e9c580da83e1015e5398d94a95b1a48dd339b4a455aae253774c6b7b1f9d078478e911bd6675dde3bcdfaa123750a61996dc850fde70318ae105fd13>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-1668
+1615
 %%EOF

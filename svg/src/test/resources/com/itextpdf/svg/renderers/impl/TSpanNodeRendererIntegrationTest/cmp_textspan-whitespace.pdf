@@ -11,11 +11,11 @@ endobj
 4 0 obj
 <</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
 endobj
-3 0 obj
-<</CreationDate(D:20240812134928+03'00')/ModDate(D:20240812134928+03'00')/Producer(iText® Core 9.0.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
-endobj
 1 0 obj
 <</Pages 2 0 R/Type/Catalog>>
+endobj
+3 0 obj
+<</CreationDate(D:20241127144828+03'00')/ModDate(D:20241127144828+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 75]/Length 884/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 75]/Length 695/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 75 re
 W
 n
@@ -52,33 +52,25 @@ q
 q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
 (text)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 RG
-0.19844 w
+1 0 0 -1 11.25 0 Tm
 2 Tr
-/F1 7.5 Tf
-11.25 0 Td
+0.19844 w
+1 0 0 RG
 ( tspan text)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 0 0 Tm
-42.08 0 Td
+1 0 0 -1 42.08 0 Tm
 ( after text)Tj
 ET
 Q
@@ -87,33 +79,25 @@ q
 1 0 0 1 0 7.5 cm
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
 (text)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-0 0.50196 0 RG
-0.19844 w
+1 0 0 -1 11.25 0 Tm
 2 Tr
-/F1 7.5 Tf
-11.25 0 Td
+0.19844 w
+0 0.50196 0 RG
 (tspan text)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 0 0 Tm
-40.21 0 Td
+1 0 0 -1 40.21 0 Tm
 ( after text)Tj
 ET
 Q
@@ -122,33 +106,25 @@ q
 1 0 0 1 0 15 cm
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
 (text)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-0 0 1 RG
-0.19844 w
+1 0 0 -1 11.25 0 Tm
 2 Tr
-/F1 7.5 Tf
-11.25 0 Td
+0.19844 w
+0 0 1 RG
 (tspan text)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 7.5 Tf
-1 0 0 -1 0 0 Tm
-40.21 0 Td
+1 0 0 -1 40.21 0 Tm
 (after text)Tj
 ET
 Q
@@ -160,17 +136,17 @@ endobj
 xref
 0 9
 0000000000 65535 f 
-0000000383 00000 n 
-0000000518 00000 n 
 0000000211 00000 n 
+0000000518 00000 n 
+0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
 0000000428 00000 n 
 0000000569 00000 n 
 0000000750 00000 n 
 trailer
-<</ID [<1e22c09c9d9e8da643b39d9a87f4c8d0f4e25281cd9a99b4afae2348947a4e31f81daf43f616ff8ae08c0780b1e61f6cdf919bf23482b42ec2dc89e6ae3509fe><1e22c09c9d9e8da643b39d9a87f4c8d0f4e25281cd9a99b4afae2348947a4e31f81daf43f616ff8ae08c0780b1e61f6cdf919bf23482b42ec2dc89e6ae3509fe>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-9.0.0-SNAPSHOT
+<</ID [<74b030b22621d5340f0bf7806105fff70e4030a680c8d6576db08c860d143dad66026380c93d1a24bd2870818e0664782646c546ab30647ad80bf41b8595dcd2><74b030b22621d5340f0bf7806105fff70e4030a680c8d6576db08c860d143dad66026380c93d1a24bd2870818e0664782646c546ab30647ad80bf41b8595dcd2>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-1757
+1568
 %%EOF

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108180038+03'00')/ModDate(D:20211108180038+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144728+03'00')/ModDate(D:20241127144728+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 525 300]/Length 240/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 525 300]/Length 228/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 525 300 re
 W
 n
@@ -53,13 +53,11 @@ q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 7.5 75 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 7.5 75 Tm
+0 0 0 rg
 (The test passes when the gradient starts at character "m" of the text)Tj
 ET
 Q
@@ -68,20 +66,18 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 525 300]/Length 113/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 525 300]/Length 101/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 525 300 re
 W
 n
 q
+q
+BT
+/F1 37.5 Tf
+1 0 0 -1 7.5 52.5 Tm
 /Pattern cs
 
 /P1 scn
-q
-BT
-1 0 0 -1 7.5 52.5 Tm
-0 Tr
-/F1 37.5 Tf
-0 0 Td
 (some text)Tj
 ET
 Q
@@ -114,24 +110,24 @@ xref
 0 17
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
-0000001137 00000 n 
-0000001396 00000 n 
-0000001459 00000 n 
-0000001572 00000 n 
-0000001705 00000 n 
-0000001777 00000 n 
-0000001855 00000 n 
-0000001933 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
+0000001126 00000 n 
+0000001373 00000 n 
+0000001436 00000 n 
+0000001549 00000 n 
+0000001682 00000 n 
+0000001754 00000 n 
+0000001832 00000 n 
+0000001910 00000 n 
 trailer
-<</ID [<6826fb3bcd09f18d9566d2753e84a9b5><6826fb3bcd09f18d9566d2753e84a9b5>]/Info 3 0 R/Root 1 0 R/Size 17>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<f43431e9471d54d1331c8c394f53d8bfdb3ee71947e2ab219c7dd8a31d28821f80bbe384c2875354e625dafdb42d002132f0b5852ad7a7f62c1f27b155d9b8eb><f43431e9471d54d1331c8c394f53d8bfdb3ee71947e2ab219c7dd8a31d28821f80bbe384c2875354e625dafdb42d002132f0b5852ad7a7f62c1f27b155d9b8eb>]/Info 3 0 R/Root 1 0 R/Size 17>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-2005
+1982
 %%EOF

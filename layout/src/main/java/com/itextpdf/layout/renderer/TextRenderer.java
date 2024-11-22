@@ -900,12 +900,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             beginElementOpacityApplying(drawContext);
             canvas.saveState().beginText().setFontAndSize(font, fontSize.getValue());
 
+            float verticalScale = (float) this.getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
             if (skew != null && skew.length == 2) {
-                canvas.setTextMatrix(1, skew[0], skew[1], 1, leftBBoxX, getYLine());
+                canvas.setTextMatrix(1, skew[0], skew[1], verticalScale, leftBBoxX, getYLine());
             } else if (italicSimulation) {
-                canvas.setTextMatrix(1, 0, ITALIC_ANGLE, 1, leftBBoxX, getYLine());
-            } else {
+                canvas.setTextMatrix(1, 0, ITALIC_ANGLE, verticalScale, leftBBoxX, getYLine());
+            } else if (Math.abs(verticalScale - 1) < EPS) {
                 canvas.moveText(leftBBoxX, getYLine());
+            } else {
+                canvas.setTextMatrix(1, 0, 0, verticalScale, leftBBoxX, getYLine());
             }
 
             if (textRenderingMode != PdfCanvasConstants.TextRenderingMode.FILL) {

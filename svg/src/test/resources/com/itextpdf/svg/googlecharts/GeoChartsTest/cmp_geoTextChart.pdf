@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174712+03'00')/ModDate(D:20211108174712+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144736+03'00')/ModDate(D:20241127144736+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675.75 375.75]/Length 181337/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675.75 375.75]/Length 181216/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675.75 375.75 re
 W
 n
@@ -14158,13 +14158,11 @@ q
 Q
 q
 q
-0.06275 0.58824 0.09412 rg
 q
 BT
-1 0 0 -1 509.31 142.64 Tm
-0 Tr
 /F1 9 Tf
--12 0 Td
+1 0 0 -1 497.3 142.64 Tm
+0.06275 0.58824 0.09412 rg
 (Russia)Tj
 ET
 Q
@@ -14172,13 +14170,11 @@ Q
 Q
 q
 q
-0.50196 0.7451 0.47843 rg
 q
 BT
-1 0 0 -1 247.55 282.66 Tm
-0 Tr
 /F1 6.75 Tf
--20.34 0 Td
+1 0 0 -1 227.21 282.66 Tm
+0.50196 0.7451 0.47843 rg
 (South America)Tj
 ET
 Q
@@ -14186,13 +14182,11 @@ Q
 Q
 q
 q
-0.50196 0.7451 0.47843 rg
 q
 BT
-1 0 0 -1 341.48 184.26 Tm
-0 Tr
 /F1 6.75 Tf
--9.18 0 Td
+1 0 0 -1 332.3 184.26 Tm
+0.50196 0.7451 0.47843 rg
 (France)Tj
 ET
 Q
@@ -14200,13 +14194,11 @@ Q
 Q
 q
 q
-0.50196 0.7451 0.47843 rg
 q
 BT
-1 0 0 -1 555.63 310.57 Tm
-0 Tr
 /F1 6.75 Tf
--12.37 0 Td
+1 0 0 -1 543.25 310.57 Tm
+0.50196 0.7451 0.47843 rg
 (Australia)Tj
 ET
 Q
@@ -14214,13 +14206,11 @@ Q
 Q
 q
 q
-0.93725 0.90196 0.86275 rg
 q
 BT
-1 0 0 -1 164.77 157.11 Tm
-0 Tr
 /F1 2.25 Tf
--3.37 0 Td
+1 0 0 -1 161.4 157.11 Tm
+0.93725 0.90196 0.86275 rg
 (Canada)Tj
 ET
 Q
@@ -14236,40 +14226,36 @@ f
 Q
 q
 q
-1 1 1 RG
-2.25 w
 q
 BT
+/F1 10.5 Tf
 1 0 0 -1 5.25 363.67 Tm
 2 Tr
-/F1 10.5 Tf
-0 0 Td
-(500)Tj
-ET
-Q
-Q
-q
-q
-BT
-1 0 0 -1 5.25 363.67 Tm
-0 Tr
-/F1 10.5 Tf
-0 0 Td
-(500)Tj
-ET
-Q
-Q
-Q
-q
-q
-1 1 1 RG
 2.25 w
+1 1 1 RG
+(500)Tj
+ET
+Q
+Q
+q
 q
 BT
+/F1 10.5 Tf
+1 0 0 -1 5.25 363.67 Tm
+(500)Tj
+ET
+Q
+Q
+Q
+q
+q
+q
+BT
+/F1 10.5 Tf
 1 0 0 -1 212.5 363.67 Tm
 2 Tr
-/F1 10.5 Tf
-0 0 Td
+2.25 w
+1 1 1 RG
 (700)Tj
 ET
 Q
@@ -14277,10 +14263,8 @@ Q
 q
 q
 BT
-1 0 0 -1 212.5 363.67 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 212.5 363.67 Tm
 (700)Tj
 ET
 Q
@@ -14299,16 +14283,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000760 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000761 00000 n 
 trailer
-<</ID [<8e61d8e2c561371aa7a0465f859c61be><8e61d8e2c561371aa7a0465f859c61be>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<2f22ab2d8ac10543857837edd59c32dde3abb095605a1338ba50a385dc1941d57f83c789df574af74bdb46b2f07ec78bf3052ecce4dd0d42f7fb1b5bfa46e2db><2f22ab2d8ac10543857837edd59c32dde3abb095605a1338ba50a385dc1941d57f83c789df574af74bdb46b2f07ec78bf3052ecce4dd0d42f7fb1b5bfa46e2db>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-182230
+182110
 %%EOF

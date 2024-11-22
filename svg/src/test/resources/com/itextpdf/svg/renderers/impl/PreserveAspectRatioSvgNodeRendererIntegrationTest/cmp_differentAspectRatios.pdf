@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108175019+03'00')/ModDate(D:20211108175019+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144821+03'00')/ModDate(D:20241127144821+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 337.5 225]/Length 4006/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm2 13 0 R/Fm3 14 0 R/Fm4 15 0 R/Fm5 16 0 R/Fm6 17 0 R/Fm7 18 0 R/Fm8 19 0 R/Fm9 20 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 337.5 225]/Length 3778/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm2 13 0 R/Fm3 14 0 R/Fm4 15 0 R/Fm5 16 0 R/Fm6 17 0 R/Fm7 18 0 R/Fm8 19 0 R/Fm9 20 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 337.5 225 re
 W
 n
@@ -47,13 +47,11 @@ q
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 7.5 22.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 7.5 22.5 Tm
+0 0 0 rg
 (SVG to fit)Tj
 ET
 Q
@@ -108,13 +106,11 @@ Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 7.5 82.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 7.5 82.5 Tm
+0 0 0 rg
 (Viewport 1)Tj
 ET
 Q
@@ -131,13 +127,11 @@ S
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 7.5 135 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 7.5 135 Tm
+0 0 0 rg
 (Viewport 2)Tj
 ET
 Q
@@ -159,10 +153,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -22.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -22.5 Tm
 (--------------- meet ---------------)Tj
 ET
 Q
@@ -171,10 +163,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (xMin*)Tj
 ET
 Q
@@ -199,10 +189,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (xMid*)Tj
 ET
 Q
@@ -228,10 +216,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (xMax*)Tj
 ET
 Q
@@ -259,10 +245,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -22.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -22.5 Tm
 (---------- meet ----------)Tj
 ET
 Q
@@ -271,10 +255,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (*YMin)Tj
 ET
 Q
@@ -298,10 +280,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (*YMid)Tj
 ET
 Q
@@ -326,10 +306,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (*YMax)Tj
 ET
 Q
@@ -356,10 +334,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -22.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -22.5 Tm
 (---------- slice ----------)Tj
 ET
 Q
@@ -368,10 +344,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (xMin*)Tj
 ET
 Q
@@ -396,10 +370,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (xMid*)Tj
 ET
 Q
@@ -425,10 +397,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (xMax*)Tj
 ET
 Q
@@ -456,10 +426,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -22.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -22.5 Tm
 (--------------- slice ---------------)Tj
 ET
 Q
@@ -468,10 +436,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (*YMin)Tj
 ET
 Q
@@ -496,10 +462,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (*YMid)Tj
 ET
 Q
@@ -525,10 +489,8 @@ q
 q
 q
 BT
-1 0 0 -1 0 -7.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 -7.5 Tm
 (*YMax)Tj
 ET
 Q
@@ -1205,28 +1167,28 @@ xref
 0 21
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000753 00000 n 
-0000005032 00000 n 
-0000005807 00000 n 
-0000006591 00000 n 
-0000007382 00000 n 
-0000008170 00000 n 
-0000008959 00000 n 
-0000009745 00000 n 
-0000010525 00000 n 
-0000011313 00000 n 
-0000012097 00000 n 
-0000012873 00000 n 
-0000013658 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000754 00000 n 
+0000004805 00000 n 
+0000005580 00000 n 
+0000006364 00000 n 
+0000007155 00000 n 
+0000007943 00000 n 
+0000008732 00000 n 
+0000009518 00000 n 
+0000010298 00000 n 
+0000011086 00000 n 
+0000011870 00000 n 
+0000012646 00000 n 
+0000013431 00000 n 
 trailer
-<</ID [<122d84af7485cf3441a93353f349106c><122d84af7485cf3441a93353f349106c>]/Info 3 0 R/Root 1 0 R/Size 21>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<4ddef62d97708b2d99fc707eae14fd9e2c79a7d949e865f5ef22f916e9b1108ca7a74c606383494e3e76c6490f2d3267e69d578bf573022d50426ab871511243><4ddef62d97708b2d99fc707eae14fd9e2c79a7d949e865f5ef22f916e9b1108ca7a74c606383494e3e76c6490f2d3267e69d578bf573022d50426ab871511243>]/Info 3 0 R/Root 1 0 R/Size 21>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-14440
+14213
 %%EOF

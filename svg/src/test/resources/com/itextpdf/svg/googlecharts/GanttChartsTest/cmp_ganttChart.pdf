@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174707+03'00')/ModDate(D:20211108174707+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144736+03'00')/ModDate(D:20241127144736+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -38,7 +38,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 824.25 206.25]/Length 7045/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 824.25 206.25]/Length 6775/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 824.25 206.25 re
 W
 n
@@ -125,10 +125,8 @@ Q
 q
 q
 BT
-1 0 0 -1 108.42 173.4 Tm
-0 Tr
 /F1 9.75 Tf
-0 0 Td
+1 0 0 -1 108.42 173.4 Tm
 (Thu)Tj
 ET
 Q
@@ -136,10 +134,8 @@ Q
 q
 q
 BT
-1 0 0 -1 108.42 184.65 Tm
-0 Tr
 /F1 9.75 Tf
-0 0 Td
+1 0 0 -1 108.42 184.65 Tm
 (1/1)Tj
 ET
 Q
@@ -147,10 +143,8 @@ Q
 q
 q
 BT
-1 0 0 -1 187.96 173.4 Tm
-0 Tr
 /F2 9.75 Tf
--5.68 0 Td
+1 0 0 -1 182.28 173.4 Tm
 (Fri)Tj
 ET
 Q
@@ -158,10 +152,8 @@ Q
 q
 q
 BT
-1 0 0 -1 267.49 173.4 Tm
-0 Tr
 /F2 9.75 Tf
--7.31 0 Td
+1 0 0 -1 260.18 173.4 Tm
 (Sat)Tj
 ET
 Q
@@ -169,10 +161,8 @@ Q
 q
 q
 BT
-1 0 0 -1 347.03 173.4 Tm
-0 Tr
 /F1 9.75 Tf
--9.2 0 Td
+1 0 0 -1 337.83 173.4 Tm
 (Sun)Tj
 ET
 Q
@@ -180,10 +170,8 @@ Q
 q
 q
 BT
-1 0 0 -1 347.03 184.65 Tm
-0 Tr
 /F1 9.75 Tf
--6.77 0 Td
+1 0 0 -1 340.26 184.65 Tm
 (1/4)Tj
 ET
 Q
@@ -191,10 +179,8 @@ Q
 q
 q
 BT
-1 0 0 -1 426.57 173.4 Tm
-0 Tr
 /F2 9.75 Tf
--9.48 0 Td
+1 0 0 -1 417.09 173.4 Tm
 (Mon)Tj
 ET
 Q
@@ -202,10 +188,8 @@ Q
 q
 q
 BT
-1 0 0 -1 506.1 173.4 Tm
-0 Tr
 /F2 9.75 Tf
--8.21 0 Td
+1 0 0 -1 497.89 173.4 Tm
 (Tue)Tj
 ET
 Q
@@ -213,10 +197,8 @@ Q
 q
 q
 BT
-1 0 0 -1 585.64 173.4 Tm
-0 Tr
 /F2 9.75 Tf
--9.93 0 Td
+1 0 0 -1 575.71 173.4 Tm
 (Wed)Tj
 ET
 Q
@@ -224,10 +206,8 @@ Q
 q
 q
 BT
-1 0 0 -1 665.18 173.4 Tm
-0 Tr
 /F2 9.75 Tf
--8.4 0 Td
+1 0 0 -1 656.78 173.4 Tm
 (Thu)Tj
 ET
 Q
@@ -235,10 +215,8 @@ Q
 q
 q
 BT
-1 0 0 -1 744.71 173.4 Tm
-0 Tr
 /F2 9.75 Tf
--5.68 0 Td
+1 0 0 -1 739.03 173.4 Tm
 (Fri)Tj
 ET
 Q
@@ -246,10 +224,8 @@ Q
 q
 q
 BT
-1 0 0 -1 824.25 173.4 Tm
-0 Tr
 /F2 9.75 Tf
--14.63 0 Td
+1 0 0 -1 809.62 173.4 Tm
 (Sat)Tj
 ET
 Q
@@ -557,61 +533,51 @@ Q
 q
 0 0 0 rg
 q
-0.36863 0.59216 0.96471 rg
 q
 BT
-1 0 0 -1 96.42 19.36 Tm
-0 Tr
 /F2 10.5 Tf
--53.37 0 Td
+1 0 0 -1 43.05 19.36 Tm
+0.36863 0.59216 0.96471 rg
 (Find sources)Tj
 ET
 Q
 Q
 q
-0.36863 0.59216 0.96471 rg
 q
 BT
-1 0 0 -1 96.42 50.86 Tm
-0 Tr
 /F2 10.5 Tf
--83.68 0 Td
+1 0 0 -1 12.74 50.86 Tm
+0.36863 0.59216 0.96471 rg
 (Create bibliography)Tj
 ET
 Q
 Q
 q
-0.36863 0.59216 0.96471 rg
 q
 BT
-1 0 0 -1 96.42 82.36 Tm
-0 Tr
 /F2 10.5 Tf
--57.44 0 Td
+1 0 0 -1 38.98 82.36 Tm
+0.36863 0.59216 0.96471 rg
 (Outline paper)Tj
 ET
 Q
 Q
 q
-0.36863 0.59216 0.96471 rg
 q
 BT
-1 0 0 -1 96.42 113.86 Tm
-0 Tr
 /F2 10.5 Tf
--49.42 0 Td
+1 0 0 -1 47 113.86 Tm
+0.36863 0.59216 0.96471 rg
 (Write paper)Tj
 ET
 Q
 Q
 q
-0.36863 0.59216 0.96471 rg
 q
 BT
-1 0 0 -1 96.42 145.36 Tm
-0 Tr
 /F2 10.5 Tf
--59.48 0 Td
+1 0 0 -1 36.94 145.36 Tm
+0.36863 0.59216 0.96471 rg
 (Hand in paper)Tj
 ET
 Q
@@ -627,17 +593,17 @@ xref
 0 10
 0000000000 65535 f 
 0000000211 00000 n 
-0000000606 00000 n 
+0000000607 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000516 00000 n 
-0000000657 00000 n 
-0000000849 00000 n 
+0000000428 00000 n 
+0000000517 00000 n 
+0000000658 00000 n 
+0000000850 00000 n 
 trailer
-<</ID [<2bfcb19f343fa77290bec30cfdf803ec><2bfcb19f343fa77290bec30cfdf803ec>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<cc3ae52b654dd453846d51291ce983d7a326185190acbc2f0dbe357b07c4c86d8bcd2e39d45710b3668c05aa23546954641604f82e20c017d320b6b6947f21a1><cc3ae52b654dd453846d51291ce983d7a326185190acbc2f0dbe357b07c4c86d8bcd2e39d45710b3668c05aa23546954641604f82e20c017d320b6b6947f21a1>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-8034
+7765
 %%EOF

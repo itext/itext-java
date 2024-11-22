@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174946+03'00')/ModDate(D:20211108174946+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144810+03'00')/ModDate(D:20241127144810+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 450]/Length 856/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 450]/Length 844/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 450 re
 W
 n
@@ -83,13 +83,11 @@ Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 187.5 292.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 187.5 292.5 Tm
+0 0 0 rg
 (path with arc segments)Tj
 ET
 Q
@@ -135,18 +133,18 @@ xref
 0 11
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
-0000001764 00000 n 
-0000001942 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
+0000001753 00000 n 
+0000001931 00000 n 
 trailer
-<</ID [<7d0905d0eaedd3510b0aafc1df2934bd><7d0905d0eaedd3510b0aafc1df2934bd>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<fb0414d60070392e3f9d2961704bb849c90dcd918062e98a9c626bc08ce071f103efbeb687c290f62aa7b02cf7010e22cbfd378b5796e991f9c855a764020ab9><fb0414d60070392e3f9d2961704bb849c90dcd918062e98a9c626bc08ce071f103efbeb687c290f62aa7b02cf7010e22cbfd378b5796e991f9c855a764020ab9>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-2116
+2105
 %%EOF

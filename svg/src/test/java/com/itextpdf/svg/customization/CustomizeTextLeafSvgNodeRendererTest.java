@@ -39,6 +39,7 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
+import com.itextpdf.svg.utils.SvgTextProperties;
 import com.itextpdf.test.ITextTest;
 
 import java.io.IOException;
@@ -98,12 +99,13 @@ public class CustomizeTextLeafSvgNodeRendererTest extends SvgIntegrationTest {
         @Override
         protected void doDraw(SvgDrawContext context) {
             if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
-                PdfCanvas currentCanvas = context.getCurrentCanvas();
-                currentCanvas.setFillColor(ColorConstants.RED);
-                currentCanvas.moveText(context.getTextMove()[0], context.getTextMove()[1]);
                 String initialText = this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT);
                 String amendedText = "_" + initialText + "_";
-                currentCanvas.showText(amendedText);
+                SvgTextProperties properties = new SvgTextProperties(context.getSvgTextProperties());
+                context.getSvgTextProperties().setFillColor(ColorConstants.RED);
+                super.doDraw(context);
+                getText().setText(amendedText);
+                context.setSvgTextProperties(properties);
             }
         }
     }

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108180041+03'00')/ModDate(D:20211108180041+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241127144731+03'00')/ModDate(D:20241127144731+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,97 +35,83 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 375]/Length 968/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 375]/Length 884/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 375 re
 W
 n
 q
 1 0 0 1 15 15 cm
-0.06667 0.06667 0.06667 rg
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
+0.06667 0.06667 0.06667 rg
 (Test for google font Roboto here)Tj
 ET
 Q
 Q
 q
 1 0 0 1 22.5 30 cm
-0.06667 0.06667 0.06667 rg
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 18 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
+0.06667 0.06667 0.06667 rg
 (Test for google font Tangerine here)Tj
 ET
 Q
 Q
 q
 1 0 0 1 30 60 cm
-0.06667 0.06667 0.06667 rg
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
+0.06667 0.06667 0.06667 rg
 (Test for google font Open Sans here)Tj
 ET
 Q
 Q
 q
 1 0 0 1 15 75 cm
-0.06667 0.06667 0.06667 rg
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
+0.06667 0.06667 0.06667 rg
 (Test for google font Eater here)Tj
 ET
 Q
 Q
 q
 1 0 0 1 15 90 cm
-0.06667 0.06667 0.06667 rg
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
+0.06667 0.06667 0.06667 rg
 (Test for google font Lobster here)Tj
 ET
 Q
 Q
 q
 1 0 0 1 15 105 cm
-0.06667 0.06667 0.06667 rg
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
+0.06667 0.06667 0.06667 rg
 (Test for google font Pacifico here)Tj
 ET
 Q
 Q
 q
 1 0 0 1 15 120 cm
-0.06667 0.06667 0.06667 rg
 q
 BT
-1 0 0 -1 0 0 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 0 Tm
+0.06667 0.06667 0.06667 rg
 (Test for google font Sacramento here)Tj
 ET
 Q
@@ -137,16 +123,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
 trailer
-<</ID [<e311354399e05499dad0ff4d85ba0f86><e311354399e05499dad0ff4d85ba0f86>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<2a81135c6e16ad9315aa9094816d9edc998ab2bc1969c9c850f717980765de8b6c91433e23b11751cb35feff2b3761150cd229e53c08c142e877ea1a54402411><2a81135c6e16ad9315aa9094816d9edc998ab2bc1969c9c850f717980765de8b6c91433e23b11751cb35feff2b3761150cd229e53c08c142e877ea1a54402411>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-1843
+1760
 %%EOF

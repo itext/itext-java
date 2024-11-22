@@ -33,6 +33,7 @@ import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.utils.SvgTextProperties;
 
 import java.util.Deque;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ public class SvgDrawContext {
     private final Stack<String> patternIds = new Stack<>();
     private final ResourceResolver resourceResolver;
     private final FontProvider fontProvider;
+    private SvgTextProperties textProperties = new SvgTextProperties();
     private FontSet tempFonts;
     private SvgCssContext cssContext;
 
@@ -379,11 +381,31 @@ public class SvgDrawContext {
         this.patternIds.pop();
     }
 
+    @Deprecated
     public void setPreviousElementTextMove(float[] previousElementTextMove) {
         this.previousElementTextMove = previousElementTextMove;
     }
 
+    @Deprecated
     public float[] getPreviousElementTextMove() {
         return previousElementTextMove;
+    }
+
+    /**
+     * Retrieves {@link SvgTextProperties} for text SVG elements.
+     *
+     * @return {@link SvgTextProperties} text properties
+     */
+    public SvgTextProperties getSvgTextProperties() {
+        return textProperties;
+    }
+
+    /**
+     * Sets {@link SvgTextProperties} for textSVG elements.
+     *
+     * @param textProperties {@link SvgTextProperties} to set
+     */
+    public void setSvgTextProperties(SvgTextProperties textProperties) {
+        this.textProperties = textProperties;
     }
 }
