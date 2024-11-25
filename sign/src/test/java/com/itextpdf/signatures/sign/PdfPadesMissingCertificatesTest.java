@@ -66,43 +66,82 @@ import java.util.Map;
 public class PdfPadesMissingCertificatesTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesMissingCertificatesTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesMissingCertificatesTest/";
-    private static final char[] password = "testpassphrase".toCharArray();
+    private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesMissingCertificatesTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/PdfPadesMissingCertificatesTest/";
+    private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @Test
+    public void certificateFromAiaIsIncorrectTest() throws Exception {
+        String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";
+        String rootCertFileName = CERTS_SRC + "root.pem";
+        String intermediateCertFileName = CERTS_SRC + "intermediate.pem";
+        String signCertFileName = CERTS_SRC + "sign.pem";
+
+        X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
+
+        SignerProperties signerProperties = createSignerProperties();
+
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(intermediateCertFileName)[0];
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfPadesSigner padesSigner =
+                new PdfPadesSigner(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)), outputStream);
+        IssuingCertificateRetriever issuingCertificateRetriever = new IssuingCertificateRetriever() {
+            @Override
+            protected InputStream getIssuerCertByURI(String uri) throws IOException {
+                return FileUtil.getInputStreamForFile(rootCertFileName);
+            }
+        };
+        issuingCertificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        padesSigner.setIssuingCertificateRetriever(issuingCertificateRetriever);
+
+
+        Certificate[] signChain = new Certificate[]{signCert, rootCert};
+        padesSigner.signWithBaselineBProfile(signerProperties, signChain, signPrivateKey);
+
+        outputStream.close();
+
+        TestSignUtils.basicCheckSignedDoc(new ByteArrayInputStream(outputStream.toByteArray()), "Signature1");
+
+        List<X509Certificate> certs = Arrays.asList(rootCert, intermediateCert, signCert);
+        TestSignUtils.signedDocumentContainsCerts(new ByteArrayInputStream(outputStream.toByteArray()), certs, "Signature1");
     }
 
     @Test
     public void retrieveMissingCertificatesTest() throws GeneralSecurityException, IOException,
             AbstractOperatorCreationException, AbstractPKCSException, AbstractOCSPException {
-        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
-        String rootCertFileName = certsSrc + "root.pem";
-        String intermediateCertFileName = certsSrc + "intermediate.pem";
-        String signCertFileName = certsSrc + "sign.pem";
-        String rootCrlFileName = certsSrc + "crlRoot.pem";
-        String intermediateCrlFileName = certsSrc + "crlIntermediate.pem";
-        String crlCertFileName = certsSrc + "crlCert.pem";
-        String rootOcspFileName = certsSrc + "ocspRoot.pem";
-        String intermediateOscpFileName = certsSrc + "ocspIntermediate.pem";
-        String ocspCertFileName = certsSrc + "ocspCert.pem";
-        String rootTsaFileName = certsSrc + "tsaRoot.pem";
-        String intermediateTsaFileName = certsSrc + "tsaIntermediate.pem";
-        String tsaCertFileName = certsSrc + "tsaCert.pem";
-        String crlSignedByCA = certsSrc + "crlSignedByCA.crl";
-        String crlSignedByCrlCert = certsSrc + "crlSignedByCrlCert.crl";
+        String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";
+        String rootCertFileName = CERTS_SRC + "root.pem";
+        String intermediateCertFileName = CERTS_SRC + "intermediate.pem";
+        String signCertFileName = CERTS_SRC + "sign.pem";
+        String rootCrlFileName = CERTS_SRC + "crlRoot.pem";
+        String intermediateCrlFileName = CERTS_SRC + "crlIntermediate.pem";
+        String crlCertFileName = CERTS_SRC + "crlCert.pem";
+        String rootOcspFileName = CERTS_SRC + "ocspRoot.pem";
+        String intermediateOscpFileName = CERTS_SRC + "ocspIntermediate.pem";
+        String ocspCertFileName = CERTS_SRC + "ocspCert.pem";
+        String rootTsaFileName = CERTS_SRC + "tsaRoot.pem";
+        String intermediateTsaFileName = CERTS_SRC + "tsaIntermediate.pem";
+        String tsaCertFileName = CERTS_SRC + "tsaCert.pem";
+        String crlSignedByCA = CERTS_SRC + "crlSignedByCA.crl";
+        String crlSignedByCrlCert = CERTS_SRC + "crlSignedByCrlCert.crl";
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
-        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
         X509Certificate crlCert = (X509Certificate) PemFileHelper.readFirstChain(crlCertFileName)[0];
         X509Certificate ocspCert = (X509Certificate) PemFileHelper.readFirstChain(ocspCertFileName)[0];
-        PrivateKey ocspPrivateKey = PemFileHelper.readFirstKey(ocspCertFileName, password);
+        PrivateKey ocspPrivateKey = PemFileHelper.readFirstKey(ocspCertFileName, PASSWORD);
         X509Certificate tsaCert = (X509Certificate) PemFileHelper.readFirstChain(tsaCertFileName)[0];
-        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, PASSWORD);
 
         SignerProperties signerProperties = createSignerProperties();
         TestTsaClient testTsa = new TestTsaClient(Collections.singletonList(tsaCert), tsaPrivateKey);
@@ -200,20 +239,20 @@ public class PdfPadesMissingCertificatesTest extends ExtendedITextTest {
     @Test
     public void retrieveMissingCertificatesUsingTrustedStoreTest() throws GeneralSecurityException, IOException,
             AbstractOperatorCreationException, AbstractPKCSException, AbstractOCSPException {
-        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
-        String rootCertFileName = sourceFolder + "root.pem";
-        String signCertFileName = sourceFolder + "sign.pem";
-        String rootCrlFileName = sourceFolder + "crlRoot.pem";
-        String crlCertFileName = sourceFolder + "crlCert.pem";
-        String tsaCertFileName = sourceFolder + "tsCert.pem";
-        String crlSignedByCA = sourceFolder + "crlWithRootIssuer.crl";
-        String crlSignedByCrlCert = sourceFolder + "crlWithCrlIssuer.crl";
+        String srcFileName = SOURCE_FOLDER + "helloWorldDoc.pdf";
+        String rootCertFileName = SOURCE_FOLDER + "root.pem";
+        String signCertFileName = SOURCE_FOLDER + "sign.pem";
+        String rootCrlFileName = SOURCE_FOLDER + "crlRoot.pem";
+        String crlCertFileName = SOURCE_FOLDER + "crlCert.pem";
+        String tsaCertFileName = SOURCE_FOLDER + "tsCert.pem";
+        String crlSignedByCA = SOURCE_FOLDER + "crlWithRootIssuer.crl";
+        String crlSignedByCrlCert = SOURCE_FOLDER + "crlWithCrlIssuer.crl";
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
-        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
         X509Certificate crlCert = (X509Certificate) PemFileHelper.readFirstChain(crlCertFileName)[0];
         X509Certificate tsaCert = (X509Certificate) PemFileHelper.readFirstChain(tsaCertFileName)[0];
-        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, PASSWORD);
 
         SignerProperties signerProperties = createSignerProperties();
         TestTsaClient testTsa = new TestTsaClient(Collections.singletonList(tsaCert), tsaPrivateKey);

@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.crypto.OID.X509Extensions;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
@@ -46,6 +47,7 @@ import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResu
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
@@ -168,6 +170,54 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                         .withCertificate(intermediateCert)
                 )
         );
+    }
+
+    @Test
+    public void chainWithAiaTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chainWithAia.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        IssuingCertificateRetriever customRetriever = new IssuingCertificateRetriever() {
+            @Override
+            protected InputStream getIssuerCertByURI(String uri) throws IOException {
+                return FileUtil.getInputStreamForFile(CERTS_SRC + "intermediateCertFromAia.pem");
+            }
+        };
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> customRetriever);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        properties.setRequiredExtensions(CertificateSources.of(CertificateSource.CERT_ISSUER), Collections.<CertificateExtension>emptyList());
+        customRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        ValidationReport report = validator.validateCertificate(baseContext, signingCert,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 21));
+        AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+    }
+
+    @Test
+    public void chainWithAiaWhichPointsToRandomCertTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chainWithAia.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        IssuingCertificateRetriever customRetriever = new IssuingCertificateRetriever() {
+            @Override
+            protected InputStream getIssuerCertByURI(String uri) throws IOException {
+                return FileUtil.getInputStreamForFile(CERTS_SRC + "randomCert.pem");
+            }
+        };
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> customRetriever);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        properties.setRequiredExtensions(CertificateSources.of(CertificateSource.CERT_ISSUER), Collections.<CertificateExtension>emptyList());
+        customRetriever.addKnownCertificates(Collections.<Certificate>singletonList(intermediateCert));
+        customRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        ValidationReport report = validator.validateCertificate(baseContext, signingCert,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 21));
+        AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
     }
 
     @Test
