@@ -51,6 +51,7 @@ import com.itextpdf.styledxmlparser.node.IStylesContainer;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.node.IXmlDeclarationNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
+import com.itextpdf.styledxmlparser.util.FontFamilySplitterUtil;
 import com.itextpdf.styledxmlparser.util.StyleUtil;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
@@ -284,6 +285,12 @@ public class SvgStyleResolver implements ICssResolver {
         }
 
         SvgStyleResolver.resolveFontSizeStyle(styles, context, parentFontSizeStr);
+        // TODO DEVSIX-2534 Process CSS "font-family" property value according to CSS specification rules
+        List<String> fontFamilies = FontFamilySplitterUtil.splitFontFamily(styles.get(CommonCssConstants.FONT_FAMILY));
+        if (fontFamilies != null && !fontFamilies.isEmpty()) {
+            // TODO DEVSIX-8792 SVG: implement styles appliers like in html2pdf
+            styles.put(CommonCssConstants.FONT_FAMILY, fontFamilies.get(0));
+        }
 
         // Set root font size
         final boolean isSvgElement = element instanceof IElementNode
@@ -344,7 +351,7 @@ public class SvgStyleResolver implements ICssResolver {
                             String styleData = node instanceof IDataNode ? ((IDataNode) node).getWholeData() :
                                     ((ITextNode) node).wholeText();
 
-                            CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData);
+                            CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData, resourceResolver.getBaseUri());
                             // TODO (DEVSIX-2263): media query wrap
                             // styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
                             this.css.appendCssStyleSheet(styleSheet);
@@ -439,5 +446,4 @@ public class SvgStyleResolver implements ICssResolver {
         }
         return parsed;
     }
-
 }

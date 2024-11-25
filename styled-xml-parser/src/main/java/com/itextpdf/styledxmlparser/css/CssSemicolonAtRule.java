@@ -28,18 +28,40 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
  * A {@link CssAtRule} implementation.
  */
 public class CssSemicolonAtRule extends CssAtRule {
-
     /** The rule parameters. */
-    private String ruleParams;
+    private final String ruleParams;
 
     /**
      * Creates a new {@link CssSemicolonAtRule} instance.
      *
      * @param ruleDeclaration the rule declaration
+     * @deprecated use {@link #CssSemicolonAtRule(String, String)} constructor instead
      */
+    @Deprecated
+    // After removing the constructor, make CssAtRuleFactory.extractRuleNameFromDeclaration private
     public CssSemicolonAtRule(String ruleDeclaration) {
-        super(CssNestedAtRuleFactory.extractRuleNameFromDeclaration(ruleDeclaration.trim()));
+        super(CssAtRuleFactory.extractRuleNameFromDeclaration(ruleDeclaration.trim()));
         this.ruleParams = ruleDeclaration.trim().substring(ruleName.length()).trim();
+    }
+
+    /**
+     * Creates a new {@link CssSemicolonAtRule} instance.
+     *
+     * @param ruleName the rule name
+     * @param ruleParams the rule params
+     */
+    public CssSemicolonAtRule(String ruleName, String ruleParams) {
+        super(ruleName);
+        this.ruleParams = ruleParams;
+    }
+
+    /**
+     * Gets the rule params.
+     *
+     * @return the rule params
+     */
+    public String getRuleParams() {
+        return ruleParams;
     }
 
     /* (non-Javadoc)

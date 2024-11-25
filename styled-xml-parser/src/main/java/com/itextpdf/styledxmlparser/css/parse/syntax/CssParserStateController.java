@@ -23,21 +23,27 @@
 package com.itextpdf.styledxmlparser.css.parse.syntax;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
+import com.itextpdf.styledxmlparser.css.CssAtRule;
+import com.itextpdf.styledxmlparser.css.CssAtRuleFactory;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
+import com.itextpdf.styledxmlparser.css.CssImportAtRule;
 import com.itextpdf.styledxmlparser.css.CssNestedAtRule;
-import com.itextpdf.styledxmlparser.css.CssNestedAtRuleFactory;
 import com.itextpdf.styledxmlparser.css.CssRuleName;
 import com.itextpdf.styledxmlparser.css.CssRuleSet;
 import com.itextpdf.styledxmlparser.css.CssSemicolonAtRule;
+import com.itextpdf.styledxmlparser.css.CssStatement;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
 import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
+import com.itextpdf.styledxmlparser.css.parse.CssStyleSheetParser;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
-import com.itextpdf.styledxmlparser.resolver.resource.UriResolver;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 
-import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,35 +52,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * State machine that will parse content into a style sheet.
  */
 public final class CssParserStateController {
-
-    /** The current state. */
-    private IParserState currentState;
-
-    /** Indicates if the current rule is supported. */
-    private boolean isCurrentRuleSupported = true;
-
-    /** The previous active state (excluding comments). */
-    private IParserState previousActiveState;
-
-    /** A buffer to store temporary results. */
-    private StringBuilder buffer = new StringBuilder();
-
-    /** The current selector. */
-    private String currentSelector;
-
-    /** The style sheet. */
-    private CssStyleSheet styleSheet;
-
-    /** The nested At-rules. */
-    private Stack<CssNestedAtRule> nestedAtRules;
-
-    /** The stored properties without selector. */
-    private Stack<List<CssDeclaration>> storedPropertiesWithoutSelector;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CssParserStateController.class);
 
     /** Set of the supported rules. */
     private static final Set<String> SUPPORTED_RULES = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
@@ -90,6 +75,38 @@ public final class CssParserStateController {
     private static final Set<String> CONDITIONAL_GROUP_RULES = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
             CssRuleName.MEDIA
     )));
+
+
+    /** The current state. */
+    private IParserState currentState;
+
+    /** Indicates if the current rule is supported. */
+    private boolean isCurrentRuleSupported = true;
+
+    /** The previous active state (excluding comments). */
+    private IParserState previousActiveState;
+
+    /** A buffer to store temporary results. */
+    private final StringBuilder buffer = new StringBuilder();
+
+    /** The current selector. */
+    private String currentSelector;
+
+    /** The style sheet. */
+    private final CssStyleSheet styleSheet;
+
+    /**
+     * The style sheet from import CSS rules. It is used to store styles from import
+     * separately to avoid {@link StyledXmlParserLogMessageConstant#IMPORT_MUST_COME_BEFORE}
+     * on check whether were styles before import or not.
+     */
+    private final CssStyleSheet styleSheetFromImport;
+
+    /** The nested At-rules. */
+    private final Stack<CssNestedAtRule> nestedAtRules;
+
+    /** The stored properties without selector. */
+    private final Stack<List<CssDeclaration>> storedPropertiesWithoutSelector;
 
     /** The comment start state. */
     private final IParserState commentStartState;
@@ -115,12 +132,14 @@ public final class CssParserStateController {
     /** The At-rule block state. */
     private final IParserState atRuleBlockState;
 
-    /** The URI resolver. */
-    private UriResolver uriResolver;
+    /** The resource resolver. */
+    private final ResourceResolver resourceResolver;
 
     /**
      * Creates a new {@link CssParserStateController} instance.
+     * @deprecated use {@link #CssParserStateController(String)} constructor
      */
+    @Deprecated
     public CssParserStateController() {
         this("");
     }
@@ -131,10 +150,13 @@ public final class CssParserStateController {
      * @param baseUrl the base URL
      */
     public CssParserStateController(String baseUrl) {
-        if (baseUrl != null && baseUrl.length() > 0) {
-            this.uriResolver = new UriResolver(baseUrl);
-        }
+        this((baseUrl == null || baseUrl.isEmpty()) ? null : new ResourceResolver(baseUrl, new NoDuplicatesResourceRetriever()));
+    }
+
+    private CssParserStateController(ResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver;
         styleSheet = new CssStyleSheet();
+        styleSheetFromImport = new CssStyleSheet();
         nestedAtRules = new Stack<>();
         storedPropertiesWithoutSelector = new Stack<>();
 
@@ -165,7 +187,10 @@ public final class CssParserStateController {
      * @return the resulting style sheet
      */
     public CssStyleSheet getParsingResult() {
-        return styleSheet;
+        CssStyleSheet parsingResult = new CssStyleSheet();
+        parsingResult.appendCssStyleSheet(styleSheet);
+        parsingResult.appendCssStyleSheet(styleSheetFromImport);
+        return parsingResult;
     }
 
     /**
@@ -338,7 +363,7 @@ public final class CssParserStateController {
      * Push the block preceding At-rule.
      */
     void pushBlockPrecedingAtRule() {
-        nestedAtRules.push(CssNestedAtRuleFactory.createNestedRule(buffer.toString()));
+        nestedAtRules.push(CssAtRuleFactory.createNestedRule(buffer.toString()));
         storedPropertiesWithoutSelector.push(new ArrayList<CssDeclaration>());
         isCurrentRuleSupported = isCurrentRuleSupported();
         buffer.setLength(0);
@@ -373,7 +398,7 @@ public final class CssParserStateController {
             normalizeDeclarationURIs(ruleSet.getImportantDeclarations());
         }
         for (CssRuleSet ruleSet : ruleSets) {
-            if (nestedAtRules.size() == 0) {
+            if (nestedAtRules.isEmpty()) {
                 styleSheet.addStatement(ruleSet);
             } else {
                 nestedAtRules.peek().addStatementToBody(ruleSet);
@@ -387,7 +412,7 @@ public final class CssParserStateController {
      * @param properties the properties
      */
     private void processProperties(String properties) {
-        if (storedPropertiesWithoutSelector.size() > 0) {
+        if (!storedPropertiesWithoutSelector.isEmpty()) {
             List<CssDeclaration> cssDeclarations = CssRuleSetParser.parsePropertyDeclarations(properties);
             normalizeDeclarationURIs(cssDeclarations);
             storedPropertiesWithoutSelector.peek().addAll(cssDeclarations);
@@ -401,44 +426,50 @@ public final class CssParserStateController {
      */
     private void normalizeDeclarationURIs(List<CssDeclaration> declarations) {
         // This is the case when css has no location and thus urls should not be resolved against base css location
-        if (this.uriResolver == null) {
+        if (this.resourceResolver == null) {
             return;
         }
         for (CssDeclaration declaration : declarations) {
             if (declaration.getExpression().contains("url(")) {
-                CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(declaration.getExpression());
-                CssDeclarationValueTokenizer.Token token;
-                StringBuilder normalizedDeclaration = new StringBuilder();
-                while ((token = tokenizer.getNextValidToken()) != null) {
-                    String strToAppend;
-                    if (token.getType() == CssDeclarationValueTokenizer.TokenType.FUNCTION && token.getValue().startsWith("url(")) {
-                        String url = token.getValue().trim();
-                        url = url.substring(4, url.length() - 1).trim();
-                        if (CssTypesValidationUtils.isBase64Data(url)) {
-                            strToAppend = token.getValue().trim();
-                        } else {
-                            if (url.startsWith("'") && url.endsWith("'") || url.startsWith("\"") && url.endsWith("\"")) {
-                                url = url.substring(1, url.length() - 1);
-                            }
-                            url = url.trim();
-                            String finalUrl = url;
-                            try {
-                                finalUrl = uriResolver.resolveAgainstBaseUri(url).toExternalForm();
-                            } catch (MalformedURLException ignored) {
-                            }
-                            strToAppend = MessageFormatUtil.format("url({0})", finalUrl);
-                        }
-                    } else {
-                        strToAppend = token.getValue();
-                    }
-                    if (normalizedDeclaration.length() > 0) {
-                        normalizedDeclaration.append(' ');
-                    }
-                    normalizedDeclaration.append(strToAppend);
-                }
-                declaration.setExpression(normalizedDeclaration.toString());
+                normalizeSingleDeclarationURI(declaration);
             }
         }
+    }
+
+    private void normalizeSingleDeclarationURI(CssDeclaration declaration) {
+        CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(declaration.getExpression());
+        CssDeclarationValueTokenizer.Token token;
+        StringBuilder normalizedDeclaration = new StringBuilder();
+        while ((token = tokenizer.getNextValidToken()) != null) {
+            String strToAppend;
+            if (token.getType() == TokenType.FUNCTION && token.getValue().startsWith("url(")) {
+                String url = token.getValue().trim();
+                url = url.substring(4, url.length() - 1).trim();
+                url = CssUtils.extractUnquotedString(url);
+                if (CssTypesValidationUtils.isInlineData(url) || url.startsWith("#")) {
+                    strToAppend = token.getValue().trim();
+                } else {
+                    String finalUrl = url;
+                    try {
+                        finalUrl = resourceResolver.resolveAgainstBaseUri(url).toExternalForm();
+                    } catch (MalformedURLException ignored) {
+                    }
+                    strToAppend = MessageFormatUtil.format("url({0})", finalUrl);
+                }
+            } else if (token.getType() == TokenType.STRING && token.getStringQuote() != 0) {
+                // If we parse string with quotes, save them
+                strToAppend = token.getStringQuote() + token.getValue() + token.getStringQuote();
+            } else {
+                strToAppend = token.getValue();
+            }
+
+            if (normalizedDeclaration.length() > 0 && token.getType() != TokenType.COMMA) {
+                // Don't add space at the start and before comma
+                normalizedDeclaration.append(' ');
+            }
+            normalizedDeclaration.append(strToAppend);
+        }
+        declaration.setExpression(normalizedDeclaration.toString());
     }
 
     /**
@@ -447,8 +478,47 @@ public final class CssParserStateController {
      * @param ruleStr the rule str
      */
     private void processSemicolonAtRule(String ruleStr) {
-        CssSemicolonAtRule atRule = new CssSemicolonAtRule(ruleStr);
-        styleSheet.addStatement(atRule);
+        CssSemicolonAtRule atRule = CssAtRuleFactory.createSemicolonAtRule(ruleStr);
+        if (atRule instanceof CssImportAtRule) {
+            boolean isPositionCorrect = true;
+            for (CssStatement statement : styleSheet.getStatements()) {
+                if (statement instanceof CssAtRule) {
+                    String ruleName = ((CssAtRule) statement).getRuleName();
+                    if (!CssImportAtRule.ALLOWED_RULES_BEFORE.contains(ruleName)) {
+                        isPositionCorrect = false;
+                        break;
+                    }
+                } else {
+                    isPositionCorrect = false;
+                    break;
+                }
+            }
+
+            if (isPositionCorrect) {
+                if (resourceResolver == null) {
+                    LOGGER.error(StyledXmlParserLogMessageConstant.IMPORT_RULE_URL_CAN_NOT_BE_RESOLVED);
+                    return;
+                }
+
+                String externalCss = CssUtils.extractUrl(atRule.getRuleParams());
+                try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(externalCss)) {
+                    if (stream != null) {
+                        final ResourceResolver newResourceResolver = new ResourceResolver(
+                                resourceResolver.resolveAgainstBaseUri(externalCss).toExternalForm(),
+                                resourceResolver.getRetriever());
+                        CssParserStateController controller = new CssParserStateController(newResourceResolver);
+                        CssStyleSheet externalStyleSheet = CssStyleSheetParser.parse(stream, controller);
+                        styleSheetFromImport.appendCssStyleSheet(externalStyleSheet);
+                    }
+                } catch (IOException e) {
+                    LOGGER.error(StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, e);
+                }
+            } else {
+                LOGGER.warn(StyledXmlParserLogMessageConstant.IMPORT_MUST_COME_BEFORE);
+            }
+        } else {
+            styleSheet.addStatement(atRule);
+        }
     }
 
     /**
@@ -457,10 +527,10 @@ public final class CssParserStateController {
      * @param atRule the at rule
      */
     private void processFinishedAtRuleBlock(CssNestedAtRule atRule) {
-        if (nestedAtRules.size() != 0) {
-            nestedAtRules.peek().addStatementToBody(atRule);
-        } else {
+        if (nestedAtRules.isEmpty()) {
             styleSheet.addStatement(atRule);
+        } else {
+            nestedAtRules.peek().addStatementToBody(atRule);
         }
     }
 
@@ -472,9 +542,8 @@ public final class CssParserStateController {
     private boolean isCurrentRuleSupported() {
         boolean isSupported = nestedAtRules.isEmpty() || SUPPORTED_RULES.contains(nestedAtRules.peek().getRuleName());
         if (!isSupported) {
-            LoggerFactory.getLogger(getClass())
-                    .error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.RULE_IS_NOT_SUPPORTED,
-                            nestedAtRules.peek().getRuleName()));
+            LOGGER.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.RULE_IS_NOT_SUPPORTED,
+                    nestedAtRules.peek().getRuleName()));
         }
         return isSupported;
     }

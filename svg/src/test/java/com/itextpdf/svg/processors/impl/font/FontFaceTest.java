@@ -42,8 +42,8 @@ import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontFaceTest extends SvgIntegrationTest {
@@ -63,8 +63,6 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO fix cmp file after DEVSIX-2534 is finished. Right now droid fonts are not applied if
-    //  their aliases are inside single quotes and contain spaces
     public void droidSerifSingleQuotesTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "droidSerifSingleQuotesTest");
     }

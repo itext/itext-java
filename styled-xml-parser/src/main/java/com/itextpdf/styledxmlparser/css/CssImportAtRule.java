@@ -22,29 +22,27 @@
  */
 package com.itextpdf.styledxmlparser.css;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * A factory for creating {@link CssNestedAtRule} objects.
- *
- * @deprecated use {@link CssAtRuleFactory} instead
+ * Implementation of {@link CssSemicolonAtRule} for {@code import} rule.
  */
-@Deprecated
-public final class CssNestedAtRuleFactory {
-
+public class CssImportAtRule extends CssSemicolonAtRule {
     /**
-     * Creates a new {@link CssNestedAtRuleFactory} instance.
+     * The list of rules which are allowed to be before {@code import} rule declaration in CSS stylesheet.
      */
-    private CssNestedAtRuleFactory() {
-    }
+    public static final Set<String> ALLOWED_RULES_BEFORE = Collections.unmodifiableSet(new HashSet<String>(
+            Arrays.asList(CssRuleName.CHARSET, CssRuleName.IMPORT, CssRuleName.LAYER)));
 
     /**
-     * Creates a new {@link CssNestedAtRule} object.
+     * Creates a new {@link CssImportAtRule} instance.
      *
-     * @param ruleDeclaration the rule declaration
-     * @return a {@link CssNestedAtRule} instance
-     * @deprecated use {@link CssAtRuleFactory#createNestedRule(String)}
+     * @param ruleParameters the rule parameters
      */
-    @Deprecated
-    public static CssNestedAtRule createNestedRule(String ruleDeclaration) {
-        return CssAtRuleFactory.createNestedRule(ruleDeclaration);
+    public CssImportAtRule(String ruleParameters) {
+        super(CssRuleName.IMPORT, ruleParameters);
     }
 }

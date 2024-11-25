@@ -23,6 +23,7 @@
 package com.itextpdf.styledxmlparser.css.font;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.util.FontFamilySplitterUtil;
@@ -54,7 +55,7 @@ public class CssFontFace {
         String fontFamily = null;
         String srcs = null;
         for(CssDeclaration descriptor: properties) {
-            if ("font-family".equals(descriptor.getProperty())) {
+            if (CommonCssConstants.FONT_FAMILY.equals(descriptor.getProperty())) {
                 // TODO DEVSIX-2534
                 fontFamily = FontFamilySplitterUtil.removeQuotes(descriptor.getExpression());
             } else if ("src".equals(descriptor.getProperty())) {

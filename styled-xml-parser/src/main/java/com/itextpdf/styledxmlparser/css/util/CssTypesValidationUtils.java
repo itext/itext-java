@@ -43,6 +43,8 @@ public final class CssTypesValidationUtils {
             CommonCssConstants.EM, CommonCssConstants.EX, CommonCssConstants.REM};
 
     private static final Pattern BASE64_PATTERN = Pattern.compile("^data:[^\\s]+;base64,");
+    private static final Pattern DATA_PATTERN = Pattern.compile("^data:[^\\s]+;[^\\s]+,");
+
 
     /**
      * Creates a new {@link CssTypesValidationUtils} instance.
@@ -78,9 +80,22 @@ public final class CssTypesValidationUtils {
      *
      * @param data the data
      * @return true, if the data is base 64 encoded
+     * @deprecated use {@link #isInlineData(String)} instead.
      */
+    @Deprecated
     public static boolean isBase64Data(String data) {
         return BASE64_PATTERN.matcher(data).find();
+    }
+
+    /**
+     * Checks if the string represent inline data in format `data:{FORMAT};{ENCODING},{DATA}`.
+     *
+     * @param data the string to check
+     *
+     * @return true, if the string is inline data
+     */
+    public static boolean isInlineData(String data) {
+        return DATA_PATTERN.matcher(data).find();
     }
 
     /**

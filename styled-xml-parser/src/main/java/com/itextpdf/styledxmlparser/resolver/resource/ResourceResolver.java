@@ -230,6 +230,15 @@ public class ResourceResolver {
     }
 
     /**
+     * Gets the base URI.
+     *
+     * @return the base uri
+     */
+    public String getBaseUri() {
+        return uriResolver.getBaseUri();
+    }
+
+    /**
      * Resets the simple image cache.
      */
     public void resetCache() {

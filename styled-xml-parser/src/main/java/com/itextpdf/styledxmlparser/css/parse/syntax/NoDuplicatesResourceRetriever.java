@@ -20,31 +20,36 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.styledxmlparser.css;
+package com.itextpdf.styledxmlparser.css.parse.syntax;
+
+import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * A factory for creating {@link CssNestedAtRule} objects.
- *
- * @deprecated use {@link CssAtRuleFactory} instead
+ * Implementation of {@link DefaultResourceRetriever} which returns {@code null} if the {@code URL}
+ * from {@link #getInputStreamByUrl(URL)} has been already processed by the current instance.
  */
-@Deprecated
-public final class CssNestedAtRuleFactory {
+class NoDuplicatesResourceRetriever extends DefaultResourceRetriever {
+    private final Set<String> processedUrls = new HashSet<>();
 
     /**
-     * Creates a new {@link CssNestedAtRuleFactory} instance.
+     * Creates a new {@link NoDuplicatesResourceRetriever} instance.
      */
-    private CssNestedAtRuleFactory() {
+    NoDuplicatesResourceRetriever() {
+        super();
     }
 
-    /**
-     * Creates a new {@link CssNestedAtRule} object.
-     *
-     * @param ruleDeclaration the rule declaration
-     * @return a {@link CssNestedAtRule} instance
-     * @deprecated use {@link CssAtRuleFactory#createNestedRule(String)}
-     */
-    @Deprecated
-    public static CssNestedAtRule createNestedRule(String ruleDeclaration) {
-        return CssAtRuleFactory.createNestedRule(ruleDeclaration);
+    @Override
+    public InputStream getInputStreamByUrl(URL url) throws IOException {
+        if (processedUrls.contains(url.toExternalForm())) {
+            return null;
+        }
+        processedUrls.add(url.toExternalForm());
+        return super.getInputStreamByUrl(url);
     }
 }

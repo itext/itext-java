@@ -25,25 +25,26 @@ package com.itextpdf.styledxmlparser.css;
 import com.itextpdf.styledxmlparser.css.page.CssMarginRule;
 import com.itextpdf.styledxmlparser.css.page.CssPageRule;
 import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
-public class CssNestedAtRuleFactoryTest extends ExtendedITextTest {
+public class CssAtRuleFactoryTest extends ExtendedITextTest {
 
     @Test
     public void testCreatingNestedRule() {
-        CssNestedAtRule pageRule = CssNestedAtRuleFactory.createNestedRule("page:first");
+        CssNestedAtRule pageRule = CssAtRuleFactory.createNestedRule("page:first");
         Assertions.assertTrue(pageRule instanceof CssPageRule);
         Assertions.assertEquals(CssRuleName.PAGE, pageRule.getRuleName());
         Assertions.assertEquals(":first", pageRule.getRuleParameters());
 
-        CssNestedAtRule rightBottomMarginRule = CssNestedAtRuleFactory.createNestedRule("bottom-right");
+        CssNestedAtRule rightBottomMarginRule = CssAtRuleFactory.createNestedRule("bottom-right");
         Assertions.assertTrue(rightBottomMarginRule instanceof CssMarginRule);
         Assertions.assertEquals(CssRuleName.BOTTOM_RIGHT, rightBottomMarginRule.getRuleName());
 
-        CssNestedAtRule fontFaceRule = CssNestedAtRuleFactory.createNestedRule("font-face");
+        CssNestedAtRule fontFaceRule = CssAtRuleFactory.createNestedRule("font-face");
         Assertions.assertTrue(fontFaceRule instanceof CssFontFaceRule);
         Assertions.assertEquals(CssRuleName.FONT_FACE, fontFaceRule.getRuleName());
     }

@@ -22,21 +22,18 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
-import com.itextpdf.layout.font.RangeBuilder;
-import com.itextpdf.styledxmlparser.CommonAttributeConstants;
-import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.layout.font.Range;
+import com.itextpdf.layout.font.RangeBuilder;
 import com.itextpdf.layout.properties.BlendMode;
+import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
+import com.itextpdf.styledxmlparser.node.IElementNode;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,13 +89,13 @@ public class CssUtils {
                 }
             }
             if (currentChar == splitChar && !isEscaped) {
-                resultList.add(value.substring(lastSplitChar, i));
+                resultList.add(value.substring(lastSplitChar, i).trim());
                 lastSplitChar = i + 1;
             }
         }
         final String lastToken = value.substring(lastSplitChar);
         if (!lastToken.isEmpty()) {
-            resultList.add(lastToken);
+            resultList.add(lastToken.trim());
         }
         return resultList;
     }
@@ -213,24 +210,36 @@ public class CssUtils {
      * Parses {@code url("file.jpg")} to {@code file.jpg}.
      *
      * @param url the url attribute to parse
+     *
      * @return the parsed url. Or original url if not wrappend in url()
      */
-    public static String extractUrl(final String url) {
-        String str = null;
-        if (url.startsWith("url")) {
-            String urlString = url.substring(3).trim().replace("(", "").replace(")", "").trim();
-            if (urlString.startsWith("'") && urlString.endsWith("'")) {
-                str = urlString.substring(urlString.indexOf("'") + 1, urlString.lastIndexOf("'"));
-            } else if (urlString.startsWith("\"") && urlString.endsWith("\"")) {
-                str = urlString.substring(urlString.indexOf('"') + 1, urlString.lastIndexOf('"'));
-            } else {
-                str = urlString;
+    public static String extractUrl(String url) {
+        if (url.startsWith(CommonCssConstants.URL)) {
+            String urlString = url.substring(CommonCssConstants.URL.length()).trim();
+            if (!urlString.startsWith("(") || !urlString.endsWith(")")) {
+                return url;
             }
+            urlString = urlString.substring(1, urlString.length() - 1).trim();
+            return extractUnquotedString(urlString);
         } else {
             // assume it's an url without wrapping in "url()"
-            str = url;
+            return extractUnquotedString(url);
         }
-        return str;
+    }
+
+    /**
+     * Unquotes the passed string, e.g. parse {@code "text"} to {@code text}.
+     *
+     * @param str the quotes string
+     *
+     * @return the unquoted string, or original {@code str} if not wrapped in quotes
+     */
+    public static String extractUnquotedString(String str) {
+        if ((str.startsWith("'") && str.endsWith("'")) || (str.startsWith("\"") && str.endsWith("\""))) {
+            return str.substring(1, str.length() - 1).trim();
+        } else {
+            return str;
+        }
     }
 
     /**

@@ -22,7 +22,6 @@
  */
 package com.itextpdf.styledxmlparser.css.parse;
 
-
 import com.itextpdf.styledxmlparser.PortUtil;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.parse.syntax.CssParserStateController;
@@ -38,7 +37,6 @@ import java.nio.charset.StandardCharsets;
  * Utilities class to parse a CSS style sheet.
  */
 public final class CssStyleSheetParser {
-
     /**
      * Creates a new {@link CssStyleSheetParser}.
      */
@@ -46,15 +44,30 @@ public final class CssStyleSheetParser {
     }
 
     /**
-     * Parses a stream into a {@link CssRuleSetParser}.
+     * Parses a stream into a {@link CssStyleSheet}.
      *
      * @param stream the stream
      * @param baseUrl the base url
+     *
      * @return the resulting {@link CssStyleSheet}
+     *
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static CssStyleSheet parse(InputStream stream, String baseUrl) throws IOException {
-        CssParserStateController controller = new CssParserStateController(baseUrl);
+        return parse(stream, new CssParserStateController(baseUrl));
+    }
+
+    /**
+     * Parses a stream into a {@link CssStyleSheet}.
+     *
+     * @param stream the stream
+     * @param controller the parse state controller
+     *
+     * @return the resulting {@link CssStyleSheet}
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static CssStyleSheet parse(InputStream stream, CssParserStateController controller) throws IOException {
         // TODO determine charset correctly DEVSIX-1458
         Reader br = PortUtil.wrapInBufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
         char[] buffer = new char[8192];
@@ -71,11 +84,13 @@ public final class CssStyleSheetParser {
      * Parses a stream into a {@link CssStyleSheet}.
      *
      * @param stream the stream
+     *
      * @return the resulting {@link CssStyleSheet}
+     *
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static CssStyleSheet parse(InputStream stream) throws IOException {
-        return parse(stream, null);
+        return parse(stream, (String) null);
     }
 
     /**
@@ -83,6 +98,7 @@ public final class CssStyleSheetParser {
      *
      * @param data the style sheet data
      * @param baseUrl the base url
+     *
      * @return the resulting {@link CssStyleSheet}
      */
     public static CssStyleSheet parse(String data, String baseUrl) {
@@ -98,6 +114,7 @@ public final class CssStyleSheetParser {
      * Parses a string into a {@link CssStyleSheet}.
      *
      * @param data the data
+     *
      * @return the resulting {@link CssStyleSheet}
      */
     public static CssStyleSheet parse(String data) {

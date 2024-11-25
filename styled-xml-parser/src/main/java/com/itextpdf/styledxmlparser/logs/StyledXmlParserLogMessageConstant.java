@@ -118,6 +118,12 @@ public final class StyledXmlParserLogMessageConstant {
     public static final String ERROR_RESOLVING_PARENT_STYLES =
             "Element parent styles are not resolved. Styles for current element might be incorrect.";
 
+    public static final String IMPORT_MUST_COME_BEFORE =
+            "Imported rules must come before all other types of rules, except @charset rules and layer creating @layer statements. "
+                    + "Rule will be ignored. ";
+
+    public static final String IMPORT_RULE_URL_CAN_NOT_BE_RESOLVED = "Import rule URL can't be resolved because of base URI absence.";
+
     /**
      * Instantiates a new log message constant.
      */

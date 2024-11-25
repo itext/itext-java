@@ -28,7 +28,7 @@ package com.itextpdf.styledxmlparser.css.parse;
 public class CssDeclarationValueTokenizer {
     
     /** The source string. */
-    private String src;
+    private final String src;
     
     /** The current index. */
     private int index = -1;
@@ -107,7 +107,7 @@ public class CssDeclarationValueTokenizer {
                         pendingUnicodeSequence.setLength(0);
                         if (curChar == stringQuote) {
                             inString = false;
-                            return new Token(buff.toString(), TokenType.STRING);
+                            return new Token(buff.toString(), TokenType.STRING, stringQuote);
                         } else if (!Character.isWhitespace(curChar)) {
                             buff.append(curChar);
                         }
@@ -118,7 +118,7 @@ public class CssDeclarationValueTokenizer {
                     }
                 } else if (curChar == stringQuote){
                     inString = false;
-                    return new Token(buff.toString(), TokenType.STRING);
+                    return new Token(buff.toString(), TokenType.STRING, stringQuote);
                 } else if (curChar == '\\') {
                     isEscaped = true;
                 } else {
@@ -148,7 +148,7 @@ public class CssDeclarationValueTokenizer {
                 } else if (curChar == ']') {
                     inString = false;
                     buff.append(curChar);
-                    return new Token(buff.toString(), TokenType.STRING);
+                    return new Token(buff.toString(), TokenType.STRING, stringQuote);
                 } else if (curChar == ',' && !inString && functionDepth == 0) {
                     if (buff.length() == 0) {
                         return new Token(",", TokenType.COMMA);
@@ -207,10 +207,12 @@ public class CssDeclarationValueTokenizer {
     public static class Token {
         
         /** The value. */
-        private String value;
+        private final String value;
         
         /** The type. */
-        private TokenType type;
+        private final TokenType type;
+
+        private final char stringQuote;
 
         /**
          * Creates a new {@link Token} instance.
@@ -219,8 +221,13 @@ public class CssDeclarationValueTokenizer {
          * @param type the type
          */
         public Token(String value, TokenType type) {
+            this(value, type, (char) 0);
+        }
+
+        Token(String value, TokenType type, char stringQuote) {
             this.value = value;
             this.type = type;
+            this.stringQuote = stringQuote;
         }
 
         /**
@@ -239,6 +246,15 @@ public class CssDeclarationValueTokenizer {
          */
         public TokenType getType() {
             return type;
+        }
+
+        /**
+         * Gets the quotes of the string.
+         *
+         * @return {@code 0} if the token isn't a string or there are no quotes, {@code quote char} otherwise
+         */
+        public char getStringQuote() {
+            return stringQuote;
         }
 
         /**

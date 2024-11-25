@@ -85,6 +85,7 @@ public class SvgImageXObject extends PdfFormXObject {
             if (result instanceof SvgProcessorResult) {
                 context.setCssContext(((SvgProcessorResult) result).getContext().getCssContext());
             }
+            context.setTempFonts(result.getTempFonts());
             context.addNamedObjects(result.getNamedObjects());
             context.pushCanvas(canvas);
             ISvgNodeRenderer root = new PdfRootSvgNodeRenderer(result.getRootRenderer());

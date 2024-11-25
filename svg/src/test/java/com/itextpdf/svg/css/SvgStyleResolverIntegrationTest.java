@@ -23,7 +23,6 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
@@ -202,7 +201,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-2264: that test shall fail after the fix.
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6459 Android: fix the SecurityException(Permission denied) from UrlUtil method)
     public void googleFontsTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "googleFontsTest");
     }
@@ -259,7 +258,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-2264 Support CSS @import url() rule to reference external resources
     public void importStyleSheetWithStrokeStyleTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "importStyleSheetWithStrokeStyleTest");
     }
@@ -346,5 +344,20 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     public void cssStylesResolverOrder14Test() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder14");
+    }
+
+    @Test
+    public void cssStylesResolverOrder15Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder15");
+    }
+
+    @Test
+    public void cssStylesResolverOrder16Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder16");
+    }
+
+    @Test
+    public void cssStylesResolverOrder17Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder17");
     }
 }

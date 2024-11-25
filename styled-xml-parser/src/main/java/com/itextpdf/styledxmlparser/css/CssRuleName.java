@@ -47,6 +47,15 @@ public final class CssRuleName {
     
     /** The Constant BOTTOM_RIGHT_CORNER. */
     public static final String BOTTOM_RIGHT_CORNER = "bottom-right-corner";
+
+    /** The Constant CHARSET. */
+    public static final String CHARSET = "charset";
+
+    /** The Constant IMPORT. */
+    public static final String IMPORT = "import";
+
+    /** The Constant LAYER. */
+    public static final String LAYER = "layer";
     
     /** The Constant LEFT_BOTTOM. */
     public static final String LEFT_BOTTOM = "left-bottom";
