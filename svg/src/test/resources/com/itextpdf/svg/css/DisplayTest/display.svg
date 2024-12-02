@@ -1,0 +1,27 @@
+<svg width="600" height="800" xmlns="http://www.w3.org/2000/svg">
+
+<!-- Child elements of a container with display none should not be visible even if they have a value for display other than none. -->
+  <g display="none">
+    <rect x="10" y="20" width="250" height="50" fill="blue" />
+    <text x="20" y="50" font-size="14" fill="white" display="inline">child element with display inline should not be visible</text>
+  </g>
+
+<!-- If a path has a value for display that is none, the path itself will not be visible, but it can still be referenced in f.e. a textpath. -->
+  <path id="curve" d="M 50 150 Q 150 50, 250 150 T 450 150" stroke="black" fill="black" stroke-width="2" display="none"/>
+
+  <text font-family="Arial" font-size="24" fill="blue">
+    <textPath href="#curve">
+      Text on a path that should be visible.
+    </textPath>
+  </text>
+  
+  
+  <clipPath id="clip-path-example">
+    <circle cx="10" cy="200" r="100" fill="black"/>
+    <rect x="10" y="200" width="200" height="100" fill="black" display="none"/>
+  </clipPath>
+
+  <rect x="10" y="200" width="400" height="300" fill="lightblue" clip-path="url(#clip-path-example)"/>
+  <text x="10" y="350" font-size="14" fill="blue">Only 1/4th of a circle should be visible. The rect is hidden.</text>
+
+</svg>

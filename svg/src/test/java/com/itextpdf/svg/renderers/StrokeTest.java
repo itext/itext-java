@@ -80,4 +80,21 @@ public class StrokeTest extends SvgIntegrationTest {
     public void strokeWidthMeasureUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWidthMeasureUnitsTest");
     }
+
+    @Test
+    public void pathLengthTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "path-length");
+    }
+
+    @Test
+    //TODO DEVSIX-2258: update cmp after supporting
+    public void strokeAttributesTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-attributes");
+    }
+
+    @Test
+    //TODO DEVSIX-8760 : change cmp after fix
+    public void heightWidthZeroTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"height-width-zero");
+    }
 }

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="1000" style="border: 1px solid black;">
+  <circle cx="100" cy="100" r="75" fill="blue" stroke="black" stroke-width="4" shape-rendering="auto" />
+  <circle cx="100" cy="300" r="75" fill="green" stroke="black" stroke-width="4" shape-rendering="optimizeSpeed" />
+  <circle cx="100" cy="500" r="75" fill="red" stroke="black" stroke-width="4" shape-rendering="crispEdges" />
+  <circle cx="100" cy="700" r="75" fill="purple" stroke="black" stroke-width="4" shape-rendering="geometricPrecision" />  
+</svg>

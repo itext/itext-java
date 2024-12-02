@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="300" style="border:1px solid black;">
+  
+  <line x1="50" y1="150" x2="750" y2="150" stroke="gray" stroke-width="1" />
+  <text x="50" y="150" font-size="24" fill="black" baseline-shift="baseline">baseline</text>
+  <line x1="200" y1="150" x2="750" y2="150" stroke="gray" stroke-width="1" />
+  <text x="200" y="150" font-size="24" fill="blue" baseline-shift="sub">sub</text>
+  <line x1="300" y1="150" x2="750" y2="150" stroke="gray" stroke-width="1" />
+  <text x="300" y="150" font-size="24" fill="red" baseline-shift="super">super</text>
+  <line x1="400" y1="150" x2="750" y2="150" stroke="gray" stroke-width="1" />
+  <text x="400" y="150" font-size="24" fill="green" baseline-shift="10%">10%</text>
+  <line x1="500" y1="150" x2="750" y2="150" stroke="gray" stroke-width="1" />
+  <text x="500" y="150" font-size="24" fill="purple" baseline-shift="-10%">-10%</text>
+  <line x1="600" y1="150" x2="750" y2="150" stroke="gray" stroke-width="1" />
+  <text x="600" y="150" font-size="24" fill="orange" baseline-shift="5px">5px</text>
+  <line x1="700" y1="150" x2="750" y2="150" stroke="gray" stroke-width="1" />
+  <text x="700" y="150" font-size="24" fill="brown" baseline-shift="-5px">-5px</text>
+</svg>

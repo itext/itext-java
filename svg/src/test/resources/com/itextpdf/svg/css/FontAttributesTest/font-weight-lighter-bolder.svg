@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" style="border:1px solid black;">
+  <text y="20" font-family="Times, serif" font-size="20px">
+    This text is here to compare font weight.
+  </text>
+  <text y="40" font-family="Times, serif" font-size="20px" font-weight="lighter">
+    This text is here to compare font weight.
+  </text>
+  <text y="60" font-family="Times, serif" font-size="20px" font-weight="bolder">
+    This text is here to compare.
+  </text>
+</svg>

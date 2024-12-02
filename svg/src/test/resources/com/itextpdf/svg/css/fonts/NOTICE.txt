@@ -1,0 +1,5 @@
+Please notice that the following fonts are used with the mentioned below licenses.
+
+* NotoSansArabic-Regular - SIL Open Font License v1.1
+
+All the used bold Google Noto fonts have been taken from the https://github.com/googlefonts.

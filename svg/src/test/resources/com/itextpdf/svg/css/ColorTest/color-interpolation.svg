@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="200" style="border:1px solid black;">
+  <defs>
+    <linearGradient id="gradient-sRGB" x1="0%" y1="0%" x2="100%" y2="0%" color-interpolation="sRGB">
+      <stop offset="0%" stop-color="red" />
+      <stop offset="100%" stop-color="blue" />
+    </linearGradient>
+  </defs>
+  <rect x="50" y="30" width="500" height="50" fill="url(#gradient-sRGB)" />
+  <text x="70" y="70" font-size="20" fill="black">sRGB</text>
+
+  <defs>
+    <linearGradient id="gradient-linearRGB" x1="0%" y1="0%" x2="100%" y2="0%" color-interpolation="linearRGB">
+      <stop offset="0%" stop-color="red" />
+      <stop offset="100%" stop-color="blue" />
+    </linearGradient>
+  </defs>
+  <rect x="50" y="120" width="500" height="50" fill="url(#gradient-linearRGB)" />
+  <text x="70" y="160" font-size="20" fill="black">linearRGB</text>
+</svg>

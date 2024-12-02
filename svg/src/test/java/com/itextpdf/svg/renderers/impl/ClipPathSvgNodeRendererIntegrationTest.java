@@ -120,4 +120,9 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void invalidClipPathTagTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_invalid_tag");
     }
+
+    @Test
+    public void clipPathUnitsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathUnits");
+    }
 }

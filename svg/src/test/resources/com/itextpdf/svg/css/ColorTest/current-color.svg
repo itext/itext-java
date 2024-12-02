@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" style="border:1px solid black;">
+  <!-- Define a container with a specific color -->
+  <g color="green" fill="lightgrey">
+    <!-- Circle with fill set to currentColor -->
+    <circle cx="150" cy="150" r="100" stroke="currentColor" stroke-width="10" />
+    <text x="60" y="150" font-size="20" fill="currentColor" dy="5">
+      Green text and border
+    </text>
+  </g>
+
+  <!-- Define another container with a different color -->
+  <g color="blue" fill="lightgrey">
+    <!-- Rectangle with fill set to currentColor -->
+    <rect x="300" y="50" width="200" height="100" stroke="currentColor" stroke-width="10" />
+    <text x="310" y="120" font-size="20" fill="currentColor">
+      Blue text and border
+    </text>
+  </g>
+
+  <!-- Another rectangle with inline color -->
+  <rect x="50" y="250" width="200" height="100" fill="orange" stroke="currentColor" stroke-width="5" />
+  <text x="50" y="400" font-size="20" fill="currentColor">
+    Orange Rectangle, black text and border. Parent element does not have a color set so currentColor = black.
+  </text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" style="border: 1px solid black;">
+	<path d="M 0,50 h500"
+        stroke="blue" stroke-width="4" stroke-dasharray="10" fill="none" pathLength="100"/>
+	<path d="M 0,150 h500"
+        stroke="blue" stroke-width="4" stroke-dasharray="10" fill="none" pathLength="50"/>
+	<path d="M 0,250 h500"
+        stroke="blue" stroke-width="4" stroke-dasharray="10" fill="none" pathLength="10"/>
+</svg>

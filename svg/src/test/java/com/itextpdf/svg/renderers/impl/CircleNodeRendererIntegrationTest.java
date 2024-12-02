@@ -126,4 +126,9 @@ public class CircleNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void circleWithBigStrokeWidthTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "circleWithBigStrokeWidth");
     }
+
+    @Test
+    public void circleShapeRenderingTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "shape-rendering");
+    }
 }

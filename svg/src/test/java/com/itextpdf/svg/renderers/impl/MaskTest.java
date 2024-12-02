@@ -62,4 +62,9 @@ public class MaskTest extends SvgIntegrationTest {
   public void maskWithGradient() throws IOException, InterruptedException {
     convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "maskWithGradient", properties);
   }
+
+  @Test
+  public void maskContentUnitsTest() throws IOException, InterruptedException {
+    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "mask-content-units", properties);
+  }
 }

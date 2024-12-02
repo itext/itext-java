@@ -177,4 +177,9 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void imageWithPreserveAspectRatioXMaxYMaxTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMaxYMax", properties);
     }
+
+    @Test
+    public void imageRenderingTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "image-rendering", properties);
+    }
 }

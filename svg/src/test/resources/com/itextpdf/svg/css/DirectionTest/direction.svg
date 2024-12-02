@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" style="border:1px solid black;">
+  <text x="225" y="80" font-size="16" fill="black" style="direction: ltr;">
+    This is Left-to-Right (LTR) Text
+  </text>
+  <text x="225" y="160" font-size="16" fill="black" style="direction: rtl;">
+    This is Right-to-Left (RTL) Text
+  </text>
+  <line x1="225" y1="40" x2="225" y2="200" stroke="green"/>
+</svg>

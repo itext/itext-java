@@ -1,0 +1,154 @@
+%PDF-1.7
+%‚„œ”
+5 0 obj
+<</Length 12>>stream
+q
+/Fm1 Do
+Q
+
+endstream
+endobj
+4 0 obj
+<</Contents 5 0 R/MediaBox[0 0 450 600]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 450 600]/Type/Page>>
+endobj
+1 0 obj
+<</Pages 2 0 R/Type/Catalog>>
+endobj
+3 0 obj
+<</CreationDate(D:20241202131400+01'00')/ModDate(D:20241202131400+01'00')/Producer(iTextÆ Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+endobj
+6 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+2 0 obj
+<</Count 1/Kids[4 0 R]/Type/Pages>>
+endobj
+7 0 obj
+<</BBox[0 0 450 600]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 600 cm
+% svg root
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+
+endstream
+endobj
+8 0 obj
+<</BBox[0 0 450 600]/Length 1012/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 450 600 re
+W
+n
+q
+0 0 0 rg
+q
+0 0 1 rg
+% rect
+7.5 15 187.5 37.5 re
+f
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 37.5 Tm
+1 1 1 rg
+(child element with display inline should not be visible)Tj
+ET
+Q
+Q
+Q
+q
+0 0 0 rg
+0 0 0 RG
+1.5 w
+% path
+37.5 112.5 m
+112.5 37.5 187.5 112.5 v
+262.5 187.5 337.5 112.5 v
+B
+Q
+q
+q
+BT
+/F1 18 Tf
+1 0 0 -1 0 0 Tm
+0 0 1 rg
+(Text on a path that should be visible.)Tj
+ET
+Q
+Q
+q
+q
+% ellipse
+82.5 150 m
+82.5 191.42 48.92 225 7.5 225 c
+-33.92 225 -67.5 191.42 -67.5 150 c
+-67.5 108.58 -33.92 75 7.5 75 c
+48.92 75 82.5 108.58 82.5 150 c
+W
+n
+Q
+q
+% rect
+7.5 150 150 75 re
+W
+n
+Q
+Q
+q
+q
+% ellipse
+82.5 150 m
+82.5 191.42 48.92 225 7.5 225 c
+-33.92 225 -67.5 191.42 -67.5 150 c
+-67.5 108.58 -33.92 75 7.5 75 c
+48.92 75 82.5 108.58 82.5 150 c
+W
+n
+0.67843 0.84706 0.90196 rg
+% rect
+7.5 150 300 225 re
+f
+Q
+q
+% rect
+7.5 150 150 75 re
+W
+n
+0.67843 0.84706 0.90196 rg
+% rect
+7.5 150 300 225 re
+f
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 7.5 262.5 Tm
+0 0 1 rg
+(Only 1/4th of a circle should be visible. The rect is hidden.)Tj
+ET
+Q
+Q
+
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000211 00000 n 
+0000000518 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
+0000000015 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
+trailer
+<</ID [<5f7eebb9f86d33db29761513b8490ad39c1841dccfbbeb6aaf8342157982354071b5d20e88d7fb1cd3530850e454c8c66c56f5b8884ee5df2bc7d529d280fcb3><5f7eebb9f86d33db29761513b8490ad39c1841dccfbbeb6aaf8342157982354071b5d20e88d7fb1cd3530850e454c8c66c56f5b8884ee5df2bc7d529d280fcb3>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
+startxref
+1889
+%%EOF

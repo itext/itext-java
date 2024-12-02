@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" style="border:1px solid black;">
+  <defs>
+    <filter id="filter-sRGB" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="15" />
+    </filter>
+  </defs>
+  <circle cx="150" cy="150" r="50" fill="red" filter="url(#filter-sRGB)" />
+  <text x="150" y="230" font-size="14" fill="black" text-anchor="middle">sRGB</text>
+
+  <defs>
+    <filter id="filter-linearRGB" color-interpolation-filters="linearRGB">
+      <feGaussianBlur stdDeviation="15" />
+    </filter>
+  </defs>
+  <circle cx="450" cy="150" r="50" fill="red" filter="url(#filter-linearRGB)" />
+  <text x="450" y="230" font-size="14" fill="black" text-anchor="middle">linearRGB</text>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" style="border:1px solid black;">
+  <defs>
+    <filter id="no-blur">
+      <feGaussianBlur stdDeviation="0" />
+    </filter>
+    <filter id="low-blur">
+      <feGaussianBlur stdDeviation="2" />
+    </filter>
+    <filter id="medium-blur">
+      <feGaussianBlur stdDeviation="5" />
+    </filter>
+    <filter id="large-blur">
+      <feGaussianBlur stdDeviation="10" />
+    </filter>
+  </defs>
+
+  <rect x="50" y="50" width="100" height="100" fill="blue" filter="url(#no-blur)" />
+  <text x="50" y="170" font-size="14" fill="black">stdDeviation="0"</text>
+
+  <rect x="50" y="200" width="100" height="100" fill="green" filter="url(#low-blur)" />
+  <text x="50" y="320" font-size="14" fill="black">stdDeviation="2"</text>
+
+  <rect x="50" y="350" width="100" height="100" fill="orange" filter="url(#medium-blur)" />
+  <text x="50" y="470" font-size="14" fill="black">stdDeviation="5"</text>
+
+  <rect x="50" y="500" width="100" height="100" fill="purple" filter="url(#large-blur)" />
+  <text x="50" y="620" font-size="14" fill="black">stdDeviation="10"</text>
+</svg>

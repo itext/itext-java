@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" version="1.1">
+    <rect x="10" y="10" width="100" height="100" fill="lightblue" stroke="blue" stroke-width="2"/>
+    <rect x="10" y="210" width="100" fill="lightblue" stroke="blue" stroke-width="2"/>
+    <rect x="10" y="410" height="100" fill="lightblue" stroke="blue" stroke-width="2"/>
+    <rect x="10" y="610" fill="lightblue" stroke="blue" stroke-width="2"/>
+	<rect x="10" y="810" height="0" width="100" fill="lightblue" stroke="blue" stroke-width="2"/>
+    <rect x="10" y="1010" height="100" width="0" fill="lightblue" stroke="blue" stroke-width="2"/>
+</svg>
