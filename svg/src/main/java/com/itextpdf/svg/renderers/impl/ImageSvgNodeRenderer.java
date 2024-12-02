@@ -74,16 +74,20 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
             y = parseVerticalLength(attributesAndStyles.get(SvgConstants.Attributes.Y), context);
         }
 
-        float width = 0;
+        float width;
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.WIDTH)) {
             width = parseHorizontalLength(attributesAndStyles.get(SvgConstants.Attributes.WIDTH), context);
+        } else {
+            width = xObject.getWidth();
         }
 
-        float height = 0;
+        float height;
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.HEIGHT)) {
             height = parseVerticalLength(attributesAndStyles.get(SvgConstants.Attributes.HEIGHT), context);
+        } else {
+            height = xObject.getHeight();
         }
 
         String preserveAspectRatio = "";
