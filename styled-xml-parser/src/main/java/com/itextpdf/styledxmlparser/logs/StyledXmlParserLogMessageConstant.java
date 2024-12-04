@@ -117,6 +117,8 @@ public final class StyledXmlParserLogMessageConstant {
     /** The Constant ERROR_RESOLVING_PARENT_STYLES. */
     public static final String ERROR_RESOLVING_PARENT_STYLES =
             "Element parent styles are not resolved. Styles for current element might be incorrect.";
+    /** The Constant ERROR_LOADING_FONT. */
+    public static final String ERROR_LOADING_FONT = "Error while loading font";
 
     public static final String IMPORT_MUST_COME_BEFORE =
             "Imported rules must come before all other types of rules, except @charset rules and layer creating @layer statements. "
