@@ -228,6 +228,27 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
                 );
     }
 
+    @Test
+    public void ocspResponseWithoutHashAlgoParametersTest() throws IOException {
+        TestOcspClient ocspClient = new TestOcspClient();
+        IBasicOCSPResp caBasicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert,
+                        SOURCE_FOLDER + "ocspResponseWithoutHashAlgoParameters.dat"))));
+
+        ValidationReport report = new ValidationReport();
+        // Configure OCSP signing authority for the certificate in question
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
+        validator.validate(report, baseContext, checkCert, caBasicOCSPResp.getResponses()[0], caBasicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfFailures(0)
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+        );
+    }
+
     private ValidationReport validateTest(Date checkDate) throws CertificateException, IOException {
         Date thisUpdate = DateTimeUtil.addDaysToDate(checkDate, 1);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);

@@ -30,6 +30,8 @@ import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -54,6 +56,15 @@ public class TestOcspClient implements IOcspClient {
 
     @Override
     public byte[] getEncoded(X509Certificate checkCert, X509Certificate issuerCert, String url) {
+        if (url != null && !url.isEmpty()) {
+            // Treat as file path
+            try {
+                return Files.readAllBytes(Paths.get(url));
+            } catch (Exception e) {
+                // Sometimes we pass http url here in tests (though it's not used) so skipping any errors
+            }
+        }
+
         byte[] bytes = null;
         try {
             ICertificateID id = SignTestPortUtil.generateCertificateId(issuerCert, checkCert.getSerialNumber(), BOUNCY_CASTLE_FACTORY.createCertificateID().getHashSha1());
