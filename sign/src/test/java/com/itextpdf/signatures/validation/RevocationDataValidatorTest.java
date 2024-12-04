@@ -42,6 +42,7 @@ import com.itextpdf.signatures.testutils.client.TestCrlClientWrapper;
 import com.itextpdf.signatures.testutils.client.TestOcspClientWrapper;
 import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
+import com.itextpdf.signatures.validation.SignatureValidationProperties.OnlineFetching;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.CertificateSources;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
@@ -62,9 +63,12 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import java.security.cert.X509CRL;
 import java.util.ArrayList;
 
+import java.util.Arrays;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -950,5 +954,45 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
                 .hasLogItem(l -> l.withMessage(RevocationDataValidator.CRL_CLIENT_FAILURE,p -> crlClient.toString())));
 
+    }
+
+    @Test
+    public void testCrlClientInjection() throws CertificateEncodingException, IOException {
+
+        TestCrlClient testCrlClient = new TestCrlClient();
+        TestCrlClientWrapper mockCrlClient = new TestCrlClientWrapper(testCrlClient);
+        validatorChainBuilder.withCrlClient(() -> mockCrlClient);
+        testCrlClient.addBuilderForCertIssuer(caCert, caPrivateKey);
+
+        ValidationReport report = new ValidationReport();
+        ValidationContext context = new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,CertificateSource.SIGNER_CERT, TimeBasedContext.HISTORICAL);
+
+        validatorChainBuilder.buildRevocationDataValidator().validate(report, context, checkCert, TimeTestUtil.TEST_DATE_TIME);
+
+        Assertions.assertEquals(1,mockCrlClient.getCalls().size());
+    }
+
+    @Test
+    public void testOcspClientInjection() throws CertificateEncodingException, IOException {
+
+        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+        TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
+        builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
+        builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 5)));
+        builder.setNextUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(checkDate, 10)));
+        TestOcspClientWrapper mockOcspClient = new TestOcspClientWrapper(new TestOcspClient().addBuilderForCertIssuer(caCert, builder));
+
+
+        validatorChainBuilder.withOcspClient(() -> mockOcspClient);
+
+        mockParameters.addRevocationOnlineFetchingResponse(OnlineFetching.ALWAYS_FETCH);
+        certificateRetriever.addKnownCertificates(Arrays.asList(caCert, trustedOcspResponderCert));
+
+        ValidationReport report = new ValidationReport();
+        ValidationContext context = new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,CertificateSource.SIGNER_CERT, TimeBasedContext.HISTORICAL);
+
+        validatorChainBuilder.buildRevocationDataValidator().validate(report, context, checkCert, TimeTestUtil.TEST_DATE_TIME);
+
+        Assertions.assertEquals(2,mockOcspClient.getBasicResponceCalls().size());
     }
 }

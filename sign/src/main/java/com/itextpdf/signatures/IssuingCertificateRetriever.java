@@ -27,6 +27,8 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
+import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
+import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -58,12 +60,23 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
 
     private final TrustedCertificatesStore trustedCertificatesStore = new TrustedCertificatesStore();
     private final Map<String, List<Certificate>> knownCertificates = new HashMap<>();
+    private final IResourceRetriever resourceRetriever;
 
     /**
      * Creates {@link IssuingCertificateRetriever} instance.
      */
     public IssuingCertificateRetriever() {
-        // Empty constructor.
+        this.resourceRetriever = new DefaultResourceRetriever();
+    }
+
+    /**
+     * Creates {@link IssuingCertificateRetriever} instance.
+     *
+     * @param resourceRetriever an @{link IResourceRetriever} instance to use for performing http
+     *                          requests.
+     */
+    public IssuingCertificateRetriever(IResourceRetriever resourceRetriever) {
+        this.resourceRetriever = resourceRetriever;
     }
 
     /**
@@ -374,7 +387,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      * @throws IOException if an I/O error occurs.
      */
     protected InputStream getIssuerCertByURI(String uri) throws IOException {
-        return SignUtils.getHttpResponse(new URL(uri));
+        return resourceRetriever.getInputStreamByUrl(new URL(uri));
     }
 
     /**

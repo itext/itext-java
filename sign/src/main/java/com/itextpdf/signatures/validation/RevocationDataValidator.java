@@ -93,6 +93,7 @@ public class RevocationDataValidator {
     private final IssuingCertificateRetriever certificateRetriever;
     private final OCSPValidator ocspValidator;
     private final CRLValidator crlValidator;
+    private final ValidatorChainBuilder builder;
 
     /**
      * Creates new {@link RevocationDataValidator} instance to validate certificate revocation data.
@@ -106,10 +107,13 @@ public class RevocationDataValidator {
         this.crlValidator = builder.getCRLValidator();
         this.crlClients.addAll(this.properties.getCrlClients());
         this.ocspClients.addAll(this.properties.getOcspClients());
+        this.builder = builder;
     }
 
     /**
      * Add {@link ICrlClient} to be used for CRL responses receiving.
+     * These clients will be used regardless of the
+     * {@link SignatureValidationProperties.OnlineFetching} settings
      *
      * @param crlClient {@link ICrlClient} to be used for CRL responses receiving
      *
@@ -122,6 +126,8 @@ public class RevocationDataValidator {
 
     /**
      * Add {@link IOcspClient} to be used for OCSP responses receiving.
+     * These clients will be used regardless of the
+     * {@link SignatureValidationProperties.OnlineFetching} settings
      *
      * @param ocspClient {@link IOcspClient} to be used for OCSP responses receiving
      *
@@ -348,7 +354,7 @@ public class RevocationDataValidator {
         if (SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH == onlineFetching) {
             for (X509Certificate issuerCert : issuerCerts) {
                 onRuntimeExceptionLog(() -> {
-                    IBasicOCSPResp basicOCSPResp = new OcspClientBouncyCastle().getBasicOCSPResp(certificate,
+                    IBasicOCSPResp basicOCSPResp = builder.getOcspClient().getBasicOCSPResp(certificate,
                             issuerCert, null);
                     fillOcspResponses(ocspResponses, basicOCSPResp, DateTimeUtil.getCurrentTimeDate(),
                             TimeBasedContext.PRESENT);
@@ -369,7 +375,7 @@ public class RevocationDataValidator {
         SignatureValidationProperties.OnlineFetching onlineFetching = properties.getRevocationOnlineFetching(
                 context.setValidatorContext(ValidatorContext.CRL_VALIDATOR));
         if (SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH == onlineFetching) {
-            crlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, new CrlClientOnline()));
+            crlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, builder.getCrlClient()));
         }
         // Sort all the CRL responses available based on the most recent revocation data.
         return crlResponses.stream().sorted((o1, o2) -> o2.crl.getThisUpdate().compareTo(o1.crl.getThisUpdate()))
@@ -384,7 +390,7 @@ public class RevocationDataValidator {
                 context.setValidatorContext(ValidatorContext.CRL_VALIDATOR));
         if (SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE == crlOnlineFetching) {
             // Sort all the CRL responses available based on the most recent revocation data.
-            onlineCrlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, new CrlClientOnline())
+            onlineCrlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, builder.getCrlClient())
                     .stream().sorted((o1, o2) ->
                             o2.crl.getThisUpdate().compareTo(o1.crl.getThisUpdate())).collect(Collectors.toList()));
         }
@@ -393,7 +399,7 @@ public class RevocationDataValidator {
         if (SignatureValidationProperties.OnlineFetching.FETCH_IF_NO_OTHER_DATA_AVAILABLE == ocspOnlineFetching) {
             for (X509Certificate issuerCert : certificateRetriever.retrieveIssuerCertificate(certificate)) {
                 onRuntimeExceptionLog(() -> {
-                    IBasicOCSPResp basicOCSPResp = new OcspClientBouncyCastle().getBasicOCSPResp(certificate,
+                    IBasicOCSPResp basicOCSPResp = builder.getOcspClient().getBasicOCSPResp(certificate,
                             issuerCert, null);
                     List<OcspResponseValidationInfo> ocspResponses = new ArrayList<>();
                     fillOcspResponses(ocspResponses, basicOCSPResp, DateTimeUtil.getCurrentTimeDate(),

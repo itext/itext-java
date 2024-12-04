@@ -34,14 +34,12 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.signatures.validation.OCSPValidator;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.GeneralSecurityException;
-import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import org.slf4j.Logger;
@@ -50,7 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * OcspClient implementation using BouncyCastle.
  */
-public class OcspClientBouncyCastle implements IOcspClient {
+public class OcspClientBouncyCastle implements IOcspClientBouncyCastle {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
@@ -66,18 +64,11 @@ public class OcspClientBouncyCastle implements IOcspClient {
         // Empty constructor in order for default one to not be removed if another one is added.
     }
 
+
     /**
-     * Gets OCSP response.
-     *
-     * <p>
-     * If required, {@link IBasicOCSPResp} can be checked using {@link OCSPValidator} class.
-     *
-     * @param checkCert the certificate to check
-     * @param rootCert  parent certificate
-     * @param url       to get the verification
-     *
-     * @return {@link IBasicOCSPResp} an OCSP response wrapper
+     * {@inheritDoc}
      */
+    @Override
     public IBasicOCSPResp getBasicOCSPResp(X509Certificate checkCert, X509Certificate rootCert, String url) {
         try {
             IOCSPResp ocspResponse = getOcspResponse(checkCert, rootCert, url);

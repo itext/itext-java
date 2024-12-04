@@ -23,10 +23,16 @@
 package com.itextpdf.signatures.validation;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.signatures.CrlClientOnline;
+import com.itextpdf.signatures.ICrlClient;
+import com.itextpdf.signatures.IOcspClientBouncyCastle;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
+import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.validation.report.xml.AdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.NullAdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.PadesValidationReport;
+import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
+import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 
 import java.io.Writer;
 import java.security.cert.Certificate;
@@ -39,16 +45,35 @@ import java.util.function.Supplier;
  * The builder can be reused to create multiple instances of a validator.
  */
 public class ValidatorChainBuilder {
-    private SignatureValidationProperties properties;
+    private SignatureValidationProperties properties = new SignatureValidationProperties();
     private Supplier<IssuingCertificateRetriever> certificateRetrieverFactory;
     private Supplier<CertificateChainValidator> certificateChainValidatorFactory;
     private Supplier<RevocationDataValidator> revocationDataValidatorFactory;
     private Supplier<OCSPValidator> ocspValidatorFactory;
     private Supplier<CRLValidator> crlValidatorFactory;
+    private Supplier<IResourceRetriever> resourceRetrieverFactory;
     private Supplier<DocumentRevisionsValidator> documentRevisionsValidatorFactory;
+    private Supplier<IOcspClientBouncyCastle> ocspClientFactory;
+    private Supplier<ICrlClient> crlClientFactory;
+
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
     private AdESReportAggregator adESReportAggregator = new NullAdESReportAggregator();
+
+    /**
+     * Creates a ValidatorChainBuilder using default implementations
+     */
+    public ValidatorChainBuilder() {
+        certificateRetrieverFactory = () -> buildIssuingCertificateRetriever();
+        certificateChainValidatorFactory = () -> buildCertificateChainValidator();
+        revocationDataValidatorFactory = () -> buildRevocationDataValidator();
+        ocspValidatorFactory = () -> buildOCSPValidator();
+        crlValidatorFactory = () -> buildCRLValidator();
+        resourceRetrieverFactory = () -> new DefaultResourceRetriever();
+        documentRevisionsValidatorFactory = () -> buildDocumentRevisionsValidator();
+        ocspClientFactory = () -> new OcspClientBouncyCastle();
+        crlClientFactory = () -> new CrlClientOnline();
+    }
 
     /**
      * Create a new {@link SignatureValidator} instance with the current configuration.
@@ -139,6 +164,18 @@ public class ValidatorChainBuilder {
     }
 
     /**
+     * Use this factory method to create instances of {@link IResourceRetriever} for use in the validation chain.
+     *
+     * @param resourceRetrieverFactory the ResourceRetrieverFactory method to use.
+     *
+     * @return the current ValidatorChainBuilder.
+     */
+    public ValidatorChainBuilder withResourceRetriever(Supplier<IResourceRetriever> resourceRetrieverFactory) {
+        this.resourceRetrieverFactory = resourceRetrieverFactory;
+        return this;
+    }
+
+    /**
      * Use this factory method to create instances of {@link OCSPValidator} for use in the validation chain.
      *
      * @param ocspValidatorFactory the OCSPValidatorFactory method to use
@@ -203,6 +240,30 @@ public class ValidatorChainBuilder {
     }
 
     /**
+     * Use this factory to create instances of {@link IOcspClientBouncyCastle} for use in the validation chain.
+     *
+     * @param ocspClientFactory the IOcspClient factory method to use
+     *
+     * @return the current ValidatorChainBuilder.
+     */
+    public ValidatorChainBuilder withOcspClient(Supplier<IOcspClientBouncyCastle> ocspClientFactory) {
+        this.ocspClientFactory = ocspClientFactory;
+        return this;
+    }
+
+    /**
+     * Use this factory to create instances of {@link ICrlClient} for use in the validation chain.
+     *
+     * @param crlClientFactory the ICrlClient factory method to use
+     *
+     * @return the current ValidatorChainBuilder.
+     */
+    public ValidatorChainBuilder withCrlClient(Supplier<ICrlClient> crlClientFactory) {
+        this.crlClientFactory = crlClientFactory;
+        return this;
+    }
+
+    /**
      * Adds known certificates to the {@link IssuingCertificateRetriever}.
      *
      * @param knownCertificates the list of known certificates to add
@@ -234,7 +295,7 @@ public class ValidatorChainBuilder {
      * {@link com.itextpdf.signatures.validation.report.xml.XmlReportGenerator#generate(PadesValidationReport, Writer)}.
      *
      * @param adESReportAggregator the report aggregator to use
-     * 
+     *
      * @return the current ValidatorChainBuilder
      */
     public ValidatorChainBuilder withAdESReportAggregator(AdESReportAggregator adESReportAggregator) {
@@ -248,9 +309,6 @@ public class ValidatorChainBuilder {
      * @return the explicitly added or automatically created {@link IssuingCertificateRetriever} instance.
      */
     public IssuingCertificateRetriever getCertificateRetriever() {
-        if (certificateRetrieverFactory == null) {
-            return buildIssuingCertificateRetriever();
-        }
         return certificateRetrieverFactory.get();
     }
 
@@ -260,9 +318,6 @@ public class ValidatorChainBuilder {
      * @return the explicitly added or automatically created {@link SignatureValidationProperties} instance.
      */
     public SignatureValidationProperties getProperties() {
-        if (properties == null) {
-            properties = new SignatureValidationProperties();
-        }
         return properties;
     }
 
@@ -282,9 +337,6 @@ public class ValidatorChainBuilder {
      * @return the explicitly added or automatically created {@link DocumentRevisionsValidator} instance.
      */
     DocumentRevisionsValidator getDocumentRevisionsValidator() {
-        if (documentRevisionsValidatorFactory == null) {
-            return buildDocumentRevisionsValidator();
-        }
         return documentRevisionsValidatorFactory.get();
     }
 
@@ -294,9 +346,6 @@ public class ValidatorChainBuilder {
      * @return the explicitly added or automatically created {@link CertificateChainValidator} instance.
      */
     CertificateChainValidator getCertificateChainValidator() {
-        if (certificateChainValidatorFactory == null) {
-            return buildCertificateChainValidator();
-        }
         return certificateChainValidatorFactory.get();
     }
 
@@ -306,10 +355,34 @@ public class ValidatorChainBuilder {
      * @return the explicitly added or automatically created {@link RevocationDataValidator} instance.
      */
     RevocationDataValidator getRevocationDataValidator() {
-        if (revocationDataValidatorFactory == null) {
-            return buildRevocationDataValidator();
-        }
         return revocationDataValidatorFactory.get();
+    }
+
+    /**
+     * Retrieves the explicitly added or automatically created {@link ICrlClient} instance.
+     *
+     * @return the explicitly added or automatically created {@link ICrlClient} instance.
+     */
+    ICrlClient getCrlClient() {
+        return crlClientFactory.get();
+    }
+
+    /**
+     * Retrieves the explicitly added or automatically created {@link IOcspClientBouncyCastle} instance.
+     *
+     * @return the explicitly added or automatically created {@link IOcspClientBouncyCastle} instance.
+     */
+    IOcspClientBouncyCastle getOcspClient() {
+        return ocspClientFactory.get();
+    }
+
+    /**
+     * Retrieves the explicitly added or automatically created {@link IResourceRetriever} instance.
+     *
+     * @return the explicitly added or automatically created {@link IResourceRetriever} instance.
+     */
+    public IResourceRetriever getResourceRetriever() {
+        return resourceRetrieverFactory.get();
     }
 
     /**
@@ -318,9 +391,6 @@ public class ValidatorChainBuilder {
      * @return the explicitly added or automatically created {@link CRLValidator} instance.
      */
     CRLValidator getCRLValidator() {
-        if (crlValidatorFactory == null) {
-            return buildCRLValidator();
-        }
         return crlValidatorFactory.get();
     }
 
@@ -330,14 +400,11 @@ public class ValidatorChainBuilder {
      * @return the explicitly added or automatically created {@link OCSPValidator} instance.
      */
     OCSPValidator getOCSPValidator() {
-        if (ocspValidatorFactory == null) {
-            return buildOCSPValidator();
-        }
         return ocspValidatorFactory.get();
     }
 
     private IssuingCertificateRetriever buildIssuingCertificateRetriever() {
-        IssuingCertificateRetriever result = new IssuingCertificateRetriever();
+        IssuingCertificateRetriever result = new IssuingCertificateRetriever(this.resourceRetrieverFactory.get());
         if (trustedCertificates != null) {
             result.setTrustedCertificates(trustedCertificates);
         }
