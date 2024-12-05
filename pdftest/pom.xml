@@ -15,7 +15,7 @@
 
   <properties>
     <sonar.skip>true</sonar.skip>
-    <verapdf.version>1.25.125</verapdf.version>
+    <verapdf.version>1.26.2</verapdf.version>
   </properties>
 
   <dependencyManagement>
@@ -45,17 +45,6 @@
       <version>${junit.jupiter.version}</version>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>vera-dev</id>
-      <name>Vera development</name>
-      <url>https://artifactory.openpreservation.org/artifactory/vera-dev</url>
-    </repository>
-  </repositories>
 
   <build>
     <plugins>
