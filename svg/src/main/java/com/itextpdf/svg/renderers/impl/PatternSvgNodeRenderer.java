@@ -152,18 +152,20 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             Rectangle viewBox = new Rectangle(viewBoxValues[0], viewBoxValues[1], viewBoxValues[2], viewBoxValues[3]);
             Rectangle appliedViewBox = calculateAppliedViewBox(viewBox, xStep, yStep);
 
-            patternMatrixTransform.translate(appliedViewBox.getX(), appliedViewBox.getY());
-
             double scaleX = (double) appliedViewBox.getWidth() / (double) viewBox.getWidth();
             double scaleY = (double) appliedViewBox.getHeight() / (double) viewBox.getHeight();
+
+            double xOffset = (double) appliedViewBox.getX() / scaleX - (double) viewBox.getX();
+            double yOffset = (double) appliedViewBox.getY() / scaleY - (double) viewBox.getY();
+
+            patternMatrixTransform.translate(xOffset, yOffset);
+
             patternMatrixTransform.scale(scaleX, scaleY);
             xStep /= scaleX;
             yStep /= scaleY;
 
-            patternMatrixTransform.translate(-viewBox.getX(), -viewBox.getY());
-
-            double bboxXOriginal = viewBox.getX() - appliedViewBox.getX() / scaleX;
-            double bboxYOriginal = viewBox.getY() - appliedViewBox.getY() / scaleY;
+            double bboxXOriginal = -xOffset / scaleX;
+            double bboxYOriginal = -yOffset / scaleY;
             bbox = new Rectangle((float) bboxXOriginal, (float) bboxYOriginal, (float) xStep, (float) yStep);
         }
 
@@ -301,8 +303,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         // of the element (according to the viewBox documentation)
         if (viewBoxValues[2] == 0 || viewBoxValues[3] == 0) {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info(MessageFormatUtil
-                        .format(SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO));
+                LOGGER.info(SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO);
             }
             return true;
         } else {

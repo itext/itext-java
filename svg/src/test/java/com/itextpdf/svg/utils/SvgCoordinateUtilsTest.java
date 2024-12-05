@@ -233,7 +233,7 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
 
     @Test
     public void applyViewBoxCurrentViewPortZeroWidthHeightTest() {
-        Rectangle currentViewPort = new Rectangle(50F, 50F, 0F, 0F);
+        Rectangle currentViewPort = new Rectangle(0F, 0F, 0F, 0F);
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, currentViewPort, null, null);
         Assertions.assertTrue(currentViewPort.equalsWithEpsilon(appliedViewBox));
@@ -244,33 +244,33 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
         Rectangle currentViewPort = new Rectangle(50F, 50F, -100F, -60F);
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, currentViewPort, null, null);
-        Assertions.assertTrue(new Rectangle(50F, 70F, -100F, -100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-850F, -950F, -100F, -100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxAlignIsNullSliceTest() {
-        Rectangle assertRect = new Rectangle(80F, 40F, 60F, 60F);
+        Rectangle assertRect = new Rectangle(120F, 0F, 60F, 60F);
         Rectangle appliedViewBox = SvgCoordinateUtils.applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, null, Values.SLICE);
         Assertions.assertTrue(assertRect.equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxAlignIsNullMeetTest() {
-        Rectangle assertRect = new Rectangle(80F, 40F, 60F, 60F);
+        Rectangle assertRect = new Rectangle(120F, 0F, 60F, 60F);
         Rectangle appliedViewBox = SvgCoordinateUtils.applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, null, Values.MEET);
         Assertions.assertTrue(assertRect.equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxAlignIsNullIncorrectMeetOrSliceTest() {
-        Rectangle assertRect = new Rectangle(80F, 40F, 60F, 60F);
+        Rectangle assertRect = new Rectangle(120F, 0F, 60F, 60F);
         Rectangle appliedViewBox = SvgCoordinateUtils.applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, null, "jklsdj");
         Assertions.assertTrue(assertRect.equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxMeetOrSliceIsNullXMaxYMaxTest() {
-        Rectangle assertRect = new Rectangle(100F, 40F, 60F, 60F);
+        Rectangle assertRect = new Rectangle(180F, 0F, 60F, 60F);
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMAX_YMAX, null);
         Assertions.assertTrue(assertRect.equalsWithEpsilon(appliedViewBox));
@@ -278,7 +278,7 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
 
     @Test
     public void applyViewBoxMeetOrSliceIsNullXMinYMinTest() {
-        Rectangle assertRect = new Rectangle(60F, 40F, 60F, 60F);
+        Rectangle assertRect = new Rectangle(60F, 0F, 60F, 60F);
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMIN_YMIN, null);
         Assertions.assertTrue(assertRect.equalsWithEpsilon(appliedViewBox));
@@ -286,7 +286,7 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
 
     @Test
     public void applyViewBoxMeetOrSliceIsNullIncorrectAlignTest() {
-        Rectangle assertRect = new Rectangle(80F, 40F, 60F, 60F);
+        Rectangle assertRect = new Rectangle(120F, 0F, 60F, 60F);
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, "ahfdfs", null);
         Assertions.assertTrue(assertRect.equalsWithEpsilon(appliedViewBox));
@@ -294,7 +294,7 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
 
     @Test
     public void applyViewBoxIncorrectAlignMeetTest() {
-        Rectangle assertRect = new Rectangle(80F, 40F, 60F, 60F);
+        Rectangle assertRect = new Rectangle(120F, 0F, 60F, 60F);
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, "ahfdfs", Values.MEET);
         Assertions.assertTrue(assertRect.equalsWithEpsilon(appliedViewBox));
@@ -302,7 +302,7 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
 
     @Test
     public void applyViewBoxIncorrectAlignSliceTest() {
-        Rectangle assertRect = new Rectangle(80F, 40F, 60F, 60F);
+        Rectangle assertRect = new Rectangle(120F, 0F, 60F, 60F);
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, "ahfdfs", Values.SLICE);
         Assertions.assertTrue(assertRect.equalsWithEpsilon(appliedViewBox));
@@ -313,7 +313,7 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.NONE, null);
         Assertions.assertNotSame(VIEW_PORT_HORIZONTAL, appliedViewBox);
-        Assertions.assertTrue(VIEW_PORT_HORIZONTAL.equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, 0F, 100F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
@@ -321,7 +321,7 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.NONE, Values.MEET);
         Assertions.assertNotSame(VIEW_PORT_HORIZONTAL, appliedViewBox);
-        Assertions.assertTrue(VIEW_PORT_HORIZONTAL.equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, 0F, 100F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
@@ -329,13 +329,13 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.NONE, Values.SLICE);
         Assertions.assertNotSame(VIEW_PORT_HORIZONTAL, appliedViewBox);
-        Assertions.assertTrue(VIEW_PORT_HORIZONTAL.equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, 0F, 100F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxNoneMeetOrSliceIsIncorrectTest() {
         //xMidYMid will be processed  cause meetOrSlice is incorrect
-        Rectangle assertRect = new Rectangle(80F, 40F, 60F, 60F);
+        Rectangle assertRect = new Rectangle(120F, 0F, 60F, 60F);
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.NONE, "fhakljs");
         Assertions.assertTrue(assertRect.equalsWithEpsilon(appliedViewBox));
@@ -345,42 +345,42 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
     public void applyViewBoxXMinYMinMeetHorizontalViewPortTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMIN_YMIN, Values.MEET);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(60F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMinYMinSliceHorizontalViewPortTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMIN_YMIN, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMinYMinMeetVerticalViewPortTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMIN_YMIN, Values.MEET);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(60F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMinYMinSliceVerticalViewPortTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMIN_YMIN, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMinYMidMeetHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMIN_YMID, Values.MEET);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(60F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMinYMidSliceHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMIN_YMID, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 20F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -300F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
@@ -394,7 +394,7 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
     public void applyViewBoxXMinYMidSliceVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMIN_YMID, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
 
@@ -402,70 +402,70 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
     public void applyViewBoxXMinYMaxMeetHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMIN_YMAX, Values.MEET);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(60F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMinYMaxSliceHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMIN_YMAX, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 0F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -400F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMinYMaxMeetVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMIN_YMAX, Values.MEET);
-        Assertions.assertTrue(new Rectangle(60F, 80F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(60F, 120F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMinYMaxSliceVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMIN_YMAX, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMinMeetHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMID_YMIN, Values.MEET);
-        Assertions.assertTrue(new Rectangle(80F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(120F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMinSliceHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMID_YMIN, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMinMeetVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMID_YMIN, Values.MEET);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(60F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMinSliceVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMID_YMIN, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(40F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-200F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMidMeetHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMID_YMID, Values.MEET);
-        Assertions.assertTrue(new Rectangle(80F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(120F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMidSliceHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMID_YMID, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 20F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -300F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
@@ -479,77 +479,77 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
     public void applyViewBoxXMidYMidSliceVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMID_YMID, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(40F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-200F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMaxMeetHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMID_YMAX, Values.MEET);
-        Assertions.assertTrue(new Rectangle(80F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(120F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMaxSliceHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMID_YMAX, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 0F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -400F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMaxMeetVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMID_YMAX, Values.MEET);
-        Assertions.assertTrue(new Rectangle(60F, 80F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(60F, 120F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMidYMaxSliceVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMID_YMAX, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(40F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-200F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMinMeetHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMAX_YMIN, Values.MEET);
-        Assertions.assertTrue(new Rectangle(100F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(180F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMinSliceHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMAX_YMIN, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMinMeetVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMAX_YMIN, Values.MEET);
-        Assertions.assertTrue(new Rectangle(60F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(60F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMinSliceVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMAX_YMIN, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(20F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-300F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMidMeetHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMAX_YMID, Values.MEET);
-        Assertions.assertTrue(new Rectangle(100F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(180F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMidSliceHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMAX_YMID, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 20F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -300F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
@@ -563,34 +563,34 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
     public void applyViewBoxXMaxYMidSliceVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMAX_YMID, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(20F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-300F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMaxMeetHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMAX_YMAX, Values.MEET);
-        Assertions.assertTrue(new Rectangle(100F, 40F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(180F, 0F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMaxSliceHorizontalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_HORIZONTAL, Values.XMAX_YMAX, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(60F, 0F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-100F, -400F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMaxMeetVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMAX_YMAX, Values.MEET);
-        Assertions.assertTrue(new Rectangle(60F, 80F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(60F, 120F, 60F, 60F).equalsWithEpsilon(appliedViewBox));
     }
 
     @Test
     public void applyViewBoxXMaxYMaxSliceVerticalTest() {
         Rectangle appliedViewBox = SvgCoordinateUtils
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMAX_YMAX, Values.SLICE);
-        Assertions.assertTrue(new Rectangle(20F, 40F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
+        Assertions.assertTrue(new Rectangle(-300F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
 }

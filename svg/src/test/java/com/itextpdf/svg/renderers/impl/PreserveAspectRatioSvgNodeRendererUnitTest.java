@@ -22,11 +22,9 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,98 +38,7 @@ import java.util.Map;
 public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     private static final Rectangle VIEWPORT_VALUE = PageSize.DEFAULT;
-    private static final float[] VIEWBOX_VALUES = new float[]{0, 0, 300, 400};
-
-    @Test
-    public void processAspectRatioPositionDefault() {
-        //default aspect ration is xMidYMid
-        String alignValue = SvgConstants.Values.DEFAULT_ASPECT_RATIO;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(147.5, 221);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
-
-    @Test
-    public void processAspectRatioPositionNone() {
-        String alignValue = SvgConstants.Values.NONE;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(0, 0);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
-
-    @Test
-    public void processAspectRatioPositionXMinYMin() {
-        String alignValue = SvgConstants.Values.XMIN_YMIN;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(0, 0);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
-
-    @Test
-    public void processAspectRatioPositionXMinYMid() {
-        String alignValue = SvgConstants.Values.XMIN_YMID;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(0, 221);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
-
-    @Test
-    public void processAspectRatioPositionXMinYMax() {
-        String alignValue = SvgConstants.Values.XMIN_YMAX;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(0, 442);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
-
-    @Test
-    public void processAspectRatioPositionXMidYMin() {
-        String alignValue = SvgConstants.Values.XMID_YMIN;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(147.5, 0);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
-
-    @Test
-    public void processAspectRatioPositionXMidYMax() {
-        String alignValue = SvgConstants.Values.XMID_YMAX;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(147.5, 442);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
-
-    @Test
-    public void processAspectRatioPositionXMaxYMin() {
-        String alignValue = SvgConstants.Values.XMAX_YMIN;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(295, 0);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
-
-    @Test
-    public void processAspectRatioPositionXMaxYMid() {
-        String alignValue = SvgConstants.Values.XMAX_YMID;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(295, 221);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
-
-    @Test
-    public void processAspectRatioPositionXMaxYMax() {
-        String alignValue = SvgConstants.Values.XMAX_YMAX;
-        AffineTransform cmpTransform = new AffineTransform();
-        cmpTransform.translate(295, 442);
-
-        processAspectRatioPositionAndCompare(alignValue, cmpTransform);
-    }
+    private static final Rectangle VIEWBOX_VALUE = new Rectangle(0, 0, 300, 400);
 
     @Test
     public void retrieveAlignAndMeetXMinYMinMeet() {
@@ -213,25 +120,6 @@ public class PreserveAspectRatioSvgNodeRendererUnitTest extends ExtendedITextTes
         String[] outAlignAndMeet = retrieveAlignAndMeet("", "");
 
         Assertions.assertArrayEquals(cmpAlignAndMeet, outAlignAndMeet);
-    }
-
-    private void processAspectRatioPositionAndCompare(String alignValue, AffineTransform cmpTransform) {
-        SvgDrawContext context = new SvgDrawContext(null, null);
-
-        // topmost viewport has default page size values for bounding rectangle
-        context.addViewPort(VIEWPORT_VALUE);
-
-        float[] viewboxValues = VIEWBOX_VALUES;
-        float scaleWidth = 1.0f;
-        float scaleHeight = 1.0f;
-
-        AbstractBranchSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
-        Map<String, String> attributesAndStyles = new HashMap<>();
-        renderer.setAttributesAndStyles(attributesAndStyles);
-
-        AffineTransform outTransform = renderer.processAspectRatioPosition(context, viewboxValues, alignValue, scaleWidth, scaleHeight);
-
-        Assertions.assertTrue(cmpTransform.equals(outTransform));
     }
 
     private String[] retrieveAlignAndMeet(String align, String meet) {

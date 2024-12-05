@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241125124217+03'00')/ModDate(D:20241125124217+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20241205042615+03'00')/ModDate(D:20241205042615+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -27,8 +27,8 @@ endobj
 <</BBox[0 0 191.25 180]/Length 93/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 180 cm
 % svg root
+1 0 0 1 5.63 0 cm
 1.2 0 0 1.2 0 0 cm
-1 0 0 1 4.69 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm1 Do
@@ -37,7 +37,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[-4.69 0 154.69 150]/Length 2462/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm2 11 0 R/Fm3 12 0 R/Fm4 13 0 R/Fm5 14 0 R/Fm6 15 0 R/Fm7 16 0 R/Fm8 17 0 R/Fm9 18 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-4.69 0 154.69 150]/Length 2454/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm2 11 0 R/Fm3 12 0 R/Fm4 13 0 R/Fm5 14 0 R/Fm6 15 0 R/Fm7 16 0 R/Fm8 17 0 R/Fm9 18 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -4.69 0 159.38 150 re
 W
 n
@@ -51,8 +51,8 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 7.5 7.5 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 12.5 12.5 cm
 0 -1 1 0 0 0 cm
 1 0 0 1 -3.75 -3.75 cm
 q
@@ -62,8 +62,8 @@ Q
 Q
 q
 0 0 0 rg
+1 0 0 1 60 60 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 100 100 cm
 0.98995 -0.14142 0.14142 0.98995 0 0 cm
 1 0 0 1 -3.75 -3.75 cm
 q
@@ -101,8 +101,8 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 15 15 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 25 25 cm
 1 0 0 1 0 0 cm
 1 0 0 1 -3.75 -3.75 cm
 q
@@ -130,8 +130,8 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 22.5 22.5 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 37.5 37.5 cm
 1 0 0 1 -3.75 -3.75 cm
 q
 1 0 0 1 0 0 cm
@@ -158,8 +158,8 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 30 30 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 50 50 cm
 0.98481 0.17365 -0.17365 0.98481 0 0 cm
 1 0 0 1 -3.75 -3.75 cm
 q
@@ -187,8 +187,8 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 37.5 37.5 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 62.5 62.5 cm
 1 0 0 1 -3.75 -3.75 cm
 q
 1 0 0 1 0 0 cm
@@ -215,8 +215,8 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 45 45 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 75 75 cm
 1 0 0 1 -3.75 -3.75 cm
 q
 1 0 0 1 0 0 cm
@@ -243,8 +243,8 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 52.5 52.5 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 87.5 87.5 cm
 -0.86603 -0.5 0.5 -0.86603 0 0 cm
 1 0 0 1 -3.75 -3.75 cm
 q
@@ -272,8 +272,8 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 63.75 67.5 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 106.25 112.5 cm
 0.86603 -0.5 0.5 0.86603 0 0 cm
 1 0 0 1 -3.75 -3.75 cm
 q
@@ -301,8 +301,8 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 60 75 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 100 125 cm
 1 0 0 1 -3.75 -3.75 cm
 q
 1 0 0 1 0 0 cm
@@ -504,19 +504,19 @@ xref
 0000000434 00000 n 
 0000000575 00000 n 
 0000000798 00000 n 
-0000003514 00000 n 
-0000003687 00000 n 
-0000003861 00000 n 
-0000004041 00000 n 
-0000004215 00000 n 
-0000004395 00000 n 
-0000004569 00000 n 
-0000004748 00000 n 
-0000004934 00000 n 
-0000005108 00000 n 
+0000003506 00000 n 
+0000003679 00000 n 
+0000003853 00000 n 
+0000004033 00000 n 
+0000004207 00000 n 
+0000004387 00000 n 
+0000004561 00000 n 
+0000004740 00000 n 
+0000004926 00000 n 
+0000005100 00000 n 
 trailer
-<</ID [<f31a43d7773fc3c58a558ec6ce8742a1a21c84b1410328533c93bc4d3641c00e1ff9e5c4dd5b9418f5274b10ccadf13f31eec23c64d1ccac361cf3e3980c4a0c><f31a43d7773fc3c58a558ec6ce8742a1a21c84b1410328533c93bc4d3641c00e1ff9e5c4dd5b9418f5274b10ccadf13f31eec23c64d1ccac361cf3e3980c4a0c>]/Info 3 0 R/Root 1 0 R/Size 19>>
+<</ID [<40b2d5aee9fe706a44fc1b0537750c312f9ff22f8dbcd9446c62a50dddba71d6ba223eabbc3ddbaef9ff9b788093511035d54bf085c412675376b0cd7fb91861><40b2d5aee9fe706a44fc1b0537750c312f9ff22f8dbcd9446c62a50dddba71d6ba223eabbc3ddbaef9ff9b788093511035d54bf085c412675376b0cd7fb91861>]/Info 3 0 R/Root 1 0 R/Size 19>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-5288
+5280
 %%EOF

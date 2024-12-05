@@ -56,8 +56,8 @@ public abstract class AbstractContainerSvgNodeRenderer extends AbstractBranchSvg
         Rectangle currentViewPort = context.getCurrentViewPort();
 
         // Set default values to parent viewport in the case of a nested svg tag
-        float portX = currentViewPort.getX();
-        float portY = currentViewPort.getY();
+        float portX = 0;
+        float portY = 0;
         // Default should be parent portWidth if not outermost
         float portWidth = currentViewPort.getWidth();
         // Default should be parent height if not outermost

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018120101+03'00')/ModDate(D:20211018120101+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20241205042639+03'00')/ModDate(D:20241205042639+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -48,8 +48,8 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[283.5 450.75 729.75 1082.25]/Length 64/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
-283.5 450.75 446.25 631.5 re
+<</BBox[60 135 506.25 766.5]/Length 58/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+60 135 446.25 631.5 re
 W
 n
 q
@@ -62,8 +62,8 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[283.5 450.75 729.75 1082.25]/Length 85/Resources<</XObject<</Fm1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
-283.5 450.75 446.25 631.5 re
+<</BBox[0 0 446.25 631.5]/Length 76/Resources<</XObject<</Fm1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 446.25 631.5 re
 W
 n
 q
@@ -77,8 +77,8 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[306 480.75 752.25 1112.25]/Length 216/Resources<<>>/Subtype/Form/Type/XObject>>stream
-306 480.75 446.25 631.5 re
+<</BBox[22.5 30 468.75 661.5]/Length 213/Resources<<>>/Subtype/Form/Type/XObject>>stream
+22.5 30 446.25 631.5 re
 W
 n
 q
@@ -98,18 +98,18 @@ xref
 0 11
 0000000000 65535 f 
 0000000211 00000 n 
-0000000427 00000 n 
+0000000428 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000478 00000 n 
-0000000694 00000 n 
-0000000920 00000 n 
-0000001127 00000 n 
-0000001356 00000 n 
+0000000479 00000 n 
+0000000695 00000 n 
+0000000921 00000 n 
+0000001114 00000 n 
+0000001323 00000 n 
 trailer
-<</ID [<3056671076b99e887dad44fc84943a43><3056671076b99e887dad44fc84943a43>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<0791fc8485f891d4169b0eecffd554eab4ed6ed9a9b2bf99e405a3a9fb4a14db64bc4ab002edac0887936bd2fb4712dc99628a548a5b46b112dc46aad69f45bd><0791fc8485f891d4169b0eecffd554eab4ed6ed9a9b2bf99e405a3a9fb4a14db64bc4ab002edac0887936bd2fb4712dc99628a548a5b46b112dc46aad69f45bd>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-1693
+1652
 %%EOF

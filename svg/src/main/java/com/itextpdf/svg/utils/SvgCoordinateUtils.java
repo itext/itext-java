@@ -210,24 +210,25 @@ public class SvgCoordinateUtils {
             scaleHeight = scale;
         }
 
-        // apply scale
+        // Apply scale for width and height.
         Rectangle appliedViewBox = new Rectangle(viewBox.getX(), viewBox.getY(),
                 (float) ((double) viewBox.getWidth() * scaleWidth),
                 (float) ((double) viewBox.getHeight() * scaleHeight));
 
-        double minXOffset = (double) currentViewPort.getX() - (double) appliedViewBox.getX();
-        double minYOffset = (double) currentViewPort.getY() - (double) appliedViewBox.getY();
+        // Calculate offset.
+        double minXOffset = (double) currentViewPort.getX() - ((double) appliedViewBox.getX() * scaleWidth);
+        double minYOffset = (double) currentViewPort.getY() - ((double) appliedViewBox.getY() * scaleHeight);
 
         double midXOffset = (double) currentViewPort.getX() + ((double) currentViewPort.getWidth() / 2)
-                - ((double) appliedViewBox.getX() + ((double) appliedViewBox.getWidth() / 2));
+                - (((double) appliedViewBox.getX() * scaleWidth) + ((double) appliedViewBox.getWidth() / 2));
         double midYOffset = (double) currentViewPort.getY() + ((double) currentViewPort.getHeight() / 2)
-                - ((double) appliedViewBox.getY() + ((double) appliedViewBox.getHeight() / 2));
+                - (((double) appliedViewBox.getY() * scaleHeight) + ((double) appliedViewBox.getHeight() / 2));
 
         double maxXOffset = (double) currentViewPort.getX() + (double) currentViewPort.getWidth()
-                - ((double) appliedViewBox.getX() + (double) appliedViewBox.getWidth());
+                - (((double) appliedViewBox.getX() * scaleWidth) + (double) appliedViewBox.getWidth());
         double maxYOffset = (double) currentViewPort.getY() + (double) currentViewPort.getHeight()
-                - ((double) appliedViewBox.getY() + (double) appliedViewBox.getHeight());
-        
+                - (((double) appliedViewBox.getY() * scaleHeight) + (double) appliedViewBox.getHeight());
+
         double xOffset;
         double yOffset;
 
@@ -273,9 +274,13 @@ public class SvgCoordinateUtils {
                 return applyViewBox(viewBox, currentViewPort, Values.XMID_YMID, Values.MEET);
         }
 
-        // apply offset
+        // Apply offset.
         appliedViewBox.moveRight((float) xOffset);
         appliedViewBox.moveUp((float) yOffset);
+
+        // Apply scale for coordinates.
+        appliedViewBox.setX((float) ((double) appliedViewBox.getX() * scaleWidth));
+        appliedViewBox.setY((float) ((double) appliedViewBox.getY() * scaleHeight));
 
         return appliedViewBox;
     }

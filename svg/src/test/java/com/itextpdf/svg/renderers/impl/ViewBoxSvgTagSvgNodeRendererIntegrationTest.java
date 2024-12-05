@@ -99,19 +99,16 @@ public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationT
     }
 
     @Test
-    //TODO (DEVSIX-3493) change cmp files after fix
     public void viewBoxXYValuesPreserveAspectRatioXMaxYMaxMeetValues() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxXYValuesPreserveAspectRatioXMaxYMaxMeetValues");
     }
 
     @Test
-    //TODO (DEVSIX-3493) change cmp files after fix
     public void viewBoxXYValuesPreserveAspectRatioXMaxYMaxSliceValues() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxXYValuesPreserveAspectRatioXMaxYMaxSliceValues");
     }
 
     @Test
-    //TODO DEVSIX-4861 change cmp after fix
     public void preserveAspectRationAllOptionsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"preserveAspectRationAllOptions");
     }

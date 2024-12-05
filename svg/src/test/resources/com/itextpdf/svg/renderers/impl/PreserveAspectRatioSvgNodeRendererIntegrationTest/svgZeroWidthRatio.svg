@@ -1,0 +1,17 @@
+<svg width="450px" height="300px" viewBox="0 0 0 10" xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+        <g id="smile">
+            <rect x='.5' y='.5' width='29' height='39' style="fill:black;stroke:red"/>
+            <circle cx='15' cy='20' r='10' fill='yellow'/>
+            <circle cx='12' cy='17' r='1.5' fill='black'/>
+            <circle cx='17' cy='17' r='1.5' fill='black'/>
+            <path d='M 10 24 A 8 8 0 0 0 20 24' stroke='black' stroke-width='2'/>
+        </g>
+    </defs>
+
+    <text x="10" y="30">SVG with zero width should be invisible</text>
+    <g transform="translate(20,40)">
+        <use href="#smile"/>
+    </g>
+</svg>
