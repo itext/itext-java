@@ -798,34 +798,37 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
     @Test
     public void ua1PrinterMAnnotNotInTagStructureTest() throws IOException {
-        final String outPdf = DESTINATION_FOLDER + "ua1PrinterMAnnotNotInTagStructureTest.pdf";
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
-        PdfPage pdfPage = pdfDoc.addNewPage();
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
 
-        PdfFormXObject form = new PdfFormXObject(PageSize.A4);
-        PdfCanvas canvas = new PdfCanvas(form, pdfDoc);
-        canvas
-                .saveState()
-                .circle(265, 795, 5)
-                .setColor(ColorConstants.GREEN, true)
-                .fill()
-                .restoreState();
-        canvas.release();
+            PdfFormXObject form = new PdfFormXObject(PageSize.A4);
+            PdfCanvas canvas = new PdfCanvas(form, pdfDoc);
+            canvas
+                    .saveState()
+                    .circle(265, 795, 5)
+                    .setColor(ColorConstants.GREEN, true)
+                    .fill()
+                    .restoreState();
+            canvas.release();
 
-        PdfPrinterMarkAnnotation annot = new PdfPrinterMarkAnnotation(PageSize.A4, form);
-        annot.setContents("link annot");
-        // Put false as 3rd parameter to not tag annotation
-        pdfPage.addAnnotation(-1, annot, false);
+            PdfPrinterMarkAnnotation annot = new PdfPrinterMarkAnnotation(PageSize.A4, form);
+            annot.setContents("link annot");
+            // Put false as 3rd parameter to not tag annotation
+            pdfPage.addAnnotation(-1, annot, false);
 
 
-        PdfCustomAnnot annot2 = new PdfCustomAnnot(new Rectangle(100, 650, 400, 100));
-        annot2.setContents("Content of unique annot");
-        pdfPage.addAnnotation(annot2);
+            PdfCustomAnnot annot2 = new PdfCustomAnnot(new Rectangle(100, 650, 400, 100));
+            annot2.setContents("Content of unique annot");
+            pdfPage.addAnnotation(annot2);
 
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
-        // VeraPdf complains about the fact that PrinterMark annotation isn't wrapped by Annot tag.
-        // But in that test we don't put PrinterMark annot in tag structure at all.
-        new VeraPdfValidator().validateFailure(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+            PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
+            stamp.setStampName(PdfName.Approved);
+            stamp.setContents("stamp contents");
+            stamp.getPdfObject().put(PdfName.Type, PdfName.Annot);
+            pdfPage.addAnnotation(stamp);
+        });
+        framework.assertBothValid("ua1PrinterMAnnotNotInTagStructureTest");
     }
 
     private PdfTextAnnotation createRichTextAnnotation() {

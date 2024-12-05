@@ -286,6 +286,45 @@ public class PdfUA2Test extends ExtendedITextTest {
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
 
+            Paragraph paragraph = new Paragraph("Table of Contents");
+            document.add(paragraph);
+            Paragraph tociRef = new Paragraph("The referenced paragraph");
+            document.add(tociRef);
+            TagTreePointer pointer = new TagTreePointer(pdfDocument);
+            pointer.moveToKid(1 ,StandardRoles.P);
+            Div tocDiv = new Div();
+            tocDiv.getAccessibilityProperties().setRole(StandardRoles.TOC).setNamespace(new PdfNamespace(StandardNamespaces.PDF_1_7));
+            Div firstTociDiv = new Div();
+            firstTociDiv.getAccessibilityProperties().setRole(StandardRoles.TOCI).setNamespace(new PdfNamespace(StandardNamespaces.PDF_1_7));
+            firstTociDiv.add(new Paragraph("first toci"));
+            firstTociDiv.getAccessibilityProperties().addRef(pointer);
+            Div secondTociDiv = new Div();
+            secondTociDiv.getAccessibilityProperties().setRole(StandardRoles.TOCI).setNamespace(new PdfNamespace(StandardNamespaces.PDF_1_7));
+            secondTociDiv.add(new Paragraph("second toci"));
+            secondTociDiv.getAccessibilityProperties().addRef(pointer);
+            tocDiv.add(firstTociDiv);
+            tocDiv.add(secondTociDiv);
+            document.add(tocDiv);
+
+            pointer.moveToParent().moveToKid(StandardRoles.TOCI);
+            // We check that TOCI contains the previously added Paragraph ref
+            Assertions.assertEquals(1, pointer.getProperties().getRefsList().size());
+            Assertions.assertEquals(StandardRoles.P, pointer.getProperties().getRefsList().get(0).getRole());
+        }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void checkInvalidStructureTableOfContentsTest() throws IOException, XMPException {
+        String outFile = DESTINATION_FOLDER + "invalidStructureTableOfContentsTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))){
+            Document document = new Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            document.setFont(font);
+            createSimplePdfUA2Document(pdfDocument);
+
             Paragraph tocTitle = new Paragraph("Table of Contents\n");
             tocTitle.getAccessibilityProperties().setRole(StandardRoles.TOC).setNamespace(new PdfNamespace(StandardNamespaces.PDF_1_7));
             Paragraph tociElement = new Paragraph("- TOCI element");
@@ -303,7 +342,8 @@ public class PdfUA2Test extends ExtendedITextTest {
             Assertions.assertEquals(1, pointer.getProperties().getRefsList().size());
             Assertions.assertEquals(StandardRoles.P, pointer.getProperties().getRefsList().get(0).getRole());
         }
-        compareAndValidate(outFile, cmpFile);
+        // We expect failing validation because TOC and TOCI shall not contain Span tags
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -319,8 +359,38 @@ public class PdfUA2Test extends ExtendedITextTest {
             createSimplePdfUA2Document(pdfDocument);
 
             document.add(new Paragraph("Section 1:"));
+            document.add(new Paragraph("Paragraph 1.1"));
 
-            Paragraph section1Content = new Paragraph("Paragraph 1.1");
+            Div aside = new Div();
+            aside.getAccessibilityProperties().setRole(StandardRoles.ASIDE);
+            aside.add(new Paragraph("Additional content related to Section 1."));
+            document.add(aside);
+            document.add(new Paragraph("Section 2:"));
+            document.add(new Paragraph("Paragraph 2.1"));
+            document.add(new Paragraph("Paragraph 2.2"));
+
+            Div aside2 = new Div();
+            aside2.getAccessibilityProperties().setRole(StandardRoles.ASIDE);
+            aside2.add(new Paragraph("Additional content related to Section 2."));
+            document.add(aside2);
+        }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void createInvalidAsideStructureTest() throws IOException, XMPException{
+        String outFile = DESTINATION_FOLDER + "invalidAsideStructureTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))){
+            Document document = new Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            document.setFont(font);
+            createSimplePdfUA2Document(pdfDocument);
+
+            document.add(new Paragraph("Section 1:"));
+
+            Paragraph section1Content = new Paragraph("Paragraph 1.1\n");
 
             Paragraph aside = new Paragraph("Additional content related to Section 1.");
             aside.getAccessibilityProperties().setRole(StandardRoles.ASIDE);
@@ -333,10 +403,9 @@ public class PdfUA2Test extends ExtendedITextTest {
             Paragraph aside2 = new Paragraph("Additional content related to Section 2.");
             aside2.getAccessibilityProperties().setRole(StandardRoles.ASIDE);
             document.add(aside2);
-
-            document.add(new Paragraph("Section 3:"));
         }
-        compareAndValidate(outFile, cmpFile);
+        // We expect failing validation because Aside shall not contain Span and P shall not contain Aside
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -398,9 +467,33 @@ public class PdfUA2Test extends ExtendedITextTest {
     }
 
     @Test
-    public void checkLabelTest() throws IOException, XMPException, InterruptedException {
+    public void checkLabelInListTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "labelInListTest.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_labelInListTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))){
+            Document document = new Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            document.setFont(font);
+            createSimplePdfUA2Document(pdfDocument);
+
+            List list = new List();
+            list.add("First list element");
+            list.add("Second list element");
+            list.add("Third list element");
+            document.add(list);
+            TagTreePointer pointer = new TagTreePointer(pdfDocument);
+            pointer.moveToKid(StandardRoles.LI);
+            // We check that a list element contains a bullet with Lbl tag
+            Assertions.assertEquals(StandardRoles.LBL, pointer.getKidsRoles().get(0));
+        }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void checkInvalidLabelStructureTest() throws IOException, XMPException, InterruptedException {
         String outFile = DESTINATION_FOLDER + "labelTest.pdf";
-        String cmpFile = SOURCE_FOLDER + "cmp_labelTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
@@ -411,14 +504,35 @@ public class PdfUA2Test extends ExtendedITextTest {
 
             Div lblStructure = new Div();
             lblStructure.getAccessibilityProperties().setRole(StandardRoles.LBL);
-            Paragraph labelContent = new Paragraph("Label: ");
+            Paragraph labelContent = new Paragraph("Label content");
             lblStructure.add(labelContent);
-
-            Paragraph targetContent = new Paragraph("Marked content");
-            targetContent.getAccessibilityProperties().setActualText("Marked content");
-
             document.add(lblStructure);
-            document.add(targetContent);
+        }
+        // We expect failing validation because Lbl shall not contain P and Document shall not contain Lbl
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void checkLabelWithLinkContentTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "labelWithLinkContentTest.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_labelWithLinkContentTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))){
+            Document document = new Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            document.setFont(font);
+            createSimplePdfUA2Document(pdfDocument);
+
+            Paragraph container = new Paragraph();
+            Div lblStructure = new Div();
+            lblStructure.getAccessibilityProperties().setRole(StandardRoles.LBL);
+            Paragraph labelContent = new Paragraph("Label with Link content");
+            labelContent.getAccessibilityProperties().setRole(StandardRoles.LINK);
+            lblStructure.add(labelContent);
+            container.add(lblStructure);
+
+            document.add(container);
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -649,6 +763,27 @@ public class PdfUA2Test extends ExtendedITextTest {
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
 
+            Paragraph paragraph = new Paragraph("Bibliography paragraph:\n");
+            Paragraph bibliography = new Paragraph("1. Author A. Title of Book. Publisher, Year.");
+            bibliography.getAccessibilityProperties().setRole(StandardRoles.BIBENTRY).setNamespace(new PdfNamespace(StandardNamespaces.PDF_1_7));
+            paragraph.add(bibliography);
+            document.add(paragraph);
+        }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void checkInvalidBibliographicStructureEntryTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "invalidBibliographicStructureEntryTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(
+                new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            Document document = new Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            document.setFont(font);
+            createSimplePdfUA2Document(pdfDocument);
+
             Paragraph section = new Paragraph("Bibliography section:\n");
             section.getAccessibilityProperties().setRole(StandardRoles.SECT);
             Paragraph bibliography = new Paragraph("1. Author A. Title of Book. Publisher, Year.");
@@ -657,7 +792,8 @@ public class PdfUA2Test extends ExtendedITextTest {
             section.add(bibliography);
             document.add(section);
         }
-        compareAndValidate(outFile, cmpFile);
+        // We expect failing validation because Sect shall not contain BibEntry and Span
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
