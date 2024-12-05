@@ -1348,6 +1348,11 @@ public class PdfPKCS7 {
                     }
                     // Check that encapMessageContent is TSTInfo
                     boolean isTSTInfo = Arrays.equals(tstInfo, encapMessageContent);
+                    if (!isTSTInfo) {
+                        // This additional fallback is required in cases when encapMessageContent is ber encoded.
+                        // In this method we re-encode it into der.
+                        isTSTInfo = verifyTSTInfoDer(tstInfo);
+                    }
                     IMessageImprint imprint = timeStampTokenInfo.getMessageImprint();
                     byte[] imphashed = imprint.getHashedMessage();
                     verifySignedMessageContent = isTSTInfo && Arrays.equals(msgDigestBytes, imphashed);
@@ -1371,12 +1376,6 @@ public class PdfPKCS7 {
         return verifyResult;
     }
 
-    private boolean verifySigAttributes(byte[] attr) throws GeneralSecurityException {
-        Signature signature = initSignature(signCert.getPublicKey());
-        SignUtils.updateVerifier(signature, attr);
-        return signature.verify(signatureValue);
-    }
-
     /**
      * Checks if the timestamp refers to this document.
      *
@@ -1393,6 +1392,23 @@ public class PdfPKCS7 {
         byte[] md = SignUtils.getMessageDigest(DigestAlgorithms.getDigest(algOID)).digest(signatureValue);
         byte[] imphashed = imprint.getHashedMessage();
         return Arrays.equals(md, imphashed);
+    }
+
+    private boolean verifyTSTInfoDer(byte[] tstInfo) {
+        try {
+            byte[] encapMessageContentDer = BOUNCY_CASTLE_FACTORY.createTSTInfo(
+                            BOUNCY_CASTLE_FACTORY.createASN1Sequence(encapMessageContent))
+                    .toASN1Primitive().getEncoded(BOUNCY_CASTLE_FACTORY.createASN1Encoding().getDer());
+            return Arrays.equals(tstInfo, encapMessageContentDer);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean verifySigAttributes(byte[] attr) throws GeneralSecurityException {
+        Signature signature = initSignature(signCert.getPublicKey());
+        SignUtils.updateVerifier(signature, attr);
+        return signature.verify(signatureValue);
     }
 
     // Certificates

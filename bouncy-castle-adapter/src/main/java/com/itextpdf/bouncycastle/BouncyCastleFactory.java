@@ -1748,6 +1748,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public ITSTInfo createTSTInfo(IASN1Primitive contentInfo) {
+        return new TSTInfoBC(TSTInfo.getInstance(((ASN1PrimitiveBC) contentInfo).getPrimitive()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ISingleResp createSingleResp(IBasicOCSPResponse basicResp) {
         return new SingleRespBC(basicResp);
     }

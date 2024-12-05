@@ -119,6 +119,15 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
     }
 
     @Test
+    public void verifySignatureIntegrityAndAuthenticityBerEncodedTimestampTest() throws IOException, GeneralSecurityException {
+        try (PdfDocument outDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timeStampSignatureBerEncoded.pdf"))) {
+            SignatureUtil sigUtil = new SignatureUtil(outDocument);
+            PdfPKCS7 pkcs7 = sigUtil.readSignatureData("timestampSig1");
+            Assertions.assertTrue(pkcs7.verifySignatureIntegrityAndAuthenticity());
+        }
+    }
+
+    @Test
     public void reasonSetGetTest()
             throws NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException {
         PdfPKCS7 pkcs7 = createSimplePdfPKCS7();

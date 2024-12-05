@@ -1753,6 +1753,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public ITSTInfo createTSTInfo(IASN1Primitive contentInfo) {
+        return new TSTInfoBCFips(TSTInfo.getInstance(((ASN1PrimitiveBCFips) contentInfo).getPrimitive()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ISingleResp createSingleResp(IBasicOCSPResponse basicResp) {
         return new SingleRespBCFips(basicResp);
     }

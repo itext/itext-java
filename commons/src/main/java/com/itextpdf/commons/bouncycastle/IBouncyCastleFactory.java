@@ -1555,6 +1555,15 @@ public interface IBouncyCastleFactory {
     ITSTInfo createTSTInfo(IContentInfo contentInfo) throws AbstractTSPException, IOException;
 
     /**
+     * Create TST Info wrapper from content info wrapper.
+     *
+     * @param primitive primitive wrapper to create TST Info wrapper from
+     *
+     * @return created TST Info wrapper
+     */
+    ITSTInfo createTSTInfo(IASN1Primitive primitive);
+
+    /**
      * Create single resp wrapper from basic OCSP Response wrapper.
      *
      * @param basicResp basic OCSP Response wrapper to create single resp wrapper from
