@@ -159,7 +159,7 @@ public class SimpleSigningTest extends ExtendedITextTest {
         signer.setSignerProperties(signerProperties);
 
         // Creating the appearance
-        createAppearance(signer, "Signature1", "Test 1", "TestCity", false, rect, 12f);
+        createAppearance(signer, "Test 1", "TestCity", false, rect, 12f);
 
         // Creating the signature
         IExternalSignature pks =
@@ -191,7 +191,7 @@ public class SimpleSigningTest extends ExtendedITextTest {
         signer.setSignerProperties(signerProperties);
 
         // Creating the appearance
-        createAppearance(signer, name, reason, location, setReuseAppearance, rectangleForNewField, fontSize);
+        createAppearance(signer, reason, location, setReuseAppearance, rectangleForNewField, fontSize);
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, FACTORY.getProviderName());
@@ -204,7 +204,7 @@ public class SimpleSigningTest extends ExtendedITextTest {
         return result;
     }
 
-    private static void createAppearance(PdfSigner signer, String signatureName, String reason, String location,
+    private static void createAppearance(PdfSigner signer, String reason, String location,
                                          boolean setReuseAppearance, Rectangle rectangleForNewField, Float fontSize) {
         SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
                 .setContent(new SignedAppearanceText());

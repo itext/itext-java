@@ -422,6 +422,7 @@ public class PdfSigner {
                     .setWidgetRectangle(this.signerProperties.getPageRect())
                     .setPage(this.signerProperties.getPageNumber())
                     .createSignature();
+            sigField.getWidgets().get(0).setFlags(PdfAnnotation.PRINT);
             acroForm.addField(sigField);
 
             if (acroForm.getPdfObject().isIndirect()) {
