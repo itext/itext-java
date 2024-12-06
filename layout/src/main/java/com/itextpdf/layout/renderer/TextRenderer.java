@@ -661,7 +661,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
         }
 
-        yLineOffset = FontProgram.convertTextSpaceToGlyphSpace(currentLineAscender * fontSize.getValue());
+        yLineOffset = RenderingMode.SVG_MODE == mode ? 0 :
+                FontProgram.convertTextSpaceToGlyphSpace(currentLineAscender * fontSize.getValue());
 
         occupiedArea.getBBox().moveDown(currentLineHeight);
         occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);

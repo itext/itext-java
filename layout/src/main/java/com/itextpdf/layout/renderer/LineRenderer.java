@@ -751,6 +751,7 @@ public class LineRenderer extends AbstractRenderer {
 
         if (anythingPlaced || floatsPlacedInLine) {
             toProcess.adjustChildrenYLine().trimLast();
+            toProcess.adjustChildrenXLine();
             result.setMinMaxWidth(minMaxWidth);
         }
 
@@ -934,7 +935,7 @@ public class LineRenderer extends AbstractRenderer {
     protected LineRenderer adjustChildrenYLine() {
         if (RenderingMode.HTML_MODE == this.<RenderingMode>getProperty(Property.RENDERING_MODE) &&
                 hasInlineBlocksWithVerticalAlignment()) {
-                        InlineVerticalAlignmentHelper.adjustChildrenYLineHtmlMode(this);
+            InlineVerticalAlignmentHelper.adjustChildrenYLineHtmlMode(this);
         } else {
             adjustChildrenYLineDefaultMode();
         }
@@ -1618,6 +1619,42 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         return false;
+    }
+
+    private void adjustChildrenXLine() {
+        RenderingMode mode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        if (RenderingMode.SVG_MODE != mode) {
+            return;
+        }
+        // LineRenderer first child contains initial x of the occupied area, in order to identify originX we need to
+        // also add relative x position of the first text chunk in the svg which is ParagraphRenderer first child.
+        float originX = (float) getChildRenderers().get(0).getOccupiedArea().getBBox().getLeft() +
+                (float) ((TextRenderer) getParent().getChildRenderers().get(0)).getPropertyAsFloat(Property.LEFT, 0f);
+        float leftmostX = getLeftmostX();
+        float xShift = originX - leftmostX;
+        for (final IRenderer renderer : getChildRenderers()) {
+            if (renderer instanceof TextRenderer) {
+                renderer.move(xShift, 0);
+            }
+        }
+    }
+
+    private float getLeftmostX() {
+        float leftmostX = Float.MAX_VALUE;
+        for (int i = 0; i < getChildRenderers().size(); i++) {
+            IRenderer renderer = getChildRenderers().get(i);
+            if (renderer instanceof TextRenderer) {
+                final TextRenderer textRenderer = (TextRenderer) renderer;
+                float x = textRenderer.getOccupiedArea().getBBox().getX();
+                if (textRenderer.isRelativePosition()) {
+                    x += (float) textRenderer.getPropertyAsFloat(Property.LEFT, 0f);
+                }
+                if (x < leftmostX) {
+                    leftmostX = x;
+                }
+            }
+        }
+        return leftmostX;
     }
 
     public static class RendererGlyph {

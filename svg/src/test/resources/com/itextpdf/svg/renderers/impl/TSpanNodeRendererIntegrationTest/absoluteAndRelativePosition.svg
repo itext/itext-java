@@ -1,0 +1,236 @@
+<?xml version="1.0" standalone="no"?>
+<svg version="1.1" baseProfile="full" width="400" height="400" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <g id="grid" fill="none">
+            <circle r="10" stroke-width="0.5" stroke="teal"/>
+
+            <line x1="0" y1="-100" x2="0" y2="100" stroke="teal" stroke-width="1"/>
+            <line y1="0" x1="-100" y2="0" x2="100" stroke="teal" stroke-width="1"/>
+
+            <line x1="10" y1="-100" x2="10" y2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line x1="20" y1="-100" x2="20" y2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line x1="30" y1="-100" x2="30" y2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line x1="40" y1="-100" x2="40" y2="100" stroke="lightgray" stroke-width="0.25"/>
+
+            <line x1="50" y1="-100" x2="50" y2="100" stroke="lightgray" stroke-width="1"/>
+
+            <line x1="60" y1="-100" x2="60" y2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line x1="70" y1="-100" x2="70" y2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line x1="80" y1="-100" x2="80" y2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line x1="90" y1="-100" x2="90" y2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line x1="100" y1="-100" x2="100" y2="100" stroke="lightgray" stroke-width="0.25"/>
+
+            <line y1="10" x1="-100" y2="10" x2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line y1="20" x1="-100" y2="20" x2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line y1="30" x1="-100" y2="30" x2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line y1="40" x1="-100" y2="40" x2="100" stroke="lightgray" stroke-width="0.25"/>
+
+            <line y1="50" x1="-100" y2="50" x2="100" stroke="lightgray" stroke-width="1"/>
+
+            <line y1="60" x1="-100" y2="60" x2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line y1="70" x1="-100" y2="70" x2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line y1="80" x1="-100" y2="80" x2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line y1="90" x1="-100" y2="90" x2="100" stroke="lightgray" stroke-width="0.25"/>
+            <line y1="100" x1="-100" y2="100" x2="100" stroke="lightgray" stroke-width="0.25"/>
+        </g>
+    </defs>
+    <g>
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan x="40" dx="10" y="-20" fill="green">
+                green
+            </tspan>
+            <tspan dx="-50" dy="20" fill="orange">
+                orange
+            </tspan>
+            <tspan x="0" y="20" fill="red">
+                red
+            </tspan>
+            <tspan dx="-50" dy="20" fill="blue">
+                blue
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(0,100)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan x="50" y="-20" fill="green">
+                green
+            </tspan>
+            <tspan dx="-50" y="0" fill="orange">
+                orange
+            </tspan>
+            <tspan x="0" dy="20" fill="red">
+                red
+            </tspan>
+            <tspan dx="-50" dy="20" fill="blue">
+                blue
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(0,200)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan fill="green">
+                green
+            </tspan>
+            <tspan x="0" y="0" fill="orange">
+                orange
+            </tspan>
+            <tspan y="20" fill="red">
+                red
+            </tspan>
+            <tspan x="20" fill="blue">
+                blue
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(100,0)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan x="0" y="-20" dx="10" dy="10" fill="green">
+                green
+            </tspan>
+            <tspan x="0" dx="20" y="-20" dy="20" fill="orange">
+                orange
+            </tspan>
+            <tspan dy="30" y="-20" dx="30" x="0" fill="red">
+                red
+            </tspan>
+            <tspan dx="40" dy="40" x="0" y="-20" fill="blue">
+                blue
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(100,100)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan x="0" y="-20" dy="10" fill="green">
+                green
+            </tspan>
+            <tspan x="0" y="-20" dx="20" fill="orange">
+                orange
+            </tspan>
+            <tspan y="-10" dx="20" dy="30" fill="red">
+                red
+            </tspan>
+            <tspan x="0" dx="40" dy="40" fill="blue">
+                blue
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(100,200)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan fill="green">
+                green
+            </tspan>
+            <tspan dx="-70" fill="orange">
+                orange
+            </tspan>
+            <tspan dx="20" dy="30" fill="red">
+                red
+            </tspan>
+            <tspan dx="-90" fill="blue">
+                blue
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(200,0)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan fill="green">
+                green
+                <tspan dx="-70" fill="orange">
+                    orange
+                    <tspan dx="20" dy="30" fill="red">
+                        red
+                        <tspan dx="-90" fill="blue">
+                            blue
+                        </tspan>
+                    </tspan>
+                </tspan>
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(200,100)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan fill="green">
+                green
+                <tspan dx="-70" fill="orange">
+                    orange
+                </tspan>
+                <tspan dx="20" dy="30" fill="red">
+                    red
+                    <tspan dx="-90" fill="blue">
+                        blue
+                    </tspan>
+                </tspan>
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(200,200)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan fill="green">
+                green
+                <tspan dx="-70" fill="orange">
+                    orange
+                </tspan>
+            </tspan>
+            <tspan dx="20" dy="30" fill="red">
+                red
+                <tspan dx="-90" fill="blue">
+                    blue
+                </tspan>
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(300,0)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            <tspan x="30" y="10" fill="green">
+                green
+                <tspan dx="-70" fill="orange">
+                    orange
+                    <tspan x="10" y="30" fill="red">
+                        red
+                        <tspan dx="-70" dy="-50" fill="blue">
+                            blue
+                        </tspan>
+                    </tspan>
+                </tspan>
+            </tspan>
+        </text>
+    </g>
+
+    <g transform="translate(300,100)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            H<tspan fill="green">el<tspan fill="orange">lo</tspan>,
+            <tspan dx="15" fill="red">Wor<tspan fill="blue">ld</tspan></tspan>
+            </tspan>!
+        </text>
+    </g>
+
+    <g transform="translate(300,200)">
+        <use xlink:href="#grid"/>
+        <text font-size="13" transform="translate(0 40)">
+            H<tspan x="20" fill="green">el<tspan x="40" fill="orange">lo</tspan>,
+            <tspan x="50" y="30" fill="red">Wor<tspan dx="-20" dy="10" fill="blue">ld</tspan></tspan>
+        </tspan>!
+        </text>
+    </g>
+
+</svg>

@@ -101,10 +101,10 @@ public class CustomizeTextLeafSvgNodeRendererTest extends SvgIntegrationTest {
             if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
                 String initialText = this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT);
                 String amendedText = "_" + initialText + "_";
+                this.attributesAndStyles.put(SvgConstants.Attributes.TEXT_CONTENT, amendedText);
                 SvgTextProperties properties = new SvgTextProperties(context.getSvgTextProperties());
                 context.getSvgTextProperties().setFillColor(ColorConstants.RED);
                 super.doDraw(context);
-                getText().setText(amendedText);
                 context.setSvgTextProperties(properties);
             }
         }

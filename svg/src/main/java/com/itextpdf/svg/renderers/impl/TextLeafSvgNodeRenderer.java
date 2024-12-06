@@ -65,11 +65,13 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     }
 
     @Override
+    @Deprecated
     public float[] getRelativeTranslation() {
         return new float[]{0.0f, 0.0f};
     }
 
     @Override
+    @Deprecated
     public boolean containsRelativeMove() {
         return false; //Leaf text elements do not contain any kind of transformation
     }
@@ -116,17 +118,11 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
             text.setText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
 
-            final float parentFontSize = ((AbstractSvgNodeRenderer) getParent()).getCurrentFontSize();
-            final PdfFont parentFont = ((TextSvgBranchRenderer) getParent()).getFont();
-            final float[] fontAscenderDescenderFromMetrics = TextRenderer
-                    .calculateAscenderDescender(parentFont, RenderingMode.HTML_MODE);
-            final float yLineOffset =
-                    FontProgram.convertTextSpaceToGlyphSpace(fontAscenderDescenderFromMetrics[0]) * parentFontSize;
-
+            ((TextSvgBranchRenderer) getParent()).applyFontProperties(text, context);
+            ((TextSvgBranchRenderer) getParent()).applyTextRenderingMode(text);
             applyTransform(context);
             applyGraphicsState(context);
-            ((TextSvgBranchRenderer) getParent()).addTextChild(text, context, yLineOffset,
-                    getTextContentLength(parentFontSize, parentFont));
+            ((TextSvgBranchRenderer) getParent()).addTextChild(text, context);
         }
     }
 
@@ -135,17 +131,8 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         return false;
     }
 
-    /**
-     * Retrieves {@link Text} element which will be drawn using layout.
-     *
-     * @return corresponding {@link Text} element
-     */
-    protected Text getText() {
-        return text;
-    }
-
     private void applyTransform(SvgDrawContext context) {
-        AffineTransform transform = context.getLastTextTransform();
+        AffineTransform transform = context.getRootTransform();
         text.setHorizontalScaling((float) transform.getScaleX());
         text.setProperty(Property.VERTICAL_SCALING, transform.getScaleY());
         text.setProperty(Property.SKEW, new float[]{(float) transform.getShearX(), (float) transform.getShearY()});

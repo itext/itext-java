@@ -58,16 +58,15 @@ public class SvgDrawContext {
     private FontSet tempFonts;
     private SvgCssContext cssContext;
 
-    private AffineTransform lastTextTransform;
     private AffineTransform rootTransform;
     private float[] textMove = new float[]{0.0f, 0.0f};
-    private float[] previousElementTextMove;
+    private float[] relativePosition;
 
     /**
      * Create an instance of the context that is used to store information when converting SVG.
      *
      * @param resourceResolver instance of {@link ResourceResolver}
-     * @param fontProvider instance of {@link FontProvider}
+     * @param fontProvider     instance of {@link FontProvider}
      */
     public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider) {
         if (resourceResolver == null) {
@@ -157,7 +156,7 @@ public class SvgDrawContext {
      * Remove the currently set view box.
      */
     public void removeCurrentViewPort() {
-        if (this.viewports.size() > 0) {
+        if (!this.viewports.isEmpty()) {
             viewports.removeFirst();
         }
     }
@@ -266,22 +265,27 @@ public class SvgDrawContext {
     }
 
     /**
-     * Get the text transformation that was last applied
+     * Get the text transformation that was last applied.
+     *
      * @return {@link AffineTransform} representing the last text transformation
+     *
+     * @deprecated in favour of {@link #getRootTransform()}
      */
+    @Deprecated
     public AffineTransform getLastTextTransform() {
-        if (lastTextTransform == null) {
-            lastTextTransform = new AffineTransform();
-        }
-        return this.lastTextTransform;
+        return new AffineTransform();
     }
 
     /**
-     * Set the last text transformation
+     * Set the last text transformation.
+     *
      * @param newTransform last text transformation
+     *
+     * @deprecated in favour of {@link #setRootTransform(AffineTransform)}
      */
+    @Deprecated
     public void setLastTextTransform(AffineTransform newTransform) {
-        this.lastTextTransform = newTransform;
+        // Do nothing.
     }
 
     /**
@@ -306,7 +310,8 @@ public class SvgDrawContext {
     }
 
     /**
-     * Get the stored current text move
+     * Get the stored current text move.
+     *
      * @return [horizontal text move, vertical text move]
      */
     public float[] getTextMove() {
@@ -321,7 +326,8 @@ public class SvgDrawContext {
     }
 
     /**
-     * Increment the stored text move
+     * Increment the stored text move.
+     *
      * @param additionalMoveX horizontal value to add
      * @param additionalMoveY vertical value to add
      */
@@ -331,7 +337,8 @@ public class SvgDrawContext {
     }
 
     /**
-     * Get the current canvas transformation
+     * Get the current canvas transformation.
+     *
      * @return the {@link AffineTransform} representing the current canvas transformation
      */
     public AffineTransform getCurrentCanvasTransform() {
@@ -386,12 +393,12 @@ public class SvgDrawContext {
 
     @Deprecated
     public void setPreviousElementTextMove(float[] previousElementTextMove) {
-        this.previousElementTextMove = previousElementTextMove;
+        // Do nothing.
     }
 
     @Deprecated
     public float[] getPreviousElementTextMove() {
-        return previousElementTextMove;
+        return new float[]{0.0f, 0.0f};
     }
 
     /**
@@ -410,5 +417,33 @@ public class SvgDrawContext {
      */
     public void setSvgTextProperties(SvgTextProperties textProperties) {
         this.textProperties = textProperties;
+    }
+
+    /**
+     * Retrieves relative position for the current text SVG element relative to the last origin
+     * identified by absolute position.
+     *
+     * @return relative position for the current text SVG element
+     */
+    public float[] getRelativePosition() {
+        return relativePosition;
+    }
+
+    /**
+     * Adds move to the current relative position for the text SVG element.
+     *
+     * @param dx x-axis movement
+     * @param dy y-axis movement
+     */
+    public void moveRelativePosition(float dx, float dy) {
+        relativePosition[0] += dx;
+        relativePosition[1] += dy;
+    }
+
+    /**
+     * Resets current relative position for the text SVG element.
+     */
+    public void resetRelativePosition() {
+        relativePosition = new float[]{0.0f, 0.0f};
     }
 }

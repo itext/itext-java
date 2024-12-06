@@ -23,7 +23,6 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.element.Text;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
@@ -50,14 +49,6 @@ public class TextSvgTSpanBranchRenderer extends TextSvgBranchRenderer {
         if (getChildren().isEmpty() || this.attributesAndStyles == null) {
             return;
         }
-        for (ISvgTextNodeRenderer child : getChildren()) {
-            resolveFont(context);
-            if (child instanceof TextLeafSvgNodeRenderer) {
-                Text text = ((TextLeafSvgNodeRenderer) child).getText();
-                applyFontProperties(text, context);
-                applyTextRenderingMode(text);
-            }
-            processChild(context, child);
-        }
+        performDrawing(context);
     }
 }

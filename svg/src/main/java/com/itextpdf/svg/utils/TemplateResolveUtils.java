@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Utility class which contains methods related to href resolving
  */
-public class TemplateResolveUtils {
+public final class TemplateResolveUtils {
 
     private TemplateResolveUtils() {
         //private constructor for utility class

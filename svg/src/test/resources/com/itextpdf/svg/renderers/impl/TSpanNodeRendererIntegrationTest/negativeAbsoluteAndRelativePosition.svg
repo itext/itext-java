@@ -7,17 +7,9 @@
     <line x2="50" y2="80" stroke="red"/>
     <line x2="0" y2="100" stroke="blue"/>
     <text fill="green" transform="translate(0 45.5)" font-family="NotoNaskhArabic">
-        <tspan x="-30" fill="green" font-family="NotoNaskhArabic">
-            x="-30"
-        </tspan>
-        <tspan dx="-70" dy="20" fill="orange" font-family="NotoNaskhArabic">
-            dx="-70" dy="20"
-        </tspan>
-        <tspan x="0" dy="20" fill="red" font-family="NotoNaskhArabic">
-            x="0" dy="20"
-        </tspan>
-        <tspan dx="-150" dy="20" fill="blue" font-family="NotoNaskhArabic">
-            dx="-150" dy="20"
-        </tspan>
+        <tspan x="-30" fill="green" font-family="NotoNaskhArabic">x="-30"</tspan>
+        <tspan dx="-70" dy="20" fill="orange" font-family="NotoNaskhArabic">dx="-70" dy="20"</tspan>
+        <tspan x="0" dy="20" fill="red" font-family="NotoNaskhArabic">x="0" dy="20"</tspan>
+        <tspan dx="-150" dy="20" fill="blue" font-family="NotoNaskhArabic">dx="-150" dy="20"</tspan>
     </text>
 </svg>

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241127144808+03'00')/ModDate(D:20241127144808+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20241211143206+03'00')/ModDate(D:20241211143206+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Courier/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -45,7 +45,7 @@ q
 q
 BT
 /F1 48 Tf
-1 0 0 -1 172.5 112.5 Tm
+1 0 0 -1 373.5 112.5 Tm
 /Pattern cs
 
 /P1 scn
@@ -55,7 +55,7 @@ Q
 q
 BT
 /F1 48 Tf
-1 0 0 -1 -28.5 112.5 Tm
+1 0 0 -1 172.5 112.5 Tm
 /Pattern cs
 
 /P2 scn
@@ -68,10 +68,10 @@ Q
 endstream
 endobj
 9 0 obj
-<</Matrix[460 0 0 60.36 -28.5 76.27]/PatternType 2/Shading 11 0 R/Type/Pattern>>
+<</Matrix[460 0 0 60.36 172.5 76.27]/PatternType 2/Shading 11 0 R/Type/Pattern>>
 endobj
 10 0 obj
-<</Matrix[460 0 0 60.36 -28.5 76.27]/PatternType 2/Shading 12 0 R/Type/Pattern>>
+<</Matrix[460 0 0 60.36 172.5 76.27]/PatternType 2/Shading 12 0 R/Type/Pattern>>
 endobj
 11 0 obj
 <</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 13 0 R/ShadingType 2>>
@@ -119,7 +119,7 @@ xref
 0000001835 00000 n 
 0000001907 00000 n 
 trailer
-<</ID [<0a28143a0f1d2731eb94cb29443119a9893338d6dd6b079fd2af4d11caa0813cddb1b5094a5f6bb0aceca6aafcbb415ddbc730e8625511bcbb3e640569670bf2><0a28143a0f1d2731eb94cb29443119a9893338d6dd6b079fd2af4d11caa0813cddb1b5094a5f6bb0aceca6aafcbb415ddbc730e8625511bcbb3e640569670bf2>]/Info 3 0 R/Root 1 0 R/Size 19>>
+<</ID [<d9b28587d9af473b42c79035588dd06431144d84fcf6d965ceda71dc5da1db273c68f272f2d73f572746a32b09761540bcfcfd182ff9dda284eb96260acefb97><d9b28587d9af473b42c79035588dd06431144d84fcf6d965ceda71dc5da1db273c68f272f2d73f572746a32b09761540bcfcfd182ff9dda284eb96260acefb97>]/Info 3 0 R/Root 1 0 R/Size 19>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
 1979

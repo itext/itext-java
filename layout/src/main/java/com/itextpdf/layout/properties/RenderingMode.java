@@ -36,5 +36,10 @@ public enum RenderingMode {
     /**
      * Mode in which objects are processed in accordance with the HTML documentation
      */
-    HTML_MODE
+    HTML_MODE,
+
+    /**
+     * Mode in which objects are processed in accordance with the SVG documentation
+     */
+    SVG_MODE
 }

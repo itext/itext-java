@@ -15,16 +15,16 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241205042645+03'00')/ModDate(D:20241205042645+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
-endobj
-8 0 obj
-<</BaseFont/Times-Italic/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20241213120248+03'00')/ModDate(D:20241213120248+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 7 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+8 0 obj
+<</BaseFont/Times-Italic/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -43,7 +43,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[-81.82 0 1881.82 900]/Length 2192/Resources<</Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-81.82 0 1881.82 900]/Length 2194/Resources<</Font<</F1 6 0 R/F2 7 0 R/F3 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -81.82 0 1963.64 900 re
 W
 n
@@ -114,7 +114,7 @@ q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 7.5 225 Tm
+1 0 0 -1 26.02 225 Tm
 0 0 1 rg
 (Text with)Tj
 ET
@@ -122,7 +122,7 @@ Q
 q
 BT
 /F2 18 Tf
-1 0 0 -1 113 187.5 Tm
+1 0 0 -1 131.52 187.5 Tm
 1 0 0 rg
 ( tspan dx="2em" dy="-50" font-weight="bold" fill="red)Tj
 ET
@@ -130,7 +130,7 @@ Q
 q
 BT
 /F3 18 Tf
-1 0 0 -1 -11.02 206.25 Tm
+1 0 0 -1 7.5 206.25 Tm
 1 0 1 rg
 ( tspan dx="-550" dy="15" font-style="italic" fill="magenta")Tj
 ET
@@ -138,7 +138,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 430.55 206.25 Tm
+1 0 0 -1 449.08 206.25 Tm
 0 0 1 rg
 ( and a)Tj
 ET
@@ -175,7 +175,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 7.5 315 Tm
+1 0 0 -1 7.5 330 Tm
 0.56471 0.93333 0.56471 rg
 (--- tspan textLength="500"-)Tj
 ET
@@ -183,7 +183,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 7.5 315 Tm
+1 0 0 -1 7.5 345 Tm
 0.56471 0.93333 0.56471 rg
 (--- tspan textLength="200"-)Tj
 ET
@@ -191,7 +191,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 7.5 315 Tm
+1 0 0 -1 7.5 360 Tm
 0.56471 0.93333 0.56471 rg
 (--- tspan textLength="-200"-)Tj
 ET
@@ -321,14 +321,14 @@ xref
 0000000268 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000531 00000 n 
-0000000621 00000 n 
 0000000440 00000 n 
+0000000530 00000 n 
+0000000619 00000 n 
 0000000761 00000 n 
 0000001001 00000 n 
 trailer
-<</ID [<c1036e85b4e078a16d44fcdd7bc4cf0fea6d6c8508b6ae264da6b0dc2d7edda85371237f942a468ce5db008d765ece2298547697bc85429950cef7012a887a96><c1036e85b4e078a16d44fcdd7bc4cf0fea6d6c8508b6ae264da6b0dc2d7edda85371237f942a468ce5db008d765ece2298547697bc85429950cef7012a887a96>]/Info 3 0 R/Root 1 0 R/Size 11>>
+<</ID [<198c6814d10e82c62f99f7227a0abf5eb9f0215cfcda55c71ff21970f5aa6c342f9768debdfed9a755d3289c96de3010c2c82988fba3f78523543c5e786ba27b><198c6814d10e82c62f99f7227a0abf5eb9f0215cfcda55c71ff21970f5aa6c342f9768debdfed9a755d3289c96de3010c2c82988fba3f78523543c5e786ba27b>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-3346
+3348
 %%EOF

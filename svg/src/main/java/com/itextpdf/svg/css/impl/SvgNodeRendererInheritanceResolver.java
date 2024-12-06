@@ -27,6 +27,7 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.AbstractBranchSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +54,12 @@ public final class SvgNodeRendererInheritanceResolver {
         // If subtree, iterate over tree
         if (subTree instanceof AbstractBranchSvgNodeRenderer) {
             AbstractBranchSvgNodeRenderer subTreeAsBranch = (AbstractBranchSvgNodeRenderer) subTree;
+            for (ISvgNodeRenderer child : subTreeAsBranch.getChildren()) {
+                applyInheritanceToSubTree(subTreeAsBranch, child, cssContext);
+            }
+        }
+        if (subTree instanceof TextSvgBranchRenderer) {
+            TextSvgBranchRenderer subTreeAsBranch = (TextSvgBranchRenderer) subTree;
             for (ISvgNodeRenderer child : subTreeAsBranch.getChildren()) {
                 applyInheritanceToSubTree(subTreeAsBranch, child, cssContext);
             }

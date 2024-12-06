@@ -111,6 +111,7 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO DEVSIX-2589 Support overflow attribute for symbol
     public void clipPathRulesCombined() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRulesCombined");
     }

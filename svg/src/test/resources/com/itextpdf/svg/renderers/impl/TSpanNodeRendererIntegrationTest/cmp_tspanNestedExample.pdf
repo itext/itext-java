@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241205042645+03'00')/ModDate(D:20241205042645+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20241213120246+03'00')/ModDate(D:20241213120246+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -40,7 +40,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[-81.82 0 1881.82 900]/Length 2028/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-81.82 0 1881.82 900]/Length 2026/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -81.82 0 1963.64 900 re
 W
 n
@@ -50,21 +50,21 @@ q
 q
 BT
 /F1 13.5 Tf
-1 0 0 -1 7.5 150 Tm
+1 0 0 -1 44.65 150 Tm
 (Text with)Tj
 ET
 Q
 q
 BT
 /F1 13.5 Tf
-1 0 0 -1 59.62 150 Tm
+1 0 0 -1 96.78 150 Tm
 (superscript nested-1 tspan)Tj
 ET
 Q
 q
 BT
 /F2 13.5 Tf
-1 0 0 -1 -29.65 171 Tm
+1 0 0 -1 7.5 171 Tm
 1 0 0 rg
 ( nested-2 tspan dx="-17 em" dy="28" font-weight="bold" fill="red and)Tj
 ET
@@ -72,7 +72,7 @@ Q
 q
 BT
 /F1 13.5 Tf
-1 0 0 -1 385.84 171 Tm
+1 0 0 -1 422.99 171 Tm
 1 0 0 rg
 (nested-3 tspan)Tj
 ET
@@ -80,7 +80,7 @@ Q
 q
 BT
 /F1 13.5 Tf
-1 0 0 -1 463.45 171 Tm
+1 0 0 -1 500.6 171 Tm
 ( inside)Tj
 ET
 Q
@@ -153,7 +153,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 7.5 315 Tm
+1 0 0 -1 7.5 330 Tm
 0.56471 0.93333 0.56471 rg
 (--- tspan textLength="500"-)Tj
 ET
@@ -161,7 +161,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 208.31 315 Tm
+1 0 0 -1 208.31 330 Tm
 0.56471 0.93333 0.56471 rg
 (nested)Tj
 ET
@@ -169,7 +169,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 7.5 315 Tm
+1 0 0 -1 7.5 345 Tm
 0.56471 0.93333 0.56471 rg
 (--- tspan textLength="200"-)Tj
 ET
@@ -177,7 +177,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 208.31 315 Tm
+1 0 0 -1 208.31 345 Tm
 0.56471 0.93333 0.56471 rg
 (nested)Tj
 ET
@@ -185,7 +185,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 7.5 315 Tm
+1 0 0 -1 7.5 360 Tm
 0.56471 0.93333 0.56471 rg
 (--- tspan textLength="-200"-)Tj
 ET
@@ -193,7 +193,7 @@ Q
 q
 BT
 /F1 18 Tf
-1 0 0 -1 214.3 315 Tm
+1 0 0 -1 214.3 360 Tm
 0.56471 0.93333 0.56471 rg
 (nested)Tj
 ET
@@ -305,8 +305,8 @@ xref
 0000000670 00000 n 
 0000000909 00000 n 
 trailer
-<</ID [<cb60ffa90a1338b988dc9ca23be7a1fe9f41bf956a739a0842f6a7554b4fc23141f721e5422ea00552fd74f889224ccec53d102b3b9a982613da639d9f29a646><cb60ffa90a1338b988dc9ca23be7a1fe9f41bf956a739a0842f6a7554b4fc23141f721e5422ea00552fd74f889224ccec53d102b3b9a982613da639d9f29a646>]/Info 3 0 R/Root 1 0 R/Size 10>>
+<</ID [<1d509c140fa39a7aeb978776ba1e5cee3d293fbf816fbf9bd835601043ed7038ac49364d69f533ecc70b1ff8b16f852b5bb9344b4016e8670512733746e89281><1d509c140fa39a7aeb978776ba1e5cee3d293fbf816fbf9bd835601043ed7038ac49364d69f533ecc70b1ff8b16f852b5bb9344b4016e8670512733746e89281>]/Info 3 0 R/Root 1 0 R/Size 10>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-3080
+3078
 %%EOF

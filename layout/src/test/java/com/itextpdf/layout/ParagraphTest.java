@@ -30,6 +30,9 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
@@ -133,6 +136,33 @@ public class ParagraphTest extends ExtendedITextTest {
         document.add(paragraph);
 
         document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void paragraphUsingSvgRenderingModeTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "paragraphUsingSvgRenderingMode.pdf";
+        String cmpFileName = sourceFolder + "cmp_paragraphUsingSvgRenderingMode.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            Paragraph paragraph1 = new Paragraph().setBorder(new SolidBorder(ColorConstants.YELLOW, 1));
+            paragraph1.setWidth(200).setHorizontalAlignment(HorizontalAlignment.RIGHT);
+            Paragraph paragraph2 = new Paragraph().setBorder(new SolidBorder(ColorConstants.PINK, 1));
+            paragraph2.setWidth(200).setHorizontalAlignment(HorizontalAlignment.RIGHT);
+            paragraph2.setProperty(Property.RENDERING_MODE, RenderingMode.SVG_MODE);
+            for (int i = 0; i < 5; i++) {
+                Text textChunk = new Text("text" + i).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                textChunk.setRelativePosition(-70 * i, 0, 0, 0);
+
+                paragraph1.add(textChunk);
+                paragraph2.add(textChunk);
+            }
+            document.add(new Paragraph("Default rendering mode:"));
+            document.add(paragraph1);
+            document.add(new Paragraph("SVG rendering mode:"));
+            document.add(paragraph2);
+        }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
