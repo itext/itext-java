@@ -48,7 +48,6 @@ import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.TransformUtils;
 
@@ -211,11 +210,40 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             return CssDimensionParsingUtils.parseRelativeValue(fontSizeAttribute, context.getCssContext().getRootFontSize());
         }
         if (CssTypesValidationUtils.isEmValue(fontSizeAttribute) && getParent() != null
-                && parent instanceof AbstractSvgNodeRenderer) {
+                && getParent() instanceof AbstractSvgNodeRenderer) {
             return CssDimensionParsingUtils.parseRelativeValue(fontSizeAttribute,
-                    ((AbstractSvgNodeRenderer)parent).getCurrentFontSize(context));
+                    ((AbstractSvgNodeRenderer) getParent()).getCurrentFontSize(context));
         }
         return CssDimensionParsingUtils.parseAbsoluteFontSize(fontSizeAttribute);
+    }
+
+    /**
+     * Gets the viewbox from the first parent element which can define it.
+     * <p>
+     * See <a href="https://svgwg.org/svg2-draft/coords.html#EstablishingANewSVGViewport">SVG specification</a>
+     * to find which elements can define a viewbox.
+     *
+     * @param context draw context from which fallback viewbox can be extracted
+     *
+     * @return the viewbox or {@code null} if the element doesn't have parent which can define the viewbox
+     */
+    public Rectangle getCurrentViewBox(SvgDrawContext context) {
+        // According to https://svgwg.org/svg2-draft/coords.html#EstablishingANewSVGViewport: "For historical reasons,
+        // the ‘pattern’ and ‘marker’ elements do not create a new viewport, despite accepting a ‘viewBox’ attribute".
+        // So get viewbox only from symbol and svg elements
+        if (this instanceof AbstractContainerSvgNodeRenderer) {
+            float[] viewBoxValues = SvgCssUtils.parseViewBox(this);
+            if (viewBoxValues == null || viewBoxValues.length < SvgConstants.Values.VIEWBOX_VALUES_NUMBER) {
+                Rectangle currentViewPort = context.getCurrentViewPort();
+                viewBoxValues = new float[]{0, 0, currentViewPort.getWidth(), currentViewPort.getHeight()};
+            }
+            return new Rectangle(viewBoxValues[0], viewBoxValues[1], viewBoxValues[2], viewBoxValues[3]);
+        } else if (getParent() instanceof AbstractSvgNodeRenderer) {
+            return ((AbstractSvgNodeRenderer) getParent()).getCurrentViewBox(context);
+        } else {
+            // From iText this line isn't reachable, in custom renderer tree fallback to context's view port
+            return context.getCurrentViewPort();
+        }
     }
 
     /**
@@ -371,8 +399,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @return absolute length in points
      */
     protected float parseHorizontalLength(String length, SvgDrawContext context) {
-        return SvgCssUtils.parseAbsoluteLength(this, length,
-                SvgCoordinateUtils.calculatePercentBaseValueIfNeeded(context, length, true), 0.0F, context);
+        return SvgCssUtils.parseAbsoluteHorizontalLength(this, length, 0.0F, context);
     }
 
     /**
@@ -387,8 +414,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @return absolute length in points
      */
     protected float parseVerticalLength(String length, SvgDrawContext context) {
-        return SvgCssUtils.parseAbsoluteLength(this, length,
-                SvgCoordinateUtils.calculatePercentBaseValueIfNeeded(context, length, false), 0.0F, context);
+        return SvgCssUtils.parseAbsoluteVerticalLength(this, length, 0.0F, context);
     }
 
     /**
@@ -427,6 +453,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             final String normalizedName = tokenValue.substring(5, tokenValue.length() - 1).trim();
             final ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
             if (colorRenderer instanceof ISvgPaintServer) {
+                if (colorRenderer.getParent() == null) {
+                    colorRenderer.setParent(this);
+                }
                 resolvedColor = ((ISvgPaintServer) colorRenderer).createColor(
                         context, getObjectBoundingBox(context), objectBoundingBoxMargin, parentOpacity);
             }

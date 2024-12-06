@@ -30,7 +30,6 @@ import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.path.IPathShape;
-import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.Map;
@@ -129,8 +128,7 @@ public abstract class AbstractPathShape implements IPathShape {
      * @return absolute length in points
      */
     protected float parseHorizontalLength(String length) {
-        return SvgCssUtils.parseAbsoluteLength(parent, length,
-                SvgCoordinateUtils.calculatePercentBaseValueIfNeeded(context, length, true), 0.0F, context);
+        return SvgCssUtils.parseAbsoluteHorizontalLength(parent, length, 0.0F, context);
     }
 
     /**
@@ -140,7 +138,6 @@ public abstract class AbstractPathShape implements IPathShape {
      * @return absolute length in points
      */
     protected float parseVerticalLength(String length) {
-        return SvgCssUtils.parseAbsoluteLength(parent, length,
-                SvgCoordinateUtils.calculatePercentBaseValueIfNeeded(context, length, false), 0.0F, context);
+        return SvgCssUtils.parseAbsoluteVerticalLength(parent, length, 0.0F, context);
     }
 }

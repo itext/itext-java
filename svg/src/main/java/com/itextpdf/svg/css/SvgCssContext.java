@@ -23,9 +23,8 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
-import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
-import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.css.impl.SvgStyleResolver;
 
 /**
  * Context necessary for evaluating certain Css statements whose final values depends on other statements
@@ -33,8 +32,7 @@ import com.itextpdf.svg.SvgConstants;
  */
 public class SvgCssContext extends AbstractCssContext {
     /** The root font size value in pt. */
-    private float rootFontSize = CssDimensionParsingUtils.parseAbsoluteFontSize(
-            CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
+    private float rootFontSize = SvgStyleResolver.DEFAULT_FONT_SIZE;
 
     /**
      * Gets the root font size.

@@ -23,20 +23,15 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 
@@ -56,29 +51,16 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     }
 
     @Test
-    //TODO: change cmp file after DEVSIX-3123 fixed
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_HEIGHT),
-    })
     public void absentHeight() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentHeight");
     }
 
     @Test
-    //TODO: change cmp file after DEVSIX-3123 fixed
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_WIDTH),
-    })
     public void absentWidth() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidth");
     }
 
     @Test
-    //TODO: change cmp file after DEVSIX-3123 fixed
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_WIDTH),
-            @LogMessage(messageTemplate =  SvgLogMessageConstant.MISSING_HEIGHT),
-    })
     public void absentWidthAndHeight() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"absentWidthAndHeight");
     }
@@ -100,7 +82,7 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     }
 
     @Test
-    public void invalidHeight() throws IOException, InterruptedException {
+    public void invalidHeight() {
         Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidHeight")
         );
@@ -108,7 +90,7 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
     }
 
     @Test
-    public void invalidWidth() throws IOException, InterruptedException {
+    public void invalidWidth() {
         Exception e = Assertions.assertThrows(StyledXMLParserException.class,
                 () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidWidth")
         );
@@ -117,16 +99,12 @@ public class SimpleSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationTe
 
     @Test
     public void invalidX() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () ->  convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidX");
     }
 
     @Test
     public void invalidY() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,"invalidY");
     }
 
     @Test

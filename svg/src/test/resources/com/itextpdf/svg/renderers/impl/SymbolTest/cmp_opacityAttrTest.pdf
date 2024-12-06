@@ -15,15 +15,17 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241205042641+03'00')/ModDate(D:20241205042641+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20241211161530+03'00')/ModDate(D:20241211161530+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 6 0 obj
-<</BBox[0 0 600 450]/Length 56/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
-1 0 0 -1 0 450 cm
+<</BBox[0 0 595 842]/Length 103/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 842 cm
 % svg root
+1 0 0 1 0 197.88 cm
+0.99167 0 0 0.99167 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm1 Do
@@ -32,8 +34,8 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 600 450]/Length 298/Resources<</XObject<</Fm1 8 0 R/Fm2 9 0 R/Fm3 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
-0 0 600 450 re
+<</BBox[0 -199.54 600 649.54]/Length 307/Resources<</XObject<</Fm1 8 0 R/Fm2 9 0 R/Fm3 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 -199.54 600 849.08 re
 W
 n
 q
@@ -138,13 +140,13 @@ xref
 0000000074 00000 n 
 0000000015 00000 n 
 0000000479 00000 n 
-0000000662 00000 n 
-0000001109 00000 n 
-0000001452 00000 n 
-0000001795 00000 n 
+0000000710 00000 n 
+0000001175 00000 n 
+0000001518 00000 n 
+0000001861 00000 n 
 trailer
-<</ID [<f35308c70a44c9a8a423a332f55fc435bca56d42524d8d7460c2e5009c2aaac6f3aed8f764cf88bd684256ad8289c47d8eb74f8f788cc3306c9b7b1b2ce36f6a><f35308c70a44c9a8a423a332f55fc435bca56d42524d8d7460c2e5009c2aaac6f3aed8f764cf88bd684256ad8289c47d8eb74f8f788cc3306c9b7b1b2ce36f6a>]/Info 3 0 R/Root 1 0 R/Size 11>>
+<</ID [<83137a1194fe23a556fff2f021e7155c7cb66b025685b98df5c8040baf0f486fa52242107eafb472ab6101ad121f793575faf4debb478481c3d371e9330273be><83137a1194fe23a556fff2f021e7155c7cb66b025685b98df5c8040baf0f486fa52242107eafb472ab6101ad121f793575faf4debb478481c3d371e9330273be>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-2139
+2205
 %%EOF

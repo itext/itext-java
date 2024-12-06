@@ -84,13 +84,15 @@ public class SvgStyleResolver implements ICssResolver {
     public static final Set<IStyleInheritance> INHERITANCE_RULES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList((IStyleInheritance) new CssInheritance(), (IStyleInheritance) new SvgAttributeInheritance())));
 
+    public static final float DEFAULT_FONT_SIZE = CssDimensionParsingUtils.parseAbsoluteFontSize(
+            CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
+
     // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
     private static final String[] ELEMENTS_INHERITING_PARENT_STYLES = new String[]{
             Tags.MARKER, Tags.LINEAR_GRADIENT, Tags.LINEAR_GRADIENT.toLowerCase(), Tags.PATTERN
     };
 
-    private static final float DEFAULT_FONT_SIZE = CssDimensionParsingUtils.parseAbsoluteFontSize(
-            CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgStyleResolver.class);
 
@@ -172,8 +174,7 @@ public class SvgStyleResolver implements ICssResolver {
             if (CssTypesValidationUtils.isRemValue(elementFontSize)) {
                 baseFontSize = cssContext == null ? DEFAULT_FONT_SIZE : cssContext.getRootFontSize();
             } else if (parentFontSizeStr == null) {
-                baseFontSize = CssDimensionParsingUtils.parseAbsoluteFontSize(
-                        CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
+                baseFontSize = DEFAULT_FONT_SIZE;
             } else {
                 baseFontSize = CssDimensionParsingUtils.parseAbsoluteLength(parentFontSizeStr);
             }

@@ -158,7 +158,7 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
                     SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
                             getAttribute(Attributes.Y2), 0) * CONVERT_COEFF);
         } else {
-            Rectangle currentViewPort = context.getCurrentViewPort();
+            Rectangle currentViewPort = this.getCurrentViewBox(context);
             double x = currentViewPort.getX();
             double y = currentViewPort.getY();
             double width = currentViewPort.getWidth();

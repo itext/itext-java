@@ -23,9 +23,9 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
-import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCssUtils;
 
 public abstract class AbstractContainerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     @Override
@@ -46,36 +46,41 @@ public abstract class AbstractContainerSvgNodeRenderer extends AbstractBranchSvg
      * Calculate the viewport based on the context.
      *
      * @param context the SVG draw context
+     *
      * @return the viewport that applies to this renderer
      */
     Rectangle calculateViewPort(SvgDrawContext context) {
-        //TODO: DEVSIX-8775 the logic below should be refactored, first of all it shouldn't be applied to root svg tag
-        // (though depending on implementation maybe it won't be a problem), also it need to be adjusted to support em/rem
-        // which seems possible for all cases, and as for percents, I'm not sure it's possible for nested svg tags, but
-        // it should be possible for symbols
-        Rectangle currentViewPort = context.getCurrentViewPort();
+        Rectangle percentBaseBox;
+        if (getParent() instanceof PdfRootSvgNodeRenderer || !(getParent() instanceof AbstractSvgNodeRenderer)) {
+            // If the current container is a top level SVG, take a current view port as a percent base
+            percentBaseBox = context.getCurrentViewPort();
+        } else {
+            // If the current container is nested container, take a view box as a percent base
+            percentBaseBox = ((AbstractSvgNodeRenderer) getParent()).getCurrentViewBox(context);
+        }
 
-        // Set default values to parent viewport in the case of a nested svg tag
         float portX = 0;
         float portY = 0;
-        // Default should be parent portWidth if not outermost
-        float portWidth = currentViewPort.getWidth();
-        // Default should be parent height if not outermost
-        float portHeight = currentViewPort.getHeight();
+        float portWidth = percentBaseBox.getWidth();
+        float portHeight = percentBaseBox.getHeight();
 
         if (attributesAndStyles != null) {
-            if (attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
-                portX = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.X));
-            }
-            if (attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
-                portY = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.Y));
-            }
-            if (attributesAndStyles.containsKey(SvgConstants.Attributes.WIDTH)) {
-                portWidth = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.WIDTH));
-            }
-            if (attributesAndStyles.containsKey(SvgConstants.Attributes.HEIGHT)) {
-                portHeight = CssDimensionParsingUtils.parseAbsoluteLength(attributesAndStyles.get(SvgConstants.Attributes.HEIGHT));
-            }
+            portX = SvgCssUtils.parseAbsoluteLength(this, attributesAndStyles.get(Attributes.X),
+                    percentBaseBox.getWidth(), 0, context);
+            portY = SvgCssUtils.parseAbsoluteLength(this, attributesAndStyles.get(Attributes.Y),
+                    percentBaseBox.getHeight(), 0, context);
+
+            String widthStr = attributesAndStyles.get(Attributes.WIDTH);
+            // In case widthStr==null, according to SVG spec default value is 100%, it is why default
+            // value is percentBaseBox.getWidth(). See SvgConstants.Values.DEFAULT_WIDTH_AND_HEIGHT_VALUE
+            portWidth = SvgCssUtils.parseAbsoluteLength(this, widthStr, percentBaseBox.getWidth(),
+                    percentBaseBox.getWidth(), context);
+
+            String heightStr = attributesAndStyles.get(Attributes.HEIGHT);
+            // In case heightStr==null, according to SVG spec default value is 100%, it is why default
+            // value is percentBaseBox.getHeight(). See SvgConstants.Values.DEFAULT_WIDTH_AND_HEIGHT_VALUE
+            portHeight = SvgCssUtils.parseAbsoluteLength(this, heightStr, percentBaseBox.getHeight(),
+                    percentBaseBox.getHeight(), context);
         }
 
         return new Rectangle(portX, portY, portWidth, portHeight);

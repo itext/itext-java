@@ -182,11 +182,9 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-2079: change compare file after fix
     public void fontWeightTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontWeightTest");
     }
-
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))

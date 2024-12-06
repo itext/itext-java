@@ -32,9 +32,10 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
@@ -55,6 +56,7 @@ public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
         context.addViewPort(expected);
 
         SvgTagSvgNodeRenderer parent = new SvgTagSvgNodeRenderer();
+        parent.setAttributesAndStyles(new HashMap<>());
         SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
         renderer.setParent(parent);
 

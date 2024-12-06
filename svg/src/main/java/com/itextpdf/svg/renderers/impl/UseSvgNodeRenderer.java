@@ -26,11 +26,9 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -69,13 +67,10 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                         float x = 0f;
                         float y = 0f;
 
-                        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
-                            x = CssDimensionParsingUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.X));
-                        }
+                        // If X or Y attribute is null, then default 0 value will be returned
+                        x = parseHorizontalLength(this.attributesAndStyles.get(SvgConstants.Attributes.X), context);
+                        y = parseVerticalLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y), context);
 
-                        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.Y)) {
-                            y = CssDimensionParsingUtils.parseAbsoluteLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y));
-                        }
                         AffineTransform inverseMatrix = null;
                         if (!CssUtils.compareFloats(x,0) || !CssUtils.compareFloats(y,0)) {
                             AffineTransform translation = AffineTransform.getTranslateInstance(x, y);

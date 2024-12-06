@@ -33,15 +33,11 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.styledxmlparser.IXmlParser;
-import com.itextpdf.styledxmlparser.css.resolve.CssDefaults;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
-import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
@@ -57,7 +53,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -295,6 +290,9 @@ public final class SvgConverter {
      */
     public static void drawOnPage(InputStream stream, PdfPage page, float x, float y, ISvgConverterProperties props) throws IOException {
         checkNull(page);
+        if (props instanceof SvgConverterProperties && ((SvgConverterProperties) props).getCustomViewport() == null) {
+            ((SvgConverterProperties) props).setCustomViewport(page.getMediaBox());
+        }
         drawOnCanvas(stream, new PdfCanvas(page), x, y, props);
     }
 
@@ -543,9 +541,9 @@ public final class SvgConverter {
             checkNull(topSvgRenderer);
             checkNull(pdfDocument);
 
-            //Since svg is a single object in the document, rem = em
-            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer,
-                    drawContext.getCssContext().getRootFontSize(), drawContext.getCssContext().getRootFontSize());
+            // Since svg is a single object in the document, em = rem
+            float em = drawContext.getCssContext().getRootFontSize();
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, em, drawContext);
 
             // Adjust pagesize and create new page
             pdfDocument.setDefaultPageSize(new PageSize(wh.getWidth(), wh.getHeight()));
@@ -646,6 +644,9 @@ public final class SvgConverter {
         final SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
         if (processorResult instanceof SvgProcessorResult) {
             drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
+        }
+        if (props instanceof SvgConverterProperties) {
+            drawContext.setCustomViewport(((SvgConverterProperties) props).getCustomViewport());
         }
         drawContext.setTempFonts(processorResult.getTempFonts());
         drawContext.addNamedObjects(processorResult.getNamedObjects());
@@ -793,11 +794,9 @@ public final class SvgConverter {
         checkNull(document);
         checkNull(context);
 
-        //Can't determine em value here, so passing default value
-        float defaultFontSize = CssDimensionParsingUtils.parseAbsoluteFontSize(
-                CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
-        Rectangle bbox = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, defaultFontSize,
-                context.getCssContext().getRootFontSize());
+        // Can't determine em value here, so em=rem
+        float em = context.getCssContext().getRootFontSize();
+        Rectangle bbox = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, em, context);
 
         PdfFormXObject pdfForm = new PdfFormXObject(bbox);
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
@@ -901,7 +900,7 @@ public final class SvgConverter {
      * defaulting to respective viewbox values if either one is not present or
      * to browser default if viewbox is missing as well
      * <p>
-     * Deprecated in favour of {@link SvgCssUtils#extractWidthAndHeight(ISvgNodeRenderer, float, float)}
+     * Deprecated in favour of {@link SvgCssUtils#extractWidthAndHeight(ISvgNodeRenderer, float, SvgDrawContext)}
      *
      * @param topSvgRenderer the {@link ISvgNodeRenderer} instance that contains
      *                       the renderer tree
@@ -909,42 +908,10 @@ public final class SvgConverter {
      */
     @Deprecated
     public static float[] extractWidthAndHeight(ISvgNodeRenderer topSvgRenderer) {
-        float[] res = new float[2];
-
-        float[] values = SvgCssUtils.parseViewBox(topSvgRenderer);
-
-        float width, height;
-        String wString, hString;
-        wString = topSvgRenderer.getAttribute(SvgConstants.Attributes.WIDTH);
-        if (wString == null) {
-            if (values != null) {
-                width = values[2];
-            } else {
-                //Log Warning
-                LOGGER.warn(SvgLogMessageConstant.MISSING_WIDTH);
-                //Set to browser default
-                width = CssDimensionParsingUtils.parseAbsoluteLength(SvgConstants.Values.DEFAULT_VIEWBOX_WIDTH);
-            }
-        } else {
-            width = CssDimensionParsingUtils.parseAbsoluteLength(wString);
-        }
-        hString = topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT);
-        if (hString == null) {
-            if (values != null) {
-                height = values[3];
-            } else {
-                //Log Warning
-                LOGGER.warn(SvgLogMessageConstant.MISSING_HEIGHT);
-                //Set to browser default
-                height = CssDimensionParsingUtils.parseAbsoluteLength(SvgConstants.Values.DEFAULT_VIEWBOX_HEIGHT);
-            }
-        } else {
-            height = CssDimensionParsingUtils.parseAbsoluteLength(hString);
-        }
-
-        res[0] = width;
-        res[1] = height;
-        return res;
+        SvgDrawContext context = new SvgDrawContext(null, null);
+        float em = context.getCssContext().getRootFontSize();
+        Rectangle rectangle = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, em, context);
+        return new float[] {rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight()};
     }
 
     static ResourceResolver getResourceResolver(ISvgProcessorResult processorResult, ISvgConverterProperties props) {

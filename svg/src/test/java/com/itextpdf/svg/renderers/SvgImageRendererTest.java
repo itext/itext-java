@@ -29,7 +29,6 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.converter.SvgConverter;
@@ -41,9 +40,6 @@ import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.xobject.SvgImageXObject;
 
 import java.io.IOException;
-
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -69,7 +65,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
-            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, 0.0F);
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, new SvgDrawContext(null, null));
             SvgImageXObject svgImageXObject = new SvgImageXObject(wh,
                     result, new ResourceResolver(SOURCE_FOLDER));
             SvgImage svgImage = new SvgImage(svgImageXObject);
@@ -89,7 +85,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, new SvgConverterProperties().setBaseUri(svgFileName));
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
-            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, 0.0F);
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, new SvgDrawContext(null, null));
             SvgImageXObject svgImageXObject = new SvgImageXObject(wh,
                     result, new ResourceResolver(SOURCE_FOLDER));
             SvgImage svgImage = new SvgImage(svgImageXObject);
@@ -111,7 +107,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
                     new SvgConverterProperties().setBaseUri(svgFileName));
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
-            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, 0.0F);
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, new SvgDrawContext(null, null));
             document.add(new SvgImage(new SvgImageXObject(wh, result, new ResourceResolver(SOURCE_FOLDER))));
         }
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));

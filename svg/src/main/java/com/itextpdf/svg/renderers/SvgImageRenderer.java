@@ -47,8 +47,4 @@ public class SvgImageRenderer extends ImageRenderer {
         ((SvgImage) modelElement).generate(drawContext.getDocument());
         super.draw(drawContext);
     }
-    //TODO: DEVSIX-8775 probably we need to override ImageRenderer#calculateImageDimensions and calcualte percent
-    // values of svg width and height there by altering layoutBox or affine transform, this is needed to correctly
-    // calculate percent values in root svg element. Though this won't help with svg's loaded as background image in
-    // html2pdf, so this has to be carefully investigated
 }

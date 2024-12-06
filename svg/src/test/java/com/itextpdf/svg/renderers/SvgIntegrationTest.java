@@ -53,13 +53,13 @@ public class SvgIntegrationTest extends ExtendedITextTest {
     }
 
     public void convert(String svg, String output) throws IOException {
-        convert(svg, output, PageSize.DEFAULT);
+        convert(svg, output, PageSize.DEFAULT, new SvgConverterProperties());
     }
 
-    public void convert(String svg, String output, PageSize size) throws IOException {
+    public void convert(String svg, String output, PageSize size, SvgConverterProperties properties) throws IOException {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(output, new WriterProperties().setCompressionLevel(0)))) {
             doc.addNewPage(size);
-            ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(svg);
+            properties.setBaseUri(svg);
             SvgConverter.drawOnDocument(FileUtil.getInputStreamForFile(svg), doc, 1, properties);
         }
     }
@@ -105,8 +105,17 @@ public class SvgIntegrationTest extends ExtendedITextTest {
         convertAndCompare(src, dest, fileName, PageSize.DEFAULT);
     }
 
+    public void convertAndCompare(String src, String dest, String fileName, SvgConverterProperties properties) throws IOException, InterruptedException {
+        convertAndCompare(src, dest, fileName, PageSize.DEFAULT, properties);
+    }
+
     public void convertAndCompare(String src, String dest, String fileName, PageSize size) throws IOException, InterruptedException {
-        convert(src + fileName + ".svg", dest + fileName + ".pdf", size);
+        convert(src + fileName + ".svg", dest + fileName + ".pdf", size, new SvgConverterProperties());
+        compare(fileName, src, dest);
+    }
+
+    public void convertAndCompare(String src, String dest, String fileName, PageSize size, SvgConverterProperties properties) throws IOException, InterruptedException {
+        convert(src + fileName + ".svg", dest + fileName + ".pdf", size, properties);
         compare(fileName, src, dest);
     }
 

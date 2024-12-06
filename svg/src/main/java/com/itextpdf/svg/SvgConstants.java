@@ -937,6 +937,23 @@ public final class SvgConstants {
         public static final String DEFAULT_ASPECT_RATIO = Values.XMID_YMID;
 
         /**
+         * Default svg view port width value.
+         * See <a href="https://svgwg.org/specs/integration/#svg-css-sizing">SVG specification</a>.
+         */
+        public static final String DEFAULT_VIEWPORT_WIDTH = "300px";
+
+        /**
+         * Default svg view port height value.
+         * See <a href="https://svgwg.org/specs/integration/#svg-css-sizing">SVG specification</a>.
+         */
+        public static final String DEFAULT_VIEWPORT_HEIGHT = "150px";
+        /**
+         * Default width and height value.
+         * See <a href="https://svgwg.org/specs/integration/#svg-css-sizing">SVG specification</a>.
+         */
+        public static final String DEFAULT_WIDTH_AND_HEIGHT_VALUE = "100%";
+
+        /**
          * Value representing how to preserve the aspect ratio when dealing with images.
          */
         public static final String DEFER = "defer";
@@ -1010,6 +1027,10 @@ public final class SvgConstants {
          * Value representing the units relation "userSpaceOnUse".
          */
         public static final String USER_SPACE_ON_USE = "userSpaceOnUse";
+        /**
+         * The number of viewBox values.
+         */
+        public static final int VIEWBOX_VALUES_NUMBER = 4;
 
         /**
          * Value representing how to align when scaling.
@@ -1056,21 +1077,7 @@ public final class SvgConstants {
          */
         public static final String XMAX_YMAX = "xmaxymax";
 
+        @Deprecated
         public static final String VERSION1_1 = "1.1";
-
-        /**
-         * Default svg view box width value.
-         */
-        public static final String DEFAULT_VIEWBOX_WIDTH = "300px";
-
-        /**
-         * Default svg view box height value.
-         */
-        public static final String DEFAULT_VIEWBOX_HEIGHT = "150px";
-
-        /**
-         * The number of viewBox values.
-         */
-        public static final int VIEWBOX_VALUES_NUMBER = 4;
     }
 }

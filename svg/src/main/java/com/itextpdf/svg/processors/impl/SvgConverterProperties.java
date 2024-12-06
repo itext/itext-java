@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.processors.impl;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
@@ -56,6 +57,8 @@ public class SvgConverterProperties implements ISvgConverterProperties {
 
     private CssStyleSheet cssStyleSheet = null;
 
+    private Rectangle customViewport = null;
+
     /**
      * Creates a new {@link SvgConverterProperties} instance.
      * Instantiates its members, IResourceRetriever and ISvgNodeRendererFactory, to its default implementations.
@@ -63,6 +66,29 @@ public class SvgConverterProperties implements ISvgConverterProperties {
     public SvgConverterProperties() {
         this.resourceRetriever = new DefaultResourceRetriever();
         this.rendererFactory = new DefaultSvgNodeRendererFactory();
+    }
+
+    /**
+     * Gets the custom viewport of SVG.
+     * <p>
+     * The custom viewport is used to resolve percent values of the top level svg.
+     *
+     * @return the custom viewport
+     */
+    public Rectangle getCustomViewport() {
+        // TODO DEVSIX-8808 add this getter to the interface ISvgConverterProperties and remove class casting where getCustomViewport is called
+        return customViewport;
+    }
+
+    /**
+     * Sets the custom viewport of SVG.
+     * <p>
+     * The custom viewport is used to resolve percent values of the top level svg.
+     *
+     * @param customViewport the custom viewport
+     */
+    public void setCustomViewport(Rectangle customViewport) {
+        this.customViewport = customViewport;
     }
 
     public SvgConverterProperties setRendererFactory(ISvgNodeRendererFactory rendererFactory) {

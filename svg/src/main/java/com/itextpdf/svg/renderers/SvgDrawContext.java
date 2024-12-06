@@ -62,6 +62,8 @@ public class SvgDrawContext {
     private float[] textMove = new float[]{0.0f, 0.0f};
     private float[] relativePosition;
 
+    private Rectangle customViewport;
+
     /**
      * Create an instance of the context that is used to store information when converting SVG.
      *
@@ -78,6 +80,28 @@ public class SvgDrawContext {
         }
         this.fontProvider = fontProvider;
         cssContext = new SvgCssContext();
+    }
+
+    /**
+     * Gets the custom viewport of SVG.
+     * <p>
+     * The custom viewport is used to resolve percent values of the top level svg.
+     *
+     * @return the custom viewport
+     */
+    public Rectangle getCustomViewport() {
+        return customViewport;
+    }
+
+    /**
+     * Sets the custom viewport of SVG.
+     * <p>
+     * The custom viewport is used to resolve percent values of the top level svg.
+     *
+     * @param customViewport the custom viewport
+     */
+    public void setCustomViewport(Rectangle customViewport) {
+        this.customViewport = customViewport;
     }
 
     /**

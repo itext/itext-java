@@ -210,7 +210,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             yStep = SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
                     getAttribute(Attributes.HEIGHT), 0) * CONVERT_COEFF;
         } else {
-            final Rectangle currentViewPort = context.getCurrentViewPort();
+            final Rectangle currentViewPort = this.getCurrentViewBox(context);
             final double viewPortX = currentViewPort.getX();
             final double viewPortY = currentViewPort.getY();
             final double viewPortWidth = currentViewPort.getWidth();

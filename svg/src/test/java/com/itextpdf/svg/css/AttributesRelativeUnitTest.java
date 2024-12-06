@@ -22,11 +22,10 @@
  */
 package com.itextpdf.svg.css;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
@@ -69,5 +68,140 @@ public class AttributesRelativeUnitTest extends SvgIntegrationTest {
     @Test
     public void imageAttributesPercentUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "imageAttributesPercentUnits");
+    }
+
+//-------------- Nested svg
+    @Test
+    public void nestedSvgWidthPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedSvgWidthPercentTest");
+    }
+
+    @Test
+    public void nestedSvgXPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedSvgXPercentTest");
+    }
+
+    @Test
+    public void nestedSvgHeightPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedSvgHeightPercentTest");
+    }
+
+    @Test
+    public void nestedSvgYPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedSvgYPercentTest");
+    }
+
+    @Test
+    public void nestedSvgWidthEmTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedSvgWidthEmTest");
+    }
+
+    @Test
+    public void nestedSvgAllPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedSvgAllPercentTest");
+    }
+
+//-------------- Top level svg
+    @Test
+    public void svgWidthPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svgWidthPercentTest");
+    }
+
+    @Test
+    public void svgViewboxWidthPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svgViewboxWidthPercentTest");
+    }
+
+    @Test
+    public void svgHeightPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svgHeightPercentTest");
+    }
+
+    @Test
+    public void svgWidthAndHeightEmAndRemTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svgWidthAndHeightEmAndRemTest");
+    }
+//-------------- use
+    @Test
+    public void useXPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "useXPercentTest");
+    }
+
+    @Test
+    public void useYPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "useYPercentTest");
+    }
+
+    @Test
+    public void useXAndYEmAndRemTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "useXAndYEmAndRemTest");
+    }
+
+    @Test
+    // TODO DEVSIX-4566 Processing of width&height attributes in use tag are not currently supported
+    public void useWidthPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "useWidthPercentTest");
+    }
+
+//-------------- symbol
+
+    @Test
+    public void symbolXPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "symbolXPercentTest");
+    }
+
+    @Test
+    public void symbolYPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "symbolYPercentTest");
+    }
+
+    @Test
+    public void symbolXAndYEmAndRemTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "symbolXAndYEmAndRemTest");
+    }
+
+    @Test
+    public void symbolWidthAndHeightPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "symbolWidthAndHeightPercentTest");
+    }
+
+    @Test
+    public void symbolWidthAndHeightEmAndRemTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "symbolWidthAndHeightEmAndRemTest");
+    }
+
+//-------------- misc
+    @Test
+    public void linePercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linePercentTest");
+    }
+
+    @Test
+    public void diffViewBoxAndPortPercent1Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "diffViewBoxAndPortPercent1Test");
+    }
+
+    @Test
+    public void diffViewBoxAndPortPercent2Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "diffViewBoxAndPortPercent2Test");
+    }
+
+    @Test
+    public void noViewBoxAndViewPortPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noViewBoxAndViewPortPercentTest");
+    }
+
+    @Test
+    public void noViewBoxPercentTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noViewBoxPercentTest");
+    }
+
+    @Test
+    public void viewportFromConverterPropertiesTest() throws IOException, InterruptedException {
+        SvgConverterProperties properties = new SvgConverterProperties();
+        properties.setCustomViewport(new Rectangle(500, 500));
+        // It is expected that the result is different with browser. In
+        // browsers the result should be bigger but with the same proportions
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewportFromConverterPropertiesTest", properties);
     }
 }

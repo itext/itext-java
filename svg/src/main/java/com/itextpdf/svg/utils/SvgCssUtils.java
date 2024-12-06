@@ -27,15 +27,17 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class that facilitates parsing values from CSS.
@@ -110,6 +112,40 @@ public final class SvgCssUtils {
     }
 
     /**
+     * Parses vertical length attribute and converts it to an absolute value.
+     *
+     * @param svgNodeRenderer renderer for which length should be parsed
+     * @param length {@link String} for parsing
+     * @param defaultValue default value if length is not recognized
+     * @param context current {@link SvgDrawContext}
+     *
+     * @return absolute value in points
+     */
+    public static float parseAbsoluteVerticalLength(AbstractSvgNodeRenderer svgNodeRenderer, String length,
+            float defaultValue, SvgDrawContext context) {
+
+        float percentBaseValue = calculatePercentBaseValueIfNeeded(svgNodeRenderer, context, length, false);
+        return parseAbsoluteLength(svgNodeRenderer, length, percentBaseValue, defaultValue, context);
+    }
+
+    /**
+     * Parses horizontal length attribute and converts it to an absolute value.
+     *
+     * @param svgNodeRenderer renderer for which length should be parsed
+     * @param length {@link String} for parsing
+     * @param defaultValue default value if length is not recognized
+     * @param context current {@link SvgDrawContext}
+     *
+     * @return absolute value in points
+     */
+    public static float parseAbsoluteHorizontalLength(AbstractSvgNodeRenderer svgNodeRenderer, String length,
+            float defaultValue, SvgDrawContext context) {
+
+        float percentBaseValue = calculatePercentBaseValueIfNeeded(svgNodeRenderer, context, length, true);
+        return parseAbsoluteLength(svgNodeRenderer, length, percentBaseValue, defaultValue, context);
+    }
+
+    /**
      * Extract svg viewbox values.
      *
      * @param svgRenderer the {@link ISvgNodeRenderer} instance that contains
@@ -154,45 +190,75 @@ public final class SvgCssUtils {
     }
 
     /**
-     * Extract width and height of the passed SVGNodeRenderer,
-     * defaulting to respective viewbox values if either one is not present or
-     * to browser default if viewbox is missing as well.
+     * Extract width and height of the passed SVGNodeRenderer, defaulting to {@link SvgDrawContext#getCustomViewport()}
+     * if either one is not present. If {@link SvgDrawContext#getCustomViewport()} isn't specified, than respective
+     * viewbox values or browser default (if viewbox is missing) will be used.
      *
-     * @param svgRenderer the {@link ISvgNodeRenderer} instance that contains
-     *                       the renderer tree
+     *
+     * @param svgRenderer the {@link ISvgNodeRenderer} instance that contains the renderer tree
      * @param em em value in pt
-     * @param rem rem value in pt
-     * @return Rectangle, where x,y = 0 and width and height are extracted ones by this method.
+     * @param context the svg draw context
+     *                
+     * @return rectangle, where x,y = 0 and width and height are extracted ones by this method.
      */
-    public static Rectangle extractWidthAndHeight(ISvgNodeRenderer svgRenderer, float em, float rem) {
-        float[] values = SvgCssUtils.parseViewBox(svgRenderer);
-        float defaultWidth = values == null ?
-                CssDimensionParsingUtils.parseAbsoluteLength(SvgConstants.Values.DEFAULT_VIEWBOX_WIDTH) : values[2];
-        float defaultHeight = values == null ?
-                CssDimensionParsingUtils.parseAbsoluteLength(SvgConstants.Values.DEFAULT_VIEWBOX_HEIGHT) : values[3];
-        Rectangle result = new Rectangle(defaultWidth, defaultHeight);
+    public static Rectangle extractWidthAndHeight(ISvgNodeRenderer svgRenderer, float em, SvgDrawContext context) {
+        float finalWidth = 0;
+        float finalHeight = 0;
+
+        float percentHorizontalBase;
+        float percentVerticalBase;
+        // Here we follow https://svgwg.org/specs/integration/#svg-css-sizing with one exception:
+        // we use author specified width and height (SvgDrawContext#customViewport)
+        // in any case regardless viewbox existing (it is how browsers work).
+        if (context.getCustomViewport() == null) {
+            float[] viewBox = SvgCssUtils.parseViewBox(svgRenderer);
+            if (viewBox == null) {
+                percentHorizontalBase = CssDimensionParsingUtils.parseAbsoluteLength(SvgConstants.Values.DEFAULT_VIEWPORT_WIDTH);
+                percentVerticalBase = CssDimensionParsingUtils.parseAbsoluteLength(SvgConstants.Values.DEFAULT_VIEWPORT_HEIGHT);
+            } else {
+                percentHorizontalBase = viewBox[2];
+                percentVerticalBase = viewBox[3];
+            }
+        } else {
+            percentHorizontalBase = context.getCustomViewport().getWidth();
+            percentVerticalBase = context.getCustomViewport().getHeight();
+        }
+
+        float rem = context.getCssContext().getRootFontSize();
 
         String width = svgRenderer.getAttribute(SvgConstants.Attributes.WIDTH);
-        if (CssTypesValidationUtils.isRemValue(width)) {
-            result.setWidth(CssDimensionParsingUtils.parseRelativeValue(width, rem));
-        } else if (CssTypesValidationUtils.isEmValue(width)) {
-            result.setWidth(CssDimensionParsingUtils.parseRelativeValue(width, em));
-        } else if (width != null) {
-            result.setWidth(CssDimensionParsingUtils.parseAbsoluteLength(width));
-        } else if (values == null) {
-            LOGGER.warn(SvgLogMessageConstant.MISSING_WIDTH);
-        }
+        finalWidth = calculateFinalSvgRendererLength(width, em, rem, percentHorizontalBase);
 
         String height = svgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT);
-        if (CssTypesValidationUtils.isRemValue(height)) {
-            result.setHeight(CssDimensionParsingUtils.parseRelativeValue(height, rem));
-        } else if (CssTypesValidationUtils.isEmValue(height)) {
-            result.setHeight(CssDimensionParsingUtils.parseRelativeValue(height, em));
-        } else if (height != null) {
-            result.setHeight(CssDimensionParsingUtils.parseAbsoluteLength(height));
-        } else if (values == null) {
-            LOGGER.warn(SvgLogMessageConstant.MISSING_HEIGHT);
+        finalHeight = calculateFinalSvgRendererLength(height, em, rem, percentVerticalBase);
+
+        return new Rectangle(finalWidth, finalHeight);
+    }
+
+    private static float calculateFinalSvgRendererLength(String length, float em, float rem, float percentBase) {
+        if (length == null) {
+            length = SvgConstants.Values.DEFAULT_WIDTH_AND_HEIGHT_VALUE;
         }
-        return result;
+        if (CssTypesValidationUtils.isRemValue(length)) {
+            return CssDimensionParsingUtils.parseRelativeValue(length, rem);
+        } else if (CssTypesValidationUtils.isEmValue(length)) {
+            return CssDimensionParsingUtils.parseRelativeValue(length, em);
+        } else if (CssTypesValidationUtils.isPercentageValue(length)) {
+            return CssDimensionParsingUtils.parseRelativeValue(length, percentBase);
+        } else {
+            return CssDimensionParsingUtils.parseAbsoluteLength(length);
+        }
+    }
+
+    private static float calculatePercentBaseValueIfNeeded(AbstractSvgNodeRenderer svgNodeRenderer, SvgDrawContext context, String length, boolean isXAxis) {
+        float percentBaseValue = 0.0F;
+        if (CssTypesValidationUtils.isPercentageValue(length)) {
+            Rectangle viewBox = svgNodeRenderer.getCurrentViewBox(context);
+            if (viewBox == null) {
+                throw new SvgProcessingException(SvgExceptionMessageConstant.ILLEGAL_RELATIVE_VALUE_NO_VIEWPORT_IS_SET);
+            }
+            percentBaseValue = isXAxis ? viewBox.getWidth() : viewBox.getHeight();
+        }
+        return percentBaseValue;
     }
 }

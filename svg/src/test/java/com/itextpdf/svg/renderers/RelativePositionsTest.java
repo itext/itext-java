@@ -25,7 +25,6 @@ package com.itextpdf.svg.renderers;
 import com.itextpdf.test.ITextTest;
 
 import java.io.IOException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -47,7 +46,6 @@ public class RelativePositionsTest extends SvgIntegrationTest {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativePositionsBasic");
   }
 
-  //TODO DEVSIX-5740: Update cmp file after supporting
   @Test
   public void relativePositionsBasic2Test() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativePositionsBasic2");
