@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 @Tag("IntegrationTest")
 // Android-Conversion-Skip-File (java.awt library isn't available on Android)
@@ -56,7 +57,8 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
     }
-    
+
+    @DisabledInNativeImage // java.awt is not compatible with graalvm
     @Test
     // See http://stackoverflow.com/questions/39119776/itext-binary-transparency-bug
     public void imageBinaryTransparencySameColorTest() throws java.io.IOException {
@@ -94,6 +96,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
         ExtendedITextTest.printOutputPdfNameAndDir(outFile);
     }
 
+    @DisabledInNativeImage // java.awt is not compatible with graalvm
     @Test
     // See http://stackoverflow.com/questions/39119776/itext-binary-transparency-bug
     public void imageBinaryTransparencyDifferentColorsTest() throws java.io.IOException {

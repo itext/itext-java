@@ -26,6 +26,8 @@ import com.itextpdf.test.pdfa.VeraPdfValidator;
 import com.itextpdf.test.utils.FileUtil;
 
 import java.io.IOException;
+import java.util.function.Consumer;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -60,7 +62,9 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
                 + "WARNING: Invalid embedded cff font. Charset range exceeds number of glyphs\n"
                 + "WARNING: Missing OutputConditionIdentifier in an output intent dictionary\n"
                 + "WARNING: The Top DICT does not begin with ROS operator";
-        Assertions.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + target));
+        ignoreRunningWhenNative((isNative) -> {
+            Assertions.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + target));
+        });
     }
 
     @Test
@@ -74,10 +78,11 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
                 + "WARNING: Invalid embedded cff font. Charset range exceeds number of glyphs\n"
                 + "WARNING: Missing OutputConditionIdentifier in an output intent dictionary\n"
                 + "WARNING: The Top DICT does not begin with ROS operator";
-        Assertions.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithWarnings));
-
-        //We check that the logs are empty after the first check
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithoutWarnings));
+        ignoreRunningWhenNative((isNative) -> {
+            Assertions.assertEquals(expectedWarningsForFileWithWarnings, new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithWarnings));
+            //We check that the logs are empty after the first check
+            Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + fileNameWithoutWarnings));
+        });
     }
 
     @Test
@@ -87,7 +92,20 @@ public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
         FileUtil.copy(SOURCE_FOLDER + source, DESTINATION_FOLDER + target);
 
         String expectedResponseForErrors = "VeraPDF verification failed. See verification results: file:";
-        String result =  new VeraPdfValidator().validate(DESTINATION_FOLDER + target);
-        Assertions.assertTrue(result.startsWith(expectedResponseForErrors));
+        ignoreRunningWhenNative((isNative) -> {
+            String result = new VeraPdfValidator().validate(DESTINATION_FOLDER + target);
+            Assertions.assertTrue(result.startsWith(expectedResponseForErrors));
+        });
     }
+
+    private static final boolean isNative = System.getProperty("org.graalvm.nativeimage.imagecode") != null;
+
+    public static void ignoreRunningWhenNative(Consumer<Object> test) {
+        // VeraPdf doesn't work in native mode so skip VeraPdf validation
+        if (isNative) {
+            return;
+        }
+        test.accept(isNative);
+    }
+
 }

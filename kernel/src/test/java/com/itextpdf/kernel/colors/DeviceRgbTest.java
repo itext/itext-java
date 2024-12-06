@@ -29,6 +29,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 @Tag("UnitTest")
 public class DeviceRgbTest extends ExtendedITextTest {
@@ -60,6 +61,7 @@ public class DeviceRgbTest extends ExtendedITextTest {
     }
 
     // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
+    @DisabledInNativeImage // java.awt is not compatible with graalvm
     @Test
     public void colorByAWTColorConstantTest() {
         // RED
@@ -87,6 +89,7 @@ public class DeviceRgbTest extends ExtendedITextTest {
         Assertions.assertEquals(1, rgbColorValue[2], 0.0001);
     }
 
+    @DisabledInNativeImage // java.awt is not compatible with graalvm
     @Test
     public void colorByAWTColorTest() {
         java.awt.Color color = new java.awt.Color(50, 100, 150);

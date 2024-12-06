@@ -129,7 +129,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             paragraph.add(link);
             new Document(pdfDocument).add(paragraph);
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -173,7 +173,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             annot.setContents("Hello world");
             pdfPage.addAnnotation(annot);
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
 
@@ -210,7 +210,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(stamp);
             pdfPage.flush();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -241,7 +241,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(screen);
             pdfPage.flush();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -275,7 +275,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -310,7 +310,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -344,7 +344,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -378,7 +378,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -420,7 +420,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfTrapNetworkAnnotation annot = new PdfTrapNetworkAnnotation(PageSize.A4, form);
             pdfPage.addAnnotation(annot);
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -434,7 +434,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfAnnotation annot = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), new PdfStream());
             pdfPage.addAnnotation(annot);
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -455,7 +455,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             new Document(pdfDocument).add(paragraph);
         }
 
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -496,7 +496,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -513,7 +513,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     private void createSimplePdfUA2Document(PdfDocument pdfDocument) throws IOException, XMPException {

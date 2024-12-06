@@ -170,7 +170,8 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     endText().
                     restoreState().closeTag();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+        new VeraPdfValidator().validateFailure(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test

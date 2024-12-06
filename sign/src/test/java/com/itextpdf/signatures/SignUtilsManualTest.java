@@ -30,8 +30,10 @@ import java.util.Iterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 @Tag("UnitTest")
+@DisabledInNativeImage // One can't use java key store in native as there is no java
 public class SignUtilsManualTest extends ExtendedITextTest {
 
     @Test

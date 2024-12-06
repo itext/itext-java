@@ -813,13 +813,12 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     private void compareResult(String outPdf, String cmpPdf, String expectedVeraPdfWarning) throws IOException, InterruptedException {
-        Assertions.assertEquals(expectedVeraPdfWarning, new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateWarning(outPdf, expectedVeraPdfWarning); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);
         }
     }
-
 
     private void generatePdfA2WithCidFont(String fontFile, String outPdf) throws IOException {
         try (PdfWriter writer = new PdfWriter(outPdf);

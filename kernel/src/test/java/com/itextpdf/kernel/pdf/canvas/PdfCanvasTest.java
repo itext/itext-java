@@ -60,6 +60,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 @Tag("IntegrationTest")
 public class PdfCanvasTest extends ExtendedITextTest {
@@ -1055,6 +1056,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
+    @DisabledInNativeImage // java.awt is not compatible with graalvm
     @Test
     public void awtImagesTest01() throws IOException, InterruptedException {
         String filename = "awtImagesTest01.pdf";

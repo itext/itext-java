@@ -99,8 +99,17 @@ class XmlReportGeneratorTest extends ExtendedITextTest {
             }
 
             // For each reported signature the certificate is added to the validation objects
-            Assertions.assertTrue(testTool.countElements(
-                    "//r:ValidationObject[r:ObjectType=\"urn:etsi:019102:validationObject:certificate\"]") >= 2);
+            // We don't use something like
+            // testTool.countElements("//r:ValidationObject[r:ObjectType=\"urn:etsi:019102:validationObject:certificate\"]");
+            // here because it fails in native by not clear reason
+            NodeList objectTypesNodes = testTool.executeXpathAsNodeList("//r:ValidationObject//r:ObjectType");
+            int requiredObjectTypesCount = 0;
+            for (int i = 0; i < objectTypesNodes.getLength(); i++) {
+                if ("urn:etsi:019102:validationObject:certificate".equals(objectTypesNodes.item(i).getTextContent())) {
+                    ++requiredObjectTypesCount;
+                }
+            }
+            Assertions.assertEquals(2, requiredObjectTypesCount);
 
             Assertions.assertNull(testTool.validateXMLSchema());
         }

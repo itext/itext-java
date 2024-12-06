@@ -93,6 +93,7 @@
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.7.0</javadoc.version>
     <junit.jupiter.version>5.10.2</junit.jupiter.version>
+    <junit.platform.version>1.10.2</junit.platform.version>
     <junitparams.version>1.0.4</junitparams.version>
     <logback.version>1.3.14</logback.version>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -109,6 +110,8 @@
 
     <sharpen.builddotnet>false</sharpen.builddotnet>
     <sharpen.showdiff>false</sharpen.showdiff>
+
+    <native.maven.plugin.version>0.10.1</native.maven.plugin.version>
   </properties>
 
   <dependencies>
@@ -127,6 +130,12 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>${junit.platform.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -601,7 +610,7 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
-              <groups>SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest</groups>
+              <groups>SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest,UnitTest</groups>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
               <argLine>@{jacoco.agent.argLine}</argLine>
               <threadCount>1</threadCount>
@@ -868,6 +877,87 @@
           <scope>provided</scope>
         </dependency>
       </dependencies>
+    </profile>
+    <profile>
+      <id>native</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.graalvm.nativeimage</groupId>
+          <artifactId>svm</artifactId>
+          <version>22.3.5</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk18on</artifactId>
+          <version>${bouncycastle.version}</version>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>add-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-source</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>${basedir}/../resources/graalvm</source>
+                  </sources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <version>${native.maven.plugin.version}</version>
+            <extensions>true</extensions>
+            <executions>
+              <execution>
+                <id>test-native</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <phase>test</phase>
+              </execution>
+            </executions>
+            <configuration>
+              <buildArgs>
+                <arg>
+                  --initialize-at-build-time=org.junit.validator.PublicClassValidator
+                  --initialize-at-build-time=org.junit.platform.engine.TestTag
+
+                  --initialize-at-run-time=org.bouncycastle.crypto.prng.SP800SecureRandom
+                  --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV
+                  --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default
+
+                  --features=com.itextpdf.BouncyCastleFeature
+
+                  --enable-all-security-services
+                  --enable-url-protocols=http,https,ftp
+
+                  -H:+AddAllCharsets
+                  -H:ReflectionConfigurationFiles=${basedir}/../resources/graalvm/reflect-config.json
+                  <!-- Graalvm requires VisualStudio 2022 on Windows but it also works with earlier versions.
+                       So this is a workaround to run tests on TC agents having earlier VS versions installed. -->
+                  -H:-CheckToolchain
+                </arg>
+              </buildArgs>
+              <skipTests>false</skipTests>
+              <metadataRepository>
+                <enabled>true</enabled>
+              </metadataRepository>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>

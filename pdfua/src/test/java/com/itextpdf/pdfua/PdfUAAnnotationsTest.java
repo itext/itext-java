@@ -275,7 +275,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_ua1StampAnnotWithAltTest.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        new VeraPdfValidator().validateFailure(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -292,7 +292,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_ua1ScreenAnnotWithAltTest.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        new VeraPdfValidator().validateFailure(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -825,7 +825,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
         // VeraPdf complains about the fact that PrinterMark annotation isn't wrapped by Annot tag.
         // But in that test we don't put PrinterMark annot in tag structure at all.
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        new VeraPdfValidator().validateFailure(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     private PdfTextAnnotation createRichTextAnnotation() {

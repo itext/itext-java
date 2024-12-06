@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 @Tag("IntegrationTest")
 public class BarcodePDF417Test extends ExtendedITextTest {
@@ -178,6 +179,7 @@ public class BarcodePDF417Test extends ExtendedITextTest {
 
     // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     @Test
+    @DisabledInNativeImage
     public void barcode417CreateAWTImageTest() throws IOException, InterruptedException {
         String filename = "barcode417CreateAWTImageTest.pdf";
         PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename);

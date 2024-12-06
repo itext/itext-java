@@ -671,7 +671,7 @@ public class PdfUA2Test extends ExtendedITextTest {
             pdfDocument.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
             pdfDocument.getCatalog().setLang(new PdfString("en-US"));
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -687,7 +687,7 @@ public class PdfUA2Test extends ExtendedITextTest {
             PdfDocumentInfo info = pdfDocument.getDocumentInfo();
             info.setTitle("PdfUA2 Title");
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -702,7 +702,7 @@ public class PdfUA2Test extends ExtendedITextTest {
             PdfDocumentInfo info = pdfDocument.getDocumentInfo();
             info.setTitle("PdfUA2 Title");
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -731,7 +731,7 @@ public class PdfUA2Test extends ExtendedITextTest {
             ((PdfDictionary) spec.getPdfObject()).remove(PdfName.Desc);
             pdfDocument.addFileAttachment("specificname", spec);
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test

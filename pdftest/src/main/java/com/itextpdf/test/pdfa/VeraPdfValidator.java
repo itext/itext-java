@@ -23,7 +23,6 @@
 package com.itextpdf.test.pdfa;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -31,6 +30,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.Assertions;
 import org.verapdf.component.LogsSummary;
 import org.verapdf.component.LogsSummaryImpl;
 import org.verapdf.core.VeraPDFException;
@@ -50,7 +50,7 @@ import org.verapdf.processor.reports.BatchSummary;
 
 // Android-Conversion-Skip-File (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 public class VeraPdfValidator {
-
+    private static final boolean isNative = System.getProperty("org.graalvm.nativeimage.imagecode") != null;
 
     /**
      * @return the {@link PDFAFlavour} to use for validation
@@ -59,9 +59,42 @@ public class VeraPdfValidator {
         return PDFAFlavour.NO_FLAVOUR;
     }
 
-    public String validate(String filePath) {
-        String errorMessage = null;
+    /**
+     * Validates PDF file with VeraPdf expecting failure.
+     *
+     * @param filePath file to validate
+     */
+    public void validateFailure(String filePath) {
+        // VeraPdf doesn't work in native mode so skip VeraPdf validation
+        if (isNative) {
+            return;
+        }
 
+        Assertions.assertNotNull(validate(filePath));
+    }
+
+    /**
+     * Validates PDF file with VeraPdf expecting a warning.
+     *
+     * @param filePath file to validate
+     * @param expectedWarning expected VeraPdf warning
+     */
+    public void validateWarning(String filePath, String expectedWarning) {
+        // VeraPdf doesn't work in native mode so skip VeraPdf validation
+        if (isNative) {
+            return;
+        }
+
+        Assertions.assertEquals(expectedWarning, validate(filePath));
+    }
+
+    public String validate(String filePath) {
+        // VeraPdf doesn't work in native mode so skip VeraPdf validation
+        if (isNative) {
+            return null;
+        }
+
+        String errorMessage = null;
         try {
             File xmlReport = new File(filePath.substring(0, filePath.length() - ".pdf".length()) + ".xml");
             VeraGreenfieldFoundryProvider.initialise();
@@ -107,6 +140,9 @@ public class VeraPdfValidator {
             errorMessage = "VeraPDF execution failed:\n" + exc.getMessage();
         }
 
+        if (errorMessage != null) {
+            System.out.println(errorMessage);
+        }
         return errorMessage;
     }
 }

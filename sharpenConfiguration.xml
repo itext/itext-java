@@ -350,7 +350,9 @@
                 <file path="com/itextpdf/commons/bouncycastle/pkcs/AbstractPKCSException.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampToken.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampTokenGenerator.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/SecurityProviderProxy.java"/>
             </fileset>
+
             <fileset reason="These classes are used only in Java.">
                 <file path="com/itextpdf/commons/bouncycastle/crypto/fips/AbstractFipsUnapprovedOperationError.java"/>
                 <file path="com/itextpdf/bouncycastlefips/crypto/fips/FipsUnapprovedOperationErrorBCFips.java"/>
