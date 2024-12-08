@@ -1,0 +1,142 @@
+%PDF-1.7
+%‚„œ”
+5 0 obj
+<</Length 12>>stream
+q
+/Fm1 Do
+Q
+
+endstream
+endobj
+4 0 obj
+<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+endobj
+1 0 obj
+<</Pages 2 0 R/Type/Catalog>>
+endobj
+3 0 obj
+<</CreationDate(D:20241211161745+01'00')/ModDate(D:20241211161745+01'00')/Producer(iTextÆ Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+endobj
+6 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+2 0 obj
+<</Count 1/Kids[4 0 R]/Type/Pages>>
+endobj
+7 0 obj
+<</BBox[0 0 750 450]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 450 cm
+% svg root
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+
+endstream
+endobj
+8 0 obj
+<</BBox[0 0 750 450]/Length 1164/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 750 450 re
+W
+n
+q
+% rect
+0 0 450 450 re
+n
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 52.5 45 Tm
+1 0 0 rg
+(1. white-space: normal. This text has some extra spaces in front which are also ignored by relative positioning.)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 60 52.5 Tm
+0 0.50196 0 rg
+(2. white-space: pre. This text also has extra spaces in front but these do not get ignored by white-space attribute)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 17.25 108.75 Tm
+0 0 1 rg
+(3. white-space: nowrap. The extra leading spaces are ignored by relative positioning. New line is ignored)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 90 136.5 Tm
+0.50196 0 0.50196 rg
+(4. white-space: pre-wrap. Leading spaces count for relative positioning .)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 18.75 228.75 Tm
+1 0.64706 0 rg
+(5. white-space: pre-line. The leading spaces will not get ignored for relative)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 336.89 228.75 Tm
+0 0 0 rg
+(positioning.)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 75 247.5 Tm
+0.64706 0.16471 0.16471 rg
+(6. white-space: break-spaces. Here leading spaces are counted for relative)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 384.93 247.5 Tm
+0 0 0 rg
+(positioning)Tj
+ET
+Q
+Q
+
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000211 00000 n 
+0000000518 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
+0000000015 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
+trailer
+<</ID [<205748de4437d2f502ad052de1e78b27074a0a71eb09b32c885848b81a37db678da8a02a72d0d429ea5fc9a3a7651bf5d496e167eba8bd734a787dd58a2d46f7><205748de4437d2f502ad052de1e78b27074a0a71eb09b32c885848b81a37db678da8a02a72d0d429ea5fc9a3a7651bf5d496e167eba8bd734a787dd58a2d46f7>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
+startxref
+2041
+%%EOF

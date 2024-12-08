@@ -1,0 +1,14 @@
+<svg viewBox="0 0 240 220" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    circle {
+      fill: blue;
+    }
+  </style>
+  <style media="only screen and (min-width: 200px) and (max-width: 600px) and (min-heigth: 200px)">
+    circle {
+      fill: yellow;
+    }
+  </style>
+
+  <circle cx="100" cy="100" r="50"/>
+</svg>

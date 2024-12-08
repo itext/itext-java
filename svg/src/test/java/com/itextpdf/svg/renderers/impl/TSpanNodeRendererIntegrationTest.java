@@ -22,12 +22,9 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -297,5 +294,23 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void nestedPositioningTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedPositioningTest");
+    }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void textDecorationTspanTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationTspan");
+    }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void textDecorationTspanSubTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationTspanSub");
+    }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void tspanFillTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanFill");
     }
 }

@@ -254,6 +254,13 @@ public class CssStyleSheetParserTest extends ExtendedITextTest {
         Assertions.assertTrue(styleSheet.getStatements().get(0).toString().contains(declaration.substring(0, declaration.length() - 1)));
     }
 
+    @Test
+    public void base64Test() throws IOException {
+        String cssString = "data:image/jpeg;base64,/9j/aGVsbG8gd29ybGQ=";
+        CssStyleSheet styleSheet = CssStyleSheetParser.parse(new ByteArrayInputStream(cssString.getBytes()), sourceFolder);
+        Assertions.assertTrue(styleSheet.getStatements().isEmpty());
+    }
+
     private String getCssFileContents(String filePath) throws IOException {
         byte[] bytes = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(filePath));
         String content = new String(bytes);

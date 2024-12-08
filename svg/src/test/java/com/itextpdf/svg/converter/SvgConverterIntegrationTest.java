@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.dummy.sdk.ExceptionInputStream;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
@@ -639,5 +640,34 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
     @Test
     public void parsePathWithNewLinesTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "pathWithNewLines");
+    }
+
+    @Test
+    //TODO DEVSIX-8769: adapt after supporting
+    @LogMessages(
+            messages = {@LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG)})
+    public void descriptionTagsTest() throws IOException {
+        Map<String, ISvgNodeRenderer> map = new HashMap<>();
+        RectangleSvgNodeRenderer rect = new RectangleSvgNodeRenderer();
+        rect.setAttribute("title", "Blue rectangle title");
+        rect.setAttribute("desc", "This is a description of a blue rectangle in a desc tag.");
+        rect.setAttribute("aria-describedby", "This description inside the aria-describedby will take precedent over desc tag description.");
+        rect.setAttribute("fill", "blue");
+        rect.setAttribute("width", "300");
+        rect.setAttribute("height", "200");
+        ISvgNodeRenderer root = new SvgTagSvgNodeRenderer();
+        root.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        root.setAttribute("font-size", "12pt");
+        root.setAttribute("width", "800");
+        root.setAttribute("height", "500");
+        ISvgProcessorResult expected = new SvgProcessorResult(map, root, new SvgProcessorContext(new SvgConverterProperties()));
+
+        String name = "descriptions";
+        try (InputStream fis = FileUtil.getInputStreamForFile(sourceFolder + name + ".svg")) {
+
+            ISvgProcessorResult actual = SvgConverter.parseAndProcess(fis);
+
+            Assertions.assertEquals(expected.getRootRenderer().getAttributeMapCopy(), actual.getRootRenderer().getAttributeMapCopy());
+        }
     }
 }

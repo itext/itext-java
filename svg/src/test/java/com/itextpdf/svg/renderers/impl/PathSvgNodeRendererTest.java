@@ -31,7 +31,9 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
+import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -47,6 +49,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
@@ -55,12 +58,18 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
     public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
+    private ISvgConverterProperties properties;
 
     @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(destinationFolder);
     }
 
+    @BeforeEach
+    public void before() {
+        properties = new SvgConverterProperties()
+                .setBaseUri(sourceFolder);
+    }
     @Test
     public void pathNodeRendererMoveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest.pdf";
@@ -408,5 +417,65 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathHOperatorRelativeAfterMultiplePairsTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "pathHOperatorRelativeAfterMultiplePairs");
+    }
+
+    @Test
+    public void patternXlinkTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "patternHref");
+    }
+
+    @Test
+    public void patternXlinkHrefPatternContentUnits1Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "patternHrefPatternContentUnits1");
+    }
+
+    @Test
+    public void patternXlinkHrefPatternContentUnits2Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "patternHrefPatternContentUnits2");
+    }
+
+    @Test
+    public void patternXlinkHrefPatternUnitsTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "patternHrefPatternUnits");
+    }
+
+    @Test
+    public void patternXlinkHrefPreserveAR1Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "patternHrefPreserveAR1", properties);
+    }
+
+    @Test
+    public void patternXlinkHrefPreserveAR2Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "patternHrefPreserveAR2", properties);
+    }
+
+    @Test
+    public void patternHrefTransitivePatternUnitsTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "patternHrefTransitivePatternUnits");
+    }
+
+    @Test
+    public void patternHrefTransitivePCUTopLayerTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "patternHrefTransitivePCUTopLayer");
+    }
+
+    @Test
+    public void patternHrefTransitivePCUBottomLayerTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "patternHrefTransitivePCUBottomLayer");
+    }
+
+    @Test
+    public void patternHrefTransitivePCU2Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "patternHrefTransitivePCU2");
+    }
+
+    @Test
+    public void patternHrefTransitivePresAR1Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "patternHrefTransitivePresAR1", properties);
+    }
+
+    @Test
+    public void patternHrefTransitivePresAR2Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "patternHrefTransitivePresAR2", properties);
     }
 }

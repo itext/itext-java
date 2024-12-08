@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="600">
+	<rect x="0" y="0" width="400" height="100" fill="none" stroke="red"></rect>
+    <text xmlns="http://www.w3.org/2000/svg" x="0" y="20">
+        <tspan>No attributes set</tspan>
+        <tspan x="20" y="50">Only x=20 and y=50</tspan>
+        <tspan dx="10" dy="20">Only dx=10 and dy=20</tspan>
+    </text>
+</svg>

@@ -58,9 +58,21 @@ public class FontAttributesTest extends SvgIntegrationTest {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"font-size-adjust");
     }
 
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void fontSizeAdjustTspanTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"font-size-adjust-tspan");
+    }
+
     @Test
     public void fontStretchTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"font-stretch");
+    }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void fontStretchTspanTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"font-stretch-tspan");
     }
 
     @Test

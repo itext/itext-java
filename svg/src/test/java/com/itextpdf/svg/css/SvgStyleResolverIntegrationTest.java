@@ -220,6 +220,13 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
     @Test
     // TODO: update cmp files when DEVSIX-2286 resolved
+    public void svgWithInternalCSSWithoutOverlapTest() throws IOException,InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "internalCssNoOverlap");
+    }
+
+
+    @Test
+    // TODO: update cmp files when DEVSIX-2286 resolved
     public void svgWithExternalCSStoCustomPage() throws IOException,InterruptedException {
         // Take a note this method differs from the one used in Default Page test
         convertAndCompare(sourceFolder, destinationFolder, "externalCss_custom", PageSize.A3.rotate());
@@ -359,5 +366,11 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     public void cssStylesResolverOrder17Test() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder17");
+    }
+
+    @Test
+    //TODO DEVSIX-8823: update after issue is fixed
+    public void heightWidthSvgStyleTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "height-width-style");
     }
 }

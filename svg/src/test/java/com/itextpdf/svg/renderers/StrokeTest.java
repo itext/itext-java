@@ -22,10 +22,7 @@
  */
 package com.itextpdf.svg.renderers;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
@@ -102,5 +99,17 @@ public class StrokeTest extends SvgIntegrationTest {
     //TODO: update cmp-file after DEVSIX-2258
     public void strokeDashArrayLinesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeDashArrayLines");
+    }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void strokeTextTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeText");
+    }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void strokeTspanTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeTspan");
     }
 }

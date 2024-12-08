@@ -132,4 +132,10 @@ public class FillTest extends SvgIntegrationTest {
     public void textFillFallbackTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFillFallbackTest");
     }
+
+    @Test
+    //TODO DEVSIX-8821: update after supported
+    public void fillLinkToNonExistingGradientTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "fillLinkToNonExistingGradient");
+    }
 }

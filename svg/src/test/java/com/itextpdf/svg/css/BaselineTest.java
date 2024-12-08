@@ -56,4 +56,11 @@ public class BaselineTest extends SvgIntegrationTest {
     public void dominantBaselineTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"dominant-baseline");
     }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    //TODO DEVSIX-5890: update cmp file after supporting
+    public void dominantBaselineTspanTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"dominant-baseline-tspan");
+    }
 }

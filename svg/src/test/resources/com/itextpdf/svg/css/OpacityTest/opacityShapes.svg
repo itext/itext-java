@@ -1,0 +1,38 @@
+<svg width="600px" height="600px" viewBox="-300 -300 600 600"
+  xmlns="http://www.w3.org/2000/svg" version="1.1"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  
+  <style>
+    /*** SVG demonstration ***/
+
+    /* page */
+
+    /* outer petals */
+    #outer-petals {
+      opacity: .25;
+      }
+
+    
+
+
+  </style>
+
+<title>SVG demonstration</title>
+<desc>Mozilla CSS Getting Started - SVG demonstration</desc>
+
+<defs>
+  <g id="segment" class="segment">
+    <circle cx="50" cy="50" r="50" />
+	<rect x="50" width="200" height="100" />
+    </g>
+  <g id="petals">
+    <use xlink:href="#segment"/>
+    </g>
+  
+  </defs>
+
+<g id="flower">
+  <use id="outer-petals" xlink:href="#petals"/>
+</g>
+
+</svg>

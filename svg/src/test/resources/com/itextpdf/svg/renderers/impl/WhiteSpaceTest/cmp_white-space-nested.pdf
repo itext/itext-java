@@ -1,0 +1,342 @@
+%PDF-1.7
+%‚„œ”
+5 0 obj
+<</Length 12>>stream
+q
+/Fm1 Do
+Q
+
+endstream
+endobj
+4 0 obj
+<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+endobj
+1 0 obj
+<</Pages 2 0 R/Type/Catalog>>
+endobj
+3 0 obj
+<</CreationDate(D:20241211161744+01'00')/ModDate(D:20241211161744+01'00')/Producer(iTextÆ Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+endobj
+6 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+2 0 obj
+<</Count 1/Kids[4 0 R]/Type/Pages>>
+endobj
+7 0 obj
+<</BBox[0 0 450 300]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 300 cm
+% svg root
+q
+1 0 0 1 0 0 cm
+/Fm1 Do
+Q
+
+endstream
+endobj
+8 0 obj
+<</BBox[0 0 450 300]/Length 2612/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 450 300 re
+W
+n
+q
+% rect
+0 0 450 300 re
+n
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 15 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: normal)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 100.44 15 Tm
+0 0 0 rg
+(. Double spaces)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 166.63 15 Tm
+1 0 0 rg
+( will be ignor)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 222.92 15 Tm
+0 0 0 rg
+(ed and so are line)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 296.4 15 Tm
+1 0 0 rg
+( breaks)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 326.43 15 Tm
+0 0 0 rg
+( .)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 37.5 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: pre)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 84.1 37.5 Tm
+0 0 0 rg
+(. This)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 108.02 37.5 Tm
+1 0 0 rg
+(text)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 123.77 37.5 Tm
+0 0 1 rg
+( will)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 142.73 37.5 Tm
+1 0 0 rg
+(keep extra spaces)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 216.2 37.5 Tm
+0 0 0 rg
+( and line)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 252.36 37.5 Tm
+1 0 0 rg
+(breaks)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 105 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: nowrap)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 102.18 105 Tm
+0 0 0 rg
+(. This text will ignore)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 192.89 105 Tm
+1 0 0 rg
+(line wrap)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 127.5 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: pre-wrap)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 108.59 127.5 Tm
+0 0 0 rg
+(. This)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 132.51 127.5 Tm
+1 0 0 rg
+(text does keep)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 192.58 127.5 Tm
+0 0 1 rg
+(double spaces and line wrap)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 310.96 127.5 Tm
+1 0 0 rg
+( but will remove)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 380.08 127.5 Tm
+0 0 0 rg
+( end of line spaces)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 187.5 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: pre-line)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 103.35 187.5 Tm
+0 0 0 rg
+(.)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 105.97 187.5 Tm
+1 0 0 rg
+(This text will not keep extra spaces but will keep)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 311.57 187.5 Tm
+0 0 0 rg
+( line breaks)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 232.5 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: break-spaces)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 124.91 232.5 Tm
+0 0 0 rg
+(. This text)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 167.21 232.5 Tm
+1 0 0 rg
+( will)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 186.17 232.5 Tm
+0 0 1 rg
+(keep)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 206 232.5 Tm
+1 0 0 rg
+(extra spaces)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 257.01 232.5 Tm
+0 0 0 rg
+(and line breaks)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 320.58 232.5 Tm
+1 0 0 rg
+(but will remove end-of-line spaces)Tj
+ET
+Q
+Q
+
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000211 00000 n 
+0000000518 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
+0000000015 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000752 00000 n 
+trailer
+<</ID [<695bba8200ab89b20790c59a730b39a332b410e8028f544987d9135b02a71fb204b622f4c0e10fab7879b6b9f0fff0069299e7530a2c60dcb834411a76e7a911><695bba8200ab89b20790c59a730b39a332b410e8028f544987d9135b02a71fb204b622f4c0e10fab7879b6b9f0fff0069299e7530a2c60dcb834411a76e7a911>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
+startxref
+3489
+%%EOF

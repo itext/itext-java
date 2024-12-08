@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400">
+  <text x="20" y="100" font-size="30" xml:space="preserve">
+    Spaces are       preserved     in this           text object.
+  </text>
+
+  <text x="20" y="160" font-size="30">
+    <tspan xml:space="preserve">Spaces        are     preserved     in this     tspan object.</tspan>
+  </text>
+
+  <text x="20" y="220"  font-size="30" xml:space="default">
+    Spaces     are    collapsed         in      this           line of text.
+  </text>
+
+</svg>

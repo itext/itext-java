@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="400" viewBox="0 0 500 300">
+  <text x="20" y="20">
+    <tspan style="text-decoration-line: underline; text-decoration-color: red; text-decoration-style: dashed;">Underlined tspan</tspan>
+  </text>
+
+  <text x="20" y="60">
+    <tspan style="text-decoration-line: overline; text-decoration-color: blue; text-decoration-style: dotted;">Overlined tspan</tspan>
+  </text>
+
+  <text x="20" y="100">
+    <tspan style="text-decoration-line: line-through; text-decoration-color: yellow;">Line-through tspan</tspan>
+  </text>
+
+  <text x="20" y="140">
+    <tspan style="text-decoration-line: overline line-through; text-decoration-color: orange;">Overline and line-through tspan</tspan>
+  </text>
+
+  <text x="20" y="180">
+    <tspan style="text-decoration-line: underline line-through; text-decoration-color: green;">Underline and line-through tspan</tspan>
+  </text>
+
+  <text x="20" y="220">
+    <tspan style="text-decoration-line: underline overline; text-decoration-color: grey;">Underlined and overlined tspan</tspan>
+  </text>
+
+  <text x="20" y="260">
+    <tspan style="text-decoration-line: underline overline line-through; text-decoration-color: brown;">All three applied to tspan</tspan>
+  </text>
+</svg>

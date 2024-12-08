@@ -1,0 +1,35 @@
+<svg width="600px" height="600px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+	<style>
+		svg {
+		  height:100px; 
+		  width:100px;
+		}
+	</style>
+  <defs>
+  <g id="palette">
+  <path d="M5,90
+           C5,45 40,-5 75,10 
+           C110,25 80,95 60,95
+           C50,95 50,75 30,75
+           C20,75 17,95 12,95
+           C10,95 5,95 5,90 Z"></path>
+  </g>
+  </defs>
+  
+  <svg>
+    <use x="0" y="0" href="#palette"/>
+  </svg>
+  
+  <svg>
+    <use x="0" y="100" href="#palette"/>
+  </svg>
+  
+  <svg>
+    <use x="100" y="0" href="#palette"/>
+  </svg>
+  
+  <svg>
+    <use x="100" y="100" href="#palette"/>
+  </svg>
+
+</svg>

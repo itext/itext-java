@@ -126,4 +126,14 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void clipPathUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathUnits");
     }
+
+    @Test
+    public void clipPathUrlTopLevelTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathUrlTopLevel");
+    }
+
+    @Test
+    public void clipPathUrl2ndLevelTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathUrl2ndLevel");
+    }
 }

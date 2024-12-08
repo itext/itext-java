@@ -104,6 +104,17 @@ public class ImportRuleTest extends SvgIntegrationTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR)
     })
+    // TODO DEVSIX-2263 SVG: CSS: Media query processing
+    public void mediaQueryPrintTest() throws IOException, InterruptedException {
+        ISvgConverterProperties properties = new SvgConverterProperties().setMediaDeviceDescription(new MediaDeviceDescription(
+                MediaType.SCREEN));
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "mediaQueryPrint", properties);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI, logLevel = LogLevelConstants.ERROR)
+    })
     public void srcInImportTest() throws IOException, InterruptedException {
         // Spec says that import can contain src, but no one browser doesn't support it as well as iText
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "srcInImport");
