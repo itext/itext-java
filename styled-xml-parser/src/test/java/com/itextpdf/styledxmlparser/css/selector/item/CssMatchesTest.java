@@ -82,6 +82,126 @@ public class CssMatchesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void matchesNthChildFixSelectorItemTest() {
+        CssPseudoClassNthChildSelectorItem item = new CssPseudoClassNthChildSelectorItem("2");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<p>First</p><p>Second</p><p>Third</p><p>Fourth</p>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode first = bodyNode.childNodes().get(0);
+        INode second = bodyNode.childNodes().get(1);
+        INode third = bodyNode.childNodes().get(2);
+        INode fourth = bodyNode.childNodes().get(3);
+
+        Assertions.assertFalse(item.matches(first), "First paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(second), "Second paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(third), "Third paragraph should NOT be matched, but matched!");
+        Assertions.assertFalse(item.matches(fourth), "Fourth paragraph should NOT be matched, but matched!");
+    }
+
+    @Test
+    public void matchesNthChildEvenSelectorItemTest() {
+        CssPseudoClassNthChildSelectorItem item = new CssPseudoClassNthChildSelectorItem("2n");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<p>First</p><p>Second</p><p>Third</p><p>Fourth</p>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode first = bodyNode.childNodes().get(0);
+        INode second = bodyNode.childNodes().get(1);
+        INode third = bodyNode.childNodes().get(2);
+        INode fourth = bodyNode.childNodes().get(3);
+
+        Assertions.assertFalse(item.matches(first), "First paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(second), "Second paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(third), "Third paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(fourth), "Fourth paragraph should be be matched, but WAS NOT matched!");
+    }
+
+    @Test
+    public void matchesNthChildOddSelectorItemTest() {
+        CssPseudoClassNthChildSelectorItem item = new CssPseudoClassNthChildSelectorItem("2n-1");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<p>First</p><p>Second</p><p>Third</p><p>Fourth</p>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode first = bodyNode.childNodes().get(0);
+        INode second = bodyNode.childNodes().get(1);
+        INode third = bodyNode.childNodes().get(2);
+        INode fourth = bodyNode.childNodes().get(3);
+
+        Assertions.assertTrue(item.matches(first), "First paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(second), "Second paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(third), "Third paragraph should be be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(fourth), "Fourth paragraph should NOT be matched, but matched!");
+    }
+
+    @Test
+    public void matchesNthLastChildFixSelectorItemTest() {
+        CssPseudoClassNthLastChildSelectorItem item = new CssPseudoClassNthLastChildSelectorItem("2");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<p>First</p><p>Second</p><p>Third</p><p>Fourth</p>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode first = bodyNode.childNodes().get(0);
+        INode second = bodyNode.childNodes().get(1);
+        INode third = bodyNode.childNodes().get(2);
+        INode fourth = bodyNode.childNodes().get(3);
+
+        Assertions.assertFalse(item.matches(first), "First paragraph should NOT be matched, but matched!");
+        Assertions.assertFalse(item.matches(second), "Second paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(third), "Third paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(fourth), "Fourth paragraph should NOT be matched, but matched!");
+    }
+
+    @Test
+    public void matchesNthLastChildEvenSelectorItemTest() {
+        CssPseudoClassNthLastChildSelectorItem item = new CssPseudoClassNthLastChildSelectorItem("2n");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<p>First</p><p>Second</p><p>Third</p><p>Fourth</p>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode first = bodyNode.childNodes().get(0);
+        INode second = bodyNode.childNodes().get(1);
+        INode third = bodyNode.childNodes().get(2);
+        INode fourth = bodyNode.childNodes().get(3);
+
+        Assertions.assertTrue(item.matches(first), "First paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(second), "Second paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(third), "Third paragraph should be be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(fourth), "Fourth paragraph should NOT be matched, but matched!");
+    }
+
+    @Test
+    public void matchesNthLastChildOddSelectorItemTest() {
+        CssPseudoClassNthLastChildSelectorItem item = new CssPseudoClassNthLastChildSelectorItem("2n-1");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<p>First</p><p>Second</p><p>Third</p><p>Fourth</p>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode first = bodyNode.childNodes().get(0);
+        INode second = bodyNode.childNodes().get(1);
+        INode third = bodyNode.childNodes().get(2);
+        INode fourth = bodyNode.childNodes().get(3);
+
+        Assertions.assertFalse(item.matches(first), "First paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(second), "Second paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(third), "Third paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(fourth), "Fourth paragraph should be be matched, but WAS NOT matched!");
+    }
+
+    @Test
     public void matchesFirstOfTypeSelectorItemTest() {
         CssPseudoClassFirstOfTypeSelectorItem item = CssPseudoClassFirstOfTypeSelectorItem.getInstance();
         IXmlParser htmlParser = new JsoupHtmlParser();
@@ -126,6 +246,66 @@ public class CssMatchesTest extends ExtendedITextTest {
                     .childNodes().get(1);
 
         Assertions.assertTrue(item.matches(divNode));
+    }
+
+    @Test
+    public void matchesNthLastOfTypeFixSelectorItemTest() {
+        CssPseudoClassNthLastOfTypeSelectorItem item = new CssPseudoClassNthLastOfTypeSelectorItem("2");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<p>First</p><h1>Headline</h1><p>Second</p><h1>Headline</h1><p>Third</p><h1>Headline</h1><p>Fourth</p>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode first = bodyNode.childNodes().get(0);
+        INode second = bodyNode.childNodes().get(2);
+        INode third = bodyNode.childNodes().get(4);
+        INode fourth = bodyNode.childNodes().get(6);
+
+        Assertions.assertFalse(item.matches(first), "First paragraph should NOT be matched, but matched!");
+        Assertions.assertFalse(item.matches(second), "Second paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(third), "Third paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(fourth), "Fourth paragraph should NOT be be matched, but matched!");
+    }
+
+    @Test
+    public void matchesNthLastOfTypeEvenSelectorItemTest() {
+        CssPseudoClassNthLastOfTypeSelectorItem item = new CssPseudoClassNthLastOfTypeSelectorItem("2n");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<p>First</p><h1>Headline</h1><p>Second</p><h1>Headline</h1><p>Third</p><h1>Headline</h1><p>Fourth</p>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode first = bodyNode.childNodes().get(0);
+        INode second = bodyNode.childNodes().get(2);
+        INode third = bodyNode.childNodes().get(4);
+        INode fourth = bodyNode.childNodes().get(6);
+
+        Assertions.assertTrue(item.matches(first), "First paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(second), "Second paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(third), "Third paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(fourth), "Fourth paragraph should NOT be be matched, but matched!");
+    }
+
+    @Test
+    public void matchesNthLastOfTypeOddSelectorItemTest() {
+        CssPseudoClassNthLastOfTypeSelectorItem item = new CssPseudoClassNthLastOfTypeSelectorItem("2n-1");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<p>First</p><h1>Headline</h1><p>Second</p><h1>Headline</h1><p>Third</p><h1>Headline</h1><p>Fourth</p>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode first = bodyNode.childNodes().get(0);
+        INode second = bodyNode.childNodes().get(2);
+        INode third = bodyNode.childNodes().get(4);
+        INode fourth = bodyNode.childNodes().get(6);
+
+        Assertions.assertFalse(item.matches(first), "First paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(second), "Second paragraph should be matched, but WAS NOT matched!");
+        Assertions.assertFalse(item.matches(third), "Third paragraph should NOT be matched, but matched!");
+        Assertions.assertTrue(item.matches(fourth), "Fourth paragraph should be be matched, but WAS NOT matched!");
     }
 
     @Test
