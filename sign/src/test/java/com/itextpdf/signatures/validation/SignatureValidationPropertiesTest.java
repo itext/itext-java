@@ -31,8 +31,13 @@ import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
+import com.itextpdf.signatures.validation.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.extensions.KeyUsageExtension;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -184,6 +189,27 @@ public class SignatureValidationPropertiesTest extends ExtendedITextTest {
         Assertions.assertEquals(Collections.singletonList(new KeyUsageExtension(3)), sut.getRequiredExtensions(
                 new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,
                         CertificateSource.OCSP_ISSUER, TimeBasedContext.HISTORICAL)));
+    }
+
+    @Test
+    public void addRequiredExtensionsTest() {
+        SignatureValidationProperties sut = new SignatureValidationProperties();
+        sut.addRequiredExtensions(CertificateSources.all(),
+                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(1)));
+        sut.addRequiredExtensions(CertificateSources.of(CertificateSource.CRL_ISSUER),
+                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(2)));
+
+        List<CertificateExtension> expectedExtensionsSigner = Collections.<CertificateExtension>singletonList(new KeyUsageExtension(1));
+        List<CertificateExtension> expectedExtensionsCrlIssuer = new ArrayList<>();
+        expectedExtensionsCrlIssuer.add(new KeyUsageExtension(KeyUsage.CRL_SIGN));
+        expectedExtensionsCrlIssuer.add(new KeyUsageExtension(1));
+        expectedExtensionsCrlIssuer.add(new KeyUsageExtension(2));
+        Assertions.assertEquals(expectedExtensionsSigner,
+                sut.getRequiredExtensions(new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,
+                        CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT)));
+        Assertions.assertEquals(expectedExtensionsCrlIssuer,
+                sut.getRequiredExtensions(new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,
+                        CertificateSource.CRL_ISSUER, TimeBasedContext.HISTORICAL)));
     }
 
     private static class IncrementalFreshnessValueSetter {

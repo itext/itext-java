@@ -38,6 +38,7 @@ public class KeyUsageExtension extends CertificateExtension {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private final int keyUsage;
+    private final boolean resultOnMissingExtension;
 
     /**
      * Create new {@link KeyUsageExtension} instance using provided {@code int} flag.
@@ -45,8 +46,20 @@ public class KeyUsageExtension extends CertificateExtension {
      * @param keyUsage {@code int} flag which represents bit values for key usage value
      */
     public KeyUsageExtension(int keyUsage) {
+        this(keyUsage, false);
+    }
+
+    /**
+     * Create new {@link KeyUsageExtension} instance using provided {@code int} flag.
+     *
+     * @param keyUsage {@code int} flag which represents bit values for key usage value
+     * @param resultOnMissingExtension parameter which represents return value for
+     * {@link #existsInCertificate(X509Certificate)} method in case of the extension not being present in a certificate
+     */
+    public KeyUsageExtension(int keyUsage, boolean resultOnMissingExtension) {
         super(OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(keyUsage).toASN1Primitive());
         this.keyUsage = keyUsage;
+        this.resultOnMissingExtension = resultOnMissingExtension;
     }
 
     /**
@@ -55,7 +68,18 @@ public class KeyUsageExtension extends CertificateExtension {
      * @param keyUsages key usages {@link List} which represents key usage values
      */
     public KeyUsageExtension(List<KeyUsage> keyUsages) {
-        this(convertKeyUsageSetToInt(keyUsages));
+        this(keyUsages, false);
+    }
+
+    /**
+     * Create new {@link KeyUsageExtension} instance using provided key usage enum list.
+     *
+     * @param keyUsages key usages {@link List} which represents key usage values
+     * @param resultOnMissingExtension parameter which represents return value for
+     * {@link #existsInCertificate(X509Certificate)} method in case of the extension not being present in a certificate
+     */
+    public KeyUsageExtension(List<KeyUsage> keyUsages, boolean resultOnMissingExtension) {
+        this(convertKeyUsageSetToInt(keyUsages), resultOnMissingExtension);
     }
 
     /**
@@ -64,7 +88,18 @@ public class KeyUsageExtension extends CertificateExtension {
      * @param keyUsageValue {@link KeyUsage} which represents single key usage enum value
      */
     public KeyUsageExtension(KeyUsage keyUsageValue) {
-        this(Collections.singletonList(keyUsageValue));
+        this(Collections.singletonList(keyUsageValue), false);
+    }
+
+    /**
+     * Create new {@link KeyUsageExtension} instance using provided single key usage enum value.
+     *
+     * @param keyUsageValue {@link KeyUsage} which represents single key usage enum value
+     * @param resultOnMissingExtension parameter which represents return value for
+     * {@link #existsInCertificate(X509Certificate)} method in case of the extension not being present in a certificate
+     */
+    public KeyUsageExtension(KeyUsage keyUsageValue, boolean resultOnMissingExtension) {
+        this(Collections.singletonList(keyUsageValue), resultOnMissingExtension);
     }
 
     /**
@@ -79,7 +114,8 @@ public class KeyUsageExtension extends CertificateExtension {
     public boolean existsInCertificate(X509Certificate certificate) {
         boolean[] providedKeyUsageFlags = certificate.getKeyUsage();
         if (providedKeyUsageFlags == null) {
-            return false;
+            // By default, we want to return true if extension is not specified. Configurable.
+            return resultOnMissingExtension;
         }
         for (int i = 0; i < providedKeyUsageFlags.length; ++i) {
             int power = providedKeyUsageFlags.length - i - 2;

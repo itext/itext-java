@@ -269,29 +269,22 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         ValidationReport report = validator.validateCertificate(baseContext, signingCert, DateTimeUtil.getCurrentTimeDate());
 
         Assertions.assertEquals(ValidationResult.INVALID, report.getValidationResult());
-        Assertions.assertEquals(3, report.getFailures().size());
-        Assertions.assertEquals(4, report.getLogs().size());
+        Assertions.assertEquals(2, report.getFailures().size());
+        Assertions.assertEquals(3, report.getLogs().size());
         Assertions.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
         Assertions.assertEquals(report.getFailures().get(1), report.getLogs().get(1));
-        Assertions.assertEquals(report.getFailures().get(2), report.getLogs().get(2));
 
         CertificateReportItem failure1 = report.getCertificateFailures().get(0);
-        Assertions.assertEquals(signingCert, failure1.getCertificate());
+        Assertions.assertEquals(intermediateCert, failure1.getCertificate());
         Assertions.assertEquals("Required certificate extensions check.", failure1.getCheckName());
         Assertions.assertEquals(MessageFormatUtil.format(
                 "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure1.getMessage());
 
         CertificateReportItem failure2 = report.getCertificateFailures().get(1);
-        Assertions.assertEquals(intermediateCert, failure2.getCertificate());
+        Assertions.assertEquals(rootCert, failure2.getCertificate());
         Assertions.assertEquals("Required certificate extensions check.", failure2.getCheckName());
         Assertions.assertEquals(MessageFormatUtil.format(
                 "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure2.getMessage());
-
-        CertificateReportItem failure3 = report.getCertificateFailures().get(2);
-        Assertions.assertEquals(rootCert, failure3.getCertificate());
-        Assertions.assertEquals("Required certificate extensions check.", failure3.getCheckName());
-        Assertions.assertEquals(MessageFormatUtil.format(
-                "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure3.getMessage());
     }
 
     @Test
@@ -319,10 +312,32 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         Assertions.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
 
         CertificateReportItem failure1 = report.getCertificateFailures().get(0);
-        Assertions.assertEquals(signingCert, failure1.getCertificate());
+        Assertions.assertEquals(intermediateCert, failure1.getCertificate());
         Assertions.assertEquals("Required certificate extensions check.", failure1.getCheckName());
         Assertions.assertEquals(MessageFormatUtil.format(
                 "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure1.getMessage());
+    }
+
+    @Test
+    public void unusualKeyUsageExtensionsTest() throws CertificateException, IOException {
+        // Both root and intermediate certificates in this chain doesn't have KeyUsage extension.
+        // Sign certificate contains digital signing.
+        String chainName = CERTS_SRC + "chainWithUnusualKeyUsages.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+        properties.setContinueAfterFailure(ValidatorContexts.all() , CertificateSources.all(),false);
+
+        ValidationReport report = validator.validateCertificate(baseContext, signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        Assertions.assertEquals(ValidationResult.VALID, report.getValidationResult());
+        Assertions.assertEquals(1, report.getLogs().size());
     }
 
     @Test

@@ -58,6 +58,16 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
     }
 
     @Test
+    public void keyUsageNotSetButConfiguredToReturnFalseTest() throws CertificateException, IOException {
+        String certName = certsSrc + "keyUsageNotSetCert.pem";
+        X509Certificate certificate = (X509Certificate) PemFileHelper.readFirstChain(certName)[0];
+
+        KeyUsageExtension extension = new KeyUsageExtension(8, true);
+
+        Assertions.assertTrue(extension.existsInCertificate(certificate));
+    }
+
+    @Test
     public void keyUsageKeyCertSignExpectedTest() throws CertificateException, IOException {
         String certName = certsSrc + "keyUsageKeyCertSignCert.pem";
         X509Certificate certificate = (X509Certificate) PemFileHelper.readFirstChain(certName)[0];

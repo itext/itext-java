@@ -78,14 +78,12 @@ public class SignatureValidationProperties {
                 TimeBasedContexts.of(TimeBasedContext.PRESENT), DEFAULT_FRESHNESS_PRESENT_CRL);
 
         setRequiredExtensions(CertificateSources.of(CertificateSource.CRL_ISSUER),
-                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(KeyUsage.CRL_SIGN)));
+                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(KeyUsage.CRL_SIGN, true)));
         setRequiredExtensions(CertificateSources.of(CertificateSource.OCSP_ISSUER),
                 Collections.<CertificateExtension>singletonList(new ExtendedKeyUsageExtension(
                         Collections.<String>singletonList(ExtendedKeyUsageExtension.OCSP_SIGNING))));
-        setRequiredExtensions(CertificateSources.of(CertificateSource.SIGNER_CERT),
-                Collections.<CertificateExtension>singletonList(new KeyUsageExtension(KeyUsage.NON_REPUDIATION)));
         List<CertificateExtension> certIssuerRequiredExtensions = new ArrayList<>();
-        certIssuerRequiredExtensions.add(new KeyUsageExtension(KeyUsage.KEY_CERT_SIGN));
+        certIssuerRequiredExtensions.add(new KeyUsageExtension(KeyUsage.KEY_CERT_SIGN, true));
         certIssuerRequiredExtensions.add(new DynamicBasicConstraintsExtension());
         setRequiredExtensions(CertificateSources.of(CertificateSource.CERT_ISSUER), certIssuerRequiredExtensions);
         setRequiredExtensions(CertificateSources.of(CertificateSource.TIMESTAMP),
@@ -208,7 +206,7 @@ public class SignatureValidationProperties {
     }
 
     /**
-     * Set list of extensions which are required to be set to a certificate depending on certificate source.
+     * Sets list of extensions which are required to be set to a certificate depending on certificate source.
      * <p>
      * By default, required extensions are set to be compliant with common validation norms.
      * Changing those can result in falsely positive validation result.
@@ -227,6 +225,33 @@ public class SignatureValidationProperties {
                 new ArrayList<>(requiredExtensions));
         setParameterValueFor(ValidatorContexts.all().getSet(), certificateSources.getSet(),
                 TimeBasedContexts.all().getSet(), p -> p.setRequiredExtensions(copy));
+        return this;
+    }
+
+    /**
+     * Adds list of extensions which are required to be set to a certificate depending on certificate source.
+     * <p>
+     * By default, required extensions are set to be compliant with common validation norms.
+     * Changing those can result in falsely positive validation result.
+     *
+     * @param certificateSources {@link CertificateSource} for extensions to be present
+     * @param requiredExtensions list of required {@link CertificateExtension}
+     *
+     * @return this same {@link SignatureValidationProperties} instance
+     */
+    public final SignatureValidationProperties addRequiredExtensions(CertificateSources certificateSources,
+            List<CertificateExtension> requiredExtensions) {
+        for (CertificateSource certificateSource : certificateSources.getSet()) {
+            // The list of required extensions is exactly the same for all TimeBasedContexts and ValidatorContexts.
+            // That's why we can just use any ValidatorContext and TimeBasedContext values to retrieve the list.
+            List<CertificateExtension> currentExtensionsList = this.<List<CertificateExtension>>getParametersValueFor(
+                    ValidatorContext.OCSP_VALIDATOR, certificateSource, TimeBasedContext.HISTORICAL,
+                    p -> p.getRequiredExtensions());
+            List<CertificateExtension> certificateSourceSpecificList = currentExtensionsList == null ?
+                    new ArrayList<>() : new ArrayList<>(currentExtensionsList);
+            certificateSourceSpecificList.addAll(requiredExtensions);
+            setRequiredExtensions(CertificateSources.of(certificateSource), certificateSourceSpecificList);
+        }
         return this;
     }
 
