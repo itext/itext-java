@@ -24,17 +24,27 @@ package com.itextpdf.styledxmlparser.css.selector.item;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.node.INode;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-class CssPseudoClassNthOfTypeSelectorItem extends CssPseudoClassNthSelectorItem {
+class CssPseudoClassNthLastOfTypeSelectorItem extends CssPseudoClassNthSelectorItem {
 
-    CssPseudoClassNthOfTypeSelectorItem(String arguments) {
-        super(CommonCssConstants.NTH_OF_TYPE, arguments);
+    CssPseudoClassNthLastOfTypeSelectorItem(String arguments) {
+        super(CommonCssConstants.NTH_LAST_OF_TYPE, arguments);
     }
 
     @Override
     public boolean matches(INode node) {
         List<INode> children = getAllSiblingsOfNodeType(node);
         return !children.isEmpty() && resolveNth(node, children);
+    }
+
+    @Override
+    protected boolean resolveNth(INode node, List<INode> children) {
+        final List<INode> reversedChildren = new ArrayList<>(children);
+        Collections.reverse(reversedChildren);
+        return super.resolveNth(node, reversedChildren);
     }
 }

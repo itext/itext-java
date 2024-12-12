@@ -147,6 +147,24 @@ public class SpecificityCalculationTest extends ExtendedITextTest {
     }
 
     @Test
+    public void test23() {
+        Assertions.assertEquals( CssSpecificityConstants.CLASS_SPECIFICITY * 2,
+                getSpecificity(".class_name:nth-last-child(2n - 3)"));
+    }
+
+    @Test
+    public void test24() {
+        Assertions.assertEquals( CssSpecificityConstants.CLASS_SPECIFICITY * 2,
+                getSpecificity(".class_name:nth-of-type(2n - 3)"));
+    }
+
+    @Test
+    public void test25() {
+        Assertions.assertEquals( CssSpecificityConstants.CLASS_SPECIFICITY * 2,
+                getSpecificity(".class_name:nth-last-of-type(2n - 3)"));
+    }
+
+    @Test
     public void pageTest01() {
         Assertions.assertEquals(CssSpecificityConstants.ID_SPECIFICITY, getPageSelectorSpecificity("customPageName"));
     }

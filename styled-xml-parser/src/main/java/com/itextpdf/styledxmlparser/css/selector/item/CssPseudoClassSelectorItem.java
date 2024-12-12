@@ -82,8 +82,12 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
                 return CssPseudoClassLastOfTypeSelectorItem.getInstance();
             case CommonCssConstants.NTH_CHILD:
                 return new CssPseudoClassNthChildSelectorItem(arguments);
+            case CommonCssConstants.NTH_LAST_CHILD:
+                return new CssPseudoClassNthLastChildSelectorItem(arguments);
             case CommonCssConstants.NTH_OF_TYPE:
                 return new CssPseudoClassNthOfTypeSelectorItem(arguments);
+            case CommonCssConstants.NTH_LAST_OF_TYPE:
+                return new CssPseudoClassNthLastOfTypeSelectorItem(arguments);
             case CommonCssConstants.NOT:
                 CssSelector selector = new CssSelector(arguments);
                 for (ICssSelectorItem item : selector.getSelectorItems()) {
@@ -110,8 +114,6 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
             //case CommonCssConstants.IN_RANGE:
             //case CommonCssConstants.INVALID:
             //case CommonCssConstants.LANG:
-            //case CommonCssConstants.NTH_LAST_CHILD:
-            //case CommonCssConstants.NTH_LAST_OF_TYPE:
             //case CommonCssConstants.ONLY_OF_TYPE:
             //case CommonCssConstants.ONLY_CHILD:
             //case CommonCssConstants.OPTIONAL:
