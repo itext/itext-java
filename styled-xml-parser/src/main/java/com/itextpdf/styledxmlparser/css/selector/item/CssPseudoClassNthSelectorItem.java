@@ -46,9 +46,6 @@ class CssPseudoClassNthSelectorItem extends CssPseudoClassChildSelectorItem {
 
     @Override
     public boolean matches(INode node) {
-        if (!(node instanceof IElementNode) || node instanceof ICustomElementNode || node instanceof IDocumentNode) {
-            return false;
-        }
         List<INode> children = getAllSiblings(node);
         return !children.isEmpty() && resolveNth(node, children);
     }
