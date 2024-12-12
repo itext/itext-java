@@ -121,6 +121,11 @@ public class AttributesRelativeUnitTest extends SvgIntegrationTest {
     public void svgWidthAndHeightEmAndRemTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svgWidthAndHeightEmAndRemTest");
     }
+
+    @Test
+    public void svgRelativeSizeWithViewBox1() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svgRelativeSizeWithViewBox1");
+    }
 //-------------- use
     @Test
     public void useXPercentTest() throws IOException, InterruptedException {
@@ -170,6 +175,32 @@ public class AttributesRelativeUnitTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "symbolWidthAndHeightEmAndRemTest");
     }
 
+//-------------- SVGs with absolute or missing size, but with viewBox and or preserveAspectRatio="none"
+    @Test
+    public void absoluteWidthHeightViewBoxTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "absoluteWidthHeightViewBoxTest");
+    }
+
+    @Test
+    public void absoluteHeightViewBoxMissWidthTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "absoluteHeightViewBoxMissWidthTest");
+    }
+
+    @Test
+    public void absoluteWidthNoHeightNoViewBoxTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "absoluteWidthNoHeightNoViewBoxTest");
+    }
+
+    @Test
+    public void absoluteWidthViewBoxNoHeightTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "absoluteWidthViewBoxNoHeightTest");
+    }
+
+    @Test
+    public void absWidthViewBoxNoneRatioTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "absWidthViewBoxNoneRatioTest");
+    }
+
 //-------------- misc
     @Test
     public void linePercentTest() throws IOException, InterruptedException {
@@ -203,5 +234,15 @@ public class AttributesRelativeUnitTest extends SvgIntegrationTest {
         // It is expected that the result is different with browser. In
         // browsers the result should be bigger but with the same proportions
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewportFromConverterPropertiesTest", properties);
+    }
+
+    @Test
+    public void viewBoxMissWidthHeightTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxMissWidthHeightTest");
+    }
+
+    @Test
+    public void percentHeightMissWidthViewBoxTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "percentHeightMissWidthViewBoxTest");
     }
 }

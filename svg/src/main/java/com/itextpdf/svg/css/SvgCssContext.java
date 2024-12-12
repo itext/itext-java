@@ -51,4 +51,13 @@ public class SvgCssContext extends AbstractCssContext {
     public void setRootFontSize(String fontSizeStr) {
         this.rootFontSize = CssDimensionParsingUtils.parseAbsoluteFontSize(fontSizeStr);
     }
+
+    /**
+     * Sets the root font size.
+     *
+     * @param rootFontSize the new root font size
+     */
+    public void setRootFontSize(float rootFontSize) {
+        this.rootFontSize = rootFontSize;
+    }
 }

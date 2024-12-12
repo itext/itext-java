@@ -29,6 +29,9 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.converter.SvgConverter;
@@ -38,6 +41,8 @@ import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.xobject.SvgImageXObject;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -109,6 +114,110 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
             Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, new SvgDrawContext(null, null));
             document.add(new SvgImage(new SvgImageXObject(wh, result, new ResourceResolver(SOURCE_FOLDER))));
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvg1Test() throws IOException, InterruptedException {
+        String svgName = "fixed_height_percent_width";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+
+            svgImage.setWidth(100);
+            svgImage.setHeight(300);
+
+            document.add(svgImage);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvg3Test() throws IOException, InterruptedException {
+        String svgName = "viewbox_fixed_height_percent_width";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+
+            svgImage.setWidth(100);
+            svgImage.setHeight(300);
+
+            document.add(svgImage);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void relativeSizedSvg4Test() throws IOException, InterruptedException {
+        String svgName = "viewbox_percent_height_percent_width";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+
+            document.add(svgImage);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvg5Test() throws IOException, InterruptedException {
+        String svgName = "viewbox_percent_height_percent_width_prRatio_none";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            Div div = new Div();
+            div.setWidth(100);
+            div.setHeight(300);
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+            svgImage.setWidth(UnitValue.createPercentValue(100));
+            svgImage.setHeight(UnitValue.createPercentValue(100));
+            div.add(svgImage);
+            document.add(div);
         }
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }

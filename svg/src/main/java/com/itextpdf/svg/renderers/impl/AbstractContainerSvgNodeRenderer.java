@@ -52,8 +52,10 @@ public abstract class AbstractContainerSvgNodeRenderer extends AbstractBranchSvg
     Rectangle calculateViewPort(SvgDrawContext context) {
         Rectangle percentBaseBox;
         if (getParent() instanceof PdfRootSvgNodeRenderer || !(getParent() instanceof AbstractSvgNodeRenderer)) {
-            // If the current container is a top level SVG, take a current view port as a percent base
-            percentBaseBox = context.getCurrentViewPort();
+            // If the current container is a top level SVG, make a copy of the current viewport.
+            // It is needed to avoid double percent resolving. For absolute sized viewport we
+            // will get the same viewport, so save resources and just make a copy.
+            return context.getCurrentViewPort().clone();
         } else {
             // If the current container is nested container, take a view box as a percent base
             percentBaseBox = ((AbstractSvgNodeRenderer) getParent()).getCurrentViewBox(context);

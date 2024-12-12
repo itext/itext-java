@@ -617,8 +617,9 @@ public abstract class AbstractRenderer implements IRenderer {
             DrawContext drawContext, Rectangle backgroundArea) {
         Rectangle originBackgroundArea = applyBackgroundBoxProperty(backgroundArea.clone(),
                 backgroundImage.getBackgroundOrigin());
-        float[] imageWidthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(
-                backgroundImage, originBackgroundArea.getWidth(), originBackgroundArea.getHeight());
+        float[] imageWidthAndHeight = backgroundImage.calculateBackgroundImageSize(originBackgroundArea.getWidth(),
+                originBackgroundArea.getHeight());
+
         PdfXObject backgroundXObject = backgroundImage.getImage();
         if (backgroundXObject == null) {
             backgroundXObject = backgroundImage.getForm();

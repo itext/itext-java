@@ -213,8 +213,8 @@ public final class SvgCssUtils {
         if (context.getCustomViewport() == null) {
             float[] viewBox = SvgCssUtils.parseViewBox(svgRenderer);
             if (viewBox == null) {
-                percentHorizontalBase = CssDimensionParsingUtils.parseAbsoluteLength(SvgConstants.Values.DEFAULT_VIEWPORT_WIDTH);
-                percentVerticalBase = CssDimensionParsingUtils.parseAbsoluteLength(SvgConstants.Values.DEFAULT_VIEWPORT_HEIGHT);
+                percentHorizontalBase = SvgConstants.Values.DEFAULT_VIEWPORT_WIDTH;
+                percentVerticalBase = SvgConstants.Values.DEFAULT_VIEWPORT_HEIGHT;
             } else {
                 percentHorizontalBase = viewBox[2];
                 percentVerticalBase = viewBox[3];

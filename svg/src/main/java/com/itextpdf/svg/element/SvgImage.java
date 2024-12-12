@@ -33,7 +33,6 @@ import com.itextpdf.svg.xobject.SvgImageXObject;
  * A layout element that represents SVG image for inclusion in the document model.
  */
 public class SvgImage extends Image {
-
     /**
      * Creates an {@link SvgImage} from the {@link SvgImageXObject} which represents Form XObject and contains
      * processor result with the SVG information and resource resolver for the SVG image.
@@ -45,10 +44,21 @@ public class SvgImage extends Image {
     }
 
     /**
+     * Gets the {@link SvgImageXObject} contained in this image object.
+     *
+     * @return a {@link SvgImageXObject}
+     */
+    public SvgImageXObject getSvgImageXObject() {
+        return (SvgImageXObject) getXObject();
+    }
+
+    /**
      * Draws SVG image to a canvas-like object maintained in the {@link SvgDrawContext}.
      *
      * @param document pdf that shall contain the SVG image.
+     * @deprecated was replaced by {@code getSvgImageXObject().generate(PdfDocument)}
      */
+    @Deprecated
     public void generate(PdfDocument document) {
         ((SvgImageXObject) xObject).generate(document);
     }

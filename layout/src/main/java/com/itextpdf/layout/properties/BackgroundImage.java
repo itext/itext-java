@@ -32,6 +32,8 @@ import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
  * Class to hold background-image property.
  */
 public class BackgroundImage {
+    private static final UnitValue PERCENT_VALUE_100 = UnitValue.createPercentValue(100F);
+    private static final float EPS = 1e-4F;
 
     private static final BlendMode DEFAULT_BLEND_MODE = BlendMode.NORMAL;
 
@@ -110,6 +112,37 @@ public class BackgroundImage {
         }
         this.backgroundClip = clip;
         this.backgroundOrigin = origin;
+    }
+
+    /**
+     * Calculates width and height values for background image with a given area params.
+     *
+     * @param areaWidth width of the area of this images
+     * @param areaHeight height of the area of this images
+     *
+     * @return array of two float values. NOTE that first value defines width, second defines height
+     */
+    public float[] calculateBackgroundImageSize(float areaWidth, float areaHeight) {
+        BackgroundSize size;
+        if (getLinearGradientBuilder() == null && getBackgroundSize().isSpecificSize()) {
+            size = calculateBackgroundSizeForArea(this, areaWidth, areaHeight);
+        } else {
+            size = getBackgroundSize();
+        }
+        UnitValue widthUV = size.getBackgroundWidthSize();
+        UnitValue heightUV = size.getBackgroundHeightSize();
+
+        if (widthUV != null && widthUV.isPercentValue()) {
+            widthUV = UnitValue.createPointValue(areaWidth * widthUV.getValue() / PERCENT_VALUE_100.getValue());
+        }
+        if (heightUV != null && heightUV.isPercentValue()) {
+            heightUV = UnitValue.createPointValue(areaHeight * heightUV.getValue() / PERCENT_VALUE_100.getValue());
+        }
+
+        Float width = widthUV != null && widthUV.getValue() >= 0 ? (Float) widthUV.getValue() : null;
+        Float height = heightUV != null && heightUV.getValue() >= 0 ? (Float) heightUV.getValue() : null;
+
+        return resolveWidthAndHeight(width, height, areaWidth, areaHeight);
     }
 
     /**
@@ -200,6 +233,66 @@ public class BackgroundImage {
      */
     public BackgroundBox getBackgroundOrigin() {
         return backgroundOrigin;
+    }
+
+    /**
+     * Resolves the final size of the background image in specified area.
+     *
+     * @param width the intrinsic background image width
+     * @param height the intrinsic background image height
+     * @param areaWidth the area width in which background will be placed
+     * @param areaHeight the area height in which background will be placed
+     *
+     * @return the final size of the background image
+     */
+    protected float[] resolveWidthAndHeight(Float width, Float height, float areaWidth, float areaHeight) {
+        boolean isGradient = getLinearGradientBuilder() != null;
+        Float[] widthAndHeight = new Float[2];
+        if (width != null) {
+            widthAndHeight[0] = width;
+            if (!isGradient && height == null) {
+                float difference = getImageWidth() < EPS ? 1F : (float) width / getImageWidth();
+                widthAndHeight[1] = getImageHeight() * difference;
+            }
+        }
+        if (height != null) {
+            widthAndHeight[1] = height;
+            if (!isGradient && width == null) {
+                float difference = getImageHeight() < EPS ? 1F : (float) height / getImageHeight();
+                widthAndHeight[0] = getImageWidth() * difference;
+            }
+        }
+        if (widthAndHeight[0] == null) {
+            widthAndHeight[0] = isGradient ? areaWidth : getImageWidth();
+        }
+        if (widthAndHeight[1] == null) {
+            widthAndHeight[1] = isGradient ? areaHeight : getImageHeight();
+        }
+
+        return new float[] {(float) widthAndHeight[0], (float) widthAndHeight[1]};
+    }
+
+    private static BackgroundSize calculateBackgroundSizeForArea(BackgroundImage image,
+            float areaWidth, float areaHeight) {
+        double widthDifference = areaWidth / image.getImageWidth();
+        double heightDifference = areaHeight / image.getImageHeight();
+        if (image.getBackgroundSize().isCover()) {
+            return createBackgroundSizeWithMaxValueSide(widthDifference > heightDifference);
+        } else if (image.getBackgroundSize().isContain()) {
+            return createBackgroundSizeWithMaxValueSide(widthDifference < heightDifference);
+        } else {
+            return new BackgroundSize();
+        }
+    }
+
+    private static BackgroundSize createBackgroundSizeWithMaxValueSide(boolean maxWidth) {
+        BackgroundSize size = new BackgroundSize();
+        if (maxWidth) {
+            size.setBackgroundSizeToValues(PERCENT_VALUE_100, null);
+        } else {
+            size.setBackgroundSizeToValues(null, PERCENT_VALUE_100);
+        }
+        return size;
     }
 
     /**

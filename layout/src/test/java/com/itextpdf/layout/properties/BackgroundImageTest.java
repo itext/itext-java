@@ -57,13 +57,14 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class BackgroundImageTest extends ExtendedITextTest {
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BackgroundImageTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/BackgroundImageTest/";
+    private static final float DELTA = 0.0001f;
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BackgroundImageTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/BackgroundImageTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -658,6 +659,60 @@ public class BackgroundImageTest extends ExtendedITextTest {
     @Test
     public void backgroundImageWithLinearGradientAndLuminosityBlendModeTest() throws IOException, InterruptedException {
         blendModeTest(BlendMode.LUMINOSITY);
+    }
+
+    @Test
+    public void calculateImageSizeTest() throws MalformedURLException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+
+        float[] widthAndHeight = backgroundImage.calculateBackgroundImageSize(200f, 300f);
+
+        Assertions.assertArrayEquals(new float[] {45f, 45f}, widthAndHeight, DELTA);
+    }
+
+    @Test
+    public void calculateImageSizeWithCoverPropertyTest() throws MalformedURLException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+        backgroundImage.getBackgroundSize().setBackgroundSizeToCover();
+
+        float[] widthAndHeight = backgroundImage.calculateBackgroundImageSize(200f, 300f);
+
+        Assertions.assertArrayEquals(new float[] {300f, 300f}, widthAndHeight, DELTA);
+    }
+
+    @Test
+    public void calculateSizeWithContainPropertyTest() throws MalformedURLException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "pattern-grg-rrg-rgg.png"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+        backgroundImage.getBackgroundSize().setBackgroundSizeToContain();
+
+        float[] widthAndHeight = backgroundImage.calculateBackgroundImageSize(200f, 300f);
+
+        Assertions.assertArrayEquals(new float[] {200f, 200.000015f}, widthAndHeight, DELTA);
+    }
+
+    @Test
+    public void calculateSizeWithContainAndImageWeightMoreThatHeightTest() throws MalformedURLException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+        backgroundImage.getBackgroundSize().setBackgroundSizeToContain();
+
+        float[] widthAndHeight = backgroundImage.calculateBackgroundImageSize(200f, 300f);
+
+        Assertions.assertArrayEquals(new float[] {200f, 112.5f}, widthAndHeight, DELTA);
+    }
+
+    @Test
+    public void calculateSizeWithCoverAndImageWeightMoreThatHeightTest() throws MalformedURLException {
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+        backgroundImage.getBackgroundSize().setBackgroundSizeToCover();
+
+        float[] widthAndHeight = backgroundImage.calculateBackgroundImageSize(200f, 300f);
+
+        Assertions.assertArrayEquals(new float[] {533.3333f, 300f}, widthAndHeight, DELTA);
     }
 
     private void blendModeTest(BlendMode blendMode) throws IOException, InterruptedException {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200px" viewBox="0 0 1200 600" version="1.1">
+    <circle cx="100" cy="100" r="100" fill="green" />
+    <line x1="0" y1="0" x2="1200" y2="600" stroke="blue" />
+    <line x1="0" y1="600" x2="1200" y2="600" stroke="blue" />
+    <line x1="50%" y1="0" x2="50%" y2="100%" stroke="red" />
+</svg>

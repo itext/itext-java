@@ -942,16 +942,16 @@ public final class SvgConstants {
         public static final String DEFAULT_ASPECT_RATIO = Values.XMID_YMID;
 
         /**
-         * Default svg view port width value.
+         * Default svg view port width value (300px * 0.75 = 225).
          * See <a href="https://svgwg.org/specs/integration/#svg-css-sizing">SVG specification</a>.
          */
-        public static final String DEFAULT_VIEWPORT_WIDTH = "300px";
+        public static final float DEFAULT_VIEWPORT_WIDTH = 225F;
 
         /**
-         * Default svg view port height value.
+         * Default svg view port height value (150px * 0.75 = 112.5).
          * See <a href="https://svgwg.org/specs/integration/#svg-css-sizing">SVG specification</a>.
          */
-        public static final String DEFAULT_VIEWPORT_HEIGHT = "150px";
+        public static final float DEFAULT_VIEWPORT_HEIGHT = 112.5F;
         /**
          * Default width and height value.
          * See <a href="https://svgwg.org/specs/integration/#svg-css-sizing">SVG specification</a>.
