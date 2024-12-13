@@ -93,7 +93,6 @@ public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationT
     }
 
     @Test
-    //TODO (DEVSIX-3493) change cmp files after fix
     public void viewBoxXYValuesPreserveAspectRatioNoneValues() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"viewBoxXYValuesPreserveAspectRatioNoneValues");
     }

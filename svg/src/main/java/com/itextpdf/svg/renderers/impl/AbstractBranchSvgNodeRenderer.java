@@ -110,8 +110,6 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
                 applyViewportClip(context);
             }
 
-            applyViewportTranslationCorrection(context);
-
             for (ISvgNodeRenderer child : getChildren()) {
                 if (!(child instanceof MarkerSvgNodeRenderer)) {
                     newCanvas.saveState();
@@ -196,19 +194,6 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
         currentCanvas.rectangle(context.getCurrentViewPort());
         currentCanvas.clip();
         currentCanvas.endPath();
-    }
-
-    private void applyViewportTranslationCorrection(SvgDrawContext context) {
-        PdfCanvas currentCanvas = context.getCurrentCanvas();
-        AffineTransform tf = this.calculateViewPortTranslation(context);
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        boolean preserveAspectRationNone =
-                SvgConstants.Values.NONE.equals(getAttribute(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) ||
-                        SvgConstants.Values.NONE.equals(
-                                getAttribute(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase()));
-        if (!tf.isIdentity() && preserveAspectRationNone) {
-            currentCanvas.concatMatrix(tf);
-        }
     }
 
     /**
