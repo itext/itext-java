@@ -1,0 +1,17 @@
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="circle" x="0" y="0" width="10%" height="10%" patternUnits="userSpaceOnUse">
+            <circle cx="10" cy="10" r="10" fill="red" />
+        </pattern>
+        <pattern id="star" width="10%" height="10%" href="#circle">
+            <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2" />
+        </pattern>
+        <pattern id="test" href="#star"/>
+    </defs>
+    <circle cx="50" cy="50" r="50" fill="url(#test)" />
+    <circle
+            cx="180"
+            cy="50"
+            r="40"
+            fill="url(#circle)" />
+</svg>

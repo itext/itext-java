@@ -96,6 +96,21 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void hrefBasicReferenceTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hrefBasicReference");
+    }
+
+    @Test
+    public void hrefAndXlinkHrefPriorityTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hrefAndXlinkHrefPriority");
+    }
+
+    @Test
+    public void transitiveHrefBasicReferenceTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "transitiveHrefBasicReference");
+    }
+
+    @Test
     public void patternUnitsObjectBoundingBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternUnitsObjectBoundingBox");
     }

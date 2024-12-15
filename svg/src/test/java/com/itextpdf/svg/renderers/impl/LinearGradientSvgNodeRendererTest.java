@@ -531,4 +531,14 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     public void severalTransformsInGradientWithObjectBoundingBoxUnitsTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "severalTransformsInGradientWithObjectBoundingBoxUnits");
     }
+
+    @Test
+    public void hrefBasicReferenceTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "hrefBasicReference");
+    }
+
+    @Test
+    public void transitiveHrefBasicReferenceTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "transitiveHrefBasicReference");
+    }
 }

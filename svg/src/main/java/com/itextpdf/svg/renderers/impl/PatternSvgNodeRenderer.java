@@ -40,6 +40,7 @@ import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
+import com.itextpdf.svg.utils.TemplateResolveUtils;
 import com.itextpdf.svg.utils.TransformUtils;
 
 import org.slf4j.Logger;
@@ -73,6 +74,8 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             return null;
         }
         try {
+            //create color is an entry point method for pattern when drawing svg, so resolving href values here
+            TemplateResolveUtils.resolve(this, context);
             PdfPattern.Tiling tilingPattern = createTilingPattern(context, objectBoundingBox);
             drawPatternContent(context, tilingPattern);
             return (tilingPattern == null) ? null : new PatternColor(tilingPattern);

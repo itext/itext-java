@@ -30,10 +30,10 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.svg.SvgConstants.Attributes;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
+import com.itextpdf.svg.utils.TemplateResolveUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +52,9 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
         if (objectBoundingBox == null) {
             return null;
         }
+
+        //create color is an entry point method for linear gradient when drawing svg, so resolving href values here
+        TemplateResolveUtils.resolve(this, context);
 
         LinearGradientBuilder builder = new LinearGradientBuilder();
 

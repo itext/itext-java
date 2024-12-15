@@ -45,10 +45,10 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
     @Override
     protected void doDraw(SvgDrawContext context) {
         if (this.attributesAndStyles != null) {
-            String elementToReUse = this.attributesAndStyles.get(SvgConstants.Attributes.XLINK_HREF);
+            String elementToReUse = this.attributesAndStyles.get(SvgConstants.Attributes.HREF);
 
             if (elementToReUse == null) {
-                elementToReUse = this.attributesAndStyles.get(SvgConstants.Attributes.HREF);
+                elementToReUse = this.attributesAndStyles.get(SvgConstants.Attributes.XLINK_HREF);
             }
 
             if (elementToReUse != null && !elementToReUse.isEmpty() && isValidHref(elementToReUse)) {
