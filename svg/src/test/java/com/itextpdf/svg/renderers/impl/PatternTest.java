@@ -315,6 +315,11 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void linearGradientInsidePatternTextTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradientInsidePatternText");
+    }
+
+    @Test
     public void nestedPatternsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedPatterns");
     }
@@ -437,6 +442,16 @@ public class PatternTest extends SvgIntegrationTest {
     @Test
     public void coordSystemTransform() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "coordSystemTransform");
+    }
+
+    @Test
+    public void textCoordSystemTransformTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textCoordSystemTransform");
+    }
+
+    @Test
+    public void textAnchorTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textAnchorTest");
     }
 
     @Test

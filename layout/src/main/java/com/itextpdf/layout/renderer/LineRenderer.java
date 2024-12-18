@@ -51,6 +51,7 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TabAlignment;
+import com.itextpdf.layout.properties.TextAnchor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.LastFittingChildRendererData;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRendererSequenceHelper;
@@ -1630,8 +1631,12 @@ public class LineRenderer extends AbstractRenderer {
         // also add relative x position of the first text chunk in the svg which is ParagraphRenderer first child.
         float originX = (float) getChildRenderers().get(0).getOccupiedArea().getBBox().getLeft() +
                 (float) ((TextRenderer) getParent().getChildRenderers().get(0)).getPropertyAsFloat(Property.LEFT, 0f);
-        float leftmostX = getLeftmostX();
+        float[] minMaxX = getMinMaxX();
+        float leftmostX = minMaxX[0];
         float xShift = originX - leftmostX;
+        float textAnchorCorrection = applyTextAnchor(minMaxX[1] - minMaxX[0]);
+        xShift += textAnchorCorrection;
+
         for (final IRenderer renderer : getChildRenderers()) {
             if (renderer instanceof TextRenderer) {
                 renderer.move(xShift, 0);
@@ -1639,8 +1644,9 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    private float getLeftmostX() {
+    private float[] getMinMaxX() {
         float leftmostX = Float.MAX_VALUE;
+        float rightmostX = Float.MIN_VALUE;
         for (int i = 0; i < getChildRenderers().size(); i++) {
             IRenderer renderer = getChildRenderers().get(i);
             if (renderer instanceof TextRenderer) {
@@ -1652,9 +1658,25 @@ public class LineRenderer extends AbstractRenderer {
                 if (x < leftmostX) {
                     leftmostX = x;
                 }
+                float width = textRenderer.getOccupiedArea().getBBox().getWidth();
+                if (x + width > rightmostX) {
+                    rightmostX = x + width;
+                }
             }
         }
-        return leftmostX;
+        return new float[]{leftmostX, rightmostX};
+    }
+
+    private float applyTextAnchor(float textWidth) {
+        TextAnchor textAnchor = (TextAnchor) this.<TextAnchor>getProperty(Property.TEXT_ANCHOR, TextAnchor.START);
+        switch (textAnchor) {
+            case END:
+                return -textWidth;
+            case MIDDLE:
+                return -textWidth / 2;
+            default:
+                return 0;
+        }
     }
 
     public static class RendererGlyph {

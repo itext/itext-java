@@ -20,29 +20,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.svg.renderers.impl;
+package com.itextpdf.layout.properties;
 
-import com.itextpdf.svg.renderers.ISvgNodeRenderer;
-import com.itextpdf.svg.renderers.SvgDrawContext;
-
-public class TextSvgTSpanBranchRenderer extends TextSvgBranchRenderer {
-
-    public TextSvgTSpanBranchRenderer() {
-        this.performRootTransformations = false;
-    }
-
-    @Override
-    public ISvgNodeRenderer createDeepCopy() {
-        TextSvgBranchRenderer copy = new TextSvgTSpanBranchRenderer();
-        fillCopy(copy);
-        return copy;
-    }
-
-    @Override
-    protected void doDraw(SvgDrawContext context) {
-        if (getChildren().isEmpty() || this.attributesAndStyles == null) {
-            return;
-        }
-        performDrawing(context);
-    }
+/**
+ * A specialized enum containing potential property values for {@link Property#TEXT_ANCHOR}.
+ */
+public enum TextAnchor {
+    START,
+    MIDDLE,
+    END
 }

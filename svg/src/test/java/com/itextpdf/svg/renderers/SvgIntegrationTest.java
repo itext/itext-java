@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers;
 
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -132,6 +133,7 @@ public class SvgIntegrationTest extends ExtendedITextTest {
     }
 
     protected void compare(String filename, String sourceFolder, String destinationFolder) throws IOException, InterruptedException {
+        System.out.println("SVG: " + UrlUtil.getNormalizedFileUriString(sourceFolder + filename + ".svg") + "\n");
         Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename + ".pdf",
                         sourceFolder + "cmp_" + filename + ".pdf",

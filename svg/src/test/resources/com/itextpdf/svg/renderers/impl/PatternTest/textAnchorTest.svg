@@ -1,0 +1,82 @@
+<svg x="0" y="0" width="800" height="1000" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <pattern id="ptrn" patternUnits="userSpaceOnUse"
+                 width="6" height="6" patternContentUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="6" height="6" fill="none" stroke="red"/>
+        </pattern>
+    </defs>
+
+    <style type="text/css">
+        @font-face {
+        font-family: 'Noto Serif CJK JP';
+        font-weight: 400;
+        font-style:normal;
+        src: url('../../../css/SvgStyleResolver/web-fonts/NotoSerifCJKjp-Regular.otf')
+        format('OpenType');
+        }
+    </style>
+
+    <line x1="400" y1="0" x2="400" y2="1000" stroke="teal"/>
+    <g font-size="64">
+        <text x="400" y="50" fill="url(#ptrn)" stroke="pink" text-anchor="middle">
+            教育部
+            <tspan>iText</tspan>
+        </text>
+        <text x="400" y="120" fill="url(#ptrn)" stroke="pink" text-anchor="end">
+            教育部
+            <tspan dx="-350">iText</tspan>
+        </text>
+        <text x="400" y="150" fill="url(#ptrn)" stroke="pink" text-anchor="start">
+            iText
+            <tspan text-anchor="middle">教育部</tspan>
+        </text>
+        <text x="400" y="180" transform="rotate(5) skewX(15)" fill="url(#ptrn)" stroke="pink" text-anchor="end">
+            iText
+            <tspan dx="-350" text-anchor="middle">教育部</tspan>
+        </text>
+    </g>
+
+    <g font-size="64" transform="translate(0, 250)">
+        <text x="400" y="50" text-anchor="end">
+            教育部
+            <tspan fill="url(#ptrn)" stroke="pink">iText</tspan>
+        </text>
+        <text x="400" y="120" text-anchor="middle">
+            教育部
+            <tspan dx="-350" fill="url(#ptrn)" stroke="pink">iText</tspan>
+        </text>
+        <text x="400" y="180" text-anchor="end">
+            iText
+            <tspan fill="url(#ptrn)" stroke="pink">教育部</tspan>
+        </text>
+        <text x="400" y="270" transform="scale(1.1) skewY(-5)" text-anchor="middle">
+            iText
+            <tspan dx="-350" fill="url(#ptrn)" stroke="pink">教育部</tspan>
+        </text>
+    </g>
+    <g font-size="64" transform="translate(0, 500)">
+        <text x="400" y="80" text-anchor="end">
+            教育部
+            <tspan fill="url(#ptrn)" stroke="pink">
+                iText
+                <tspan x="400" y="180" text-anchor="middle">
+                    教育部
+                    <tspan dx="-450" font-size="100" fill="url(#ptrn)" stroke="pink">
+                        iText
+                        <tspan x="400" y="280" text-anchor="start">
+                            iText
+                            <tspan fill="url(#ptrn)" stroke="pink">
+                                教育部
+                                <tspan x="400" y="430" stroke="url(#ptrn)"
+                                       font-size="150" stroke-width="6" fill="pink" text-anchor="middle">
+                                    iText
+                                    <tspan dx="-800" fill="pink">教育部</tspan>
+                                </tspan>
+                            </tspan>
+                        </tspan>
+                    </tspan>
+                </tspan>
+            </tspan>
+        </text>
+    </g>
+</svg>

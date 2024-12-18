@@ -326,6 +326,11 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     public void textTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "text");
     }
+
+    @Test
+    public void tspanTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "tspan");
+    }
     
     @Test
     public void textNestedTSpansTest() throws IOException, InterruptedException, java.io.IOException {
@@ -340,6 +345,21 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void textDxTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "textDxTest");
+    }
+
+    @Test
+    public void chineseTextDxTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "chineseTextDxTest");
+    }
+
+    @Test
+    public void chineseTextDxVerticalTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "chineseTextDxVerticalTest");
+    }
+
+    @Test
+    public void textAnchorTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textAnchorTest");
     }
 
     @Test

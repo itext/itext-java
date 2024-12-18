@@ -1,0 +1,25 @@
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="pattern1" x="0" y="0" width="4" height="4"
+                 patternContentUnits="userSpaceOnUse"
+                 patternUnits="userSpaceOnUse"
+                 fill="orange">
+            <rect x="0" y="0" width="2" height="2"/>
+        </pattern>
+        <pattern id="ptrn" x="0" y="0" width="12" height="12"
+                 patternContentUnits="userSpaceOnUse"
+                 patternUnits="userSpaceOnUse"
+                 fill="url(#pattern1)">
+            <rect stroke-width="0.4" stroke="blue" x="0" y="0" width="10" height="10"/>
+        </pattern>
+    </defs>
+
+    <text x="50" y="150" fill="url(#ptrn)" font-size="200" stroke-width="1" stroke="orange">
+        Hello
+    </text>
+
+    <text transform="translate(150, 350) rotate(-10 50 100) scale(1 0.5) skewX(40)"
+          fill="url(#ptrn)" font-size="200" stroke-width="1" stroke="blue">
+        Hello
+    </text>
+</svg>

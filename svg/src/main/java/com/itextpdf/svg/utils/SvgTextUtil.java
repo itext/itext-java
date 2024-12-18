@@ -23,6 +23,7 @@
 package com.itextpdf.svg.utils;
 
 
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
@@ -160,8 +161,12 @@ public final class SvgTextUtil {
      *
      * @param renderer       renderer containing the font size declaration
      * @param parentFontSize parent font size to fall back on if the renderer does not contain a font size declarations or if the stored declaration is invalid
+     *
      * @return float containing the font-size, or the parent font size if the renderer's declaration cannot be resolved
+     *
+     * @deprecated will be removed together with {@link TextLeafSvgNodeRenderer#getTextContentLength(float, PdfFont)}
      */
+    @Deprecated
     public static float resolveFontSize(ISvgTextNodeRenderer renderer, float parentFontSize) {
         //Use own font-size declaration if it is present, parent's otherwise
         float fontSize = Float.NaN;

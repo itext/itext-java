@@ -204,6 +204,7 @@ public final class Property {
     public static final int TAGGING_HELPER = 108;
     public static final int TAGGING_HINT_KEY = 109;
     public static final int TEXT_ALIGNMENT = 70;
+    public static final int TEXT_ANCHOR = 155;
     /**
      * Use values from {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode}.
      */
@@ -234,7 +235,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 154;
+    private static final int MAX_INHERITED_PROPERTY_ID = 155;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -267,6 +268,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.STROKE_COLOR] = true;
         INHERITED_PROPERTIES[Property.STROKE_WIDTH] = true;
         INHERITED_PROPERTIES[Property.TEXT_ALIGNMENT] = true;
+        INHERITED_PROPERTIES[Property.TEXT_ANCHOR] = true;
         INHERITED_PROPERTIES[Property.TEXT_RENDERING_MODE] = true;
         INHERITED_PROPERTIES[Property.TEXT_RISE] = true;
         INHERITED_PROPERTIES[Property.UNDERLINE] = true;

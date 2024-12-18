@@ -30,6 +30,7 @@ import com.itextpdf.svg.utils.TextRectangle;
 
 public interface ISvgTextNodeRenderer extends ISvgNodeRenderer {
 
+    @Deprecated
     float getTextContentLength(float parentFontSize, PdfFont font);
 
     /**

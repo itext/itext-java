@@ -22,15 +22,18 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.RenderingMode;
-import com.itextpdf.layout.renderer.TextRenderer;
+import com.itextpdf.layout.renderer.LineRenderer;
+import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -53,9 +56,11 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     }
 
     @Override
+    @Deprecated
     public float getTextContentLength(float parentFontSize, PdfFont font) {
         float contentLength = 0.0f;
-        if (font != null && this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
+        if (font != null && this.attributesAndStyles != null &&
+                this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
             // Use own font-size declaration if it is present, parent's otherwise
             final float fontSize = SvgTextUtil.resolveFontSize(this, parentFontSize);
             final String content = this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT);
@@ -88,21 +93,18 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     }
 
     @Override
-    public TextRectangle getTextRectangle(SvgDrawContext context, Point basePoint) {
-        if (getParent() instanceof TextSvgBranchRenderer && basePoint != null) {
-            final float parentFontSize = ((AbstractSvgNodeRenderer) getParent()).getCurrentFontSize(context);
-            final PdfFont parentFont = ((TextSvgBranchRenderer) getParent()).getFont();
-            final float textLength = getTextContentLength(parentFontSize, parentFont);
-            final float[] fontAscenderDescenderFromMetrics = TextRenderer
-                    .calculateAscenderDescender(parentFont, RenderingMode.HTML_MODE);
-            final float fontAscender =
-                    FontProgram.convertTextSpaceToGlyphSpace(fontAscenderDescenderFromMetrics[0]) * parentFontSize;
-            final float fontDescender = FontProgram.convertTextSpaceToGlyphSpace(
-                    fontAscenderDescenderFromMetrics[1]) * parentFontSize;
-            // TextRenderer#calculateAscenderDescender returns fontDescender as a negative value so we should subtract this value
-            final float textHeight = fontAscender - fontDescender;
-            return new TextRectangle((float) basePoint.getX(), (float) basePoint.getY() - fontAscender, textLength,
-                    textHeight, (float) basePoint.getY());
+    public TextRectangle getTextRectangle(SvgDrawContext context, Point startPoint) {
+        if (getParent() instanceof TextSvgBranchRenderer && startPoint != null) {
+            LineRenderer lineRenderer = layoutText(context);
+            if (lineRenderer == null) {
+                return null;
+            }
+            Rectangle textBBox = lineRenderer.getOccupiedAreaBBox();
+            final float textLength = textBBox.getWidth();
+            final float textHeight = textBBox.getHeight();
+
+            return new TextRectangle((float) startPoint.getX(), (float) startPoint.getY() - lineRenderer.getMaxAscent(),
+                    textLength, textHeight, (float) startPoint.getY());
         } else {
             return null;
         }
@@ -115,7 +117,8 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
 
     @Override
     protected void doDraw(SvgDrawContext context) {
-        if (this.attributesAndStyles != null && this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
+        if (this.attributesAndStyles != null &&
+                this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
             text.setText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
 
             ((TextSvgBranchRenderer) getParent()).applyFontProperties(text, context);
@@ -146,5 +149,28 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         text.setStrokeWidth(textProperties.getLineWidth());
         text.setStrokeColor(textProperties.getStrokeColor());
         text.setOpacity(textProperties.getFillOpacity());
+    }
+
+    private LineRenderer layoutText(SvgDrawContext context) {
+        if (this.attributesAndStyles != null &&
+                this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
+            // We need to keep all spaces after whitespace processing, so spaces are replaced with SpaceChar to avoid
+            // trimming trailing spaces at layout level (they trimmed in the beginning of the paragraph by default,
+            // but current text could be somewhere in the middle or end in the final result).
+            text.setText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT).replace(" ", "\u00a0"));
+            ((TextSvgBranchRenderer) getParent()).applyFontProperties(text, context);
+            Paragraph paragraph = new Paragraph();
+            paragraph.setProperty(Property.FORCED_PLACEMENT, true);
+            ParagraphRenderer paragraphRenderer = new ParagraphRenderer(paragraph);
+            paragraph.setNextRenderer(paragraphRenderer);
+            paragraph.add(text);
+            PdfFormXObject xObject = new PdfFormXObject(new Rectangle(1e6f, 0));
+            try (Canvas canvas = new Canvas(new PdfCanvas(xObject, context.getCurrentCanvas().getDocument()),
+                    xObject.getBBox().toRectangle())) {
+                canvas.add(paragraph);
+            }
+            return paragraphRenderer.getLines().get(0);
+        }
+        return null;
     }
 }

@@ -72,7 +72,7 @@ public class TextDecorationShorthandResolver implements IShorthandResolver {
 
         for (String value : props) {
             //For text-decoration-line attributes several attributes may be present at once.
-            //However when "none" attribute is present, all the other attributes become invalid
+            //However, when "none" attribute is present, all the other attributes become invalid
             if (TEXT_DECORATION_LINE_VALUES.contains(value)
                     || CommonCssConstants.NONE.equals(value)) {
                 textDecorationLineValues.add(value);

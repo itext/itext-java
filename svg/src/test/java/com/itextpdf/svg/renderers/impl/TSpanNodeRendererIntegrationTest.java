@@ -164,6 +164,11 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void tspanTextAnchorTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-textAnchor2");
+    }
+
+    @Test
     //TODO: update after DEVSIX-2507 fix
     public void tspanBasicExample() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanBasicExample");
