@@ -25,7 +25,6 @@ package com.itextpdf.signatures.validation;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.crypto.OID.X509Extensions;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
@@ -36,6 +35,8 @@ import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
+import com.itextpdf.signatures.validation.extensions.DynamicBasicConstraintsExtension;
+import com.itextpdf.signatures.validation.extensions.DynamicCertificateExtension;
 import com.itextpdf.signatures.validation.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.extensions.KeyUsageExtension;
 import com.itextpdf.signatures.validation.mocks.MockIssuingCertificateRetriever;
@@ -159,14 +160,14 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 )
                 .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                        .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                                l -> "2.5.29.19")
+                        .withMessage(CertificateChainValidator.EXTENSION_MISSING , l -> MessageFormatUtil.format(DynamicBasicConstraintsExtension.ERROR_MESSAGE,
+                                1, 0))
                         .withCertificate(rootCert)
                 )
                 .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                        .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                                l -> "2.5.29.19")
+                        .withMessage(CertificateChainValidator.EXTENSION_MISSING , l -> MessageFormatUtil.format(DynamicBasicConstraintsExtension.ERROR_MESSAGE,
+                                0, -1))
                         .withCertificate(intermediateCert)
                 )
         );
@@ -277,14 +278,14 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         CertificateReportItem failure1 = report.getCertificateFailures().get(0);
         Assertions.assertEquals(intermediateCert, failure1.getCertificate());
         Assertions.assertEquals("Required certificate extensions check.", failure1.getCheckName());
-        Assertions.assertEquals(MessageFormatUtil.format(
-                "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure1.getMessage());
+        Assertions.assertEquals(buildKeyUsageWrongMessagePart(KeyUsage.DECIPHER_ONLY, KeyUsage.KEY_CERT_SIGN),
+                failure1.getMessage());
 
         CertificateReportItem failure2 = report.getCertificateFailures().get(1);
         Assertions.assertEquals(rootCert, failure2.getCertificate());
         Assertions.assertEquals("Required certificate extensions check.", failure2.getCheckName());
-        Assertions.assertEquals(MessageFormatUtil.format(
-                "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure2.getMessage());
+        Assertions.assertEquals(buildKeyUsageWrongMessagePart(KeyUsage.DECIPHER_ONLY, KeyUsage.KEY_CERT_SIGN),
+                failure2.getMessage());
     }
 
     @Test
@@ -314,8 +315,9 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         CertificateReportItem failure1 = report.getCertificateFailures().get(0);
         Assertions.assertEquals(intermediateCert, failure1.getCertificate());
         Assertions.assertEquals("Required certificate extensions check.", failure1.getCheckName());
-        Assertions.assertEquals(MessageFormatUtil.format(
-                "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure1.getMessage());
+        Assertions.assertEquals(
+                buildKeyUsageWrongMessagePart(KeyUsage.DECIPHER_ONLY, KeyUsage.KEY_CERT_SIGN),
+                failure1.getMessage());
     }
 
     @Test
@@ -414,12 +416,11 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                    )
                 .hasLogItem(la -> la
                     .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                    .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                                            l ->X509Extensions.KEY_USAGE)
+                    .withMessageContains(buildKeyUsageWrongMessagePart(
+                                    KeyUsage.KEY_CERT_SIGN))
                     .withCertificate(signingCert)
                    ));
     }
-
     @Test
     public void validChainTrustedRootIsnSetTest() throws CertificateException, IOException {
         String chainName = CERTS_SRC + "chain.pem";
@@ -928,4 +929,19 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         Assertions.assertEquals(0, mockCertificateRetriever.getCrlIssuerCertificatesByNameCalls.size());
         Assertions.assertEquals(1, mockRevocationDataValidator.calls.size());
     }
+
+    private String buildKeyUsageWrongMessagePart(KeyUsage expectedKeyUsage,  KeyUsage ... actualKeyUsage) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String sep = "";
+
+        for (KeyUsage usage: actualKeyUsage) {
+            stringBuilder.append(sep).append(usage);
+            sep = ", ";
+        }
+
+        return MessageFormatUtil.format(CertificateChainValidator.EXTENSION_MISSING,
+                MessageFormatUtil.format(KeyUsageExtension.EXPECTED_VALUE, expectedKeyUsage)
+                        + MessageFormatUtil.format(KeyUsageExtension.ACTUAL_VALUE, stringBuilder.toString()));
+    }
+
 }

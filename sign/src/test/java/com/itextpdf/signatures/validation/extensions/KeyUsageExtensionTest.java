@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.validation.extensions;
 
+import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -189,5 +191,48 @@ public class KeyUsageExtensionTest extends ExtendedITextTest {
                 KeyUsage.DIGITAL_SIGNATURE));
 
         Assertions.assertFalse(extension.existsInCertificate(certificate));
+    }
+
+    @Test
+    public void keyUsageTranslationTest() throws CertificateException, IOException {
+        String certName = certsSrc + "keyUsageDecipherOnlyCert.pem";
+        KeyUsageExtension extension = new KeyUsageExtension(KeyUsage.DECIPHER_ONLY);
+        X509Certificate certificate = (X509Certificate) PemFileHelper.readFirstChain(certName)[0];
+
+        Assertions.assertEquals(CertificateUtil.getExtensionValue(certificate, extension.getExtensionOid()),
+                extension.getExtensionValue());
+
+
+        certName = certsSrc + "keyUsageDigitalSignatureCert.pem";
+        extension = new KeyUsageExtension(KeyUsage.DIGITAL_SIGNATURE);
+        certificate = (X509Certificate) PemFileHelper.readFirstChain(certName)[0];
+
+        Assertions.assertEquals(CertificateUtil.getExtensionValue(certificate, extension.getExtensionOid()),
+                extension.getExtensionValue());
+
+        certName = certsSrc + "keyUsageKeyCertSignCert.pem";
+        extension = new KeyUsageExtension(KeyUsage.KEY_CERT_SIGN);
+        certificate = (X509Certificate) PemFileHelper.readFirstChain(certName)[0];
+
+        Assertions.assertEquals(CertificateUtil.getExtensionValue(certificate, extension.getExtensionOid()),
+                extension.getExtensionValue());
+
+        certName = certsSrc + "keyUsageSeveralKeys1Cert.pem";
+        //Non-Repudiation, Key Encipherment, Off-line CRL Signing, CRL Signing
+        extension = new KeyUsageExtension(Arrays.asList(KeyUsage.NON_REPUDIATION, KeyUsage.KEY_ENCIPHERMENT,
+                KeyUsage.CRL_SIGN));
+        certificate = (X509Certificate) PemFileHelper.readFirstChain(certName)[0];
+
+        Assertions.assertEquals(CertificateUtil.getExtensionValue(certificate, extension.getExtensionOid()),
+                extension.getExtensionValue());
+
+        certName = certsSrc + "keyUsageSeveralKeys2Cert.pem";
+        //Digital Signature, Key Agreement, Decipher Only
+        extension = new KeyUsageExtension(Arrays.asList(KeyUsage.DIGITAL_SIGNATURE,
+                KeyUsage.KEY_AGREEMENT, KeyUsage.DECIPHER_ONLY));
+        certificate = (X509Certificate) PemFileHelper.readFirstChain(certName)[0];
+
+        Assertions.assertEquals(CertificateUtil.getExtensionValue(certificate, extension.getExtensionOid()),
+                extension.getExtensionValue());
     }
 }

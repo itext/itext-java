@@ -43,8 +43,13 @@ public class ExtendedKeyUsageExtension extends CertificateExtension {
     public static final String CLIENT_AUTH = "1.3.6.1.5.5.7.3.2";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    public static final String EXPECTED_KEY_USAGES = "Expected extended key usages:";
+    public static final String ACTUAL = "But found :";
+    public static final String NO_EXTENDED_KEY_USAGES_WERE_FOUND = " But no extended key usages were found.";
+    public static final String ERROR_OCCURRED_DURING_RETRIEVAL = " But error occurred during retrieval ";
 
     private final List<String> extendedKeyUsageOids;
+    private String errorMessage = "";
 
     /**
      * Create new {@link ExtendedKeyUsageExtension} instance.
@@ -71,14 +76,29 @@ public class ExtendedKeyUsageExtension extends CertificateExtension {
         try {
             providedExtendedKeyUsage = (List<String>) certificate.getExtendedKeyUsage();
         } catch (CertificateParsingException | RuntimeException e) {
+            errorMessage = ERROR_OCCURRED_DURING_RETRIEVAL + e.getClass().getName() + " " + e.getMessage();
             return false;
         }
 
         if (providedExtendedKeyUsage == null) {
+            errorMessage = NO_EXTENDED_KEY_USAGES_WERE_FOUND;
             return false;
         }
-        return providedExtendedKeyUsage.contains(ANY_EXTENDED_KEY_USAGE_OID) ||
-                new HashSet<>(providedExtendedKeyUsage).containsAll(extendedKeyUsageOids);
+
+        if (providedExtendedKeyUsage.contains(ANY_EXTENDED_KEY_USAGE_OID) ||
+                new HashSet<>(providedExtendedKeyUsage).containsAll(extendedKeyUsageOids)) {
+            return true;
+        }
+
+        StringBuilder sb = new StringBuilder(ACTUAL);
+        char sep = '(';
+        for (String usage : providedExtendedKeyUsage) {
+            sb.append(sep).append(usage);
+            sep = ',';
+        }
+        sb.append(')');
+        errorMessage = sb.toString();
+        return false;
     }
 
     private static IKeyPurposeId[] createKeyPurposeIds(List<String> extendedKeyUsageOids) {
@@ -88,5 +108,18 @@ public class ExtendedKeyUsageExtension extends CertificateExtension {
                     FACTORY.createKeyPurposeId(FACTORY.createASN1ObjectIdentifier(extendedKeyUsageOids.get(i)));
         }
         return keyPurposeIds;
+    }
+
+    @Override
+    public String getMessage() {
+        StringBuilder sb = new StringBuilder(EXPECTED_KEY_USAGES);
+        char sep = '(';
+        for (String usage : extendedKeyUsageOids) {
+            sb.append(sep).append(usage);
+            sep = ',';
+        }
+        sb.append(')');
+        sb.append(errorMessage);
+        return sb.toString();
     }
 }

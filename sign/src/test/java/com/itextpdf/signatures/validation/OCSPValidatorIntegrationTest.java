@@ -44,6 +44,7 @@ import com.itextpdf.signatures.validation.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.extensions.ExtendedKeyUsageExtension;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
@@ -221,8 +222,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
                 .hasNumberOfFailures(1)
                 .hasLogItem(al -> al
                     .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                    .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                            l -> OID.X509Extensions.EXTENDED_KEY_USAGE)
+                    .withMessageContains(ExtendedKeyUsageExtension.OCSP_SIGNING)
                     )
                 .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
                 );

@@ -129,6 +129,11 @@ public class AssertValidationReport implements AutoCloseable {
             return this;
         }
 
+        public AssertValidationReportLogItem withMessageContains(String expectedContent) {
+            check.withMessageContains(expectedContent);
+            return this;
+        }
+
         public AssertValidationReportLogItem withStatus(ReportItem.ReportItemStatus status) {
             check.withStatus(status);
             return this;
@@ -218,10 +223,13 @@ public class AssertValidationReport implements AutoCloseable {
         private final StringBuilder errorMessage = new StringBuilder();
         private String checkName;
         private String message;
+
+        private String expectedMessageContent;
         private ReportItem.ReportItemStatus status;
         private boolean checkStatus = false;
         private X509Certificate certificate;
         private Class exceptionType;
+
 
 
         public ValidationReportLogItemCheck(int minCount, int maxCount) {
@@ -247,6 +255,13 @@ public class AssertValidationReport implements AutoCloseable {
             Collections.addAll(messageParams, params);
             errorMessage.append(" message '")
                     .append(message)
+                    .append("'");
+        }
+
+        public void withMessageContains(String expectedContent) {
+            this.expectedMessageContent = expectedContent;
+            errorMessage.append(" message containing '")
+                    .append(expectedContent)
                     .append("'");
         }
 
@@ -285,7 +300,11 @@ public class AssertValidationReport implements AutoCloseable {
                     return i.getMessage().equals(MessageFormatUtil.format(message, params));
                 }).collect(Collectors.toList());
                 errorMessage.append("found ").append(prefiltered.size()).append(" matches after message filter\n");
-            } else {
+            } else if (expectedMessageContent != null) {
+                prefiltered = report.getLogs().stream().filter(i -> i.getMessage().contains(expectedMessageContent)
+                ).collect(Collectors.toList());
+                errorMessage.append("found ").append(prefiltered.size()).append(" matches after message filter\n");
+            } else  {
                 prefiltered = report.getLogs();
             }
             if (checkName != null) {

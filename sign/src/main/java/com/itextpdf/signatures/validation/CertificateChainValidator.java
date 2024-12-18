@@ -56,7 +56,7 @@ public class CertificateChainValidator {
             "Certificate {0} is trusted, revocation data checks are not required.";
     static final String CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT = "Certificate {0} is trusted for {1}, "
             + "but it is not used in this context. Validation will continue as usual.";
-    static final String EXTENSION_MISSING = "Required extension {0} is missing or incorrect.";
+    static final String EXTENSION_MISSING = "Required extension validation failed: {0}";
     static final String ISSUER_MISSING = "Certificate {0} isn't trusted and issuer certificate isn't provided.";
     static final String EXPIRED_CERTIFICATE = "Certificate {0} is expired.";
     static final String NOT_YET_VALID_CERTIFICATE = "Certificate {0} is not yet valid.";
@@ -245,7 +245,7 @@ public class CertificateChainValidator {
                 }
                 if (!requiredExtension.existsInCertificate(certificate)) {
                     result.addReportItem(new CertificateReportItem(certificate, EXTENSIONS_CHECK,
-                            MessageFormatUtil.format(EXTENSION_MISSING, requiredExtension.getExtensionOid()),
+                            MessageFormatUtil.format(EXTENSION_MISSING, requiredExtension.getMessage()),
                             ReportItemStatus.INVALID));
                 }
             }

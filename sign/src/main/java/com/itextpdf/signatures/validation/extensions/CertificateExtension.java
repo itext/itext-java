@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation.extensions;
 
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.CertificateUtil;
 
 import java.io.IOException;
@@ -34,8 +35,14 @@ import java.util.Objects;
  */
 public class CertificateExtension {
 
+    public static final String EXCEPTION_OCCURRED = " but an exception occurred {0}:{1}.";
+    public static final String EXTENSION_NOT_FOUND = " but no extension with that id was found.";
+    public static final String FOUND_VALUE = " but found value ";
+    public static final String EXPECTED_EXTENSION_ID_AND_VALUE = "Expected extension with id {0} and value {1}"
+            + " {1} {2}";
     private final String extensionOid;
     private final IASN1Primitive extensionValue;
+    private String errorMessage = "";
 
     /**
      * Create new instance of {@link CertificateExtension} using provided extension OID and value.
@@ -67,6 +74,15 @@ public class CertificateExtension {
     }
 
     /**
+     * Returns a message with extra information about the check.
+     * @return a message with extra information about the check.
+     */
+    public String getMessage() {
+        return MessageFormatUtil.format(EXPECTED_EXTENSION_ID_AND_VALUE,
+                getExtensionOid(), getExtensionValue().toString(), errorMessage);
+    }
+
+    /**
      * Check if this extension is present in the provided certificate.
      * <p>
      * This method doesn't always require complete extension value equality,
@@ -81,9 +97,22 @@ public class CertificateExtension {
         try {
             providedExtensionValue = CertificateUtil.getExtensionValue(certificate, extensionOid);
         } catch (IOException | RuntimeException e) {
+            errorMessage = MessageFormatUtil.format(EXCEPTION_OCCURRED,
+                    e.getClass().getName(),e.getMessage());
             return false;
         }
-        return Objects.equals(providedExtensionValue, extensionValue);
+        if (providedExtensionValue == null) {
+            if (extensionValue == null) {
+                return true;
+            }
+            errorMessage = EXTENSION_NOT_FOUND;
+            return false;
+        }
+        if (Objects.equals(providedExtensionValue, extensionValue)) {
+            return true;
+        }
+        errorMessage = FOUND_VALUE + MessageFormatUtil.format(" but found value {0}.", extensionValue.toString());
+        return false;
     }
 
     @Override
@@ -102,4 +131,5 @@ public class CertificateExtension {
     public int hashCode() {
         return Objects.hash((Object) extensionOid, extensionValue);
     }
+
 }

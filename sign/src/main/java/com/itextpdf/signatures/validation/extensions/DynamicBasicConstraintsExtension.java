@@ -24,10 +24,9 @@ package com.itextpdf.signatures.validation.extensions;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.crypto.OID;
-import com.itextpdf.signatures.CertificateUtil;
 
-import java.io.IOException;
 import java.security.cert.X509Certificate;
 
 /**
@@ -36,6 +35,9 @@ import java.security.cert.X509Certificate;
  */
 public class DynamicBasicConstraintsExtension extends DynamicCertificateExtension {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    public static final String ERROR_MESSAGE =
+            "Expected extension 2.5.29.19 to have a value of at least {0} but found {1}";
+    private String errorMessage;
 
     /**
      * Create new instance of {@link DynamicBasicConstraintsExtension}.
@@ -55,6 +57,16 @@ public class DynamicBasicConstraintsExtension extends DynamicCertificateExtensio
      */
     @Override
     public boolean existsInCertificate(X509Certificate certificate) {
-        return certificate.getBasicConstraints() >= getCertificateChainSize() - 1;
+        if (certificate.getBasicConstraints() >= getCertificateChainSize() - 1) {
+            return true;
+        }
+        errorMessage = MessageFormatUtil.format(ERROR_MESSAGE,
+                getCertificateChainSize() - 1, certificate.getBasicConstraints());
+        return false;
+    }
+
+    @Override
+    public String getMessage() {
+        return errorMessage;
     }
 }
