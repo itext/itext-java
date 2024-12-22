@@ -598,6 +598,11 @@ public final class SvgConstants {
         public static final String MARKER_HEIGHT = "markerHeight";
 
         /**
+         * Attribute defining shorthand for marker-start/marker-mid/marker-end
+         */
+        public static final String MARKER = "marker";
+
+        /**
          * Attribute defining the marker drawn at every other vertex but the start and end of a path, line, polygon or polyline
          */
         public static final String MARKER_MID = "marker-mid";

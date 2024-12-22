@@ -59,9 +59,8 @@ import java.util.Map;
  */
 public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
-    // TODO (DEVSIX-3397) Add MarkerVertexType.MARKER_MID after ticket will be finished.
     private static final MarkerVertexType[] MARKER_VERTEX_TYPES = new MarkerVertexType[] {MarkerVertexType.MARKER_START,
-            MarkerVertexType.MARKER_END};
+            MarkerVertexType.MARKER_MID, MarkerVertexType.MARKER_END};
 
     /**
      * Map that contains attributes and styles used for drawing operations.
@@ -325,12 +324,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             }
             // Marker drawing
             if (this instanceof IMarkerCapable) {
-                // TODO (DEVSIX-3397) add processing of 'marker' property (shorthand for a joint using of all other properties)
                 for (MarkerVertexType markerVertexType : MARKER_VERTEX_TYPES) {
                     if (attributesAndStyles.containsKey(markerVertexType.toString())) {
-                        currentCanvas.saveState();
                         ((IMarkerCapable) this).drawMarker(context, markerVertexType);
-                        currentCanvas.restoreState();
                     }
                 }
             }

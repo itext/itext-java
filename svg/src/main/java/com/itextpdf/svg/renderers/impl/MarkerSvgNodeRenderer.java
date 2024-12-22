@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
@@ -39,10 +40,18 @@ import com.itextpdf.svg.utils.SvgTextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;marker&gt; tag.
  */
 public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
+
+    /**
+     * Attribute defining the marker index on polygon, line or polyline.
+     * It is not a property from css standard, used for internal marker processing.
+     */
+    public static final String MARKER_INDEX = "marker-index";
 
     // Default marker width in point units (3 px)
     private static final float DEFAULT_MARKER_WIDTH = 2.25f;
@@ -104,9 +113,37 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             namedObject.setAttribute(SvgConstants.Tags.MARKER, markerToUse.toString());
             namedObject.setAttribute(SvgConstants.Attributes.X, moveX);
             namedObject.setAttribute(SvgConstants.Attributes.Y, moveY);
+            context.getCurrentCanvas().saveState();
             namedObject.draw(context);
+            context.getCurrentCanvas().restoreState();
             // unsetting the parent of the referenced element
             namedObject.setParent(null);
+        }
+    }
+
+    static void drawMarkers(SvgDrawContext context, int startIndex, List<Point> markerPoints,
+                            MarkerVertexType markerToUse, AbstractSvgNodeRenderer parent) {
+        String elementToReUse =
+                SvgTextUtil.filterReferenceValue(parent.attributesAndStyles.get(markerToUse.toString()));
+        ISvgNodeRenderer template = context.getNamedObject(elementToReUse);
+        if (!(template instanceof MarkerSvgNodeRenderer &&
+                // Having markerWidth or markerHeight with negative or zero value disables rendering of the element .
+                markerWidthHeightAreCorrect((MarkerSvgNodeRenderer) template))) {
+            return;
+        }
+        for (int i = 0; i < markerPoints.size(); ++i) {
+            ISvgNodeRenderer marker = template.createDeepCopy();
+            // setting the parent of the referenced element to this instance
+            marker.setParent(parent);
+            marker.setAttribute(SvgConstants.Tags.MARKER, markerToUse.toString());
+            marker.setAttribute(SvgConstants.Attributes.X,
+                    SvgCssUtils.convertDoubleToString(markerPoints.get(i).getX()));
+            marker.setAttribute(SvgConstants.Attributes.Y,
+                    SvgCssUtils.convertDoubleToString(markerPoints.get(i).getY()));
+            marker.setAttribute(MarkerSvgNodeRenderer.MARKER_INDEX, Integer.toString(startIndex + i));
+            context.getCurrentCanvas().saveState();
+            marker.draw(context);
+            context.getCurrentCanvas().restoreState();
         }
     }
 

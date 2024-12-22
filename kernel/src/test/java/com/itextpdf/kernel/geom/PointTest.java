@@ -40,6 +40,13 @@ public class PointTest extends ExtendedITextTest {
     }
 
     @Test
+    public void copyConstructorTest() {
+        Point first = new Point(new Point(4.0, 5.0));
+        Assertions.assertEquals(4.0, first.getX(), EPSILON_COMPARISON);
+        Assertions.assertEquals(5.0, first.getY(), EPSILON_COMPARISON);
+    }
+
+    @Test
     public void doubleParamConstructorTest() {
         Point first = new Point(0.13, 1.1);
         Assertions.assertEquals(0.13, first.getX(), EPSILON_COMPARISON);

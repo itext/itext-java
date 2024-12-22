@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+    <defs>
+        <marker id="red-chevron" viewBox="0 0 10 10" preserveAspectRatio="xMinYMin slice" refX="5" refY="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="red"/>
+        </marker>
+
+        <marker id="black-arrow" viewBox="0 0 10 10" refX="0" refY="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z"/>
+        </marker>
+
+        <marker id="blue-arrow" viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet"  refX="5" refY="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="blue"/>
+        </marker>
+    </defs>
+
+    <path d="M250,350
+        a15,5 -16 0,1 10,-15 l 20,-5
+        a15,10 -16 0,1 10,-15 l 20,-5
+        a15,25 -16 0,1 10,-15 l 20,-5
+        a15,35 -16 0,1 10,-15 l 20,-5"
+          style="fill:none; stroke:green; stroke-width:2; marker-start:url(#red-chevron);
+        marker-end:url(#black-arrow); marker-mid:url(#blue-arrow);"/>
+    <text x="250" y="390"> path with arc segments </text>
+
+</svg>

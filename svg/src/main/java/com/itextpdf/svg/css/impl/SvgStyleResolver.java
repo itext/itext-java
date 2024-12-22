@@ -27,6 +27,7 @@ import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
+import com.itextpdf.styledxmlparser.css.CssRuleSet;
 import com.itextpdf.styledxmlparser.css.CssStatement;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
@@ -440,11 +441,8 @@ public class SvgStyleResolver implements ICssResolver {
     }
 
     private Map<String, String> parseStylesFromStyleAttribute(String style) {
-        Map<String, String> parsed = new HashMap<>();
-        List<CssDeclaration> declarations = CssRuleSetParser.parsePropertyDeclarations(style);
-        for (CssDeclaration declaration : declarations) {
-            parsed.put(declaration.getProperty(), declaration.getExpression());
-        }
-        return parsed;
+        List<CssRuleSet> ruleSets = Collections.singletonList(new CssRuleSet(null,
+                CssRuleSetParser.parsePropertyDeclarations(style)));
+        return CssStyleSheet.extractStylesFromRuleSets(ruleSets);
     }
 }

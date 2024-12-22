@@ -47,6 +47,7 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GridShorthandReso
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.GridTemplateShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.ListStyleShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.MarginShorthandResolver;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.MarkerShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.OutlineShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.PaddingShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.PlaceItemsShorthandResolver;
@@ -92,6 +93,7 @@ public class ShorthandResolverFactory {
         shorthandResolvers.put(CommonCssConstants.GRID_COLUMN, new GridColumnShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.GRID_TEMPLATE, new GridTemplateShorthandResolver());
         shorthandResolvers.put(CommonCssConstants.GRID, new GridShorthandResolver());
+        shorthandResolvers.put(CommonCssConstants.MARKER, new MarkerShorthandResolver());
     }
 
     /**

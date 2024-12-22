@@ -22,7 +22,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
@@ -115,33 +114,60 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     // Markers in different elements
     @Test
-    // TODO: update when DEVSIX-3397 will be closed
     public void markerTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "marker");
     }
 
     @Test
-    // TODO: update when DEVSIX-3397 will be closed
     public void markerInLineElementTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInLineElement");
     }
 
     @Test
-    // TODO: update when DEVSIX-3397 will be closed
     public void markerInPolylineElementTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPolylineElement");
     }
 
     @Test
-    // TODO: update when DEVSIX-3397, DEVSIX-2719 will be closed
+    // TODO: update when DEVSIX-2719 will be closed
     public void markerInPolygonElementTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPolygonElement");
     }
 
     @Test
-    // TODO: update when DEVSIX-3397 will be closed
+    public void markerInPolygonElementWithComplexAngleTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPolygonElementWithComplexAngle");
+    }
+
+    @Test
+    public void markerShorthandWithFillAndStrokeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerShorthandWithFillAndStroke");
+    }
+
+    @Test
     public void markerInPathTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPath");
+    }
+
+    @Test
+    // TODO: update when DEVSIX-8749 will be closed
+    public void markerInPathWithAngledMarkerTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPathWithAngledMarker");
+    }
+
+    @Test
+    public void markerShorthandInPolylineTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerShorthandInPolyline");
+    }
+
+    @Test
+    public void markerShorthandInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerShorthandInheritance");
+    }
+
+    @Test
+    public void markerShorthandTagInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerShorthandTagInheritance");
     }
 
     @Test

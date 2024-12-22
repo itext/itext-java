@@ -687,6 +687,26 @@ public class CommonCssConstants {
     public static final String MARGIN_TOP = "margin-top";
 
     /**
+     * The Constant MARKER
+     */
+    public static final String MARKER = "marker";
+
+    /**
+     * The Constant MARKER_MID
+     */
+    public static final String MARKER_MID = "marker-mid";
+
+    /**
+     * The Constant MARKER_START
+     */
+    public static final String MARKER_START = "marker-start";
+
+    /**
+     * The Constant MARKER_END
+     */
+    public static final String MARKER_END = "marker-end";
+
+    /**
      * The Constant MIN_HEIGHT.
      */
     public static final String MIN_HEIGHT = "min-height";

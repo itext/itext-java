@@ -1,0 +1,22 @@
+<svg viewBox="0 0 800 600" width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <marker
+    id="circle"
+    markerWidth="6"
+    markerHeight="6"
+    refX="3"
+    refY="3"
+    markerUnits="strokeWidth">
+    <circle cx="3" cy="3" r="2" stroke="context-stroke" fill="context-fill" />
+  </marker>
+
+  <style>
+    path {
+      marker: url(#circle);
+    }
+  </style>
+
+  <path d="M 10,10 30,10 h 10" stroke="black" />
+  <path d="M 10,20 30,20 h 10" stroke="blue" fill="red" />
+  <path d="M 10,30 30,30 h 10" stroke="red" fill="none" />
+  <path d="M 10,40 30,40 h 10" stroke="gray" fill="blue" stroke-width="1.5" />
+</svg>
