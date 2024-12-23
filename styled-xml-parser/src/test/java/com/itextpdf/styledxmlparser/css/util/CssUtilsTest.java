@@ -114,7 +114,7 @@ public class CssUtilsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void normalizeProperty() {
+    public void normalizePropertyTest() {
         Assertions.assertEquals("part1 part2", CssUtils.normalizeCssProperty("   part1   part2  "));
         Assertions.assertEquals("\" the next quote is ESCAPED \\\\\\\" still  IN string \"", CssUtils.normalizeCssProperty("\" the next quote is ESCAPED \\\\\\\" still  IN string \""));
         Assertions.assertEquals("\" the next quote is NOT ESCAPED \\\\\" not in the string", CssUtils.normalizeCssProperty("\" the next quote is NOT ESCAPED \\\\\" NOT in   THE string"));
@@ -125,6 +125,10 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assertions.assertEquals("rgba(255,255,255,0.2)", CssUtils.normalizeCssProperty("rgba(  255,  255 ,  255 ,0.2   )"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.URL_IS_EMPTY_IN_CSS_EXPRESSION)
+    })
     @Test
     public void normalizeUrlTest() {
         Assertions.assertEquals("url(data:application/font-woff;base64,2CBPCRXmgywtV1t4oWwjBju0kqkvfhPs0cYdMgFtDSY5uL7MIGT5wiGs078HrvBHekp0Yf=)",
@@ -132,6 +136,8 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assertions.assertEquals("url(\"quoted  Url\")", CssUtils.normalizeCssProperty("  url(  \"quoted  Url\")"));
         Assertions.assertEquals("url('quoted  Url')", CssUtils.normalizeCssProperty("  url(  'quoted  Url')"));
         Assertions.assertEquals("url(haveEscapedEndBracket\\))", CssUtils.normalizeCssProperty("url(  haveEscapedEndBracket\\) )"));
+        Assertions.assertEquals("url(", CssUtils.normalizeCssProperty("url(https://example.com/"));
+        Assertions.assertEquals("url(", CssUtils.normalizeCssProperty("url("));
     }
 
     @Test

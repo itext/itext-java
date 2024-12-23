@@ -110,7 +110,7 @@ class CssPropertyNormalizer {
      * @return the new position in the source
      */
     private static int appendUrlContent(StringBuilder buffer, String source, int start) {
-        while (Character.isWhitespace(source.charAt(start)) && start < source.length()) {
+        while (start < source.length() && Character.isWhitespace(source.charAt(start))) {
             ++start;
         }
         if (start < source.length()) {
