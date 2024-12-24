@@ -896,6 +896,11 @@ public final class SvgConstants {
         public static final String XMLNS = "xmlns";
 
         /**
+         * Attribute defining the property that sets how white space inside an element is handled.
+         */
+        public static final String XML_SPACE = "xml:space";
+
+        /**
          * Attribute defining the y value of an element.
          */
         public static final String Y = "y";

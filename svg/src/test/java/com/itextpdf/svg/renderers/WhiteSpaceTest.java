@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
-//TODO DEVSIX-2284: Update cmp file after supporting
 public class WhiteSpaceTest extends SvgIntegrationTest {
 
   private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/WhiteSpaceTest/";
@@ -64,5 +63,18 @@ public class WhiteSpaceTest extends SvgIntegrationTest {
   @Test
   public void whiteSpaceRelativePositionsTest() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "white-space-basic-relative-positions");
+  }
+
+  @Test
+  public void whiteSpaceEmptyTest() throws IOException, InterruptedException {
+    // This test result is different from browser since we don't add empty (or whitespace only) children to the
+    // text branch renderer. But even if we will, spaces will be preserved for pre, pre-wrap and pre-line, however
+    // they shouldn't for pre-wrap and pre-line values.
+    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "white-space-empty");
+  }
+
+  @Test
+  public void whiteSpaceLeadingTest() throws IOException, InterruptedException {
+    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "white-space-leading");
   }
 }

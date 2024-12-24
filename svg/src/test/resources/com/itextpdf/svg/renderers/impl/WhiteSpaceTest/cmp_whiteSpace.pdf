@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241208102640+01'00')/ModDate(D:20241208102640+01'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20241230135907+03'00')/ModDate(D:20241230135907+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 300]/Length 320/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 300]/Length 369/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 300 re
 W
 n
@@ -45,7 +45,8 @@ BT
 /F1 22.5 Tf
 1 0 0 -1 15 75 Tm
 0 0 0 rg
-(Spaces are preserved in this text object.)Tj
+(    Spaces are       preserved     in this           text object.)Tj
+( )Tj
 ET
 Q
 Q
@@ -55,7 +56,7 @@ BT
 /F1 22.5 Tf
 1 0 0 -1 15 120 Tm
 0 0 0 rg
-(Spaces are preserved in this tspan object.)Tj
+(Spaces        are     preserved     in this     tspan object.)Tj
 ET
 Q
 Q
@@ -84,8 +85,8 @@ xref
 0000000569 00000 n 
 0000000752 00000 n 
 trailer
-<</ID [<b52174edf5b7bbdaf885a919a091e1be200645ccf1152cfbe83f7eb9d40a272c372a749b41c5c1c688e8fe35f69bd14b8af4ba5a2363789864761dcb7960d396><b52174edf5b7bbdaf885a919a091e1be200645ccf1152cfbe83f7eb9d40a272c372a749b41c5c1c688e8fe35f69bd14b8af4ba5a2363789864761dcb7960d396>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<87341f78da39984a1653a3a12b1e350ee7d5801b4bae636d890b95515f4856e5921176dd1276174df0fd942470529278a7abd056ec540e7398f746e0a353d151><87341f78da39984a1653a3a12b1e350ee7d5801b4bae636d890b95515f4856e5921176dd1276174df0fd942470529278a7abd056ec540e7398f746e0a353d151>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-1196
+1245
 %%EOF

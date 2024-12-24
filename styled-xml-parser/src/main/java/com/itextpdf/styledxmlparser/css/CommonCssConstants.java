@@ -280,6 +280,11 @@ public class CommonCssConstants {
     public static final String BREAK_ALL = "break-all";
 
     /**
+     * The Constant BREAK_SPACES.
+     */
+    public static final String BREAK_SPACES = "break-spaces";
+
+    /**
      * The Constant CAPTION_SIDE.
      */
     public static final String CAPTION_SIDE = "caption-side";
@@ -1374,6 +1379,21 @@ public class CommonCssConstants {
      * The Constant PADDING_BOX.
      */
     public static final String PADDING_BOX = "padding-box";
+
+    /**
+     * The Constant PRE.
+     */
+    public static final String PRE = "pre";
+
+    /**
+     * The Constant PRE_LINE.
+     */
+    public static final String PRE_LINE = "pre-line";
+
+    /**
+     * The Constant PRE_WRAP.
+     */
+    public static final String PRE_WRAP = "pre-wrap";
 
     /**
      * The Constant RAD.

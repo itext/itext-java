@@ -307,31 +307,26 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: DEVSIX-2284 update cmp file after fix
     public void textWhiteSpaceNormalTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpaceNormal");
     }
 
     @Test
-    //TODO: DEVSIX-2284 update cmp file after fix
     public void textWhiteSpacePreTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePre");
     }
 
     @Test
-    //TODO: DEVSIX-2284 update cmp file after fix
     public void textWhiteSpaceNoWrapTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpaceNoWrap");
     }
 
     @Test
-    //TODO: DEVSIX-2284 update cmp file after fix
     public void textWhiteSpacePreWrapTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePreWrap");
     }
 
     @Test
-    //TODO: DEVSIX-2284 update cmp file after fix
     public void textWhiteSpacePreLineTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePreLine");
     }

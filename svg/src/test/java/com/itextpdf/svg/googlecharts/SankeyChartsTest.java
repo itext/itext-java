@@ -56,7 +56,6 @@ public class SankeyChartsTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-2905
     public void sankeyFontsChart() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "sankeyFontsChart");
     }

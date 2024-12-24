@@ -70,4 +70,65 @@ public class WhiteSpaceUtil {
     public static boolean isNonEmSpace(char ch) {
         return Character.isWhitespace(ch) && !EM_SPACES.contains(ch);
     }
+
+    /**
+     * Checks if a character is white space value that doesn't cause a newline.
+     *
+     * @param ch the character
+     *
+     * @return {@code true}, if the character is a white space character, but no newline
+     */
+    public static boolean isNonLineBreakSpace(char ch) {
+        return WhiteSpaceUtil.isNonEmSpace(ch) && ch != '\n';
+    }
+
+    /**
+     * Processes whitespaces according to provided {@code keepLineBreaks} and {@code collapseSpaces} values.
+     *
+     * @param text string to process
+     * @param keepLineBreaks whether to keep line breaks
+     * @param collapseSpaces whether to collapse spaces
+     *
+     * @return processed string
+     */
+    public static String processWhitespaces(String text, boolean keepLineBreaks, boolean collapseSpaces) {
+        if (!keepLineBreaks && collapseSpaces) {
+            // Don't keep line breaks and collapse spaces. Normal or nowrap.
+            text = WhiteSpaceUtil.collapseConsecutiveSpaces(text);
+        } else if (keepLineBreaks && collapseSpaces) {
+            // Keep line breaks and collapse spaces. Pre-line.
+            StringBuilder sb = new StringBuilder(text.length());
+            for (int i = 0; i < text.length(); i++) {
+                if (WhiteSpaceUtil.isNonLineBreakSpace(text.charAt(i))) {
+                    if (sb.length() == 0 || sb.charAt(sb.length() - 1) != ' ') {
+                        sb.append(" ");
+                    }
+                } else {
+                    sb.append(text.charAt(i));
+                }
+            }
+            text = sb.toString();
+        } else {
+            // Preserve line breaks and spaces. Pre, pre-wrap and break-spaces.
+            text = keepLineBreaksAndSpaces(text);
+        }
+        return text;
+    }
+
+    private static String keepLineBreaksAndSpaces(String text) {
+        StringBuilder sb = new StringBuilder(text.length());
+        // Prohibit trimming first and last spaces.
+        sb.append('\u200d');
+        for (int i = 0; i < text.length(); i++) {
+            sb.append(text.charAt(i));
+            if ('\n' == text.charAt(i) ||
+                    ('\r' == text.charAt(i) && i + 1 < text.length() && '\n' != text.charAt(i + 1))) {
+                sb.append('\u200d');
+            }
+        }
+        if ('\u200d' == sb.charAt(sb.length() - 1)) {
+            sb.delete(sb.length() - 1, sb.length());
+        }
+        return sb.toString();
+    }
 }

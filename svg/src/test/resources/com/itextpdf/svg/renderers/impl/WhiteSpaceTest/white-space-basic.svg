@@ -1,15 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" style="border: 1px solid black; font-family: Arial, sans-serif;">
-  <rect x="0" y="0" width="600" height="400" fill="none" /> 
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"
+     style="border: 1px solid black; font-family: Arial, sans-serif;">
+    <rect x="0" y="0" width="600" height="400" fill="none"/>
 
-
-  <text x="20" y="20" style="font-size: 14px; white-space: normal;">
-    white-space: normal.   This   will ignore double        spaces and line wrap, and handle it as 
+    <text x="20" y="20" style="font-size: 14px; white-space: normal;">
+    white-space: normal.   This text    will ignore double        spaces and line wrap, and handle it as
 	normal.
   </text>
 
   <text x="20" y="50" style="font-size: 14px; white-space: pre;">
   white-space: pre.     This text              will keep extra      spaces
-	   and line    
+	   and line
 	        breaks
   </text>
 
@@ -22,7 +22,7 @@
 
   <text x="20" y="170" style="font-size: 14px; white-space: pre-wrap;">
   white-space: pre-wrap.   This text          does    keep double spaces
-	    and line      wrap but will remove end of line spaces                    
+	    and line      wrap but will remove end of line spaces
   </text>
 
   <text x="20" y="250" style="font-size: 14px; white-space: pre-line;">
@@ -32,8 +32,8 @@
   </text>
 
   <text x="20" y="310" style="font-size: 14px; white-space: break-spaces;">
-  white-space: break-spaces. This text             will       keep extra    spaces 
-	and 
-	line breaks but will remove end-of-line spaces                                                                                           
+  white-space: break-spaces. This text             will       keep extra    spaces
+	and
+	line breaks but will remove end-of-line spaces
   </text>
 </svg>

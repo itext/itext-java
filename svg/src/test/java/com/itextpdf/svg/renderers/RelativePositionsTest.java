@@ -40,7 +40,6 @@ public class RelativePositionsTest extends SvgIntegrationTest {
     ITextTest.createDestinationFolder(DESTINATION_FOLDER);
   }
 
-  //TODO DEVSIX-5740: Update cmp file after supporting
   @Test
   public void relativePositionsBasic1Test() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativePositionsBasic");
@@ -51,19 +50,19 @@ public class RelativePositionsTest extends SvgIntegrationTest {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativePositionsBasic2");
   }
 
-  //TODO DEVSIX-5740: Update cmp file after supporting
+  //TODO DEVSIX-4068: Update cmp file after supporting
   @Test
   public void relativePositionsListValuesTest() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativePositionsListValues");
   }
 
-  //TODO DEVSIX-5740: Update cmp file after supporting
+  //TODO DEVSIX-4068: Update cmp file after supporting
   @Test
   public void relativePositionsListValuesNoXTest() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativePositionsListValuesNoX");
   }
 
-  //TODO DEVSIX-5740: Update cmp file after supporting
+  //TODO DEVSIX-4068: Update cmp file after supporting
   @Test
   public void relativePositionsListValuesNoYTest() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativePositionsListValuesNoY");

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241211161745+01'00')/ModDate(D:20241211161745+01'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20241229222531+03'00')/ModDate(D:20241229222531+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 300]/Length 916/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 300]/Length 1203/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 300 re
 W
 n
@@ -50,7 +50,7 @@ BT
 /F1 10.5 Tf
 1 0 0 -1 15 15 Tm
 0 0 0 rg
-(white-space: normal. This will ignore double spaces and line wrap, and handle it as normal.)Tj
+(white-space: normal. This text will ignore double spaces and line wrap, and handle it as normal.)Tj
 ET
 Q
 Q
@@ -60,7 +60,16 @@ BT
 /F1 10.5 Tf
 1 0 0 -1 15 37.5 Tm
 0 0 0 rg
-(white-space: pre. This text will keep extra spaces and line breaks)Tj
+(  white-space: pre.     This text              will keep extra      spaces)Tj
+269.451019 0 Td
+( )Tj
+10.5 0 Td
+(   and line)Tj
+41.411999 0 Td
+( )Tj
+10.5 0 Td
+(        breaks)Tj
+( )Tj
 ET
 Q
 Q
@@ -80,7 +89,12 @@ BT
 /F1 10.5 Tf
 1 0 0 -1 15 127.5 Tm
 0 0 0 rg
-(white-space: pre-wrap. This text does keep double spaces and line wrap but will remove end of line spaces)Tj
+(  white-space: pre-wrap.   This text          does    keep double spaces)Tj
+283.437012 0 Td
+( )Tj
+10.5 0 Td
+(    and line      wrap but will remove end of line spaces)Tj
+( )Tj
 ET
 Q
 Q
@@ -91,6 +105,7 @@ BT
 1 0 0 -1 15 187.5 Tm
 0 0 0 rg
 (white-space: pre-line. This text will not keep extra spaces but will keep line breaks)Tj
+( )Tj
 ET
 Q
 Q
@@ -100,7 +115,16 @@ BT
 /F1 10.5 Tf
 1 0 0 -1 15 232.5 Tm
 0 0 0 rg
-(white-space: break-spaces. This text will keep extra spaces and line breaks but will remove end-of-line spaces)Tj
+(  white-space: break-spaces. This text             will       keep extra    spaces)Tj
+307.639496 0 Td
+( )Tj
+10.5 0 Td
+(and)Tj
+15.162 0 Td
+( )Tj
+10.5 0 Td
+(line breaks but will remove end-of-line spaces)Tj
+( )Tj
 ET
 Q
 Q
@@ -119,8 +143,8 @@ xref
 0000000569 00000 n 
 0000000752 00000 n 
 trailer
-<</ID [<1130f700ae7e7680edbbb415acdacaf6c6f2e2b5c735314a1163eb8b75a03e18a065b2e5e16c6d601f5e6d6626b7d3277bda3334b51bf721d6b380b3f8744c44><1130f700ae7e7680edbbb415acdacaf6c6f2e2b5c735314a1163eb8b75a03e18a065b2e5e16c6d601f5e6d6626b7d3277bda3334b51bf721d6b380b3f8744c44>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<ee413ecaa6a527da968d2e900045e4ef11257acd98e684da420c24aef36a662ab600d1df07dd4c49a13ad58aec120e4348f0d13836bf29df5876b25ed73a4eb8><ee413ecaa6a527da968d2e900045e4ef11257acd98e684da420c24aef36a662ab600d1df07dd4c49a13ad58aec120e4348f0d13836bf29df5876b25ed73a4eb8>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-1792
+2080
 %%EOF

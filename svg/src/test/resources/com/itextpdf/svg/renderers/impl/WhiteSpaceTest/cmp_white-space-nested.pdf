@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241211161744+01'00')/ModDate(D:20241211161744+01'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20241230140719+03'00')/ModDate(D:20241230140719+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 300]/Length 2612/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 300]/Length 2876/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 300 re
 W
 n
@@ -108,45 +108,51 @@ BT
 /F1 10.5 Tf
 1 0 0 -1 84.1 37.5 Tm
 0 0 0 rg
-(. This)Tj
+(.     This )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 108.02 37.5 Tm
+1 0 0 -1 121.14 37.5 Tm
 1 0 0 rg
-(text)Tj
+(text          )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 123.77 37.5 Tm
+1 0 0 -1 163.14 37.5 Tm
 0 0 1 rg
-( will)Tj
+(    will )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 142.73 37.5 Tm
+1 0 0 -1 192.61 37.5 Tm
 1 0 0 rg
-(keep extra spaces)Tj
+(keep extra      spaces )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 216.2 37.5 Tm
+1 0 0 -1 281.83 37.5 Tm
 0 0 0 rg
-( and line)Tj
+( )Tj
+10.5 0 Td
+(   and line    )Tj
+51.911999 0 Td
+( )Tj
+10.5 0 Td
+(        )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 252.36 37.5 Tm
+1 0 0 -1 375.74 37.5 Tm
 1 0 0 rg
 (breaks)Tj
 ET
@@ -192,29 +198,33 @@ BT
 /F1 10.5 Tf
 1 0 0 -1 108.59 127.5 Tm
 0 0 0 rg
-(. This)Tj
+(.   This )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 132.51 127.5 Tm
+1 0 0 -1 140.38 127.5 Tm
 1 0 0 rg
-(text does keep)Tj
+(text          does    keep )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 192.58 127.5 Tm
+1 0 0 -1 234.58 127.5 Tm
 0 0 1 rg
-(double spaces and line wrap)Tj
+(double spaces)Tj
+58.610996 0 Td
+( )Tj
+10.5 0 Td
+(    and line      wrap)Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 310.96 127.5 Tm
+1 0 0 -1 384.46 127.5 Tm
 1 0 0 rg
 ( but will remove)Tj
 ET
@@ -222,9 +232,10 @@ Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 380.08 127.5 Tm
+1 0 0 -1 453.58 127.5 Tm
 0 0 0 rg
 ( end of line spaces)Tj
+( )Tj
 ET
 Q
 Q
@@ -242,13 +253,13 @@ BT
 /F1 10.5 Tf
 1 0 0 -1 103.35 187.5 Tm
 0 0 0 rg
-(.)Tj
+(. )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 105.97 187.5 Tm
+1 0 0 -1 108.6 187.5 Tm
 1 0 0 rg
 (This text will not keep extra spaces but will keep)Tj
 ET
@@ -256,9 +267,10 @@ Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 311.57 187.5 Tm
+1 0 0 -1 314.2 187.5 Tm
 0 0 0 rg
 ( line breaks)Tj
+( )Tj
 ET
 Q
 Q
@@ -276,47 +288,55 @@ BT
 /F1 10.5 Tf
 1 0 0 -1 124.91 232.5 Tm
 0 0 0 rg
-(. This text)Tj
+(. This text      )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 167.21 232.5 Tm
+1 0 0 -1 182.96 232.5 Tm
 1 0 0 rg
-( will)Tj
+(       will       )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 186.17 232.5 Tm
+1 0 0 -1 236.05 232.5 Tm
 0 0 1 rg
-(keep)Tj
+(keep )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 206 232.5 Tm
+1 0 0 -1 258.49 232.5 Tm
 1 0 0 rg
-(extra spaces)Tj
+(extra    spaces )Tj
+61.519493 0 Td
+( )Tj
+10.5 0 Td
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 257.01 232.5 Tm
+1 0 0 -1 322.64 232.5 Tm
 0 0 0 rg
-(and line breaks)Tj
+(and )Tj
+17.786999 0 Td
+( )Tj
+10.5 0 Td
+(line breaks )Tj
 ET
 Q
 q
 BT
 /F1 10.5 Tf
-1 0 0 -1 320.58 232.5 Tm
+1 0 0 -1 399.33 232.5 Tm
 1 0 0 rg
 (but will remove end-of-line spaces)Tj
+( )Tj
 ET
 Q
 Q
@@ -335,8 +355,8 @@ xref
 0000000569 00000 n 
 0000000752 00000 n 
 trailer
-<</ID [<695bba8200ab89b20790c59a730b39a332b410e8028f544987d9135b02a71fb204b622f4c0e10fab7879b6b9f0fff0069299e7530a2c60dcb834411a76e7a911><695bba8200ab89b20790c59a730b39a332b410e8028f544987d9135b02a71fb204b622f4c0e10fab7879b6b9f0fff0069299e7530a2c60dcb834411a76e7a911>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<011c24148d7d5ebcdfdc17f7fd0e69881d672c7b062c5cd00629602bb37df4927666ae8f4a8788cedb8db8071d70de1418c33082e7eb2f131c118fadcc3e4d50><011c24148d7d5ebcdfdc17f7fd0e69881d672c7b062c5cd00629602bb37df4927666ae8f4a8788cedb8db8071d70de1418c33082e7eb2f131c118fadcc3e4d50>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-3489
+3753
 %%EOF

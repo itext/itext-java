@@ -233,6 +233,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         this.paragraph = new Paragraph();
         this.paragraph.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
         this.paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.SVG_MODE);
+        this.paragraph.setProperty(Property.NO_SOFT_WRAP_INLINE, true);
         this.paragraph.setMargin(0);
         applyTextRenderingMode(paragraph);
         applyFontProperties(paragraph, context);

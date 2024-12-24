@@ -77,4 +77,44 @@ public class WhiteSpaceUtilUnitTest extends ExtendedITextTest {
         String expected = " A B ";
         Assertions.assertEquals(expected, actual);
     }
+
+    @Test
+    public void keepLineBreaksCollapseSpacesTest() {
+        String toProcess = "\t  A B  \n  A   B   \t";
+        final boolean keepLineBreaks = Boolean.TRUE;
+        final boolean collapseSpaces = Boolean.TRUE;
+        String actual = WhiteSpaceUtil.processWhitespaces(toProcess, keepLineBreaks, collapseSpaces);
+        String expected = " A B \n A B ";
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void keepLineBreaksKeepSpacesTest() {
+        String toProcess = "\t  A B  \n  A   B   \t";
+        final boolean keepLineBreaks = Boolean.TRUE;
+        final boolean collapseSpaces = Boolean.FALSE;
+        String actual = WhiteSpaceUtil.processWhitespaces(toProcess, keepLineBreaks, collapseSpaces);
+        String expected = "\u200d\t  A B  \n\u200d  A   B   \t";
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void removeLineBreaksKeepSpacesTest() {
+        String toProcess = "\t  A B  \n  A   B   \t";
+        final boolean keepLineBreaks = Boolean.FALSE;
+        final boolean collapseSpaces = Boolean.TRUE;
+        String actual = WhiteSpaceUtil.processWhitespaces(toProcess, keepLineBreaks, collapseSpaces);
+        String expected = " A B A B ";
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void removeLineBreaksCollapseSpacesInvalidTest() {
+        String toProcess = "\t  A B  \n  A   B   \t";
+        final boolean keepLineBreaks = Boolean.FALSE;
+        final boolean collapseSpaces = Boolean.FALSE;
+        String actual = WhiteSpaceUtil.processWhitespaces(toProcess, keepLineBreaks, collapseSpaces);
+        String expected = "\u200d\t  A B  \n\u200d  A   B   \t";
+        Assertions.assertEquals(expected, actual);
+    }
 }

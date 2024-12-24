@@ -22,7 +22,6 @@
  */
 package com.itextpdf.svg.utils;
 
-
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
@@ -33,12 +32,10 @@ import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 
-
 /**
  * Class containing utility methods for text operations in the context of SVG processing
  */
 public final class SvgTextUtil {
-
 
     private SvgTextUtil() {
     }
@@ -58,7 +55,7 @@ public final class SvgTextUtil {
         while (current < end) {
             char currentChar = toTrim.charAt(current);
             if (Character.isWhitespace(currentChar) && !(currentChar == '\n' || currentChar == '\r')) {
-                //if the character is whitespace and not a newline, increase current
+                // If the character is whitespace and not a newline, increase current.
                 current++;
             } else {
                 break;
@@ -83,7 +80,7 @@ public final class SvgTextUtil {
             while (current >= 0) {
                 char currentChar = toTrim.charAt(current);
                 if (Character.isWhitespace(currentChar) && !(currentChar == '\n' || currentChar == '\r')) {
-                    //if the character is whitespace and not a newline, increase current
+                    // If the character is whitespace and not a newline, increase current.
                     current--;
                 } else {
                     break;
@@ -109,32 +106,52 @@ public final class SvgTextUtil {
      * @param isLeadingElement true if this element is a leading element(either the first child or the first element after an absolute position change)
      */
     public static void processWhiteSpace(TextSvgBranchRenderer root, boolean isLeadingElement) {
-        // when svg is parsed by jsoup it leaves all whitespace in text element as is. Meaning that
+        // When svg is parsed by jsoup it leaves all whitespace in text element as is. Meaning that
         // tab/space indented xml files will retain their tabs and spaces.
         // The following regex replaces all whitespace with a single space.
-        boolean performLeadingTrim = isLeadingElement;
+        String whiteSpace = root.getAttributeMapCopy().isEmpty() ? CommonCssConstants.NORMAL :
+                root.getAttribute(CommonCssConstants.WHITE_SPACE);
+        if (whiteSpace == null) {
+            // XML_SPACE is 'default' or 'preserve'.
+            whiteSpace = root.getAttribute(SvgConstants.Attributes.XML_SPACE);
+            if ("preserve".equals(whiteSpace)) {
+                whiteSpace = CommonCssConstants.PRE;
+            } else {
+                whiteSpace = CommonCssConstants.NORMAL;
+            }
+        }
+        boolean keepLineBreaks = CommonCssConstants.PRE.equals(whiteSpace) ||
+                CommonCssConstants.PRE_WRAP.equals(whiteSpace) || CommonCssConstants.PRE_LINE.equals(whiteSpace)
+                || CommonCssConstants.BREAK_SPACES.equals(whiteSpace);
+        boolean collapseSpaces = !(CommonCssConstants.PRE.equals(whiteSpace) ||
+                CommonCssConstants.PRE_WRAP.equals(whiteSpace) || CommonCssConstants.BREAK_SPACES.equals(whiteSpace));
         for (ISvgTextNodeRenderer child : root.getChildren()) {
-            //If leaf, process contents, if branch, call function again
+            // If child is leaf, process contents, if it is branch, call function again.
             if (child instanceof TextSvgBranchRenderer) {
-                //Branch processing
-                processWhiteSpace((TextSvgBranchRenderer) child, child.containsAbsolutePositionChange());
+                // Branch processing.
+                processWhiteSpace((TextSvgBranchRenderer) child,
+                        child.containsAbsolutePositionChange() || isLeadingElement);
                 ((TextSvgBranchRenderer) child).markWhiteSpaceProcessed();
+                isLeadingElement = false;
             }
             if (child instanceof TextLeafSvgNodeRenderer) {
-                //Leaf processing
+                // Leaf processing.
                 TextLeafSvgNodeRenderer leafRend = (TextLeafSvgNodeRenderer) child;
-                //Process text
+                // Process text.
                 String toProcess = leafRend.getAttribute(SvgConstants.Attributes.TEXT_CONTENT);
-                toProcess = toProcess.replaceAll("\\s+", " ");
-                toProcess = WhiteSpaceUtil.collapseConsecutiveSpaces(toProcess);
-                if (performLeadingTrim) {
-                    //Trim leading white spaces
-                    toProcess = trimLeadingWhitespace(toProcess);
-                    toProcess = trimTrailingWhitespace(toProcess);
-                    performLeadingTrim = false;
-                } else {
-                    //only collapse whitespace
-                    toProcess = trimTrailingWhitespace(toProcess);
+                // For now, text element contains single line and no-wrapping by default.
+                toProcess = toProcess.replace("\n", "");
+                toProcess = WhiteSpaceUtil.processWhitespaces(toProcess, keepLineBreaks, collapseSpaces);
+                if (!keepLineBreaks) {
+                    if (isLeadingElement) {
+                        // Trim leading and trailing whitespaces.
+                        toProcess = trimLeadingWhitespace(toProcess);
+                        toProcess = trimTrailingWhitespace(toProcess);
+                        isLeadingElement = false;
+                    } else {
+                        // Only trim trailing whitespaces.
+                        toProcess = trimTrailingWhitespace(toProcess);
+                    }
                 }
                 leafRend.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, toProcess);
             }
@@ -149,9 +166,9 @@ public final class SvgTextUtil {
      */
     public static boolean isOnlyWhiteSpace(String s) {
         String trimmedText = s.replaceAll("\\s+", " ");
-        //Trim leading whitespace
+        // Trim leading whitespace.
         trimmedText = SvgTextUtil.trimLeadingWhitespace(trimmedText);
-        //Trim trailing whitespace
+        // Trim trailing whitespace.
         trimmedText = SvgTextUtil.trimTrailingWhitespace(trimmedText);
         return "".equals(trimmedText);
     }
