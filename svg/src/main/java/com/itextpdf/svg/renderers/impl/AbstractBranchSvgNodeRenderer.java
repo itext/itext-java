@@ -99,10 +99,6 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
                 stream.put(PdfName.BBox, new PdfArray(bbBox));
             }
 
-            if (this instanceof MarkerSvgNodeRenderer) {
-                ((MarkerSvgNodeRenderer) this).applyMarkerAttributes(context);
-            }
-
             context.pushCanvas(newCanvas);
 
             // TODO (DEVSIX-3482) Currently overflow logic works only for markers. Update this code after the ticket will be finished.
@@ -286,6 +282,10 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             context.getCurrentViewPort()
                     .setX(currentViewPort.getX() - (float) transform.getTranslateX())
                     .setY(currentViewPort.getY() - (float) transform.getTranslateY());
+        }
+
+        if (this instanceof MarkerSvgNodeRenderer) {
+            ((MarkerSvgNodeRenderer) this).applyMarkerAttributes(context);
         }
 
         if (!scale.isIdentity()) {

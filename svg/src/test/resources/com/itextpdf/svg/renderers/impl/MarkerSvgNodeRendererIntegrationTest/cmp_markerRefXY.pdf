@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241205042620+03'00')/ModDate(D:20241205042620+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20241230181251+03'00')/ModDate(D:20241230181251+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -35,7 +35,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 450]/Length 3124/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm13 13 0 R/Fm2 14 0 R/Fm3 15 0 R/Fm4 16 0 R/Fm5 17 0 R/Fm6 18 0 R/Fm7 19 0 R/Fm8 20 0 R/Fm9 21 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 450]/Length 3126/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm13 13 0 R/Fm2 14 0 R/Fm3 15 0 R/Fm4 16 0 R/Fm5 17 0 R/Fm6 18 0 R/Fm7 19 0 R/Fm8 20 0 R/Fm9 21 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 450 re
 W
 n
@@ -49,9 +49,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 75 75 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -3.75 cm
+1 0 0 1 0 -1.12 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm1 Do
@@ -78,9 +78,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 225 75 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 3.75 3.75 cm
+1 0 0 1 1.12 1.12 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm2 Do
@@ -107,9 +107,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 375 75 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 3.75 0 cm
+1 0 0 1 1.12 0 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm3 Do
@@ -136,9 +136,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 525 75 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 3.75 cm
+1 0 0 1 0 1.12 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm4 Do
@@ -165,9 +165,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 75 225 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -24 cm
+1 0 0 1 0 -7.2 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm5 Do
@@ -194,9 +194,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 225 225 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -3.75 cm
+1 0 0 1 0 -1.12 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm6 Do
@@ -223,9 +223,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 375 225 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -5 cm
+1 0 0 1 0 -1.5 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm7 Do
@@ -252,9 +252,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 525 225 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -14.17 cm
+1 0 0 1 0 -4.25 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm8 Do
@@ -281,10 +281,10 @@ S
 q
 0 0 0 rg
 1 0 0 1 675 225 cm
-0.3 0 0 0.3 0 0 cm
 0.70711 0.70711 -0.70711 0.70711 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -30 cm
+1 0 0 1 0 -9 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm9 Do
@@ -311,9 +311,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 75 375 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -14.17 cm
+1 0 0 1 0 -4.25 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm10 Do
@@ -340,9 +340,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 225 375 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -24 cm
+1 0 0 1 0 -7.2 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm11 Do
@@ -369,9 +369,9 @@ S
 q
 0 0 0 rg
 1 0 0 1 375 375 cm
-0.3 0 0 0.3 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -22.5 cm
+1 0 0 1 0 -6.75 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm12 Do
@@ -398,10 +398,10 @@ S
 q
 0 0 0 rg
 1 0 0 1 525 375 cm
-0.3 0 0 0.3 0 0 cm
 0.70711 0.70711 -0.70711 0.70711 0 0 cm
 8 0 0 8 0 0 cm
-1 0 0 1 0 -7.2 cm
+1 0 0 1 0 -2.16 cm
+0.3 0 0 0.3 0 0 cm
 q
 1 0 0 1 0 0 cm
 /Fm13 Do
@@ -653,22 +653,22 @@ xref
 0000000428 00000 n 
 0000000569 00000 n 
 0000000752 00000 n 
-0000004159 00000 n 
-0000004332 00000 n 
-0000004506 00000 n 
-0000004692 00000 n 
-0000004866 00000 n 
-0000005040 00000 n 
-0000005226 00000 n 
-0000005400 00000 n 
-0000005574 00000 n 
-0000005760 00000 n 
-0000005958 00000 n 
-0000006144 00000 n 
-0000006330 00000 n 
+0000004161 00000 n 
+0000004334 00000 n 
+0000004508 00000 n 
+0000004694 00000 n 
+0000004868 00000 n 
+0000005042 00000 n 
+0000005228 00000 n 
+0000005402 00000 n 
+0000005576 00000 n 
+0000005762 00000 n 
+0000005960 00000 n 
+0000006146 00000 n 
+0000006332 00000 n 
 trailer
-<</ID [<8fc6eba5e419c7bb1ae9c0ce80a48764bfe2cf92bd5df1b7bdd60ac9619a8f136ee31894e80664c2641c0c9da80bae3a4af78c6af69b4b956868de6c2006d4f6><8fc6eba5e419c7bb1ae9c0ce80a48764bfe2cf92bd5df1b7bdd60ac9619a8f136ee31894e80664c2641c0c9da80bae3a4af78c6af69b4b956868de6c2006d4f6>]/Info 3 0 R/Root 1 0 R/Size 22>>
+<</ID [<605770201f3d1c17fe85d63f5ee865234d0e3e35546f6799310d3b6cafb17f1679267f956d1e1a77863b4cb1d0154cb8259ef05fb5c19a86d4e26ade3a11626a><605770201f3d1c17fe85d63f5ee865234d0e3e35546f6799310d3b6cafb17f1679267f956d1e1a77863b4cb1d0154cb8259ef05fb5c19a86d4e26ade3a11626a>]/Info 3 0 R/Root 1 0 R/Size 22>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-6516
+6518
 %%EOF
