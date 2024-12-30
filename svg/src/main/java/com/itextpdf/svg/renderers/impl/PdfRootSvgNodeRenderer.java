@@ -28,11 +28,15 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,6 +72,7 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         PdfCanvas currentCanvas = context.getCurrentCanvas();
         currentCanvas.concatMatrix(this.calculateTransformation(context));
         currentCanvas.writeLiteral("% svg root\n");
+        applyBackgroundColor(context);
         subTreeRoot.draw(context);
     }
 
@@ -134,6 +139,22 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
     public ISvgNodeRenderer createDeepCopy() {
         PdfRootSvgNodeRenderer copy = new PdfRootSvgNodeRenderer(subTreeRoot.createDeepCopy());
         return copy;
+    }
+
+    private void applyBackgroundColor(SvgDrawContext context) {
+        final String backgroundColorStr = subTreeRoot.getAttribute(CommonCssConstants.BACKGROUND_COLOR);
+        if (backgroundColorStr != null && !CommonCssConstants.TRANSPARENT.equals(backgroundColorStr)) {
+            final Rectangle backgroundArea = context.getCurrentViewPort();
+            //Since we don't have info about margins/paddings/borders, background box can't work correctly, so we don't
+            //count for it when applying background color in svg
+            TransparentColor color = CssDimensionParsingUtils.parseColor(backgroundColorStr);
+            context.getCurrentCanvas().saveState().setFillColor(color.getColor());
+            color.applyFillTransparency(context.getCurrentCanvas());
+            context.getCurrentCanvas().rectangle((double) backgroundArea.getX(),
+                    (double) backgroundArea.getY(),
+                    (double) backgroundArea.getWidth(),
+                    (double) backgroundArea.getHeight()).fill().restoreState();
+        }
     }
 
 }

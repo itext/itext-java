@@ -101,6 +101,25 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void svgImageWithBackgroundTest() throws IOException, InterruptedException {
+        String svgFileName = SOURCE_FOLDER + "svgImageWithBackground.svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_svgImageWithBackground.pdf";
+        String outFileName = DESTINATION_FOLDER + "svgImageWithBackground.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, new SvgConverterProperties().setBaseUri(svgFileName));
+            ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, new SvgDrawContext(null, null));
+            SvgImageXObject svgImageXObject = new SvgImageXObject(wh,
+                    result, new ResourceResolver(SOURCE_FOLDER));
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+            document.add(svgImage);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
     public void noSpecifiedWidthHeightImageTest() throws IOException, InterruptedException {
         String svgFileName = SOURCE_FOLDER + "noWidthHeightSvgImage.svg";
         String cmpFileName = SOURCE_FOLDER + "cmp_noWidthHeightSvg.pdf";

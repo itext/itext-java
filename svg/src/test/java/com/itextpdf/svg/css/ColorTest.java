@@ -42,13 +42,11 @@ public class ColorTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-7156: update cmp file after supporting
     public void backgroundColorTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"background-color");
     }
 
     @Test
-    //TODO DEVSIX-8758: update cmp file after supporting
     public void currentColorTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"current-color");
     }

@@ -437,6 +437,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (rawColorValue == null) {
             return null;
         }
+        if (CommonCssConstants.CURRENTCOLOR.equals(rawColorValue)) {
+            rawColorValue = getAttributeOrDefault(CommonCssConstants.COLOR, "black");
+        }
         CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(rawColorValue);
         Token token = tokenizer.getNextValidToken();
         if (token == null) {
