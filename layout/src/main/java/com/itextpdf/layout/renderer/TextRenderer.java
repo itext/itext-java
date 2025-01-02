@@ -96,6 +96,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private static final float ITALIC_ANGLE = 0.21256f;
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1 / 30f;
+    //Line height is recalculated several times during layout and small difference is expected.
+    private static final float HEIGHT_EPS = 5.1e-2F;
 
     protected float yLineOffset;
 
@@ -647,7 +649,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
         // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
         boolean isPlacingForcedWhileNothing = false;
-        if (currentLineHeight > layoutBox.getHeight()) {
+        if (currentLineHeight > layoutBox.getHeight() + HEIGHT_EPS) {
             if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && isOverflowFit(overflowY)) {
                 applyPaddings(occupiedArea.getBBox(), paddings, true);
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
