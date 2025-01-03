@@ -143,7 +143,6 @@ public class AttributesRelativeUnitTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4566 Processing of width&height attributes in use tag are not currently supported
     public void useWidthPercentTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "useWidthPercentTest");
     }

@@ -1,0 +1,22 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <circle id="green" fill="green" cx="20" cy="20" r="20"/>
+  </defs>
+  <symbol id="red">
+    <circle fill="red" cx="20" cy="20" r="20"/>
+  </symbol>
+  <defs>
+    <svg id="blue">
+        <circle fill="blue" cx="20" cy="20" r="20"/>
+    </svg>
+  </defs>
+  
+  <text x="0" y="12">Green is usual circle, so width and height on use is ignored</text>
+  <use href="#green" x="50" y="20" width="text" height="%"/>
+
+  <text x="0" y="82">Red is symbol, so width and height on use affects the result</text>
+  <use href="#red" x="50" y="90" width="text" height="4%" />
+
+  <text x="0" y="152">Blue is svg, so width and height on use affects the result</text>
+  <use href="#blue" x="50" y="160" width="0" />
+</svg>

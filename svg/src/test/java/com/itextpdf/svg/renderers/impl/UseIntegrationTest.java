@@ -22,16 +22,21 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class UseIntegrationTest extends SvgIntegrationTest {
@@ -155,5 +160,29 @@ public class UseIntegrationTest extends SvgIntegrationTest {
     public void useInDifferentFilesExampleTest() throws IOException, InterruptedException {
         //TODO: update when DEVSIX-2252 fixed
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "useInDifferentFilesExampleTest");
+    }
+
+    @Test
+    public void widthAndHeightResolvingTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "widthAndHeightResolving", properties);
+    }
+
+    @Test
+    public void widthAndHeightOverridingTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "widthAndHeightOverriding", properties);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO, logLevel = LogLevelConstants.INFO, count = 2),
+            @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_PROCESS_NAN, logLevel = LogLevelConstants.ERROR, count = 4)
+    })
+    public void invalidWidthAndHeightResolvingTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidWidthAndHeightResolving", properties);
+    }
+
+    @Test
+    public void widthAndHeightNestedResolvingTest() throws IOException,InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "widthAndHeightNestedResolving", properties);
     }
 }

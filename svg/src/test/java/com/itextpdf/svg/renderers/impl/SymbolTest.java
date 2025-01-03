@@ -162,13 +162,11 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4566 Processing of width&height attributes in use tag are not currently supported
     public void useHeightWidthAllUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useHeightWidthAllUnitsTest", properties);
     }
 
     @Test
-    // TODO DEVSIX-4566 Processing of width&height attributes in use tag are not currently supported
     public void useSymbolHeightWidthAllUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useSymbolHeightWidthAllUnitsTest",
                 properties);
@@ -187,7 +185,6 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4566 Processing of width&height attributes in use tag are not currently supported
     public void widthHeightAttrInteractionTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightAttrInteraction",
                 properties);

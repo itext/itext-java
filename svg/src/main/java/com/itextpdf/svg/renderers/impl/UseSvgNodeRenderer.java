@@ -26,8 +26,10 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -43,10 +45,10 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
     @Override
     protected void doDraw(SvgDrawContext context) {
         if (this.attributesAndStyles != null) {
-            String elementToReUse = this.attributesAndStyles.get(SvgConstants.Attributes.HREF);
+            String elementToReUse = getAttribute(SvgConstants.Attributes.HREF);
 
             if (elementToReUse == null) {
-                elementToReUse = this.attributesAndStyles.get(SvgConstants.Attributes.XLINK_HREF);
+                elementToReUse = getAttribute(SvgConstants.Attributes.XLINK_HREF);
             }
 
             if (elementToReUse != null && !elementToReUse.isEmpty() && isValidHref(elementToReUse)) {
@@ -54,25 +56,22 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                 if (!context.isIdUsedByUseTagBefore(normalizedName)) {
                     ISvgNodeRenderer template = context.getNamedObject(normalizedName);
                     // Clone template
-                    ISvgNodeRenderer namedObject = template == null ? null : template.createDeepCopy();
+                    ISvgNodeRenderer clonedObject = template == null ? null : template.createDeepCopy();
                     // Resolve parent inheritance
-                    SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(this, namedObject, context.getCssContext());
+                    SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(this, clonedObject, context.getCssContext());
 
-                    if (namedObject != null) {
-                        if (namedObject instanceof AbstractSvgNodeRenderer) {
-                            ((AbstractSvgNodeRenderer) namedObject).setPartOfClipPath(partOfClipPath);
+                    if (clonedObject != null) {
+                        if (clonedObject instanceof AbstractSvgNodeRenderer) {
+                            ((AbstractSvgNodeRenderer) clonedObject).setPartOfClipPath(partOfClipPath);
                         }
                         PdfCanvas currentCanvas = context.getCurrentCanvas();
 
-                        float x = 0f;
-                        float y = 0f;
-
                         // If X or Y attribute is null, then default 0 value will be returned
-                        x = parseHorizontalLength(this.attributesAndStyles.get(SvgConstants.Attributes.X), context);
-                        y = parseVerticalLength(this.attributesAndStyles.get(SvgConstants.Attributes.Y), context);
+                        float x = parseHorizontalLength(getAttribute(Attributes.X), context);
+                        float y = parseVerticalLength(getAttribute(Attributes.Y), context);
 
                         AffineTransform inverseMatrix = null;
-                        if (!CssUtils.compareFloats(x,0) || !CssUtils.compareFloats(y,0)) {
+                        if (!CssUtils.compareFloats(x, 0) || !CssUtils.compareFloats(y, 0)) {
                             AffineTransform translation = AffineTransform.getTranslateInstance(x, y);
                             currentCanvas.concatMatrix(translation);
                             if (partOfClipPath) {
@@ -85,11 +84,25 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                             }
                         }
 
-                        // setting the parent of the referenced element to this instance
-                        namedObject.setParent(this);
-                        namedObject.draw(context);
-                        // unsetting the parent of the referenced element
-                        namedObject.setParent(null);
+                        // Setting the parent of the referenced element to this instance
+                        clonedObject.setParent(this);
+                        // Width, and height have no effect on use elements, unless the element referenced has a viewBox
+                        // i.e. they only have an effect when use refers to a svg or symbol element.
+                        if (clonedObject instanceof SvgTagSvgNodeRenderer || clonedObject instanceof SymbolSvgNodeRenderer) {
+                            if (getAttribute(Attributes.WIDTH) != null) {
+                                float width = parseHorizontalLength(getAttribute(Attributes.WIDTH), context);
+                                clonedObject.setAttribute(Attributes.WIDTH, Float.toString(width) + CommonCssConstants.PT);
+                            }
+                            if (getAttribute(Attributes.HEIGHT) != null) {
+                                float height = parseVerticalLength(getAttribute(Attributes.HEIGHT), context);
+                                clonedObject.setAttribute(Attributes.HEIGHT, Float.toString(height) + CommonCssConstants.PT);
+                            }
+                        }
+
+                        clonedObject.draw(context);
+
+                        // Unsetting the parent of the referenced element
+                        clonedObject.setParent(null);
                         if (inverseMatrix != null) {
                             currentCanvas.concatMatrix(inverseMatrix);
                         }
