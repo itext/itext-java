@@ -255,7 +255,8 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         // in forms logic root renderer is CanvasRenderer, and these properties will have default values. So
         // we get them from renderer and set these properties to model element, which will be passed to forms logic.
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
-        modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));
+        modelElement.setProperty(Property.RENDERING_MODE,
+                this.<com.itextpdf.layout.properties.RenderingMode>getProperty(Property.RENDERING_MODE));
         final PdfSignatureFormField sigField = new SignatureFormFieldBuilder(doc, name).setWidgetRectangle(area)
                 .setConformance(getConformance(doc))
                 .setFont(font)
