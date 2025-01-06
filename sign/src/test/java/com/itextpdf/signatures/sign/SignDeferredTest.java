@@ -34,6 +34,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -64,6 +65,8 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.util.HashMap;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -73,7 +76,7 @@ import org.junit.jupiter.api.Test;
 public class SignDeferredTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    
+
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/SignDeferredTest/";
     private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/SignDeferredTest/";
@@ -145,28 +148,11 @@ public class SignDeferredTest extends ExtendedITextTest {
     @Test
     public void prepareDocForSignDeferredLittleSpaceTest() throws IOException {
         String input = sourceFolder + "helloWorldDoc.pdf";
-
-        String sigFieldName = "DeferredSignature1";
-        PdfName filter = PdfName.Adobe_PPKLite;
-        PdfName subFilter = PdfName.Adbe_pkcs7_detached;
-
         PdfReader reader = new PdfReader(input);
-        PdfSigner signer = new PdfSigner(reader, new ByteArrayOutputStream(), new StampingProperties());
-        SignerProperties signerProperties = new SignerProperties().setFieldName(sigFieldName);
-        signer.setSignerProperties(signerProperties);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
-                .setContent("Signature field which signing is deferred.");
-        signerProperties
-                .setPageRect(new Rectangle(36, 600, 200, 100))
-                .setPageNumber(1)
-                .setSignatureAppearance(appearance);
-        IExternalSignatureContainer external = new ExternalBlankSignatureContainer(filter, subFilter);
-
-        // This size is definitely not enough, however, the size check will pass.
-        // The test will fail lately on an invalid key
-        int estimatedSize = 0;
-        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> signer.signExternalContainer(external, estimatedSize));
+        DummySigner dummySigner = new DummySigner(reader, new ByteArrayOutputStream(), new StampingProperties());
+        PdfDictionary content = new PdfDictionary();
+        content.put(PdfName.Contents, new PdfString("test"));
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> dummySigner.dummyClose(content));
         Assertions.assertEquals(SignExceptionMessageConstant.TOO_BIG_KEY, e.getMessage());
     }
 
@@ -184,7 +170,7 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         String sigFieldName = "DeferredSignature1";
         try (PdfReader reader = new PdfReader(srcFileName);
-                OutputStream outStream = FileUtil.getFileOutputStream(outFileName)) {
+             OutputStream outStream = FileUtil.getFileOutputStream(outFileName)) {
             PdfSigner.signDeferred(reader, sigFieldName, outStream, extSigContainer);
         }
 
@@ -209,7 +195,7 @@ public class SignDeferredTest extends ExtendedITextTest {
 
         String sigFieldName = "DeferredSignature1";
         try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName));
-                OutputStream outStream = FileUtil.getFileOutputStream(outFileName)) {
+             OutputStream outStream = FileUtil.getFileOutputStream(outFileName)) {
             PdfSigner.signDeferred(document, sigFieldName, outStream, extSigContainer);
         }
 
@@ -261,7 +247,7 @@ public class SignDeferredTest extends ExtendedITextTest {
         ReadySignatureSigner extSigContainer = new ReadySignatureSigner(cmsSignature);
 
         try (PdfReader newReader = new PdfReader(new ByteArrayInputStream(preSignedBytes));
-                OutputStream outStream = FileUtil.getFileOutputStream(outFileName)) {
+             OutputStream outStream = FileUtil.getFileOutputStream(outFileName)) {
             PdfSigner.signDeferred(newReader, sigFieldName, outStream, extSigContainer);
         }
 
@@ -394,6 +380,20 @@ public class SignDeferredTest extends ExtendedITextTest {
         }
 
         public void modifySigningDictionary(PdfDictionary signDic) {
+        }
+    }
+
+    static class DummySigner extends PdfSigner {
+
+        public DummySigner(PdfReader reader, OutputStream outputStream, StampingProperties properties) throws IOException {
+            super(reader, outputStream, properties);
+        }
+
+        public void dummyClose(PdfDictionary content) throws IOException {
+            preClosed = true;
+            exclusionLocations = new HashMap<>();
+            exclusionLocations.put(PdfName.Contents, new PdfLiteral(1));
+            close(content);
         }
     }
 }

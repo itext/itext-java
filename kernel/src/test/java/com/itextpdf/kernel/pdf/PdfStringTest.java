@@ -28,6 +28,7 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -278,5 +279,15 @@ public class PdfStringTest extends ExtendedITextTest {
         Assertions.assertEquals("", string.toUnicodeString());
         string.setHexWriting(true);
         Assertions.assertEquals("", string.toUnicodeString());
+    }
+
+
+    @Test
+    public void nullHexWriting() {
+        PdfString string = new PdfString("hello");
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
+            string.encodeBytes(null);
+        });
+        Assertions.assertEquals("byte[] should not be null.", e.getMessage());
     }
 }
