@@ -663,8 +663,9 @@ public class LayoutTaggingHelper {
             return;
         }
 
-        int kidIndInParentKidsHint = getAccessibleKidsHint(parentKey).indexOf(kidKey);
-        int ind = getNearestNextSiblingTagIndex(waitingTagsManager, parentPointer, getAccessibleKidsHint(parentKey), kidIndInParentKidsHint);
+        List<TaggingHintKey> parentKidsHint = getAccessibleKidsHint(parentKey);
+        int kidIndInParentKidsHint = parentKidsHint.indexOf(kidKey);
+        int ind = getNearestNextSiblingTagIndex(waitingTagsManager, parentPointer, parentKidsHint, kidIndInParentKidsHint);
 
         parentPointer.setNextNewKidIndex(ind);
         kidPointer.relocate(parentPointer);
