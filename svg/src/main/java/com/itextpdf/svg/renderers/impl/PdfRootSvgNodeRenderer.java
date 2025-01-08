@@ -53,12 +53,11 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
 
     @Override
     public void setParent(ISvgNodeRenderer parent) {
-        // TODO DEVSIX-2283
+        // Do nothing because it is root
     }
 
     @Override
     public ISvgNodeRenderer getParent() {
-        // TODO DEVSIX-2283
         return null;
     }
 

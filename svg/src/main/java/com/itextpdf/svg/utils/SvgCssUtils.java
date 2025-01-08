@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class that facilitates parsing values from CSS.
  */
-// TODO DEVSIX-2266
-
 public final class SvgCssUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgCssUtils.class);
@@ -78,8 +76,12 @@ public final class SvgCssUtils {
      * Converts a float to a String.
      *
      * @param value to be converted float value
+     *
      * @return the value in a String representation
+     *
+     * @deprecated can be replaced by {@code Float.toString(float)}
      */
+    @Deprecated
     public static String convertFloatToString(float value) {
         return String.valueOf(value);
     }
@@ -88,8 +90,12 @@ public final class SvgCssUtils {
      * Converts a double to a String.
      *
      * @param value to be converted double value
+     *
      * @return the value in a String representation
+     *
+     * @deprecated can be replaced by {@code Double.toString(float)}
      */
+    @Deprecated
     public static String convertDoubleToString(double value) {
         return String.valueOf(value);
     }

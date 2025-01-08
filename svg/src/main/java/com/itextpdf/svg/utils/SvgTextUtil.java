@@ -24,8 +24,8 @@ package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
-import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.util.WhiteSpaceUtil;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
@@ -47,6 +47,7 @@ public final class SvgTextUtil {
      * @return string with all leading whitespace characters removed
      */
     public static String trimLeadingWhitespace(String toTrim) {
+        // TODO DEVSIX-8808 make this method private static, because it is used only in the scope of that class
         if (toTrim == null) {
             return "";
         }
@@ -71,6 +72,7 @@ public final class SvgTextUtil {
      * @return string with al trailing whitespace characters removed
      */
     public static String trimTrailingWhitespace(String toTrim) {
+        // TODO DEVSIX-8808 make this method private static, because it is used only in the scope of that class
         if (toTrim == null) {
             return "";
         }

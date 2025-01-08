@@ -58,7 +58,7 @@ public class SvgCoordinateUtils {
             for (int j = 0; j < currentCoordinates.length; j++, i++) {
                 double relativeDouble = Double.parseDouble(relativeCoordinates[i]);
                 relativeDouble += currentCoordinates[j];
-                absoluteOperators[i] = SvgCssUtils.convertDoubleToString(relativeDouble);
+                absoluteOperators[i] = Double.toString(relativeDouble);
             }
         }
 

@@ -42,7 +42,6 @@ import com.itextpdf.svg.renderers.path.impl.MoveTo;
 import com.itextpdf.svg.renderers.path.impl.QuadraticSmoothCurveTo;
 import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
-import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -156,11 +155,11 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                     float reflectedX = (float) (2 * previousEndPoint.getX() - lastControlPoint.getX());
                     float reflectedY = (float) (2 * previousEndPoint.getY() - lastControlPoint.getY());
 
-                    startingControlPoint[0] = SvgCssUtils.convertFloatToString(reflectedX);
-                    startingControlPoint[1] = SvgCssUtils.convertFloatToString(reflectedY);
+                    startingControlPoint[0] = Float.toString(reflectedX);
+                    startingControlPoint[1] = Float.toString(reflectedY);
                 } else {
-                    startingControlPoint[0] = SvgCssUtils.convertDoubleToString(previousEndPoint.getX());
-                    startingControlPoint[1] = SvgCssUtils.convertDoubleToString(previousEndPoint.getY());
+                    startingControlPoint[0] = Double.toString(previousEndPoint.getX());
+                    startingControlPoint[1] = Double.toString(previousEndPoint.getY());
                 }
             } else {
                 throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE);

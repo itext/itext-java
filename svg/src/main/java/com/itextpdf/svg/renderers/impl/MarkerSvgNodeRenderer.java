@@ -25,8 +25,8 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.MarkerVertexType;
 import com.itextpdf.svg.SvgConstants;
@@ -37,10 +37,9 @@ import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.SvgTextUtil;
 
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;marker&gt; tag.
@@ -136,10 +135,8 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             // setting the parent of the referenced element to this instance
             marker.setParent(parent);
             marker.setAttribute(SvgConstants.Tags.MARKER, markerToUse.toString());
-            marker.setAttribute(SvgConstants.Attributes.X,
-                    SvgCssUtils.convertDoubleToString(markerPoints.get(i).getX()));
-            marker.setAttribute(SvgConstants.Attributes.Y,
-                    SvgCssUtils.convertDoubleToString(markerPoints.get(i).getY()));
+            marker.setAttribute(SvgConstants.Attributes.X, Double.toString(markerPoints.get(i).getX()));
+            marker.setAttribute(SvgConstants.Attributes.Y, Double.toString(markerPoints.get(i).getY()));
             marker.setAttribute(MarkerSvgNodeRenderer.MARKER_INDEX, Integer.toString(startIndex + i));
             context.getCurrentCanvas().saveState();
             marker.draw(context);
