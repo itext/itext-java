@@ -336,6 +336,27 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
         return kids;
     }
 
+    /**
+     * Checks if the kid with the given index is flushed.
+     *
+     * @param index index of the kid to check.
+     * @return {@code true} if the kid with the given index is flushed, {@code false} otherwise.
+     */
+    public boolean isKidFlushed(int index) {
+        PdfObject k = getK();
+        if (k == null) {
+            return false;
+        }
+        if (k.isArray()) {
+            PdfArray array = (PdfArray) k;
+            if (index >= array.size()) {
+                return false;
+            }
+            return array.get(index).isFlushed();
+        }
+        return index == 0 && k.isFlushed();
+    }
+
     public PdfObject getK() {
         return getPdfObject().get(PdfName.K);
     }
