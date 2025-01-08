@@ -32,7 +32,9 @@ import com.itextpdf.layout.properties.Property;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class CollapsedTableBorders extends TableBorders {
     /**
@@ -57,13 +59,17 @@ class CollapsedTableBorders extends TableBorders {
 
     private static Comparator<Border> borderComparator = new BorderComparator();
 
+    private final Map<Integer, List<Border>> verticalBorderComputationResult;
+
     // region constructors
     public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
         super(rows, numberOfColumns, tableBoundingBorders);
+        verticalBorderComputationResult =  new HashMap<>();
     }
 
     public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, int largeTableIndexOffset) {
         super(rows, numberOfColumns, tableBoundingBorders, largeTableIndexOffset);
+        verticalBorderComputationResult = new HashMap<>();
     }
     // endregion
 
@@ -133,16 +139,21 @@ class CollapsedTableBorders extends TableBorders {
         return borders;
     }
 
+
     @Override
     public List<Border> getVerticalBorder(int index) {
-        if (index == 0) {
-            List<Border> borderList = TableBorderUtil
-                    .createAndFillBorderList(null, tableBoundingBorders[3], verticalBorders.get(0).size());
-            return getCollapsedList(verticalBorders.get(0), borderList);
-        } else if (index == numberOfColumns) {
-            List<Border> borderList = TableBorderUtil.createAndFillBorderList(null, tableBoundingBorders[1],
-                    verticalBorders.get(verticalBorders.size() - 1).size());
-            return getCollapsedList(verticalBorders.get(verticalBorders.size() - 1), borderList);
+        if (index == 0 || index == numberOfColumns) {
+            if (verticalBorderComputationResult.containsKey(index)) {
+                return verticalBorderComputationResult.get(index);
+            }
+            final int tableBoundingBordersIndex = index == 0 ? 3 : 1;
+            List<Border> borderList = TableBorderUtil.createAndFillBorderList(
+                    null,
+                    tableBoundingBorders[tableBoundingBordersIndex],
+                    verticalBorders.get(index).size());
+            List<Border> result = getCollapsedList(verticalBorders.get(index), borderList);
+            verticalBorderComputationResult.put(index, result);
+            return result;
         } else {
             return verticalBorders.get(index);
         }
@@ -226,7 +237,7 @@ class CollapsedTableBorders extends TableBorders {
     }
 
     public CollapsedTableBorders setBottomBorderCollapseWith(List<Border> bottomBorderCollapseWith,
-            List<Border> verticalBordersCrossingBottomBorder) {
+                                                             List<Border> verticalBordersCrossingBottomBorder) {
         this.bottomBorderCollapseWith = new ArrayList<Border>();
         if (null != bottomBorderCollapseWith) {
             this.bottomBorderCollapseWith.addAll(bottomBorderCollapseWith);
