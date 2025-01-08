@@ -685,7 +685,7 @@ public class LayoutTaggingHelper {
     }
 
     private static boolean isNonAccessibleHint(TaggingHintKey hintKey) {
-        return hintKey.getAccessibleElement() == null || hintKey.getAccessibleElement().getAccessibilityProperties().getRole() == null;
+        return !hintKey.isAccessible();
     }
 
     private boolean isTagAlreadyExistsForHint(TaggingHintKey tagHint) {
