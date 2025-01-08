@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241229222531+03'00')/ModDate(D:20241229222531+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20250108145144+03'00')/ModDate(D:20250108145144+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,11 +24,10 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 450 300]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 300]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 300 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -141,10 +140,10 @@ xref
 0000000015 00000 n 
 0000000428 00000 n 
 0000000569 00000 n 
-0000000752 00000 n 
+0000000737 00000 n 
 trailer
-<</ID [<ee413ecaa6a527da968d2e900045e4ef11257acd98e684da420c24aef36a662ab600d1df07dd4c49a13ad58aec120e4348f0d13836bf29df5876b25ed73a4eb8><ee413ecaa6a527da968d2e900045e4ef11257acd98e684da420c24aef36a662ab600d1df07dd4c49a13ad58aec120e4348f0d13836bf29df5876b25ed73a4eb8>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<8a811e48a4d3e42b7fb84035e86572b42b1a6f683ae412e093b2b701895e4b6706579098d41d3848de5d58f28637a99f3ad3920beac71fd27143521b10ea0703><8a811e48a4d3e42b7fb84035e86572b42b1a6f683ae412e093b2b701895e4b6706579098d41d3848de5d58f28637a99f3ad3920beac71fd27143521b10ea0703>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-2080
+2065
 %%EOF

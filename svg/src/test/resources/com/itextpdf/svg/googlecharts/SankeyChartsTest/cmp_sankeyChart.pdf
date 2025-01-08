@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241125121539+03'00')/ModDate(D:20241125121539+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20250103181246+03'00')/ModDate(D:20250103181246+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,11 +24,10 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 450 225]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 225]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 225 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -252,21 +251,21 @@ xref
 0000000015 00000 n 
 0000000428 00000 n 
 0000000569 00000 n 
-0000000752 00000 n 
-0000002614 00000 n 
-0000002641 00000 n 
-0000002669 00000 n 
-0000002697 00000 n 
-0000002725 00000 n 
-0000002753 00000 n 
-0000002781 00000 n 
-0000002809 00000 n 
-0000002837 00000 n 
-0000002865 00000 n 
-0000002893 00000 n 
+0000000737 00000 n 
+0000002599 00000 n 
+0000002626 00000 n 
+0000002654 00000 n 
+0000002682 00000 n 
+0000002710 00000 n 
+0000002738 00000 n 
+0000002766 00000 n 
+0000002794 00000 n 
+0000002822 00000 n 
+0000002850 00000 n 
+0000002878 00000 n 
 trailer
-<</ID [<8f1cf12e0611baf9ea33aea91bd58b5809d7c315780d346c0626d952d56e7d98e6781b1b9a3916ba2a97f8e27c139dd996cb80a704c75636581376b720d7ccf5><8f1cf12e0611baf9ea33aea91bd58b5809d7c315780d346c0626d952d56e7d98e6781b1b9a3916ba2a97f8e27c139dd996cb80a704c75636581376b720d7ccf5>]/Info 3 0 R/Root 1 0 R/Size 20>>
+<</ID [<218f4d15b1e7230ca025b1f04b8809009ffaba02e0b1cfc0395c7ccb7637ad33a2883c7aa48bd2ccc5e8563fa82d479a507e20fe363231ee7095aeaec84e324a><218f4d15b1e7230ca025b1f04b8809009ffaba02e0b1cfc0395c7ccb7637ad33a2883c7aa48bd2ccc5e8563fa82d479a507e20fe363231ee7095aeaec84e324a>]/Info 3 0 R/Root 1 0 R/Size 20>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-2921
+2906
 %%EOF

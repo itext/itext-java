@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241125124218+03'00')/ModDate(D:20241125124218+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20250103181713+03'00')/ModDate(D:20250103181713+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 225 225]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 225 225]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 225 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 225 225]/Length 252/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 225 225]/Length 237/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 225 225 re
 W
 n
@@ -53,7 +52,6 @@ q
 3 0 0 3 0 0 cm
 1 0 0 1 4.14 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 Q
@@ -99,11 +97,11 @@ xref
 0000000015 00000 n 
 0000000428 00000 n 
 0000000569 00000 n 
-0000000752 00000 n 
-0000001150 00000 n 
+0000000737 00000 n 
+0000001120 00000 n 
 trailer
-<</ID [<46c1830b23d1e116f3bcb34b7a5127be3dde827078f5e5ff4ce437141d7b784032493786e36f41088fb2e0a5a0708655f3907426a14462162f77e73af68fc2b9><46c1830b23d1e116f3bcb34b7a5127be3dde827078f5e5ff4ce437141d7b784032493786e36f41088fb2e0a5a0708655f3907426a14462162f77e73af68fc2b9>]/Info 3 0 R/Root 1 0 R/Size 10>>
+<</ID [<9d02abff4f3df014978eeb7df11c8181d67e29f7967341cb60cdfd9697295430c7062d1141a69d9cfcd34139bcf8fb870332a6fb712700a3b5b6af33caa45bca><9d02abff4f3df014978eeb7df11c8181d67e29f7967341cb60cdfd9697295430c7062d1141a69d9cfcd34139bcf8fb870332a6fb712700a3b5b6af33caa45bca>]/Info 3 0 R/Root 1 0 R/Size 10>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-1360
+1330
 %%EOF

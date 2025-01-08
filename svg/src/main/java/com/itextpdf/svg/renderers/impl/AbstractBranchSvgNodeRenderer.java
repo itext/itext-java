@@ -22,7 +22,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
@@ -91,13 +90,14 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             applyViewBox(context);
 
             boolean overflowVisible = isOverflowVisible(this);
+            Rectangle bbBox;
             // TODO (DEVSIX-3482) Currently overflow logic works only for markers.  Update this code after the ticket will be finished.
             if (this instanceof MarkerSvgNodeRenderer && overflowVisible) {
-                writeBBoxAccordingToVisibleOverflow(context, stream);
+                bbBox = getBBoxAccordingToVisibleOverflow(context);
             } else {
-                Rectangle bbBox = context.getCurrentViewPort().clone();
-                stream.put(PdfName.BBox, new PdfArray(bbBox));
+                bbBox = context.getCurrentViewPort().clone();
             }
+            stream.put(PdfName.BBox, new PdfArray(bbBox));
 
             context.pushCanvas(newCanvas);
 
@@ -117,21 +117,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             cleanUp(context);
 
             // Transformation already happened in AbstractSvgNodeRenderer, so no need to do a transformation here
-            addXObject(context.getCurrentCanvas(), xObject, 0, 0);
-        }
-    }
-
-    //TODO: DEVSIX-5731 Replace this workaround method with PdfCanvas::addXObjectAt
-    static void addXObject(PdfCanvas canvas, PdfXObject xObject, float x, float y) {
-        if (xObject instanceof PdfFormXObject) {
-            canvas.saveState();
-            canvas.concatMatrix(1, 0, 0, 1, x, y);
-            PdfName name = canvas.getResources().addForm((PdfFormXObject) xObject);
-            canvas.getContentStream().getOutputStream()
-                  .write(name).writeSpace().writeBytes(ByteUtils.getIsoBytes("Do\n"));
-            canvas.restoreState();
-        } else {
-            canvas.addXObjectAt(xObject, x, y);
+            context.getCurrentCanvas().addXObjectAt(xObject, bbBox.getX(), bbBox.getY());
         }
     }
 
@@ -305,15 +291,17 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
     }
 
     /**
-     * When in the svg element {@code overflow} is {@code visible} the corresponding formXObject
-     * should have a BBox (form XObject’s bounding box; see PDF 32000-1:2008 - 8.10.2 Form Dictionaries)
-     * that should cover the entire svg space (page in pdf) in order to be able to show parts of the element which are outside the current element viewPort.
-     * To do this, we get the inverse matrix of all the current transformation matrix changes and apply it to the root viewPort.
-     * This allows you to get the root rectangle in the final coordinate system.
+     * When in the svg element {@code overflow} is {@code visible} the corresponding formXObject should have a BBox
+     * (form XObject’s bounding box; see PDF 32000-1:2008 - 8.10.2 Form Dictionaries) that should cover the entire svg
+     * space (page in pdf) in order to be able to show parts of the element which are outside the current element
+     * viewPort. To do this, we get the inverse matrix of all the current transformation matrix changes and apply it
+     * to the root viewPort. This allows you to get the root rectangle in the final coordinate system.
+     *
      * @param context current context to get canvases and view ports
-     * @param stream stream to write a BBox
+     *
+     * @return the set to {@code PdfStream} bbox
      */
-    private static void writeBBoxAccordingToVisibleOverflow(SvgDrawContext context, PdfStream stream) {
+    private static Rectangle getBBoxAccordingToVisibleOverflow(SvgDrawContext context) {
         List<PdfCanvas> canvases = new ArrayList<>();
         int canvasesSize = context.size();
         for (int i = 0; i < canvasesSize; i++) {
@@ -330,16 +318,14 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
         try {
             transform = transform.createInverse();
         } catch (NoninvertibleTransformException e) {
-            // Case with zero determiner (see PDF 32000-1:2008 - 8.3.4 Transformation Matrices - NOTE 3)
-            // for example with a, b, c, d in cm equal to 0
-            stream.put(PdfName.BBox, new PdfArray(new Rectangle(0, 0, 0, 0)));
             Logger logger = LoggerFactory.getLogger(AbstractBranchSvgNodeRenderer.class);
             logger.warn(SvgLogMessageConstant.UNABLE_TO_GET_INVERSE_MATRIX_DUE_TO_ZERO_DETERMINANT);
-            return;
+            // Case with zero determiner (see PDF 32000-1:2008 - 8.3.4 Transformation Matrices - NOTE 3)
+            // for example with a, b, c, d in cm equal to 0
+            return new Rectangle(0, 0, 0, 0);
         }
         Point[] points = context.getRootViewPort().toPointsArray();
         transform.transform(points, 0, points, 0, points.length);
-        Rectangle bbox = Rectangle.calculateBBox(Arrays.asList(points));
-        stream.put(PdfName.BBox, new PdfArray(bbox));
+        return Rectangle.calculateBBox(Arrays.asList(points));
     }
 }

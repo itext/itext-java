@@ -15,10 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241125113615+03'00')/ModDate(D:20241125113615+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
-endobj
-8 0 obj
-<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+<</CreationDate(D:20250108145452+03'00')/ModDate(D:20250108145452+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Italic/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -26,15 +23,17 @@ endobj
 7 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
+8 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 9 0 obj
-<</BBox[0 0 375 300]/Length 56/Resources<</XObject<</Fm1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 300]/Length 41/Resources<</XObject<</Fm1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 300 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -96,14 +95,14 @@ xref
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000518 00000 n 
-0000000609 00000 n 
 0000000428 00000 n 
+0000000519 00000 n 
+0000000608 00000 n 
 0000000749 00000 n 
-0000000933 00000 n 
+0000000918 00000 n 
 trailer
-<</ID [<756e48e2f7afdb7547c0839feda6b5d20fc41eb4bf8107ce039c21fd63ce251a1c502f4355a849bb9a46843d206970303a44510ac41f51b0856a3e7c75cbdd47><756e48e2f7afdb7547c0839feda6b5d20fc41eb4bf8107ce039c21fd63ce251a1c502f4355a849bb9a46843d206970303a44510ac41f51b0856a3e7c75cbdd47>]/Info 3 0 R/Root 1 0 R/Size 11>>
+<</ID [<0b3ccf57278df4e3b0357f21a86672ab121c0f78ae865056db0165cb346c5735d57afdf1830dc056f0236bbaf60f881a74af52924c904d5cfc98e42e89f4c45e><0b3ccf57278df4e3b0357f21a86672ab121c0f78ae865056db0165cb346c5735d57afdf1830dc056f0236bbaf60f881a74af52924c904d5cfc98e42e89f4c45e>]/Info 3 0 R/Root 1 0 R/Size 11>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-1355
+1340
 %%EOF

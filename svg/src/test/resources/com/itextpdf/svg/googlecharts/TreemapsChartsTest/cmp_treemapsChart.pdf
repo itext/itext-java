@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241125121539+03'00')/ModDate(D:20241125121539+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20250103181000+03'00')/ModDate(D:20250103181000+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -27,11 +27,10 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 8 0 obj
-<</BBox[0 0 667.5 375]/Length 56/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 667.5 375]/Length 41/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 375 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -242,21 +241,21 @@ xref
 0000000428 00000 n 
 0000000518 00000 n 
 0000000658 00000 n 
-0000000843 00000 n 
-0000002233 00000 n 
-0000002261 00000 n 
-0000002289 00000 n 
-0000002317 00000 n 
-0000002380 00000 n 
-0000002443 00000 n 
-0000002553 00000 n 
-0000002662 00000 n 
-0000002749 00000 n 
-0000002836 00000 n 
-0000002926 00000 n 
+0000000828 00000 n 
+0000002218 00000 n 
+0000002246 00000 n 
+0000002274 00000 n 
+0000002302 00000 n 
+0000002365 00000 n 
+0000002428 00000 n 
+0000002538 00000 n 
+0000002647 00000 n 
+0000002734 00000 n 
+0000002821 00000 n 
+0000002911 00000 n 
 trailer
-<</ID [<c689ea554a06ae20b991e871e3945f376d24e7b6efa935ddcbf3dde3ee2bc8ae263db48bce0eaddb55ffa5529520f23420152606101d1759c7f065d348a78277><c689ea554a06ae20b991e871e3945f376d24e7b6efa935ddcbf3dde3ee2bc8ae263db48bce0eaddb55ffa5529520f23420152606101d1759c7f065d348a78277>]/Info 3 0 R/Root 1 0 R/Size 21>>
+<</ID [<ab7a5d14d9d8d2e2682732be9063967631cda2f5bed73326a707ffabe7a9ec2ab8cd2e4933436a1d614e192c73ccb551e24e3510fe73d0f7d7e8a4dc76523354><ab7a5d14d9d8d2e2682732be9063967631cda2f5bed73326a707ffabe7a9ec2ab8cd2e4933436a1d614e192c73ccb551e24e3510fe73d0f7d7e8a4dc76523354>]/Info 3 0 R/Root 1 0 R/Size 21>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-3022
+3007
 %%EOF

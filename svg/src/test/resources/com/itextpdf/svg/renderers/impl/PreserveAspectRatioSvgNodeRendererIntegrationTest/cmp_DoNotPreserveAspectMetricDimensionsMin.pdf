@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241205042634+03'00')/ModDate(D:20241205042634+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20250103181152+03'00')/ModDate(D:20250103181152+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 481.89 396.85]/Length 59/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 481.89 396.85]/Length 44/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 396.85 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 481.89 396.85]/Length 306/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 481.89 396.85]/Length 291/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 481.89 396.85 re
 W
 n
@@ -43,7 +42,6 @@ q
 1 0 0 1 28.35 56.69 cm
 0.37795 0 0 0.37795 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 Q
@@ -127,11 +125,11 @@ xref
 0000000015 00000 n 
 0000000428 00000 n 
 0000000569 00000 n 
-0000000761 00000 n 
-0000001201 00000 n 
+0000000746 00000 n 
+0000001171 00000 n 
 trailer
-<</ID [<36a22c809be7010820949f5b082752a131f3f6b135e770052743169f341646fa2d86741b850cbfebb1ae899625270184bc3494f3f02c6a7086edd3873a62cc6c><36a22c809be7010820949f5b082752a131f3f6b135e770052743169f341646fa2d86741b850cbfebb1ae899625270184bc3494f3f02c6a7086edd3873a62cc6c>]/Info 3 0 R/Root 1 0 R/Size 10>>
+<</ID [<7ba56d3fa22748d7801a55b4b265acee93bdfdf3dd0dc5837c65b4d868ef131cc96cde353f02a1d04ffa6fc06f08d09189c23d5f9172c38f3163aeed716aea01><7ba56d3fa22748d7801a55b4b265acee93bdfdf3dd0dc5837c65b4d868ef131cc96cde353f02a1d04ffa6fc06f08d09189c23d5f9172c38f3163aeed716aea01>]/Info 3 0 R/Root 1 0 R/Size 10>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-1543
+1513
 %%EOF

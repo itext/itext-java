@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20241127144739+03'00')/ModDate(D:20241127144739+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20250103175909+03'00')/ModDate(D:20250103175909+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,11 +24,10 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 337.5 150]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 337.5 150]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 150 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -432,21 +431,21 @@ xref
 0000000015 00000 n 
 0000000428 00000 n 
 0000000569 00000 n 
-0000000754 00000 n 
-0000004860 00000 n 
-0000004885 00000 n 
-0000004913 00000 n 
-0000004941 00000 n 
-0000004967 00000 n 
-0000004993 00000 n 
-0000005019 00000 n 
-0000005045 00000 n 
-0000005071 00000 n 
-0000005099 00000 n 
-0000005127 00000 n 
+0000000739 00000 n 
+0000004845 00000 n 
+0000004870 00000 n 
+0000004898 00000 n 
+0000004926 00000 n 
+0000004952 00000 n 
+0000004978 00000 n 
+0000005004 00000 n 
+0000005030 00000 n 
+0000005056 00000 n 
+0000005084 00000 n 
+0000005112 00000 n 
 trailer
-<</ID [<4ca31f6cd0c9b9f5e892f798b2ae9862ceec76efff8faa1d71d64311988e576a07677bc532be844b6c07b27b0fc288238b1b9849322bb813a6288014389b161a><4ca31f6cd0c9b9f5e892f798b2ae9862ceec76efff8faa1d71d64311988e576a07677bc532be844b6c07b27b0fc288238b1b9849322bb813a6288014389b161a>]/Info 3 0 R/Root 1 0 R/Size 20>>
+<</ID [<f19b48887ba975b20b14b0149b52bdcc8b2c3a8791d837c7b22eba08fa4118ca3848a7344eefee15c9faac2426eb4450d960f6aabb216ef3f1c4d124160d5303><f19b48887ba975b20b14b0149b52bdcc8b2c3a8791d837c7b22eba08fa4118ca3848a7344eefee15c9faac2426eb4450d960f6aabb216ef3f1c4d124160d5303>]/Info 3 0 R/Root 1 0 R/Size 20>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-5155
+5140
 %%EOF

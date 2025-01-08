@@ -15,17 +15,16 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115628+03'00')/ModDate(D:20211018115628+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250103181545+03'00')/ModDate(D:20250103181545+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 6 0 obj
-<</BBox[0 0 142.5 120]/Length 56/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 142.5 120]/Length 41/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 120 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
@@ -75,22 +74,22 @@ xref
 0 15
 0000000000 65535 f 
 0000000211 00000 n 
-0000000427 00000 n 
+0000000428 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000478 00000 n 
-0000000663 00000 n 
-0000000897 00000 n 
-0000000985 00000 n 
-0000001100 00000 n 
-0000001237 00000 n 
-0000001313 00000 n 
-0000001393 00000 n 
-0000001477 00000 n 
+0000000479 00000 n 
+0000000649 00000 n 
+0000000883 00000 n 
+0000000971 00000 n 
+0000001086 00000 n 
+0000001223 00000 n 
+0000001299 00000 n 
+0000001379 00000 n 
+0000001463 00000 n 
 trailer
-<</ID [<a85c4004bd26228df81a6e762b3406ff><a85c4004bd26228df81a6e762b3406ff>]/Info 3 0 R/Root 1 0 R/Size 15>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<0bfd6b224e77bcae5cb9db7081a578e911786ffac0ea7edca2980340e80f7534a0159f9002f2b33303fa080642d322561d32b867ff705b8508bfe3aa2a9bfaba><0bfd6b224e77bcae5cb9db7081a578e911786ffac0ea7edca2980340e80f7534a0159f9002f2b33303fa080642d322561d32b867ff705b8508bfe3aa2a9bfaba>]/Info 3 0 R/Root 1 0 R/Size 15>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-1561
+1547
 %%EOF
