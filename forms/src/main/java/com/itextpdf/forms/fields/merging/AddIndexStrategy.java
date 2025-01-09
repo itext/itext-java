@@ -68,20 +68,17 @@ public class AddIndexStrategy implements OnDuplicateFormFieldNameStrategy {
      * @param secondField           the second field
      * @param throwExceptionOnError if true, an exception will be thrown
      *
-     * @return true if the second field was renamed successfully, false otherwise
+     * @return returns {@code false} value, since {@link AddIndexStrategy} never merges fields.
      */
     @Override
     public boolean execute(PdfFormField firstField, PdfFormField secondField, boolean throwExceptionOnError) {
-        if (firstField == null || secondField == null) {
-            return false;
+        if (firstField != null && secondField != null &&
+                firstField.getFieldName() != null && secondField.getFieldName() != null) {
+            String originalFieldName = firstField.getFieldName().toUnicodeString();
+            String fieldToAddNewName = originalFieldName + separator + getNextIndex(originalFieldName);
+            secondField.setFieldName(fieldToAddNewName);
         }
-        if (firstField.getFieldName() == null || secondField.getFieldName() == null) {
-            return true;
-        }
-        String originalFieldName = firstField.getFieldName().toUnicodeString();
-        String fieldToAddNewName = originalFieldName + separator + getNextIndex(originalFieldName);
-        secondField.setFieldName(fieldToAddNewName);
-        return true;
+        return false;
     }
 
     int getNextIndex(String name) {

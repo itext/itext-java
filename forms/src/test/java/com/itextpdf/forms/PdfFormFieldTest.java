@@ -1965,6 +1965,19 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    public void dirtyCheckBoxAnnotationMergedTest() throws IOException, InterruptedException {
+        String outputFileName = destinationFolder + "dirtyCheckBoxAnnotationMergedTest.pdf";
+        String inputFileName = sourceFolder + "dirtyCheckBoxAnnotationMergedTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_dirtyCheckBoxAnnotationMergedTest.pdf";
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(inputFileName), new PdfWriter(outputFileName))) {
+            PdfFormCreator.getAcroForm(pdf, false);
+            // Do nothing.
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
     @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.FORM_FIELD_HAS_CYCLED_PARENT_STRUCTURE,
             ignore = true))
     public void formFieldCycleRefTest() throws IOException, InterruptedException {

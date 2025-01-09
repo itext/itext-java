@@ -37,7 +37,7 @@ public interface OnDuplicateFormFieldNameStrategy {
      * @param secondField           the second field
      * @param throwExceptionOnError if true, an exception will be thrown
      *
-     * @return true if the second field was renamed successfully, false otherwise
+     * @return true if the second field was merged successfully, false otherwise
      */
     boolean execute(PdfFormField firstField, PdfFormField secondField, boolean throwExceptionOnError);
 }
