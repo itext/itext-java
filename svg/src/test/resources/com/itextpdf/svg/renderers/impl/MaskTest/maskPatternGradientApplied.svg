@@ -1,0 +1,19 @@
+<svg width="660" height="300" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" style="stop-color:blue;stop-opacity:1" />
+    <stop offset="100%" style="stop-color:red;stop-opacity:1" />
+  </linearGradient>
+  
+<pattern id="pattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+<rect width="5" height="10" fill="url(#gradient)"/>
+<circle cx="7" cy="7" r="3" fill="lightgreen"/>
+</pattern>
+
+<mask id="patternMask" x="0" y="0" width="1" height="1" >
+<rect x="0" y="0" width="300" height="300" fill="url(#pattern)"/>
+</mask>
+</defs>
+
+<circle cx="140" cy="140" r="120" fill="darkgreen" mask="url(#patternMask)" />
+</svg>

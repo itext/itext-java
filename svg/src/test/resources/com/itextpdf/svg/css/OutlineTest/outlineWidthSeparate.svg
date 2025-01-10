@@ -1,0 +1,28 @@
+<svg width="660" height="1100" xmlns="http://www.w3.org/2000/svg">
+<style>
+	.pixels1{outline-style: solid; outline-width: 8px;}
+	.pixels2{outline-style: solid; outline-width: 3px;}
+	.em{outline-style: solid; outline-width: 0.6em;}
+	.rem{outline-style: solid; outline-width: 0.5rem;}
+	.ex{outline-style: solid; outline-width: 1ex;}
+	.medium{outline-style: solid; outline-width: medium;}
+	.thick{outline-style: solid; outline-width: thick;}
+	.thin{outline-style: solid; outline-width: thin;}
+</style>
+<rect x="50" y="50" width="400" height="80" fill="red" class="pixels1"/>
+<text x="60" y="75" font-size="15" fill="white">outline-width: 8px;</text>
+<rect x="50" y="150" width="400" height="80" fill="red" class="pixels2"/>
+<text x="60" y="175" font-size="15" fill="white">outline-width: 3px;</text>
+<rect x="50" y="250" width="400" height="80" fill="red" class="em"/>
+<text x="60" y="275" font-size="15" fill="white">outline-width: 0.6em;</text>
+<rect x="50" y="350" width="400" height="80" fill="red" class="rem"/>
+<text x="60" y="375" font-size="15" fill="white">outline-width: 0.5rem;</text>
+<rect x="50" y="450" width="400" height="80" fill="red" class="ex"/>
+<text x="60" y="475" font-size="15" fill="white">outline-width: 1ex;</text>
+<rect x="50" y="550" width="400" height="80" fill="red" class="medium"/>
+<text x="60" y="575" font-size="15" fill="white">outline-width: medium;</text>
+<rect x="50" y="650" width="400" height="80" fill="red" class="thick"/>
+<text x="60" y="675" font-size="15" fill="white">outline-width: thick;</text>
+<rect x="50" y="750" width="400" height="80" fill="red" class="thin"/>
+<text x="60" y="775" font-size="15" fill="white">outline-width: thin;</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 100 100">
+   <g stroke-width="6" stroke="black">
+     <g id="object">
+       <rect id="r1" width="80" height="10" x="10" y="30" fill="white"/>
+	   <rect id="r2" width="10" height="10" x="60" y="40" fill="white"/>
+	   <use xlink:href="#r2" transform="translate(20 0)"/>
+	   <circle fill="white" cx="10" cy="35" r="15" />
+      
+     </g>
+   </g>
+   <use xlink:href="#object"/>
+</svg>

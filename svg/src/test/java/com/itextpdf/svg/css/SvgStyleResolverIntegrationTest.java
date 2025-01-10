@@ -205,39 +205,57 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-4396 resolved
+    // TODO: update cmp files when DEVSIX-6405 resolved
+    // TODO: update cmp files when DEVSIX-8821 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithExternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "externalCss");
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-4396 resolved
+    // TODO: update cmp files when DEVSIX-6405 resolved
+    // TODO: update cmp files when DEVSIX-8821 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithInternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "internalCss");
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithInternalCSSWithoutOverlapTest() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "internalCssNoOverlap");
     }
 
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-4396 resolved
+    // TODO: update cmp files when DEVSIX-6405 resolved
+    // TODO: update cmp files when DEVSIX-8821 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithExternalCSStoCustomPage() throws IOException,InterruptedException {
         // Take a note this method differs from the one used in Default Page test
         convertAndCompare(sourceFolder, destinationFolder, "externalCss_custom", PageSize.A3.rotate());
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-4396 resolved
+    // TODO: update cmp files when DEVSIX-6405 resolved
+    // TODO: update cmp files when DEVSIX-8821 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithInternalCSStoCustomPage() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "internalCss_custom", PageSize.A3.rotate());
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-8823 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void multipleSVGtagsWithDiffStylesFromExternalCSS() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "externalCss_palette", PageSize.A3.rotate());
     }

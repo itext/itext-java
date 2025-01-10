@@ -1,0 +1,13 @@
+<svg width="660" height="300" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern id="pattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+<circle cx="7" cy="7" r="3" fill="lightgreen"/>
+</pattern>
+
+<mask id="patternMask" x="0" y="0" width="1" height="1" >
+<rect x="0" y="0" width="300" height="300" fill="url(#pattern)"/>
+</mask>
+</defs>
+
+<circle cx="140" cy="140" r="120" fill="darkgreen" mask="url(#patternMask)" />
+</svg>

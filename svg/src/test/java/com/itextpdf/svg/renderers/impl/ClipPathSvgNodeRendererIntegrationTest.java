@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -135,5 +136,55 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void clipPathUrl2ndLevelTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathUrl2ndLevel");
+    }
+
+    @Test
+    //TODO DEVSIX-2588: Update cmp files
+    public void clipPathTextSimpleTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathText");
+    }
+
+    @Test
+    //TODO DEVSIX-2588: Update cmp files
+    public void clipPathTextBoldTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathTextBold");
+    }
+
+    @Test
+    //TODO DEVSIX-2588: Update cmp files
+    public void clipPathTextMultiObjectsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathTextMultiObjects");
+    }
+
+    @Test
+    //TODO DEVSIX-2588: Update cmp files
+    public void clipPathTextMultiObjects2Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathTextMultiObjects2");
+    }
+
+    @Test
+    //TODO DEVSIX-2588: Update cmp files
+    public void clipPathTextMultiObjects3Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathTextMultiObjects3");
+    }
+
+    @Test
+    //TODO DEVSIX-2588: Update cmp files
+    public void clipPathTextLinearGradientTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathTextLinearGrad");
+    }
+
+    @Test
+    //TODO DEVSIX-2588: Update cmp files
+    public void clipPathTextPatternTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathTextPattern");
+    }
+
+    @Test
+    //TODO DEVSIX-2588: Update cmp files
+    public void clipPathTextImageTest() throws IOException, InterruptedException {
+        ISvgConverterProperties properties = new SvgConverterProperties()
+                .setBaseUri(sourceFolder);
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathTextImage", properties);
     }
 }

@@ -112,4 +112,33 @@ public class StrokeTest extends SvgIntegrationTest {
     public void strokeTspanTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeTspan");
     }
+
+    @Test
+    public void strokeObjectsOverlap1Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroup");
+    }
+
+    @Test
+    //TODO DEVSIX-7338: Update cmp file
+    public void strokeObjectsOverlap2Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroup2");
+    }
+
+    @Test
+    //TODO DEVSIX-7338: Update cmp file
+    public void strokeObjectsOverlap3Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroupNoInsideStroke");
+    }
+
+    @Test
+    //TODO DEVSIX-7338: Update cmp file
+    public void strokeObjectsOverlap4Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroupNoInsideStroke2");
+    }
+
+    @Test
+    //TODO DEVSIX-7338: Update cmp file
+    public void strokeObjectsOverlap5Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroupNoInsideStroke3");
+    }
 }

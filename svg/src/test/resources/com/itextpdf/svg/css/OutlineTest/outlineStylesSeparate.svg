@@ -1,0 +1,35 @@
+<svg width="660" height="1100" xmlns="http://www.w3.org/2000/svg">
+<style>
+	.solid{outline-style: solid;}
+	.dotted{outline-style: dotted}
+	.dashed{outline-style: dashed}
+	.double{outline-style: double}
+	.groove{outline-style: groove}
+	.ridge{outline-style: ridge}
+	.inset{outline-style: inset}
+	.outset{outline-style: outset}
+	.none{outline-style: none}
+	.hidden{outline-style: hidden}
+</style>
+
+<rect x="50" y="50" width="400" height="80" fill="red" class="solid"/>
+<text x="60" y="75" font-size="15" fill="white">outline-style: solid</text>
+<rect x="50" y="150" width="400" height="80" fill="red" class="dotted"/>
+<text x="60" y="175" font-size="15" fill="white">outline-style: dotted</text>
+<rect x="50" y="250" width="400" height="80" fill="red" class="dashed"/>
+<text x="60" y="275" font-size="15" fill="white">outline-style: dashed</text>
+<rect x="50" y="350" width="400" height="80" fill="red" class="double"/>
+<text x="60" y="375" font-size="15" fill="white">outline-style: double</text>
+<rect x="50" y="450" width="400" height="80" fill="red" class="groove"/>
+<text x="60" y="475" font-size="15" fill="white">outline-style: groove</text>
+<rect x="50" y="550" width="400" height="80" fill="red" class="ridge"/>
+<text x="60" y="575" font-size="15" fill="white">outline-style: ridge</text>
+<rect x="50" y="650" width="400" height="80" fill="red" class="inset"/>
+<text x="60" y="675" font-size="15" fill="white">outline-style: inset</text>
+<rect x="50" y="750" width="400" height="80" fill="red" class="outset"/>
+<text x="60" y="775" font-size="15" fill="white">outline-style: outset</text>
+<rect x="50" y="850" width="400" height="80" fill="red" class="none"/>
+<text x="60" y="875" font-size="15" fill="white">outline-style: none</text>
+<rect x="50" y="950" width="400" height="80" fill="red" class="hidden"/>
+<text x="60" y="975" font-size="15" fill="white">outline-style: hidden</text>
+</svg>

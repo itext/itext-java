@@ -1,0 +1,25 @@
+<svg width="660" height="1100" xmlns="http://www.w3.org/2000/svg">
+<style>
+.firstVal {
+outline-width:3px;
+outline-color: purple;
+outline-style: solid;
+outline-offset: 14px;
+}
+</style>
+
+<rect x="50" y="50" width="400" height="80" fill="red" style="outline-style: solid; outline-offset: 5px;" />
+<text x="60" y="75" font-size="15" fill="white">outline-offset: 5px;</text>
+<rect x="50" y="150" width="400" height="80" fill="red" style="outline-style: solid; outline-offset: 0.3em;" />
+<text x="60" y="175" font-size="15" fill="white">outline-offset: 0.3em;</text>
+<rect x="50" y="250" width="400" height="80" fill="red" style="outline-style: solid; outline-offset: inherit;" />
+<text x="60" y="275" font-size="15" fill="white">outline-offset: inherit;</text>    
+<rect x="50" y="350" width="400" height="80" fill="red" style="outline-style: solid; outline-offset: initial;" />
+<text x="60" y="375" font-size="15" fill="white">outline-offset: initial;</text> 
+<rect x="50" y="450" width="400" height="80" fill="red" class="firstVal" style="outline-offset: revert;" />
+<text x="60" y="475" font-size="15" fill="white">outline-offset: revert;</text>     
+<rect x="50" y="550" width="400" height="80" fill="red" class="firstVal" style="outline-offset: unset;" />
+<text x="60" y="575" font-size="15" fill="white">outline-offset: unset;</text>       
+<rect x="50" y="650" width="400" height="80" fill="red" class="firstVal" />
+<text x="60" y="675" font-size="15" fill="white">outline-offset no revert/unsetting of class.</text>  
+</svg>

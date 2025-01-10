@@ -98,6 +98,11 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void fontSelectorMissingFontWithSize() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "fontSelectorMissingWithFontSize");
+    }
+
+    @Test
     public void fontFaceGrammarTest() throws IOException, InterruptedException {
         convertAndCompare
                 (sourceFolder, destinationFolder, "fontFaceGrammarTest");

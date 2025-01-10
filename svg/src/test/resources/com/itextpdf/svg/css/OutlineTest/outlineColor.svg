@@ -1,0 +1,15 @@
+<svg width="660" height="1100" xmlns="http://www.w3.org/2000/svg">
+
+<g color="orange">
+	<rect x="50" y="50" width="400" height="80" fill="red" style="outline-style: solid; outline-width: 6px; outline-color: green" />
+	<text x="60" y="75" font-size="15" fill="white">outline-color: green</text>
+	<rect x="50" y="150" width="400" height="80" fill="red" style="outline-style: dotted; outline-width: 6px; outline-color: #32a1ce;" />
+	<text x="60" y="175" font-size="15" fill="white">outline-color: #32a1ce;</text>
+	<rect x="50" y="250" width="400" height="80" fill="red" style="outline-style: dashed; outline-width: 6px; outline-color: rgba(170, 50, 220, .6)" />
+	<text x="60" y="275" font-size="15" fill="white">outline-color: rgba(170, 50, 220, .6)</text>
+	<rect x="50" y="350" width="400" height="80" fill="red" style="outline-style: double; outline-width: 6px; outline-color: hsla(90, 90%, 30%, .8)" />
+	<text x="60" y="375" font-size="15" fill="white">outline-color: hsla(90, 90%, 30%, .8)</text>
+	<rect x="50" y="450" width="400" height="80" fill="red" style="outline-style: groove; outline-width: 6px; outline-color: currentcolor" />
+	<text x="60" y="475" font-size="15" fill="white">outline-color: currentcolor</text>
+</g>
+</svg>
