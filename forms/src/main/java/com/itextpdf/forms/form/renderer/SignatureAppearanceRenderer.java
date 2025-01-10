@@ -69,7 +69,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
 
     private static final float EPS = 1e-5f;
 
-    private final RenderingMode renderingMode;
+    private final DisplayOption displayOption;
 
     private boolean isFontSizeApproximated = false;
 
@@ -80,7 +80,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
      */
     public SignatureAppearanceRenderer(SignatureFieldAppearance modelElement) {
         super(modelElement);
-        renderingMode = retrieveRenderingMode();
+        displayOption = retrieveRenderingMode();
     }
 
     /**
@@ -140,7 +140,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         Rectangle descriptionRect = null;
         Rectangle signatureRect = null;
 
-        switch (renderingMode) {
+        switch (displayOption) {
             case NAME_AND_DESCRIPTION:
             case GRAPHIC_AND_DESCRIPTION: {
                 // Split the signature field into two and add the name of the signer or an image to the one side,
@@ -198,7 +198,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
             default:
                 return;
         }
-        adjustChildrenLayout(renderingMode, signatureRect, descriptionRect, layoutContext.getArea().getPageNumber());
+        adjustChildrenLayout(displayOption, signatureRect, descriptionRect, layoutContext.getArea().getPageNumber());
     }
 
     /**
@@ -274,9 +274,9 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
 
     }
 
-    private void adjustChildrenLayout(RenderingMode renderingMode,
+    private void adjustChildrenLayout(DisplayOption displayOption,
                                       Rectangle signatureRect, Rectangle descriptionRect, int pageNum) {
-        switch (renderingMode) {
+        switch (displayOption) {
             case NAME_AND_DESCRIPTION: {
                 ParagraphRenderer name = (ParagraphRenderer) flatRenderer.getChildRenderers().get(0);
                 relayoutParagraph(name, signatureRect, pageNum);
@@ -376,8 +376,8 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         if (this.hasOwnProperty(Property.FONT_SIZE) || modelElement.hasOwnProperty(Property.FONT_SIZE)) {
             return;
         }
-        if (RenderingMode.GRAPHIC == renderingMode || RenderingMode.GRAPHIC_AND_DESCRIPTION == renderingMode ||
-                RenderingMode.CUSTOM == renderingMode) {
+        if (DisplayOption.GRAPHIC == displayOption || DisplayOption.GRAPHIC_AND_DESCRIPTION == displayOption ||
+                DisplayOption.CUSTOM == displayOption) {
             // We can expect CLIP_ELEMENT log messages since the initial image size may be larger than the field height.
             // But image size will be adjusted during its relayout in #adjustFieldLayout.
             return;
@@ -389,49 +389,49 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         }
     }
 
-    private RenderingMode retrieveRenderingMode() {
+    private DisplayOption retrieveRenderingMode() {
         List<IElement> contentElements = ((SignatureFieldAppearance) modelElement).getContentElements();
         if (contentElements.size() == 2 && contentElements.get(1) instanceof Paragraph) {
             if (contentElements.get(0) instanceof Paragraph) {
-                return RenderingMode.NAME_AND_DESCRIPTION;
+                return DisplayOption.NAME_AND_DESCRIPTION;
             }
             if (contentElements.get(0) instanceof Image) {
-                return RenderingMode.GRAPHIC_AND_DESCRIPTION;
+                return DisplayOption.GRAPHIC_AND_DESCRIPTION;
             }
         }
         if (contentElements.size() == 1) {
             if (contentElements.get(0) instanceof Paragraph) {
-                return RenderingMode.DESCRIPTION;
+                return DisplayOption.DESCRIPTION;
             }
             if (contentElements.get(0) instanceof Image) {
-                return RenderingMode.GRAPHIC;
+                return DisplayOption.GRAPHIC;
             }
         }
-        return RenderingMode.CUSTOM;
+        return DisplayOption.CUSTOM;
     }
 
     /**
-     * Signature rendering modes.
+     * Signature display options.
      */
-    private enum RenderingMode {
+    private enum DisplayOption {
         /**
-         * The rendering mode is just the description.
+         * The display option is just the description.
          */
         DESCRIPTION,
         /**
-         * The rendering mode is the name of the signer and the description.
+         * The display option is the name of the signer and the description.
          */
         NAME_AND_DESCRIPTION,
         /**
-         * The rendering mode is an image and the description.
+         * The display option is an image and the description.
          */
         GRAPHIC_AND_DESCRIPTION,
         /**
-         * The rendering mode is just an image.
+         * The display option is just an image.
          */
         GRAPHIC,
         /**
-         * The rendering mode is div.
+         * The display option is div.
          */
         CUSTOM
     }
