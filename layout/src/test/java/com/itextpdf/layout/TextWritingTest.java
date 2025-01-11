@@ -39,6 +39,8 @@ import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
@@ -336,6 +338,47 @@ public class TextWritingTest extends ExtendedITextTest {
         document.add(p);
 
         document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void strokedUnderlineTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "strokedUnderline.pdf";
+        String cmpFileName = sourceFolder + "cmp_strokedUnderline.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+
+            Paragraph p = new Paragraph("Yellow text with pink stroked underline.")
+                    .setFontSize(50).setFontColor(ColorConstants.YELLOW);
+            Underline underline = new Underline(null, 0, 0.1f, 0, -0.1f, PdfCanvasConstants.LineCapStyle.BUTT)
+                    .setStrokeWidth(2).setStrokeColor(new TransparentColor(ColorConstants.PINK, 0.5f));
+            p.setUnderline(underline);
+
+            Paragraph p2 = new Paragraph("Text with line-through and default underline.")
+                    .setFontSize(50).setStrokeWidth(1).setFontColor(ColorConstants.DARK_GRAY)
+                    .setStrokeColor(ColorConstants.GREEN);
+            Underline underline2 = new Underline(ColorConstants.DARK_GRAY, 0, 0.1f, 0, 0.3f,
+                    PdfCanvasConstants.LineCapStyle.BUTT)
+                    .setStrokeWidth(1).setStrokeColor(new TransparentColor(ColorConstants.GREEN));
+            p2.setUnderline(underline2);
+            p2.setUnderline();
+
+            Paragraph p3 = new Paragraph("Text with transparent font color and default overline.").setFontSize(50)
+                    .setFontColor(new TransparentColor(ColorConstants.BLUE, 0));
+            Underline underline3 = new Underline(null, 0, 0.1f, 0, 0.9f, PdfCanvasConstants.LineCapStyle.BUTT);
+            p3.setUnderline(underline3);
+            p3.setBackgroundColor(ColorConstants.PINK);
+
+            Paragraph p4 = new Paragraph("Text with null font color and default overline.").setFontSize(50)
+                    .setFontColor((TransparentColor) null);
+            p4.setUnderline(underline3);
+
+            document.add(p);
+            document.add(p2);
+            document.add(p3);
+            document.add(p4);
+        }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

@@ -289,19 +289,16 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: DEVSIX-2270, DEVSIX-4586 update cmp file after fix
     public void textTextDecorationUnderlineTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextDecorationUnderline");
     }
 
     @Test
-    //TODO: DEVSIX-2270, DEVSIX-4586 update cmp file after fix
     public void textTextDecorationLineThroughTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextDecorationLineThrough");
     }
 
     @Test
-    //TODO: DEVSIX-2270, DEVSIX-4586 update cmp file after fix
     public void textTextDecorationOverlineTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextDecorationOverline");
     }

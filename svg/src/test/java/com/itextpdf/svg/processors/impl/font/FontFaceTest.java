@@ -57,7 +57,7 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO fix cmp file after DEVSIX-2256 is finished. Right now unicode range is not processed correctly
+    // Unicode range is processed correctly: in case Droid Serif font doesn't include current glyph, Times font is used.
     public void unicodeRangeTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "unicodeRangeTest");
     }
@@ -95,6 +95,11 @@ public class FontFaceTest extends SvgIntegrationTest {
     @Test
     public void fontSelectorTest01() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "fontSelectorTest01");
+    }
+
+    @Test
+    public void fontSelectorTest03() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "fontSelectorTest03");
     }
 
     @Test

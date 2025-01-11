@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="25cm" height="25cm" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <style type="text/css">
+            .luigi { font: italic 10px Verdana; fill: blue; }
+            .alberto { font: bold 10px Verdana; fill: red; }
+            .toni { font-size: 10px; font-family: Verdana; fill: green; }
+        </style>
+    </defs>
+    <g>
+        <text style="font: 5px Verdana" x="20" y="20">normal 5px Verdana black</text>
+        <text class="luigi" x="20" y="40">italic 10px Verdana blue</text>
+        <text class="alberto" x="20" y="60">bold 10px Verdana red</text>
+        <text class="toni" x="20" y="80">10px Verdana green</text>
+        <text style="font: 5px Verdana" x="20" y="100">normal 5px Verdana black</text>
+    </g>
+</svg>
+

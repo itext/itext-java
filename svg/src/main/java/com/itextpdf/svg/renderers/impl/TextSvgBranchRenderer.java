@@ -213,6 +213,12 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         return objectBoundingBox;
     }
 
+    @Override
+    void preDraw(SvgDrawContext context) {
+        super.preDraw(context);
+        SvgTextUtil.applyTextDecoration(this, doFill, doStroke, context);
+    }
+
     /**
      * Method that will set properties to be inherited by this branch renderer's
      * children and will iterate over all children in order to draw them.
@@ -243,6 +249,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
         performDrawing(context);
         drawLastTextChunk(context);
+        context.setSvgTextProperties(new SvgTextProperties());
     }
 
     void applyFontProperties(IElement element, SvgDrawContext context) {

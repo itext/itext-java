@@ -149,6 +149,7 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         text.setStrokeWidth(textProperties.getLineWidth());
         text.setStrokeColor(textProperties.getStrokeColor());
         text.setOpacity(textProperties.getFillOpacity());
+        text.setProperty(Property.UNDERLINE, textProperties.getTextDecoration());
     }
 
     private LineRenderer layoutText(SvgDrawContext context) {

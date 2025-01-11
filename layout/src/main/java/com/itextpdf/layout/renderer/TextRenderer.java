@@ -1489,27 +1489,57 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return new TextRenderer[]{splitRenderer, overflowRenderer};
     }
 
-    protected void drawSingleUnderline(Underline underline, TransparentColor fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
-        TransparentColor underlineColor = underline.getColor() != null ? new TransparentColor(underline.getColor(), underline.getOpacity()) : fontStrokeColor;
-        canvas.saveState();
+    protected void drawSingleUnderline(Underline underline, TransparentColor fontColor, PdfCanvas canvas,
+                                       float fontSize, float italicAngleTan) {
+        TransparentColor underlineFillColor = underline.getColor() != null ?
+                new TransparentColor(underline.getColor(), underline.getOpacity()) : null;
+        TransparentColor underlineStrokeColor = underline.getStrokeColor();
 
-        if (underlineColor != null) {
-            canvas.setStrokeColor(underlineColor.getColor());
-            underlineColor.applyStrokeTransparency(canvas);
+        boolean doStroke = underlineStrokeColor != null;
+        RenderingMode mode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        // In SVG mode we should always use underline color, it is not related to the font color of the current text,
+        // but to the font color of the text element where text-decoration has been declared. In case of none value
+        // for fill and stroke in SVG mode, underline shouldn't be drawn at all.
+        if (underlineFillColor == null && !doStroke) {
+            if (RenderingMode.SVG_MODE == mode) {
+                return;
+            }
+            underlineFillColor = fontColor;
+        }
+        boolean doFill = underlineFillColor != null;
+
+        canvas.saveState();
+        if (doFill) {
+            canvas.setFillColor(underlineFillColor.getColor());
+            underlineFillColor.applyFillTransparency(canvas);
+        }
+        if (doStroke) {
+            canvas.setStrokeColor(underlineStrokeColor.getColor());
+            underlineStrokeColor.applyStrokeTransparency(canvas);
         }
         canvas.setLineCapStyle(underline.getLineCapStyle());
         float underlineThickness = underline.getThickness(fontSize);
         if (underlineThickness != 0) {
-            canvas.setLineWidth(underlineThickness);
+            if (doStroke) {
+                canvas.setLineWidth(underline.getStrokeWidth());
+            }
             float yLine = getYLine();
             float underlineYPosition = underline.getYPosition(fontSize) + yLine;
             float italicWidthSubstraction = .5f * fontSize * italicAngleTan;
             Rectangle innerAreaBbox = getInnerAreaBBox();
-            canvas.moveTo(innerAreaBbox.getX(), underlineYPosition).
-                    lineTo(innerAreaBbox.getX() + innerAreaBbox.getWidth() - italicWidthSubstraction, underlineYPosition).
-                    stroke();
+            Rectangle underlineBBox = new Rectangle(innerAreaBbox.getX(), underlineYPosition - underlineThickness / 2,
+                    innerAreaBbox.getWidth() - italicWidthSubstraction, underlineThickness);
+            canvas.rectangle(underlineBBox);
+            if (doFill && doStroke) {
+                canvas.fillStroke();
+            } else if (doStroke) {
+                canvas.stroke();
+            } else {
+                // In layout/html we should use default color in case underline and fontColor are null
+                // and still draw underline.
+                canvas.fill();
+            }
         }
-
         canvas.restoreState();
     }
 

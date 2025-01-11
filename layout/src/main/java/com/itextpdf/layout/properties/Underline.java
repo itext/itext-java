@@ -29,9 +29,10 @@ import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.*;
 
 /**
  * A POJO that describes the underline of a layout element.
- * 
+ *
+ * <p>
  * This class is to be used as a property for an element or renderer,
- * as the value for {@link com.itextpdf.layout.properties.Property#UNDERLINE}
+ * as the value for {@link com.itextpdf.layout.properties.Property#UNDERLINE}.
  */
 public class Underline {
     protected TransparentColor transparentColor;
@@ -40,6 +41,9 @@ public class Underline {
     protected float yPosition;
     protected float yPositionMul;
     protected int lineCapStyle = PdfCanvasConstants.LineCapStyle.BUTT;
+
+    private TransparentColor strokeColor;
+    private float strokeWidth = 0f;
 
     /**
      * Creates an Underline. Both the thickness and vertical positioning under
@@ -136,5 +140,47 @@ public class Underline {
      */
     public int getLineCapStyle() {
         return lineCapStyle;
+    }
+
+    /**
+     * Gets the color of the underline stroke.
+     *
+     * @return {@link TransparentColor} stroke color
+     */
+    public TransparentColor getStrokeColor() {
+        return strokeColor;
+    }
+
+    /**
+     * Sets the stroke color of the underline.
+     *
+     * @param strokeColor {@link TransparentColor} stroke color
+     *
+     * @return this {@link Underline} instance
+     */
+    public Underline setStrokeColor(TransparentColor strokeColor) {
+        this.strokeColor = strokeColor;
+        return this;
+    }
+
+    /**
+     * Gets the thickness of the underline stroke.
+     *
+     * @return float value of the stroke width
+     */
+    public float getStrokeWidth() {
+        return strokeWidth;
+    }
+
+    /**
+     * Sets the thickness of the underline stroke.
+     *
+     * @param strokeWidth float value of the stroke width
+     *
+     * @return this {@link Underline} instance
+     */
+    public Underline setStrokeWidth(float strokeWidth) {
+        this.strokeWidth = strokeWidth;
+        return this;
     }
 }

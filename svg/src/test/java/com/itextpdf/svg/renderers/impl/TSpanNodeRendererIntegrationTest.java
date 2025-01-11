@@ -228,9 +228,19 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-2270 fixed
-    public void text_decoration_Test() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "text_decoration");
+    public void textDecorationSvgTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationSvg");
+    }
+
+    @Test
+    public void textDecorationCssTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationCss");
+    }
+
+    @Test
+    // TODO update after DEVSIX-4063 is closed
+    public void textDecorationStyleTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationStyle");
     }
 
     @Test
@@ -301,13 +311,11 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedPositioningTest");
     }
 
-    //TODO DEVSIX-2507: Update cmp file after supporting
     @Test
     public void textDecorationTspanTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationTspan");
     }
 
-    //TODO DEVSIX-2507: Update cmp file after supporting
     @Test
     public void textDecorationTspanSubTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationTspanSub");

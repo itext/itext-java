@@ -27,8 +27,11 @@ import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.layout.properties.Underline;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class represents {@code text} and {@code tspan} SVG elements properties identifying their graphics state.
@@ -41,6 +44,7 @@ public class SvgTextProperties {
     private float strokeOpacity = 1f;
     private PdfArray dashPattern = new PdfArray(Arrays.asList(new PdfObject[]{new PdfArray(), new PdfNumber(0)}));
     private float lineWidth = 1f;
+    private List<Underline> textDecoration = new ArrayList<>();
 
     /**
      * Creates new {@link SvgTextProperties} instance.
@@ -61,6 +65,7 @@ public class SvgTextProperties {
         this.strokeOpacity = textProperties.getStrokeOpacity();
         this.dashPattern = textProperties.getDashPattern();
         this.lineWidth = textProperties.getLineWidth();
+        this.textDecoration = textProperties.getTextDecoration();
     }
 
     /**
@@ -166,6 +171,29 @@ public class SvgTextProperties {
      */
     public SvgTextProperties setFillOpacity(float fillOpacity) {
         this.fillOpacity = fillOpacity;
+        return this;
+    }
+
+    /**
+     * Gets the list of {@link Underline} values representing text-decoration horizontal lines that can be an
+     * underline, strikethrough or overline.
+     *
+     * @return the list of {@link Underline} values
+     */
+    public List<Underline> getTextDecoration() {
+        return textDecoration;
+    }
+
+    /**
+     * Sets the list of {@link Underline} values representing text-decoration horizontal lines that can be an
+     * underline, strikethrough or overline.
+     *
+     * @param underlineList the list of {@link Underline} values to set
+     *
+     * @return this same {@link SvgTextProperties} instance
+     */
+    public SvgTextProperties setTextDecoration(List<Underline> underlineList) {
+        this.textDecoration = underlineList;
         return this;
     }
 

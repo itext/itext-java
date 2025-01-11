@@ -22,20 +22,33 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.CssDeclaration;
+import com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.TextDecorationShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.util.WhiteSpaceUtil;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class containing utility methods for text operations in the context of SVG processing
  */
 public final class SvgTextUtil {
+    private static final float TEXT_DECORATION_LINE_THROUGH_Y_POS = -3 / 10F;
+    private static final float TEXT_DECORATION_LINE_OVER_Y_POS = -9 / 10F;
+    private static final float TEXT_DECORATION_LINE_UNDER_Y_POS = 1 / 10F;
 
     private SvgTextUtil() {
     }
@@ -172,7 +185,7 @@ public final class SvgTextUtil {
         trimmedText = SvgTextUtil.trimLeadingWhitespace(trimmedText);
         // Trim trailing whitespace.
         trimmedText = SvgTextUtil.trimTrailingWhitespace(trimmedText);
-        return "".equals(trimmedText);
+        return trimmedText.isEmpty();
     }
 
     /**
@@ -213,5 +226,97 @@ public final class SvgTextUtil {
      */
     public static String filterReferenceValue(String name) {
         return name.replace("#", "").replace("url(", "").replace(")", "").trim();
+    }
+
+    /**
+     * Processes text-decoration attribute which is shorthand for text-decoration-line and text-decoration-style.
+     *
+     * <p>
+     * Note, that text-decoration from styles (resolved in SvgStyleResolver) takes precedence when both are specified.
+     *
+     * @param renderer to apply text-decoration for
+     * @param doFill boolean specifying whether text should be filled
+     * @param doStroke boolean specifying whether text should be stroked
+     * @param context current SVG draw context
+     */
+    public static void applyTextDecoration(ISvgTextNodeRenderer renderer, boolean doFill, boolean doStroke,
+                                           SvgDrawContext context) {
+        if (renderer.getAttributeMapCopy().isEmpty()) {
+            return;
+        }
+        String textDecoration = renderer.getAttribute(CommonCssConstants.TEXT_DECORATION);
+        if (textDecoration != null) {
+            List<CssDeclaration> resolvedShorthandProps =
+                    new TextDecorationShorthandResolver().resolveShorthand(textDecoration);
+            for (CssDeclaration cssDeclaration : resolvedShorthandProps) {
+                if (renderer.getAttribute(cssDeclaration.getProperty()) == null) {
+                    renderer.setAttribute(cssDeclaration.getProperty(), cssDeclaration.getExpression());
+                }
+            }
+        }
+
+        final String textDecorationLineProp = renderer.getAttribute(CommonCssConstants.TEXT_DECORATION_LINE);
+        if (textDecorationLineProp == null) {
+            return;
+        }
+        // TODO DEVSIX-4063 Support text-decoration-style property
+        final String[] textDecorationArray = textDecorationLineProp.split("\\s+");
+        List<Float> baselineList = new ArrayList<>();
+        for (Underline underline : context.getSvgTextProperties().getTextDecoration()) {
+            baselineList.add(underline.getYPositionMul());
+        }
+        for (final String line : textDecorationArray) {
+            float textDecorationLine;
+            switch (line) {
+                case CommonCssConstants.LINE_THROUGH:
+                    textDecorationLine = TEXT_DECORATION_LINE_THROUGH_Y_POS;
+                    break;
+                case CommonCssConstants.OVERLINE:
+                    textDecorationLine = TEXT_DECORATION_LINE_OVER_Y_POS;
+                    break;
+                case CommonCssConstants.UNDERLINE:
+                    textDecorationLine = TEXT_DECORATION_LINE_UNDER_Y_POS;
+                    break;
+                case CommonCssConstants.NONE:
+                default:
+                    return;
+            }
+            baselineList.add(textDecorationLine);
+        }
+
+        // SVG2 spec, 11.11. Text decoration: the fill and stroke of the text decoration are given by the fill and
+        // stroke of the text at the point where the text decoration is declared.
+        Color fillColor = doFill ? context.getSvgTextProperties().getFillColor() : null;
+        float fillOpacity = context.getSvgTextProperties().getFillOpacity();
+        Color strokeColor = doStroke ? context.getSvgTextProperties().getStrokeColor() : null;
+        float strokeOpacity = context.getSvgTextProperties().getStrokeOpacity();
+
+        List<Underline> underlineList = new ArrayList<>();
+        for (float textDecorationLine : baselineList) {
+            addUnderline(context, underlineList, strokeColor, strokeOpacity, fillColor, fillOpacity,
+                    textDecorationLine, doFill, doStroke);
+        }
+        context.getSvgTextProperties().setTextDecoration(underlineList);
+    }
+
+    private static void addUnderline(SvgDrawContext context, List<Underline> underlineList, Color strokeColor,
+                                     float strokeOpacity, Color fillColor, float fillOpacity, float textDecorationLine,
+                                     boolean doFill, boolean doStroke) {
+        Underline underline;
+        if (doStroke && doFill) {
+            underline = new Underline(fillColor, fillOpacity, context.getSvgTextProperties().getLineWidth(), 0.07f,
+                    0, textDecorationLine, PdfCanvasConstants.LineCapStyle.BUTT)
+                    .setStrokeColor(new TransparentColor(strokeColor, strokeOpacity))
+                    .setStrokeWidth(context.getSvgTextProperties().getLineWidth());
+        } else if (doStroke) {
+            underline = new Underline(null, 0, context.getSvgTextProperties().getLineWidth(), 0.07f,
+                    0, textDecorationLine, PdfCanvasConstants.LineCapStyle.BUTT)
+                    .setStrokeColor(new TransparentColor(strokeColor, strokeOpacity))
+                    .setStrokeWidth(context.getSvgTextProperties().getLineWidth());
+        } else {
+            underline = new Underline(fillColor, fillOpacity, 0, 0.07f, 0, textDecorationLine,
+                    PdfCanvasConstants.LineCapStyle.BUTT);
+        }
+        underlineList.add(underline);
     }
 }
