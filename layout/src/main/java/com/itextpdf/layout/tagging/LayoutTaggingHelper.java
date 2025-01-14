@@ -47,6 +47,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -578,9 +579,7 @@ public class LayoutTaggingHelper {
             if (parentHint != null) {
                 // if parent tag hasn't been created yet - it's ok, kid tags will be moved on it's creation
                 if (waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, parentHint)) {
-                    List<TaggingHintKey> siblingsHint = getAccessibleKidsHint(parentHint);
-                    int i = siblingsHint.indexOf(hintKey);
-                    ind = getNearestNextSiblingTagIndex(waitingTagsManager, tagPointer, siblingsHint, i);
+                    ind = getNearestNextSiblingIndex(waitingTagsManager, tagPointer, parentHint, hintKey);
                 }
             }
 
@@ -663,26 +662,11 @@ public class LayoutTaggingHelper {
             return;
         }
 
-        List<TaggingHintKey> parentKidsHint = getAccessibleKidsHint(parentKey);
-        int kidIndInParentKidsHint = parentKidsHint.indexOf(kidKey);
-        int ind = getNearestNextSiblingTagIndex(waitingTagsManager, parentPointer, parentKidsHint, kidIndInParentKidsHint);
-
+        int ind = getNearestNextSiblingIndex(waitingTagsManager, parentPointer, parentKey, kidKey);
         parentPointer.setNextNewKidIndex(ind);
         kidPointer.relocate(parentPointer);
     }
 
-    private int getNearestNextSiblingTagIndex(WaitingTagsManager waitingTagsManager, TagTreePointer parentPointer, List<TaggingHintKey> siblingsHint, int start) {
-        int ind = -1;
-        TagTreePointer nextSiblingPointer = new TagTreePointer(document);
-        while (++start < siblingsHint.size()) {
-            if (waitingTagsManager.tryMovePointerToWaitingTag(nextSiblingPointer, siblingsHint.get(start))
-                    && parentPointer.isPointingToSameTag(new TagTreePointer(nextSiblingPointer).moveToParent())) {
-                ind = nextSiblingPointer.getIndexInParentKidsList();
-                break;
-            }
-        }
-        return ind;
-    }
 
     private static boolean isNonAccessibleHint(TaggingHintKey hintKey) {
         return !hintKey.isAccessible();
@@ -767,7 +751,7 @@ public class LayoutTaggingHelper {
         registerSingleRule(StandardRoles.TFOOT, tableRule);
         registerSingleRule(StandardRoles.THEAD, tableRule);
         registerSingleRule(StandardRoles.TH, new THTaggingRule());
-        if (pdfVersion.compareTo(PdfVersion.PDF_1_5) < 0 ) {
+        if (pdfVersion.compareTo(PdfVersion.PDF_1_5) < 0) {
             TableTaggingPriorToOneFiveVersionRule priorToOneFiveRule = new TableTaggingPriorToOneFiveVersionRule();
             registerSingleRule(StandardRoles.TABLE, priorToOneFiveRule);
             registerSingleRule(StandardRoles.THEAD, priorToOneFiveRule);
@@ -782,5 +766,61 @@ public class LayoutTaggingHelper {
             taggingRules.put(role, rules);
         }
         rules.add(rule);
+    }
+
+    private int getNearestNextSiblingIndex(WaitingTagsManager waitingTagsManager, TagTreePointer parentPointer, TaggingHintKey parentKey, TaggingHintKey kidKey) {
+        ScanContext scanContext = new ScanContext();
+        scanContext.waitingTagsManager = waitingTagsManager;
+        scanContext.startHintKey = kidKey;
+        scanContext.parentPointer = parentPointer;
+        scanContext.nextSiblingPointer = new TagTreePointer(document);
+        return scanForNearestNextSiblingIndex(scanContext, null, parentKey);
+    }
+
+    private int scanForNearestNextSiblingIndex(ScanContext scanContext, TaggingHintKey toCheck, TaggingHintKey parent) {
+        if (scanContext.startVerifying) {
+            if (scanContext.waitingTagsManager.tryMovePointerToWaitingTag(scanContext.nextSiblingPointer, toCheck)
+                    && scanContext.parentPointer.isPointingToSameTag(new TagTreePointer(scanContext.nextSiblingPointer).moveToParent())) {
+                return scanContext.nextSiblingPointer.getIndexInParentKidsList();
+            }
+        }
+        if (toCheck != null && !isNonAccessibleHint(toCheck)) {
+            return -1;
+        }
+        List<TaggingHintKey> kidsHintList = kidsHints.get(parent);
+        if (kidsHintList == null) {
+            return -1;
+        }
+
+
+        int startIndex = -1;
+        if (!scanContext.startVerifying) {
+            for (int i = kidsHintList.size() - 1; i >= 0; i--) {
+                if (scanContext.startHintKey == kidsHintList.get(i)) {
+                    scanContext.startVerifying = true;
+                    startIndex = i;
+                    break;
+                }
+            }
+        }
+
+
+        for (int j = startIndex + 1; j < kidsHintList.size(); j++) {
+            final TaggingHintKey kid = kidsHintList.get(j);
+            final int interMediateResult = scanForNearestNextSiblingIndex(scanContext, kid, kid);
+            if (interMediateResult != -1) {
+                return interMediateResult;
+            }
+        }
+
+        return -1;
+    }
+
+    private static class ScanContext {
+        WaitingTagsManager waitingTagsManager;
+        TaggingHintKey startHintKey;
+        boolean startVerifying;
+        TagTreePointer parentPointer;
+        TagTreePointer nextSiblingPointer;
     }
 }
