@@ -41,6 +41,16 @@ public class PdfStructureAttributes extends PdfObjectWrapper<PdfDictionary> {
         getPdfObject().put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName(owner));
     }
 
+    /**
+     * Method to get owner of current pdf object.
+     *
+     * @return Pdf owner
+     */
+    public String getPdfOwner() {
+        PdfName pdfName = (PdfName) getPdfObject().get(PdfName.O);
+        return pdfName == null ? null : pdfName.getValue();
+    }
+
     public PdfStructureAttributes(PdfNamespace namespace) {
         super(new PdfDictionary());
         getPdfObject().put(PdfName.O, PdfName.NSO);
@@ -90,13 +100,13 @@ public class PdfStructureAttributes extends PdfObjectWrapper<PdfDictionary> {
     public Integer getAttributeAsInt(String attributeName) {
         PdfName name = PdfStructTreeRoot.convertRoleToPdfName(attributeName);
         PdfNumber attrVal = getPdfObject().getAsNumber(name);
-        return attrVal != null ? (Integer) attrVal.intValue() : (Integer)null;
+        return attrVal != null ? (Integer) attrVal.intValue() : (Integer) null;
     }
 
     public Float getAttributeAsFloat(String attributeName) {
         PdfName name = PdfStructTreeRoot.convertRoleToPdfName(attributeName);
         PdfNumber attrVal = getPdfObject().getAsNumber(name);
-        return attrVal != null ? (Float)attrVal.floatValue() : (Float)null;
+        return attrVal != null ? (Float) attrVal.floatValue() : (Float) null;
     }
 
     public PdfStructureAttributes removeAttribute(String attributeName) {

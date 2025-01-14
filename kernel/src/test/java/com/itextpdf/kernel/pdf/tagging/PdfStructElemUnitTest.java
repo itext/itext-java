@@ -30,14 +30,19 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.Pdf3DAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfStructElemUnitTest extends ExtendedITextTest {
@@ -62,4 +67,58 @@ public class PdfStructElemUnitTest extends ExtendedITextTest {
         Assertions.assertEquals(KernelExceptionMessageConstant.ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE,
                 exception.getMessage());
     }
+
+
+    @Test
+    public void attributesAreNullTest() {
+        Map<PdfName, PdfObject> attributesMap = new HashMap<>();
+
+        PdfDictionary dictionary = new PdfDictionary(attributesMap);
+        PdfStructElem pdfStructElem = new PdfStructElem(dictionary);
+
+        List<PdfStructureAttributes> actualAttributesList = pdfStructElem.getAttributesList();
+        List<PdfStructureAttributes> expectedAttributesList = new ArrayList<>();
+        Assertions.assertEquals(actualAttributesList, expectedAttributesList);
+
+    }
+
+    @Test
+    public void attributesAreDictionaryTest() {
+        Map<PdfName, PdfObject> attributesMap = new HashMap<>();
+        Map<PdfName, PdfObject> dictionaryMap = new HashMap<>();
+
+        dictionaryMap.put(PdfName.A, new PdfName("value"));
+        attributesMap.put(PdfName.A, new PdfDictionary(dictionaryMap));
+
+        PdfDictionary dictionary = new PdfDictionary(attributesMap);
+        PdfStructElem pdfStructElem = new PdfStructElem(dictionary);
+
+        List<PdfStructureAttributes> actualAttributesList = pdfStructElem.getAttributesList();
+        List<PdfStructureAttributes> expectedAttributesList = new ArrayList<>();
+        expectedAttributesList.add(new PdfStructureAttributes(new PdfDictionary(dictionaryMap)));
+
+        Assertions.assertEquals(actualAttributesList.get(0).getPdfObject().get(PdfName.A),
+                expectedAttributesList.get(0).getPdfObject().get(PdfName.A));
+    }
+
+    @Test
+    public void attributesAreArrayTest() {
+        Map<PdfName, PdfObject> attributesMap = new HashMap<>();
+        Map<PdfName, PdfObject> dictionaryMap = new HashMap<>();
+
+        dictionaryMap.put(PdfName.A, new PdfName("value"));
+        PdfDictionary pdfDictionary = new PdfDictionary(dictionaryMap);
+
+        attributesMap.put(PdfName.A, new PdfArray(pdfDictionary));
+
+        PdfDictionary dictionary = new PdfDictionary(attributesMap);
+        PdfStructElem pdfStructElem = new PdfStructElem(dictionary);
+
+        List<PdfStructureAttributes> actualAttributesList = pdfStructElem.getAttributesList();
+        List<PdfStructureAttributes> expectedAttributesList = new ArrayList<>();
+        expectedAttributesList.add(new PdfStructureAttributes(new PdfDictionary(dictionaryMap)));
+        Assertions.assertEquals(actualAttributesList.get(0).getPdfObject().get(PdfName.A),
+                expectedAttributesList.get(0).getPdfObject().get(PdfName.A));
+    }
+
 }
