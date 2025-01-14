@@ -86,6 +86,7 @@ class TableTaggingRule implements ITaggingRule {
                 taggingHelper.moveKidHint(nonCellKid, tableHintKey);
             }
         }
+        List<TaggingDummyElement> rows = new ArrayList<>();
         for (TreeMap<Integer, TaggingHintKey> rowTags : tableTags.values()) {
             TaggingDummyElement row = new TaggingDummyElement(StandardRoles.TR);
             TaggingHintKey rowTagHint = LayoutTaggingHelper.getOrCreateHintKey(row);
@@ -98,8 +99,9 @@ class TableTaggingRule implements ITaggingRule {
                 }
                 tableCellTagsUnindexed = null;
             }
-            taggingHelper.addKidsHint(tbodyTag, Collections.<TaggingDummyElement>singletonList(row), -1);
+            rows.add(row);
         }
+        taggingHelper.addKidsHint(tbodyTag, rows, -1);
 
         for (TaggingHintKey nonCellKid : nonCellKids) {
             if (StandardRoles.CAPTION.equals(getKidRole(nonCellKid,taggingHelper))) {
