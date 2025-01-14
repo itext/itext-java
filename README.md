@@ -86,6 +86,9 @@ public class HelloPdfApp {
 }
 ```
 
+### GraalVM compatibility
+Starting from version 8.0.3 iText Core supports native image compilation using GraalVM. See [building] for details. 
+
 ### Examples
 
 This is a small subset of examples to get you started. For more advanced examples, refer to our [Knowledge Base](https://kb.itextpdf.com/home/it7kb/examples) or the following links:

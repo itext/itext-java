@@ -230,7 +230,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(screen);
             pdfPage.flush();
         }
-        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
