@@ -1923,6 +1923,17 @@ public class PdfFontTest extends ExtendedITextTest {
     }
 
     @Test
+    public void fontDirectoryRegisterRecursivelyTest() throws IOException {
+        PdfFontFactory.registerDirectoryRecursively(sourceFolder);
+        for (String name : PdfFontFactory.getRegisteredFonts()) {
+            PdfFont pdfFont = PdfFontFactory.createRegisteredFont(name);
+            if (pdfFont == null) {
+                Assertions.assertTrue(false, "Font {" + name + "} can't be empty");
+            }
+        }
+    }
+
+    @Test
     public void fontRegisterTest() throws IOException {
         FontProgramFactory.registerFont(fontsFolder + "NotoSerif-Regular_v1.7.ttf", "notoSerifRegular");
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());

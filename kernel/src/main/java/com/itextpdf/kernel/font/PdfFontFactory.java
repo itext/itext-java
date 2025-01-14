@@ -425,6 +425,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
      * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerDirectoryRecursively(String)
      * @see PdfFontFactory#registerSystemDirectories()
      * @see PdfFontFactory#getRegisteredFamilies()
      * @see PdfFontFactory#getRegisteredFonts()
@@ -453,6 +454,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
      * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerDirectoryRecursively(String)
      * @see PdfFontFactory#registerSystemDirectories()
      * @see PdfFontFactory#getRegisteredFamilies()
      * @see PdfFontFactory#getRegisteredFonts()
@@ -479,6 +481,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
      * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerDirectoryRecursively(String)
      * @see PdfFontFactory#registerSystemDirectories()
      * @see PdfFontFactory#getRegisteredFamilies()
      * @see PdfFontFactory#getRegisteredFonts()
@@ -506,6 +509,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
      * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerDirectoryRecursively(String)
      * @see PdfFontFactory#registerSystemDirectories()
      * @see PdfFontFactory#getRegisteredFamilies()
      * @see PdfFontFactory#getRegisteredFonts()
@@ -527,6 +531,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
      * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerDirectoryRecursively(String)
      * @see PdfFontFactory#registerSystemDirectories()
      * @see PdfFontFactory#getRegisteredFamilies()
      * @see PdfFontFactory#getRegisteredFonts()
@@ -546,6 +551,7 @@ public final class PdfFontFactory {
      * @see PdfFontFactory#register(String, String)
      * @see PdfFontFactory#registerFamily(String, String, String)
      * @see PdfFontFactory#registerDirectory(String)
+     * @see PdfFontFactory#registerDirectoryRecursively(String)
      * @see PdfFontFactory#registerSystemDirectories()
      * @see PdfFontFactory#getRegisteredFamilies()
      * @see PdfFontFactory#getRegisteredFonts()
@@ -594,6 +600,17 @@ public final class PdfFontFactory {
      */
     public static int registerDirectory(String dirPath) {
         return FontProgramFactory.registerFontDirectory(dirPath);
+    }
+
+
+    /**
+     * Registers all the fonts in a directory recursively.
+     *
+     * @param dirPath the directory path to be registered as a font directory path
+     * @return the number of fonts registered
+     */
+    public static int registerDirectoryRecursively(String dirPath) {
+        return FontProgramFactory.registerFontDirectoryRecursively(dirPath);
     }
 
     /**

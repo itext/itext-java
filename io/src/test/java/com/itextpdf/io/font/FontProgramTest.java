@@ -29,6 +29,7 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 import java.io.IOException;
@@ -37,6 +38,13 @@ import java.io.IOException;
 @Tag("UnitTest")
 public class FontProgramTest extends ExtendedITextTest {
     private static final String notExistingFont = "some-font.ttf";
+
+    @BeforeEach
+    public void clearFonts(){
+        FontProgramFactory.clearRegisteredFonts();
+        FontProgramFactory.clearRegisteredFontFamilies();
+        FontCache.clearSavedFonts();
+    }
 
     @Test
     public void exceptionMessageTest() throws IOException {
@@ -70,6 +78,15 @@ public class FontProgramTest extends ExtendedITextTest {
     @Test
     public void registerDirectoryType1Test() throws IOException {
         FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/type1/");
+        FontProgram computerModern = FontProgramFactory.createRegisteredFont("computer modern");
+        FontProgram cmr10 = FontProgramFactory.createRegisteredFont("cmr10");
+        Assertions.assertNull(computerModern);
+        Assertions.assertNull(cmr10);
+    }
+
+    @Test
+    public void registerDirectoryType1RecursivelyTest() throws IOException {
+        FontProgramFactory.registerFontDirectoryRecursively("./src/test/resources/com/itextpdf/io/font/type1/");
         FontProgram computerModern = FontProgramFactory.createRegisteredFont("computer modern");
         FontProgram cmr10 = FontProgramFactory.createRegisteredFont("cmr10");
         Assertions.assertNotNull(computerModern);

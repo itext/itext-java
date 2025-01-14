@@ -443,6 +443,17 @@ public final class FontProgramFactory {
         return fontRegisterProvider.registerFontDirectory(dir);
     }
 
+
+    /**
+     * Register all the fonts in a directory recursively.
+     *
+     * @param dir the directory
+     * @return the number of fonts registered
+     */
+    public static int registerFontDirectoryRecursively(String dir) {
+        return fontRegisterProvider.registerFontDirectory(dir, true);
+    }
+
     /**
      * Register fonts in some probable directories. It usually works in Windows,
      * Linux and Solaris.
