@@ -622,6 +622,30 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
     }
 
     /**
+     * Sets the stroke dash pattern for the current text. Dash pattern is an array of the form [ dashArray dashPhase ],
+     * where {@code dashArray} is a float array that specifies the length of the alternating dashes and gaps,
+     * {@code dashPhase} is a float that specifies the distance into the dash pattern to start the dash.
+     *
+     * @param dashArray float array that specifies the length of the alternating dashes and gaps,
+     *                  use {@code null} for solid line
+     * @param dashPhase float that specifies the distance into the dash pattern to start the dash,
+     *                  use 0 in case offset isn't needed
+     *
+     * @return this element
+     */
+    public T setDashPattern(float[] dashArray, float dashPhase) {
+        List<Float> dashPattern = new ArrayList<>();
+        if (dashArray != null) {
+            for (float fl : dashArray) {
+                dashPattern.add(fl);
+            }
+        }
+        dashPattern.add(dashPhase);
+        setProperty(Property.STROKE_DASH_PATTERN, dashPattern);
+        return (T) (Object) this;
+    }
+
+    /**
      * Gets the stroke width for the current element.
      * The stroke width is the width of the outlines or edges of a shape.
      *

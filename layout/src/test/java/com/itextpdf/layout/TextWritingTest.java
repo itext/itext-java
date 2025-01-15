@@ -117,6 +117,15 @@ public class TextWritingTest extends ExtendedITextTest {
                 setFontSize(20);
         document.add(new Paragraph(text3));
 
+        Text text4 = new Text("This is a stroke with dashes text").
+                setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE).
+                setStrokeColor(ColorConstants.BLUE).
+                setStrokeWidth(0.5f).
+                setFontColor(ColorConstants.PINK).
+                setFontSize(20);
+        text4.setDashPattern(new float[]{0.5f, 1f}, 0f);
+        document.add(new Paragraph(text4));
+
         document.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
@@ -349,10 +358,11 @@ public class TextWritingTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            Paragraph p = new Paragraph("Yellow text with pink stroked underline.")
-                    .setFontSize(50).setFontColor(ColorConstants.YELLOW);
+            Paragraph p = new Paragraph("Yellow text with pink stroked dashed underline.")
+                    .setFontSize(45).setFontColor(ColorConstants.YELLOW);
             Underline underline = new Underline(null, 0, 0.1f, 0, -0.1f, PdfCanvasConstants.LineCapStyle.BUTT)
-                    .setStrokeWidth(2).setStrokeColor(new TransparentColor(ColorConstants.PINK, 0.5f));
+                    .setStrokeWidth(2).setStrokeColor(new TransparentColor(ColorConstants.PINK, 0.5f))
+                    .setDashPattern(new float[]{5, 5, 10, 5}, 5);
             p.setUnderline(underline);
 
             Paragraph p2 = new Paragraph("Text with line-through and default underline.")
@@ -364,7 +374,7 @@ public class TextWritingTest extends ExtendedITextTest {
             p2.setUnderline(underline2);
             p2.setUnderline();
 
-            Paragraph p3 = new Paragraph("Text with transparent font color and default overline.").setFontSize(50)
+            Paragraph p3 = new Paragraph("Text with transparent color and default overline.").setFontSize(50)
                     .setFontColor(new TransparentColor(ColorConstants.BLUE, 0));
             Underline underline3 = new Underline(null, 0, 0.1f, 0, 0.9f, PdfCanvasConstants.LineCapStyle.BUTT);
             p3.setUnderline(underline3);

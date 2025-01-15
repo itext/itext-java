@@ -915,7 +915,17 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             if (textRenderingMode != PdfCanvasConstants.TextRenderingMode.FILL) {
                 canvas.setTextRenderingMode((int) textRenderingMode);
             }
-            if (textRenderingMode == PdfCanvasConstants.TextRenderingMode.STROKE || textRenderingMode == PdfCanvasConstants.TextRenderingMode.FILL_STROKE) {
+            if (textRenderingMode == PdfCanvasConstants.TextRenderingMode.STROKE ||
+                    textRenderingMode == PdfCanvasConstants.TextRenderingMode.FILL_STROKE) {
+                List<Float> strokeDashPattern = this.<List<Float>>getProperty(Property.STROKE_DASH_PATTERN);
+                if (strokeDashPattern != null && !strokeDashPattern.isEmpty()) {
+                    float[] dashArray = new float[strokeDashPattern.size() - 1];
+                    for (int i = 0; i < strokeDashPattern.size() - 1; ++i) {
+                        dashArray[i] = strokeDashPattern.get(i);
+                    }
+                    float dashPhase = strokeDashPattern.get(strokeDashPattern.size() - 1);
+                    canvas.setLineDash(dashArray, dashPhase);
+                }
                 if (strokeWidth == null) {
                     strokeWidth = this.getPropertyAsFloat(Property.STROKE_WIDTH);
                 }
@@ -1516,6 +1526,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (doStroke) {
             canvas.setStrokeColor(underlineStrokeColor.getColor());
             underlineStrokeColor.applyStrokeTransparency(canvas);
+            float[] strokeDashArray = underline.getDashArray();
+            if (strokeDashArray != null) {
+                canvas.setLineDash(strokeDashArray, underline.getDashPhase());
+            }
         }
         canvas.setLineCapStyle(underline.getLineCapStyle());
         float underlineThickness = underline.getThickness(fontSize);

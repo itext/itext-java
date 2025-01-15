@@ -307,12 +307,16 @@ public final class SvgTextUtil {
             underline = new Underline(fillColor, fillOpacity, context.getSvgTextProperties().getLineWidth(), 0.07f,
                     0, textDecorationLine, PdfCanvasConstants.LineCapStyle.BUTT)
                     .setStrokeColor(new TransparentColor(strokeColor, strokeOpacity))
-                    .setStrokeWidth(context.getSvgTextProperties().getLineWidth());
+                    .setStrokeWidth(context.getSvgTextProperties().getLineWidth())
+                    .setDashPattern(context.getSvgTextProperties().getDashArray(),
+                            context.getSvgTextProperties().getDashPhase());
         } else if (doStroke) {
             underline = new Underline(null, 0, context.getSvgTextProperties().getLineWidth(), 0.07f,
                     0, textDecorationLine, PdfCanvasConstants.LineCapStyle.BUTT)
                     .setStrokeColor(new TransparentColor(strokeColor, strokeOpacity))
-                    .setStrokeWidth(context.getSvgTextProperties().getLineWidth());
+                    .setStrokeWidth(context.getSvgTextProperties().getLineWidth())
+                    .setDashPattern(context.getSvgTextProperties().getDashArray(),
+                            context.getSvgTextProperties().getDashPhase());
         } else {
             underline = new Underline(fillColor, fillOpacity, 0, 0.07f, 0, textDecorationLine,
                     PdfCanvasConstants.LineCapStyle.BUTT);

@@ -277,13 +277,11 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: DEVSIX-8776 Support stroke dash pattern in layout
     public void textStrokeDasharrayTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textStrokeDasharray");
     }
 
     @Test
-    //TODO: DEVSIX-8776 Support stroke dash pattern in layout
     public void textComplexStrokeDasharrayTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textComplexStrokeDasharray");
     }

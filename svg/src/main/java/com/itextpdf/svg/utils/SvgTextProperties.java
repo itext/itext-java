@@ -24,13 +24,9 @@ package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceGray;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.layout.properties.Underline;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,7 +38,8 @@ public class SvgTextProperties {
     private Color strokeColor = DeviceGray.BLACK;
     private float fillOpacity = 1f;
     private float strokeOpacity = 1f;
-    private PdfArray dashPattern = new PdfArray(Arrays.asList(new PdfObject[]{new PdfArray(), new PdfNumber(0)}));
+    private float[] dashArray = null;
+    private float dashPhase = 0f;
     private float lineWidth = 1f;
     private List<Underline> textDecoration = new ArrayList<>();
 
@@ -63,7 +60,8 @@ public class SvgTextProperties {
         this.strokeColor = textProperties.getStrokeColor();
         this.fillOpacity = textProperties.getFillOpacity();
         this.strokeOpacity = textProperties.getStrokeOpacity();
-        this.dashPattern = textProperties.getDashPattern();
+        this.dashArray = textProperties.getDashArray();
+        this.dashPhase = textProperties.getDashPhase();
         this.lineWidth = textProperties.getLineWidth();
         this.textDecoration = textProperties.getTextDecoration();
     }
@@ -198,7 +196,7 @@ public class SvgTextProperties {
     }
 
     /**
-     * Gets a description of the dash pattern to be used when paths are stroked. Default value is solid line.
+     * Gets dash array part of the dash pattern to be used when paths are stroked. Default value is solid line.
      *
      * <p>
      * The line dash pattern is expressed as an array of the form [ dashArray dashPhase ],
@@ -208,11 +206,27 @@ public class SvgTextProperties {
      * An empty dash array (first element in the array) and zero phase (second element in the array)
      * can be used to restore the dash pattern to a solid line.
      *
-     * @return dash pattern array
+     * @return float dash array
      */
-    // TODO DEVSIX-8776 support dash-pattern in layout
-    public PdfArray getDashPattern() {
-        return dashPattern;
+    public float[] getDashArray() {
+        return dashArray;
+    }
+
+    /**
+     * Gets dash phase part of the dash pattern to be used when paths are stroked. Default value is solid line.
+     *
+     * <p>
+     * The line dash pattern is expressed as an array of the form [ dashArray dashPhase ],
+     * where dashArray is itself an array and dashPhase is an integer.
+     *
+     * <p>
+     * An empty dash array (first element in the array) and zero phase (second element in the array)
+     * can be used to restore the dash pattern to a solid line.
+     *
+     * @return float dash array
+     */
+    public float getDashPhase() {
+        return dashPhase;
     }
 
     /**
@@ -232,20 +246,8 @@ public class SvgTextProperties {
      * @return this same {@link SvgTextProperties} instance
      */
     public SvgTextProperties setDashPattern(float[] dashArray, float dashPhase) {
-        this.dashPattern = getDashPatternArray(dashArray, dashPhase);
+        this.dashArray = dashArray;
+        this.dashPhase = dashPhase;
         return this;
-    }
-
-    private static PdfArray getDashPatternArray(float[] dashArray, float phase) {
-        PdfArray dashPatternArray = new PdfArray();
-        PdfArray dArray = new PdfArray();
-        if (dashArray != null) {
-            for (float fl : dashArray) {
-                dArray.add(new PdfNumber(fl));
-            }
-        }
-        dashPatternArray.add(dArray);
-        dashPatternArray.add(new PdfNumber(phase));
-        return dashPatternArray;
     }
 }

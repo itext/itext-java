@@ -44,6 +44,8 @@ public class Underline {
 
     private TransparentColor strokeColor;
     private float strokeWidth = 0f;
+    private float[] dashArray = null;
+    private float dashPhase = 0f;
 
     /**
      * Creates an Underline. Both the thickness and vertical positioning under
@@ -181,6 +183,62 @@ public class Underline {
      */
     public Underline setStrokeWidth(float strokeWidth) {
         this.strokeWidth = strokeWidth;
+        return this;
+    }
+
+    /**
+     * Gets dash array part of the dash pattern to be used when paths are stroked. Default value is solid line.
+     *
+     * <p>
+     * The line dash pattern is expressed as an array of the form [ dashArray dashPhase ],
+     * where dashArray is itself an array and dashPhase is an integer.
+     *
+     * <p>
+     * An empty dash array (first element in the array) and zero phase (second element in the array)
+     * can be used to restore the dash pattern to a solid line.
+     *
+     * @return float dash array
+     */
+    public float[] getDashArray() {
+        return dashArray;
+    }
+
+    /**
+     * Gets dash phase part of the dash pattern to be used when paths are stroked. Default value is solid line.
+     *
+     * <p>
+     * The line dash pattern is expressed as an array of the form [ dashArray dashPhase ],
+     * where dashArray is itself an array and dashPhase is an integer.
+     *
+     * <p>
+     * An empty dash array (first element in the array) and zero phase (second element in the array)
+     * can be used to restore the dash pattern to a solid line.
+     *
+     * @return float dash array
+     */
+    public float getDashPhase() {
+        return dashPhase;
+    }
+
+    /**
+     * Sets a description of the dash pattern to be used when paths are stroked. Default value is solid line.
+     *
+     * <p>
+     * The line dash pattern is expressed as an array of the form [ dashArray dashPhase ],
+     * where dashArray is itself an array and dashPhase is a number.
+     *
+     * <p>
+     * An empty dash array (first element in the array) and zero phase (second element in the array)
+     * can be used to restore the dash pattern to a solid line.
+     *
+     * @param dashArray dash array
+     * @param dashPhase dash phase value
+     *
+     * @return this same {@link Underline} instance
+     */
+    public Underline setDashPattern(float[] dashArray, float dashPhase) {
+        this.dashArray = dashArray;
+        this.dashPhase = dashPhase;
         return this;
     }
 }

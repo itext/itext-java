@@ -244,6 +244,11 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void textDecorationDashedStrokeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationDashedStroke");
+    }
+
+    @Test
     public void tspanDefaultFontSizeTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanDefaultFontSize");
     }

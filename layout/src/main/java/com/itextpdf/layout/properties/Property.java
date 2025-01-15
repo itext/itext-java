@@ -194,6 +194,13 @@ public final class Property {
     public static final int SPACING_RATIO = 61;
     public static final int SPLIT_CHARACTERS = 62;
     public static final int STROKE_COLOR = 63;
+    /**
+     * STROKE_DASH_PATTERN property specifies dash pattern for the text stroke and stores the {@link java.util.List}
+     * as float array of the form [ dashArray dashPhase ], where {@code dashArray} is a float array that specifies
+     * the length of the alternating dashes and gaps, {@code dashPhase} is a float that specifies the distance into
+     * the dash pattern to start the dash.
+     */
+    public static final int STROKE_DASH_PATTERN = 156;
     public static final int STROKE_WIDTH = 64;
     public static final int SKEW = 65;
     public static final int TABLE_LAYOUT = 93;
@@ -235,7 +242,7 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 155;
+    private static final int MAX_INHERITED_PROPERTY_ID = 156;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -266,6 +273,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.SPACING_RATIO] = true;
         INHERITED_PROPERTIES[Property.SPLIT_CHARACTERS] = true;
         INHERITED_PROPERTIES[Property.STROKE_COLOR] = true;
+        INHERITED_PROPERTIES[Property.STROKE_DASH_PATTERN] = true;
         INHERITED_PROPERTIES[Property.STROKE_WIDTH] = true;
         INHERITED_PROPERTIES[Property.TEXT_ALIGNMENT] = true;
         INHERITED_PROPERTIES[Property.TEXT_ANCHOR] = true;

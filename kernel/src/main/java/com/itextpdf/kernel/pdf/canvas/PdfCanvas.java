@@ -1513,7 +1513,11 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(float phase) {
-        currentGs.setDashPattern(getDashPatternArray(phase));
+        PdfArray dashPattern = getDashPatternArray(phase);
+        if (dashPattern == null) {
+            return this;
+        }
+        currentGs.setDashPattern(dashPattern);
         contentStream.getOutputStream().writeByte('[').writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
@@ -1533,7 +1537,11 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(float unitsOn, float phase) {
-        currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn}, phase));
+        PdfArray dashPattern = getDashPatternArray(new float[]{unitsOn}, phase);
+        if (dashPattern == null) {
+            return this;
+        }
+        currentGs.setDashPattern(dashPattern);
         contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
@@ -1555,7 +1563,11 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(float unitsOn, float unitsOff, float phase) {
-        currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn, unitsOff}, phase));
+        PdfArray dashPattern = getDashPatternArray(new float[]{unitsOn, unitsOff}, phase);
+        if (dashPattern == null) {
+            return this;
+        }
+        currentGs.setDashPattern(dashPattern);
         contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeSpace()
                 .writeFloat(unitsOff).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1576,7 +1588,11 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(float[] array, float phase) {
-        currentGs.setDashPattern(getDashPatternArray(array, phase));
+        PdfArray dashPattern = getDashPatternArray(array, phase);
+        if (dashPattern == null) {
+            return this;
+        }
+        currentGs.setDashPattern(dashPattern);
         PdfOutputStream out = contentStream.getOutputStream();
         out.writeByte('[');
         for (int iter = 0; iter < array.length; iter++) {
@@ -2497,8 +2513,18 @@ public class PdfCanvas {
         PdfArray dashPatternArray = new PdfArray();
         PdfArray dArray = new PdfArray();
         if (dashArray != null) {
+            float sum = 0;
             for (float fl : dashArray) {
+                if (fl < 0) {
+                    // Negative values are not allowed.
+                    return null;
+                }
+                sum += fl;
                 dArray.add(new PdfNumber(fl));
+            }
+            if (sum < 1e-6) {
+                // All 0 values are not allowed.
+                return null;
             }
         }
         dashPatternArray.add(dArray);

@@ -144,10 +144,10 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     private void applyGraphicsState(SvgDrawContext context) {
         SvgTextProperties textProperties = context.getSvgTextProperties();
         // TODO DEVSIX-8774 support stroke-opacity for text at layout level
-        // TODO DEVSIX-8776 support dash-pattern in layout
         text.setFontColor(textProperties.getFillColor());
         text.setStrokeWidth(textProperties.getLineWidth());
         text.setStrokeColor(textProperties.getStrokeColor());
+        text.setDashPattern(textProperties.getDashArray(), textProperties.getDashPhase());
         text.setOpacity(textProperties.getFillOpacity());
         text.setProperty(Property.UNDERLINE, textProperties.getTextDecoration());
     }
