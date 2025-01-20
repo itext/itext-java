@@ -1514,9 +1514,6 @@ public class PdfCanvas {
      */
     public PdfCanvas setLineDash(float phase) {
         PdfArray dashPattern = getDashPatternArray(phase);
-        if (dashPattern == null) {
-            return this;
-        }
         currentGs.setDashPattern(dashPattern);
         contentStream.getOutputStream().writeByte('[').writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()

@@ -134,7 +134,6 @@ public class SvgTextProperties {
      *
      * @return stroke opacity
      */
-    // TODO DEVSIX-8774 support stroke-opacity for text at layout level
     public float getStrokeOpacity() {
         return strokeOpacity;
     }

@@ -604,9 +604,23 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      * The stroke color is the color of the outlines or edges of a shape.
      *
      * @return the current stroke color
+     *
+     * @deprecated in favour of {@link #getTransparentStrokeColor()} which should be renamed to {@code getStrokeColor}
+     * after this method will be removed
      */
+    @Deprecated
     public Color getStrokeColor() {
-        return this.<Color>getProperty(Property.STROKE_COLOR);
+        return this.<TransparentColor>getProperty(Property.STROKE_COLOR).getColor();
+    }
+
+    /**
+     * Gets the stroke color for the current element.
+     * The stroke color is the color of the outlines or edges of a shape.
+     *
+     * @return the current stroke color
+     */
+    public TransparentColor getTransparentStrokeColor() {
+        return this.<TransparentColor>getProperty(Property.STROKE_COLOR);
     }
 
     /**
@@ -614,10 +628,38 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      * The stroke color is the color of the outlines or edges of a shape.
      *
      * @param strokeColor a new stroke color
-     * @return this Element.
+     *
+     * @return this element
      */
     public T setStrokeColor(Color strokeColor) {
-        setProperty(Property.STROKE_COLOR, strokeColor);
+        return setStrokeColor(strokeColor, 1f);
+    }
+
+    /**
+     * Sets the stroke color for the current element.
+     * The stroke color is the color of the outlines or edges of a shape.
+     *
+     * @param strokeColor a {@link Color} for the stroke
+     * @param opacity an opacity for the stroke color; a float between 0 and 1, where 1 stands for fully opaque color
+     *                and 0 - for fully transparent
+     *
+     * @return this element
+     */
+    public T setStrokeColor(Color strokeColor, float opacity) {
+        setProperty(Property.STROKE_COLOR, strokeColor != null ? new TransparentColor(strokeColor, opacity) : null);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the stroke color for the current element.
+     * The stroke color is the color of the outlines or edges of a shape.
+     *
+     * @param transparentColor a new stroke color with transparency
+     *
+     * @return this element
+     */
+    public T setStrokeColor(TransparentColor transparentColor) {
+        setProperty(Property.STROKE_COLOR, transparentColor);
         return (T) (Object) this;
     }
 

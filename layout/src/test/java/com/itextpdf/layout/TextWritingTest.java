@@ -23,6 +23,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -128,6 +129,78 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void textStrokeTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "textStrokeTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_textStrokeTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDocument)) {
+            Text text1 = new Text("Red stroke text via color setter")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeColor(ColorConstants.RED)
+                    .setStrokeWidth(0.1f);
+            document.add(new Paragraph().add(text1));
+
+            Text text2 = new Text("Red transparent stroke text via setter with 2 parameters")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeColor(ColorConstants.RED, 0.5f)
+                    .setStrokeWidth(0.1f);
+            document.add(new Paragraph().add(text2));
+
+            Text text3 = new Text("Red transparent stroke text via transparent color setter")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeColor(new TransparentColor(ColorConstants.RED, 0.5f))
+                    .setStrokeWidth(0.1f);
+            document.add(new Paragraph().add(text3));
+
+            Text text4 = new Text("Red transparent stroke text via transparent color property")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeWidth(0.1f);
+            text4.setProperty(Property.STROKE_COLOR, new TransparentColor(ColorConstants.RED, 0.5f));
+            document.add(new Paragraph().add(text4));
+
+            Text text5 = new Text("Red transparent stroke text via color property")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeWidth(0.1f);
+            text5.setProperty(Property.STROKE_COLOR, ColorConstants.RED);
+            document.add(new Paragraph().add(text5));
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void textFillStrokeTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "textFillStrokeTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_textFillStrokeTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            Text text1 = new Text("Pink text with null stroke color (so font color is used)")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE)
+                    .setFontColor(ColorConstants.PINK)
+                    .setStrokeColor((Color) null)
+                    .setStrokeWidth(2)
+                    .setFontSize(50);
+            document.add(new Paragraph().add(text1));
+
+            Text text2 = new Text("Pink text with red half-transparent stroke")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE)
+                    .setFontColor(ColorConstants.PINK)
+                    .setStrokeColor(ColorConstants.RED, 0.5f)
+                    .setStrokeWidth(2)
+                    .setFontSize(50);
+            document.add(new Paragraph().add(text2));
+
+            Text text3 = new Text("Pink text with fully transparent stroke")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE)
+                    .setFontColor(ColorConstants.PINK)
+                    .setStrokeColor(new TransparentColor(ColorConstants.RED, 0f))
+                    .setStrokeWidth(2)
+                    .setFontSize(50);
+            document.add(new Paragraph().add(text3));
+        }
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -365,12 +438,13 @@ public class TextWritingTest extends ExtendedITextTest {
                     .setDashPattern(new float[]{5, 5, 10, 5}, 5);
             p.setUnderline(underline);
 
+            TransparentColor strokeColor = new TransparentColor(ColorConstants.GREEN, 0.5f);
             Paragraph p2 = new Paragraph("Text with line-through and default underline.")
                     .setFontSize(50).setStrokeWidth(1).setFontColor(ColorConstants.DARK_GRAY)
-                    .setStrokeColor(ColorConstants.GREEN);
+                    .setStrokeColor(strokeColor);
             Underline underline2 = new Underline(ColorConstants.DARK_GRAY, 0, 0.1f, 0, 0.3f,
                     PdfCanvasConstants.LineCapStyle.BUTT)
-                    .setStrokeWidth(1).setStrokeColor(new TransparentColor(ColorConstants.GREEN));
+                    .setStrokeWidth(1).setStrokeColor(strokeColor);
             p2.setUnderline(underline2);
             p2.setUnderline();
 

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250103175542+03'00')/ModDate(D:20250103175542+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20250120151530+03'00')/ModDate(D:20250120151530+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -34,7 +34,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 225 150]/Length 170/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R/Gs3 11 0 R/Gs4 12 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 225 150]/Length 154/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R/Gs3 11 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 225 150 re
 W
 n
@@ -50,17 +50,12 @@ f
 Q
 q
 q
-/Gs3 gs
-Q
-q
-/Gs4 gs
-q
 BT
 /F1 12 Tf
 1 0 0 -1 37.5 112.5 Tm
+/Gs3 gs
 (Test Text)Tj
 ET
-Q
 Q
 Q
 Q
@@ -74,13 +69,10 @@ endobj
 <</ca 0.1>>
 endobj
 11 0 obj
-<</CA 0.1/ca 0.1>>
-endobj
-12 0 obj
-<</CA 0.1/ca 0.1>>
+<</ca 0.1>>
 endobj
 xref
-0 13
+0 12
 0000000000 65535 f 
 0000000211 00000 n 
 0000000518 00000 n 
@@ -90,13 +82,12 @@ xref
 0000000428 00000 n 
 0000000569 00000 n 
 0000000737 00000 n 
+0000001061 00000 n 
 0000001088 00000 n 
-0000001115 00000 n 
-0000001143 00000 n 
-0000001178 00000 n 
+0000001116 00000 n 
 trailer
-<</ID [<08bc33afa5257f8b09f0df5159ff07eb217275ff528a20e576bf1d2c41618c11843cee56e6454c092abaa22bb1b65b186b2309f79fc94c4d340e07af7c2b93f6><08bc33afa5257f8b09f0df5159ff07eb217275ff528a20e576bf1d2c41618c11843cee56e6454c092abaa22bb1b65b186b2309f79fc94c4d340e07af7c2b93f6>]/Info 3 0 R/Root 1 0 R/Size 13>>
+<</ID [<67420fd3585356aba2b2aefb26bff6aecf52fdde5e55e5e101dc540bf382fd6332409fbd367f7b9d9cdd79ccdf9ae8fb0029b552304cf28f7a87f45238771ff9><67420fd3585356aba2b2aefb26bff6aecf52fdde5e55e5e101dc540bf382fd6332409fbd367f7b9d9cdd79ccdf9ae8fb0029b552304cf28f7a87f45238771ff9>]/Info 3 0 R/Root 1 0 R/Size 12>>
 %iText-Core-9.1.0-SNAPSHOT
 startxref
-1213
+1144
 %%EOF

@@ -56,9 +56,24 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-8774 support stroke-opacity for text at layout level
+    // TODO DEVSIX-8854 Draw SVG elements with transparent stroke in 2 steps
     public void strokeWithDashesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWithDashes");
+    }
+
+    @Test
+    public void strokeWithDashesAcrobatBugTest() throws IOException, InterruptedException {
+        // Acrobat displays the result incorrectly, however e.g. Xodo PDF Studio displays the document exactly the same
+        // as svg (in terms of stroke opacity and view box). Same issue is reproduced in the
+        // DefaultStyleInheritanceIntegrationTest#usePropertiesInheritanceTest and nestedInheritanceTest,
+        // ClipPathSvgNodeRendererIntegrationTest#clipPathComplexTest.
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWithDashesAcrobatBug");
+    }
+
+    @Test
+    // TODO DEVSIX-8854 Draw SVG elements with transparent stroke in 2 steps
+    public void strokeOpacityTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOpacity");
     }
 
     @Test

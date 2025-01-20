@@ -968,7 +968,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
                     .setBackgroundColor(ColorConstants.YELLOW)
                     .setWidth(10)
                     .setStrokeWidth(1f)
-                    .setStrokeColor(null)
+                    .setStrokeColor((TransparentColor) null)
                     .setBorder(new SolidBorder(1));
             paragraph.setNextRenderer(new TextRenderer(text) {
                 @Override

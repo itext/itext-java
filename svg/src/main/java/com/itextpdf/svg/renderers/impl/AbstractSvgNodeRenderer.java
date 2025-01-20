@@ -328,6 +328,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                         }
                     } else {
                         if (doStroke) {
+                            // TODO DEVSIX-8854 Draw SVG elements with transparent stroke in 2 steps
                             currentCanvas.fillStroke();
                         } else {
                             currentCanvas.fill();
@@ -396,6 +397,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             currentCanvas.setLineWidth(strokeProperties.getWidth());
 
             if (!CssUtils.compareFloats(strokeProperties.getOpacity(), 1f)) {
+                // TODO DEVSIX-8854 Draw SVG elements with transparent stroke in 2 steps
                 opacityGraphicsState.setStrokeOpacity(strokeProperties.getOpacity());
             }
         }
