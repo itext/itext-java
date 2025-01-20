@@ -26,7 +26,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Paragraph;
@@ -34,6 +34,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.properties.IBeforeTextRestoreExecutor;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAnchor;
@@ -240,13 +241,17 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         this.paragraph.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
         this.paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.SVG_MODE);
         this.paragraph.setProperty(Property.NO_SOFT_WRAP_INLINE, true);
+        if (getParentClipPath() != null) {
+            this.paragraph.setProperty(Property.BEFORE_TEXT_RESTORE_EXECUTOR,
+                    new ClippedElementDrawer(getParentClipPath(), context));
+        }
         this.paragraph.setMargin(0);
         applyTextRenderingMode(paragraph);
         applyFontProperties(paragraph, context);
         // We resolve and draw absolutely positioned text chunks similar to getTextRectangle method. We are interested
         // not only in building of properly positioned rectangles, but also in drawing and text properties applying.
         startNewTextChunk(context, TEXTFLIP);
-
+        
         performDrawing(context);
         drawLastTextChunk(context);
         context.setSvgTextProperties(new SvgTextProperties());
@@ -270,14 +275,18 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     }
 
     void applyTextRenderingMode(IElement element) {
-        // Fill only is the default for text operation in PDF
-        if (doStroke && doFill) {
-            // Default for SVG
-            element.setProperty(Property.TEXT_RENDERING_MODE, PdfCanvasConstants.TextRenderingMode.FILL_STROKE);
-        } else if (doStroke) {
-            element.setProperty(Property.TEXT_RENDERING_MODE, PdfCanvasConstants.TextRenderingMode.STROKE);
+        if (getParentClipPath() != null) {
+            element.setProperty(Property.TEXT_RENDERING_MODE, TextRenderingMode.CLIP);
         } else {
-            element.setProperty(Property.TEXT_RENDERING_MODE, PdfCanvasConstants.TextRenderingMode.FILL);
+            // Fill only is the default for text operation in PDF
+            if (doStroke && doFill) {
+                // Default for SVG
+                element.setProperty(Property.TEXT_RENDERING_MODE, TextRenderingMode.FILL_STROKE);
+            } else if (doStroke) {
+                element.setProperty(Property.TEXT_RENDERING_MODE, TextRenderingMode.STROKE);
+            } else {
+                element.setProperty(Property.TEXT_RENDERING_MODE, TextRenderingMode.FILL);
+            }
         }
     }
 
@@ -509,6 +518,21 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             if (child instanceof TextSvgBranchRenderer) {
                 ((TextSvgBranchRenderer) child).collectChildren(children);
             }
+        }
+    }
+
+    private static final class ClippedElementDrawer implements IBeforeTextRestoreExecutor {
+        private final ClipPathSvgNodeRenderer clipPathSvgNodeRenderer;
+        private final SvgDrawContext context;
+
+        public ClippedElementDrawer(ClipPathSvgNodeRenderer clipPathSvgNodeRenderer, SvgDrawContext context) {
+            this.clipPathSvgNodeRenderer = clipPathSvgNodeRenderer;
+            this.context = context;
+        }
+
+        @Override
+        public void execute() {
+            clipPathSvgNodeRenderer.drawClippedRenderer(context);
         }
     }
 }

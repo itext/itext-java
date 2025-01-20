@@ -59,6 +59,7 @@ public class SvgDrawContext {
     private SvgCssContext cssContext;
 
     private AffineTransform rootTransform;
+    private AffineTransform clippingElementTransform = new AffineTransform();
     private float[] textMove = new float[]{0.0f, 0.0f};
     private float[] relativePosition;
 
@@ -469,5 +470,29 @@ public class SvgDrawContext {
      */
     public void resetRelativePosition() {
         relativePosition = new float[]{0.0f, 0.0f};
+    }
+
+    /**
+     * Gets clipping element transformation matrix.
+     *
+     * <p>
+     * It is used to preserve clipping element transformation matrix and before drawing clipped element revert canvas
+     * transformation matrix into original state. After clipped element will be drawn, clipping element transformation
+     * matrix will be used once again to return clipping element matrix for next siblings.
+     *
+     * @return the current clipping element transformation matrix
+     */
+    public AffineTransform getClippingElementTransform() {
+        return clippingElementTransform;
+    }
+
+    /**
+     * Resets clipping element transformation matrix.
+     *
+     * <p>
+     * See {@link #getClippingElementTransform()} for more info about clipping element transformation matrix.
+     */
+    public void resetClippingElementTransform() {
+        this.clippingElementTransform.setToIdentity();
     }
 }

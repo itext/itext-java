@@ -61,9 +61,6 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                     SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(this, clonedObject, context.getCssContext());
 
                     if (clonedObject != null) {
-                        if (clonedObject instanceof AbstractSvgNodeRenderer) {
-                            ((AbstractSvgNodeRenderer) clonedObject).setPartOfClipPath(partOfClipPath);
-                        }
                         PdfCanvas currentCanvas = context.getCurrentCanvas();
 
                         // If X or Y attribute is null, then default 0 value will be returned
@@ -74,7 +71,7 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                         if (!CssUtils.compareFloats(x, 0) || !CssUtils.compareFloats(y, 0)) {
                             AffineTransform translation = AffineTransform.getTranslateInstance(x, y);
                             currentCanvas.concatMatrix(translation);
-                            if (partOfClipPath) {
+                            if (getParentClipPath() != null) {
                                 try {
                                     inverseMatrix = translation.createInverse();
                                 } catch (NoninvertibleTransformException ex) {

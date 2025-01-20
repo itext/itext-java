@@ -1,0 +1,22 @@
+<svg width="500" height="250" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="outline: 1px solid red">
+<defs>
+	<clipPath id="textPath">
+		<!-- <text x="50" y="133" font-size="40pt" >ClipPathText</text> -->
+    <rect x="100" y="0" width="1" height="250" fill="red" />
+		<text fill="green">
+        <tspan x="70" y="45" fill="green">
+            x="-30"
+            <tspan dx="-70" dy="20" fill="orange">
+                dx="-70" dy="20"
+                <tspan x="100" dy="20" fill="red">
+                    x="0" dy="20"
+                </tspan>
+            </tspan>
+        </tspan>
+        <tspan dx="-150" dy="20" fill="blue">dx="-150" dy="20"</tspan>
+    </text>
+	</clipPath>
+</defs>
+
+<image xlink:href="star.jpg" x="0" y="-100" width="400" height="400" clip-path="url(#textPath)"/>
+</svg>

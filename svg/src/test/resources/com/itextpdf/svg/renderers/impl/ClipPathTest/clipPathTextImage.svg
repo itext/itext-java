@@ -1,6 +1,6 @@
 <svg width="400" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <clipPath id="text-clip">
-    <text x="20" y="100" font-size="80" font-family="Arial" fill="black">
+    <text x="20" y="100" font-size="80" fill="black">
       ClipPathText
     </text>
   </clipPath>

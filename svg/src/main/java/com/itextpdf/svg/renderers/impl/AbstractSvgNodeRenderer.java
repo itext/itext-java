@@ -67,7 +67,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      */
     protected Map<String, String> attributesAndStyles;
 
-    boolean partOfClipPath;
     boolean doFill = false;
     boolean doStroke = false;
 
@@ -143,6 +142,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 AffineTransform transformation = TransformUtils.parseTransform(transformString);
                 if (!transformation.isIdentity()) {
                     currentCanvas.concatMatrix(transformation);
+                    if (getParentClipPath() != null) {
+                        context.getClippingElementTransform().concatenate(transformation);
+                    }
                 }
             }
 
@@ -267,6 +269,24 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     protected abstract void doDraw(SvgDrawContext context);
 
     /**
+     * Gets parent {@link ClipPathSvgNodeRenderer} if it exists or {@code null} otherwise.
+     *
+     * @return the parent {@link ClipPathSvgNodeRenderer} or {@code null} otherwise
+     */
+    ClipPathSvgNodeRenderer getParentClipPath() {
+        if (this instanceof ClipPathSvgNodeRenderer) {
+            return (ClipPathSvgNodeRenderer) this;
+        }
+        if (getParent() == null) {
+            return null;
+        }
+        if (getParent() instanceof AbstractSvgNodeRenderer) {
+            return ((AbstractSvgNodeRenderer) getParent()).getParentClipPath();
+        }
+        return null;
+    }
+
+    /**
      * Calculate the transformation for the viewport based on the context. Only used by elements that can create
      * viewports
      *
@@ -290,16 +310,13 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (this.attributesAndStyles != null) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
 
+            if (this instanceof ISvgTextNodeRenderer) {
+                // Text rendering is performed via layout, which takes the responsibility for clipping, filling, stroking
+                return;
+            }
+
             // fill-rule
-            if (partOfClipPath) {
-                if (SvgConstants.Values.FILL_RULE_EVEN_ODD
-                        .equalsIgnoreCase(this.getAttribute(SvgConstants.Attributes.CLIP_RULE))) {
-                    currentCanvas.eoClip();
-                } else {
-                    currentCanvas.clip();
-                }
-                currentCanvas.endPath();
-            } else if (!(this instanceof ISvgTextNodeRenderer)) {
+            if (getParentClipPath() == null) {
                 if (doFill && canElementFill()) {
                     String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
 
@@ -321,7 +338,16 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 } else {
                     currentCanvas.endPath();
                 }
+            } else {
+                if (SvgConstants.Values.FILL_RULE_EVEN_ODD
+                        .equalsIgnoreCase(this.getAttribute(SvgConstants.Attributes.CLIP_RULE))) {
+                    currentCanvas.eoClip();
+                } else {
+                    currentCanvas.clip();
+                }
+                currentCanvas.endPath();
             }
+
             // Marker drawing
             if (this instanceof IMarkerCapable) {
                 for (MarkerVertexType markerVertexType : MARKER_VERTEX_TYPES) {
@@ -333,10 +359,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
     }
 
-    void setPartOfClipPath(boolean value) {
-        partOfClipPath = value;
-    }
-
     /**
      * Operations to perform before drawing an element.
      * This includes setting stroke color and width, fill color.
@@ -344,7 +366,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context the svg draw context
      */
     void preDraw(SvgDrawContext context) {
-        if (this.attributesAndStyles != null && !partOfClipPath) {
+        if (this.attributesAndStyles != null && getParentClipPath() == null) {
             FillProperties fillProperties = calculateFillProperties(context);
             StrokeProperties strokeProperties = calculateStrokeProperties(context);
             applyFillAndStrokeProperties(fillProperties, strokeProperties, context);
@@ -491,8 +513,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.CLIP_PATH)) {
             String clipPathName = attributesAndStyles.get(SvgConstants.Attributes.CLIP_PATH);
             ISvgNodeRenderer template = context.getNamedObject(normalizeLocalUrlName(clipPathName));
-            //Clone template to avoid muddying the state
             if (template instanceof ClipPathSvgNodeRenderer) {
+                // Clone template to avoid muddying the state
                 ClipPathSvgNodeRenderer clipPath = (ClipPathSvgNodeRenderer) template.createDeepCopy();
                 // Resolve parent inheritance
                 SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(this, clipPath, context.getCssContext());

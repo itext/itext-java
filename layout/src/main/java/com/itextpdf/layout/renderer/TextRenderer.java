@@ -43,6 +43,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Text;
@@ -62,6 +63,7 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.properties.BaseDirection;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.FontKerning;
+import com.itextpdf.layout.properties.IBeforeTextRestoreExecutor;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -1006,7 +1008,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 canvas.showText(savedWordBreakAtLineEnding);
             }
 
-            canvas.endText().restoreState();
+            canvas.endText();
+            IBeforeTextRestoreExecutor beforeTextRestoreExecutor = this.<IBeforeTextRestoreExecutor>getProperty(
+                    Property.BEFORE_TEXT_RESTORE_EXECUTOR);
+            if (beforeTextRestoreExecutor != null) {
+                beforeTextRestoreExecutor.execute();
+            }
+            canvas.restoreState();
             endElementOpacityApplying(drawContext);
 
             if (isTagged) {
@@ -1506,12 +1514,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         TransparentColor underlineStrokeColor = underline.getStrokeColor();
 
         boolean doStroke = underlineStrokeColor != null;
-        RenderingMode mode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
-        // In SVG mode we should always use underline color, it is not related to the font color of the current text,
+        boolean isClippingMode = this.<Integer>getProperty(Property.TEXT_RENDERING_MODE) > TextRenderingMode.INVISIBLE;
+        RenderingMode renderingMode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        // In SVG renderingMode we should always use underline color, it is not related to the font color of the current text,
         // but to the font color of the text element where text-decoration has been declared. In case of none value
-        // for fill and stroke in SVG mode, underline shouldn't be drawn at all.
+        // for fill and stroke in SVG renderingMode, underline shouldn't be drawn at all.
         if (underlineFillColor == null && !doStroke) {
-            if (RenderingMode.SVG_MODE == mode) {
+            if (RenderingMode.SVG_MODE == renderingMode && !isClippingMode) {
                 return;
             }
             underlineFillColor = fontColor;
@@ -1544,15 +1553,26 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             Rectangle underlineBBox = new Rectangle(innerAreaBbox.getX(), underlineYPosition - underlineThickness / 2,
                     innerAreaBbox.getWidth() - italicWidthSubstraction, underlineThickness);
             canvas.rectangle(underlineBBox);
-            if (doFill && doStroke) {
-                canvas.fillStroke();
-            } else if (doStroke) {
-                canvas.stroke();
+
+            if (isClippingMode){
+                canvas.clip().endPath();
             } else {
-                // In layout/html we should use default color in case underline and fontColor are null
-                // and still draw underline.
-                canvas.fill();
+                if (doFill && doStroke) {
+                    canvas.fillStroke();
+                } else if (doStroke) {
+                    canvas.stroke();
+                } else {
+                    // In layout/html we should use default color in case underline and fontColor are null
+                    // and still draw underline.
+                    canvas.fill();
+                }
             }
+        }
+
+        IBeforeTextRestoreExecutor beforeTextRestoreExecutor = this.<IBeforeTextRestoreExecutor>getProperty(
+                Property.BEFORE_TEXT_RESTORE_EXECUTOR);
+        if (beforeTextRestoreExecutor != null) {
+            beforeTextRestoreExecutor.execute();
         }
         canvas.restoreState();
     }

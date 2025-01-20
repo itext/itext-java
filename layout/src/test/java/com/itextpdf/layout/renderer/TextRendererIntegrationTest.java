@@ -22,10 +22,10 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -33,8 +33,10 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DashedBorder;
@@ -45,8 +47,10 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.IBeforeTextRestoreExecutor;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -54,7 +58,6 @@ import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -64,8 +67,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TextRendererIntegrationTest extends ExtendedITextTest {
@@ -1022,6 +1025,81 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
                     StandardCharsets.UTF_8);
             Assertions.assertTrue(contentstream.contains("test string"));
         }
+    }
+
+    @Test
+    // Pure layout doesn't support text clipping and CLIPPED_BY_TEXT_ELEMENT_DRAWER was developed for SVG.
+    // This test just show that there is a not user-friendly way to achieve text clipping.
+    public void simpleClippedTextTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "simpleClippedTextTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_simpleClippedTextTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        doc.setFontSize(20);
+        PdfCanvas pdfCanvas = new PdfCanvas(pdfDocument.addNewPage());
+        Canvas canvas = new Canvas(pdfCanvas, pdfDocument.getPage(1).getMediaBox());
+
+        Paragraph paragraph = new Paragraph("Hello World! Some long text to the end of the page")
+                .setTextRenderingMode(TextRenderingMode.CLIP);
+        paragraph.setProperty(Property.BEFORE_TEXT_RESTORE_EXECUTOR, new IBeforeTextRestoreExecutor() {
+            @Override
+            public void execute() {
+                Div div = new Div();
+                div.setFixedPosition(0, 0, 300);
+                div.setHeight(1200);
+                div.setBackgroundColor(ColorConstants.RED);
+                canvas.add(div);
+            }
+        });
+        doc.add(paragraph);
+
+        Paragraph paragraph2 = new Paragraph("Another text")
+                .setTextRenderingMode(TextRenderingMode.STROKE_CLIP);
+        paragraph2.setStrokeColor(ColorConstants.YELLOW);
+        paragraph2.setStrokeWidth(5);
+        paragraph2.setProperty(Property.BEFORE_TEXT_RESTORE_EXECUTOR, new IBeforeTextRestoreExecutor() {
+            @Override
+            public void execute() {
+                Div div = new Div();
+                div.setFixedPosition(0, 0, 300);
+                div.setHeight(1200);
+                div.setBackgroundColor(ColorConstants.GREEN);
+                canvas.add(div);
+            }
+        });
+        doc.add(paragraph2);
+
+        doc.add(new Paragraph("Bye World!"));
+
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void clippedTextWithoutDrawerTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "clippedTextWithoutDrawerTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_clippedTextWithoutDrawerTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+        doc.setFontSize(20);
+
+        Paragraph paragraph = new Paragraph("Hello World! Some long text to the end of the page")
+                .setTextRenderingMode(TextRenderingMode.CLIP);
+        doc.add(paragraph);
+
+        Div div = new Div();
+        div.setWidth(300);
+        div.setHeight(400);
+        div.setBackgroundColor(ColorConstants.RED);
+        doc.add(div);
+
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
     private static class TextRendererWithOverriddenGetNextRenderer extends TextRenderer {

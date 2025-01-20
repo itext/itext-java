@@ -225,16 +225,6 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
     @Override
     public abstract ISvgNodeRenderer createDeepCopy();
 
-    @Override
-    void setPartOfClipPath(boolean isPart) {
-        super.setPartOfClipPath(isPart);
-        for (ISvgNodeRenderer child : children) {
-            if (child instanceof AbstractSvgNodeRenderer) {
-                ((AbstractSvgNodeRenderer) child).setPartOfClipPath(isPart);
-            }
-        }
-    }
-
     void calculateAndApplyViewBox(SvgDrawContext context, float[] values, Rectangle currentViewPort) {
         // If viewBox width or height is zero we should disable rendering of the element.
         if (Math.abs(values[2]) < EPS || Math.abs(values[3]) < EPS) {

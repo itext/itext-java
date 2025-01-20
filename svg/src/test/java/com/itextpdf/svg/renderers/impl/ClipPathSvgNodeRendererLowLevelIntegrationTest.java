@@ -29,21 +29,17 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
-
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrationTest {
@@ -92,9 +88,10 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         rectRenderer.setAttribute(SvgConstants.Attributes.WIDTH, "400");
         rectRenderer.setAttribute(SvgConstants.Attributes.HEIGHT, "400");
         clipRenderer.addChild(rectRenderer);
+        clipRenderer.setClippedRenderer(new RectangleSvgNodeRenderer());
         clipRenderer.draw(sdc);
 
-        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\nQ\n", new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\n0 0 0 rg\n% rect\n0 0 0 0 re\nf\nQ\n", new String(cv.getContentStream().getBytes()));
     }
 
     @Test
@@ -106,9 +103,10 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         rectRenderer.setAttribute(SvgConstants.Attributes.WIDTH, "400");
         rectRenderer.setAttribute(SvgConstants.Attributes.HEIGHT, "400");
         clipRenderer.addChild(rectRenderer);
+        clipRenderer.setClippedRenderer(new RectangleSvgNodeRenderer());
         clipRenderer.draw(sdc);
 
-        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\nQ\n", new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\n0 0 0 rg\n% rect\n0 0 0 0 re\nf\nQ\n", new String(cv.getContentStream().getBytes()));
     }
 
     @Test
@@ -120,9 +118,10 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         rectRenderer.setAttribute(SvgConstants.Attributes.HEIGHT, "400");
         rectRenderer.setAttribute(SvgConstants.Attributes.CLIP_RULE, SvgConstants.Values.FILL_RULE_EVEN_ODD);
         clipRenderer.addChild(rectRenderer);
+        clipRenderer.setClippedRenderer(new RectangleSvgNodeRenderer());
         clipRenderer.draw(sdc);
 
-        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW*\nn\nQ\n", new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW*\nn\n0 0 0 rg\n% rect\n0 0 0 0 re\nf\nQ\n", new String(cv.getContentStream().getBytes()));
     }
 
     @Test
