@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.test.ITextTest;
@@ -119,7 +120,9 @@ public class FillTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO update cmp file after DEVSIX-3365 will be fixed
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION)
+    })
     public void invalidUrlFillTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidUrlFillTest");
     }
@@ -134,7 +137,6 @@ public class FillTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-8821: update after supported
     public void fillLinkToNonExistingGradientTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "fillLinkToNonExistingGradient");
     }

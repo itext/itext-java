@@ -470,21 +470,37 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             return null;
         }
         String tokenValue = token.getValue();
-        if (tokenValue.startsWith("url(#") && tokenValue.endsWith(")")) {
-            Color resolvedColor = null;
-            float resolvedOpacity = 1;
-            final String normalizedName = tokenValue.substring(5, tokenValue.length() - 1).trim();
-            final ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
-            if (colorRenderer instanceof ISvgPaintServer) {
-                if (colorRenderer.getParent() == null) {
-                    colorRenderer.setParent(this);
+        boolean isUrlInvalid = false;
+        if (tokenValue.startsWith("url(") && tokenValue.endsWith(")")) {
+            String normalizedName = tokenValue.substring(4, tokenValue.length() - 1).trim();
+            normalizedName = CssUtils.extractUnquotedString(normalizedName);
+            if (normalizedName.startsWith("#")) {
+                Color resolvedColor = null;
+                float resolvedOpacity = 1;
+                normalizedName = normalizedName.substring(1);
+                final ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
+                if (colorRenderer instanceof ISvgPaintServer) {
+                    if (colorRenderer.getParent() == null) {
+                        colorRenderer.setParent(this);
+                    }
+                    resolvedColor = ((ISvgPaintServer) colorRenderer).createColor(
+                            context, getObjectBoundingBox(context), objectBoundingBoxMargin, parentOpacity);
                 }
-                resolvedColor = ((ISvgPaintServer) colorRenderer).createColor(
-                        context, getObjectBoundingBox(context), objectBoundingBoxMargin, parentOpacity);
+                if (resolvedColor != null) {
+                    return new TransparentColor(resolvedColor, resolvedOpacity);
+                }
+                if (colorRenderer == null) {
+                    isUrlInvalid = true;
+                }
+            } else {
+                //we don't support those, but we need to make fill transparent anyway in such a case
+                isUrlInvalid = true;
+                //try to get next token to work the same as for the local url values
             }
-            if (resolvedColor != null) {
-                return new TransparentColor(resolvedColor, resolvedOpacity);
-            }
+            token = tokenizer.getNextValidToken();
+        } else if (tokenValue.startsWith("url(") && !tokenValue.contains(" ")) {
+            //for cases like url\([\w\d]+ browser treats them as urls, but url\([\w\d]+\s[\w\d]+ are not
+            isUrlInvalid = true;
             token = tokenizer.getNextValidToken();
         }
         // may become null after function parsing and reading the 2nd token
@@ -497,6 +513,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 TransparentColor result = CssDimensionParsingUtils.parseColor(value);
                 return new TransparentColor(result.getColor(), result.getOpacity() * parentOpacity);
             }
+        }
+        if (isUrlInvalid) {
+            return new TransparentColor(ColorConstants.BLACK, 0.0F);
         }
         return null;
     }
