@@ -82,13 +82,11 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp_ when DEVSIX-3119
     public void ellipseRxAbsentTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseRxAbsent");
     }
 
     @Test
-    //TODO: update cmp_ when DEVSIX-3119
     public void ellipseRyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseRyAbsent");
     }

@@ -117,12 +117,14 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
         height = parseVerticalLength(getAttribute(SvgConstants.Attributes.HEIGHT), context);
 
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.RX)) {
-            rx = checkRadius(parseHorizontalLength(getAttribute(SvgConstants.Attributes.RX), context), width);
-            rxPresent = true;
+            float rawRadius =parseHorizontalLength(getAttribute(SvgConstants.Attributes.RX), context);
+            rx = checkRadius(rawRadius, width);
+            rxPresent = rawRadius >= 0.0f;
         }
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.RY)) {
-            ry = checkRadius(parseVerticalLength(getAttribute(SvgConstants.Attributes.RY), context), height);
-            ryPresent = true;
+            float rawRadius = parseVerticalLength(getAttribute(SvgConstants.Attributes.RY), context);
+            ry = checkRadius(rawRadius, height);
+            ryPresent = rawRadius >= 0.0f;
         }
     }
 

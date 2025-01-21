@@ -95,13 +95,11 @@ public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
     }
 
     @Test
-    //TODO change cmp-file after DEVSIX-3121 fixed
     public void basicEllipticalNegativeWidthRoundedRectangleTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeWidthRoundedRectangle");
     }
 
     @Test
-    //TODO change cmp-file after DEVSIX-3121 fixed
     public void basicEllipticalNegativeHeightRoundedRectangleTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeHeightRoundedRectangle");}
 

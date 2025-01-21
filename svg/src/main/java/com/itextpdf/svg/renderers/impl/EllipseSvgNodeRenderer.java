@@ -81,8 +81,16 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
      */
     protected boolean setParameters(SvgDrawContext context) {
         initCenter(context);
-        rx = parseHorizontalLength(getAttribute(SvgConstants.Attributes.RX), context);
-        ry = parseVerticalLength(getAttribute(SvgConstants.Attributes.RY), context);
+        String rxValue = getAttribute(SvgConstants.Attributes.RX);
+        String ryValue = getAttribute(SvgConstants.Attributes.RY);
+        rx = parseHorizontalLength(rxValue, context);
+        ry = parseVerticalLength(ryValue, context);
+        if (rxValue == null) {
+            rx = ry;
+        }
+        if (ryValue == null) {
+            ry = rx;
+        }
         return rx > 0.0F && ry > 0.0F;
     }
 
