@@ -1,7 +1,6 @@
 Please notice that the following fonts are used with the mentioned below licenses.
 
 * FreeSans - GPL license you can find following the link: https://www.gnu.org/licenses
-* KhmerOS - LGPL license you can find following the link: https://www.gnu.org/licenses
 * NotoColorEmoji - SIL Open Font License v1.1
 * NotoEmoji-Regular - SIL Open Font License v1.1
 * NotoSansCJKjp-Bold - SIL Open Font License v1.1

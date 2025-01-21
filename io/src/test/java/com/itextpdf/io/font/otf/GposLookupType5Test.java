@@ -41,9 +41,9 @@ public class GposLookupType5Test extends ExtendedITextTest {
 
     @Test
     public void verifyMarkToBaseAttachment() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(RESOURCE_FOLDER + "KhmerOS.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansKhmer-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
-        GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(0);
+        GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(25);
         List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(445)), new Glyph(fontProgram.getGlyphByCode(394)));
         GlyphLine gl = new GlyphLine(glyphs);
         gl.setIdx(1);
@@ -52,8 +52,8 @@ public class GposLookupType5Test extends ExtendedITextTest {
         Assertions.assertEquals(2, gl.size());
         Assertions.assertEquals(445, gl.get(0).getCode());
         Assertions.assertEquals(394, gl.get(1).getCode());
-        Assertions.assertEquals(-1, gl.get(1).getAnchorDelta());
-        Assertions.assertEquals(756, gl.get(1).getXPlacement());
+        Assertions.assertEquals(0, gl.get(1).getAnchorDelta());
+        Assertions.assertEquals(0, gl.get(1).getXPlacement());
     }
 
     @Test
