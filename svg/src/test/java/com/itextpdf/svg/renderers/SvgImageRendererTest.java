@@ -214,7 +214,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void relativeSizedSvg5Test() throws IOException, InterruptedException {
+    public void relativeSizedSvgInImgTest() throws IOException, InterruptedException {
         String svgName = "viewbox_percent_height_percent_width_prRatio_none";
 
         String svgFileName = SOURCE_FOLDER + svgName + ".svg";
@@ -240,4 +240,307 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         }
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
+
+    @Test
+    public void relativeSizedSvgInImg2Test() throws IOException, InterruptedException {
+        String svgName = "viewbox_percent_height_percent_width_prRatio_none";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            svgImageXObject.setIsCreatedByImg(true);
+            Div div = new Div().setWidth(400).setHeight(300);
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+            svgImage.setWidth(UnitValue.createPointValue(300));
+            svgImage.setHeight(UnitValue.createPointValue(200));
+            div.add(svgImage);
+            document.add(div);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInImg3Test() throws IOException, InterruptedException {
+        String svgName = "viewbox_percent_height_percent_width_prRatio_max_max";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            svgImageXObject.setIsCreatedByImg(true);
+            Div div = new Div().setWidth(300).setHeight(300);
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+            svgImage.setWidth(UnitValue.createPointValue(200));
+            svgImage.setHeight(UnitValue.createPointValue(100));
+            div.add(svgImage);
+            document.add(div);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInImg4Test() throws IOException, InterruptedException {
+        String svgName = "viewbox_fixed_height_percent_width_no_viewbox";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            svgImageXObject.setIsCreatedByImg(true);
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+
+            svgImage.setWidth(100);
+            svgImage.setHeight(300);
+
+            document.add(svgImage);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInImg5Test() throws IOException, InterruptedException {
+        String svgName = "fixed_height_and_width";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            svgImageXObject.setIsCreatedByImg(true);
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+
+            document.add(svgImage);
+            Assertions.assertTrue(svgImageXObject.isRelativeSized());
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInImg6Test() throws IOException, InterruptedException {
+        String svgName = "relativeSizedSvg";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            svgImageXObject.setIsCreatedByImg(true);
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+            svgImage.setWidth(100.0F);
+
+            document.add(svgImage);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInImg7Test() throws IOException, InterruptedException {
+        String svgName = "relativeSizedSvg";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "2_img" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "2_img" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            svgImageXObject.setIsCreatedByImg(true);
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+            svgImage.setHeight(100.0F);
+
+            document.add(svgImage);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInImg8Test() throws IOException, InterruptedException {
+        String svgName = "fixed_height_and_width_2";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            svgImageXObject.setIsCreatedByImg(true);
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+
+            document.add(svgImage);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInImg9Test() throws IOException, InterruptedException {
+        String svgName = "fixed_height_and_width_3";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+
+            SvgDrawContext svgDrawContext = new SvgDrawContext(new ResourceResolver(SOURCE_FOLDER), null);
+            SvgImageXObject svgImageXObject = new SvgImageXObject(result, svgDrawContext, 12, document.getPdfDocument());
+            svgImageXObject.setIsCreatedByImg(true);
+            SvgImage svgImage = new SvgImage(svgImageXObject);
+
+            document.add(svgImage);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInObjTest() throws IOException, InterruptedException {
+        String svgName = "fixed_height_and_width";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_obj" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_obj" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+            ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, new SvgDrawContext(null, null));
+            SvgImageXObject xObject = new SvgImageXObject(wh, result, new ResourceResolver(SOURCE_FOLDER));
+            xObject.setIsCreatedByObject(true);
+            SvgImage image = new SvgImage(xObject);
+            image.setWidth(200.0F);
+            document.add(image);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInObj2Test() throws IOException, InterruptedException {
+        String svgName = "fixed_height_and_width";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_obj2" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_obj2" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+            ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, new SvgDrawContext(null, null));
+            SvgImageXObject xObject = new SvgImageXObject(wh, result, new ResourceResolver(SOURCE_FOLDER));
+            xObject.setIsCreatedByObject(true);
+            SvgImage image = new SvgImage(xObject);
+            image.setWidth(200.0F);
+            image.setHeight(200.0F);
+            document.add(image);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInObj3Test() throws IOException, InterruptedException {
+        String svgName = "fixed_height_and_width_2";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_obj" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_obj" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+            ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, new SvgDrawContext(null, null));
+            SvgImageXObject xObject = new SvgImageXObject(wh, result, new ResourceResolver(SOURCE_FOLDER));
+            xObject.setIsCreatedByObject(true);
+            SvgImage image = new SvgImage(xObject);
+            image.setHeight(200.0F);
+            document.add(image);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void relativeSizedSvgInObj4Test() throws IOException, InterruptedException {
+        String svgName = "fixed_height_and_width_2";
+
+        String svgFileName = SOURCE_FOLDER + svgName + ".svg";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_obj2" + ".pdf";
+        String outFileName = DESTINATION_FOLDER + svgName + "_obj2" + ".pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setCompressionLevel(0))))) {
+            INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
+            ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
+                    new SvgConverterProperties().setBaseUri(svgFileName));
+            ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, 0.0F, new SvgDrawContext(null, null));
+            SvgImageXObject xObject = new SvgImageXObject(wh, result, new ResourceResolver(SOURCE_FOLDER));
+            xObject.setIsCreatedByObject(true);
+            SvgImage image = new SvgImage(xObject);
+            image.setHeight(200.0F);
+            image.setWidth(200.0F);
+            document.add(image);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
 }

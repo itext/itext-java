@@ -45,6 +45,8 @@ public class SvgImageXObject extends PdfFormXObject {
     private final ISvgProcessorResult result;
     private final ResourceResolver resourceResolver;
     private boolean isGenerated = false;
+    private boolean isCreatedByImg = false;
+    private boolean isCreatedByObject = false;
 
     private float em;
     private SvgDrawContext svgDrawContext;
@@ -83,30 +85,53 @@ public class SvgImageXObject extends PdfFormXObject {
     }
 
     /**
+     * Set if SVG image is created from HTML img tag context
+     *
+     * @param isCreatedByImg true if object is created from HTML img tag, false otherwise
+     */
+    public void setIsCreatedByImg(boolean isCreatedByImg) {
+        this.isCreatedByImg = isCreatedByImg;
+    }
+
+    /**
+     * Check if SVG image is created from HTML img tag context
+     *
+     * @return true if object is created from HTML img tag, false otherwise
+     */
+    public boolean isCreatedByImg() {
+        return isCreatedByImg;
+    }
+
+    /**
+     * Set if SVG image is created from HTML object tag context
+     *
+     * @param isCreatedByObject true if object is created from HTML object tag, false otherwise
+     */
+    public void setIsCreatedByObject(boolean isCreatedByObject) {
+        this.isCreatedByObject = isCreatedByObject;
+    }
+
+    /**
+     * Check if SVG image is created from HTML object tag context
+     *
+     * @return true if object is created from HTML object tag, false otherwise
+     */
+    public boolean isCreatedByObject() {
+        return isCreatedByObject;
+    }
+
+    /**
      * If the SVG image is relative sized. This information
      * is used during image layouting to resolve it's relative size.
      *
      * @return {@code true} if the SVG image is relative sized, {@code false} otherwise
      *
-     * @see #updateBBox(Float, Float)
+     * @see #updateBBox(float, float)
      * @see #SvgImageXObject(ISvgProcessorResult, SvgDrawContext, float, PdfDocument)
      */
+    @Override
     public boolean isRelativeSized() {
         return isRelativeSized;
-    }
-
-    /**
-     * Sets if the SVG image is relative sized. This information
-     * is used during image layouting to resolve it's relative size.
-     *
-     * @param relativeSized {@code true} if the SVG image is relative sized, {@code false} otherwise
-     *
-     * @see #updateBBox(Float, Float)
-     * @see #SvgImageXObject(ISvgProcessorResult, SvgDrawContext, float, PdfDocument)
-     */
-    public void setRelativeSized(boolean relativeSized) {
-        // TODO DEVSIX-8829 remove/deprecate this method after ticket will be done
-        isRelativeSized = relativeSized;
     }
 
     /**
@@ -159,11 +184,8 @@ public class SvgImageXObject extends PdfFormXObject {
      * @param areaWidth the area width where SVG image will be drawn
      * @param areaHeight the area height where SVG image will be drawn
      */
-    public void updateBBox(Float areaWidth, Float areaHeight) {
-        // TODO DEVSIX-8829 change parameters to float, not Float
-        if (areaWidth != null && areaHeight != null) {
-            svgDrawContext.setCustomViewport(new Rectangle((float) areaWidth, (float) areaHeight));
-        }
+    public void updateBBox(float areaWidth, float areaHeight) {
+        svgDrawContext.setCustomViewport(new Rectangle(areaWidth, areaHeight));
         Rectangle bbox = SvgCssUtils.extractWidthAndHeight(result.getRootRenderer(), em, svgDrawContext);
         setBBox(new PdfArray(bbox));
     }

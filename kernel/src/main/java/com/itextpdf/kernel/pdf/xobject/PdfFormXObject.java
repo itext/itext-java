@@ -343,4 +343,14 @@ public class PdfFormXObject extends PdfXObject {
         return this;
     }
 
+    /**
+     * If the form xobject is relative sized. This information
+     * is used during xobject layout to resolve it's relative size.
+     *
+     * @return {@code true} if the xobject is relative sized, {@code false} otherwise
+     */
+    public boolean isRelativeSized() {
+        return false;
+    }
+
 }
