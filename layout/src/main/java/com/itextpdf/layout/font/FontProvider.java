@@ -157,8 +157,11 @@ public class FontProvider {
     /**
      * Add font to {@link FontSet} cache.
      *
-     * @param fontPath path to the font file to add. Can be a path to file or font name,
-     *                 see {@link FontProgramFactory#createFont(String)}.
+     * @param fontPath path to the font file to add. Can be a path to file or font name.
+     *                 As a font name one of 14 built in fonts can be used, see {@link StandardFonts}.
+     *                 If file is a true type collection, fonts in it should be addressed by index
+     *                 such as "msgothic.ttc,1", starting with index 0.
+     *                 See {@link FontProgramFactory#createFont(String)} for more information.
      * @param encoding font encoding to create {@link com.itextpdf.kernel.font.PdfFont}. Possible values for this
      *                 argument are the same as for {@link PdfFontFactory#createFont()} family of methods.
      * @param unicodeRange sets the specific range of characters to be used from the font.
@@ -172,8 +175,11 @@ public class FontProvider {
     /**
      * Add font to {@link FontSet} cache.
      *
-     * @param fontPath path to the font file to add. Can be a path to file or font name,
-     *                 see {@link FontProgramFactory#createFont(String)}.
+     * @param fontPath path to the font file to add. Can be a path to file or font name.
+     *                 As a font name one of 14 built in fonts can be used, see {@link StandardFonts}.
+     *                 If file is a true type collection, fonts in it should be addressed by index
+     *                 such as "msgothic.ttc,1", starting with index 0.
+     *                 See {@link FontProgramFactory#createFont(String)} for more information.
      * @param encoding font encoding to create {@link com.itextpdf.kernel.font.PdfFont}. Possible values for this
      *                 argument are the same as for {@link PdfFontFactory#createFont()} family of methods.
      *
@@ -186,9 +192,11 @@ public class FontProvider {
     /**
      * Add font to {@link FontSet} cache.
      *
-     * @param fontPath path to the font file to add. Can be a path to file or font name,
-     *                 see {@link FontProgramFactory#createFont(String)}.
-     *
+     * @param fontPath path to the font file to add. Can be a path to file or font name.
+     *                 As a font name one of 14 built in fonts can be used, see {@link StandardFonts}.
+     *                 If file is a true type collection, fonts in it should be addressed by index
+     *                 such as "msgothic.ttc,1", starting with index 0.
+     *                 See {@link FontProgramFactory#createFont(String)} for more information.
      * @return true, if font was successfully added, otherwise false.
      */
     public boolean addFont(String fontPath) {

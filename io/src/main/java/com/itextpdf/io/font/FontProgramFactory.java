@@ -120,12 +120,7 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new font program. This font program can be one of the 14 built in fonts,
-     * a Type1 font referred to by an AFM or PFM file, a TrueType font or
-     * a CJK font from the Adobe Asian Font Pack.
-     * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
-     * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p>
+     * Creates a new font program.
      * The fonts are cached and if they already exist they are extracted from the cache,
      * not parsed again.
      * <p>
@@ -139,12 +134,7 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new font program. This font program can be one of the 14 built in fonts,
-     * a Type 1 font referred to by an AFM or PFM file, a TrueType font or
-     * a CJK font from the Adobe Asian Font Pack.
-     * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
-     * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p>
+     * Creates a new font program.
      * The fonts are cached and if they already exist they are extracted from the cache,
      * not parsed again.
      * <p>
