@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
@@ -70,6 +71,12 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
                 .setWidgetRectangle(DUMMY_RECTANGLE).createCheckBox();
 
         compareCheckBoxes(checkBoxFormField, true);
+    }
+
+    @Test
+    public void createCheckBoxWithIncorrectNameTest() {
+        AssertUtil.doesNotThrow(() -> new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, "incorrect.name")
+                .setWidgetRectangle(DUMMY_RECTANGLE).createCheckBox());
     }
 
     @Test

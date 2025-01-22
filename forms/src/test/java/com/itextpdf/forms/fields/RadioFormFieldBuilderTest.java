@@ -37,6 +37,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
@@ -77,6 +78,12 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         PdfFormAnnotation radioAnnotation = builder
                 .createRadioButton(DUMMY_APPEARANCE_NAME, DUMMY_RECTANGLE);
         compareRadioButtons(radioAnnotation, radioGroup, false);
+    }
+
+    @Test
+    public void createRadioButtonWithIncorrectNameTest() {
+        AssertUtil.doesNotThrow(() -> new RadioFormFieldBuilder(DUMMY_DOCUMENT, "incorrect.name")
+                .setWidgetRectangle(DUMMY_RECTANGLE).createRadioGroup());
     }
 
     @Test

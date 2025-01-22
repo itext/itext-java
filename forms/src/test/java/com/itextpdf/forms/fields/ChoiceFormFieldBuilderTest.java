@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
@@ -126,6 +127,12 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void createComboBoxWithIncorrectNameTest() {
+        AssertUtil.doesNotThrow(() -> new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, "incorrect.name")
+                .setWidgetRectangle(DUMMY_RECTANGLE).createComboBox());
+    }
+
+    @Test
     public void createComboBoxWithConformanceLevelTest() {
         PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
                 .setWidgetRectangle(DUMMY_RECTANGLE).setConformance(PdfConformance.PDF_A_1A)
@@ -172,6 +179,12 @@ public class ChoiceFormFieldBuilderTest extends ExtendedITextTest {
         expectedDictionary.put(PdfName.Ff, new PdfNumber(0));
 
         compareChoices(expectedDictionary, choiceFormField, false);
+    }
+
+    @Test
+    public void createListWithIncorrectNameTest() {
+        AssertUtil.doesNotThrow(() -> new ChoiceFormFieldBuilder(DUMMY_DOCUMENT, "incorrect.name")
+                .setWidgetRectangle(DUMMY_RECTANGLE).createList());
     }
 
     @Test

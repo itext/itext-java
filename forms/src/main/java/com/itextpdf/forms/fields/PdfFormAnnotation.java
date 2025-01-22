@@ -816,7 +816,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         boolean multiselect = parent.getFieldFlag(PdfChoiceFormField.FF_MULTI_SELECT);
         if (!(formFieldElement instanceof ListBoxField)) {
             // Create it once and reset properties during each widget regeneration.
-            formFieldElement = new ListBoxField(parent.getPartialFieldName().toUnicodeString(), 0, multiselect);
+            formFieldElement = new ListBoxField("", 0, multiselect);
         }
         formFieldElement.setProperty(FormProperty.FORM_FIELD_MULTIPLE, multiselect);
         ((ListBoxField) formFieldElement).setTopIndex(parent instanceof PdfChoiceFormField &&
@@ -974,7 +974,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return;
         }
         if (!(formFieldElement instanceof ComboBoxField)) {
-            formFieldElement = new ComboBoxField(parent.getPartialFieldName().toUnicodeString());
+            formFieldElement = new ComboBoxField("");
         }
 
         //Apply rotation
@@ -1177,7 +1177,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     void createInputButton() {
         if (!(formFieldElement instanceof Button)) {
             // Create it one time and re-set properties during each widget regeneration.
-            formFieldElement = new Button(parent.getPartialFieldName().toUnicodeString());
+            formFieldElement = new Button("");
         }
 
         ((Button) formFieldElement).setFont(getFont());
@@ -1189,7 +1189,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     void createSigField() {
         if (!(formFieldElement instanceof SignatureFieldAppearance)) {
             // Create it one time and re-set properties during each widget regeneration.
-            formFieldElement = new SignatureFieldAppearance(parent.getPartialFieldName().toUnicodeString());
+            formFieldElement = new SignatureFieldAppearance("");
         }
         if (formFieldElement.<Object>getProperty(Property.FONT) == null) {
             ((SignatureFieldAppearance) formFieldElement).setFont(getFont());

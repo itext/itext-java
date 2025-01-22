@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
@@ -79,6 +80,12 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
                 new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME).createPushButton();
 
         comparePushButtons(pushButtonFormField, false);
+    }
+
+    @Test
+    public void createPushButtonWithIncorrectNameTest() {
+        AssertUtil.doesNotThrow(() -> new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, "incorrect.name")
+                .setWidgetRectangle(DUMMY_RECTANGLE).createPushButton());
     }
 
     @Test
