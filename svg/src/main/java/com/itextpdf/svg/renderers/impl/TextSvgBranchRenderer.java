@@ -34,6 +34,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.properties.BaseDirection;
 import com.itextpdf.layout.properties.IBeforeTextRestoreExecutor;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
@@ -246,6 +247,13 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                     new ClippedElementDrawer(getParentClipPath(), context));
         }
         this.paragraph.setMargin(0);
+        String direction = this.attributesAndStyles.get(SvgConstants.Attributes.DIRECTION);
+        boolean isRtl = "rtl".equals(direction);
+        if (isRtl) {
+            paragraph.setProperty(Property.BASE_DIRECTION, BaseDirection.RIGHT_TO_LEFT);
+        } else {
+            paragraph.setProperty(Property.BASE_DIRECTION, BaseDirection.LEFT_TO_RIGHT);
+        }
         applyTextRenderingMode(paragraph);
         applyFontProperties(paragraph, context);
         // We resolve and draw absolutely positioned text chunks similar to getTextRectangle method. We are interested
@@ -473,22 +481,27 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     private void applyTextAnchor() {
         if (this.attributesAndStyles != null &&
-                this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_ANCHOR)) {
-            String textAnchorValue = this.getAttribute(SvgConstants.Attributes.TEXT_ANCHOR);
-            applyTextAnchor(textAnchorValue);
+                (this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_ANCHOR) ||
+                        this.attributesAndStyles.containsKey(SvgConstants.Attributes.DIRECTION))) {
+            String textAnchorValue = getAttributeOrDefault(SvgConstants.Attributes.TEXT_ANCHOR,
+                    SvgConstants.Values.TEXT_ANCHOR_START);
+            String direction = this.attributesAndStyles.get(SvgConstants.Attributes.DIRECTION);
+            boolean isRtl = "rtl".equals(direction);
+            applyTextAnchor(textAnchorValue, isRtl);
         }
     }
 
-    private void applyTextAnchor(String textAnchorValue) {
+    private void applyTextAnchor(String textAnchorValue, boolean isRtl) {
         if (getParent() instanceof TextSvgBranchRenderer) {
-            ((TextSvgBranchRenderer) getParent()).applyTextAnchor(textAnchorValue);
+            ((TextSvgBranchRenderer) getParent()).applyTextAnchor(textAnchorValue, isRtl);
             return;
         }
         if (SvgConstants.Values.TEXT_ANCHOR_MIDDLE.equals(textAnchorValue)) {
             paragraph.setProperty(Property.TEXT_ANCHOR, TextAnchor.MIDDLE);
             return;
         }
-        if (SvgConstants.Values.TEXT_ANCHOR_END.equals(textAnchorValue)) {
+        if (SvgConstants.Values.TEXT_ANCHOR_END.equals(textAnchorValue) && !isRtl ||
+                !SvgConstants.Values.TEXT_ANCHOR_END.equals(textAnchorValue) && isRtl) {
             paragraph.setProperty(Property.TEXT_ANCHOR, TextAnchor.END);
             return;
         }

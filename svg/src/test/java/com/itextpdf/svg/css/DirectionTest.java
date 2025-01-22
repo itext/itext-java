@@ -22,10 +22,12 @@
  */
 package com.itextpdf.svg.css;
 
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 
 import java.io.IOException;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -41,8 +43,7 @@ public class DirectionTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-8779: update cmp file after supporting
     public void directionAttributeTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"direction");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, SvgConstants.Attributes.DIRECTION);
     }
 }

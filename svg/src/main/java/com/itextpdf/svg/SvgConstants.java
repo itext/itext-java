@@ -508,6 +508,11 @@ public final class SvgConstants {
         public static final String D = "d";
 
         /**
+         * Attribute defining the direction used by the text
+         */
+        public static final String DIRECTION = "direction";
+
+        /**
          * Attribute defining the relative x-translation of a text-element
          */
         public static final String DX = "dx";
