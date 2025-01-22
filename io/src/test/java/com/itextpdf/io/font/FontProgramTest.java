@@ -113,4 +113,32 @@ public class FontProgramTest extends ExtendedITextTest {
         Assertions.assertEquals(1, glyph.getCode());
         Assertions.assertEquals(278, glyph.getWidth());
     }
+
+    @Test
+    public void standardFontsTest() throws IOException {
+        checkStandardFont(StandardFonts.COURIER);
+        checkStandardFont(StandardFonts.COURIER_BOLD);
+        checkStandardFont(StandardFonts.COURIER_BOLDOBLIQUE);
+        checkStandardFont(StandardFonts.COURIER_OBLIQUE);
+
+        checkStandardFont(StandardFonts.HELVETICA);
+        checkStandardFont(StandardFonts.HELVETICA_BOLD);
+        checkStandardFont(StandardFonts.HELVETICA_BOLDOBLIQUE);
+        checkStandardFont(StandardFonts.HELVETICA_OBLIQUE);
+
+        checkStandardFont(StandardFonts.SYMBOL);
+
+        checkStandardFont(StandardFonts.TIMES_BOLD);
+        checkStandardFont(StandardFonts.TIMES_BOLDITALIC);
+        checkStandardFont(StandardFonts.TIMES_ITALIC);
+        checkStandardFont(StandardFonts.TIMES_ROMAN);
+
+        checkStandardFont(StandardFonts.ZAPFDINGBATS);
+    }
+
+    private void checkStandardFont(String fontName) throws IOException {
+        FontProgram font = FontProgramFactory.createFont(fontName, null, false);
+        Assertions.assertTrue(font instanceof Type1Font);
+        Assertions.assertEquals(fontName, font.getFontNames().getFontName());
+    }
 }

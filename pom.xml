@@ -66,7 +66,6 @@
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
     <module>pdfua</module>
-    <module>native-image-test</module>
   </modules>
 
   <scm>
