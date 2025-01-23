@@ -478,4 +478,9 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     public void patternHrefTransitivePresAR2Test() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "patternHrefTransitivePresAR2", properties);
     }
+
+    @Test
+    public void closedPathIsCutTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "closedPathIsCutTest", properties);
+    }
 }

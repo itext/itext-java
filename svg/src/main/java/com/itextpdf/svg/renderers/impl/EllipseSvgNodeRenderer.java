@@ -117,4 +117,9 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         return copy;
     }
 
+    @Override
+    void doStrokeOrFill(String fillRuleRawValue, PdfCanvas currentCanvas) {
+        DrawUtils.doStrokeOrFillForClosedFigure(fillRuleRawValue, currentCanvas, doStroke);
+    }
+
 }

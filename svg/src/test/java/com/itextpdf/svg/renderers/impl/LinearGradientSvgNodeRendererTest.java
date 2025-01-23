@@ -47,13 +47,11 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
         ITextTest.createOrClearDestinationFolder(destinationFolder);
     }
 
-    // TODO: DEVSIX-3932 update cmp_ after fix
     @Test
     public void circleTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "circle");
     }
 
-    // TODO: DEVSIX-3932 update cmp_ after fix
     @Test
     public void ellipseTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "ellipse");
@@ -241,7 +239,6 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
         convertAndCompare(sourceFolder, destinationFolder, "arcInsideOtherEllipticalArc");
     }
 
-    // TODO: DEVSIX-3932 update cmp_ after fix
     @Test
     public void polygonTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "polygon");

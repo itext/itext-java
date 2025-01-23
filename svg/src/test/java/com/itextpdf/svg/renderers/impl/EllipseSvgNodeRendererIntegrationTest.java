@@ -171,7 +171,6 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: DEVSIX-3932 update cmp_ after fix
     public void ellipseWithBigStrokeWidthTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseWithBigStrokeWidth");
     }

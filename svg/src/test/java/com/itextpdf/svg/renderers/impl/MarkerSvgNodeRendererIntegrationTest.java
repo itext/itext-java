@@ -127,7 +127,6 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: update when DEVSIX-2719 will be closed
     public void markerInPolygonElementTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerInPolygonElement");
     }

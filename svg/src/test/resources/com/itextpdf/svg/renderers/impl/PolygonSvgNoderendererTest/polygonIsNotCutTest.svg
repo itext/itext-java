@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" version="1.1">
+    <polygon fill="red" stroke="blue" stroke-width="10"
+             points = "150,205  179,291 269,291 197,345
+             223,431 150,380 77,431 103,345
+             31,291 121,291"/>
+    <polygon fill="lime" stroke="blue" stroke-width="10"
+             points="400,205  508,267.5 508,392.5
+                    400,455 292,392.6 292,267.5"/>
+</svg>

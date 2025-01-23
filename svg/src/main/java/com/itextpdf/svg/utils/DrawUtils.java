@@ -23,6 +23,7 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.svg.SvgConstants;
 
 import java.util.List;
 
@@ -50,6 +51,29 @@ public class DrawUtils {
         if (!ar.isEmpty()) {
             for (double[] pt : ar) {
                 cv.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
+            }
+        }
+    }
+
+    /**
+     * Perform stroke or fill operation for closed figure (e.g. Ellipse, Polygon, Circle).
+     *
+     * @param fillRuleRawValue fill rule (e.g. evenodd, nonzero)
+     * @param currentCanvas canvas to draw on
+     * @param doStroke if true, stroke operation will be performed, fill otherwise
+     */
+    public static void doStrokeOrFillForClosedFigure(String fillRuleRawValue, PdfCanvas currentCanvas, boolean doStroke) {
+        if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
+            if (doStroke) {
+                currentCanvas.closePathEoFillStroke();
+            } else {
+                currentCanvas.eoFill();
+            }
+        } else {
+            if (doStroke) {
+                currentCanvas.closePathFillStroke();
+            } else {
+                currentCanvas.fill();
             }
         }
     }

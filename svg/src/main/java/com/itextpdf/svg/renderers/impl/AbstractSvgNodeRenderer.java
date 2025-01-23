@@ -319,21 +319,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             if (getParentClipPath() == null) {
                 if (doFill && canElementFill()) {
                     String fillRuleRawValue = getAttribute(SvgConstants.Attributes.FILL_RULE);
-
-                    if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
-                        if (doStroke) {
-                            currentCanvas.eoFillStroke();
-                        } else {
-                            currentCanvas.eoFill();
-                        }
-                    } else {
-                        if (doStroke) {
-                            // TODO DEVSIX-8854 Draw SVG elements with transparent stroke in 2 steps
-                            currentCanvas.fillStroke();
-                        } else {
-                            currentCanvas.fill();
-                        }
-                    }
+                    doStrokeOrFill(fillRuleRawValue, currentCanvas);
                 } else if (doStroke) {
                     currentCanvas.stroke();
                 } else {
@@ -356,6 +342,29 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                         ((IMarkerCapable) this).drawMarker(context, markerVertexType);
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Do stroke or fill based on {@code doFill/doStroke} fields.
+     *
+     * @param fillRuleRawValue fill rule attribute value.
+     * @param currentCanvas current canvas to draw on.
+     */
+    void doStrokeOrFill(String fillRuleRawValue, PdfCanvas currentCanvas) {
+        if (SvgConstants.Values.FILL_RULE_EVEN_ODD.equalsIgnoreCase(fillRuleRawValue)) {
+            if (doStroke) {
+                currentCanvas.eoFillStroke();
+            } else {
+                currentCanvas.eoFill();
+            }
+        } else {
+            if (doStroke) {
+                // TODO DEVSIX-8854 Draw SVG elements with transparent stroke in 2 steps
+                currentCanvas.fillStroke();
+            } else {
+                currentCanvas.fill();
             }
         }
     }

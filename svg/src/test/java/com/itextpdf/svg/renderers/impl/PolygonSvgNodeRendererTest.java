@@ -182,4 +182,14 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
             Assertions.assertEquals(expectedPoints.get(x), attributePoints.get(x));
         }
     }
+
+    @Test
+    public void polygonIsNotCutTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "polygonIsNotCutTest");
+    }
+
+    @Test
+    public void polygonIsNotCutEvenOddTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "polygonIsNotCutEvenOddTest");
+    }
 }
