@@ -14,7 +14,10 @@
   <url>https://itextpdf.com/</url>
 
   <properties>
-    <sonar.exclusions>**/com/itextpdf/kernel/xmp/**</sonar.exclusions>
+    <sonar.exclusions>
+      **/com/itextpdf/kernel/xmp/**,
+      **com/itextpdf/kernel/pdf/canvas/parser/clipper/**
+    </sonar.exclusions>
   </properties>
 
   <dependencies>
