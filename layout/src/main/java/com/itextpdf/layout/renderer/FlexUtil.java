@@ -29,6 +29,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.properties.AlignContentPropertyValue;
 import com.itextpdf.layout.properties.AlignmentPropertyValue;
 import com.itextpdf.layout.properties.FlexDirectionPropertyValue;
 import com.itextpdf.layout.properties.FlexWrapPropertyValue;
@@ -37,13 +38,11 @@ import com.itextpdf.layout.properties.JustifyContent;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
+import java.util.ArrayList;
 import java.util.Collections;
-
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 final class FlexUtil {
 
@@ -68,10 +67,11 @@ final class FlexUtil {
      *
      * @param flexContainerBBox     bounding box in which flex container should be rendered
      * @param flexContainerRenderer flex container's renderer
+     *
      * @return list of lines
      */
     public static List<List<FlexItemInfo>> calculateChildrenRectangles(Rectangle flexContainerBBox,
-                                                                       FlexContainerRenderer flexContainerRenderer) {
+            FlexContainerRenderer flexContainerRenderer) {
         Rectangle layoutBox = flexContainerBBox.clone();
         flexContainerRenderer.applyMarginsBordersPaddings(layoutBox, false);
 
@@ -172,7 +172,9 @@ final class FlexUtil {
 
         // 15. Determine the flex container’s used cross size
 
-        // TODO DEVSIX-5164 16. Align all flex lines per align-content.
+        // 16. Align all flex lines per align-content.
+
+        applyAlignContent(lines, flexContainerRenderer, crossSize, layoutBox);
 
         // Convert FlexItemCalculationInfo's into FlexItemInfo's
         List<List<FlexItemInfo>> layoutTable = new ArrayList<>();
@@ -185,6 +187,156 @@ final class FlexUtil {
         }
 
         return layoutTable;
+    }
+
+    private static void applyAlignContent(List<List<FlexItemCalculationInfo>> lines, FlexContainerRenderer renderer,
+            Float crossSize, Rectangle layoutBox) {
+        AlignContentPropertyValue alignContent = (AlignContentPropertyValue) renderer
+                .<AlignContentPropertyValue>getProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.NORMAL);
+
+        if (crossSize != null) {
+            if (renderer.isWrapReverse()) {
+                Collections.reverse(lines);
+            }
+
+            float lineCrossSize = 0;
+
+            for (List<FlexItemCalculationInfo> line : lines) {
+                float maxItemSize = getItemMaxCrossSize(line);
+                lineCrossSize += maxItemSize;
+            }
+
+            float freeSpace;
+
+            if (isColumnDirection(renderer)) {
+                freeSpace = Math.min(layoutBox.getWidth(), (float) crossSize) - lineCrossSize;
+            } else {
+                freeSpace = Math.min(layoutBox.getHeight(), (float) crossSize) - lineCrossSize;
+            }
+
+            applyAlignContent(lines, alignContent, freeSpace, isColumnDirection(renderer));
+
+            if (renderer.isWrapReverse()) {
+                Collections.reverse(lines);
+            }
+        }
+    }
+
+    private static void applyAlignContent(List<List<FlexItemCalculationInfo>> lines,
+            AlignContentPropertyValue alignContent,
+            float freeSpace, boolean isColumnDirection) {
+        if (!lines.isEmpty()) {
+            switch (alignContent) {
+                case CENTER:
+                    applyCentralAlignment(lines, freeSpace, isColumnDirection);
+                    break;
+                case FLEX_END:
+                    applyFlexEndAlignment(lines, freeSpace, isColumnDirection);
+                    break;
+                case SPACE_BETWEEN:
+                    applySpaceBetweenAlignment(lines, freeSpace, isColumnDirection);
+                    break;
+                case SPACE_AROUND:
+                    applySpaceAroundAlignment(lines, freeSpace, isColumnDirection);
+                    break;
+                case SPACE_EVENLY:
+                    applySpaceEvenlyAlignment(lines, freeSpace, isColumnDirection);
+                    break;
+                case FLEX_START:
+                default:
+                    break;
+                    // We don't need to do anything in these cases
+            }
+        }
+    }
+
+    private static void applyFlexEndAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
+            boolean isColumnDirection) {
+        for (FlexItemCalculationInfo item : lines.get(0)) {
+            if (isColumnDirection) {
+                item.xShift = freeSpace;
+            } else {
+                item.yShift = freeSpace;
+            }
+        }
+    }
+
+    private static void applySpaceBetweenAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
+            boolean isColumnDirection) {
+        if(lines.size() != 1) {
+            float indentation = freeSpace / (lines.size() - 1);
+            for (int i = 1; i < lines.size(); i++) {
+                for (FlexItemCalculationInfo item : lines.get(i)) {
+                    if (isColumnDirection) {
+                        item.xShift = indentation;
+                    } else {
+                        item.yShift = indentation;
+                    }
+                }
+            }
+        }
+    }
+
+    private static void applySpaceEvenlyAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
+            boolean isColumnDirection) {
+        float indentation = freeSpace / (lines.size() + 1);
+
+        for (List<FlexItemCalculationInfo> line : lines) {
+            for (FlexItemCalculationInfo item : line) {
+                if (isColumnDirection) {
+                    item.xShift = indentation;
+                } else {
+                    item.yShift = indentation;
+                }
+            }
+        }
+    }
+
+    private static void applySpaceAroundAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
+            boolean isColumnDirection) {
+        float indentation = freeSpace / lines.size();
+
+        for (FlexItemCalculationInfo item : lines.get(0)) {
+            if (isColumnDirection) {
+                item.xShift = indentation / 2;
+            } else {
+                item.yShift = indentation / 2;
+            }
+        }
+
+        if(lines.size() != 1) {
+            for (int i = 1; i < lines.size(); i++) {
+                for (FlexItemCalculationInfo item : lines.get(i)) {
+                    if (isColumnDirection) {
+                        item.xShift = indentation;
+                    } else {
+                        item.yShift = indentation;
+                    }
+                }
+            }
+        }
+    }
+
+    private static void applyCentralAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
+            boolean isColumnDirection) {
+        for (FlexItemCalculationInfo item : lines.get(0)) {
+            if (isColumnDirection) {
+                item.xShift = freeSpace / 2;
+            } else {
+                item.yShift = freeSpace / 2;
+            }
+
+        }
+    }
+
+    private static float getItemMaxCrossSize(List<FlexItemCalculationInfo> line) {
+        float maxItemSize = 0;
+        for (FlexItemCalculationInfo item : line) {
+            if (item.getOuterCrossSize(item.crossSize) > maxItemSize) {
+                maxItemSize = item.getOuterCrossSize(item.crossSize);
+            }
+        }
+        return maxItemSize;
     }
 
     static boolean isColumnDirection(FlexContainerRenderer renderer) {
@@ -245,7 +397,7 @@ final class FlexUtil {
     private static Float[] getCrossSizes(FlexContainerRenderer renderer, Rectangle layoutBox) {
         final boolean isColumnDirection = isColumnDirection(renderer);
 
-        return new Float[]{
+        return new Float[] {
                 isColumnDirection ? renderer.retrieveWidth(layoutBox.getWidth()) : renderer.retrieveHeight(),
                 isColumnDirection ? renderer.retrieveMinWidth(layoutBox.getWidth()) : renderer.retrieveMinHeight(),
                 isColumnDirection ? renderer.retrieveMaxWidth(layoutBox.getWidth()) : renderer.retrieveMaxHeight()
@@ -476,7 +628,7 @@ final class FlexUtil {
     }
 
     private static void resolveFlexibleLengths(List<List<FlexItemCalculationInfo>> lines, float layoutBoxSize,
-                                               float containerSize) {
+            float containerSize) {
         resolveFlexibleLengths(lines, containerSize);
         if (lines.size() == 1 && layoutBoxSize < containerSize - EPSILON) {
             List<FlexItemCalculationInfo> lineToRecalculate = new ArrayList<>();
@@ -499,7 +651,7 @@ final class FlexUtil {
     }
 
     static void determineHypotheticalCrossSizeForFlexItems(List<List<FlexItemCalculationInfo>> lines,
-                                                           boolean isColumnDirection, float crossSize) {
+            boolean isColumnDirection, float crossSize) {
         for (List<FlexItemCalculationInfo> line : lines) {
             for (FlexItemCalculationInfo info : line) {
                 determineHypotheticalCrossSizeForFlexItem(info, isColumnDirection, crossSize);
@@ -508,7 +660,7 @@ final class FlexUtil {
     }
 
     private static void determineHypotheticalCrossSizeForFlexItem(FlexItemCalculationInfo info,
-                                                                  boolean isColumnDirection, float crossSize) {
+            boolean isColumnDirection, float crossSize) {
         if (info.renderer instanceof FlexContainerRenderer &&
                 ((FlexContainerRenderer) info.renderer).getHypotheticalCrossSize(info.mainSize) != null) {
             // Take from cache
@@ -549,22 +701,22 @@ final class FlexUtil {
 
     static List<Float> calculateColumnDirectionCrossSizes(List<List<FlexItemInfo>> lines) {
         List<Float> lineCrossSizes = new ArrayList<>();
-            for (List<FlexItemInfo> line : lines) {
-                float flexLinesCrossSize = 0;
-                float largestCrossSize = 0;
-                for (FlexItemInfo info : line) {
-                    // TODO DEVSIX-5002 Flex items whose cross-axis margins are both auto shouldn't be collected
-                    // TODO DEVSIX-5038 Support BASELINE as align-self
-                    largestCrossSize = Math.max(largestCrossSize, info.getRectangle().getWidth());
-                    flexLinesCrossSize = Math.max(0, largestCrossSize);
-                }
-                lineCrossSizes.add(flexLinesCrossSize);
+        for (List<FlexItemInfo> line : lines) {
+            float flexLinesCrossSize = 0;
+            float largestCrossSize = 0;
+            for (FlexItemInfo info : line) {
+                // TODO DEVSIX-5002 Flex items whose cross-axis margins are both auto shouldn't be collected
+                // TODO DEVSIX-5038 Support BASELINE as align-self
+                largestCrossSize = Math.max(largestCrossSize, info.getRectangle().getWidth());
+                flexLinesCrossSize = Math.max(0, largestCrossSize);
             }
+            lineCrossSizes.add(flexLinesCrossSize);
+        }
         return lineCrossSizes;
     }
 
     static List<Float> calculateCrossSizeOfEachFlexLine(List<List<FlexItemCalculationInfo>> lines,
-                                                        Float minCrossSize, Float crossSize, Float maxCrossSize) {
+            Float minCrossSize, Float crossSize, Float maxCrossSize) {
         boolean isSingleLine = lines.size() == 1;
         List<Float> lineCrossSizes = new ArrayList<>();
         if (isSingleLine && crossSize != null) {
@@ -608,19 +760,20 @@ final class FlexUtil {
     }
 
     static void handleAlignContentStretch(FlexContainerRenderer flexContainerRenderer,
-                                          List<List<FlexItemCalculationInfo>> lines,
-                                          Float crossSize, List<Float> lineCrossSizes, Rectangle layoutBox) {
-        AlignmentPropertyValue alignContent =
-                (AlignmentPropertyValue) flexContainerRenderer.<AlignmentPropertyValue>getProperty(
-                        Property.ALIGN_CONTENT, AlignmentPropertyValue.STRETCH);
-        if (crossSize != null && alignContent == AlignmentPropertyValue.STRETCH) {
+            List<List<FlexItemCalculationInfo>> lines,
+            Float crossSize, List<Float> lineCrossSizes, Rectangle layoutBox) {
+        AlignContentPropertyValue alignContent =
+                (AlignContentPropertyValue) flexContainerRenderer.<AlignContentPropertyValue>getProperty(
+                        Property.ALIGN_CONTENT, AlignContentPropertyValue.STRETCH);
+        if (crossSize != null && alignContent == AlignContentPropertyValue.STRETCH) {
             // Line order becomes important for alignment
             if (flexContainerRenderer.isWrapReverse()) {
                 Collections.reverse(lineCrossSizes);
                 Collections.reverse(lines);
             }
             List<Float> currentPageLineCrossSizes =
-                    retrieveCurrentPageLineCrossSizes(flexContainerRenderer, lines, lineCrossSizes, crossSize, layoutBox);
+                    retrieveCurrentPageLineCrossSizes(flexContainerRenderer, lines, lineCrossSizes, crossSize,
+                            layoutBox);
             if (currentPageLineCrossSizes.size() > 0) {
                 float flexLinesCrossSizesSum = 0;
                 for (float size : currentPageLineCrossSizes) {
@@ -642,7 +795,7 @@ final class FlexUtil {
     }
 
     static void determineUsedCrossSizeOfEachFlexItem(List<List<FlexItemCalculationInfo>> lines,
-                                                     List<Float> lineCrossSizes, FlexContainerRenderer flexContainerRenderer) {
+            List<Float> lineCrossSizes, FlexContainerRenderer flexContainerRenderer) {
         final boolean isColumnDirection = isColumnDirection(flexContainerRenderer);
         AlignmentPropertyValue alignItems =
                 (AlignmentPropertyValue) flexContainerRenderer.<AlignmentPropertyValue>getProperty(
@@ -694,12 +847,13 @@ final class FlexUtil {
 
     private static Float retrieveMinHeightForMainDirection(AbstractRenderer renderer) {
         Float minHeight = renderer.retrieveMinHeight();
-        return renderer.hasProperty(Property.MIN_HEIGHT) && renderer.<UnitValue>getProperty(Property.MIN_HEIGHT) != null ?
+        return renderer.hasProperty(Property.MIN_HEIGHT) && renderer.<UnitValue>getProperty(Property.MIN_HEIGHT) != null
+                ?
                 minHeight : null;
     }
 
     private static void applyAlignItemsAndAlignSelf(List<List<FlexItemCalculationInfo>> lines,
-                                                    FlexContainerRenderer renderer, List<Float> lineCrossSizes) {
+            FlexContainerRenderer renderer, List<Float> lineCrossSizes) {
         final boolean isColumnDirection = isColumnDirection(renderer);
         AlignmentPropertyValue itemsAlignment = (AlignmentPropertyValue) renderer.<AlignmentPropertyValue>getProperty(
                 Property.ALIGN_ITEMS, AlignmentPropertyValue.STRETCH);
@@ -792,7 +946,7 @@ final class FlexUtil {
     }
 
     private static void applyJustifyContent(List<List<FlexItemCalculationInfo>> lines,
-                                            FlexContainerRenderer renderer, float mainSize, float containerMainSize) {
+            FlexContainerRenderer renderer, float mainSize, float containerMainSize) {
         JustifyContent justifyContent = (JustifyContent) renderer.<JustifyContent>getProperty(
                 Property.JUSTIFY_CONTENT, JustifyContent.FLEX_START);
 
@@ -909,7 +1063,7 @@ final class FlexUtil {
     }
 
     private static float calculateMaxMainSize(AbstractRenderer flexItemRenderer, float flexContainerMainSize,
-                                              boolean isColumnDirection, float crossSize) {
+            boolean isColumnDirection, float crossSize) {
         Float maxMainSize;
         if (flexItemRenderer instanceof TableRenderer) {
             // TODO DEVSIX-5214 we can't call TableRenderer#retrieveWidth method as far as it can throw NPE
@@ -961,9 +1115,9 @@ final class FlexUtil {
     }
 
     private static List<Float> retrieveCurrentPageLineCrossSizes(FlexContainerRenderer flexContainerRenderer,
-                                                                 List<List<FlexItemCalculationInfo>> lines,
-                                                                 List<Float> lineCrossSizes, Float crossSize,
-                                                                 Rectangle layoutBox) {
+            List<List<FlexItemCalculationInfo>> lines,
+            List<Float> lineCrossSizes, Float crossSize,
+            Rectangle layoutBox) {
         float mainSize = getMainSize(flexContainerRenderer, new Rectangle(0, 0));
         boolean isColumnDirectionWithPagination = isColumnDirection(flexContainerRenderer) &&
                 (mainSize < EPSILON || mainSize > layoutBox.getHeight() + EPSILON);
@@ -1022,8 +1176,8 @@ final class FlexUtil {
         boolean isColumnDirection;
 
         public FlexItemCalculationInfo(AbstractRenderer renderer, float flexBasis,
-                                       float flexGrow, float flexShrink, float areaMainSize, boolean flexBasisContent,
-                                       boolean isColumnDirection, float crossSize) {
+                float flexGrow, float flexShrink, float areaMainSize, boolean flexBasisContent,
+                boolean isColumnDirection, float crossSize) {
             this.isColumnDirection = isColumnDirection;
             this.flexBasisContent = flexBasisContent;
             this.renderer = renderer;
@@ -1128,6 +1282,7 @@ final class FlexUtil {
          * It is otherwise undefined.
          *
          * @param flexContainerMainSize the width of the flex container
+         *
          * @return specified size suggestion if it's definite, null otherwise
          */
         private Float calculateSpecifiedSizeSuggestion(float flexContainerMainSize) {
@@ -1151,6 +1306,7 @@ final class FlexUtil {
          * and then further clamped by the max main size property if that is definite.
          *
          * @param flexContainerMainSize the width of the flex container
+         *
          * @return content size suggestion
          */
         private float calculateContentSizeSuggestion(float flexContainerMainSize, float crossSize) {
