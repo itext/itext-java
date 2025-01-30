@@ -126,8 +126,9 @@ public final class AnnotationCheckUtil {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ANNOT_TRAP_NET_IS_NOT_PERMITTED);
             }
 
-            if (!PdfName.Widget.equals(subtype) && !(annotObj.containsKey(PdfName.Contents)
-                    || annotObj.containsKey(PdfName.Alt))) {
+            PdfStructElem parent = (PdfStructElem) objRef.getParent();
+            if (!PdfName.Widget.equals(subtype) &&
+                    !(annotObj.containsKey(PdfName.Contents) || (parent != null && parent.getAlt() != null))) {
                 throw new PdfUAConformanceException(MessageFormatUtil.format(
                         PdfUAExceptionMessageConstants.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_OR_ALT_KEY, subtype.getValue()));
             }
