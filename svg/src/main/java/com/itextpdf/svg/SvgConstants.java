@@ -829,6 +829,10 @@ public final class SvgConstants {
          * Attribute defining the stroke linecap.
          */
         public static final String STROKE_LINECAP = "stroke-linecap";
+        /**
+         * Attribute defining the stroke linejoin.
+         */
+        public static final String STROKE_LINEJOIN = "stroke-linejoin";
 
         /**
          * Attribute defining the stroke miterlimit.

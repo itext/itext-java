@@ -32,8 +32,8 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
@@ -316,5 +316,25 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     // Compare with Chrome browser
     public void markerParentElementTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerParentElement");
+    }
+
+    @Test
+    public void markerDefinedInStyleTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerDefinedInStyle");
+    }
+
+    @Test
+    public void markerOnGroupTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOnGroup");
+    }
+
+    @Test
+    public void markerOnSvgTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOnSvg");
+    }
+
+    @Test
+    public void markerOnSymbolTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerOnSymbol");
     }
 }

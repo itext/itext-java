@@ -532,9 +532,15 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     private float getOpacityByAttributeName(String attributeName, float generalOpacity) {
         float opacity = generalOpacity;
 
-        String opacityValue = getAttribute(attributeName);
-        if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
-            opacity *= Float.valueOf(opacityValue);
+        String opacityStr = getAttribute(attributeName);
+        if (opacityStr != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityStr)) {
+            float opacityValue;
+            if (CssTypesValidationUtils.isPercentageValue(opacityStr)) {
+                opacityValue = CssDimensionParsingUtils.parseRelativeValue(opacityStr, 1f);
+            } else {
+                opacityValue = Float.valueOf(opacityStr);
+            }
+            opacity *= opacityValue;
         }
         return opacity;
     }

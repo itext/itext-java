@@ -1,0 +1,40 @@
+<svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="marker1" markerUnits="strokeWidth" refX="5" refY="5" markerWidth="5" markerHeight="5" viewBox="0 0 10 10">
+      <rect width="10" height="10" fill="blue"/>
+    </marker>
+    <marker id="marker2" markerUnits="strokeWidth" refX="5" refY="5" markerWidth="5" markerHeight="5" viewBox="0 0 10 10">
+      <rect width="10" height="10" fill="red"/>
+    </marker>
+  </defs>
+
+  <text font-size="20" x="240" y="70" text-anchor="middle">marker attribute</text>
+  <g marker="url(#marker2)" fill="gold" stroke="black" fill-rule="evenodd" transform="translate(50,20)" id="markme">
+    <path transform="scale(0.5,0.5) translate(0, 50)" d="M171.081,138.285l77.362-7.749l-91.455-8.623l30.157-35.326l-47.89,
+                         23.827l-4.503-10.37l-9.31-99.998l-9.708,110.734L79.081,81.749l19.337,
+                         40.185l-98.37,9.564l87.204,7.983l-31.559,35.816l52.541-25.082l-13.025,
+                         34.759 l22.846-15.257l8.347,81.941l8.38-87.381l32.2,35.213l-17.627-50.278l36.982,
+                         10.762l-15.258-21.69z"/>
+    <polygon transform="translate(120, 50)" points="50,15 61,35 85,35 66,50 75,75 50,60 25,75 34,50 15,35 39,35"
+             fill="gold"/>
+
+    <polyline transform="scale(0.5,0.5) translate(200, 150)" points="220,20 300,100 400,20"/>
+    <line x1="330" y1="60" x2="370"  y2="140"/>
+  </g>
+
+  <text font-size="20" x="240" y="200" text-anchor="middle">marker-start, marker-mid and marker-end attributes</text>
+  <g marker-mid="url(#marker1)" marker-end="url(#marker1)" marker-start="url(#marker1)" fill="gold" stroke="black"
+     fill-rule="evenodd" transform="translate(50,150)">
+
+    <path transform="scale(0.5,0.5) translate(0, 50)" d="M171.081,138.285l77.362-7.749l-91.455-8.623l30.157-35.326l-47.89,
+                         23.827l-4.503-10.37l-9.31-99.998l-9.708,110.734L79.081,81.749l19.337,
+                         40.185l-98.37,9.564l87.204,7.983l-31.559,35.816l52.541-25.082l-13.025,
+                         34.759 l22.846-15.257l8.347,81.941l8.38-87.381l32.2,35.213l-17.627-50.278l36.982,
+                         10.762l-15.258-21.69z"/>
+    <polygon transform="translate(120, 50)" points="50,15 61,35 85,35 66,50 75,75 50,60 25,75 34,50 15,35 39,35"
+             fill="gold"/>
+
+    <polyline transform="scale(0.5,0.5) translate(200, 150)" points="220,20 300,100 400,20"/>
+    <line x1="330" y1="60" x2="370"  y2="140"/>
+  </g>
+</svg>

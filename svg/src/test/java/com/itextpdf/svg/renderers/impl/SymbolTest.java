@@ -127,7 +127,6 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-2258 Processing of stroke attribute is not currently correct supported
     public void opacityAttributeTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "opacityAttrTest");
     }

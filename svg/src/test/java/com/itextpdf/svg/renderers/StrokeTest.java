@@ -133,19 +133,19 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-7338: Update cmp file
+    //TODO DEVSIX-7338: SVG stroke on group applied incorrectly
     public void strokeObjectsOverlap2Test() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroup2");
     }
 
     @Test
-    //TODO DEVSIX-7338: Update cmp file
+    //TODO DEVSIX-7338: SVG stroke on group applied incorrectly
     public void strokeObjectsOverlap3Test() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroupNoInsideStroke");
     }
 
     @Test
-    //TODO DEVSIX-7338: Update cmp file
+    //TODO DEVSIX-7338: SVG stroke on group applied incorrectly
     public void strokeObjectsOverlap4Test() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroupNoInsideStroke2");
     }

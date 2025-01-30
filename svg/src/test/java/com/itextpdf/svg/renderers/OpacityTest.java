@@ -24,11 +24,11 @@ package com.itextpdf.svg.renderers;
 
 import com.itextpdf.test.ITextTest;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class OpacityTest extends SvgIntegrationTest {
@@ -63,19 +63,16 @@ public class OpacityTest extends SvgIntegrationTest {
   }
 
   @Test
-  //TODO DEVSIX-2678
-  public void testFillOpacityWithComma() throws IOException, InterruptedException {
+  //TODO DEVSIX-2678 SVG: Displaying invalid value of fill-opacity incorrectly
+  public void testFillOpacityWithComma() {
     Assertions.assertThrows(NumberFormatException.class,
             () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithComma")
     );
   }
 
   @Test
-  //TODO DEVSIX-2678
   public void testFillOpacityWithPercents() throws IOException, InterruptedException {
-    Assertions.assertThrows(NumberFormatException.class,
-            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithPercents")
-    );
+      convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithPercents");
   }
 
   @Test
@@ -93,11 +90,8 @@ public class OpacityTest extends SvgIntegrationTest {
   }
 
   @Test
-  //TODO DEVSIX-2679
   public void testStrokeOpacityWithPercents() throws IOException, InterruptedException {
-    Assertions.assertThrows(NumberFormatException.class,
-            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithPercents")
-    );
+      convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithPercents");
   }
 
   @Test
