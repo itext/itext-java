@@ -82,11 +82,13 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     }
 
     @Override
+    @Deprecated
     public boolean containsAbsolutePositionChange() {
         return false; //Leaf text elements do not contain any kind of transformation
     }
 
     @Override
+    @Deprecated
     public float[][] getAbsolutePositionChanges() {
         float[] part = new float[]{0f};
         return new float[][]{part, part};

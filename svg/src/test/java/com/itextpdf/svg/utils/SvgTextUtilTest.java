@@ -23,12 +23,14 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.TextLeafSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class SvgTextUtilTest extends ExtendedITextTest {
@@ -216,7 +218,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         root.addChild(textAfter);
 
         //Run
-        SvgTextUtil.processWhiteSpace(root, true);
+        SvgTextUtil.processWhiteSpace(root, true, new SvgDrawContext(null, null));
         root.getChildren().get(0).getAttribute(SvgConstants.Attributes.TEXT_CONTENT);
         //Create result array
         String[] actual = new String[]{
@@ -260,7 +262,7 @@ public class SvgTextUtilTest extends ExtendedITextTest {
         root.addChild(textAfter);
 
         //Run
-        SvgTextUtil.processWhiteSpace(root, true);
+        SvgTextUtil.processWhiteSpace(root, true, new SvgDrawContext(null, null));
         root.getChildren().get(0).getAttribute(SvgConstants.Attributes.TEXT_CONTENT);
         //Create result array
         String[] actual = new String[]{

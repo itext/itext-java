@@ -51,8 +51,22 @@ public interface ISvgTextNodeRenderer extends ISvgNodeRenderer {
     @Deprecated
     boolean containsRelativeMove();
 
+    /**
+     * This method is deprecated and will be replaced with new signature {@code containsAbsolutePositionChange(SvgDrawContext)}.
+     * This is needed because x/y can contain relative values, so SvgDrawContext is needed to resolve them.
+     *
+     * @return {@code true} if an absolute position is specified via x/y attributes, {@code false} otherwise
+     */
+    @Deprecated
     boolean containsAbsolutePositionChange();
 
+    /**
+     * This method is deprecated and will be replaced with new signature {@code getAbsolutePositionChanges(SvgDrawContext)}.
+     * This is needed because x/y can contain relative values, so SvgDrawContext is needed to resolve them.
+     *
+     * @return text absolute position
+     */
+    @Deprecated
     float[][] getAbsolutePositionChanges();
 
     /**

@@ -111,6 +111,20 @@ public final class SvgTextUtil {
         }
     }
 
+    /**
+     * Process the whitespace inside the Text Tree.
+     * Whitespace is collapsed and new lines are handled
+     * A leading element in each subtree is handled different: the preceding whitespace is trimmed instead of kept
+     *
+     * @param root             root of the text-renderer subtree
+     * @param isLeadingElement true if this element is a leading element(either the first child or the first element after an absolute position change)
+     *
+     * @deprecated use {@link #processWhiteSpace(TextSvgBranchRenderer, boolean, SvgDrawContext)} instead
+     */
+    @Deprecated
+    public static void processWhiteSpace(TextSvgBranchRenderer root, boolean isLeadingElement) {
+        processWhiteSpace(root, isLeadingElement, new SvgDrawContext(null, null));
+    }
 
     /**
      * Process the whitespace inside the Text Tree.
@@ -119,8 +133,9 @@ public final class SvgTextUtil {
      *
      * @param root             root of the text-renderer subtree
      * @param isLeadingElement true if this element is a leading element(either the first child or the first element after an absolute position change)
+     * @param context the svg draw context
      */
-    public static void processWhiteSpace(TextSvgBranchRenderer root, boolean isLeadingElement) {
+    public static void processWhiteSpace(TextSvgBranchRenderer root, boolean isLeadingElement, SvgDrawContext context) {
         // When svg is parsed by jsoup it leaves all whitespace in text element as is. Meaning that
         // tab/space indented xml files will retain their tabs and spaces.
         // The following regex replaces all whitespace with a single space.
@@ -144,9 +159,10 @@ public final class SvgTextUtil {
             // If child is leaf, process contents, if it is branch, call function again.
             if (child instanceof TextSvgBranchRenderer) {
                 // Branch processing.
-                processWhiteSpace((TextSvgBranchRenderer) child,
-                        child.containsAbsolutePositionChange() || isLeadingElement);
-                ((TextSvgBranchRenderer) child).markWhiteSpaceProcessed();
+                TextSvgBranchRenderer childText = (TextSvgBranchRenderer) child;
+                processWhiteSpace(childText,
+                        childText.containsAbsolutePositionChange(context) || isLeadingElement, context);
+                childText.markWhiteSpaceProcessed();
                 isLeadingElement = false;
             }
             if (child instanceof TextLeafSvgNodeRenderer) {

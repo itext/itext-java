@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -43,6 +44,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.css.SvgStrokeParameterConverter.PdfLineDashParameters;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -127,7 +129,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     public float[] getRelativeTranslation(SvgDrawContext context) {
         if (!moveResolved) {
-            resolveTextMove(context);
+            resolveRelativeTextMove(context);
         }
         return new float[]{xMove, yMove};
     }
@@ -140,7 +142,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     public boolean containsRelativeMove(SvgDrawContext context) {
         if (!moveResolved) {
-            resolveTextMove(context);
+            resolveRelativeTextMove(context);
         }
         boolean isNullMove = CssUtils.compareFloats(0f, xMove) && CssUtils.compareFloats(0f, yMove); // comparison to 0
         return !isNullMove;
@@ -148,13 +150,25 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     @Override
     public boolean containsAbsolutePositionChange() {
-        if (!posResolved) resolveTextPosition();
+        return containsAbsolutePositionChange(new SvgDrawContext(null, null));
+    }
+
+    public boolean containsAbsolutePositionChange(SvgDrawContext context) {
+        if (!posResolved) {
+            resolveAbsoluteTextPosition(context);
+        }
         return (xPos != null && xPos.length > 0) || (yPos != null && yPos.length > 0);
     }
 
     @Override
     public float[][] getAbsolutePositionChanges() {
-        if (!posResolved) resolveTextPosition();
+        return getAbsolutePositionChanges(new SvgDrawContext(null, null));
+    }
+
+    public float[][] getAbsolutePositionChanges(SvgDrawContext context) {
+        if (!posResolved) {
+            resolveAbsoluteTextPosition(context);
+        }
         return new float[][]{xPos, yPos};
     }
 
@@ -178,12 +192,13 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         // building of properly positioned rectangles without any drawing or visual properties applying.
         for (ISvgTextNodeRenderer child : children) {
             if (child instanceof TextSvgBranchRenderer) {
-                startPoint = ((TextSvgBranchRenderer) child).getStartPoint(context, startPoint);
-                if (child.containsAbsolutePositionChange() && textChunkRect != null) {
+                TextSvgBranchRenderer childText = (TextSvgBranchRenderer) child;
+                startPoint = childText.getStartPoint(context, startPoint);
+                if (childText.containsAbsolutePositionChange(context) && textChunkRect != null) {
                     commonRect = getCommonRectangleWithAnchor(commonRect, textChunkRect, rootX, textAnchorValue);
                     // Start new text chunk.
                     textChunkRect = null;
-                    textAnchorValue = child.getAttribute(SvgConstants.Attributes.TEXT_ANCHOR);
+                    textAnchorValue = childText.getAttribute(SvgConstants.Attributes.TEXT_ANCHOR);
                     rootX = (float) startPoint.getX();
                 }
             } else {
@@ -208,7 +223,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         if (objectBoundingBox == null) {
             // Handle white-spaces
             if (!whiteSpaceProcessed) {
-                SvgTextUtil.processWhiteSpace(this, true);
+                SvgTextUtil.processWhiteSpace(this, true, context);
             }
             objectBoundingBox = getTextRectangle(context, null);
         }
@@ -235,7 +250,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
         // Handle white-spaces
         if (!whiteSpaceProcessed) {
-            SvgTextUtil.processWhiteSpace(this, true);
+            SvgTextUtil.processWhiteSpace(this, true, context);
         }
 
         this.paragraph = new Paragraph();
@@ -311,10 +326,10 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     }
 
     void performDrawing(SvgDrawContext context) {
-        if (this.containsAbsolutePositionChange()) {
+        if (this.containsAbsolutePositionChange(context)) {
             drawLastTextChunk(context);
             // TODO: DEVSIX-2507 support rotate and other attributes
-            float[][] absolutePositions = this.getAbsolutePositionChanges();
+            float[][] absolutePositions = this.getAbsolutePositionChanges(context);
             AffineTransform newTransform = getTextTransform(absolutePositions, context);
             startNewTextChunk(context, newTransform);
         }
@@ -383,7 +398,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
     }
 
-    private void resolveTextMove(SvgDrawContext context) {
+    private void resolveRelativeTextMove(SvgDrawContext context) {
         if (this.attributesAndStyles != null) {
             String xRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.DX);
             String yRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.DY);
@@ -405,16 +420,37 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
     }
 
-    private void resolveTextPosition() {
+    private void resolveAbsoluteTextPosition(SvgDrawContext context) {
         if (this.attributesAndStyles != null) {
             String xRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.X);
             String yRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.Y);
 
-            xPos = getPositionsFromString(xRawValue);
-            yPos = getPositionsFromString(yRawValue);
+            xPos = getPositionsFromString(xRawValue, context, true);
+            yPos = getPositionsFromString(yRawValue, context, false);
 
             posResolved = true;
         }
+    }
+
+    private float[] getPositionsFromString(String rawValuesString, SvgDrawContext context, boolean isHorizontal) {
+        float[] result = null;
+        List<String> valuesList = SvgCssUtils.splitValueList(rawValuesString);
+        if (!valuesList.isEmpty()) {
+            result = new float[valuesList.size()];
+            for (int i = 0; i < valuesList.size(); i++) {
+                String value = valuesList.get(i);
+                if (CssDimensionParsingUtils.determinePositionBetweenValueAndUnit(value) == 0) {
+                    throw new StyledXMLParserException(MessageFormatUtil.format(StyledXMLParserException.NAN, value));
+                }
+                if (isHorizontal) {
+                    result[i] = parseHorizontalLength(value, context);
+                } else {
+                    result[i] = parseVerticalLength(value, context);
+                }
+            }
+        }
+
+        return result;
     }
 
     private static AffineTransform getTextTransform(float[][] absolutePositions, SvgDrawContext context) {
@@ -433,19 +469,6 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         tf.concatenate(AffineTransform.getTranslateInstance(absolutePositions[0][0], -absolutePositions[1][0]));
 
         return tf;
-    }
-
-    private static float[] getPositionsFromString(String rawValuesString) {
-        float[] result = null;
-        List<String> valuesList = SvgCssUtils.splitValueList(rawValuesString);
-        if (!valuesList.isEmpty()) {
-            result = new float[valuesList.size()];
-            for (int i = 0; i < valuesList.size(); i++) {
-                result[i] = CssDimensionParsingUtils.parseAbsoluteLength(valuesList.get(i));
-            }
-        }
-
-        return result;
     }
 
     /**
@@ -509,14 +532,16 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     }
 
     private Point getStartPoint(SvgDrawContext context, Point basePoint) {
-        double x = 0, y = 0;
-        if (getAbsolutePositionChanges()[0] != null) {
-            x = getAbsolutePositionChanges()[0][0];
+        double x = 0;
+        double y = 0;
+        float[][] absolutePosition = getAbsolutePositionChanges(context);
+        if (absolutePosition[0] != null) {
+            x = absolutePosition[0][0];
         } else if (basePoint != null) {
             x = basePoint.getX();
         }
-        if (getAbsolutePositionChanges()[1] != null) {
-            y = getAbsolutePositionChanges()[1][0];
+        if (absolutePosition[1] != null) {
+            y = absolutePosition[1][0];
         } else if (basePoint != null) {
             y = basePoint.getY();
         }

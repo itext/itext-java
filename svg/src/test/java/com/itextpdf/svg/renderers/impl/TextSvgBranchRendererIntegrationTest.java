@@ -27,11 +27,10 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
@@ -324,5 +323,10 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void textWhiteSpacePreLineTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePreLine");
+    }
+
+    @Test
+    public void textRelativeXYTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textRelativeXY");
     }
 }
