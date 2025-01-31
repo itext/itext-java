@@ -53,6 +53,7 @@ public final class SvgExceptionMessageConstant {
     public static final String INVALID_SMOOTH_CURVE_USE =
             "The smooth curve operations (S, s, T, t) may not be used as a first operator in path.";
     public static final String INVALID_TRANSFORM_DECLARATION = "Transformation declaration is not formed correctly.";
+    public static final String INVALID_TRANSFORM_VALUE = "Invalid transformation value: {0}";
     public static final String LINE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 =
             "(x y)+ parameters are expected for lineTo operator. Got: {0}";
     public static final String MOVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 =
