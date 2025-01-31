@@ -22,6 +22,8 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
@@ -29,7 +31,6 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;rect&gt; tag.
@@ -59,44 +60,34 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
         setParameters(context);
         boolean singleValuePresent = (rxPresent && !ryPresent) || (!rxPresent && ryPresent);
 
+        AffineTransform transform = applyNonScalingStrokeTransform(context);
         if (!rxPresent && !ryPresent) {
-            cv.rectangle(x, y, width, height);
+            Point[] points = new Rectangle(x, y, width, height).toPointsArray();
+            if (transform != null) {
+                transform.transform(points, 0, points, 0, points.length);
+
+                if (Math.abs(transform.getShearX()) > 0 || Math.abs(transform.getShearY()) > 0) {
+                    int i = 0;
+                    cv.moveTo(points[i].getX(), points[i++].getY())
+                            .lineTo(points[i].getX(), points[i++].getY())
+                            .lineTo(points[i].getX(), points[i++].getY())
+                            .lineTo(points[i].getX(), points[i].getY())
+                            .closePath();
+                    return;
+                }
+            }
+            cv.rectangle(points[0].getX(),
+                    points[0].getY(),
+                    points[1].getX() - points[0].getX(),
+                    points[2].getY() - points[0].getY());
         } else if (singleValuePresent) {
             cv.writeLiteral("% circle rounded rect\n");
-            // only look for radius in case of circular rounding
+            // Only look for radius in case of circular rounding.
             float radius = findCircularRadius(rx, ry, width, height);
-            cv.roundRectangle(x, y, width, height, radius);
+            cv.roundRectangle(x, y, width, height, radius, radius, transform);
         } else {
             cv.writeLiteral("% ellipse rounded rect\n");
-            // TODO (DEVSIX-1878): this should actually be refactored into PdfCanvas.roundRectangle()
-
-            /*
-
-			y+h    ->    ____________________________
-						/                            \
-					   /                              \
-			y+h-ry -> /                                \
-					  |                                |
-					  |                                |
-					  |                                |
-					  |                                |
-			y+ry   -> \                                /
-					   \                              /
-			y      ->   \____________________________/  
-					  ^  ^                          ^  ^
-					  x  x+rx                  x+w-rx  x+w
-
-             */
-            cv.moveTo(x + rx, y);
-            cv.lineTo(x + width - rx, y);
-            arc(x + width - 2 * rx, y, x + width, y + 2 * ry, -90, 90, cv);
-            cv.lineTo(x + width, y + height - ry);
-            arc(x + width, y + height - 2 * ry, x + width - 2 * rx, y + height, 0, 90, cv);
-            cv.lineTo(x + rx, y + height);
-            arc(x + 2 * rx, y + height, x, y + height - 2 * ry, 90, 90, cv);
-            cv.lineTo(x, y + ry);
-            arc(x, y + 2 * ry, x + 2 * rx, y, 180, 90, cv);
-            cv.closePath();
+            cv.roundRectangle(x, y, width, height, rx, ry, transform);
         }
     }
 
@@ -125,17 +116,6 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
             float rawRadius = parseVerticalLength(getAttribute(SvgConstants.Attributes.RY), context);
             ry = checkRadius(rawRadius, height);
             ryPresent = rawRadius >= 0.0f;
-        }
-    }
-
-    private void arc(final float x1, final float y1, final float x2, final float y2, final float startAng, final float extent, PdfCanvas cv) {
-        List<double[]> ar = PdfCanvas.bezierArc(x1, y1, x2, y2, startAng, extent);
-        if (!ar.isEmpty()) {
-            double pt[];
-            for (int k = 0; k < ar.size(); ++k) {
-                pt = ar.get(k);
-                cv.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
-            }
         }
     }
 
@@ -177,5 +157,4 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
         deepCopyAttributesAndStyles(copy);
         return copy;
     }
-
 }

@@ -25,7 +25,6 @@ package com.itextpdf.svg.renderers.path.impl;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
@@ -57,11 +56,14 @@ public class QuadraticCurveTo extends AbstractPathShape implements IControlPoint
      */
     @Override
     public void draw() {
-        float x1 = parseHorizontalLength(coordinates[0]);
-        float y1 = parseVerticalLength(coordinates[1]);
-        float x = parseHorizontalLength(coordinates[2]);
-        float y = parseVerticalLength(coordinates[3]);
-        context.getCurrentCanvas().curveTo(x1, y1, x, y);
+        double x1 = parseHorizontalLength(coordinates[0]);
+        double y1 = parseVerticalLength(coordinates[1]);
+        double x = parseHorizontalLength(coordinates[2]);
+        double y = parseVerticalLength(coordinates[3]);
+        double[] points = new double[]{x1, y1, x, y};
+        applyTransform(points);
+        int i = 0;
+        context.getCurrentCanvas().curveTo(points[i++], points[i++], points[i++], points[i]);
     }
 
     @Override

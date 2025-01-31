@@ -292,19 +292,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
      * @return the set to {@code PdfStream} bbox
      */
     private static Rectangle getBBoxAccordingToVisibleOverflow(SvgDrawContext context) {
-        List<PdfCanvas> canvases = new ArrayList<>();
-        int canvasesSize = context.size();
-        for (int i = 0; i < canvasesSize; i++) {
-            canvases.add(context.popCanvas());
-        }
-        AffineTransform transform = new AffineTransform();
-        for (int i = canvases.size() - 1; i >= 0; i--) {
-            PdfCanvas canvas = canvases.get(i);
-            Matrix matrix = canvas.getGraphicsState().getCtm();
-            transform.concatenate(new AffineTransform(matrix.get(0), matrix.get(1), matrix.get(3),
-                    matrix.get(4), matrix.get(6), matrix.get(7)));
-            context.pushCanvas(canvas);
-        }
+        AffineTransform transform = context.getConcatenatedTransform();
         try {
             transform = transform.createInverse();
         } catch (NoninvertibleTransformException e) {

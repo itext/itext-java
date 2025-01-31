@@ -24,7 +24,6 @@ package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
 import java.util.Arrays;
@@ -46,9 +45,11 @@ public class MoveTo extends AbstractPathShape {
 
     @Override
     public void draw() {
-        float x = parseHorizontalLength(coordinates[0]);
-        float y = parseVerticalLength(coordinates[1]);
-        context.getCurrentCanvas().moveTo(x, y);
+        double x = parseHorizontalLength(coordinates[0]);
+        double y = parseVerticalLength(coordinates[1]);
+        double[] points = new double[]{x, y};
+        applyTransform(points);
+        context.getCurrentCanvas().moveTo(points[0], points[1]);
     }
 
     @Override

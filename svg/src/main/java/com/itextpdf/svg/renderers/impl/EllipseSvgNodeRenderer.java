@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
@@ -42,9 +43,14 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         cv.writeLiteral("% ellipse\n");
         if (setParameters(context)) {
             // Use double type locally to have better precision of the result after applying arithmetic operations
-            cv.moveTo((double) cx + (double) rx, cy);
+            double[] startPoint = new double[]{(double) cx + (double) rx, cy};
+            AffineTransform transform = applyNonScalingStrokeTransform(context);
+            if (transform != null) {
+                transform.transform(startPoint, 0, startPoint, 0, startPoint.length / 2);
+            }
+            cv.moveTo(startPoint[0], startPoint[1]);
             DrawUtils.arc((double) cx - (double) rx, (double) cy - (double) ry, (double) cx + (double) rx,
-                    (double) cy + (double) ry, 0, 360, cv);
+                    (double) cy + (double) ry, 0, 360, cv, transform);
         }
     }
 

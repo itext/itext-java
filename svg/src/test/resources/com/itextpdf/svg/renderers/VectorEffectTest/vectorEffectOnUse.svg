@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <g id="group">
+            <circle cx="0" cy="0" r="10" fill="none" stroke="gray" stroke-width="5" stroke-opacity="0.8"/>
+            <rect x="-5" y="-5" width="10" height="10" fill="lightblue" stroke="indigo" stroke-width="3"
+                  stroke-opacity="0.7" fill-opacity="0.6" vector-effect="non-scaling-stroke"/>
+        </g>
+    </defs>
+    <symbol id="check" viewBox="0 0 300 500">
+        <g transform="scale(5,2)">
+            <use x="0" y="30" href="#group" stroke="gray" stroke-width="0.5" vector-effect="none"/>
+            <use x="0" y="40" href="#group" stroke="gray" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+        </g>
+    </symbol>
+    <use xlink:href="#check" x="0" y="100" vector-effect="none"/>
+    <use xlink:href="#check" x="130" y="100" vector-effect="non-scaling-stroke"/>
+</svg>

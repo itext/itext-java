@@ -114,7 +114,9 @@ public class EllipticalCurveTo extends AbstractPathShape {
             /* edge case: If rx = 0 or ry = 0 then this arc is treated as a straight line segment (a "lineto")
              * joining the endpoints.
              */
-            context.getCurrentCanvas().lineTo(end.getX(), end.getY());
+            double[] points = new double[]{end.getX(), end.getY()};
+            applyTransform(points);
+            context.getCurrentCanvas().lineTo(points[0], points[1]);
         } else {
             /* This is the first step of calculating a rotated elliptical path.
             We must simulate a transformation on the end-point in order to calculate appropriate EllipseArc angles;
@@ -185,8 +187,11 @@ public class EllipticalCurveTo extends AbstractPathShape {
         return coordinates;
     }
 
-    private static void drawCurve(PdfCanvas canvas, Point cp1, Point cp2, Point end) {
-        canvas.curveTo(cp1.getX(), cp1.getY(), cp2.getX(), cp2.getY(), end.getX(), end.getY());
+    private void drawCurve(PdfCanvas canvas, Point cp1, Point cp2, Point end) {
+        double[] points = new double[]{cp1.getX(), cp1.getY(), cp2.getX(), cp2.getY(), end.getX(), end.getY()};
+        applyTransform(points);
+        int i = 0;
+        canvas.curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i]);
     }
 
     private Point[][] makePoints(List<double[]> input) {

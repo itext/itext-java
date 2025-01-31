@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
@@ -98,11 +99,14 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
         canvas.writeLiteral("% path\n");
+
+        AffineTransform transform = applyNonScalingStrokeTransform(context);
         for (IPathShape item : getShapes()) {
             if (item instanceof AbstractPathShape) {
                 AbstractPathShape shape = (AbstractPathShape) item;
                 shape.setParent(this);
                 shape.setContext(context);
+                shape.setTransform(transform);
             }
 
             item.draw(context.getCurrentCanvas());

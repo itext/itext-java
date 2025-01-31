@@ -63,6 +63,11 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void singleImageHrefTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageHref", properties);
+    }
+
+    @Test
     public void imageWithRectangleTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithRectangle", properties);
     }

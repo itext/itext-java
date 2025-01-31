@@ -81,6 +81,10 @@ public final class SvgLogMessageConstant {
             "Non-invertible transformation matrix was used in a clipping path context. Clipped elements may show "
                     + "undefined behavior.";
 
+    public static final String NON_INVERTIBLE_TRANSFORMATION_MATRIX_FOR_NON_SCALING_STROKE =
+            "Unable to get inverse transformation matrix and thus apply non-scaling-stroke vector-effect property: " +
+                    "some of the transformation matrices, written to the document, have a determinant of zero value.";
+
     public static final String UNABLE_TO_GET_INVERSE_MATRIX_DUE_TO_ZERO_DETERMINANT =
             "Unable to get inverse transformation matrix and thus calculate a viewport for the element because some of"
                     + " the transformation matrices, which are written to document, have a determinant of zero value. "

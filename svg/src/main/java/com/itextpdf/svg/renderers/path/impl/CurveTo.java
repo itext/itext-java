@@ -25,7 +25,6 @@ package com.itextpdf.svg.renderers.path.impl;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
@@ -56,13 +55,16 @@ public class CurveTo extends AbstractPathShape implements IControlPointCurve {
 
     @Override
     public void draw() {
-        float x1 = parseHorizontalLength(coordinates[0]);
-        float y1 = parseVerticalLength(coordinates[1]);
-        float x2 = parseHorizontalLength(coordinates[2]);
-        float y2 = parseVerticalLength(coordinates[3]);
-        float x = parseHorizontalLength(coordinates[4]);
-        float y = parseVerticalLength(coordinates[5]);
-        context.getCurrentCanvas().curveTo(x1, y1, x2, y2, x, y);
+        double x1 = parseHorizontalLength(coordinates[0]);
+        double y1 = parseVerticalLength(coordinates[1]);
+        double x2 = parseHorizontalLength(coordinates[2]);
+        double y2 = parseVerticalLength(coordinates[3]);
+        double x = parseHorizontalLength(coordinates[4]);
+        double y = parseVerticalLength(coordinates[5]);
+        double[] points = new double[]{x1, y1, x2, y2, x, y};
+        applyTransform(points);
+        int i = 0;
+        context.getCurrentCanvas().curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i]);
     }
 
     @Override

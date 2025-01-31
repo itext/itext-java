@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="2.0"
+     width="18cm" height="24cm" viewBox="0 0 600 900">
+    <desc>Example non-scaling stroke in text and tspan</desc>
+    <rect x="1" y="1" width="598" height="796" fill="none" stroke="black"/>
+
+    <g transform="scale(8, 1.8), translate(5)">
+        <text x="0" y="30" stroke="red" stroke-width="2" fill="none">
+            1
+            <tspan x="10" y="60" fill="none" stroke="orange" stroke-width="2">2</tspan>
+            <tspan x="20" y="90" fill="none" stroke="yellow" stroke-width="2" vector-effect="non-scaling-stroke">
+                2+ve
+                <tspan x="30" y="120" fill="none" stroke="green" stroke-width="2">
+                    3
+                    <tspan x="10" y="180" fill="none" stroke="blue" stroke-width="2">
+                        4
+                    </tspan>
+                    <tspan x="0" y="210" fill="none" stroke="purple" stroke-width="2" vector-effect="non-scaling-stroke">
+                        4+ve
+                    </tspan>
+                </tspan>
+                <tspan x="20" y="150" fill="none" stroke="lightblue" stroke-width="2" vector-effect="non-scaling-stroke">
+                    3+ve
+                </tspan>
+            </tspan>
+        </text>
+        <text x="0" y="240" stroke="red" stroke-width="2" fill="none" vector-effect="non-scaling-stroke">
+            1+ve
+            <tspan dx="-25" dy="30" fill="none" stroke="orange" stroke-width="2">2</tspan>
+            <tspan dy="30" fill="none" stroke="yellow" stroke-width="2" vector-effect="non-scaling-stroke">
+                2+ve
+                <tspan dx="-28" dy="30" fill="none" stroke="green" stroke-width="2">
+                    3
+                    <tspan dx="-32" dy="60" fill="none" stroke="blue" stroke-width="2">
+                        4
+                    </tspan>
+                    <tspan dx="-33" dy="30" fill="none" stroke="purple" stroke-width="2" vector-effect="non-scaling-stroke">
+                        4+ve
+                    </tspan>
+                </tspan>
+                <tspan dx="-3" dy="-60" fill="none" stroke="lightblue" stroke-width="2" vector-effect="non-scaling-stroke">
+                    3+ve
+                </tspan>
+            </tspan>
+        </text>
+    </g>
+
+</svg>

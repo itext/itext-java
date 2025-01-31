@@ -26,6 +26,7 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
@@ -44,12 +45,15 @@ import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.css.SvgStrokeParameterConverter;
 import com.itextpdf.svg.css.SvgStrokeParameterConverter.PdfLineDashParameters;
 import com.itextpdf.svg.css.impl.SvgNodeRendererInheritanceResolver;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.TransformUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +65,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
     private static final MarkerVertexType[] MARKER_VERTEX_TYPES = new MarkerVertexType[] {MarkerVertexType.MARKER_START,
             MarkerVertexType.MARKER_MID, MarkerVertexType.MARKER_END};
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSvgNodeRenderer.class);
 
     /**
      * Map that contains attributes and styles used for drawing operations.
@@ -284,6 +290,31 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             return ((AbstractSvgNodeRenderer) getParent()).getParentClipPath();
         }
         return null;
+    }
+
+    /**
+     * Applies non-scaling-stroke vector-effect to this renderer by concatenating all transformations applied
+     * from the top level of the svg to the current one, inverting it and applying to the current canvas.
+     *
+     * @param context the SVG draw context
+     *
+     * @return the transformation that was inverted and applied to this renderer
+     * to achieve non-scaling-stroke vector-effect
+     */
+    AffineTransform applyNonScalingStrokeTransform(SvgDrawContext context) {
+        AffineTransform transform = null;
+        boolean isNonScalingStroke = doStroke && SvgConstants.Values.NONE_SCALING_STROKE.equals(
+                getAttribute(SvgConstants.Attributes.VECTOR_EFFECT));
+        if (isNonScalingStroke) {
+            transform = context.getConcatenatedTransform();
+            try {
+                context.getCurrentCanvas().concatMatrix(transform.createInverse());
+            } catch (NoninvertibleTransformException e) {
+                LOGGER.warn(SvgLogMessageConstant.NON_INVERTIBLE_TRANSFORMATION_MATRIX_FOR_NON_SCALING_STROKE);
+                transform = null;
+            }
+        }
+        return transform;
     }
 
     /**

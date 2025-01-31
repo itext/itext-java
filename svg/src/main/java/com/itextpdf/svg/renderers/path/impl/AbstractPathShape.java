@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -40,6 +41,7 @@ import java.util.Map;
 public abstract class AbstractPathShape implements IPathShape {
 
     private PathSvgNodeRenderer parent;
+    private AffineTransform transform = null;
     /**
      * The properties of this shape.
      */
@@ -122,6 +124,15 @@ public abstract class AbstractPathShape implements IPathShape {
     }
 
     /**
+     * Sets {@link AffineTransform} to apply before drawing the shape.
+     *
+     * @param transform {@link AffineTransform} to apply before drawing
+     */
+    public void setTransform(AffineTransform transform) {
+        this.transform = transform;
+    }
+
+    /**
      * Parse x axis length value.
      *
      * @param length {@link String} length for parsing
@@ -139,5 +150,11 @@ public abstract class AbstractPathShape implements IPathShape {
      */
     protected float parseVerticalLength(String length) {
         return SvgCssUtils.parseAbsoluteVerticalLength(parent, length, 0.0F, context);
+    }
+
+    void applyTransform(double[] points) {
+        if (transform != null) {
+            transform.transform(points, 0, points, 0, points.length / 2);
+        }
     }
 }

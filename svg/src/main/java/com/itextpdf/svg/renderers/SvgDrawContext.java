@@ -35,9 +35,11 @@ import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.utils.SvgTextProperties;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -494,5 +496,27 @@ public class SvgDrawContext {
      */
     public void resetClippingElementTransform() {
         this.clippingElementTransform.setToIdentity();
+    }
+
+    /**
+     * Concatenates all transformations applied from the top level of the svg to the current one.
+     *
+     * @return {@link AffineTransform} instance
+     */
+    public AffineTransform getConcatenatedTransform() {
+        List<PdfCanvas> canvasList = new ArrayList<>();
+        int canvasesSize = this.size();
+        for (int i = 0; i < canvasesSize; i++) {
+            canvasList.add(this.popCanvas());
+        }
+        AffineTransform transform = new AffineTransform();
+        for (int i = canvasList.size() - 1; i >= 0; i--) {
+            PdfCanvas pdfCanvas = canvasList.get(i);
+            Matrix matrix = pdfCanvas.getGraphicsState().getCtm();
+            transform.concatenate(new AffineTransform(matrix.get(0), matrix.get(1), matrix.get(3),
+                    matrix.get(4), matrix.get(6), matrix.get(7)));
+            this.pushCanvas(pdfCanvas);
+        }
+        return transform;
     }
 }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
@@ -39,6 +40,7 @@ import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -132,6 +134,13 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         PdfCanvas canvas = context.getCurrentCanvas();
         canvas.writeLiteral("% polyline\n");
         if (points.size() > 1) {
+            AffineTransform transform = applyNonScalingStrokeTransform(context);
+            if (transform != null) {
+                Point[] pt = points.toArray(new Point[0]);
+                transform.transform(pt, 0, pt, 0, pt.length);
+                points = Arrays.asList(pt);
+            }
+
             Point currentPoint = points.get(0);
             canvas.moveTo(currentPoint.getX(), currentPoint.getY());
             for (int x = 1; x < points.size(); x++) {
@@ -181,11 +190,11 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
             v = new Vector((float) (secondPoint.getX() - firstPoint.getX()),
                     (float) (secondPoint.getY() - firstPoint.getY()), 0f);
             Vector xAxis = SvgConstants.Attributes.MARKER_END.equals(
-                                marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))
-                        || SvgConstants.Attributes.MARKER_START.equals(
-                                marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))
+                    marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))
+                    || SvgConstants.Attributes.MARKER_START.equals(
+                    marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))
                     ? new Vector(1, 0, 0) : new Vector(previousOrientationVector.get(1),
-                    previousOrientationVector.get(0)*-1.0F, 0.0F);
+                    previousOrientationVector.get(0) * -1.0F, 0.0F);
             previousOrientationVector = v;
             double rotAngle = SvgCoordinateUtils.calculateAngleBetweenTwoVectors(xAxis, v);
             return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1.0;

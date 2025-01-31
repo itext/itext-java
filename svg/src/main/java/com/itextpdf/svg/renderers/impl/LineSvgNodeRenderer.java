@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -51,7 +52,13 @@ public class LineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
         canvas.writeLiteral("% line\n");
 
         if (setParameters(context)) {
-            canvas.moveTo(x1, y1).lineTo(x2, y2);
+            float[] points = new float[]{x1, y1, x2, y2};
+            AffineTransform transform = applyNonScalingStrokeTransform(context);
+            if (transform != null) {
+                transform.transform(points, 0, points, 0, points.length / 2);
+            }
+            int i = 0;
+            canvas.moveTo(points[i++], points[i++]).lineTo(points[i++], points[i]);
         }
     }
 

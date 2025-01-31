@@ -925,7 +925,12 @@ public final class SvgConstants {
         public static final String Y2 = "y2";
 
         /**
-         * Attribute defining version
+         * Attribute defining vector-effect.
+         */
+        public static final String VECTOR_EFFECT = "vector-effect";
+
+        /**
+         * Attribute defining version.
          */
         public static final String VERSION = "version";
     }
@@ -993,9 +998,14 @@ public final class SvgConstants {
         public static final String MEET = "meet";
 
         /**
-         * Value representing the "none" value".
+         * Value representing the "none" value.
          */
         public static final String NONE = "none";
+
+        /**
+         * Value representing the "non-scaling-stroke" value for vector-effect attribute.
+         */
+        public static final String NONE_SCALING_STROKE = "non-scaling-stroke";
 
         /**
          * Value representing the units relation "objectBoundingBox".

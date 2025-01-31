@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
 
@@ -46,10 +47,33 @@ public class DrawUtils {
      * @param extent extent of the arc
      * @param cv canvas to paint on
      */
-    public static void arc(final double x1, final double y1, final double x2, final double y2, final double startAng, final double extent, PdfCanvas cv) {
+    public static void arc(final double x1, final double y1, final double x2, final double y2, final double startAng,
+                           final double extent, PdfCanvas cv) {
+        arc(x1, y1, x2, y2, startAng, extent, cv, null);
+    }
+
+    /**
+     * Draw an arc on the passed canvas with provided transform,
+     * enclosed by the rectangle for which two opposite corners are specified.
+     * The arc starts at the passed starting angle and extends to the starting angle + extent
+     * @param x1 corner-coordinate of the enclosing rectangle, first corner
+     * @param y1 corner-coordinate of the enclosing rectangle, first corner
+     * @param x2 corner-coordinate of the enclosing rectangle, second corner
+     * @param y2 corner-coordinate of the enclosing rectangle, second corner
+     * @param startAng starting angle in degrees
+     * @param extent extent of the arc
+     * @param cv canvas to paint on
+     * @param transform {@link AffineTransform} to apply before drawing,
+     *                  or {@code null} in case transform shouldn't be applied
+     */
+    public static void arc(final double x1, final double y1, final double x2, final double y2, final double startAng,
+                           final double extent, PdfCanvas cv, AffineTransform transform) {
         List<double[]> ar = PdfCanvas.bezierArc(x1, y1, x2, y2, startAng, extent);
         if (!ar.isEmpty()) {
             for (double[] pt : ar) {
+                if (transform != null) {
+                    transform.transform(pt, 0, pt, 0, pt.length / 2);
+                }
                 cv.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
             }
         }

@@ -1227,14 +1227,34 @@ public class PdfCanvas {
     /**
      * Draws rounded rectangle.
      *
-     * @param x      x coordinate of the starting point.
-     * @param y      y coordinate of the starting point.
-     * @param width  width.
-     * @param height height.
-     * @param radius radius of the arc corner.
-     * @return current canvas.
+     * @param x         x coordinate of the starting point
+     * @param y         y coordinate of the starting point
+     * @param width     width
+     * @param height    height
+     * @param radius    radius of the arc corner
+     *
+     * @return current canvas
      */
     public PdfCanvas roundRectangle(double x, double y, double width, double height, double radius) {
+        return roundRectangle(x, y, width, height, radius, radius, null);
+    }
+
+    /**
+     * Draws rounded rectangle.
+     *
+     * @param x x coordinate of the starting point
+     * @param y y coordinate of the starting point
+     * @param width width
+     * @param height height
+     * @param rx x radius of the arc corner
+     * @param ry y radius of the arc corner
+     * @param transform {@link AffineTransform} to apply before drawing,
+     *                  or {@code null} in case transform shouldn't be applied
+     *
+     * @return current canvas
+     */
+    public PdfCanvas roundRectangle(double x, double y, double width, double height, double rx, double ry,
+                                    AffineTransform transform) {
         if (width < 0) {
             x += width;
             width = -width;
@@ -1243,18 +1263,29 @@ public class PdfCanvas {
             y += height;
             height = -height;
         }
-        if (radius < 0)
-            radius = -radius;
-        final double curv = 0.4477f;
-        moveTo(x + radius, y);
-        lineTo(x + width - radius, y);
-        curveTo(x + width - radius * curv, y, x + width, y + radius * curv, x + width, y + radius);
-        lineTo(x + width, y + height - radius);
-        curveTo(x + width, y + height - radius * curv, x + width - radius * curv, y + height, x + width - radius, y + height);
-        lineTo(x + radius, y + height);
-        curveTo(x + radius * curv, y + height, x, y + height - radius * curv, x, y + height - radius);
-        lineTo(x, y + radius);
-        curveTo(x, y + radius * curv, x + radius * curv, y, x + radius, y);
+        if (rx < 0) {
+            rx = -rx;
+        }
+        if (ry < 0) {
+            ry = -ry;
+        }
+
+        double[] points = getEllipseRoundedRectPoints(x, y, width, height, rx, ry);
+        if (transform != null) {
+            transform.transform(points, 0, points, 0, points.length / 2);
+        }
+
+        int i = 0;
+        this.moveTo(points[i++], points[i++])
+                .lineTo(points[i++], points[i++])
+                .curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i++])
+                .lineTo(points[i++], points[i++])
+                .curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i++])
+                .lineTo(points[i++], points[i++])
+                .curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i++])
+                .lineTo(points[i++], points[i++])
+                .curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i])
+                .closePath();
         return this;
     }
 
@@ -2628,6 +2659,42 @@ public class PdfCanvas {
     private static boolean isIdentityMatrix(float a, float b, float c, float d, float e, float f) {
         return Math.abs(1 - a) < IDENTITY_MATRIX_EPS && Math.abs(b) < IDENTITY_MATRIX_EPS && Math.abs(c) < IDENTITY_MATRIX_EPS &&
                 Math.abs(1 - d) < IDENTITY_MATRIX_EPS && Math.abs(e) < IDENTITY_MATRIX_EPS && Math.abs(f) < IDENTITY_MATRIX_EPS;
+    }
+
+    private static double[] getEllipseRoundedRectPoints(double x, double y, double width, double height,
+                                                        double rx, double ry) {
+        /*
+
+			y+h    ->    ____________________________
+						/                            \
+					   /                              \
+			y+h-ry -> /                                \
+					  |                                |
+					  |                                |
+					  |                                |
+					  |                                |
+			y+ry   -> \                                /
+					   \                              /
+			y      ->   \____________________________/
+					  ^  ^                          ^  ^
+					  x  x+rx                  x+w-rx  x+w
+
+             */
+
+        double[] pt1 = PdfCanvas.bezierArc(x + width - 2 * rx, y, x + width, y + 2 * ry, -90, 90).get(0);
+        double[] pt2 = PdfCanvas.bezierArc(x + width, y + height - 2 * ry, x + width - 2 * rx, y + height, 0, 90).get(0);
+        double[] pt3 = PdfCanvas.bezierArc(x + 2 * rx, y + height, x, y + height - 2 * ry, 90, 90).get(0);
+        double[] pt4 = PdfCanvas.bezierArc(x, y + 2 * ry, x + 2 * rx, y, 180, 90).get(0);
+
+        return new double[]{x + rx, y,
+                x + width - rx, y,
+                pt1[2], pt1[3], pt1[4], pt1[5], pt1[6], pt1[7],
+                x + width, y + height - ry,
+                pt2[2], pt2[3], pt2[4], pt2[5], pt2[6], pt2[7],
+                x + rx, y + height,
+                pt3[2], pt3[3], pt3[4], pt3[5], pt3[6], pt3[7],
+                x, y + ry,
+                pt4[2], pt4[3], pt4[4], pt4[5], pt4[6], pt4[7]};
     }
 
     /**
