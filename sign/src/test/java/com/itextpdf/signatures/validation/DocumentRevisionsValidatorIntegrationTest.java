@@ -552,6 +552,46 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
     @MethodSource("createParameters")
+    public void annotationModificationAllowedTabsChangesTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "annotationModificationAllowedTabsChangesTest.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfLogs(0));
+        }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
+    public void annotationModificationNotAllowedTabsChangesTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "annotationModificationNotAllowedTabsChangesTest.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.TABS_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
+    public void annotationModificationNotAllowedTabsSetToDefaultTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "annotationModificationNotAllowedTabsSetToDefaultTest.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfLogs(0));
+        }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
     public void outlinesNotModifiedTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "outlinesNotModified.pdf"))) {

@@ -117,6 +117,7 @@ public class DocumentRevisionsValidator {
     static final String PAGES_MODIFIED = "Pages structure was unexpectedly modified.";
     static final String PAGE_ANNOTATIONS_MODIFIED = "Page annotations were unexpectedly modified.";
     static final String PAGE_MODIFIED = "Page was unexpectedly modified.";
+    static final String TABS_MODIFIED = "Tabs entry in a page dictionary was unexpectedly modified.";
     static final String PERMISSIONS_REMOVED = "Permissions dictionary was removed from the catalog.";
     static final String PERMISSIONS_TYPE = "Permissions must be a dictionary.";
     static final String PERMISSION_REMOVED = "Permission \"{0}\" dictionary was removed or unexpectedly modified.";
@@ -1310,14 +1311,21 @@ public class DocumentRevisionsValidator {
                 previousPageCopy.remove(PdfName.Annots);
                 previousPageCopy.remove(PdfName.Parent);
                 previousPageCopy.remove(PdfName.StructParents);
+                previousPageCopy.remove(PdfName.Tabs);
                 PdfDictionary currentPageCopy = new PdfDictionary(currentKid);
                 currentPageCopy.remove(PdfName.Annots);
                 currentPageCopy.remove(PdfName.Parent);
                 currentPageCopy.remove(PdfName.StructParents);
+                currentPageCopy.remove(PdfName.Tabs);
                 if (!comparePdfObjects(previousPageCopy, currentPageCopy, usuallyModifiedObjects) ||
                         !compareIndirectReferencesObjNums(previousKid.get(PdfName.Parent),
                                 currentKid.get(PdfName.Parent), report, "Page parent")) {
                     report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGE_MODIFIED, ReportItemStatus.INVALID));
+                    return false;
+                }
+
+                if (!compareTabs(previousKid.getAsName(PdfName.Tabs), currentKid.getAsName(PdfName.Tabs))) {
+                    report.addReportItem(new ReportItem(DOC_MDP_CHECK, TABS_MODIFIED, ReportItemStatus.INVALID));
                     return false;
                 }
 
@@ -1333,6 +1341,13 @@ public class DocumentRevisionsValidator {
             }
         }
         return true;
+    }
+
+    private boolean compareTabs(PdfName previousTabs, PdfName currentTabs) {
+        if (getAccessPermissions() == AccessPermissions.ANNOTATION_MODIFICATION) {
+            return true;
+        }
+        return Objects.equals(previousTabs, currentTabs) || (previousTabs == null && currentTabs.equals(PdfName.S));
     }
 
     private void collectRemovedAndAddedAnnotations(PdfArray previousAnnotations, PdfArray currentAnnotations) {
