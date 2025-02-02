@@ -1,0 +1,8 @@
+<svg width="400" height="110" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<defs>
+    <pattern id="patt1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" style="visibility:hidden">
+        <circle cx="10" cy="10" r="10" fill="red" />
+    </pattern>
+</defs>
+<rect width="200" height="100" x="0" y="0" stroke="black" fill="url(#patt1)" />
+</svg>

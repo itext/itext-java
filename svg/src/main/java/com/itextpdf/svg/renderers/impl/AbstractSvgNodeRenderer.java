@@ -142,6 +142,10 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         PdfCanvas currentCanvas = context.getCurrentCanvas();
 
         if (this.attributesAndStyles != null) {
+            if (isHidden()) {
+                return;
+            }
+
             String transformString = this.attributesAndStyles.get(SvgConstants.Attributes.TRANSFORM);
 
             if (transformString != null && !transformString.isEmpty()) {
@@ -273,6 +277,16 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context the object that knows the place to draw this element and maintains its state
      */
     protected abstract void doDraw(SvgDrawContext context);
+
+    /**
+     * Check if this renderer should draw the element based on its attributes (e.g. visibility/display)
+     *
+     * @return true if element won't be drawn, false otherwise
+     */
+    protected boolean isHidden() {
+        return CommonCssConstants.NONE.equals(this.attributesAndStyles.get(CommonCssConstants.DISPLAY))
+                || CommonCssConstants.HIDDEN.equals(this.attributesAndStyles.get(CommonCssConstants.VISIBILITY));
+    }
 
     /**
      * Gets parent {@link ClipPathSvgNodeRenderer} if it exists or {@code null} otherwise.
@@ -518,7 +532,11 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 Color resolvedColor = null;
                 float resolvedOpacity = 1;
                 normalizedName = normalizedName.substring(1);
-                final ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
+                ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
+                if (colorRenderer instanceof AbstractSvgNodeRenderer
+                        && ((AbstractSvgNodeRenderer)colorRenderer).isHidden()) {
+                    colorRenderer = null;
+                }
                 if (colorRenderer instanceof ISvgPaintServer) {
                     if (colorRenderer.getParent() == null) {
                         colorRenderer.setParent(this);
@@ -585,6 +603,9 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             if (template instanceof ClipPathSvgNodeRenderer) {
                 // Clone template to avoid muddying the state
                 ClipPathSvgNodeRenderer clipPath = (ClipPathSvgNodeRenderer) template.createDeepCopy();
+                if (clipPath.isHidden()) {
+                    return false;
+                }
                 // Resolve parent inheritance
                 SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(this, clipPath, context.getCssContext());
                 clipPath.setClippedRenderer(this);

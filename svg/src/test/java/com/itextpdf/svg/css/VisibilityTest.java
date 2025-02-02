@@ -41,8 +41,107 @@ public class VisibilityTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-8753: update cmp file after supporting
     public void visibilityDiffValuesTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibility");
+    }
+
+    @Test
+    public void visibilityDiffValuesTest2() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibility2");
+    }
+
+    @Test
+    public void visibilityHiddenInLinearGradientTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibilityHiddenInLinearGradient");
+    }
+
+    @Test
+    public void visibilityHiddenInMarkerTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibilityHiddenInMarker");
+    }
+
+    @Test
+    public void visibilityHiddenInGTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibilityHiddenInG");
+    }
+
+    @Test
+    public void visibilityHiddenInUseTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibilityHiddenInUse");
+    }
+
+    @Test
+    public void visibilityHiddenInDefsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibilityHiddenInDefs");
+    }
+
+    @Test
+    public void visibilityHiddenInPatternTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibilityHiddenInPattern");
+    }
+
+    @Test
+    public void visibilityHiddenInClipPathTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibilityHiddenInClipPath");
+    }
+
+    @Test
+    public void visibilityHiddenInClipPathWithUseTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibilityHiddenInClipPathWithUse");
+    }
+
+    @Test
+    public void visibilityHiddenInSymbolTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"visibilityHiddenInSymbol");
+    }
+
+    @Test
+    public void displayNoneInLinearGradientTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInLinearGradient");
+    }
+
+    @Test
+    public void displayNoneInMarkerTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInMarker");
+    }
+
+    @Test
+    public void displayNoneInGTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInG");
+    }
+
+    @Test
+    public void displayNoneInG2Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInG2");
+    }
+
+    @Test
+    public void displayNoneInUseTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInUse");
+    }
+
+    @Test
+    public void displayNoneInDefsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInDefs");
+    }
+
+    @Test
+    public void displayNoneInPatternTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInPattern");
+    }
+
+    @Test
+    public void displayNoneInSymbolTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInSymbol");
+    }
+
+    @Test
+    public void displayNoneInClipPathTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInClipPath");
+    }
+
+    @Test
+    public void displayNoneInClipPathWithUseTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"displayNoneInClipPathWithUse");
     }
 }

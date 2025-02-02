@@ -25,6 +25,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
@@ -75,6 +76,11 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
         return null;
+    }
+
+    @Override
+    protected boolean isHidden() {
+        return CommonCssConstants.HIDDEN.equals(this.attributesAndStyles.get(CommonCssConstants.VISIBILITY));
     }
 
     @Override

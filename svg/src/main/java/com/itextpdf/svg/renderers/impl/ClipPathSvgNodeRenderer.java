@@ -25,6 +25,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -69,6 +70,10 @@ public class ClipPathSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
 
         PdfCanvas currentCanvas = context.getCurrentCanvas();
         for (ISvgNodeRenderer child : getChildren()) {
+            if (child instanceof AbstractSvgNodeRenderer
+                    && ((AbstractSvgNodeRenderer) child).isHidden()) {
+                continue;
+            }
             currentCanvas.saveState();
 
             child.setParent(this);
@@ -115,5 +120,11 @@ public class ClipPathSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
      */
     public void setClippedRenderer(AbstractSvgNodeRenderer clippedRenderer) {
         this.clippedRenderer = clippedRenderer;
+    }
+
+    @Override
+    protected boolean isHidden() {
+        return CommonCssConstants.NONE.equals(this.attributesAndStyles.get(CommonCssConstants.DISPLAY))
+                && !CommonCssConstants.HIDDEN.equals(this.attributesAndStyles.get(CommonCssConstants.VISIBILITY));
     }
 }

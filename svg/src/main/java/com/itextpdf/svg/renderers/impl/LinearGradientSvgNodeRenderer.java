@@ -29,6 +29,7 @@ import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -92,6 +93,11 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
         return null;
+    }
+
+    @Override
+    protected boolean isHidden() {
+        return CommonCssConstants.NONE.equals(this.attributesAndStyles.get(CommonCssConstants.DISPLAY));
     }
 
     // TODO: DEVSIX-4136 opacity is not supported now.
