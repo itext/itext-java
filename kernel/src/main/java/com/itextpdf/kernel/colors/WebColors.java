@@ -301,6 +301,9 @@ public class WebColors extends HashMap<String, int[]> {
                 parseRGBColors(color, tok);
                 if (tok.hasMoreTokens()) {
                     color[3] = getAlphaChannelValue(tok.nextToken());
+                    if (tok.hasMoreTokens()) {
+                        throw new IllegalArgumentException("Too many arguments");
+                    }
                 }
             } else if (NAMES.containsKey(colorName)) {
                 int[] intColor = NAMES.get(colorName);

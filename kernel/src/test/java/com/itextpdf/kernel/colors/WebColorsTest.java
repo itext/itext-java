@@ -204,6 +204,11 @@ public class WebColorsTest extends ExtendedITextTest {
         Assertions.assertNull(resultCmyk);
     }
 
+    @Test
+    public void getRGBAColorWithExceptionDuringParsingAlpha() {
+        float[] resultCmyk = WebColors.getRGBAColor("rgba(44, 100, 0, 0,75)");
+        Assertions.assertNull(resultCmyk);
+    }
 
 
     @Test

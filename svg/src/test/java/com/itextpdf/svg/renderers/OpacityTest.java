@@ -57,7 +57,6 @@ public class OpacityTest extends SvgIntegrationTest {
   }
 
   @Test
-  //TODO: update after DEVSIX-2673 fix
   public void testRGBA() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svg_rgba");
   }
