@@ -23,7 +23,6 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -35,7 +34,6 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -133,37 +131,6 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
             viewBoxValues = new float[]{0, 0, currentViewPort.getWidth(), currentViewPort.getHeight()};
         }
         calculateAndApplyViewBox(context, viewBoxValues, currentViewPort);
-    }
-
-    String[] retrieveAlignAndMeet() {
-        String meetOrSlice = SvgConstants.Values.MEET;
-        String align = SvgConstants.Values.DEFAULT_ASPECT_RATIO;
-
-        String preserveAspectRatioValue = this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        if (preserveAspectRatioValue == null) {
-            preserveAspectRatioValue =
-                    this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase());
-        }
-
-        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO) ||
-                this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase())) {
-            List<String> aspectRatioValuesSplitValues = SvgCssUtils.splitValueList(preserveAspectRatioValue);
-
-            align = aspectRatioValuesSplitValues.get(0).toLowerCase();
-            if (aspectRatioValuesSplitValues.size() > 1) {
-                meetOrSlice = aspectRatioValuesSplitValues.get(1).toLowerCase();
-            }
-        }
-
-        if (this instanceof MarkerSvgNodeRenderer && !SvgConstants.Values.NONE.equals(align)
-                && SvgConstants.Values.MEET.equals(meetOrSlice)) {
-            // Browsers do not correctly display markers with 'meet' option in the preserveAspectRatio attribute.
-            // The Chrome, IE, and Firefox browsers set the align value to 'xMinYMin' regardless of the actual align.
-            align = Values.XMIN_YMIN;
-        }
-
-        return new String[] {align, meetOrSlice};
     }
 
     /**

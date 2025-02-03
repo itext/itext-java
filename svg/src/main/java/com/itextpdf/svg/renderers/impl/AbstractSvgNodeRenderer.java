@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -277,6 +278,37 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context the object that knows the place to draw this element and maintains its state
      */
     protected abstract void doDraw(SvgDrawContext context);
+
+    String[] retrieveAlignAndMeet() {
+        String meetOrSlice = SvgConstants.Values.MEET;
+        String align = SvgConstants.Values.DEFAULT_ASPECT_RATIO;
+
+        String preserveAspectRatioValue = this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
+        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
+        if (preserveAspectRatioValue == null) {
+            preserveAspectRatioValue =
+                    this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase());
+        }
+
+        if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO) ||
+                this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase())) {
+            List<String> aspectRatioValuesSplitValues = SvgCssUtils.splitValueList(preserveAspectRatioValue);
+
+            align = aspectRatioValuesSplitValues.get(0).toLowerCase();
+            if (aspectRatioValuesSplitValues.size() > 1) {
+                meetOrSlice = aspectRatioValuesSplitValues.get(1).toLowerCase();
+            }
+        }
+
+        if (this instanceof MarkerSvgNodeRenderer && !SvgConstants.Values.NONE.equals(align)
+                && SvgConstants.Values.MEET.equals(meetOrSlice)) {
+            // Browsers do not correctly display markers with 'meet' option in the preserveAspectRatio attribute.
+            // The Chrome, IE, and Firefox browsers set the align value to 'xMinYMin' regardless of the actual align.
+            align = SvgConstants.Values.XMIN_YMIN;
+        }
+
+        return new String[] {align, meetOrSlice};
+    }
 
     /**
      * Check if this renderer should draw the element based on its attributes (e.g. visibility/display)

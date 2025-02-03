@@ -22,8 +22,6 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -63,11 +61,18 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 19)
-    })
     public void differentAspectRatiosTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "differentAspectRatios");
+    }
+
+    @Test
+    public void imagePreserveAspectRatioTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imagePreserveAspectRatio");
+    }
+
+    @Test
+    public void imageNegativeWidthHeightTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageNegativeWidthHeight");
     }
 
     @Test

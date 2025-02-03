@@ -25,10 +25,12 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.SvgCoordinateUtils;
 
 /**
  * Responsible for drawing Images to the canvas.
@@ -79,82 +81,52 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
             y = parseVerticalLength(attributesAndStyles.get(SvgConstants.Attributes.Y), context);
         }
 
-        float width;
-
+        float width = -1;
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.WIDTH)) {
             width = parseHorizontalLength(attributesAndStyles.get(SvgConstants.Attributes.WIDTH), context);
-        } else {
-            width = xObject.getWidth();
+        }
+        if (width < 0) {
+            width = CssUtils.convertPxToPts(xObject.getWidth());
         }
 
-        float height;
-
+        float height = -1;
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.HEIGHT)) {
             height = parseVerticalLength(attributesAndStyles.get(SvgConstants.Attributes.HEIGHT), context);
-        } else {
-            height = xObject.getHeight();
+        }
+        if (height < 0) {
+            height = CssUtils.convertPxToPts(xObject.getHeight());
         }
 
-        String preserveAspectRatio = "";
+        if (width != 0 && height != 0) {
+            String[] alignAndMeet = retrieveAlignAndMeet();
+            String align = alignAndMeet[0];
+            String meetOrSlice = alignAndMeet[1];
 
-        if (attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO)) {
-            preserveAspectRatio = attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO);
-        } else if (attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase())) {
-            // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-            preserveAspectRatio = attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase());
-        }
+            Rectangle currentViewPort = new Rectangle(0, 0, width, height);
+            Rectangle viewBox = new Rectangle(0, 0, xObject.getWidth(), xObject.getHeight());
+            Rectangle appliedViewBox = SvgCoordinateUtils.applyViewBox(viewBox, currentViewPort, align, meetOrSlice);
 
-        preserveAspectRatio = preserveAspectRatio.toLowerCase();
-        if (!SvgConstants.Values.NONE.equals(preserveAspectRatio) && !(width == 0 || height == 0)) {
-            float normalizedWidth;
-            float normalizedHeight;
-            if (xObject.getWidth() / width > xObject.getHeight() / height) {
-                normalizedWidth = width;
-                normalizedHeight = xObject.getHeight() / xObject.getWidth() * width;
-            } else {
-                normalizedWidth = xObject.getWidth() / xObject.getHeight() * height;
-                normalizedHeight = height;
+            float scaleWidth = appliedViewBox.getWidth() / viewBox.getWidth();
+            float scaleHeight = appliedViewBox.getHeight() / viewBox.getHeight();
+
+            float xOffset = appliedViewBox.getX() / scaleWidth - viewBox.getX();
+            float yOffset = appliedViewBox.getY() / scaleHeight - viewBox.getY();
+
+            x += xOffset;
+            y += yOffset;
+            width = appliedViewBox.getWidth();
+            height = appliedViewBox.getHeight();
+
+            if (SvgConstants.Values.SLICE.equals(meetOrSlice)) {
+                currentCanvas.saveState()
+                        .rectangle(currentViewPort)
+                        .clip()
+                        .endPath()
+                        .addXObjectWithTransformationMatrix(xObject, width, 0, 0, -height, x, y + height)
+                        .restoreState();
+                return;
             }
-
-            switch (preserveAspectRatio.toLowerCase()) {
-                case SvgConstants.Values.XMIN_YMIN:
-                    break;
-                case SvgConstants.Values.XMIN_YMID:
-                    y += Math.abs(normalizedHeight - height) / 2;
-                    break;
-                case SvgConstants.Values.XMIN_YMAX:
-                    y += Math.abs(normalizedHeight - height);
-                    break;
-                case SvgConstants.Values.XMID_YMIN:
-                    x += Math.abs(normalizedWidth - width) / 2;
-                    break;
-                case SvgConstants.Values.XMID_YMAX:
-                    x += Math.abs(normalizedWidth - width) / 2;
-                    y += Math.abs(normalizedHeight - height);
-                    break;
-                case SvgConstants.Values.XMAX_YMIN:
-                    x += Math.abs(normalizedWidth - width);
-                    break;
-                case SvgConstants.Values.XMAX_YMID:
-                    x += Math.abs(normalizedWidth - width);
-                    y += Math.abs(normalizedHeight - height) / 2;
-                    break;
-                case SvgConstants.Values.XMAX_YMAX:
-                    x += Math.abs(normalizedWidth - width);
-                    y += Math.abs(normalizedHeight - height);
-                    break;
-                case SvgConstants.Values.DEFAULT_ASPECT_RATIO:
-                default:
-                    x += Math.abs(normalizedWidth - width) / 2;
-                    y += Math.abs(normalizedHeight - height) / 2;
-                    break;
-            }
-
-            width = normalizedWidth;
-            height = normalizedHeight;
         }
-
-        float v = y + height;
-        currentCanvas.addXObjectWithTransformationMatrix(xObject, width, 0, 0, -height, x, v);
+        currentCanvas.addXObjectWithTransformationMatrix(xObject, width, 0, 0, -height, x, y + height);
     }
 }
