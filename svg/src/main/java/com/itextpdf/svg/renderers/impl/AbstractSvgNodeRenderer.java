@@ -568,8 +568,10 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             float opacityValue;
             if (CssTypesValidationUtils.isPercentageValue(opacityStr)) {
                 opacityValue = CssDimensionParsingUtils.parseRelativeValue(opacityStr, 1f);
+            } else if (CssTypesValidationUtils.isNumber(opacityStr)) {
+                opacityValue = (float) CssDimensionParsingUtils.parseFloat(opacityStr);
             } else {
-                opacityValue = Float.valueOf(opacityStr);
+                opacityValue = 1;
             }
             opacity *= opacityValue;
         }

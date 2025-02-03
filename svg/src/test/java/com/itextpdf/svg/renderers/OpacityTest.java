@@ -63,11 +63,8 @@ public class OpacityTest extends SvgIntegrationTest {
   }
 
   @Test
-  //TODO DEVSIX-2678 SVG: Displaying invalid value of fill-opacity incorrectly
-  public void testFillOpacityWithComma() {
-    Assertions.assertThrows(NumberFormatException.class,
-            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithComma")
-    );
+  public void testFillOpacityWithComma() throws IOException, InterruptedException {
+    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithComma");
   }
 
   @Test
@@ -76,17 +73,13 @@ public class OpacityTest extends SvgIntegrationTest {
   }
 
   @Test
-  //TODO: update after DEVSIX-2678 fix
   public void testFillOpacity() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svg_fill_opacity");
   }
 
   @Test
-  //TODO DEVSIX-2679
   public void testStrokeOpacityWithComma() throws IOException, InterruptedException {
-    Assertions.assertThrows(Exception.class,
-            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithComma")
-    );
+    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithComma");
   }
 
   @Test
@@ -95,7 +88,6 @@ public class OpacityTest extends SvgIntegrationTest {
   }
 
   @Test
-  //TODO: update after DEVSIX-2679 fix
   public void testStrokeOpacity() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svg_stroke_opacity");
   }
