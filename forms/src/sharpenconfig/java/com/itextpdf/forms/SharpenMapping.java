@@ -45,6 +45,7 @@ public class SharpenMapping implements MappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
+        configurator.removeMethod("com.itextpdf.forms.xfdf.XfdfSecurityTest.customXmlParserCreateNewXfdfDocumentExceptionTest");
     }
 
     @Override

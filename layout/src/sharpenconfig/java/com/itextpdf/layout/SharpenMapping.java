@@ -45,6 +45,36 @@ public class SharpenMapping implements MappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
+
+        configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.layout.AlignmentTest$IInlineTestObjectModifier");
+        configurator.mapMethod("com.itextpdf.layout.borders.Border.getType", "GetBorderType");
+        configurator.mapMethod("com.itextpdf.layout.element.AreaBreak.getType", "GetAreaType");
+        configurator.mapMethod("com.itextpdf.layout.properties.Leading.getType", "GetLeadingType");
+        configurator.addFullName("com.itextpdf.layout.element.Image");
+        configurator.mapType("com.itextpdf.layout.properties.VerticalAlignment", "iText.Layout.Properties.VerticalAlignment?");
+        configurator.mapType("com.itextpdf.layout.properties.InlineVerticalAlignmentType", "iText.Layout.Properties.InlineVerticalAlignmentType?");
+        configurator.mapType("com.itextpdf.layout.properties.HorizontalAlignment", "iText.Layout.Properties.HorizontalAlignment?");
+        configurator.mapType("com.itextpdf.layout.properties.TextAlignment", "iText.Layout.Properties.TextAlignment?");
+        configurator.mapType("com.itextpdf.layout.properties.AreaBreakType", "iText.Layout.Properties.AreaBreakType?");
+        configurator.mapType("com.itextpdf.layout.properties.BaseDirection", "iText.Layout.Properties.BaseDirection?");
+        configurator.mapType("com.itextpdf.layout.properties.FloatPropertyValue", "iText.Layout.Properties.FloatPropertyValue?");
+        configurator.mapType("com.itextpdf.layout.properties.ClearPropertyValue", "iText.Layout.Properties.ClearPropertyValue?");
+        configurator.mapType("com.itextpdf.layout.properties.BoxSizingPropertyValue", "iText.Layout.Properties.BoxSizingPropertyValue?");
+        configurator.mapType("com.itextpdf.layout.properties.OverflowPropertyValue", "iText.Layout.Properties.OverflowPropertyValue?");
+        configurator.mapType("com.itextpdf.layout.properties.OverflowWrapPropertyValue", "iText.Layout.Properties.OverflowWrapPropertyValue?");
+        configurator.mapType("com.itextpdf.layout.properties.RenderingMode", "iText.Layout.Properties.RenderingMode?");
+        configurator.mapVariableType("com.itextpdf.layout.renderer.LineRenderer.getNextTabStop.nextTabStopEntry", "KeyValuePair<float, TabStop>?");
+        configurator.mapVariableType("com.itextpdf.layout.renderer.TextRenderer.applyOtf.glyphScript", "UnicodeScript");
+        configurator.mapStringLiteral("com.itextpdf.layout.renderer.TypographyUtils.TYPOGRAPHY_PACKAGE", "iText.Typography.");
+        configurator.mapStringLiteral("com.itextpdf.layout.renderer.TypographyUtils.TYPOGRAPHY_APPLIER", "Shaping.TypographyApplier,iText.Typography");
+        configurator.mapStringLiteral("com.itextpdf.layout.renderer.TypographyUtils.TYPOGRAPHY_APPLIER_INITIALIZE", "RegisterForLayout");
+        configurator.mapStringLiteral("com.itextpdf.layout.hyphenation.HyphenationConstants.HYPHENATION_DEFAULT_RESOURCE", "iText.Hyph.");
+        configurator.ignoreSuperInterface("java.lang.Cloneable", "com.itextpdf.layout.layout.LayoutArea");
+        configurator.ignoreSuperInterface("java.lang.Cloneable", "com.itextpdf.layout.layout.RootLayoutArea");
+        configurator.ignoreSuperInterface("java.lang.Cloneable", "com.itextpdf.layout.margincollapse.MarginsCollapse");
+        configurator.mapMethodToCustomMember("com.itextpdf.layout.renderer.TypographyUtils.getTypographyClass", "GetTypographyClass", ITextSharpCustomMembers.getTypographyClass);
+        configurator.mapMethodToCustomMember("com.itextpdf.layout.layout.LayoutArea.clone", "Clone", ITextSharpCustomMembers.cloneLayoutArea);
+        configurator.mapMethodToCustomMember("com.itextpdf.layout.margincollapse.MarginsCollapse.clone", "Clone", ITextSharpCustomMembers.cloneMarginsCollapse);
     }
 
     @Override

@@ -45,6 +45,21 @@ public class SharpenMapping implements MappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodePDF417Test.barcode417CreateAWTImageTest");
+        configurator.removeMethod("com.itextpdf.barcodes.Barcode128.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.Barcode1D.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodeMSI.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.Barcode39.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodeCodabar.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodeDataMatrix.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodeEAN.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodeEANSUPP.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodeInter25.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodePDF417.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodePostnet.createAwtImage");
+        configurator.removeMethod("com.itextpdf.barcodes.BarcodeQRCode.createAwtImage");
+        configurator.removeField("com.itextpdf.barcodes.Barcode1D.DEFAULT_BAR_FOREGROUND_COLOR");
+        configurator.removeField("com.itextpdf.barcodes.Barcode1D.DEFAULT_BAR_BACKGROUND_COLOR");
     }
 
     @Override

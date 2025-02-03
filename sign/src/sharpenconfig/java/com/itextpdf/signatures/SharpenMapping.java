@@ -22,15 +22,16 @@
  */
 package com.itextpdf.signatures;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
 import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
+
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class SharpenMapping implements MappingConfiguration {
     @Override
@@ -45,6 +46,31 @@ public class SharpenMapping implements MappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
+        configurator.ignoreVarForNullableGenericsConversion("com.itextpdf.signatures.PdfSigner.preClose.entry");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.PrivateKeySignature.PrivateKeySignature(" + "java.security.PrivateKey,java.lang.String,java.lang.String)", "1, 2");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.PrivateKeySignature.PrivateKeySignature(" + "java.security.PrivateKey,java.lang.String,java.lang.String," + "java.lang.String,com.itextpdf.signatures.IApplicableSignatureParams)", "1, 2, 3, 5");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.SignUtils.getSignatureHelper", "1");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.SignUtils.verifyCertificateSignature", "1, 2");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.CertificateVerification.verifyOcspCertificates", "1, 2");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.CertificateVerification.verifyTimestampCertificates", "1, 2");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.SignUtils.isSignatureValid", "1, 2");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.SignUtils.readAllCerts", "1");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.PdfPKCS7.PdfPKCS7(java.security.PrivateKey," + "java.security.cert.Certificate[],java.lang.String,java.lang.String,boolean)", "1, 2, 3, 5");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.PdfPKCS7.PdfPKCS7(byte[],byte[],java.lang.String)", "1, 2");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.SignatureUtil.verifySignature(java.lang.String,java.lang.String)", "1");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.SignatureUtil.readSignatureData(java.lang.String,java.lang.String)", "1");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.testutils.PemFileHelper.initStore(java.lang.String,char[],java.security.Provider)", "1");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.SignUtils.generateCertificate(java.io.InputStream,java.security.Provider)", "1");
+        configurator.mapMethod("com.itextpdf.signatures.SignatureUtil.verifySignature(java.lang.String)", "VerifySignature");
+        configurator.removeMethod("com.itextpdf.signatures.SignatureUtil.verifySignature(java.lang.String)", true);
+        configurator.mapMethod("com.itextpdf.signatures.SignatureUtil.readSignatureData(java.lang.String)", "ReadSignatureData");
+        configurator.removeMethod("com.itextpdf.signatures.SignatureUtil.readSignatureData(java.lang.String)", true);
+        configurator.removeField("com.itextpdf.signatures.PrivateKeySignature.provider");
+        configurator.removeField("com.itextpdf.signatures.PdfPKCS7.provider");
+        configurator.removeField("com.itextpdf.signatures.LtvVerification.securityProviderCode");
+        configurator.removeField("com.itextpdf.signatures.LtvVerifier.securityProviderCode");
+        configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.signatures.PdfSigner$ISignatureDataProvider");
+        configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.signatures.testutils.SignaturesCompareTool$SequenceComparator");
     }
 
     @Override
