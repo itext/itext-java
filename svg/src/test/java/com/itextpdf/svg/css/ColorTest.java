@@ -27,6 +27,7 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 
 import java.io.IOException;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -43,22 +44,22 @@ public class ColorTest extends SvgIntegrationTest {
 
     @Test
     public void backgroundColorTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"background-color");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "background-color");
     }
 
     @Test
     public void currentColorTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"current-color");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "current-color");
     }
 
     @Test
     public void interpolationColorTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"color-interpolation");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "color-interpolation");
     }
 
     @Test
     public void interpolationFilterColorTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"color-interpolation-filter");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "color-interpolation-filter");
     }
 
     @Test
@@ -66,12 +67,12 @@ public class ColorTest extends SvgIntegrationTest {
     public void colorProfileTest() throws IOException, InterruptedException {
         SvgConverterProperties properties = new SvgConverterProperties()
                 .setBaseUri(SOURCE_FOLDER);
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"color-profile", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "color-profile", properties);
     }
 
     @Test
     //TODO DEVSIX-8748: update cmp files after supporting
     public void colorTypesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"color-types");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "color-types");
     }
 }
