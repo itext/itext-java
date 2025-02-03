@@ -312,8 +312,6 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4130 fix after ticket will be completed
-    // Compare with Chrome browser
     public void markerParentElementTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "markerParentElement");
     }

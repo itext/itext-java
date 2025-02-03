@@ -322,6 +322,24 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO DEVSIX-8888 SVG: support text-decoration inheritance
+    public void textDecorationOnGroupTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationOnGroup");
+    }
+
+    @Test
+    // TODO DEVSIX-8888 SVG: support text-decoration inheritance
+    public void textDecorationOnSvgTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationOnSvg");
+    }
+
+    @Test
+    // TODO DEVSIX-8888 SVG: support text-decoration inheritance
+    public void textDecorationOnSymbolTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationOnSymbol");
+    }
+
+    @Test
     public void textDecorationTspanSubTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationTspanSub");
     }
