@@ -45,6 +45,16 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void emptyClipPathTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "emptyClipPath");
+    }
+
+    @Test
+    public void invalidClipPathTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidClipPath");
+    }
+
+    @Test
     public void rectClipPathComplexTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clippath_rect_complex");
     }

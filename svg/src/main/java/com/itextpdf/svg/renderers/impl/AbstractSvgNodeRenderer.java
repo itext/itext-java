@@ -589,7 +589,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 SvgNodeRendererInheritanceResolver.applyInheritanceToSubTree(this, clipPath, context.getCssContext());
                 clipPath.setClippedRenderer(this);
                 clipPath.draw(context);
-                return !clipPath.getChildren().isEmpty();
+                return true;
             }
         }
         return false;
