@@ -25,9 +25,11 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -166,6 +168,31 @@ public class PdfPageTest extends ExtendedITextTest {
         Assertions.assertTrue(
                 new CompareTool().compareArrays(pageDictionary.getAsArray(PdfName.ArtBox), preExistingArtBoxArr));
         Assertions.assertTrue(pageDictionary.isModified());
+    }
+
+    @Test
+    public void addAnnotationAnnotTagPDF2Test() throws IOException {
+        byte[] docBytes;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (PdfDocument doc = new PdfDocument(new PdfWriter(outputStream,
+                    new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+                doc.setTagged();
+                PdfPage page = new PdfPage(doc);
+                PdfPopupAnnotation annot = new PdfPopupAnnotation(new Rectangle(100, 100, 100, 100));
+                annot.setName(new PdfString("this is a pop up"));
+                page.addAnnotation(annot);
+            }
+            docBytes = outputStream.toByteArray();
+        }
+
+        try (PdfDocument docReopen = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)))) {
+            PdfDictionary structTreeRoot = docReopen.getCatalog().getPdfObject().getAsDictionary(PdfName.StructTreeRoot);
+            PdfDictionary structElem = ((PdfDictionary) structTreeRoot.getAsArray(PdfName.K).get(0)).
+                    getAsDictionary(PdfName.K);
+            Assertions.assertEquals(PdfName.Annot, structElem.getAsName(PdfName.S));
+            Assertions.assertEquals(new PdfString("this is a pop up"), structElem.getAsDictionary(PdfName.K).
+                    getAsDictionary(PdfName.Obj).getAsString(PdfName.NM));
+        }
     }
 
     /**

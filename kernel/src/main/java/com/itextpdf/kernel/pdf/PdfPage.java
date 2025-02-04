@@ -889,12 +889,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                         // "Annot" tag was added starting from PDF 1.5
                         && PdfVersion.PDF_1_4.compareTo(getDocument().getPdfVersion()) < 0) {
 
-                    if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) > 0) {
-                        if (!(annotation instanceof PdfWidgetAnnotation) && !(annotation instanceof PdfLinkAnnotation)
-                                && !(annotation instanceof PdfPrinterMarkAnnotation)) {
-                            tagPointer.addTag(StandardRoles.ANNOT);
-                        }
-                    } else if (annotation instanceof PdfMarkupAnnotation) {
+                    if (!(annotation instanceof PdfWidgetAnnotation) && !(annotation instanceof PdfLinkAnnotation)
+                            && !(annotation instanceof PdfPrinterMarkAnnotation)) {
                         tagPointer.addTag(StandardRoles.ANNOT);
                     }
                 }
