@@ -695,11 +695,14 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (!SvgConstants.Values.NONE.equalsIgnoreCase(strokeRawValue)) {
             String strokeWidthRawValue = getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
 
-            // 1 px = 0,75 pt
-            float strokeWidth = 0.75f;
-
+            float strokeWidth = -1;
             if (strokeWidthRawValue != null) {
                 strokeWidth = parseHorizontalLength(strokeWidthRawValue, context);
+            }
+
+            if (strokeWidth < 0) {
+                // Default: 1 px = 0,75 pt
+                strokeWidth = 0.75f;
             }
 
             float generalOpacity = getOpacity();
@@ -719,8 +722,10 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     SvgStrokeParameterConverter.convertStrokeDashParameters(strokeDashArrayRawValue,
                             strokeDashOffsetRawValue, getCurrentFontSize(context), context);
 
-            doStroke = true;
-            return new StrokeProperties(strokeColor, strokeWidth, strokeOpacity, lineDashParameters);
+            if (strokeWidth > 0) {
+                doStroke = true;
+                return new StrokeProperties(strokeColor, strokeWidth, strokeOpacity, lineDashParameters);
+            }
         }
         return null;
     }

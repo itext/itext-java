@@ -25,6 +25,7 @@ package com.itextpdf.svg.renderers;
 import com.itextpdf.test.ITextTest;
 
 import java.io.IOException;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -104,13 +105,23 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void zeroStrokeWidthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "zeroStrokeWidth");
+    }
+
+    @Test
+    public void negativeStrokeWidthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "negativeStrokeWidth");
+    }
+
+    @Test
     public void heightWidthZeroTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"heightWidthZero");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "heightWidthZero");
     }
 
     @Test
     public void heightWidthNegativeTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"heightWidthNegative");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "heightWidthNegative");
     }
 
     @Test
