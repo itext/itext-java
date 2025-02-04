@@ -131,7 +131,6 @@ public class FillTest extends SvgIntegrationTest {
     @LogMessages(
             messages = {@LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 4)}
     )
-    //TODO update cmp file after DEVSIX-2915 will be fixed
     public void textFillFallbackTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFillFallbackTest");
     }

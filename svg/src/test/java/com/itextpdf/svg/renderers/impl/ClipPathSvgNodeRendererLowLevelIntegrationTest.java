@@ -91,7 +91,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         clipRenderer.setClippedRenderer(new RectangleSvgNodeRenderer());
         clipRenderer.draw(sdc);
 
-        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\n0 0 0 rg\n% rect\n0 0 0 0 re\nf\nQ\n", new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\n0 0 0 rg\n% rect\nf\nQ\n", new String(cv.getContentStream().getBytes()));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         clipRenderer.setClippedRenderer(new RectangleSvgNodeRenderer());
         clipRenderer.draw(sdc);
 
-        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\n0 0 0 rg\n% rect\n0 0 0 0 re\nf\nQ\n", new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW\nn\n0 0 0 rg\n% rect\nf\nQ\n", new String(cv.getContentStream().getBytes()));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class ClipPathSvgNodeRendererLowLevelIntegrationTest extends SvgIntegrati
         clipRenderer.setClippedRenderer(new RectangleSvgNodeRenderer());
         clipRenderer.draw(sdc);
 
-        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW*\nn\n0 0 0 rg\n% rect\n0 0 0 0 re\nf\nQ\n", new String(cv.getContentStream().getBytes()));
+        Assertions.assertEquals("q\n% rect\n0 0 300 300 re\nW*\nn\n0 0 0 rg\n% rect\nf\nQ\n", new String(cv.getContentStream().getBytes()));
     }
 
     @Test

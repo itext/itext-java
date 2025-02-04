@@ -104,9 +104,13 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-8760 : change cmp after fix
     public void heightWidthZeroTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"height-width-zero");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"heightWidthZero");
+    }
+
+    @Test
+    public void heightWidthNegativeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"heightWidthNegative");
     }
 
     @Test

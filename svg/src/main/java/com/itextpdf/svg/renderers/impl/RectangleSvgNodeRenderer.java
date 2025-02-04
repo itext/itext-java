@@ -58,6 +58,9 @@ public class RectangleSvgNodeRenderer extends AbstractSvgNodeRenderer {
         PdfCanvas cv = context.getCurrentCanvas();
         cv.writeLiteral("% rect\n");
         setParameters(context);
+        if (width <= 0 || height <= 0) {
+            return;
+        }
         boolean singleValuePresent = (rxPresent && !ryPresent) || (!rxPresent && ryPresent);
 
         AffineTransform transform = applyNonScalingStrokeTransform(context);
