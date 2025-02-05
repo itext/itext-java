@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.constants;
 
+/**
+ * Font styles ids
+ */
 public final class FontStyles {
 
     private FontStyles() {

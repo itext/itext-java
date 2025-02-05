@@ -34,13 +34,16 @@ import java.util.Map;
 
 
 /**
- * Class used to represented the International Color Consortium profile
+ * Class used to represent the International Color Consortium profile
  */
 public class IccProfile {
     protected byte[] data;
     protected int numComponents;
     private static Map<String, Integer> cstags = new HashMap<>();
 
+    /**
+     * Creates a new, empty icc profile.
+     */
     protected IccProfile() {
     }
 
