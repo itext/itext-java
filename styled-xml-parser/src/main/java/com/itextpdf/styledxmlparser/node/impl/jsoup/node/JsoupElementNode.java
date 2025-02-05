@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,8 +22,6 @@
  */
 package com.itextpdf.styledxmlparser.node.impl.jsoup.node;
 
-
-
 import com.itextpdf.styledxmlparser.CommonAttributeConstants;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.node.IAttributes;
@@ -40,10 +38,10 @@ import java.util.Map;
 public class JsoupElementNode extends JsoupNode implements IElementNode {
 
     /** The JSoup element. */
-    private Element element;
+    private final Element element;
     
     /** The attributes. */
-    private IAttributes attributes;
+    private final IAttributes attributes;
     
     /** The resolved styles. */
     private Map<String, String> elementResolvedStyles;

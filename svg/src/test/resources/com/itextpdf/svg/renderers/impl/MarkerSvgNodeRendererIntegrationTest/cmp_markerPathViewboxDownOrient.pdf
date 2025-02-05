@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174936+03'00')/ModDate(D:20211108174936+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250124014620+03'00')/ModDate(D:20250124014620+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,43 +24,38 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 1200 600]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1200 600]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 600 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 1200 600]/Length 10413/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1200 600]/Length 10261/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1200 600 re
 W
 n
 q
 q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 22.5 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 22.5 Tm
+0 0 0 rg
 (Original Viewport: 5 * \(4,3\) = 20x15)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 30 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 30 Tm
+0 0 0 rg
 (Viewbox: 20x15, no scaling)Tj
 ET
 Q
@@ -390,12 +385,11 @@ q
 S
 q
 0 0 0 rg
-0.2 0 0 0.2 0 0 cm
-1 0 0 1 562.5 562.5 cm
+1 0 0 1 112.5 112.5 cm
 0 1 -1 0 0 0 cm
 5 0 0 5 0 0 cm
+0.2 0 0 0.2 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 Q
@@ -404,25 +398,21 @@ Q
 q
 1 0 0 1 0 150 cm
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 22.5 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 22.5 Tm
+0 0 0 rg
 (Original Viewport: 5 * \(4,3\) = 20x15)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 30 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 30 Tm
+0 0 0 rg
 (Viewbox: 20x10)Tj
 ET
 Q
@@ -752,12 +742,11 @@ q
 S
 q
 0 0 0 rg
-0.2 0 0 0.2 0 0 cm
-1 0 0 1 562.5 562.5 cm
+1 0 0 1 112.5 112.5 cm
 0 1 -1 0 0 0 cm
 5 0 0 5 0 0 cm
+0.2 0 0 0.2 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm2 Do
 Q
 Q
@@ -766,25 +755,21 @@ Q
 q
 1 0 0 1 225 150 cm
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 22.5 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 22.5 Tm
+0 0 0 rg
 (Original Viewport: 5 * \(4,3\) = 20x15)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 30 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 30 Tm
+0 0 0 rg
 (Viewbox: 10x10)Tj
 ET
 Q
@@ -1114,12 +1099,11 @@ q
 S
 q
 0 0 0 rg
-0.3 0 0 0.3 0 0 cm
-1 0 0 1 375 375 cm
+1 0 0 1 112.5 112.5 cm
 0 1 -1 0 0 0 cm
 5 0 0 5 0 0 cm
+0.3 0 0 0.3 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm3 Do
 Q
 Q
@@ -1128,25 +1112,21 @@ Q
 q
 1 0 0 1 225 0 cm
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 22.5 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 22.5 Tm
+0 0 0 rg
 (Original Viewport: 5 * \(4,3\) = 20x15)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 30 Tm
-0 Tr
 /F1 6 Tf
-0 0 Td
+1 0 0 -1 15 30 Tm
+0 0 0 rg
 (Viewbox: 10x15)Tj
 ET
 Q
@@ -1476,12 +1456,11 @@ q
 S
 q
 0 0 0 rg
-0.2 0 0 0.2 0 0 cm
-1 0 0 1 562.5 562.5 cm
+1 0 0 1 112.5 112.5 cm
 0 1 -1 0 0 0 cm
 5 0 0 5 0 0 cm
+0.2 0 0 0.2 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm4 Do
 Q
 Q
@@ -1730,8 +1709,8 @@ Q
 endstream
 endobj
 11 0 obj
-<</BBox[0 0 10 7.5]/Length 954/Resources<<>>/Subtype/Form/Type/XObject>>stream
-0 0 10 7.5 re
+<</BBox[0.00003 0.00003 10 7.5]/Length 966/Resources<<>>/Subtype/Form/Type/XObject>>stream
+0.00003 0.00003 10 7.5 re
 W
 n
 q
@@ -1971,20 +1950,20 @@ xref
 0 13
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000752 00000 n 
-0000011347 00000 n 
-0000012410 00000 n 
-0000013474 00000 n 
-0000014534 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000738 00000 n 
+0000011181 00000 n 
+0000012244 00000 n 
+0000013308 00000 n 
+0000014392 00000 n 
 trailer
-<</ID [<ea80f2d73c083627aac215ed8a7a6efc><ea80f2d73c083627aac215ed8a7a6efc>]/Info 3 0 R/Root 1 0 R/Size 13>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<bc296beb84ffe7933323fe8a5cf87e9a6787b1381e35b3e55e157f6fc007b66226839953aaae2ac3b628b648ee062f8e7efbc983a847ff2e2fea5173da833876><bc296beb84ffe7933323fe8a5cf87e9a6787b1381e35b3e55e157f6fc007b66226839953aaae2ac3b628b648ee062f8e7efbc983a847ff2e2fea5173da833876>]/Info 3 0 R/Root 1 0 R/Size 13>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-15598
+15456
 %%EOF

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <rect x="90" y="90" width="245" height="245" fill="magenta"/>
+    <image xlink:href="image.png" x="100" y="100"/>
+</svg>

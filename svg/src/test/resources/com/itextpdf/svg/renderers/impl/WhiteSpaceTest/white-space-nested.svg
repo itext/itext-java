@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" style="border: 1px solid black; font-family: Arial, sans-serif;">
+  <rect x="0" y="0" width="600" height="400" fill="none" /> 
+
+
+  <text x="20" y="20" style="font-size: 14px; white-space: normal;">
+    <tspan fill="gray">white-space: normal</tspan>.   Double spaces     <tspan fill="red">   will be ignor</tspan>ed 
+	and so are line<tspan fill="red"> breaks</tspan>     .
+  </text>
+
+  <text x="20" y="50" style="font-size: 14px; white-space: pre;">
+  <tspan fill="gray">white-space: pre</tspan>.     This <tspan fill="red">text          <tspan fill="blue">    will </tspan>keep extra      spaces </tspan>
+	   and line    
+	        <tspan fill="red">breaks</tspan>
+  </text>
+
+  <text x="20" y="140" style="font-size: 14px; white-space: nowrap;">
+  <tspan fill="gray">white-space: nowrap</tspan>. This text will
+	ignore
+	<tspan fill="red">line
+	wrap</tspan>
+  </text>
+
+  <text x="20" y="170" style="font-size: 14px; white-space: pre-wrap;">
+  <tspan fill="gray">white-space: pre-wrap</tspan>.   This <tspan fill="red">text          does    keep <tspan fill="blue">double spaces
+	    and line      wrap</tspan> but will remove</tspan> end of line spaces                    
+  </text>
+
+  <text x="20" y="250" style="font-size: 14px; white-space: pre-line;">
+  <tspan fill="gray">white-space: pre-line</tspan>. <tspan fill="red">This text             will         not keep extra    spaces 
+	but will keep</tspan> 
+	line breaks
+  </text>
+
+  <text x="20" y="310" style="font-size: 14px; white-space: break-spaces;">
+  <tspan fill="gray">white-space: break-spaces</tspan>. This text      <tspan fill="red">       will       <tspan fill="blue">keep </tspan>extra    spaces 
+	</tspan>and 
+	line breaks <tspan fill="red">but will remove end-of-line spaces                                    </tspan>                                                       
+  </text>
+</svg>

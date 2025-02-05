@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,6 +23,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -39,6 +40,8 @@ import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
@@ -115,8 +118,89 @@ public class TextWritingTest extends ExtendedITextTest {
                 setFontSize(20);
         document.add(new Paragraph(text3));
 
+        Text text4 = new Text("This is a stroke with dashes text").
+                setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE).
+                setStrokeColor(ColorConstants.BLUE).
+                setStrokeWidth(0.5f).
+                setFontColor(ColorConstants.PINK).
+                setFontSize(20);
+        text4.setDashPattern(new float[]{0.5f, 1f}, 0f);
+        document.add(new Paragraph(text4));
+
         document.close();
 
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void textStrokeTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "textStrokeTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_textStrokeTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdfDocument)) {
+            Text text1 = new Text("Red stroke text via color setter")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeColor(ColorConstants.RED)
+                    .setStrokeWidth(0.1f);
+            document.add(new Paragraph().add(text1));
+
+            Text text2 = new Text("Red transparent stroke text via setter with 2 parameters")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeColor(ColorConstants.RED, 0.5f)
+                    .setStrokeWidth(0.1f);
+            document.add(new Paragraph().add(text2));
+
+            Text text3 = new Text("Red transparent stroke text via transparent color setter")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeColor(new TransparentColor(ColorConstants.RED, 0.5f))
+                    .setStrokeWidth(0.1f);
+            document.add(new Paragraph().add(text3));
+
+            Text text4 = new Text("Red transparent stroke text via transparent color property")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeWidth(0.1f);
+            text4.setProperty(Property.STROKE_COLOR, new TransparentColor(ColorConstants.RED, 0.5f));
+            document.add(new Paragraph().add(text4));
+
+            Text text5 = new Text("Red transparent stroke text via color property")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
+                    .setStrokeWidth(0.1f);
+            text5.setProperty(Property.STROKE_COLOR, ColorConstants.RED);
+            document.add(new Paragraph().add(text5));
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void textFillStrokeTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "textFillStrokeTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_textFillStrokeTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            Text text1 = new Text("Pink text with null stroke color (so font color is used)")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE)
+                    .setFontColor(ColorConstants.PINK)
+                    .setStrokeColor((Color) null)
+                    .setStrokeWidth(2)
+                    .setFontSize(50);
+            document.add(new Paragraph().add(text1));
+
+            Text text2 = new Text("Pink text with red half-transparent stroke")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE)
+                    .setFontColor(ColorConstants.PINK)
+                    .setStrokeColor(ColorConstants.RED, 0.5f)
+                    .setStrokeWidth(2)
+                    .setFontSize(50);
+            document.add(new Paragraph().add(text2));
+
+            Text text3 = new Text("Pink text with fully transparent stroke")
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE)
+                    .setFontColor(ColorConstants.PINK)
+                    .setStrokeColor(new TransparentColor(ColorConstants.RED, 0f))
+                    .setStrokeWidth(2)
+                    .setFontSize(50);
+            document.add(new Paragraph().add(text3));
+        }
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
@@ -336,6 +420,49 @@ public class TextWritingTest extends ExtendedITextTest {
         document.add(p);
 
         document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void strokedUnderlineTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "strokedUnderline.pdf";
+        String cmpFileName = sourceFolder + "cmp_strokedUnderline.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+
+            Paragraph p = new Paragraph("Yellow text with pink stroked dashed underline.")
+                    .setFontSize(45).setFontColor(ColorConstants.YELLOW);
+            Underline underline = new Underline(null, 0, 0.1f, 0, -0.1f, PdfCanvasConstants.LineCapStyle.BUTT)
+                    .setStrokeWidth(2).setStrokeColor(new TransparentColor(ColorConstants.PINK, 0.5f))
+                    .setDashPattern(new float[]{5, 5, 10, 5}, 5);
+            p.setUnderline(underline);
+
+            TransparentColor strokeColor = new TransparentColor(ColorConstants.GREEN, 0.5f);
+            Paragraph p2 = new Paragraph("Text with line-through and default underline.")
+                    .setFontSize(50).setStrokeWidth(1).setFontColor(ColorConstants.DARK_GRAY)
+                    .setStrokeColor(strokeColor);
+            Underline underline2 = new Underline(ColorConstants.DARK_GRAY, 0, 0.1f, 0, 0.3f,
+                    PdfCanvasConstants.LineCapStyle.BUTT)
+                    .setStrokeWidth(1).setStrokeColor(strokeColor);
+            p2.setUnderline(underline2);
+            p2.setUnderline();
+
+            Paragraph p3 = new Paragraph("Text with transparent color and default overline.").setFontSize(50)
+                    .setFontColor(new TransparentColor(ColorConstants.BLUE, 0));
+            Underline underline3 = new Underline(null, 0, 0.1f, 0, 0.9f, PdfCanvasConstants.LineCapStyle.BUTT);
+            p3.setUnderline(underline3);
+            p3.setBackgroundColor(ColorConstants.PINK);
+
+            Paragraph p4 = new Paragraph("Text with null font color and default overline.").setFontSize(50)
+                    .setFontColor((TransparentColor) null);
+            p4.setUnderline(underline3);
+
+            document.add(p);
+            document.add(p2);
+            document.add(p3);
+            document.add(p4);
+        }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

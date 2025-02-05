@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,10 +22,13 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.ICopyFilter;
 
 import java.nio.charset.StandardCharsets;
@@ -278,6 +281,13 @@ public class PdfString extends PdfPrimitiveObject {
      * @return Hexadecimal string or string with escaped symbols in byte array view.
      */
     protected byte[] encodeBytes(byte[] bytes) {
+        if (bytes == null){
+            throw new PdfException(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.ARG_SHOULD_NOT_BE_NULL, "byte[]"));
+        }
+        if (bytes.length == 0) {
+            return bytes;
+        }
         if (hexWriting) {
             ByteBuffer buf = new ByteBuffer(bytes.length * 2);
             for (byte b : bytes) {

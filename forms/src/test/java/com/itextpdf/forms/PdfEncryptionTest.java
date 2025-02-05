@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -91,8 +91,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptAes256Pdf2PermissionsTest01() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2PermissionsTest01.pdf";
         int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
@@ -135,8 +133,6 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void encryptAes256Pdf2PermissionsTest02() throws InterruptedException, IOException {
         String filename = "encryptAes256Pdf2PermissionsTest02.pdf";
         // This test differs from the previous one (encryptAes256Pdf2PermissionsTest01) only in permissions.

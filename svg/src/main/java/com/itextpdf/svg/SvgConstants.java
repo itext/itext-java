@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -470,6 +470,11 @@ public final class SvgConstants {
          * Tag defining the vertical kerning values in between two glyphs.
          */
         public static final String VKERN = "vkern";
+
+        /**
+         * Tag defining the xml stylesheet declaration.
+         */
+        public static final String XML_STYLESHEET = "xml-stylesheet";
     }
 
     /**
@@ -501,6 +506,11 @@ public final class SvgConstants {
          * Attribute defining the outline of a shape.
          */
         public static final String D = "d";
+
+        /**
+         * Attribute defining the direction used by the text
+         */
+        public static final String DIRECTION = "direction";
 
         /**
          * Attribute defining the relative x-translation of a text-element
@@ -591,6 +601,11 @@ public final class SvgConstants {
          * Attribute defining the height of the viewport in which the marker is to be fitted
          */
         public static final String MARKER_HEIGHT = "markerHeight";
+
+        /**
+         * Attribute defining shorthand for marker-start/marker-mid/marker-end
+         */
+        public static final String MARKER = "marker";
 
         /**
          * Attribute defining the marker drawn at every other vertex but the start and end of a path, line, polygon or polyline
@@ -814,6 +829,10 @@ public final class SvgConstants {
          * Attribute defining the stroke linecap.
          */
         public static final String STROKE_LINECAP = "stroke-linecap";
+        /**
+         * Attribute defining the stroke linejoin.
+         */
+        public static final String STROKE_LINEJOIN = "stroke-linejoin";
 
         /**
          * Attribute defining the stroke miterlimit.
@@ -886,6 +905,11 @@ public final class SvgConstants {
         public static final String XMLNS = "xmlns";
 
         /**
+         * Attribute defining the property that sets how white space inside an element is handled.
+         */
+        public static final String XML_SPACE = "xml:space";
+
+        /**
          * Attribute defining the y value of an element.
          */
         public static final String Y = "y";
@@ -901,7 +925,12 @@ public final class SvgConstants {
         public static final String Y2 = "y2";
 
         /**
-         * Attribute defining version
+         * Attribute defining vector-effect.
+         */
+        public static final String VECTOR_EFFECT = "vector-effect";
+
+        /**
+         * Attribute defining version.
          */
         public static final String VERSION = "version";
     }
@@ -932,6 +961,23 @@ public final class SvgConstants {
         public static final String DEFAULT_ASPECT_RATIO = Values.XMID_YMID;
 
         /**
+         * Default svg view port width value (300px * 0.75 = 225).
+         * See <a href="https://svgwg.org/specs/integration/#svg-css-sizing">SVG specification</a>.
+         */
+        public static final float DEFAULT_VIEWPORT_WIDTH = 225F;
+
+        /**
+         * Default svg view port height value (150px * 0.75 = 112.5).
+         * See <a href="https://svgwg.org/specs/integration/#svg-css-sizing">SVG specification</a>.
+         */
+        public static final float DEFAULT_VIEWPORT_HEIGHT = 112.5F;
+        /**
+         * Default width and height value.
+         * See <a href="https://svgwg.org/specs/integration/#svg-css-sizing">SVG specification</a>.
+         */
+        public static final String DEFAULT_WIDTH_AND_HEIGHT_VALUE = "100%";
+
+        /**
          * Value representing how to preserve the aspect ratio when dealing with images.
          */
         public static final String DEFER = "defer";
@@ -952,9 +998,14 @@ public final class SvgConstants {
         public static final String MEET = "meet";
 
         /**
-         * Value representing the "none" value".
+         * Value representing the "none" value.
          */
         public static final String NONE = "none";
+
+        /**
+         * Value representing the "non-scaling-stroke" value for vector-effect attribute.
+         */
+        public static final String NONE_SCALING_STROKE = "non-scaling-stroke";
 
         /**
          * Value representing the units relation "objectBoundingBox".
@@ -1005,6 +1056,10 @@ public final class SvgConstants {
          * Value representing the units relation "userSpaceOnUse".
          */
         public static final String USER_SPACE_ON_USE = "userSpaceOnUse";
+        /**
+         * The number of viewBox values.
+         */
+        public static final int VIEWBOX_VALUES_NUMBER = 4;
 
         /**
          * Value representing how to align when scaling.
@@ -1051,6 +1106,7 @@ public final class SvgConstants {
          */
         public static final String XMAX_YMAX = "xmaxymax";
 
+        @Deprecated
         public static final String VERSION1_1 = "1.1";
     }
 }

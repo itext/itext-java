@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,11 +22,33 @@
  */
 package com.itextpdf.kernel.utils;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
-class IdleOutputStream  extends OutputStream {
+/**
+ * {@link OutputStream} implementation which doesn't write anything.
+ */
+public class IdleOutputStream extends OutputStream {
+    /**
+     * Default constructor to create {@link IdleOutputStream}.
+     */
+    public IdleOutputStream() {
+        // Empty constructor.
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public void write(int b) {
+        // Idle output stream write method does nothing.
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
         // Idle output stream write method does nothing.
     }
 }

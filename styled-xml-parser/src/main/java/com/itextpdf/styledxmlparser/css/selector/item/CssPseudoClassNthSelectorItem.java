@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -46,9 +46,6 @@ class CssPseudoClassNthSelectorItem extends CssPseudoClassChildSelectorItem {
 
     @Override
     public boolean matches(INode node) {
-        if (!(node instanceof IElementNode) || node instanceof ICustomElementNode || node instanceof IDocumentNode) {
-            return false;
-        }
         List<INode> children = getAllSiblings(node);
         return !children.isEmpty() && resolveNth(node, children);
     }

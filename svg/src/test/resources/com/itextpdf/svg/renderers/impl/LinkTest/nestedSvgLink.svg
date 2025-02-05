@@ -1,0 +1,7 @@
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+     <a href="http://geeksforgeeks.org" target="_blank">
+       <svg height="220" width="300" xmlns="http://www.w3.org/2000/svg">
+         <polygon points="100,10 150,190 50,190" style="fill:lime;stroke:purple;stroke-width:3" />
+       </svg>
+     </a>
+</svg>

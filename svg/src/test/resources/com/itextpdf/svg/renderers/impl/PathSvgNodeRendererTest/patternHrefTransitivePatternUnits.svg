@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200">
+  <defs>
+    <pattern id="origPattern" width="20%" height="20%">
+      <circle cx=".1" cy=".1" r=".1" fill="blue" />
+    </pattern>
+	
+	<pattern id="secondaryPattern" width="20%" height="20%" patternUnits="userSpaceOnUse">
+      <polygon points="0,0 2,5 0,10 5,8 10,10 8,5 10,0 5,2" />
+    </pattern>
+    
+    <pattern id="hrefPattern" xlink:href="#secondaryPattern" />
+  </defs>
+
+  <rect x="0" y="0" width="200" height="200" fill="url(#hrefPattern)" />
+</svg>

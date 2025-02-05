@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -131,6 +131,7 @@ import com.itextpdf.bouncycastlefips.tsp.TimeStampTokenBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampTokenGeneratorBCFips;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleTestConstantsFactory;
+import com.itextpdf.commons.bouncycastle.SecurityProviderProxy;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1BitString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
@@ -352,15 +353,16 @@ import org.bouncycastle.tsp.TimeStampToken;
 public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
 
     private static final Provider PROVIDER = new BouncyCastleFipsProvider();
-    private static final String PROVIDER_NAME = PROVIDER.getName();
     private static final BouncyCastleFipsTestConstantsFactory BOUNCY_CASTLE_FIPS_TEST_CONSTANTS =
             new BouncyCastleFipsTestConstantsFactory();
+
+    private final SecurityProviderProxy securityProviderProxy;
 
     /**
      * Creates {@link IBouncyCastleFactory} for bouncy-castle FIPS module.
      */
     public BouncyCastleFipsFactory() {
-        // Empty constructor.
+        securityProviderProxy = new SecurityProviderProxy(PROVIDER);
     }
 
     /**
@@ -912,7 +914,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public Provider getProvider() {
-        return PROVIDER;
+        return securityProviderProxy.getProvider();
     }
 
     /**
@@ -920,7 +922,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public String getProviderName() {
-        return PROVIDER_NAME;
+        return securityProviderProxy.getProviderName();
     }
 
     /**
@@ -962,7 +964,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     public IJcaX509CertificateConverter createJcaX509CertificateConverter() {
         final IJcaX509CertificateConverter converter =
                 new JcaX509CertificateConverterBCFips(new JcaX509CertificateConverter());
-        converter.setProvider(PROVIDER);
+        converter.setProvider(securityProviderProxy.getProvider());
         return converter;
     }
 
@@ -1752,6 +1754,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public ITSTInfo createTSTInfo(IASN1Primitive contentInfo) {
+        return new TSTInfoBCFips(TSTInfo.getInstance(((ASN1PrimitiveBCFips) contentInfo).getPrimitive()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ISingleResp createSingleResp(IBasicOCSPResponse basicResp) {
         return new SingleRespBCFips(basicResp);
     }
@@ -1802,7 +1812,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IJcaPEMKeyConverter createJcaPEMKeyConverter() {
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
-        converter.setProvider(PROVIDER);
+        converter.setProvider(securityProviderProxy.getProvider());
         return new JcaPEMKeyConverterBCFips(converter);
     }
 
@@ -1843,7 +1853,7 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      */
     @Override
     public SecureRandom getSecureRandom() {
-        return ((BouncyCastleFipsProvider) PROVIDER).getDefaultSecureRandom();
+        return ((BouncyCastleFipsProvider) securityProviderProxy.getProvider()).getDefaultSecureRandom();
     }
 
     /**
@@ -1863,9 +1873,9 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
             throws GeneralSecurityException {
         Cipher cipher;
         try {
-            cipher = Cipher.getInstance(algorithmIdentifier.getAlgorithm().getId(), PROVIDER);
+            cipher = Cipher.getInstance(algorithmIdentifier.getAlgorithm().getId(), securityProviderProxy.getProvider());
         } catch (NoSuchAlgorithmException ignored) {
-            cipher = Cipher.getInstance("RSA", PROVIDER);
+            cipher = Cipher.getInstance("RSA", securityProviderProxy.getProvider());
         }
         try {
             cipher.init(Cipher.WRAP_MODE, x509certificate.getPublicKey());

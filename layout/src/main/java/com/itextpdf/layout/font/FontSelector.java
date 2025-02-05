@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -68,8 +68,7 @@ public class FontSelector {
      * @return the best matched font
      */
     public final FontInfo bestMatch() {
-
-        // fonts is sorted best to worst, get(0) returns the best matched FontInfo
+        // Fonts are sorted best to worst, get(0) returns the best matched FontInfo
         return fonts.get(0);
     }
 

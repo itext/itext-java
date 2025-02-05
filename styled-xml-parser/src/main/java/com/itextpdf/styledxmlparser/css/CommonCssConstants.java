@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -278,6 +278,11 @@ public class CommonCssConstants {
      * The Constant BREAK_ALL.
      */
     public static final String BREAK_ALL = "break-all";
+
+    /**
+     * The Constant BREAK_SPACES.
+     */
+    public static final String BREAK_SPACES = "break-spaces";
 
     /**
      * The Constant CAPTION_SIDE.
@@ -685,6 +690,26 @@ public class CommonCssConstants {
      * The Constant MARGIN_TOP.
      */
     public static final String MARGIN_TOP = "margin-top";
+
+    /**
+     * The Constant MARKER
+     */
+    public static final String MARKER = "marker";
+
+    /**
+     * The Constant MARKER_MID
+     */
+    public static final String MARKER_MID = "marker-mid";
+
+    /**
+     * The Constant MARKER_START
+     */
+    public static final String MARKER_START = "marker-start";
+
+    /**
+     * The Constant MARKER_END
+     */
+    public static final String MARKER_END = "marker-end";
 
     /**
      * The Constant MIN_HEIGHT.
@@ -1354,6 +1379,21 @@ public class CommonCssConstants {
      * The Constant PADDING_BOX.
      */
     public static final String PADDING_BOX = "padding-box";
+
+    /**
+     * The Constant PRE.
+     */
+    public static final String PRE = "pre";
+
+    /**
+     * The Constant PRE_LINE.
+     */
+    public static final String PRE_LINE = "pre-line";
+
+    /**
+     * The Constant PRE_WRAP.
+     */
+    public static final String PRE_WRAP = "pre-wrap";
 
     /**
      * The Constant RAD.

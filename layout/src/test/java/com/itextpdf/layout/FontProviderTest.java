@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -47,8 +47,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -180,7 +179,6 @@ public class FontProviderTest extends ExtendedITextTest {
     public void fontProviderNotSetExceptionTest() throws Exception {
         String fileName = "fontProviderNotSetExceptionTest.pdf";
         String outFileName = destinationFolder + fileName + ".pdf";
-
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
             Document doc = new Document(pdfDoc);
 
@@ -190,5 +188,29 @@ public class FontProviderTest extends ExtendedITextTest {
             Exception e = Assertions.assertThrows(IllegalStateException.class, () -> doc.add(paragraph));
             Assertions.assertEquals(LayoutExceptionMessageConstant.FONT_PROVIDER_NOT_SET_FONT_FAMILY_NOT_RESOLVED, e.getMessage());
         }
+    }
+
+    @Test
+    public void trueTypeCollectionTest() throws IOException, InterruptedException {
+        String fileName = "trueTypeCollectionFonts.pdf";
+        String outFileName = destinationFolder + fileName;
+        String cmpFileName = sourceFolder + "cmp_" + fileName;
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        FontProvider fontProvider = new FontProvider();
+        fontProvider.addFont(fontsFolder + "/NotoSansAndSpaceMono.ttc,0");
+        fontProvider.addFont(fontsFolder + "/NotoSansAndSpaceMono.ttc,1");
+        doc.setFontProvider(fontProvider);
+
+        Paragraph paragraph1 = new Paragraph("some test text here").setFontFamily("Noto Sans");
+        doc.add(paragraph1);
+
+        Paragraph paragraph2 = new Paragraph("and here should be different font").setFontFamily("Space Mono");
+        doc.add(paragraph2);
+
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff" + fileName));
     }
 }

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174944+03'00')/ModDate(D:20211108174944+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250124014621+03'00')/ModDate(D:20250124014621+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,20 +24,19 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 191.25 180]/Length 93/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 191.25 180]/Length 78/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 180 cm
 % svg root
+1 0 0 1 5.63 0 cm
 1.2 0 0 1.2 0 0 cm
-1 0 0 1 4.69 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[-4.69 0 154.69 150]/Length 2582/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm2 11 0 R/Fm3 12 0 R/Fm4 13 0 R/Fm5 14 0 R/Fm6 15 0 R/Fm7 16 0 R/Fm8 17 0 R/Fm9 18 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-4.69 0 154.69 150]/Length 2304/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm2 11 0 R/Fm3 12 0 R/Fm4 13 0 R/Fm5 14 0 R/Fm6 15 0 R/Fm7 16 0 R/Fm8 17 0 R/Fm9 18 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -4.69 0 159.38 150 re
 W
 n
@@ -51,47 +50,41 @@ q
 S
 q
 0 0 0 rg
-0.6 0 0 0.6 0 0 cm
-1 0 0 1 12.5 12.5 cm
+1 0 0 1 7.5 7.5 cm
 0 -1 1 0 0 0 cm
-1 0 0 1 -3.75 -3.75 cm
+1 0 0 1 -2.25 -2.25 cm
+0.6 0 0 0.6 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 Q
 q
 0 0 0 rg
-0.6 0 0 0.6 0 0 cm
-1 0 0 1 100 100 cm
+1 0 0 1 60 60 cm
 0.98995 -0.14142 0.14142 0.98995 0 0 cm
-1 0 0 1 -3.75 -3.75 cm
+1 0 0 1 -2.25 -2.25 cm
+0.6 0 0 0.6 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm2 Do
 Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 9 9 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 9 9 Tm
+0 0 0 rg
 (orient="auto-start-reverse")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 62.25 61.5 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 62.25 61.5 Tm
+0 0 0 rg
 (orient="auto")Tj
 ET
 Q
@@ -105,24 +98,21 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 15 15 cm
+1 0 0 1 0 0 cm
+1 0 0 1 -2.25 -2.25 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 25 25 cm
-1 0 0 1 0 0 cm
-1 0 0 1 -3.75 -3.75 cm
 q
-1 0 0 1 0 0 cm
 /Fm3 Do
 Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 17.25 16.5 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 17.25 16.5 Tm
+0 0 0 rg
 (orient="0")Tj
 ET
 Q
@@ -136,23 +126,20 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 22.5 22.5 cm
+1 0 0 1 -2.25 -2.25 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 37.5 37.5 cm
-1 0 0 1 -3.75 -3.75 cm
 q
-1 0 0 1 0 0 cm
 /Fm4 Do
 Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 24 24 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 24 24 Tm
+0 0 0 rg
 (orient="10in")Tj
 ET
 Q
@@ -166,24 +153,21 @@ q
 S
 q
 0 0 0 rg
-0.6 0 0 0.6 0 0 cm
-1 0 0 1 50 50 cm
+1 0 0 1 30 30 cm
 0.98481 0.17365 -0.17365 0.98481 0 0 cm
-1 0 0 1 -3.75 -3.75 cm
+1 0 0 1 -2.25 -2.25 cm
+0.6 0 0 0.6 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm5 Do
 Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 32.25 31.5 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 32.25 31.5 Tm
+0 0 0 rg
 (orient="10")Tj
 ET
 Q
@@ -197,23 +181,20 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 37.5 37.5 cm
+1 0 0 1 -2.25 -2.25 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 62.5 62.5 cm
-1 0 0 1 -3.75 -3.75 cm
 q
-1 0 0 1 0 0 cm
 /Fm6 Do
 Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 39.75 39 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 39.75 39 Tm
+0 0 0 rg
 (orient="10em")Tj
 ET
 Q
@@ -227,23 +208,20 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 45 45 cm
+1 0 0 1 -2.25 -2.25 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 75 75 cm
-1 0 0 1 -3.75 -3.75 cm
 q
-1 0 0 1 0 0 cm
 /Fm7 Do
 Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 47.25 46.5 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 47.25 46.5 Tm
+0 0 0 rg
 (orient="10%")Tj
 ET
 Q
@@ -257,24 +235,21 @@ q
 S
 q
 0 0 0 rg
-0.6 0 0 0.6 0 0 cm
-1 0 0 1 87.5 87.5 cm
+1 0 0 1 52.5 52.5 cm
 -0.86603 -0.5 0.5 -0.86603 0 0 cm
-1 0 0 1 -3.75 -3.75 cm
+1 0 0 1 -2.25 -2.25 cm
+0.6 0 0 0.6 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm8 Do
 Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 55.5 54 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 55.5 54 Tm
+0 0 0 rg
 (orient="210deg")Tj
 ET
 Q
@@ -288,24 +263,21 @@ q
 S
 q
 0 0 0 rg
-0.6 0 0 0.6 0 0 cm
-1 0 0 1 106.25 112.5 cm
+1 0 0 1 63.75 67.5 cm
 0.86603 -0.5 0.5 0.86603 0 0 cm
-1 0 0 1 -3.75 -3.75 cm
+1 0 0 1 -2.25 -2.25 cm
+0.6 0 0 0.6 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm9 Do
 Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 70.5 69 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 70.5 69 Tm
+0 0 0 rg
 (orient="-30")Tj
 ET
 Q
@@ -319,23 +291,20 @@ q
 S
 q
 0 0 0 rg
+1 0 0 1 60 75 cm
+1 0 0 1 -2.25 -2.25 cm
 0.6 0 0 0.6 0 0 cm
-1 0 0 1 100 125 cm
-1 0 0 1 -3.75 -3.75 cm
 q
-1 0 0 1 0 0 cm
 /Fm10 Do
 Q
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 63 76.5 Tm
-0 Tr
 /F1 3.75 Tf
-0 0 Td
+1 0 0 -1 63 76.5 Tm
+0 0 0 rg
 (orient="10pt")Tj
 ET
 Q
@@ -517,26 +486,26 @@ xref
 0 19
 0000000000 65535 f 
 0000000217 00000 n 
-0000000523 00000 n 
+0000000524 00000 n 
 0000000262 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000433 00000 n 
-0000000574 00000 n 
-0000000797 00000 n 
-0000003633 00000 n 
-0000003806 00000 n 
-0000003980 00000 n 
-0000004160 00000 n 
-0000004334 00000 n 
-0000004514 00000 n 
-0000004688 00000 n 
-0000004867 00000 n 
-0000005053 00000 n 
-0000005227 00000 n 
+0000000434 00000 n 
+0000000575 00000 n 
+0000000783 00000 n 
+0000003341 00000 n 
+0000003514 00000 n 
+0000003688 00000 n 
+0000003868 00000 n 
+0000004042 00000 n 
+0000004222 00000 n 
+0000004396 00000 n 
+0000004575 00000 n 
+0000004761 00000 n 
+0000004935 00000 n 
 trailer
-<</ID [<18fc23a3de35e8a6ec5f069458a3e562><18fc23a3de35e8a6ec5f069458a3e562>]/Info 3 0 R/Root 1 0 R/Size 19>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<81b452d09df41ed6b613b47de62995529f876cd5309d479be32900f552e3b43bc19e77dd5504436f0ccfa0a3693bbac2f2f2099e2cb61705962c5b418a3ca298><81b452d09df41ed6b613b47de62995529f876cd5309d479be32900f552e3b43bc19e77dd5504436f0ccfa0a3693bbac2f2f2099e2cb61705962c5b418a3ca298>]/Info 3 0 R/Root 1 0 R/Size 19>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-5407
+5115
 %%EOF

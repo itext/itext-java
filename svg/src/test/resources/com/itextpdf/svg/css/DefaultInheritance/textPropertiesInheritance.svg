@@ -1,0 +1,8 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="300" height="300">
+  <g font-size="24px" fill="green" text-anchor="middle"  writing-mode="vertical-rl" direction="rtl">
+    <text x="100" y="100" writing-mode="horizontal-tb">Horizontal Text</text>
+    <text x="150" y="150" fill="red">Vertical Text</text>
+    <text x="200" y="200" font-size="36px">Vertical Text</text>
+  </g>
+</svg>

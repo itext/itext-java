@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="2.0" viewBox="0 0 50 50"
+     width="5cm" height="15cm">
+    <rect x="5" y="5" width="40" height="40" fill="none" stroke="lightblue"/>
+    <g id="visible" transform="matrix(1, 0.99, 1, 1, 0, 0)" fill="none" stroke="teal" stroke-width="2">
+        <rect x="5" y="5" width="20" height="10"/>
+        <rect x="5" y="5" width="20" height="10" stroke="pink"
+              vector-effect="non-scaling-stroke"/>
+    </g>
+    <g id="invisible" transform="matrix(1, 1, 1, 1, 0, 0)" fill="none" stroke="teal" stroke-width="2" >
+        <rect x="5" y="5" width="20" height="10"/>
+        <rect x="5" y="5" width="20" height="10" stroke="red"
+              vector-effect="non-scaling-stroke"/>
+    </g>
+</svg>

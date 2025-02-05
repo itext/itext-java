@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="600">
+  <style>
+    text {
+      fill: red;
+    }
+  </style>
+  <style media="(overflow-block: scroll)">
+    text {
+      fill: green;
+    }
+  </style>
+  <text x="20" y="40" font-size="40">
+    <tspan>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vitae eros eu dui pharetra vulputate. Etiam scelerisque urna id arcu pretium placerat. Nulla lobortis, sapien at convallis efficitur, magna ante aliquam turpis, eu condimentum enim justo eu massa. In bibendum cursus erat. Nulla vehicula purus quis lacus imperdiet porttitor. Duis mollis lacus urna, a auctor quam lobortis non. Fusce leo lorem, viverra id sapien quis, dignissim lacinia turpis. Integer id vulputate lectus. Maecenas ut sapien vel magna dictum pellentesque non quis risus. Aenean interdum, mi id efficitur maximus, felis dui feugiat risus, eu condimentum est urna pellentesque est. Donec maximus ultrices nisl. Mauris ornare metus a odio suscipit consectetur. Morbi eget commodo elit. Cras quis gravida lectus. Ut sed est massa.</tspan>
+  </text>
+</svg>

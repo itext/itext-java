@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -29,6 +29,7 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 import java.io.IOException;
@@ -37,6 +38,13 @@ import java.io.IOException;
 @Tag("UnitTest")
 public class FontProgramTest extends ExtendedITextTest {
     private static final String notExistingFont = "some-font.ttf";
+
+    @BeforeEach
+    public void clearFonts(){
+        FontProgramFactory.clearRegisteredFonts();
+        FontProgramFactory.clearRegisteredFontFamilies();
+        FontCache.clearSavedFonts();
+    }
 
     @Test
     public void exceptionMessageTest() throws IOException {
@@ -72,6 +80,15 @@ public class FontProgramTest extends ExtendedITextTest {
         FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/type1/");
         FontProgram computerModern = FontProgramFactory.createRegisteredFont("computer modern");
         FontProgram cmr10 = FontProgramFactory.createRegisteredFont("cmr10");
+        Assertions.assertNull(computerModern);
+        Assertions.assertNull(cmr10);
+    }
+
+    @Test
+    public void registerDirectoryType1RecursivelyTest() throws IOException {
+        FontProgramFactory.registerFontDirectoryRecursively("./src/test/resources/com/itextpdf/io/font/type1/");
+        FontProgram computerModern = FontProgramFactory.createRegisteredFont("computer modern");
+        FontProgram cmr10 = FontProgramFactory.createRegisteredFont("cmr10");
         Assertions.assertNotNull(computerModern);
         Assertions.assertNotNull(cmr10);
     }
@@ -95,5 +112,33 @@ public class FontProgramTest extends ExtendedITextTest {
         Assertions.assertEquals(32, glyph.getUnicode());
         Assertions.assertEquals(1, glyph.getCode());
         Assertions.assertEquals(278, glyph.getWidth());
+    }
+
+    @Test
+    public void standardFontsTest() throws IOException {
+        checkStandardFont(StandardFonts.COURIER);
+        checkStandardFont(StandardFonts.COURIER_BOLD);
+        checkStandardFont(StandardFonts.COURIER_BOLDOBLIQUE);
+        checkStandardFont(StandardFonts.COURIER_OBLIQUE);
+
+        checkStandardFont(StandardFonts.HELVETICA);
+        checkStandardFont(StandardFonts.HELVETICA_BOLD);
+        checkStandardFont(StandardFonts.HELVETICA_BOLDOBLIQUE);
+        checkStandardFont(StandardFonts.HELVETICA_OBLIQUE);
+
+        checkStandardFont(StandardFonts.SYMBOL);
+
+        checkStandardFont(StandardFonts.TIMES_BOLD);
+        checkStandardFont(StandardFonts.TIMES_BOLDITALIC);
+        checkStandardFont(StandardFonts.TIMES_ITALIC);
+        checkStandardFont(StandardFonts.TIMES_ROMAN);
+
+        checkStandardFont(StandardFonts.ZAPFDINGBATS);
+    }
+
+    private void checkStandardFont(String fontName) throws IOException {
+        FontProgram font = FontProgramFactory.createFont(fontName, null, false);
+        Assertions.assertTrue(font instanceof Type1Font);
+        Assertions.assertEquals(fontName, font.getFontNames().getFontName());
     }
 }

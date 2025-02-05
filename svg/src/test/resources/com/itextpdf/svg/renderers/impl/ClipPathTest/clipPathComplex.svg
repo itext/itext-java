@@ -1,0 +1,39 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="outline: 1px solid red">
+<defs>
+	<clipPath id="textPath">
+		<!-- <text x="50" y="133" font-size="40pt" >ClipPathText</text> -->
+        <rect x="100" y="0" width="1" height="250" fill="red" />
+        <text fill="green" stroke="pink" stroke-width="0.5" font-size="20pt" style="text-decoration: green dotted underline" transform="translate(100 0)">
+            <tspan x="-30" y="45" fill="green">
+                x="-30"
+                <tspan dx="-70" dy="16" fill="orange">
+                    dx="-70" dy="20"
+                    <tspan x="0" dy="25" fill="red" style="text-decoration: overline" font-size="12pt">
+                        x="0" dy="20"
+                    </tspan>
+                </tspan>
+            </tspan>
+            <tspan dx="-150" dy="30" fill="none" style="text-decoration: line-through">dx="-150" dy="20"</tspan>
+            <tspan dx="-150" dy="30" fill="blue" stroke-width="2" stroke-dasharray="10 10 1% 0.5% 0.1em 0.5rem 20 20" stroke-opacity="0.8" stroke-dashoffset="5%" style="text-decoration: line-through">dx="-150" dy="20"</tspan>
+        </text>
+	</clipPath>
+</defs>
+
+<image xlink:href="star.jpg" x="0" y="-120" width="400" height="400" clip-path="url(#textPath)"/>
+
+<line x1="0" x2="500" y1="250" y2="250" stroke="lightgray" stroke-width="10" />
+
+<text fill="green" stroke="pink" stroke-width="0.5" font-size="20pt" style="text-decoration: green dotted underline" transform="translate(100 300)">
+    <tspan x="-30" y="45" fill="green">
+        x="-30"
+        <tspan dx="-70" dy="16" fill="orange">
+            dx="-70" dy="20"
+            <tspan x="0" dy="25" fill="red" style="text-decoration: overline" font-size="12pt">
+                x="0" dy="20"
+            </tspan>
+        </tspan>
+    </tspan>
+    <tspan dx="-150" dy="30" fill="none" style="text-decoration: line-through">dx="-150" dy="20"</tspan>
+    <tspan dx="-150" dy="30" fill="blue" stroke-width="2" stroke-dasharray="10 10 1% 0.5% 0.1em 0.5rem 20 20" stroke-opacity="0.8" stroke-dashoffset="5%" style="text-decoration: line-through">dx="-150" dy="20"</tspan>
+</text>
+</svg>

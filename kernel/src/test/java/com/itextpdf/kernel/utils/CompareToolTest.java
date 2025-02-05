@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -332,6 +332,23 @@ public class CompareToolTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
         Assertions.assertFalse(new File(firstPdf).exists());
         Assertions.assertFalse(new File(secondPdf).exists());
+    }
+
+    @Test
+    public void memoryFirstWriterCmpMissingTest() throws IOException {
+        String firstPdf = destinationFolder + "memoryFirstWriterCmpMissingTest.pdf";
+        String secondPdf = destinationFolder + "cmp_memoryFirstWriterCmpMissingTest.pdf";
+        PdfDocument firstDocument = new PdfDocument(CompareTool.createTestPdfWriter(firstPdf));
+
+        PdfPage page1FirstDocument = firstDocument.addNewPage();
+        page1FirstDocument.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 560, 400, 50)).setDestination(
+                PdfExplicitDestination.createFit(page1FirstDocument)).setBorder(new PdfArray(new float[] {0, 0, 1})));
+        page1FirstDocument.flush();
+        firstDocument.close();
+
+        Assertions.assertThrows(IOException.class,
+                () -> new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
+        Assertions.assertTrue(new File(firstPdf).exists());
     }
 
     @Test

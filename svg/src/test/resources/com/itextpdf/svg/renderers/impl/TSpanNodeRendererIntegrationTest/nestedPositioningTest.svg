@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="455" height="240" viewBox="0 0 100 160"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+    <line x2="-15" y2="40" stroke="green"/>
+    <line x2="-30" y2="60" stroke="orange"/>
+    <line x2="50" y2="80" stroke="red"/>
+    <line x2="0" y2="100" stroke="blue"/>
+    <text fill="green" transform="translate(0 45.5)">
+        <tspan x="-30" fill="green">
+            x="-30"
+            <tspan dx="-70" dy="20" fill="orange">
+                dx="-70" dy="20"
+                <tspan x="0" dy="20" fill="red">
+                    x="0" dy="20"
+                </tspan>
+            </tspan>
+        </tspan>
+        <tspan dx="-150" dy="20" fill="blue">dx="-150" dy="20"</tspan>
+    </text>
+</svg>

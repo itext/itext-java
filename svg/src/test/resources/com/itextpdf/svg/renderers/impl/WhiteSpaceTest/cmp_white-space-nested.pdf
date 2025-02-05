@@ -1,0 +1,361 @@
+%PDF-1.7
+%‚„œ”
+5 0 obj
+<</Length 12>>stream
+q
+/Fm1 Do
+Q
+
+endstream
+endobj
+4 0 obj
+<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+endobj
+1 0 obj
+<</Pages 2 0 R/Type/Catalog>>
+endobj
+3 0 obj
+<</CreationDate(D:20250108145144+03'00')/ModDate(D:20250108145144+03'00')/Producer(iTextÆ Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+endobj
+6 0 obj
+<</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+2 0 obj
+<</Count 1/Kids[4 0 R]/Type/Pages>>
+endobj
+7 0 obj
+<</BBox[0 0 450 300]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 300 cm
+% svg root
+q
+/Fm1 Do
+Q
+
+endstream
+endobj
+8 0 obj
+<</BBox[0 0 450 300]/Length 2876/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 450 300 re
+W
+n
+q
+% rect
+0 0 450 300 re
+n
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 15 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: normal)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 100.44 15 Tm
+0 0 0 rg
+(. Double spaces)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 166.63 15 Tm
+1 0 0 rg
+( will be ignor)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 222.92 15 Tm
+0 0 0 rg
+(ed and so are line)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 296.4 15 Tm
+1 0 0 rg
+( breaks)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 326.43 15 Tm
+0 0 0 rg
+( .)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 37.5 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: pre)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 84.1 37.5 Tm
+0 0 0 rg
+(.     This )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 121.14 37.5 Tm
+1 0 0 rg
+(text          )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 163.14 37.5 Tm
+0 0 1 rg
+(    will )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 192.61 37.5 Tm
+1 0 0 rg
+(keep extra      spaces )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 281.83 37.5 Tm
+0 0 0 rg
+( )Tj
+10.5 0 Td
+(   and line    )Tj
+51.911999 0 Td
+( )Tj
+10.5 0 Td
+(        )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 375.74 37.5 Tm
+1 0 0 rg
+(breaks)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 105 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: nowrap)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 102.18 105 Tm
+0 0 0 rg
+(. This text will ignore)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 192.89 105 Tm
+1 0 0 rg
+(line wrap)Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 127.5 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: pre-wrap)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 108.59 127.5 Tm
+0 0 0 rg
+(.   This )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 140.38 127.5 Tm
+1 0 0 rg
+(text          does    keep )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 234.58 127.5 Tm
+0 0 1 rg
+(double spaces)Tj
+58.610996 0 Td
+( )Tj
+10.5 0 Td
+(    and line      wrap)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 384.46 127.5 Tm
+1 0 0 rg
+( but will remove)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 453.58 127.5 Tm
+0 0 0 rg
+( end of line spaces)Tj
+( )Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 187.5 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: pre-line)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 103.35 187.5 Tm
+0 0 0 rg
+(. )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 108.6 187.5 Tm
+1 0 0 rg
+(This text will not keep extra spaces but will keep)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 314.2 187.5 Tm
+0 0 0 rg
+( line breaks)Tj
+( )Tj
+ET
+Q
+Q
+q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 15 232.5 Tm
+0.50196 0.50196 0.50196 rg
+(white-space: break-spaces)Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 124.91 232.5 Tm
+0 0 0 rg
+(. This text      )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 182.96 232.5 Tm
+1 0 0 rg
+(       will       )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 236.05 232.5 Tm
+0 0 1 rg
+(keep )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 258.49 232.5 Tm
+1 0 0 rg
+(extra    spaces )Tj
+61.519493 0 Td
+( )Tj
+10.5 0 Td
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 322.64 232.5 Tm
+0 0 0 rg
+(and )Tj
+17.786999 0 Td
+( )Tj
+10.5 0 Td
+(line breaks )Tj
+ET
+Q
+q
+BT
+/F1 10.5 Tf
+1 0 0 -1 399.33 232.5 Tm
+1 0 0 rg
+(but will remove end-of-line spaces)Tj
+( )Tj
+ET
+Q
+Q
+
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000211 00000 n 
+0000000518 00000 n 
+0000000256 00000 n 
+0000000074 00000 n 
+0000000015 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000737 00000 n 
+trailer
+<</ID [<7cfdcedca561d405b16813511470c0efe8081ce3885e17ca287d86ab1c1f83acc22baa98c222493c7565ef8c77f93417ad3aa44c410e31c254363bcedddba3b6><7cfdcedca561d405b16813511470c0efe8081ce3885e17ca287d86ab1c1f83acc22baa98c222493c7565ef8c77f93417ad3aa44c410e31c254363bcedddba3b6>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
+startxref
+3738
+%%EOF

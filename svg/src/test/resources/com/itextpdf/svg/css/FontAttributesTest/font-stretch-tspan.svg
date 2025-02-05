@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" style="border:1px solid black;">
+  <text x="20" y="70">
+    <tspan style="font-family: Arial; font-size: 40px; font-stretch: normal;">Normal</tspan>
+  </text>
+
+  <text x="20" y="130">
+    <tspan style="font-family: Arial; font-size: 40px; font-stretch: condensed;">Condensed</tspan>
+  </text>
+
+  <text x="20" y="190">
+    <tspan style="font-family: Arial; font-size: 40px; font-stretch: expanded;">Expanded</tspan>
+  </text>
+
+  <text x="20" y="250">
+    <tspan style="font-family: Arial; font-size: 40px; font-stretch: ultra-condensed;">Ultra-Condensed</tspan>
+  </text>
+
+  <text x="20" y="310">
+    <tspan style="font-family: Arial; font-size: 40px; font-stretch: ultra-expanded;">Ultra-Expanded</tspan>
+  </text>
+</svg>

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -181,5 +181,15 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
         for (int x = 0; x < attributePoints.size(); x++) {
             Assertions.assertEquals(expectedPoints.get(x), attributePoints.get(x));
         }
+    }
+
+    @Test
+    public void polygonIsNotCutTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "polygonIsNotCutTest");
+    }
+
+    @Test
+    public void polygonIsNotCutEvenOddTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(sourceFolder, destinationFolder, "polygonIsNotCutEvenOddTest");
     }
 }

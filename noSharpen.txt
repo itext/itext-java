@@ -1,0 +1,2 @@
+This module is not ported to .net
+This file is used to disable publishing sharpen configuration.

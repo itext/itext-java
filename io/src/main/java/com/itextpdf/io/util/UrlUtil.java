@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -35,6 +35,8 @@ import java.net.URLConnection;
  * Be aware that its API and functionality may be changed in future.
  */
 public final class UrlUtil {
+    private static final int DEFAULT_CONNECT_TIMEOUT = 300000;
+    private static final int DEFAULT_READ_TIMEOUT = 300000;
 
     private UrlUtil() {
     }
@@ -46,7 +48,8 @@ public final class UrlUtil {
      * to a JDK1.1.x-version easier.
      * @param filename a given filename
      * @return a valid URL
-     * @throws java.net.MalformedURLException
+     * @throws java.net.MalformedURLException  If a protocol handler for the URL could not be found,
+     * or if some other error occurred while constructing the URL
      */
     public static URL toURL(String filename) throws MalformedURLException {
         URL url;
@@ -94,6 +97,8 @@ public final class UrlUtil {
      * This method gets uri string from a file.
      * @param filename a given filename
      * @return a uri string
+     * @throws MalformedURLException  If a protocol handler for the URL could not be found,
+     * or if some other error occurred while constructing the URL
      */
     public static String getFileUriString(String filename) throws MalformedURLException {
         return new File(filename).toURI().toURL().toExternalForm();
@@ -119,7 +124,26 @@ public final class UrlUtil {
      * @throws IOException signals that an I/O exception has occurred.
      */
     public static InputStream getInputStreamOfFinalConnection(URL initialUrl) throws IOException {
-        final URLConnection finalConnection = getFinalConnection(initialUrl);
+        final URLConnection finalConnection = getFinalConnection(initialUrl, DEFAULT_CONNECT_TIMEOUT,
+                DEFAULT_READ_TIMEOUT);
+        return finalConnection.getInputStream();
+    }
+
+    /**
+     * Gets the input stream of connection related to last redirected url. You should manually close input stream after
+     * calling this method to not hold any open resources.
+     *
+     * @param initialUrl an initial URL.
+     * @param connectTimeout a connect timeout in milliseconds.
+     * @param readTimeout a read timeout in milliseconds.
+     *
+     * @return an input stream of connection related to the last redirected url.
+     *
+     * @throws IOException signals that an I/O exception has occurred.
+     */
+    public static InputStream getInputStreamOfFinalConnection(URL initialUrl, int connectTimeout, int readTimeout)
+            throws IOException {
+        final URLConnection finalConnection = getFinalConnection(initialUrl, connectTimeout, readTimeout);
         return finalConnection.getInputStream();
     }
 
@@ -128,16 +152,20 @@ public final class UrlUtil {
      * this method, to not hold any open resources.
      *
      * @param initialUrl an initial URL.
+     * @param connectTimeout a connect timeout in milliseconds.
+     * @param readTimeout a read timeout in milliseconds.
      *
      * @return connection related to the last redirected url.
      *
      * @throws IOException signals that an I/O exception has occurred.
      */
-     static URLConnection getFinalConnection(URL initialUrl) throws IOException {
+    static URLConnection getFinalConnection(URL initialUrl, int connectTimeout, int readTimeout) throws IOException {
         URL nextUrl = initialUrl;
         URLConnection connection = null;
         while (nextUrl != null) {
             connection = nextUrl.openConnection();
+            connection.setConnectTimeout(connectTimeout);
+            connection.setReadTimeout(readTimeout);
             final String location = connection.getHeaderField("location");
             nextUrl = location == null ? null : new URL(location);
             if (nextUrl != null) {

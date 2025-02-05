@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -39,6 +39,16 @@ public class PdfStructureAttributes extends PdfObjectWrapper<PdfDictionary> {
     public PdfStructureAttributes(String owner) {
         super(new PdfDictionary());
         getPdfObject().put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName(owner));
+    }
+
+    /**
+     * Method to get owner of current pdf object.
+     *
+     * @return Pdf owner
+     */
+    public String getPdfOwner() {
+        PdfName pdfName = (PdfName) getPdfObject().get(PdfName.O);
+        return pdfName == null ? null : pdfName.getValue();
     }
 
     public PdfStructureAttributes(PdfNamespace namespace) {
@@ -90,13 +100,13 @@ public class PdfStructureAttributes extends PdfObjectWrapper<PdfDictionary> {
     public Integer getAttributeAsInt(String attributeName) {
         PdfName name = PdfStructTreeRoot.convertRoleToPdfName(attributeName);
         PdfNumber attrVal = getPdfObject().getAsNumber(name);
-        return attrVal != null ? (Integer) attrVal.intValue() : (Integer)null;
+        return attrVal != null ? (Integer) attrVal.intValue() : (Integer) null;
     }
 
     public Float getAttributeAsFloat(String attributeName) {
         PdfName name = PdfStructTreeRoot.convertRoleToPdfName(attributeName);
         PdfNumber attrVal = getPdfObject().getAsNumber(name);
-        return attrVal != null ? (Float)attrVal.floatValue() : (Float)null;
+        return attrVal != null ? (Float) attrVal.floatValue() : (Float) null;
     }
 
     public PdfStructureAttributes removeAttribute(String attributeName) {

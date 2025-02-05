@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" style="border:1px solid black;">
+  <filter id="fullyvisible">
+    <feFlood flood-color="purple" flood-opacity="1"/>
+  </filter>
+  <filter id="seethrough">
+    <feFlood flood-color="purple" flood-opacity="0.3"/>
+  </filter>
+
+  <rect x="20" y="20" width="100" height="100" style="filter: url(#fullyvisible);" />
+  <rect x="20" y="150" width="100" height="100" style="filter: url(#seethrough);" />
+ 
+</svg>

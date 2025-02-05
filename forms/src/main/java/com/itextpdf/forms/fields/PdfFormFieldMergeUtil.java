@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -136,18 +136,15 @@ public final class PdfFormFieldMergeUtil {
         for (PdfFormField field : parentField.getChildFormFields()) {
             PdfDictionary formDict = field.getPdfObject();
             // Process form fields without PdfName.Widget having only annotations as children
-            if (field.getChildFields().size() > 0 && field.getChildFormFields().size() == 0) {
+            if (!field.getChildFields().isEmpty() && field.getChildFormFields().isEmpty()) {
                 boolean shouldBeMerged = true;
 
-                // If parent is radio button or signature we don't care about field related keys, always merge
+                // If parent is radio button, checkbox or signature we don't care about field related keys, always merge
                 // If not - go over all fields to compare with parent's fields
-                if (!(PdfName.Btn.equals(parentField.getFormType()) &&
-                        parentField.getFieldFlag(PdfButtonFormField.FF_RADIO)) &&
-                        !PdfName.Sig.equals(parentField.getFormType())) {
-                    if (formDict.containsKey(PdfName.T)) {
-                        // We only want to perform the merge if field doesn't contain any name (even empty one)
-                        continue;
-                    }
+                boolean isRadioOrCheckbox = PdfName.Btn.equals(parentField.getFormType()) &&
+                        !parentField.getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON);
+                boolean isSignature = PdfName.Sig.equals(parentField.getFormType());
+                if (!isRadioOrCheckbox && !isSignature) {
                     for (final PdfName key : formDict.keySet()) {
                         // Everything except Parent and Kids must be identical to allow the merge
                         if (!PdfName.Parent.equals(key) && !PdfName.Kids.equals(key) &&
@@ -158,6 +155,13 @@ public final class PdfFormFieldMergeUtil {
                     }
                 }
 
+                boolean isRadioButton = PdfName.Btn.equals(parentField.getFormType()) &&
+                        parentField.getFieldFlag(PdfButtonFormField.FF_RADIO);
+                if (formDict.containsKey(PdfName.T) && !isRadioButton && !isSignature) {
+                    // We only want to perform the merge if field doesn't contain any name (even empty one).
+                    // The only exceptions are radio buttons and signatures.
+                    continue;
+                }
                 if (shouldBeMerged) {
                     parentField.removeChild(field);
                     formDict.remove(PdfName.Parent);

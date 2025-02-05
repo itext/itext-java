@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" style="border: 1px solid black;">
+  <text x="10" y="40" font-family="'Noto Sans', sans-serif" font-size="24" fill="black" unicode-bidi="normal">
+    Hello world in LTR.
+  </text>
+  <text x="300" y="80" font-family="'Noto Sans', sans-serif" font-size="24" fill="black" unicode-bidi="embed" direction="rtl">
+    مرحبا بالعالم
+  </text>
+  <text x="300" y="120" font-family="'Noto Sans', sans-serif" font-size="24" fill="black" unicode-bidi="bidi-override" direction="rtl">
+    Hello world forced RTL.
+  </text>
+  <text x="10" y="160" font-family="'Noto Sans', sans-serif" font-size="24" fill="black" unicode-bidi="bidi-override" direction="ltr">
+    Hello world forced LTR.
+  </text>
+  <text x="10" y="200" font-family="'Noto Sans', sans-serif" font-size="24" fill="black" unicode-bidi="embed" direction="ltr">
+    RTL text with <tspan direction="rtl">مرحبا بالعالم</tspan> in the middle.
+  </text>
+
+</svg>

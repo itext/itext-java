@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -116,6 +116,15 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
         // Throws different exceptions on .net and java, bc/bcfips
         Assertions.assertThrows(Exception.class,
                 () -> new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), false));
+    }
+
+    @Test
+    public void verifySignatureIntegrityAndAuthenticityBerEncodedTimestampTest() throws IOException, GeneralSecurityException {
+        try (PdfDocument outDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timeStampSignatureBerEncoded.pdf"))) {
+            SignatureUtil sigUtil = new SignatureUtil(outDocument);
+            PdfPKCS7 pkcs7 = sigUtil.readSignatureData("timestampSig1");
+            Assertions.assertTrue(pkcs7.verifySignatureIntegrityAndAuthenticity());
+        }
     }
 
     @Test

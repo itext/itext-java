@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174757+03'00')/ModDate(D:20211108174757+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250131193903+03'00')/ModDate(D:20250131193903+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 675 375]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 375 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675 375]/Length 3609/Resources<</ExtGState<</Gs1 9 0 R/Gs10 10 0 R/Gs11 11 0 R/Gs12 12 0 R/Gs2 13 0 R/Gs3 14 0 R/Gs4 15 0 R/Gs5 16 0 R/Gs6 17 0 R/Gs7 18 0 R/Gs8 19 0 R/Gs9 20 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 3385/Resources<</ExtGState<</Gs1 9 0 R/Gs10 10 0 R/Gs11 11 0 R/Gs12 12 0 R/Gs2 13 0 R/Gs3 14 0 R/Gs4 15 0 R/Gs5 16 0 R/Gs6 17 0 R/Gs7 18 0 R/Gs8 19 0 R/Gs9 20 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -64,13 +63,11 @@ f
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 276 358.42 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 276 358.42 Tm
+0.13333 0.13333 0.13333 rg
 (Rotten Tomatoes)Tj
 ET
 Q
@@ -93,13 +90,11 @@ f
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 397.5 358.42 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 397.5 358.42 Tm
+0.13333 0.13333 0.13333 rg
 (IMDB)Tj
 ET
 Q
@@ -178,7 +173,7 @@ q
 0.26275 0.4549 0.87843 rg
 /Gs6 gs
 % rect
-229.5 223.68 108 79.69 re
+229.5 223.68 108 79.7 re
 f
 Q
 q
@@ -307,25 +302,21 @@ Q
 q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 175.31 319.42 Tm
-0 Tr
 /F1 10.5 Tf
--36.59 0 Td
+1 0 0 -1 138.72 319.42 Tm
+0.13333 0.13333 0.13333 rg
 (Alfred Hitchcock)Tj
 ET
 Q
 Q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 175.31 332.92 Tm
-0 Tr
 /F1 10.5 Tf
--14 0 Td
+1 0 0 -1 161.32 332.92 Tm
+0.13333 0.13333 0.13333 rg
 (\(1935\))Tj
 ET
 Q
@@ -333,25 +324,21 @@ Q
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 283.69 319.42 Tm
-0 Tr
 /F1 10.5 Tf
--30.77 0 Td
+1 0 0 -1 252.92 319.42 Tm
+0.13333 0.13333 0.13333 rg
 (Ralph Thomas)Tj
 ET
 Q
 Q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 283.69 332.92 Tm
-0 Tr
 /F1 10.5 Tf
--14 0 Td
+1 0 0 -1 269.69 332.92 Tm
+0.13333 0.13333 0.13333 rg
 (\(1959\))Tj
 ET
 Q
@@ -359,13 +346,11 @@ Q
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 392.06 319.42 Tm
-0 Tr
 /F1 10.5 Tf
--37.91 0 Td
+1 0 0 -1 354.15 319.42 Tm
+0.13333 0.13333 0.13333 rg
 (Don Sharp \(1978\))Tj
 ET
 Q
@@ -373,25 +358,21 @@ Q
 Q
 q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 500.44 319.42 Tm
-0 Tr
 /F1 10.5 Tf
--28.43 0 Td
+1 0 0 -1 472.01 319.42 Tm
+0.13333 0.13333 0.13333 rg
 (James Hawes)Tj
 ET
 Q
 Q
 q
-0.13333 0.13333 0.13333 rg
 q
 BT
-1 0 0 -1 500.44 332.92 Tm
-0 Tr
 /F1 10.5 Tf
--14 0 Td
+1 0 0 -1 486.44 332.92 Tm
+0.13333 0.13333 0.13333 rg
 (\(2008\))Tj
 ET
 Q
@@ -399,13 +380,11 @@ Q
 Q
 q
 q
-0.26667 0.26667 0.26667 rg
 q
 BT
-1 0 0 -1 110.25 307.05 Tm
-0 Tr
 /F1 10.5 Tf
--5.25 0 Td
+1 0 0 -1 105 307.05 Tm
+0.26667 0.26667 0.26667 rg
 (0)Tj
 ET
 Q
@@ -413,13 +392,11 @@ Q
 Q
 q
 q
-0.26667 0.26667 0.26667 rg
 q
 BT
-1 0 0 -1 110.25 249.3 Tm
-0 Tr
 /F1 10.5 Tf
--5.25 0 Td
+1 0 0 -1 105 249.3 Tm
+0.26667 0.26667 0.26667 rg
 (5)Tj
 ET
 Q
@@ -427,13 +404,11 @@ Q
 Q
 q
 q
-0.26667 0.26667 0.26667 rg
 q
 BT
-1 0 0 -1 110.25 191.55 Tm
-0 Tr
 /F1 10.5 Tf
--10.5 0 Td
+1 0 0 -1 99.75 191.55 Tm
+0.26667 0.26667 0.26667 rg
 (10)Tj
 ET
 Q
@@ -441,13 +416,11 @@ Q
 Q
 q
 q
-0.26667 0.26667 0.26667 rg
 q
 BT
-1 0 0 -1 110.25 133.8 Tm
-0 Tr
 /F1 10.5 Tf
--10.5 0 Td
+1 0 0 -1 99.75 133.8 Tm
+0.26667 0.26667 0.26667 rg
 (15)Tj
 ET
 Q
@@ -455,13 +428,11 @@ Q
 Q
 q
 q
-0.26667 0.26667 0.26667 rg
 q
 BT
-1 0 0 -1 110.25 76.05 Tm
-0 Tr
 /F1 10.5 Tf
--10.5 0 Td
+1 0 0 -1 99.75 76.05 Tm
+0.26667 0.26667 0.26667 rg
 (20)Tj
 ET
 Q
@@ -515,28 +486,28 @@ xref
 0 21
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
-0000004633 00000 n 
-0000004658 00000 n 
-0000004686 00000 n 
-0000004714 00000 n 
-0000004742 00000 n 
-0000004768 00000 n 
-0000004794 00000 n 
-0000004820 00000 n 
-0000004848 00000 n 
-0000004876 00000 n 
-0000004904 00000 n 
-0000004932 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000737 00000 n 
+0000004395 00000 n 
+0000004420 00000 n 
+0000004448 00000 n 
+0000004476 00000 n 
+0000004504 00000 n 
+0000004530 00000 n 
+0000004556 00000 n 
+0000004582 00000 n 
+0000004610 00000 n 
+0000004638 00000 n 
+0000004666 00000 n 
+0000004694 00000 n 
 trailer
-<</ID [<fe44af99151bef42b428f4fa4dac64a6><fe44af99151bef42b428f4fa4dac64a6>]/Info 3 0 R/Root 1 0 R/Size 21>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<68a8fe69aafa848c6cd9d5dcbb6f47a795eb6c08f81ab1b2f37dc596256ecf3fa9435944ea39739dcb930aff8b40d316c85c8881d1c7a5ee7333b2fd9df2cda6><68a8fe69aafa848c6cd9d5dcbb6f47a795eb6c08f81ab1b2f37dc596256ecf3fa9435944ea39739dcb930aff8b40d316c85c8881d1c7a5ee7333b2fd9df2cda6>]/Info 3 0 R/Root 1 0 R/Size 21>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-4960
+4722
 %%EOF

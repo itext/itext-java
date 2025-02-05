@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" style="color:green;background-color:red;">  
+  <text x="100" y="50" font-size="50" fill="darkblue">
+    Hello world.
+  </text>
+</svg>

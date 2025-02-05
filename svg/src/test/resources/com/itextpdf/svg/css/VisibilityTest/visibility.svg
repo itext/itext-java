@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" style="border: 1px solid black;">
+  <text x="10" y="40" font-family="Arial" font-size="24" fill="black" visibility="visible">
+    visibility="visible"
+  </text>
+  <text x="10" y="80" font-family="Arial" font-size="24" fill="blue" visibility="hidden">
+    visibility="hidden"
+  </text>
+  <text x="10" y="120" font-family="Arial" font-size="24" fill="green" visibility="collapse">
+    visibility="collapse"
+  </text>
+  
+  <circle cx="300" cy="200" r="50" fill="purple" visibility="hidden" />
+  
+  <circle cx="100" cy="200" r="50" fill="orange" visibility="visible" />
+  
+</svg>

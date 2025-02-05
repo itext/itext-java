@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -542,7 +542,7 @@ public class FlexContainerRenderer extends DivRenderer {
 
                 // Count the height allowed for the items after the one which was partially layouted
                 maxHeightInLine = Math.max(maxHeightInLine,
-                        itemInfo.getRectangle().getY() + itemInfo.getRenderer().getOccupiedAreaBBox().getHeight());
+                        itemInfo.getRectangle().getY() + childResult.getOccupiedArea().getBBox().getHeight());
             } else if (metChildRendererInLine) {
                 if (FlexUtil.isColumnDirection(this)) {
                     overflowRenderer.addChildRenderer(itemInfo.getRenderer());

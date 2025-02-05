@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -48,6 +48,7 @@ public final class Property {
     public static final int BACKGROUND = 6;
     public static final int BACKGROUND_IMAGE = 90;
     public static final int BASE_DIRECTION = 7;
+    public static final int BEFORE_TEXT_RESTORE_EXECUTOR = 157;
     public static final int BOLD_SIMULATION = 8;
     public static final int BORDER_BOTTOM = 10;
     public static final int BORDER_BOTTOM_LEFT_RADIUS = 113;
@@ -194,6 +195,13 @@ public final class Property {
     public static final int SPACING_RATIO = 61;
     public static final int SPLIT_CHARACTERS = 62;
     public static final int STROKE_COLOR = 63;
+    /**
+     * STROKE_DASH_PATTERN property specifies dash pattern for the text stroke and stores the {@link java.util.List}
+     * as float array of the form [ dashArray dashPhase ], where {@code dashArray} is a float array that specifies
+     * the length of the alternating dashes and gaps, {@code dashPhase} is a float that specifies the distance into
+     * the dash pattern to start the dash.
+     */
+    public static final int STROKE_DASH_PATTERN = 156;
     public static final int STROKE_WIDTH = 64;
     public static final int SKEW = 65;
     public static final int TABLE_LAYOUT = 93;
@@ -204,6 +212,7 @@ public final class Property {
     public static final int TAGGING_HELPER = 108;
     public static final int TAGGING_HINT_KEY = 109;
     public static final int TEXT_ALIGNMENT = 70;
+    public static final int TEXT_ANCHOR = 155;
     /**
      * Use values from {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode}.
      */
@@ -234,13 +243,14 @@ public final class Property {
      * related to textual operations. Indicates whether or not this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 154;
+    private static final int MAX_INHERITED_PROPERTY_ID = 157;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
 
         INHERITED_PROPERTIES[Property.APPEARANCE_STREAM_LAYOUT] = true;
         INHERITED_PROPERTIES[Property.BASE_DIRECTION] = true;
+        INHERITED_PROPERTIES[Property.BEFORE_TEXT_RESTORE_EXECUTOR] = true;
         INHERITED_PROPERTIES[Property.BOLD_SIMULATION] = true;
         INHERITED_PROPERTIES[Property.CAPTION_SIDE] = true;
         INHERITED_PROPERTIES[Property.CHARACTER_SPACING] = true;
@@ -265,8 +275,10 @@ public final class Property {
         INHERITED_PROPERTIES[Property.SPACING_RATIO] = true;
         INHERITED_PROPERTIES[Property.SPLIT_CHARACTERS] = true;
         INHERITED_PROPERTIES[Property.STROKE_COLOR] = true;
+        INHERITED_PROPERTIES[Property.STROKE_DASH_PATTERN] = true;
         INHERITED_PROPERTIES[Property.STROKE_WIDTH] = true;
         INHERITED_PROPERTIES[Property.TEXT_ALIGNMENT] = true;
+        INHERITED_PROPERTIES[Property.TEXT_ANCHOR] = true;
         INHERITED_PROPERTIES[Property.TEXT_RENDERING_MODE] = true;
         INHERITED_PROPERTIES[Property.TEXT_RISE] = true;
         INHERITED_PROPERTIES[Property.UNDERLINE] = true;

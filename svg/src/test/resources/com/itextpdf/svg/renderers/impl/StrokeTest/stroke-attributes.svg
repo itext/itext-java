@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" style="border: 1px solid black;">
+  <line x1="10" y1="10" x2="110" y2="110" 
+        stroke="blue" stroke-width="6" 
+        stroke-linecap="round" />
+
+  <rect x="150" y="10" width="100" height="100" 
+        stroke="blue" stroke-width="6" fill="none" 
+        stroke-dasharray="10,5" />
+		
+  <rect x="290" y="10" width="100" height="100" 
+        stroke="blue" stroke-width="6" fill="none" 
+        stroke-dasharray="10,5" stroke-dashoffset="5" />
+
+  <path d="M 10 150 L 110 150 L 110 250" 
+        stroke="blue" stroke-width="6" fill="none" 
+        stroke-linejoin="bevel" />
+
+  <path d="M 150 150 L 250 150 L 250 250" 
+        stroke="blue" stroke-width="6" fill="none" 
+        stroke-linejoin="miter" stroke-miterlimit="5" />
+
+  <circle cx="80" cy="360" r="50" 
+          stroke="blue" stroke-width="10" fill="yellow" 
+          stroke-opacity="0.5" />
+
+  <circle cx="220" cy="360" r="50" 
+          stroke="blue" stroke-width="8" fill="none" />
+
+</svg>

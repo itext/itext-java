@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+  <text x="10" y="50" font-size="16">
+    <tspan>Baseline</tspan>
+    <tspan baseline-shift="super" font-size="12">Super</tspan>
+    <tspan baseline-shift="sub" font-size="12">Sub</tspan>
+  </text>
+</svg>

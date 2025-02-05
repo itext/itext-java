@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -110,7 +110,7 @@ class CssPropertyNormalizer {
      * @return the new position in the source
      */
     private static int appendUrlContent(StringBuilder buffer, String source, int start) {
-        while (Character.isWhitespace(source.charAt(start)) && start < source.length()) {
+        while (start < source.length() && Character.isWhitespace(source.charAt(start))) {
             ++start;
         }
         if (start < source.length()) {

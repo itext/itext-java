@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -144,6 +144,24 @@ public class SpecificityCalculationTest extends ExtendedITextTest {
     @Test
     public void test22() {
         Assertions.assertEquals(CssSpecificityConstants.CLASS_SPECIFICITY, getSpecificity(":not(.class_name)"));
+    }
+
+    @Test
+    public void test23() {
+        Assertions.assertEquals( CssSpecificityConstants.CLASS_SPECIFICITY * 2,
+                getSpecificity(".class_name:nth-last-child(2n - 3)"));
+    }
+
+    @Test
+    public void test24() {
+        Assertions.assertEquals( CssSpecificityConstants.CLASS_SPECIFICITY * 2,
+                getSpecificity(".class_name:nth-of-type(2n - 3)"));
+    }
+
+    @Test
+    public void test25() {
+        Assertions.assertEquals( CssSpecificityConstants.CLASS_SPECIFICITY * 2,
+                getSpecificity(".class_name:nth-last-of-type(2n - 3)"));
     }
 
     @Test

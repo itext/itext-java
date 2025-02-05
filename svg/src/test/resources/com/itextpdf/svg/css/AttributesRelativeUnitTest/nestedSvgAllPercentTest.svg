@@ -1,0 +1,11 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <line x1="40" y1="0" x2="40" y2="400" stroke="black" />
+  <line x1="0" y1="240" x2="400" y2="240" stroke="black" />
+  
+  <!-- scaling: viewbox is square so minimal length from X and Y axis is taken, in our case it is width=20% -->
+  <svg viewBox="0 0 10 10" x="10%" y="20%" width="20%" height="100%">
+    <line x1="0" y1="0" x2="10" y2="10" stroke="black" />
+    <line x1="0" y1="10" x2="10" y2="0" stroke="black" />
+    <circle cx="5" cy="5" r="5" fill="grey" />
+  </svg>
+</svg>

@@ -15,24 +15,23 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115307+03'00')/ModDate(D:20211018115307+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250203142319+03'00')/ModDate(D:20250203142319+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 6 0 obj
-<</BBox[0 0 595 842]/Length 56/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 595 842]/Length 41/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 842 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 595 842]/Length 1844/Resources<</ExtGState<</Gs1 8 0 R/Gs2 9 0 R/Gs3 10 0 R/Gs4 11 0 R/Gs5 12 0 R/Gs6 13 0 R/Gs7 14 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 595 842]/Length 1836/Resources<</ExtGState<</Gs1 8 0 R/Gs2 9 0 R/Gs3 10 0 R/Gs4 11 0 R/Gs5 12 0 R/Gs6 13 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 595 842 re
 W
 n
@@ -80,8 +79,7 @@ q
 f
 Q
 q
-1 0 0 rg
-/Gs4 gs
+0 0 0 rg
 % ellipse
 180 337.5 m
 180 349.93 169.93 360 157.5 360 c
@@ -92,7 +90,7 @@ f
 Q
 q
 1 0.64706 0 rg
-/Gs5 gs
+/Gs4 gs
 % ellipse
 210 337.5 m
 210 349.93 199.93 360 187.5 360 c
@@ -113,7 +111,7 @@ f
 Q
 q
 0.64706 0.16471 0.16471 rg
-/Gs6 gs
+/Gs5 gs
 % ellipse
 270 337.5 m
 270 349.93 259.93 360 247.5 360 c
@@ -134,7 +132,7 @@ f
 Q
 q
 0 0.50196 0.50196 rg
-/Gs7 gs
+/Gs6 gs
 % ellipse
 330 337.5 m
 330 349.93 319.93 360 307.5 360 c
@@ -156,37 +154,33 @@ endobj
 <</ca 0>>
 endobj
 11 0 obj
-<</ca 0>>
-endobj
-12 0 obj
 <</ca 0.25>>
 endobj
-13 0 obj
+12 0 obj
 <</ca 0.75>>
 endobj
-14 0 obj
+13 0 obj
 <</ca 0>>
 endobj
 xref
-0 15
+0 14
 0000000000 65535 f 
 0000000211 00000 n 
-0000000427 00000 n 
+0000000428 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000478 00000 n 
-0000000661 00000 n 
-0000002701 00000 n 
-0000002726 00000 n 
-0000002753 00000 n 
-0000002779 00000 n 
-0000002805 00000 n 
-0000002834 00000 n 
-0000002863 00000 n 
+0000000479 00000 n 
+0000000647 00000 n 
+0000002668 00000 n 
+0000002693 00000 n 
+0000002720 00000 n 
+0000002746 00000 n 
+0000002775 00000 n 
+0000002804 00000 n 
 trailer
-<</ID [<32b68ba791f87014edc290de87ab1f51><32b68ba791f87014edc290de87ab1f51>]/Info 3 0 R/Root 1 0 R/Size 15>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<d836ff47b4befce56a0ee6bfe29bc4f9319ac9592b7043932a926d7e313973c3ce90bc4f40713a4b281ba965ad44ae4958f333e84d0d159fa21af84f689283ac><d836ff47b4befce56a0ee6bfe29bc4f9319ac9592b7043932a926d7e313973c3ce90bc4f40713a4b281ba965ad44ae4958f333e84d0d159fa21af84f689283ac>]/Info 3 0 R/Root 1 0 R/Size 14>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-2889
+2830
 %%EOF

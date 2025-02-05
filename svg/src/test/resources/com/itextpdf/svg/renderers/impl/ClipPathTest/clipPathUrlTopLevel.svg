@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="800">
+
+  <defs>
+    <clipPath id="baseClipCircle1">
+      <circle id="c1" cx="100" cy="100" r="50"/>
+    </clipPath>
+    <clipPath id="baseClipCircle2">
+      <circle id="c2" cx="150" cy="150" r="50"/>
+    </clipPath>
+    <clipPath id="clipInClipTopLevel" clip-path="url(#baseClipCircle1)">
+      <use xlink:href="#c2"/>
+    </clipPath>
+  </defs>
+  <rect width="800" height="800" fill="blue" clip-path="url(#clipInClipTopLevel)"/>
+</svg>

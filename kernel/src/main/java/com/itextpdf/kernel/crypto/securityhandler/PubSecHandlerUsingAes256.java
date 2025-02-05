@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -94,5 +94,13 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
             encryptionDictionary.put(PdfName.StrF, PdfName.DefaultCryptFilter);
             encryptionDictionary.put(PdfName.StmF, PdfName.DefaultCryptFilter);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initMd5MessageDigest() {
+        //Do nothing to not initialize md5 message digest, since it's not used by AES256 handler
     }
 }

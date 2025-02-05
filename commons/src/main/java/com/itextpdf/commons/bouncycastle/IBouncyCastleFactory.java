@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -1553,6 +1553,15 @@ public interface IBouncyCastleFactory {
      * @throws IOException          if input-output exception occurs during creation
      */
     ITSTInfo createTSTInfo(IContentInfo contentInfo) throws AbstractTSPException, IOException;
+
+    /**
+     * Create TST Info wrapper from content info wrapper.
+     *
+     * @param primitive primitive wrapper to create TST Info wrapper from
+     *
+     * @return created TST Info wrapper
+     */
+    ITSTInfo createTSTInfo(IASN1Primitive primitive);
 
     /**
      * Create single resp wrapper from basic OCSP Response wrapper.

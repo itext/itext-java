@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>9.0.0</version>
+    <version>9.1.0</version>
   </parent>
 
   <artifactId>pdftest</artifactId>
@@ -15,16 +15,16 @@
 
   <properties>
     <sonar.skip>true</sonar.skip>
-    <verapdf.version>1.25.125</verapdf.version>
+    <verapdf.version>1.26.2</verapdf.version>
   </properties>
 
   <dependencyManagement>
-  <dependencies>
+    <dependencies>
       <!-- remove when VeraPdf uses the same or a newer version -->
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>2.17.0</version>
+        <version>${jackson.core.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -46,17 +46,6 @@
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>vera-dev</id>
-      <name>Vera development</name>
-      <url>https://artifactory.openpreservation.org/artifactory/vera-dev</url>
-    </repository>
-  </repositories>
-
   <build>
     <plugins>
       <plugin>
@@ -68,4 +57,48 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>with-sharpen</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>sharpen</groupId>
+            <artifactId>sharpen-maven-plugin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <phase>install</phase>
+                <goals>
+                  <goal>sharpen</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>sharpen</groupId>
+                <artifactId>standard-framework-mapping</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <projectName>pdftest</projectName>
+              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
+              <cSharpSourceCodeDestination>itext/itext.pdftest</cSharpSourceCodeDestination>
+              <cSharpTestCodeDestination>itext.tests/itext.pdftest.tests</cSharpTestCodeDestination>
+              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
+              <showDiff>${sharpen.showdiff}</showDiff>
+              <sourceCodeFiles>
+                <file>**/src/main/java/**/*.java</file>
+              </sourceCodeFiles>
+              <testCodeFiles>
+                <file>**/src/test/java/**/*.java</file>
+              </testCodeFiles>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

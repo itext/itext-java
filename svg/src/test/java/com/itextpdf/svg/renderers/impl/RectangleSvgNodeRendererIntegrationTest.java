@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -95,13 +95,11 @@ public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
     }
 
     @Test
-    //TODO change cmp-file after DEVSIX-3121 fixed
     public void basicEllipticalNegativeWidthRoundedRectangleTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeWidthRoundedRectangle");
     }
 
     @Test
-    //TODO change cmp-file after DEVSIX-3121 fixed
     public void basicEllipticalNegativeHeightRoundedRectangleTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeHeightRoundedRectangle");}
 
@@ -114,5 +112,10 @@ public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest 
     @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 1))
     public void noFillRectangleTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder,destinationFolder,"noFillRectangle");
+    }
+
+    @Test
+    public void rectangleNoWidthNoHeightTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "rectangleNoWidthNoHeight");
     }
 }

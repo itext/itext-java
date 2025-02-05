@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -617,8 +617,9 @@ public abstract class AbstractRenderer implements IRenderer {
             DrawContext drawContext, Rectangle backgroundArea) {
         Rectangle originBackgroundArea = applyBackgroundBoxProperty(backgroundArea.clone(),
                 backgroundImage.getBackgroundOrigin());
-        float[] imageWidthAndHeight = BackgroundSizeCalculationUtil.calculateBackgroundImageSize(
-                backgroundImage, originBackgroundArea.getWidth(), originBackgroundArea.getHeight());
+        float[] imageWidthAndHeight = backgroundImage.calculateBackgroundImageSize(originBackgroundArea.getWidth(),
+                originBackgroundArea.getHeight());
+
         PdfXObject backgroundXObject = backgroundImage.getImage();
         if (backgroundXObject == null) {
             backgroundXObject = backgroundImage.getForm();

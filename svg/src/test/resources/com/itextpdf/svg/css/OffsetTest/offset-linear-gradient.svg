@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" style="border:1px solid black;">
+  <defs>
+    <linearGradient id="gradient">
+      <stop offset="5%" stop-color="blue" />
+      <stop offset="95%" stop-color="red" />
+    </linearGradient>
+  </defs>
+
+  <circle cx="200" cy="200" r="150" fill="url('#gradient')" />
+</svg>

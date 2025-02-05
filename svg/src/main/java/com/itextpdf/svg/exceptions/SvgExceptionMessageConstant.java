@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -53,6 +53,7 @@ public final class SvgExceptionMessageConstant {
     public static final String INVALID_SMOOTH_CURVE_USE =
             "The smooth curve operations (S, s, T, t) may not be used as a first operator in path.";
     public static final String INVALID_TRANSFORM_DECLARATION = "Transformation declaration is not formed correctly.";
+    public static final String INVALID_TRANSFORM_VALUE = "Invalid transformation value: {0}";
     public static final String LINE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 =
             "(x y)+ parameters are expected for lineTo operator. Got: {0}";
     public static final String MOVE_TO_EXPECTS_FOLLOWING_PARAMETERS_GOT_0 =
@@ -72,6 +73,9 @@ public final class SvgExceptionMessageConstant {
             "Transformation doesn't contain the right number of values.";
     public static final String TRANSFORM_NULL = "The transformation value is null.";
     public static final String UNKNOWN_TRANSFORMATION_TYPE = "Unsupported type of transformation.";
+
+    public static final String ILLEGAL_RELATIVE_VALUE_NO_VIEWPORT_IS_SET
+            = "Relative value can't be resolved, no viewport is set.";
 
     private SvgExceptionMessageConstant() {
     }

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174743+03'00')/ModDate(D:20211108174743+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250103180932+03'00')/ModDate(D:20250103180932+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -27,18 +27,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 8 0 obj
-<</BBox[0 0 262.5 225]/Length 56/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 262.5 225]/Length 41/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 225 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 262.5 225]/Length 2764/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R/Gs8 17 0 R/Gs9 18 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 262.5 225]/Length 2552/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R/Gs4 13 0 R/Gs5 14 0 R/Gs6 15 0 R/Gs7 16 0 R/Gs8 17 0 R/Gs9 18 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 262.5 225 re
 W
 n
@@ -53,10 +52,8 @@ q
 q
 q
 BT
-1 0 0 -1 57.75 11.25 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 57.75 11.25 Tm
 (Weather)Tj
 ET
 Q
@@ -64,10 +61,8 @@ Q
 q
 q
 BT
-1 0 0 -1 52.5 21.75 Tm
-0 Tr
 /F2 9 Tf
-0 0 Td
+1 0 0 -1 52.5 21.75 Tm
 (\(No. of regions in brackets\))Tj
 ET
 Q
@@ -95,13 +90,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 152.23 69.25 Tm
-0 Tr
 /F1 8.25 Tf
-0 0 Td
+1 0 0 -1 152.23 69.25 Tm
+1 1 1 rg
 (27.3%)Tj
 ET
 Q
@@ -121,13 +114,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 155.43 120.61 Tm
-0 Tr
 /F1 8.25 Tf
-0 0 Td
+1 0 0 -1 155.43 120.61 Tm
+1 1 1 rg
 (13.6%)Tj
 ET
 Q
@@ -150,10 +141,8 @@ Q
 q
 q
 BT
-1 0 0 -1 77.62 90.51 Tm
-0 Tr
 /F1 8.25 Tf
-0 0 Td
+1 0 0 -1 77.62 90.51 Tm
 (44.8%)Tj
 ET
 Q
@@ -175,10 +164,8 @@ Q
 q
 q
 BT
-1 0 0 -1 125.44 145.16 Tm
-0 Tr
 /F1 8.25 Tf
-0 0 Td
+1 0 0 -1 125.44 145.16 Tm
 (14.2%)Tj
 ET
 Q
@@ -191,10 +178,8 @@ q
 q
 q
 BT
-1 0 0 -1 258.75 59.96 Tm
-0 Tr
 /F2 8.25 Tf
--24.3 0 Td
+1 0 0 -1 234.45 59.96 Tm
 (Cloudy)Tj
 ET
 Q
@@ -204,10 +189,8 @@ q
 q
 q
 BT
-1 0 0 -1 258.75 73.31 Tm
-0 Tr
 /F2 8.25 Tf
--9.62 0 Td
+1 0 0 -1 249.13 73.31 Tm
 (\(9\))Tj
 ET
 Q
@@ -238,10 +221,8 @@ q
 q
 q
 BT
-1 0 0 -1 258.75 103.16 Tm
-0 Tr
 /F2 8.25 Tf
--35.98 0 Td
+1 0 0 -1 222.77 103.16 Tm
 (Amount of)Tj
 ET
 Q
@@ -249,10 +230,8 @@ Q
 q
 q
 BT
-1 0 0 -1 258.75 113.96 Tm
-0 Tr
 /F2 8.25 Tf
--38.27 0 Td
+1 0 0 -1 220.48 113.96 Tm
 (Sunny days)Tj
 ET
 Q
@@ -262,10 +241,8 @@ q
 q
 q
 BT
-1 0 0 -1 258.75 127.31 Tm
-0 Tr
 /F2 8.25 Tf
--9.62 0 Td
+1 0 0 -1 249.13 127.31 Tm
 (\(6\))Tj
 ET
 Q
@@ -296,10 +273,8 @@ q
 q
 q
 BT
-1 0 0 -1 258.75 140.21 Tm
-0 Tr
 /F2 8.25 Tf
--44.23 0 Td
+1 0 0 -1 214.52 140.21 Tm
 (Partly cloudy)Tj
 ET
 Q
@@ -309,10 +284,8 @@ q
 q
 q
 BT
-1 0 0 -1 258.75 153.56 Tm
-0 Tr
 /F2 8.25 Tf
--13.74 0 Td
+1 0 0 -1 245.01 153.56 Tm
 (\(11\))Tj
 ET
 Q
@@ -343,10 +316,8 @@ q
 q
 q
 BT
-1 0 0 -1 3.75 83.21 Tm
-0 Tr
 /F2 8.25 Tf
-0 0 Td
+1 0 0 -1 3.75 83.21 Tm
 (Rainfall)Tj
 ET
 Q
@@ -356,10 +327,8 @@ q
 q
 q
 BT
-1 0 0 -1 3.75 96.56 Tm
-0 Tr
 /F2 8.25 Tf
-0 0 Td
+1 0 0 -1 3.75 96.56 Tm
 (\(24\))Tj
 ET
 Q
@@ -423,26 +392,26 @@ xref
 0 19
 0000000000 65535 f 
 0000000211 00000 n 
-0000000606 00000 n 
+0000000607 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000516 00000 n 
-0000000657 00000 n 
-0000000842 00000 n 
-0000003855 00000 n 
-0000003881 00000 n 
-0000003909 00000 n 
-0000003937 00000 n 
-0000003965 00000 n 
-0000003993 00000 n 
-0000004021 00000 n 
-0000004049 00000 n 
-0000004077 00000 n 
+0000000428 00000 n 
+0000000517 00000 n 
+0000000658 00000 n 
+0000000828 00000 n 
+0000003629 00000 n 
+0000003655 00000 n 
+0000003683 00000 n 
+0000003711 00000 n 
+0000003739 00000 n 
+0000003767 00000 n 
+0000003795 00000 n 
+0000003823 00000 n 
+0000003851 00000 n 
 trailer
-<</ID [<5df28311fa6715fff0880a1b04d0c1e4><5df28311fa6715fff0880a1b04d0c1e4>]/Info 3 0 R/Root 1 0 R/Size 19>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<bd51c1dc27a0c7cc1efea49694b8a704288caa76ea22e276e451686c16aad66586b500267b59a44e4ff8bfcea66cecd44cac2c128466d7c4f598584954cf2c32><bd51c1dc27a0c7cc1efea49694b8a704288caa76ea22e276e451686c16aad66586b500267b59a44e4ff8bfcea66cecd44cac2c128466d7c4f598584954cf2c32>]/Info 3 0 R/Root 1 0 R/Size 19>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-4105
+3879
 %%EOF

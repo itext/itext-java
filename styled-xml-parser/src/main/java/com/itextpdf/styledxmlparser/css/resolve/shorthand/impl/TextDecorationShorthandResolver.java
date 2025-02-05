@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -72,9 +72,8 @@ public class TextDecorationShorthandResolver implements IShorthandResolver {
 
         for (String value : props) {
             //For text-decoration-line attributes several attributes may be present at once.
-            //However when "none" attribute is present, all the other attributes become invalid
-            if (TEXT_DECORATION_LINE_VALUES.contains(value)
-                    || CommonCssConstants.NONE.equals(value)) {
+            //However, when "none" attribute is present, all the other attributes become invalid
+            if (TEXT_DECORATION_LINE_VALUES.contains(value) || CommonCssConstants.NONE.equals(value)) {
                 textDecorationLineValues.add(value);
             } else if (TEXT_DECORATION_STYLE_VALUES.contains(value)) {
                 textDecorationStyleValue = value;

@@ -3,7 +3,6 @@
   <desc>Example PreserveAspectRatio - illustrates preserveAspectRatio attribute</desc>
 
   <style type="text/css">
-    text { font-size: 9; }
     rect { fill: none; stroke: blue; }
   </style>
 
@@ -20,13 +19,23 @@
   <rect x="1" y="1" width="448" height="298"/>
 
   <text x="10" y="30">SVG to fit</text>
-  <g transform="translate(20,40)"><use href="#smile" /></g>
+  <g transform="translate(20,40)"><use href="#smile"/></g>
 
   <text x="10" y="110">Viewport 1</text>
-  <g transform="translate(10,120)"><rect x='.5' y='.5' width='49' height='29'/></g>
+  <g transform="translate(10,120)">
+    <rect x='.5' y='.5' width='49' height='29'/>
+    <svg preserveAspectRatio="none" viewBox="0 0 30 40" width='49' height='29'>
+      <use href="#smile" />
+    </svg>
+  </g>
 
   <text x="10" y="180">Viewport 2</text>
-  <g transform="translate(20,190)"><rect x='.5' y='.5' width='29' height='59'/></g>
+  <g transform="translate(20,190)">
+    <rect x='.5' y='.5' width='29' height='59'/>
+    <svg preserveAspectRatio="none" viewBox="0 0 30 40" width='29' height='59'>
+      <use href="#smile" />
+    </svg>
+  </g>
 
   <g id="meet-group-1" transform="translate(100, 60)">
     <text x="0" y="-30">--------------- meet ---------------</text>

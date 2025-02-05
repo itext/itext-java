@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" style="border:1px solid black;">
+  <defs>
+    <filter id="lightingEffect" x="0" y="0" width="100%" height="100%">
+      <feDiffuseLighting in="SourceGraphic" lighting-color="yellow">
+        <fePointLight x="200" y="50" z="100" />
+      </feDiffuseLighting>
+    </filter>
+  </defs>
+
+  <rect x="100" y="100" width="200" height="200" fill="blue" filter="url(#lightingEffect)" />
+</svg>

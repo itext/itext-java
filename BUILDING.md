@@ -42,6 +42,18 @@ $ mvn clean install \
     > >(tee mvn.log) 2> >(tee mvn-error.log >&2)
 ```
 
+Starting from version 8.0.3 iText Core supports native image compilation using [GraalVM][4]. Follow the instructions at
+[Getting started](https://www.graalvm.org/latest/getting-started/) to build your first native application out of java sources.
+
+To run tests in native mode [GraalVM][4] for JDK 22 or higher must be installed and native profile must be used as follows
+```bash
+$ mvn clean install -Pnative -DskipTests=false \
+    -Dmaven.test.failure.ignore=false \
+    -DITEXT_GS_EXEC="gs command" \
+    -DITEXT_MAGICK_COMPARE_EXEC="magick compare command" \
+    > >(tee mvn.log) 2> >(tee mvn-error.log >&2)
+```
+
 iText is backwards compatible in minor releases. To ensure that code changes conform to this requirement we use japicmp.
 Todo verify this execute following commands:
 
@@ -74,3 +86,5 @@ $ mvn javadoc:javadoc | grep -E "(: warning:)|(: error:)"
 [2]: https://www.ghostscript.com/
 
 [3]: https://www.imagemagick.org/
+
+[4]: https://www.graalvm.org/

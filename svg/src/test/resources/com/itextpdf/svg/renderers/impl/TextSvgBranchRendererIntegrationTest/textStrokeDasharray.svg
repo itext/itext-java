@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+  <text x="10" y="50" font-size="40" stroke="blue" fill="pink" stroke-width="2" stroke-dasharray="10,10" stroke-dashoffset="10">
+    Absolute Dash O
+  </text>
+  
+  <text x="10" y="100" font-size="40" stroke="red" fill="pink" stroke-width="2" stroke-dasharray="5%,5%">
+    Percent Dash O
+  </text>
+
+  <text x="10" y="150" font-size="40" stroke="green" fill="pink" stroke-width="2" stroke-dasharray="0 0 0 0">
+    Zero Dash O
+  </text>
+
+  <text x="10" y="200" font-size="40" stroke="blue" fill="pink" stroke-width="2" stroke-dasharray="2 -3 2">
+    Negative Dash O
+  </text>
+
+  <text x="10" y="250" font-size="40" stroke="red" fill="pink" stroke-width="2" stroke-dasharray="5 5 3">
+    Odd Dash O
+  </text>
+
+  <text x="10" y="300" font-size="40" stroke="green" fill="pink" stroke-width="2" stroke-dasharray="2rem 3em">
+    Relative Dash O
+  </text>
+</svg>

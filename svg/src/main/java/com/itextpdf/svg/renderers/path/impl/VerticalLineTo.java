@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,7 +23,6 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.svg.utils.SvgCssUtils;
 
 /***
  * Implements lineTo(V) attribute of SVG's path element
@@ -51,7 +50,7 @@ public class VerticalLineTo extends LineTo {
     public void setCoordinates(String[] inputCoordinates, Point startPoint) {
         String[] normalizedCoords = new String[LineTo.ARGUMENT_SIZE];
         // A V or v command is equivalent to an L or l command with 0 specified for the x coordinate.
-        normalizedCoords[0] = isRelative() ? "0" : SvgCssUtils.convertDoubleToString(startPoint.getX());
+        normalizedCoords[0] = isRelative() ? "0" : Double.toString(startPoint.getX());
         normalizedCoords[1] = inputCoordinates[0];
         super.setCoordinates(normalizedCoords, startPoint);
     }

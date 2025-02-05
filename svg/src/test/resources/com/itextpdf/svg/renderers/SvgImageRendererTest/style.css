@@ -1,0 +1,77 @@
+/*** SVG demonstration ***/
+
+/* page */
+svg {
+  background-color: beige;
+  }
+
+#heading {
+  font-size: 24px;
+  font-weight: bold;
+  }
+
+#caption {
+  font-size: 12px;
+  }
+
+/* flower */
+#flower:hover {
+  cursor: crosshair;
+  }
+
+/* gradient */
+#fade-stop-1 {
+  stop-color: blue;
+  }
+
+#fade-stop-2 {
+  stop-color: white;
+  }
+
+/* outer petals */
+#outer-petals {
+  opacity: .75;
+  }
+
+#outer-petals .segment-fill {
+  fill: azure;
+  stroke: lightsteelblue;
+  stroke-width: 1;
+  }
+
+#outer-petals .segment-edge {
+  fill: none;
+  stroke: deepskyblue;
+  stroke-width: 3;
+  }
+
+#outer-petals .segment:hover > .segment-fill {
+  fill: plum;
+  stroke: none;
+  }
+
+#outer-petals .segment:hover > .segment-edge {
+  stroke: slateblue;
+  }
+
+/* inner petals */
+#inner-petals .segment-fill {
+  fill: yellow;
+  stroke: yellow;
+  stroke-width: 1;
+  }
+
+#inner-petals .segment-edge {
+  fill: none;
+  stroke: yellowgreen;
+  stroke-width: 9;
+  }
+
+#inner-petals .segment:hover > .segment-fill {
+  fill: darkseagreen;
+  stroke: none;
+  }
+
+#inner-petals .segment:hover > .segment-edge {
+  stroke: green;
+  }

@@ -1,0 +1,13 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <pattern id="stripe-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+    <rect width="10" height="10" fill="white"/>
+    <path d="M0,0 L10,10 M-10,10 L0,20 M10,-10 L20,0" stroke="black" stroke-width="1"/>
+  </pattern>
+
+  <mask id="pattern-mask">
+    <rect x="0" y="0" width="200" height="200" fill="white"/>
+    <circle cx="100" cy="100" r="80" fill="black"/>
+  </mask>
+
+  <rect x="0" y="0" width="200" height="200" fill="url(#stripe-pattern)" mask="url(#pattern-mask)"/>
+</svg>

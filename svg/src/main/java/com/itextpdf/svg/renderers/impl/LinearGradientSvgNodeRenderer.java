@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -29,11 +29,12 @@ import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
+import com.itextpdf.svg.utils.TemplateResolveUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,9 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
         if (objectBoundingBox == null) {
             return null;
         }
+
+        //create color is an entry point method for linear gradient when drawing svg, so resolving href values here
+        TemplateResolveUtils.resolve(this, context);
 
         LinearGradientBuilder builder = new LinearGradientBuilder();
 
@@ -89,6 +93,11 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
         return null;
+    }
+
+    @Override
+    protected boolean isHidden() {
+        return CommonCssConstants.NONE.equals(this.attributesAndStyles.get(CommonCssConstants.DISPLAY));
     }
 
     // TODO: DEVSIX-4136 opacity is not supported now.
@@ -155,12 +164,12 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
                     SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
                             getAttribute(Attributes.Y2), 0) * CONVERT_COEFF);
         } else {
-            Rectangle currentViewPort = context.getCurrentViewPort();
+            Rectangle currentViewPort = this.getCurrentViewBox(context);
             double x = currentViewPort.getX();
             double y = currentViewPort.getY();
             double width = currentViewPort.getWidth();
             double height = currentViewPort.getHeight();
-            float em = getCurrentFontSize();
+            float em = getCurrentFontSize(context);
             float rem = context.getCssContext().getRootFontSize();
             start = new Point(
                     SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(

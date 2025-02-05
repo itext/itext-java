@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174716+03'00')/ModDate(D:20211108174716+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250204154127+03'00')/ModDate(D:20250204154127+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 675 375]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 375 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675 375]/Length 6761/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 6486/Resources<</ExtGState<</Gs1 9 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -43,33 +42,26 @@ q
 0 0 0 rg
 q
 1 1 1 rg
-1 1 1 RG
-0 w
-/Gs1 gs
 % rect
 0 0 675 375 re
-B
+f
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 0 11.7 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 0 11.7 Tm
+0.45882 0.45882 0.45882 rg
 (Company Performance)Tj
 ET
 Q
 Q
 q
-0.74118 0.74118 0.74118 rg
 q
 BT
-1 0 0 -1 0 27.29 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 0 27.29 Tm
+0.74118 0.74118 0.74118 rg
 (Sales, Expenses, and Profit: 2014-2017)Tj
 ET
 Q
@@ -91,13 +83,11 @@ h
 f
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 623.7 69.08 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 623.7 69.08 Tm
+0.45882 0.45882 0.45882 rg
 (Sales)Tj
 ET
 Q
@@ -119,13 +109,11 @@ h
 f
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 623.7 95.47 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 623.7 95.47 Tm
+0.45882 0.45882 0.45882 rg
 (Expenses)Tj
 ET
 Q
@@ -147,13 +135,11 @@ h
 f
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 623.7 121.86 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 623.7 121.86 Tm
+0.45882 0.45882 0.45882 rg
 (Profit)Tj
 ET
 Q
@@ -162,7 +148,7 @@ q
 1 1 1 rg
 1 1 1 RG
 0.75 w
-/Gs2 gs
+/Gs1 gs
 % rect
 50.63 57.38 518.25 300.75 re
 B
@@ -479,146 +465,122 @@ Q
 q
 0 0 0 rg
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 50.63 371.63 Tm
-0 Tr
 /F1 9 Tf
--2.53 0 Td
+1 0 0 -1 48.1 371.63 Tm
+0.45882 0.45882 0.45882 rg
 (0)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 137 371.63 Tm
-0 Tr
 /F1 9 Tf
--7.58 0 Td
+1 0 0 -1 129.42 371.63 Tm
+0.45882 0.45882 0.45882 rg
 (200)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 223.38 371.63 Tm
-0 Tr
 /F1 9 Tf
--7.58 0 Td
+1 0 0 -1 215.79 371.63 Tm
+0.45882 0.45882 0.45882 rg
 (400)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 309.75 371.63 Tm
-0 Tr
 /F1 9 Tf
--7.58 0 Td
+1 0 0 -1 302.17 371.63 Tm
+0.45882 0.45882 0.45882 rg
 (600)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 396.13 371.63 Tm
-0 Tr
 /F1 9 Tf
--7.58 0 Td
+1 0 0 -1 388.54 371.63 Tm
+0.45882 0.45882 0.45882 rg
 (800)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 482.5 371.63 Tm
-0 Tr
 /F1 9 Tf
--5.35 0 Td
+1 0 0 -1 477.15 371.63 Tm
+0.45882 0.45882 0.45882 rg
 (1K)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 568.88 371.63 Tm
-0 Tr
 /F1 9 Tf
--9.06 0 Td
+1 0 0 -1 559.82 371.63 Tm
+0.45882 0.45882 0.45882 rg
 (1.2K)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 46.13 86.51 Tm
-0 Tr
 /F1 9 Tf
--20.21 0 Td
+1 0 0 -1 25.91 86.51 Tm
+0.45882 0.45882 0.45882 rg
 (2014)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 46.13 166.44 Tm
-0 Tr
 /F1 9 Tf
--20.21 0 Td
+1 0 0 -1 25.91 166.44 Tm
+0.45882 0.45882 0.45882 rg
 (2015)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 46.13 246.37 Tm
-0 Tr
 /F1 9 Tf
--20.21 0 Td
+1 0 0 -1 25.91 246.37 Tm
+0.45882 0.45882 0.45882 rg
 (2016)Tj
 ET
 Q
 Q
 q
-0.45882 0.45882 0.45882 rg
 q
 BT
-1 0 0 -1 46.13 326.3 Tm
-0 Tr
 /F1 9 Tf
--20.21 0 Td
+1 0 0 -1 25.91 326.3 Tm
+0.45882 0.45882 0.45882 rg
 (2017)Tj
 ET
 Q
 Q
 q
 0 -1 1 0 -191.18 215.32 cm
-0.25882 0.25882 0.25882 rg
 q
 BT
-1 0 0 -1 12.07 200.55 Tm
-0 Tr
 /F1 9 Tf
--8.91 0 Td
+1 0 0 -1 3.16 200.55 Tm
+0.25882 0.25882 0.25882 rg
 (Year)Tj
 ET
 Q
@@ -639,25 +601,21 @@ endobj
 9 0 obj
 <</CA 0>>
 endobj
-10 0 obj
-<</CA 0>>
-endobj
 xref
-0 11
+0 10
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
-0000007672 00000 n 
-0000007697 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000737 00000 n 
+0000007372 00000 n 
 trailer
-<</ID [<8bfd53eb2b907293f066ce87fa49755e><8bfd53eb2b907293f066ce87fa49755e>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<8606e04df71b0ba34537788cc16c7a6db9a98b303d9ba527ae830e6b9d2becf0cb87ac21030ed9139a67d0a879c2ca67c24e63ee411c196fae23c1fdc8c00257><8606e04df71b0ba34537788cc16c7a6db9a98b303d9ba527ae830e6b9d2becf0cb87ac21030ed9139a67d0a879c2ca67c24e63ee411c196fae23c1fdc8c00257>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-7723
+7397
 %%EOF

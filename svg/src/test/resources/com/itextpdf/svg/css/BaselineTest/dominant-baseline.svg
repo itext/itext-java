@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" style="border:1px solid black;">
+  <line x1="100" y1="100" x2="700" y2="100" stroke="gray" stroke-width="1" />
+  <line x1="100" y1="200" x2="700" y2="200" stroke="gray" stroke-width="1" />
+
+  <text x="100" y="100" font-size="20" dominant-baseline="auto">auto</text>
+  <text x="200" y="100" font-size="20" dominant-baseline="text-bottom">text-bottom</text>
+  <text x="300" y="100" font-size="20" dominant-baseline="alphabetic">alphabetic</text>
+  <text x="400" y="100" font-size="20" dominant-baseline="ideographic">ideographic</text>
+  <text x="500" y="100" font-size="20" dominant-baseline="middle">middle</text>
+  <text x="600" y="100" font-size="20" dominant-baseline="central">central</text>
+  <text x="100" y="200" font-size="20" dominant-baseline="mathematical">mathematical</text>
+  <text x="300" y="200" font-size="20" dominant-baseline="hanging">hanging</text>
+  <text x="500" y="200" font-size="20" dominant-baseline="text-top">text-top</text>
+</svg>

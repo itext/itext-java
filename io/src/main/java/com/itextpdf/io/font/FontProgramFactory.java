@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -120,12 +120,7 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new font program. This font program can be one of the 14 built in fonts,
-     * a Type1 font referred to by an AFM or PFM file, a TrueType font or
-     * a CJK font from the Adobe Asian Font Pack.
-     * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
-     * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p>
+     * Creates a new font program.
      * The fonts are cached and if they already exist they are extracted from the cache,
      * not parsed again.
      * <p>
@@ -139,12 +134,7 @@ public final class FontProgramFactory {
     }
 
     /**
-     * Creates a new font program. This font program can be one of the 14 built in fonts,
-     * a Type 1 font referred to by an AFM or PFM file, a TrueType font or
-     * a CJK font from the Adobe Asian Font Pack.
-     * Fonts in TrueType Collections are addressed by index such as "msgothic.ttc,1".
-     * This would get the second font (indexes start at 0), in this case "MS PGothic".
-     * <p>
+     * Creates a new font program.
      * The fonts are cached and if they already exist they are extracted from the cache,
      * not parsed again.
      * <p>
@@ -441,6 +431,17 @@ public final class FontProgramFactory {
      */
     public static int registerFontDirectory(String dir) {
         return fontRegisterProvider.registerFontDirectory(dir);
+    }
+
+
+    /**
+     * Register all the fonts in a directory recursively.
+     *
+     * @param dir the directory
+     * @return the number of fonts registered
+     */
+    public static int registerFontDirectoryRecursively(String dir) {
+        return fontRegisterProvider.registerFontDirectory(dir, true);
     }
 
     /**

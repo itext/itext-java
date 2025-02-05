@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -92,21 +92,16 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-2331 Update the cmp after the issue is resolved
-    // UPD: Seems to be fixed now, but leaving the remark and issue open because the scope of the issue might be bigger than
-    // this test
     public void moreThanOneHParam() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "moreThanOneHParam");
     }
 
     @Test
-    //TODO update after DEVSIX-2331 - several (negative) line operators
     public void negativeAfterPositiveHandlingTest01() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "negativeAfterPositiveHandling");
     }
 
     @Test
-    //TODO update after DEVSIX-2333 (negative viewbox) fix
     public void negativeAfterPositiveHandlingTest02() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "negativeAfterPositiveHandlingExtendedViewbox");
     }
@@ -126,7 +121,7 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG),
     })
     //TODO: update cmp-file after DEVSIX-2255
-    public void text_path_Test() throws IOException, InterruptedException {
+    public void textPathTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "textpath");
     }
 
@@ -137,6 +132,15 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     public void textPathExample() throws IOException, InterruptedException {
         //TODO: update when DEVSIX-2255 implemented
         convertAndCompare(sourceFolder, destinationFolder, "textPathExample");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG),
+    })
+    public void tspanInTextPathTest() throws IOException, InterruptedException {
+        //TODO: update when DEVSIX-2255 implemented
+        convertAndCompare(sourceFolder, destinationFolder, "tspanInTextPath");
     }
 
     @Test

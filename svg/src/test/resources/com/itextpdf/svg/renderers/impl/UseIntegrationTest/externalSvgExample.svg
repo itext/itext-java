@@ -1,0 +1,19 @@
+<svg viewBox="0 0 1000 900" width="1000" height="1000"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink" id="svgLevel"
+     version="1.1">
+    <text x="60">These is #svgLevel</text>
+    <defs id="defsLevel" >
+        <text x="60">These is defsLevel</text>
+        <g id="gLevel">
+            <text x="60">These is #gLevel</text>
+        <image id="imageLevel" xlink:href="image.png" x="60" y="0" height="500" width="250" preserveAspectRatio="none"/>
+        <line x1="0" y1="10" x2="500" y2="10" stroke="Teal" stroke-width="7"  />
+        </g>
+    <line x1="0" y1="100" x2="200" y2="100" stroke="black" stroke-width="1"  />
+    <line x1="0" y1="200" x2="200" y2="200" stroke="black" stroke-width="1"  />
+    </defs>
+    <line x1="100" y1="50" x2="400" y2="50" stroke="Aquamarine" stroke-width="4"  />
+    <line x1="200" y1="80" x2="500" y2="80" stroke="Aquamarine" stroke-width="4"  />
+
+</svg>

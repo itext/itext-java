@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108175016+03'00')/ModDate(D:20211108175016+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250103181153+03'00')/ModDate(D:20250103181153+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 450 1200]/Length 57/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 1200]/Length 42/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 1200 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 1200]/Length 1053/Resources<</XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R/Fm5 13 0 R/Fm6 14 0 R/Fm7 15 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 1200]/Length 944/Resources<</XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R/Fm5 13 0 R/Fm6 14 0 R/Fm7 15 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 1200 re
 W
 n
@@ -58,7 +57,6 @@ Q
 q
 0.2 0 0 0.2 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 Q
@@ -71,10 +69,9 @@ q
 B
 Q
 q
+1 0 0 1 0 187.5 cm
 0.1 0 0 0.1 0 0 cm
-1 0 0 1 0 1875 cm
 q
-1 0 0 1 0 0 cm
 /Fm2 Do
 Q
 Q
@@ -95,10 +92,9 @@ q
 B
 Q
 q
+1 0 0 1 112.5 300 cm
 0.2 0 0 0.2 0 0 cm
-1 0 0 1 562.5 1500 cm
 q
-1 0 0 1 0 0 cm
 /Fm3 Do
 Q
 Q
@@ -119,10 +115,9 @@ q
 B
 Q
 q
+1 0 0 1 56.25 450 cm
 0.1 0 0 0.1 0 0 cm
-1 0 0 1 562.5 4500 cm
 q
-1 0 0 1 0 0 cm
 /Fm4 Do
 Q
 Q
@@ -135,10 +130,9 @@ q
 B
 Q
 q
+1 0 0 1 0 600 cm
 0.2 0 0 0.2 0 0 cm
-1 0 0 1 0 3000 cm
 q
-1 0 0 1 0 0 cm
 /Fm5 Do
 Q
 Q
@@ -151,10 +145,9 @@ q
 B
 Q
 q
+1 0 0 1 0 825 cm
 0.1 0 0 0.1 0 0 cm
-1 0 0 1 0 8250 cm
 q
-1 0 0 1 0 0 cm
 /Fm6 Do
 Q
 Q
@@ -167,10 +160,9 @@ q
 B
 Q
 q
+1 0 0 1 0 900 cm
 0.4 0 0 0.4 0 0 cm
-1 0 0 1 0 2250 cm
 q
-1 0 0 1 0 0 cm
 /Fm7 Do
 Q
 Q
@@ -178,7 +170,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 1125 750]/Length 462/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 450/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -204,10 +196,8 @@ Q
 q
 q
 BT
-1 0 0 -1 75 450 Tm
-0 Tr
 /F1 150 Tf
-0 0 Td
+1 0 0 -1 75 450 Tm
 (Stretch to fit)Tj
 ET
 Q
@@ -244,7 +234,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[0 -375 1125 1125]/Length 466/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -375 1125 1125]/Length 454/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 -375 1125 1500 re
 W
 n
@@ -270,10 +260,8 @@ Q
 q
 q
 BT
-1 0 0 -1 75 450 Tm
-0 Tr
 /F1 150 Tf
-0 0 Td
+1 0 0 -1 75 450 Tm
 (Stretch to fit)Tj
 ET
 Q
@@ -310,7 +298,7 @@ Q
 endstream
 endobj
 11 0 obj
-<</BBox[-562.5 0 1687.5 750]/Length 467/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-562.5 0 1687.5 750]/Length 455/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -562.5 0 2250 750 re
 W
 n
@@ -336,10 +324,8 @@ Q
 q
 q
 BT
-1 0 0 -1 75 450 Tm
-0 Tr
 /F1 150 Tf
-0 0 Td
+1 0 0 -1 75 450 Tm
 (Stretch to fit)Tj
 ET
 Q
@@ -376,7 +362,7 @@ Q
 endstream
 endobj
 12 0 obj
-<</BBox[-562.5 0 1687.5 750]/Length 467/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-562.5 0 1687.5 750]/Length 455/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -562.5 0 2250 750 re
 W
 n
@@ -402,10 +388,8 @@ Q
 q
 q
 BT
-1 0 0 -1 75 450 Tm
-0 Tr
 /F1 150 Tf
-0 0 Td
+1 0 0 -1 75 450 Tm
 (Stretch to fit)Tj
 ET
 Q
@@ -442,7 +426,7 @@ Q
 endstream
 endobj
 13 0 obj
-<</BBox[0 -375 1125 1125]/Length 466/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -375 1125 1125]/Length 454/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 -375 1125 1500 re
 W
 n
@@ -468,10 +452,8 @@ Q
 q
 q
 BT
-1 0 0 -1 75 450 Tm
-0 Tr
 /F1 150 Tf
-0 0 Td
+1 0 0 -1 75 450 Tm
 (Stretch to fit)Tj
 ET
 Q
@@ -508,7 +490,7 @@ Q
 endstream
 endobj
 14 0 obj
-<</BBox[0 0 1125 750]/Length 462/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 450/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -534,10 +516,8 @@ Q
 q
 q
 BT
-1 0 0 -1 75 450 Tm
-0 Tr
 /F1 150 Tf
-0 0 Td
+1 0 0 -1 75 450 Tm
 (Stretch to fit)Tj
 ET
 Q
@@ -574,7 +554,7 @@ Q
 endstream
 endobj
 15 0 obj
-<</BBox[0 0 1125 750]/Length 462/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 450/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -600,10 +580,8 @@ Q
 q
 q
 BT
-1 0 0 -1 75 450 Tm
-0 Tr
 /F1 150 Tf
-0 0 Td
+1 0 0 -1 75 450 Tm
 (Stretch to fit)Tj
 ET
 Q
@@ -643,23 +621,23 @@ xref
 0 16
 0000000000 65535 f 
 0000000213 00000 n 
-0000000519 00000 n 
+0000000520 00000 n 
 0000000258 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000429 00000 n 
-0000000570 00000 n 
-0000000755 00000 n 
-0000002004 00000 n 
-0000002591 00000 n 
-0000003187 00000 n 
-0000003787 00000 n 
-0000004387 00000 n 
-0000004983 00000 n 
-0000005571 00000 n 
+0000000430 00000 n 
+0000000571 00000 n 
+0000000741 00000 n 
+0000001880 00000 n 
+0000002455 00000 n 
+0000003039 00000 n 
+0000003627 00000 n 
+0000004215 00000 n 
+0000004799 00000 n 
+0000005375 00000 n 
 trailer
-<</ID [<f1440d0f391330c22b68345cd93645c7><f1440d0f391330c22b68345cd93645c7>]/Info 3 0 R/Root 1 0 R/Size 16>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<3b3c6aba097972a863069e66485e61e8e1cac950c4f7893b5ecfde7c9d78f4c84d72f1b8561d8bf7774c99af8ac3fbba2975ca015849b29d681443c3938f70ea><3b3c6aba097972a863069e66485e61e8e1cac950c4f7893b5ecfde7c9d78f4c84d72f1b8561d8bf7774c99af8ac3fbba2975ca015849b29d681443c3938f70ea>]/Info 3 0 R/Root 1 0 R/Size 16>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-6159
+5951
 %%EOF

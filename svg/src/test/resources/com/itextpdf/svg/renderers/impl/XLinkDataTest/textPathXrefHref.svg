@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="200">
+  <defs>
+    <path id="textPathCurve" d="M10,100 Q200,10 390,100" />
+  </defs>
+
+  <path d="M10,100 Q200,10 390,100" stroke="red" fill="none" />
+
+  <text fill="blue">
+    <textPath xlink:href="#textPathCurve">
+      Text on path! Text on path! Text on path! Text on path!
+    </textPath>
+  </text>
+</svg>

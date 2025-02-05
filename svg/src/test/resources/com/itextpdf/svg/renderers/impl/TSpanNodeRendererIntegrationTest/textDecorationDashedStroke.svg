@@ -1,0 +1,24 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="12cm" height="4cm" viewBox="0 0 1200 200"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <rect x="1" y="1" width="1198" height="200" fill="none" stroke="blue" stroke-width="2"/>
+    <g font-size="60" fill="blue" stroke="red" stroke-width="1" stroke-dasharray="1 2 3 2" stroke-dashoffset="1">
+        <text x="100" y="135" style="text-decoration: green dotted underline">
+            <tspan stroke-dasharray="2 2">
+                Three
+                <tspan fill="orange" stroke-width="3" style="text-decoration: yellow double line-through" stroke="purple">
+                    words
+                    <tspan fill="pink" stroke="black" stroke-dasharray="1 1" stroke-width="0.5">
+                        have
+                    </tspan>
+                </tspan>
+                <tspan fill="yellow" stroke="darkgreen" stroke-dasharray="1 1" stroke-width="5" font-size="80" style="text-decoration: pink dashed overline">
+                    different
+                </tspan>
+            </tspan>
+            <tspan fill="green" stroke="blue" text-decoration=" ">
+                underlining
+            </tspan>
+        </text>
+    </g>
+</svg>

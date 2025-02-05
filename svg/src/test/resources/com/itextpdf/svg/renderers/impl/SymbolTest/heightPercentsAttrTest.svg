@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 80 20" xmlns="http://www.w3.org/2000/svg"
+<svg viewBox="0 0 20 20" width="500" height="500" xmlns="http://www.w3.org/2000/svg"
 	 xmlns:xlink="http://www.w3.org/1999/xlink">
 	<symbol id="myDot" height="25%">
-		<circle cx="5" cy="5" r="5"/>
+		<circle cx="5" cy="5" r="5" />
 	</symbol>
-	<use xlink:href="#myDot" x="15" y="0"/>
+	<use xlink:href="#myDot" x="10" y="0"/>
 </svg>

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -64,7 +64,6 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -182,7 +181,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             Assertions.fail(errorMessage);
         }
     }
-    
+
     @Test
     public void formFieldWithFloatBorderTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "formFieldWithFloatBorder.pdf";
@@ -1962,6 +1961,48 @@ public class PdfFormFieldTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(fileName,
                 sourceFolder + "cmp_pdfWithSignatureAndFontInBuilderFieldTest.pdf", destinationFolder,
+                "diff_"));
+    }
+
+    @Test
+    public void dirtyCheckBoxAnnotationMergedTest() throws IOException, InterruptedException {
+        String outputFileName = destinationFolder + "dirtyCheckBoxAnnotationMergedTest.pdf";
+        String inputFileName = sourceFolder + "dirtyCheckBoxAnnotationMergedTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_dirtyCheckBoxAnnotationMergedTest.pdf";
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(inputFileName), new PdfWriter(outputFileName))) {
+            PdfFormCreator.getAcroForm(pdf, false);
+            // Do nothing.
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.FORM_FIELD_HAS_CYCLED_PARENT_STRUCTURE,
+            ignore = true))
+    public void formFieldCycleRefTest() throws IOException, InterruptedException {
+        String fileName = destinationFolder + "formFieldCycleRefTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(fileName));
+        pdfDoc.setTagged();
+        pdfDoc.initializeOutlines();
+
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfFormField formField =  new CheckBoxFormFieldBuilder(pdfDoc, "TestCheck")
+                .setWidgetRectangle(new Rectangle(36, 560, 20, 20)).createCheckBox().setValue("1", true);
+        PdfFormField child1 = new TextFormFieldBuilder(pdfDoc, "child")
+                .setWidgetRectangle(new Rectangle(100, 300, 200, 20)).createText();
+        PdfFormField child2 = new TextFormFieldBuilder(pdfDoc, "another_name")
+                .setWidgetRectangle(new Rectangle(100, 250, 200, 20)).createText();
+        formField.addKid(child1);
+        child1.addKid(child2);
+        formField.setParent(child2);
+        acroForm.addField(formField);
+
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(fileName,
+                sourceFolder + "cmp_formFieldCycleRefTest.pdf", destinationFolder,
                 "diff_"));
     }
 

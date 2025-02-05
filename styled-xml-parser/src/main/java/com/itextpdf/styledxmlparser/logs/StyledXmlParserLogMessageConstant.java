@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -117,6 +117,14 @@ public final class StyledXmlParserLogMessageConstant {
     /** The Constant ERROR_RESOLVING_PARENT_STYLES. */
     public static final String ERROR_RESOLVING_PARENT_STYLES =
             "Element parent styles are not resolved. Styles for current element might be incorrect.";
+    /** The Constant ERROR_LOADING_FONT. */
+    public static final String ERROR_LOADING_FONT = "Error while loading font";
+
+    public static final String IMPORT_MUST_COME_BEFORE =
+            "Imported rules must come before all other types of rules, except @charset rules and layer creating @layer statements. "
+                    + "Rule will be ignored. ";
+
+    public static final String IMPORT_RULE_URL_CAN_NOT_BE_RESOLVED = "Import rule URL can't be resolved because of base URI absence.";
 
     /**
      * Instantiates a new log message constant.

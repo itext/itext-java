@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -341,6 +341,16 @@ public class PdfFormXObject extends PdfXObject {
         getPdfObject().put(key, value);
         setModified();
         return this;
+    }
+
+    /**
+     * If the form xobject is relative sized. This information
+     * is used during xobject layout to resolve it's relative size.
+     *
+     * @return {@code true} if the xobject is relative sized, {@code false} otherwise
+     */
+    public boolean isRelativeSized() {
+        return false;
     }
 
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -28,6 +28,7 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -270,5 +271,23 @@ public class PdfStringTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "writeUtf8ActualText.pdf", sourceFolder + "cmp_writeUtf8ActualText.pdf", destinationFolder, "diffActualText_"));
+    }
+
+    @Test
+    public void emptyHexWriting() {
+        PdfString string = new PdfString("");
+        Assertions.assertEquals("", string.toUnicodeString());
+        string.setHexWriting(true);
+        Assertions.assertEquals("", string.toUnicodeString());
+    }
+
+
+    @Test
+    public void nullHexWriting() {
+        PdfString string = new PdfString("hello");
+        Exception e = Assertions.assertThrows(PdfException.class, () -> {
+            string.encodeBytes(null);
+        });
+        Assertions.assertEquals("byte[] should not be null.", e.getMessage());
     }
 }

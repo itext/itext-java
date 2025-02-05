@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="2.0" viewBox="0 0 700 720"
+     preserveAspectRatio="none" width="75%" height="100%">
+    <svg xmlns="http://www.w3.org/2000/svg" version="2.0" viewBox="0 0 600 620">
+        <rect x="1" y="1" width="598" height="616" fill="none" stroke="black"/>
+
+        <g transform="scale(9,2)">
+            <rect x="5" y="10" width="10" height="50" ry="5" fill="none" stroke="teal" stroke-width="5"/>
+            <rect x="5" y="70" width="10" height="50" ry="5" fill="none" stroke="teal" stroke-width="5"
+                  vector-effect="non-scaling-stroke"/>
+
+            <circle cx="15" cy="150" r="10" fill="none" stroke="pink" stroke-width="5"/>
+            <circle cx="15" cy="180" r="10" fill="none" stroke="pink" stroke-width="5"
+                    vector-effect="non-scaling-stroke"/>
+
+            <ellipse cx="10" cy="220" rx="5" ry="20" fill="none" stroke="yellow" stroke-width="5"/>
+            <ellipse cx="10" cy="270" rx="5" ry="20" fill="none" stroke="yellow" stroke-width="5"
+                     vector-effect="non-scaling-stroke"/>
+
+            <line x1="22" y1="200" x2="22" y2="290" stroke="orange" stroke-width="3"/>
+            <line x1="27" y1="200" x2="27" y2="290" stroke="orange" stroke-width="3"
+                  vector-effect="non-scaling-stroke"/>
+
+            <path d="M 40,140 L 46,220 L 30,170 L 50,170 L 34,220 z" fill="none" stroke="red" stroke-width="3"/>
+            <path d="M 40,220 L 46,300 L 30,250 L 50,250 L 34,300 z" fill="none" stroke="red" stroke-width="3"
+                  vector-effect="non-scaling-stroke"/>
+
+            <polygon points="30,10 35,25 35,45 30,60 25,45 25,25" fill="none" stroke="lightblue" stroke-width="5"/>
+            <polygon points="30,80 35,95 35,115 30,130 25,115 25,95" fill="none" stroke="lightblue" stroke-width="5"
+                     vector-effect="non-scaling-stroke"/>
+
+            <polyline points="50,10 55,25 55,45 50,60 45,45 45,25" fill="none" stroke="blue" stroke-width="5"/>
+            <polyline points="50,80 55,95 55,115 50,130 45,115 45,95" fill="none" stroke="blue" stroke-width="5"
+                      vector-effect="non-scaling-stroke"/>
+
+            <text x="53" y="160" fill="none" stroke="green" stroke-width="2">A</text>
+            <text x="53" y="200" fill="none" stroke="green" stroke-width="2" vector-effect="non-scaling-stroke">A</text>
+
+            <text>
+                <tspan x="54" y="240" fill="none" stroke="purple" stroke-width="2">B</tspan>
+                <tspan x="54" y="280" fill="none" stroke="purple" stroke-width="2" vector-effect="non-scaling-stroke">
+                    B
+                </tspan>
+            </text>
+
+            <g transform="translate(35, 49) scale(0.5) skewX(10)" fill="none" stroke="black" stroke-width="5">
+                <rect x="5" y="10" width="10" height="50"/>
+                <rect x="5" y="70" width="10" height="50" vector-effect="non-scaling-stroke"/>
+            </g>
+        </g>
+    </svg>
+</svg>

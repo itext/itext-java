@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174902+03'00')/ModDate(D:20211108174902+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250124141752+03'00')/ModDate(D:20250124141752+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,110 +24,100 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 750 750]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 750]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 750 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 750 750]/Length 2824/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 750]/Length 2591/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 750 re
 W
 n
 q
 0 0 1 RG
+12 w
 % line
 15 15 m
 75 75 l
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 112.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 15 112.5 Tm
+0 0 0 rg
 (stroke-width="1em")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 123.75 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 15 123.75 Tm
+0 0 0 rg
 (Line element)Tj
 ET
 Q
 Q
 q
 0 0 1 RG
+6 w
 % line
 165 15 m
 225 75 l
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 165 112.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 165 112.5 Tm
+0 0 0 rg
 (stroke-width="1ex")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 165 123.75 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 165 123.75 Tm
+0 0 0 rg
 (Line element)Tj
 ET
 Q
 Q
 q
 0 0 1 RG
+7.5 w
 % line
 315 15 m
 375 75 l
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 315 112.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 315 112.5 Tm
+0 0 0 rg
 (stroke-width="1%")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 315 123.75 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 315 123.75 Tm
+0 0 0 rg
 (Line element)Tj
 ET
 Q
@@ -135,31 +125,28 @@ Q
 q
 0 0 0 rg
 0 0 1 RG
+12 w
 % polyline
 15 165 m
 75 225 l
 B
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 292.5 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 15 292.5 Tm
+0 0 0 rg
 (stroke-width="1em")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 303.75 Tm
-0 Tr
 /F1 12 Tf
-0 0 Td
+1 0 0 -1 15 303.75 Tm
+0 0 0 rg
 (Polyline element)Tj
 ET
 Q
@@ -167,31 +154,28 @@ Q
 q
 0 0 0 rg
 0 0 1 RG
+6 w
 % polyline
 165 165 m
 225 225 l
 B
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 165 292.5 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 165 292.5 Tm
+0 0 0 rg
 (stroke-width="1ex")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 165 277.5 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 165 277.5 Tm
+0 0 0 rg
 (Polyline element)Tj
 ET
 Q
@@ -199,37 +183,35 @@ Q
 q
 0 0 0 rg
 0 0 1 RG
+7.5 w
 % polyline
 315 165 m
 375 225 l
 B
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 315 292.5 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 315 292.5 Tm
+0 0 0 rg
 (stroke-width="1%")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 315 303.75 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 315 303.75 Tm
+0 0 0 rg
 (Polyline element)Tj
 ET
 Q
 Q
 q
 0 0 1 RG
+6 w
 % polyline
 15 315 m
 75 375 l
@@ -238,31 +220,28 @@ q
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 412.5 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 15 412.5 Tm
+0 0 0 rg
 (stroke-width="1ex")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 423.75 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 15 423.75 Tm
+0 0 0 rg
 (Polygon element)Tj
 ET
 Q
 Q
 q
 0 0 1 RG
+12 w
 % polyline
 165 315 m
 225 375 l
@@ -271,32 +250,28 @@ q
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 165 412.5 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 165 412.5 Tm
+0 0 0 rg
 (stroke-width="1em")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 165 423.75 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 165 423.75 Tm
+0 0 0 rg
 (Polygon element)Tj
 ET
 Q
 Q
 q
 0 0 1 RG
-0.3 w
+2.25 w
 % polyline
 315 315 m
 375 375 l
@@ -305,31 +280,28 @@ q
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 315 412.5 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 315 412.5 Tm
+0 0 0 rg
 (stroke-width="0.3%")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 315 423.75 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 315 423.75 Tm
+0 0 0 rg
 (Polygon element)Tj
 ET
 Q
 Q
 q
 0 0 1 RG
+12 w
 % path
 15 465 m
 75 525 l
@@ -338,31 +310,28 @@ q
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 562.5 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 15 562.5 Tm
+0 0 0 rg
 (stroke-width="0.3em")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 573.75 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 15 573.75 Tm
+0 0 0 rg
 (Path element)Tj
 ET
 Q
 Q
 q
 0 0 1 RG
+6 w
 % path
 165 465 m
 225 525 l
@@ -371,31 +340,28 @@ q
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 165 562.5 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 165 562.5 Tm
+0 0 0 rg
 (stroke-width="0.3ex")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 165 573.75 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 165 573.75 Tm
+0 0 0 rg
 (Path element)Tj
 ET
 Q
 Q
 q
 0 0 1 RG
+7.5 w
 % path
 315 465 m
 375 525 l
@@ -404,25 +370,21 @@ q
 S
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 315 562.5 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 315 562.5 Tm
+0 0 0 rg
 (stroke-width="0.3%")Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 315 573.75 Tm
-0 Tr
 /F1 15 Tf
-0 0 Td
+1 0 0 -1 315 573.75 Tm
+0 0 0 rg
 (Path element)Tj
 ET
 Q
@@ -434,16 +396,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000737 00000 n 
 trailer
-<</ID [<14e910a6f751d1ecd272ae152fbad6ed><14e910a6f751d1ecd272ae152fbad6ed>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<cfdf33e9a5b6e49132a5f81867becb0970e43c0fd7e81cd690b93f6fab476f4a23fd1cf5fea1f24a4b82be8f21c37e618537ac843f3acaaa1eda66192191b1eb><cfdf33e9a5b6e49132a5f81867becb0970e43c0fd7e81cd690b93f6fab476f4a23fd1cf5fea1f24a4b82be8f21c37e618537ac843f3acaaa1eda66192191b1eb>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-3700
+3453
 %%EOF

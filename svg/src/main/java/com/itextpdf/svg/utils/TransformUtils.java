@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,9 +22,9 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 
@@ -200,7 +200,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians((float) CssDimensionParsingUtils.parseFloat(values.get(0))));
+        double tan = Math.tan(Math.toRadians(parseTransformationValue(values.get(0))));
 
         //Differs from the notation in the PDF-spec for skews
         return new AffineTransform(1, tan, 0, 1, 0, 0);
@@ -217,7 +217,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double tan = Math.tan(Math.toRadians((float) CssDimensionParsingUtils.parseFloat(values.get(0))));
+        double tan = Math.tan(Math.toRadians(parseTransformationValue(values.get(0))));
 
         //Differs from the notation in the PDF-spec for skews
         return new AffineTransform(1, 0, tan, 1, 0, 0);
@@ -234,7 +234,7 @@ public final class TransformUtils {
             throw new SvgProcessingException(SvgExceptionMessageConstant.TRANSFORM_INCORRECT_NUMBER_OF_VALUES);
         }
 
-        double angle = Math.toRadians((float) CssDimensionParsingUtils.parseFloat(values.get(0)));
+        double angle = Math.toRadians(parseTransformationValue(values.get(0)));
 
         if (values.size() == 3) {
             float centerX = CssDimensionParsingUtils.parseAbsoluteLength(values.get(1));
@@ -326,5 +326,15 @@ public final class TransformUtils {
         String numbers = transformation.substring(transformation.indexOf('(') + 1, transformation.indexOf(')'));
 
         return SvgCssUtils.splitValueList(numbers);
+    }
+
+    private static float parseTransformationValue(String valueStr) {
+        Float valueParsed = CssDimensionParsingUtils.parseFloat(valueStr);
+        if (valueParsed == null) {
+            throw new SvgProcessingException(MessageFormatUtil.format(
+                    SvgExceptionMessageConstant.INVALID_TRANSFORM_VALUE, valueStr));
+        } else {
+            return (float) valueParsed;
+        }
     }
 }

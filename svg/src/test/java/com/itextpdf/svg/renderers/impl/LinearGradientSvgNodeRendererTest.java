@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -47,13 +47,11 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
         ITextTest.createOrClearDestinationFolder(destinationFolder);
     }
 
-    // TODO: DEVSIX-3932 update cmp_ after fix
     @Test
     public void circleTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "circle");
     }
 
-    // TODO: DEVSIX-3932 update cmp_ after fix
     @Test
     public void ellipseTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "ellipse");
@@ -241,7 +239,6 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
         convertAndCompare(sourceFolder, destinationFolder, "arcInsideOtherEllipticalArc");
     }
 
-    // TODO: DEVSIX-3932 update cmp_ after fix
     @Test
     public void polygonTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "polygon");
@@ -323,12 +320,13 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
-    })
-    // TODO DEVSIX-4140 font-relative values doesn't support
     public void textTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "text");
+    }
+
+    @Test
+    public void tspanTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "tspan");
     }
     
     @Test
@@ -337,9 +335,6 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)
-    })
     public void textRotatedTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "textRotatedTest");
     }
@@ -347,6 +342,21 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void textDxTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "textDxTest");
+    }
+
+    @Test
+    public void chineseTextDxTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "chineseTextDxTest");
+    }
+
+    @Test
+    public void chineseTextDxVerticalTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "chineseTextDxVerticalTest");
+    }
+
+    @Test
+    public void textAnchorTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "textAnchorTest");
     }
 
     @Test
@@ -537,5 +547,125 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void severalTransformsInGradientWithObjectBoundingBoxUnitsTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "severalTransformsInGradientWithObjectBoundingBoxUnits");
+    }
+
+    @Test
+    public void hrefBasicReferenceTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "hrefBasicReference");
+    }
+
+    @Test
+    public void transitiveHrefBasicReferenceTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "transitiveHrefBasicReference");
+    }
+
+    @Test
+    public void linearGradXlinkTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHref");
+    }
+
+    @Test
+    public void linearGradXlink3StopsTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHref3Stops");
+    }
+
+    @Test
+    public void linearGradXlinkGradientTransformTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefGradientTransform");
+    }
+
+    @Test
+    public void linearGradXlinkNegativeOffsetTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefNegativeOffset");
+    }
+
+    @Test
+    public void linearGradXlinkNegativeOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefNegativeOpacity");
+    }
+
+    @Test
+    public void linearGradXlinkOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefOpacity");
+    }
+
+    @Test
+    public void linearGradXlinkOpacity2Test() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefOpacity2");
+    }
+
+    @Test
+    public void linearGradXlinkSpreadMethodTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefSpreadMethod1");
+    }
+
+    @Test
+    public void linearGradXlinkSpreadMethod2Test() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefSpreadMethod2");
+    }
+
+    @Test
+    public void linearGradXlinkSpreadMethod3Test() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefSpreadMethod3");
+    }
+
+    @Test
+    public void linearGradXlinkHrefXYvalsTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefXYvals1");
+    }
+
+    @Test
+    public void linearGradXlinkHrefXYvals2Test() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefXYvals2");
+    }
+
+    @Test
+    public void linearGradXlinkHrefXYvals3Test() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefXYvals3");
+    }
+
+    @Test
+    public void linearGradXlinkHreOffsetSwapTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHreOffsetSwap");
+    }
+
+    @Test
+    public void linearGradTransitiveHrefOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradTransitiveHrefOpacity");
+    }
+
+    @Test
+    public void linearGradTransitiveHrefNegativeOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradTransitiveHrefNegativeOpacity");
+    }
+
+    @Test
+    public void linearGradTransitiveHrefNegativeOffsetTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradTransitiveHrefNegativeOffset");
+    }
+
+    @Test
+    public void linearGradTransitiveHref3stopsTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradTransitiveHref3stops");
+    }
+
+    @Test
+    public void linearGradHrefTransitiveSpreadMethodTopLayerTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefTransitiveSpreadMethodTopLayer");
+    }
+
+    @Test
+    public void linearGradHrefTransitiveSpreadMethodBottomLayerTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefTransitiveSpreadMethodBottomLayer");
+    }
+
+    @Test
+    public void linearGradHrefTransitiveSpreadMethod3Test() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefTransitiveSpreadMethod3");
+    }
+
+    @Test
+    public void linearGradHrefTransitiveSpreadMethod2Test() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefTransitiveSpreadMethod2");
     }
 }

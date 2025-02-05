@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -188,8 +188,9 @@ public class WriterProperties {
      * @param encryptionAlgorithm the type of encryption. It can be one of
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
-     *                            {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                            or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_128},
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_256}
+     *                            or {@link EncryptionConstants#ENCRYPTION_AES_GCM}.
      *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed
      *                            to output the metadata in cleartext.
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
@@ -229,8 +230,9 @@ public class WriterProperties {
      * @param encryptionAlgorithm the type of encryption. It can be one of
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
-     *                            {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                            or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_128},
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_256}
+     *                            or {@link EncryptionConstants#ENCRYPTION_AES_GCM}.
      *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed
      *                            to output the metadata in cleartext.
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
@@ -271,8 +273,9 @@ public class WriterProperties {
      * @param encryptionAlgorithm the type of encryption. It can be one of
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
-     *                            {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                            or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_128},
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_256}
+     *                            or {@link EncryptionConstants#ENCRYPTION_AES_GCM}.
      *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed
      *                            to output the metadata in cleartext.
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.
@@ -309,8 +312,9 @@ public class WriterProperties {
      * @param encryptionAlgorithm the type of encryption. It can be one of
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_40},
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128},
-     *                            {@link EncryptionConstants#ENCRYPTION_AES_128}
-     *                            or {@link EncryptionConstants#ENCRYPTION_AES_256}.
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_128},
+     *                            {@link EncryptionConstants#ENCRYPTION_AES_256}
+     *                            or {@link EncryptionConstants#ENCRYPTION_AES_GCM}.
      *                            Optionally {@link EncryptionConstants#DO_NOT_ENCRYPT_METADATA} can be ORed
      *                            to output the metadata in cleartext.
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} can be ORed as well.

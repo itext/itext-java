@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -51,6 +51,7 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TabAlignment;
+import com.itextpdf.layout.properties.TextAnchor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.LastFittingChildRendererData;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRendererSequenceHelper;
@@ -751,6 +752,7 @@ public class LineRenderer extends AbstractRenderer {
 
         if (anythingPlaced || floatsPlacedInLine) {
             toProcess.adjustChildrenYLine().trimLast();
+            toProcess.adjustChildrenXLine();
             result.setMinMaxWidth(minMaxWidth);
         }
 
@@ -817,7 +819,7 @@ public class LineRenderer extends AbstractRenderer {
         float baseFactor = freeWidth / (ratio * numberOfSpaces + (1 - ratio) * (baseCharsCount - 1));
 
         //Prevent a NaN when trying to justify a single word with spacing_ratio == 1.0
-        if (Float.isInfinite(baseFactor)) {
+        if (Float.isInfinite(baseFactor) || Float.isNaN(baseFactor)) {
             baseFactor = 0;
         }
         float wordSpacing = ratio * baseFactor;
@@ -934,7 +936,7 @@ public class LineRenderer extends AbstractRenderer {
     protected LineRenderer adjustChildrenYLine() {
         if (RenderingMode.HTML_MODE == this.<RenderingMode>getProperty(Property.RENDERING_MODE) &&
                 hasInlineBlocksWithVerticalAlignment()) {
-                        InlineVerticalAlignmentHelper.adjustChildrenYLineHtmlMode(this);
+            InlineVerticalAlignmentHelper.adjustChildrenYLineHtmlMode(this);
         } else {
             adjustChildrenYLineDefaultMode();
         }
@@ -1618,6 +1620,63 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         return false;
+    }
+
+    private void adjustChildrenXLine() {
+        RenderingMode mode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        if (RenderingMode.SVG_MODE != mode) {
+            return;
+        }
+        // LineRenderer first child contains initial x of the occupied area, in order to identify originX we need to
+        // also add relative x position of the first text chunk in the svg which is ParagraphRenderer first child.
+        float originX = (float) getChildRenderers().get(0).getOccupiedArea().getBBox().getLeft() +
+                (float) ((TextRenderer) getParent().getChildRenderers().get(0)).getPropertyAsFloat(Property.LEFT, 0f);
+        float[] minMaxX = getMinMaxX();
+        float leftmostX = minMaxX[0];
+        float xShift = originX - leftmostX;
+        float textAnchorCorrection = applyTextAnchor(minMaxX[1] - minMaxX[0]);
+        xShift += textAnchorCorrection;
+
+        for (final IRenderer renderer : getChildRenderers()) {
+            if (renderer instanceof TextRenderer) {
+                renderer.move(xShift, 0);
+            }
+        }
+    }
+
+    private float[] getMinMaxX() {
+        float leftmostX = Float.MAX_VALUE;
+        float rightmostX = Float.MIN_VALUE;
+        for (int i = 0; i < getChildRenderers().size(); i++) {
+            IRenderer renderer = getChildRenderers().get(i);
+            if (renderer instanceof TextRenderer) {
+                final TextRenderer textRenderer = (TextRenderer) renderer;
+                float x = textRenderer.getOccupiedArea().getBBox().getX();
+                if (textRenderer.isRelativePosition()) {
+                    x += (float) textRenderer.getPropertyAsFloat(Property.LEFT, 0f);
+                }
+                if (x < leftmostX) {
+                    leftmostX = x;
+                }
+                float width = textRenderer.getOccupiedArea().getBBox().getWidth();
+                if (x + width > rightmostX) {
+                    rightmostX = x + width;
+                }
+            }
+        }
+        return new float[]{leftmostX, rightmostX};
+    }
+
+    private float applyTextAnchor(float textWidth) {
+        TextAnchor textAnchor = (TextAnchor) this.<TextAnchor>getProperty(Property.TEXT_ANCHOR, TextAnchor.START);
+        switch (textAnchor) {
+            case END:
+                return -textWidth;
+            case MIDDLE:
+                return -textWidth / 2;
+            default:
+                return 0;
+        }
     }
 
     public static class RendererGlyph {

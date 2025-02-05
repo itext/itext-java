@@ -1,0 +1,18 @@
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <mask id="transformed-mask" maskUnits="userSpaceOnUse">
+    <g>
+      <rect x="0" y="0" width="200" height="100" fill="white"/>
+      <circle cx="100" cy="50" r="30" fill="black"/>
+    </g>
+  </mask>
+
+  <mask id="inherited" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+    <use href="#transformed-mask"/>
+	<g transform="translate(100, 50) scale(0.5) rotate(55)">
+      <rect x="0" y="0" width="250" height="100" fill="white"/>
+      <circle cx="100" cy="50" r="30" fill="red"/>
+    </g>
+  </mask>
+
+  <rect x="0" y="0" width="400" height="200" fill="blue" mask="url(#inherited)"/>
+</svg>

@@ -1,0 +1,59 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="12cm" height="4cm" viewBox="0 0 1200 800"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <rect x="1" y="1" width="1198" height="780" fill="none" stroke="blue" stroke-width="2"/>
+    <g font-size="60" fill="blue" stroke="red" stroke-width="1">
+        <text x="100" y="75">Normal text</text>
+        <text x="100" y="155" style="text-decoration: line-through" text-decoration="overline">Text with line-through
+        </text>
+        <text x="100" y="235" text-decoration="overline" style="text-decoration: underline">Underlined text</text>
+        <text x="100" y="315" style="text-decoration-line: underline; text-decoration-style: dashed;  text-decoration-color: black">
+            <tspan>One</tspan>
+            <tspan fill="yellow" stroke="purple"> word</tspan>
+            <tspan fill="pink" stroke="black"> has</tspan>
+            <tspan fill="yellow" stroke="darkgreen" text-decoration="overline line-through"> different</tspan>
+            <tspan fill="green" stroke="blue"> underlining</tspan>
+        </text>
+        <text x="100" y="395" style="text-decoration: line-through" text-decoration="overline" fill="none">
+            Text with line-through
+            <tspan fill="red">
+                and non-null fill
+            </tspan>
+        </text>
+        <text x="100" y="465" style="text-decoration: line-through" text-decoration="overline" fill="none" stroke="none">
+            <tspan fill="red">
+                Text with transparent line-through
+            </tspan>
+        </text>
+        <text x="100" y="535" text-decoration="overline" style="text-decoration: underline" stroke="none">
+            Underlined
+            <tspan fill="green" text-decoration="overline none line-through underline">
+                text
+            </tspan>
+        </text>
+        <text x="100" y="625" text-decoration="green dotted underline" stroke="none">
+            <tspan>Two</tspan>
+            <tspan fill="yellow" stroke="purple"> words</tspan>
+            <tspan fill="pink" stroke="black" text-decoration="overline    line-through underline"> has</tspan>
+            <tspan fill="none" stroke="darkgreen" text-decoration="red double overline"> different</tspan>
+            <tspan fill="green" stroke="blue"> underlining</tspan>
+        </text>
+        <text x="100" y="735" style="text-decoration: green dotted underline">
+            <tspan>
+                Three
+                <tspan fill="orange" stroke-width="3" style="text-decoration: yellow double line-through" stroke="purple">
+                    words
+                    <tspan fill="pink" stroke="black" stroke-width="0.5">
+                        have
+                    </tspan>
+                </tspan>
+                <tspan fill="yellow" stroke="darkgreen" stroke-width="5" font-size="80" style="text-decoration: pink dashed overline">
+                    different
+                </tspan>
+            </tspan>
+            <tspan fill="green" stroke="blue" text-decoration=" ">
+                underlining
+            </tspan>
+        </text>
+    </g>
+</svg>

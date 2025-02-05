@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
@@ -42,7 +43,6 @@ import com.itextpdf.svg.renderers.path.impl.MoveTo;
 import com.itextpdf.svg.renderers.path.impl.QuadraticSmoothCurveTo;
 import com.itextpdf.svg.renderers.path.impl.SmoothSCurveTo;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
-import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,12 +90,26 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
      */
     private ClosePath zOperator = null;
 
+    /**
+     * Draws this element to a canvas-like object maintained in the context.
+     *
+     * @param context the object that knows the place to draw this element and maintains its state
+     */
     @Override
     public void doDraw(SvgDrawContext context) {
         PdfCanvas canvas = context.getCurrentCanvas();
         canvas.writeLiteral("% path\n");
+
+        AffineTransform transform = applyNonScalingStrokeTransform(context);
         for (IPathShape item : getShapes()) {
-            item.draw(canvas);
+            if (item instanceof AbstractPathShape) {
+                AbstractPathShape shape = (AbstractPathShape) item;
+                shape.setParent(this);
+                shape.setContext(context);
+                shape.setTransform(transform);
+            }
+
+            item.draw(context.getCurrentCanvas());
         }
     }
 
@@ -145,11 +159,11 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                     float reflectedX = (float) (2 * previousEndPoint.getX() - lastControlPoint.getX());
                     float reflectedY = (float) (2 * previousEndPoint.getY() - lastControlPoint.getY());
 
-                    startingControlPoint[0] = SvgCssUtils.convertFloatToString(reflectedX);
-                    startingControlPoint[1] = SvgCssUtils.convertFloatToString(reflectedY);
+                    startingControlPoint[0] = Float.toString(reflectedX);
+                    startingControlPoint[1] = Float.toString(reflectedY);
                 } else {
-                    startingControlPoint[0] = SvgCssUtils.convertDoubleToString(previousEndPoint.getX());
-                    startingControlPoint[1] = SvgCssUtils.convertDoubleToString(previousEndPoint.getY());
+                    startingControlPoint[0] = Double.toString(previousEndPoint.getX());
+                    startingControlPoint[1] = Double.toString(previousEndPoint.getY());
                 }
             } else {
                 throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_SMOOTH_CURVE_USE);
@@ -283,6 +297,7 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                     .setMessageParams(pathString);
         }
 
+        pathString = pathString.replaceAll("\\s+", " ").trim();
         String[] operators = splitPathStringIntoOperators(pathString);
 
         for (String inst : operators) {
@@ -352,47 +367,41 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
     @Override
     public void drawMarker(SvgDrawContext context, final MarkerVertexType markerVertexType) {
         Object[] allShapesOrdered = getShapes().toArray();
-        Point point = null;
+        List<Point> markerPoints = new ArrayList<>();
+        int startingPoint = 0;
         if (MarkerVertexType.MARKER_START.equals(markerVertexType)) {
-            point = ((AbstractPathShape) allShapesOrdered[0]).getEndingPoint();
+            markerPoints.add(new Point(((AbstractPathShape) allShapesOrdered[0]).getEndingPoint()));
         } else if (MarkerVertexType.MARKER_END.equals(markerVertexType)) {
-            point = ((AbstractPathShape) allShapesOrdered[allShapesOrdered.length - 1])
-                    .getEndingPoint();
+            markerPoints.add(new Point(((AbstractPathShape) allShapesOrdered[allShapesOrdered.length - 1])
+                    .getEndingPoint()));
+            startingPoint = allShapesOrdered.length - 2;
+        } else if (MarkerVertexType.MARKER_MID.equals(markerVertexType)) {
+            for (int i = 1; i < allShapesOrdered.length - 1; ++i) {
+                markerPoints.add(new Point(((AbstractPathShape) allShapesOrdered[i]).getEndingPoint()));
+            }
+            startingPoint = 1;
         }
-        if (point != null) {
-            String moveX = SvgCssUtils.convertDoubleToString(point.getX());
-            String moveY = SvgCssUtils.convertDoubleToString(point.getY());
-            MarkerSvgNodeRenderer.drawMarker(context, moveX, moveY, markerVertexType, this);
+        if (!markerPoints.isEmpty()) {
+            MarkerSvgNodeRenderer.drawMarkers(context, startingPoint, markerPoints, markerVertexType, this);
         }
     }
 
     @Override
     public double getAutoOrientAngle(MarkerSvgNodeRenderer marker, boolean reverse) {
         Object[] pathShapes = getShapes().toArray();
-        if (pathShapes.length > 1) {
-            Vector v = new Vector(0, 0, 0);
-            if (SvgConstants.Attributes.MARKER_END.equals(marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
-                // Create vector from the last two shapes
-                IPathShape lastShape = (IPathShape) pathShapes[pathShapes.length - 1];
-                IPathShape secondToLastShape = (IPathShape) pathShapes[pathShapes.length - 2];
-                v = new Vector((float) (lastShape.getEndingPoint().getX() - secondToLastShape.getEndingPoint().getX()),
-                        (float) (lastShape.getEndingPoint().getY() - secondToLastShape.getEndingPoint().getY()),
-                        0f);
-            } else if (SvgConstants.Attributes.MARKER_START
-                    .equals(marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
-                // Create vector from the first two shapes
-                IPathShape firstShape = (IPathShape) pathShapes[0];
-                IPathShape secondShape = (IPathShape) pathShapes[1];
-                v = new Vector((float) (secondShape.getEndingPoint().getX() - firstShape.getEndingPoint().getX()),
-                        (float) (secondShape.getEndingPoint().getY() - firstShape.getEndingPoint().getY()),
-                        0f);
-            }
-            // Get angle from this vector and the horizontal axis
+        int markerIndex = Integer.parseInt(marker.getAttribute(MarkerSvgNodeRenderer.MARKER_INDEX));
+        if (markerIndex < pathShapes.length && pathShapes.length > 1) {
+            Vector v;
+            IPathShape firstShape = (IPathShape) pathShapes[markerIndex];
+            IPathShape secondShape = (IPathShape) pathShapes[markerIndex + 1];
+            v = new Vector((float) (secondShape.getEndingPoint().getX() - firstShape.getEndingPoint().getX()),
+                    (float) (secondShape.getEndingPoint().getY() - firstShape.getEndingPoint().getY()),
+                    0f);
             Vector xAxis = new Vector(1, 0, 0);
             double rotAngle = SvgCoordinateUtils.calculateAngleBetweenTwoVectors(xAxis, v);
-            return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1f;
+            return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1.0;
         }
-        return 0;
+        return 0.0;
     }
 
     private static Point getCurrentPoint(IPathShape previousShape) {

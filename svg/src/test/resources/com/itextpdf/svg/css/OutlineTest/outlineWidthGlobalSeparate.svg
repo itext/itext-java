@@ -1,0 +1,25 @@
+<svg width="660" height="1100" xmlns="http://www.w3.org/2000/svg" style="outline: 8px solid blue">
+<style>
+.firstVal {
+outline-width:10px;
+outline-color: purple;
+outline-style: solid;
+}
+
+.inherit{outline-style: solid; outline-width: inherit;}
+.initial{outline-style: solid; outline-width: initial;}
+.revert{outline-width: revert;}
+.unset{outline-width: unset;}
+</style>
+
+<rect x="50" y="50" width="400" height="80" fill="red" class="inherit"/>
+<text x="60" y="75" font-size="15" fill="white">outline-width: inherit;</text>
+<rect x="50" y="150" width="400" height="80" fill="red" class="initial"/>
+<text x="60" y="175" font-size="15" fill="white">outline-width: initial; (equal to medium)</text>
+<rect x="50" y="250" width="400" height="80" fill="red" class="firstVal revert"/>
+<text x="60" y="275" font-size="15" fill="white">outline-width: revert;</text>
+<rect x="50" y="350" width="400" height="80" fill="red" class="firstVal unset"/>
+<text x="60" y="375" font-size="15" fill="white">outline-width: unset;</text>
+<rect x="50" y="450" width="400" height="80" fill="red" class="firstVal" />
+<text x="60" y="475" font-size="15" fill="white">outline-offset no revert/unsetting of class.</text>
+</svg>

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -133,5 +133,14 @@ public class CssTypesValidationUtilsTest extends ExtendedITextTest {
         Assertions.assertTrue(CssTypesValidationUtils.isRemValue("10rem "));
         Assertions.assertTrue(CssTypesValidationUtils.isMetricValue("10px "));
         Assertions.assertTrue(CssTypesValidationUtils.isPercentageValue("10% "));
+    }
+
+    @Test
+    public void isBase64Test() {
+        String base64String = "data:image/jpeg;base64,/9j/aGVsbG8gd29ybGQ=";
+        boolean isBase64Data = CssTypesValidationUtils.isBase64Data(base64String);
+        boolean isInlineData = CssTypesValidationUtils.isInlineData(base64String);
+        Assertions.assertTrue(isBase64Data);
+        Assertions.assertTrue(isInlineData);
     }
 }

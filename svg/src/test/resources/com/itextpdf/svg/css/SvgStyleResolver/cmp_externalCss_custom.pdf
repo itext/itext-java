@@ -9,57 +9,60 @@ Q
 endstream
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox[0 0 1190 842]/Parent 2 0 R/Resources<</XObject<</Fm1 7 0 R>>>>/TrimBox[0 0 1190 842]/Type/Page>>
+<</Contents 5 0 R/MediaBox[0 0 1190 842]/Parent 2 0 R/Resources<</XObject<</Fm1 8 0 R>>>>/TrimBox[0 0 1190 842]/Type/Page>>
 endobj
 1 0 obj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108180040+03'00')/ModDate(D:20211108180040+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250124141743+03'00')/ModDate(D:20250124141743+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
+<</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
+endobj
+7 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
-7 0 obj
-<</BBox[0 0 450 450]/Length 75/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+8 0 obj
+<</BBox[0 0 450 450]/Length 108/Resources<</XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 450 cm
 % svg root
+q
+0.96078 0.96078 0.86275 rg
+0 0 450 450 re
+f
+Q
 1 0 0 1 225 225 cm
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
-8 0 obj
-<</BBox[-225 -225 225 225]/Length 11127/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+9 0 obj
+<</BBox[-225 -225 225 225]/Length 11126/Resources<</ExtGState<</Gs1 10 0 R/Gs2 11 0 R/Gs3 12 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 -225 -225 450 450 re
 W
 n
 q
-0 0 0 rg
 q
 BT
+/F1 18 Tf
 1 0 0 -1 -210 -202.5 Tm
-0 Tr
-/F1 12 Tf
-0 0 Td
+0 0 0 rg
 (SVG demonstration)Tj
 ET
 Q
 Q
 q
-0 0 0 rg
 q
 BT
+/F2 9 Tf
 1 0 0 -1 -210 -187.5 Tm
-0 Tr
-/F1 12 Tf
-0 0 Td
+0 0 0 rg
 (Move your mouse pointer over the flower.)Tj
 ET
 Q
@@ -67,6 +70,7 @@ Q
 q
 0 0 0 rg
 q
+/Gs1 gs
 % ellipse
 150 0 m
 150 82.84 82.84 150 0 150 c
@@ -76,6 +80,8 @@ q
 f
 Q
 q
+/Gs2 gs
+/Gs3 gs
 q
 q
 q
@@ -858,20 +864,33 @@ Q
 
 endstream
 endobj
+10 0 obj
+<</ca 0>>
+endobj
+11 0 obj
+<</ca 0.75>>
+endobj
+12 0 obj
+<</ca 0.75>>
+endobj
 xref
-0 9
+0 13
 0000000000 65535 f 
 0000000213 00000 n 
-0000000519 00000 n 
+0000000609 00000 n 
 0000000258 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000429 00000 n 
-0000000570 00000 n 
-0000000772 00000 n 
+0000000430 00000 n 
+0000000519 00000 n 
+0000000660 00000 n 
+0000000896 00000 n 
+0000012210 00000 n 
+0000012236 00000 n 
+0000012265 00000 n 
 trailer
-<</ID [<77426049c223a2d3543d18f53f8b2ada><77426049c223a2d3543d18f53f8b2ada>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<6e6a78a2f4ababa30af0ab6ad49758f1edbebc2af5cb8f9bc7c9e45d5ad600dd42354f39f336f12fd3c226dce34ea46a26e061a5cc64d9953de8a02ae50c024d><6e6a78a2f4ababa30af0ab6ad49758f1edbebc2af5cb8f9bc7c9e45d5ad600dd42354f39f336f12fd3c226dce34ea46a26e061a5cc64d9953de8a02ae50c024d>]/Info 3 0 R/Root 1 0 R/Size 13>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-12031
+12294
 %%EOF

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -27,11 +27,10 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
@@ -47,6 +46,11 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void helloWorldTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world");
+    }
+
+    @Test
+    public void relativeHelloWorldTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hello_world_relative");
     }
 
     @Test
@@ -180,9 +184,7 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void textRelativeMoveInvalidXTest() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidX")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidX");
     }
 
     //Y
@@ -203,9 +205,7 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void textRelativeMoveInvalidYTest() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text-relativeMove-invalidY");
     }
 
     @Test
@@ -226,5 +226,107 @@ public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void tspanWithOneAbsoluteCoordinateTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanWithOneAbsoluteCoordinateTest");
+    }
+
+    @Test
+    public void textDxDyAttributesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDxDyAttributes");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void textBaselineShiftTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textBaselineShift");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void textRotateTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textRotate");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void textLengthAdjustTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textLengthAdjust");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void textTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextLength");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void textStretchedTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textStretchedTextLength");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void textShrunkTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textShrunkTextLength");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void textCombinedAttributesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textCombinedAttributes");
+    }
+
+    @Test
+    public void textStrokeDasharrayTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textStrokeDasharray");
+    }
+
+    @Test
+    public void textComplexStrokeDasharrayTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textComplexStrokeDasharray");
+    }
+
+    @Test
+    public void textTextDecorationUnderlineTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextDecorationUnderline");
+    }
+
+    @Test
+    public void textTextDecorationLineThroughTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextDecorationLineThrough");
+    }
+
+    @Test
+    public void textTextDecorationOverlineTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textTextDecorationOverline");
+    }
+
+    @Test
+    public void textWhiteSpaceNormalTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpaceNormal");
+    }
+
+    @Test
+    public void textWhiteSpacePreTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePre");
+    }
+
+    @Test
+    public void textWhiteSpaceNoWrapTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpaceNoWrap");
+    }
+
+    @Test
+    public void textWhiteSpacePreWrapTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePreWrap");
+    }
+
+    @Test
+    public void textWhiteSpacePreLineTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textWhiteSpacePreLine");
+    }
+
+    @Test
+    public void textRelativeXYTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textRelativeXY");
     }
 }

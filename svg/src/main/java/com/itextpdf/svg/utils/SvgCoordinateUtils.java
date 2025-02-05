@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -30,7 +30,11 @@ import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Values;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 
+/**
+ * Utility class that facilitates various methods for calculating/transforming coordinates.
+ */
 public class SvgCoordinateUtils {
 
     /**
@@ -54,7 +58,7 @@ public class SvgCoordinateUtils {
             for (int j = 0; j < currentCoordinates.length; j++, i++) {
                 double relativeDouble = Double.parseDouble(relativeCoordinates[i]);
                 relativeDouble += currentCoordinates[j];
-                absoluteOperators[i] = SvgCssUtils.convertDoubleToString(relativeDouble);
+                absoluteOperators[i] = Double.toString(relativeDouble);
             }
         }
 
@@ -129,6 +133,19 @@ public class SvgCoordinateUtils {
     }
 
     /**
+     * Calculate normalized diagonal length.
+     *
+     * @param context svg draw context.
+     * @return diagonal length in px.
+     */
+    public static float calculateNormalizedDiagonalLength(SvgDrawContext context) {
+        final float viewPortHeight = context.getCurrentViewPort().getHeight();
+        final float viewPortWidth = context.getCurrentViewPort().getWidth();
+        return (float) (Math.sqrt(viewPortHeight * viewPortHeight +
+                viewPortWidth * viewPortWidth) / Math.sqrt(2));
+    }
+
+    /**
      * Returns the viewBox received after scaling and displacement given preserveAspectRatio.
      *
      * @param viewBox         parsed viewBox rectangle. It should be a valid {@link Rectangle}
@@ -171,24 +188,25 @@ public class SvgCoordinateUtils {
             scaleHeight = scale;
         }
 
-        // apply scale
+        // Apply scale for width and height.
         Rectangle appliedViewBox = new Rectangle(viewBox.getX(), viewBox.getY(),
                 (float) ((double) viewBox.getWidth() * scaleWidth),
                 (float) ((double) viewBox.getHeight() * scaleHeight));
 
-        double minXOffset = (double) currentViewPort.getX() - (double) appliedViewBox.getX();
-        double minYOffset = (double) currentViewPort.getY() - (double) appliedViewBox.getY();
+        // Calculate offset.
+        double minXOffset = (double) currentViewPort.getX() - ((double) appliedViewBox.getX() * scaleWidth);
+        double minYOffset = (double) currentViewPort.getY() - ((double) appliedViewBox.getY() * scaleHeight);
 
         double midXOffset = (double) currentViewPort.getX() + ((double) currentViewPort.getWidth() / 2)
-                - ((double) appliedViewBox.getX() + ((double) appliedViewBox.getWidth() / 2));
+                - (((double) appliedViewBox.getX() * scaleWidth) + ((double) appliedViewBox.getWidth() / 2));
         double midYOffset = (double) currentViewPort.getY() + ((double) currentViewPort.getHeight() / 2)
-                - ((double) appliedViewBox.getY() + ((double) appliedViewBox.getHeight() / 2));
+                - (((double) appliedViewBox.getY() * scaleHeight) + ((double) appliedViewBox.getHeight() / 2));
 
         double maxXOffset = (double) currentViewPort.getX() + (double) currentViewPort.getWidth()
-                - ((double) appliedViewBox.getX() + (double) appliedViewBox.getWidth());
+                - (((double) appliedViewBox.getX() * scaleWidth) + (double) appliedViewBox.getWidth());
         double maxYOffset = (double) currentViewPort.getY() + (double) currentViewPort.getHeight()
-                - ((double) appliedViewBox.getY() + (double) appliedViewBox.getHeight());
-        
+                - (((double) appliedViewBox.getY() * scaleHeight) + (double) appliedViewBox.getHeight());
+
         double xOffset;
         double yOffset;
 
@@ -234,9 +252,13 @@ public class SvgCoordinateUtils {
                 return applyViewBox(viewBox, currentViewPort, Values.XMID_YMID, Values.MEET);
         }
 
-        // apply offset
+        // Apply offset.
         appliedViewBox.moveRight((float) xOffset);
         appliedViewBox.moveUp((float) yOffset);
+
+        // Apply scale for coordinates.
+        appliedViewBox.setX((float) ((double) appliedViewBox.getX() * scaleWidth));
+        appliedViewBox.setY((float) ((double) appliedViewBox.getY() * scaleHeight));
 
         return appliedViewBox;
     }

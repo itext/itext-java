@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -130,6 +130,7 @@ import com.itextpdf.bouncycastle.tsp.TimeStampTokenBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampTokenGeneratorBC;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleTestConstantsFactory;
+import com.itextpdf.commons.bouncycastle.SecurityProviderProxy;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1BitString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
@@ -346,15 +347,16 @@ import org.bouncycastle.tsp.TimeStampToken;
 public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     private static final Provider PROVIDER = new BouncyCastleProvider();
-    private static final String PROVIDER_NAME = PROVIDER.getName();
     private static final BouncyCastleTestConstantsFactory BOUNCY_CASTLE_TEST_CONSTANTS =
             new BouncyCastleTestConstantsFactory();
+
+    private final SecurityProviderProxy securityProviderProxy;
 
     /**
      * Creates {@link IBouncyCastleFactory} for usual bouncy-castle module.
      */
     public BouncyCastleFactory() {
-        // Empty constructor.
+        this.securityProviderProxy = new SecurityProviderProxy(PROVIDER);
     }
 
     /**
@@ -907,7 +909,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public Provider getProvider() {
-        return PROVIDER;
+        return this.securityProviderProxy.getProvider();
     }
 
     /**
@@ -915,7 +917,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public String getProviderName() {
-        return PROVIDER_NAME;
+        return this.securityProviderProxy.getProviderName();
     }
 
     /**
@@ -957,7 +959,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IJcaX509CertificateConverter createJcaX509CertificateConverter() {
         final IJcaX509CertificateConverter converter =
                 new JcaX509CertificateConverterBC(new JcaX509CertificateConverter());
-        converter.setProvider(PROVIDER);
+        converter.setProvider(getProvider());
         return converter;
     }
 
@@ -974,8 +976,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public ICertificateID createCertificateID(IDigestCalculator digestCalculator,
-            IX509CertificateHolder certificateHolder,
-            BigInteger bigInteger) throws OCSPExceptionBC {
+                                              IX509CertificateHolder certificateHolder,
+                                              BigInteger bigInteger) throws OCSPExceptionBC {
         return new CertificateIDBC(digestCalculator, certificateHolder, bigInteger);
     }
 
@@ -1009,7 +1011,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public IExtension createExtension(IASN1ObjectIdentifier objectIdentifier,
-            boolean critical, IASN1OctetString octetString) {
+                                      boolean critical, IASN1OctetString octetString) {
         return new ExtensionBC(new Extension(((ASN1ObjectIdentifierBC) objectIdentifier).getASN1ObjectIdentifier(),
                 critical, ((ASN1OctetStringBC) octetString).getASN1OctetString()));
     }
@@ -1063,7 +1065,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public ISigPolicyQualifierInfo createSigPolicyQualifierInfo(IASN1ObjectIdentifier objectIdentifier,
-            IDERIA5String string) {
+                                                                IDERIA5String string) {
         return new SigPolicyQualifierInfoBC(objectIdentifier, string);
     }
 
@@ -1136,7 +1138,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public IResponseBytes createResponseBytes(IASN1ObjectIdentifier asn1ObjectIdentifier,
-            IDEROctetString derOctetString) {
+                                              IDEROctetString derOctetString) {
         return new ResponseBytesBC(asn1ObjectIdentifier, derOctetString);
     }
 
@@ -1206,7 +1208,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IDERIA5String createDERIA5String(IASN1TaggedObject taggedObject, boolean b) {
         return new DERIA5StringBC(
-                (DERIA5String)DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getASN1TaggedObject(), b));
+                (DERIA5String) DERIA5String.getInstance(((ASN1TaggedObjectBC) taggedObject).getASN1TaggedObject(), b));
     }
 
     /**
@@ -1271,7 +1273,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public IDistributionPointName createDistributionPointName(IGeneralNames generalNames) {
-        return new DistributionPointNameBC(new DistributionPointName(((GeneralNamesBC)generalNames).getGeneralNames()));
+        return new DistributionPointNameBC(new DistributionPointName(((GeneralNamesBC) generalNames).getGeneralNames()));
     }
 
     /**
@@ -1299,7 +1301,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
-            IASN1OctetString octetString) {
+                                                            IASN1OctetString octetString) {
         return new OtherHashAlgAndValueBC(algorithmIdentifier, octetString);
     }
 
@@ -1308,7 +1310,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
-            IOtherHashAlgAndValue algAndValue) {
+                                                      IOtherHashAlgAndValue algAndValue) {
         return new SignaturePolicyIdBC(objectIdentifier, algAndValue);
     }
 
@@ -1317,8 +1319,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public ISignaturePolicyId createSignaturePolicyId(IASN1ObjectIdentifier objectIdentifier,
-            IOtherHashAlgAndValue algAndValue,
-            ISigPolicyQualifierInfo... policyQualifiers) {
+                                                      IOtherHashAlgAndValue algAndValue,
+                                                      ISigPolicyQualifierInfo... policyQualifiers) {
         SigPolicyQualifierInfo[] qualifierInfos = new SigPolicyQualifierInfo[policyQualifiers.length];
         for (int i = 0; i < qualifierInfos.length; ++i) {
             qualifierInfos[i] = ((SigPolicyQualifierInfoBC) policyQualifiers[i]).getSigPolicyQualifierInfo();
@@ -1339,7 +1341,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public IEnvelopedData createEnvelopedData(IOriginatorInfo originatorInfo, IASN1Set set,
-            IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
+                                              IEncryptedContentInfo encryptedContentInfo, IASN1Set set1) {
         return new EnvelopedDataBC(originatorInfo, set, encryptedContentInfo, set1);
     }
 
@@ -1356,7 +1358,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public IEncryptedContentInfo createEncryptedContentInfo(IASN1ObjectIdentifier data,
-            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
+                                                            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
         return new EncryptedContentInfoBC(data, algorithmIdentifier, octetString);
     }
 
@@ -1398,7 +1400,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public IKeyTransRecipientInfo createKeyTransRecipientInfo(IRecipientIdentifier recipientIdentifier,
-            IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
+                                                              IAlgorithmIdentifier algorithmIdentifier, IASN1OctetString octetString) {
         return new KeyTransRecipientInfoBC(recipientIdentifier, algorithmIdentifier, octetString);
     }
 
@@ -1523,7 +1525,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public ITimeStampResponseGenerator createTimeStampResponseGenerator(ITimeStampTokenGenerator tokenGenerator,
-            Set<String> algorithms) {
+                                                                        Set<String> algorithms) {
         return new TimeStampResponseGeneratorBC(tokenGenerator, algorithms);
     }
 
@@ -1557,7 +1559,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public ITimeStampTokenGenerator createTimeStampTokenGenerator(ISignerInfoGenerator siGen, IDigestCalculator dgCalc,
-            IASN1ObjectIdentifier policy) throws TSPExceptionBC {
+                                                                  IASN1ObjectIdentifier policy) throws TSPExceptionBC {
         return new TimeStampTokenGeneratorBC(siGen, dgCalc, policy);
     }
 
@@ -1632,7 +1634,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public IJcaX509v3CertificateBuilder createJcaX509v3CertificateBuilder(X509Certificate signingCert,
-            BigInteger certSerialNumber, Date startDate, Date endDate, IX500Name subjectDnName, PublicKey publicKey) {
+                                                                          BigInteger certSerialNumber, Date startDate, Date endDate, IX500Name subjectDnName, PublicKey publicKey) {
         return new JcaX509v3CertificateBuilderBC(signingCert, certSerialNumber, startDate, endDate, subjectDnName,
                 publicKey);
     }
@@ -1747,6 +1749,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public ITSTInfo createTSTInfo(IASN1Primitive contentInfo) {
+        return new TSTInfoBC(TSTInfo.getInstance(((ASN1PrimitiveBC) contentInfo).getPrimitive()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ISingleResp createSingleResp(IBasicOCSPResponse basicResp) {
         return new SingleRespBC(basicResp);
     }
@@ -1797,7 +1807,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IJcaPEMKeyConverter createJcaPEMKeyConverter() {
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
-        converter.setProvider(PROVIDER);
+        converter.setProvider(getProvider());
         return new JcaPEMKeyConverterBC(converter);
     }
 
@@ -1854,7 +1864,7 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      */
     @Override
     public byte[] createCipherBytes(X509Certificate x509certificate, byte[] abyte0,
-            IAlgorithmIdentifier algorithmIdentifier)
+                                    IAlgorithmIdentifier algorithmIdentifier)
             throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(algorithmIdentifier.getAlgorithm().getId());
         try {

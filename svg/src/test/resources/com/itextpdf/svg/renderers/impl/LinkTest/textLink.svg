@@ -1,0 +1,6 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- A link around a text -->
+  <a href="/docs/Web/SVG/Element/text">
+    <text x="50" y="90" text-anchor="middle" font-family="Arial" font-size="16" fill="darkblue">&lt;circle&gt;</text>
+  </a>
+</svg>

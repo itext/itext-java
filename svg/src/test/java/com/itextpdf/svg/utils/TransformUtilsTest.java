@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,14 +22,15 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class TransformUtilsTest extends ExtendedITextTest {
@@ -197,5 +198,29 @@ public class TransformUtilsTest extends ExtendedITextTest {
         AffineTransform expected = AffineTransform.getTranslateInstance(2.25, 0);
 
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void parseInvalidRotateTest() {
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("rotate(text)"));
+        Assertions.assertEquals(MessageFormatUtil.format(SvgExceptionMessageConstant.INVALID_TRANSFORM_VALUE, "text"),
+                e.getMessage());
+    }
+
+    @Test
+    public void parseInvalidSkewXTest() {
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("skewX(text)"));
+        Assertions.assertEquals(MessageFormatUtil.format(SvgExceptionMessageConstant.INVALID_TRANSFORM_VALUE, "text"),
+                e.getMessage());
+    }
+
+    @Test
+    public void parseInvalidSkewYTest() {
+        Exception e = Assertions.assertThrows(SvgProcessingException.class,
+                () -> TransformUtils.parseTransform("skewY(text)"));
+        Assertions.assertEquals(MessageFormatUtil.format(SvgExceptionMessageConstant.INVALID_TRANSFORM_VALUE, "text"),
+                e.getMessage());
     }
 }

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="100">
+  <text x="10" y="50" font-size="16">
+    <tspan textLength="200" fill="blue">TextWithLength</tspan>
+  </text>
+</svg>

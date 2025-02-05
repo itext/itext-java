@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,8 +22,12 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 
@@ -63,7 +67,6 @@ public class FillTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill");
     }
 
-    /* This test should fail when DEVSIX-2251 is resolved*/
     @Test
     public void eoFillTest01() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofill01");
@@ -89,7 +92,6 @@ public class FillTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillstroke");
     }
 
-    /* This test should fail when DEVSIX-2251 is resolved*/
     @Test
     public void nonZeroFillTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nonzerofill");
@@ -118,8 +120,23 @@ public class FillTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO update cmp file after DEVSIX-3365 will be fixed
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION)
+    })
     public void invalidUrlFillTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidUrlFillTest");
+    }
+
+    @Test
+    @LogMessages(
+            messages = {@LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 4)}
+    )
+    public void textFillFallbackTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textFillFallbackTest");
+    }
+
+    @Test
+    public void fillLinkToNonExistingGradientTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "fillLinkToNonExistingGradient");
     }
 }

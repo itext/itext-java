@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="600">
+	<rect x="0" y="0" width="400" height="140" fill="none" stroke="red"></rect>
+	<text xmlns="http://www.w3.org/2000/svg" x="0" y="20">
+        <tspan x="0" dx="20, 20, 5,4,6,14" y="15">Multiple dx values</tspan>
+        <tspan x="0" y="20" dy="15,3,4,5,10">Multiple dy values</tspan>
+        <tspan x="0" dx="20, 20, 5,4,6,14" y="80" dy="15,3,4,5,10">Multiple dx and dy values</tspan>
+    </text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200">
+  <text x="10" y="50" font-size="16" fill="black">BaseText</text>
+  
+  <text x="10" y="50" font-size="16" dx="10" dy="20" rotate="30" baseline-shift="super" 
+        textLength="150" lengthAdjust="spacing" fill="red">
+    CombinedText
+  </text>
+</svg>

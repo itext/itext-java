@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,12 +22,9 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -65,9 +62,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void TSpanRelativeMoveInvalidXTest() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidX")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidX");
     }
 
     @Test
@@ -87,9 +82,7 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void TSpanRelativeMoveInvalidYTest() throws IOException, InterruptedException {
-        Assertions.assertThrows(StyledXMLParserException.class,
-                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidY")
-        );
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-relativeMove-invalidY");
     }
 
     @Test
@@ -171,27 +164,88 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update after DEVSIX-2507 and DEVSIX-3005 fix
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
-    })
+    public void tspanTextAnchorTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textspan-textAnchor2");
+    }
+
+    @Test
+    //TODO: update after DEVSIX-2507 fix
     public void tspanBasicExample() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanBasicExample");
     }
 
     @Test
-    //TODO: update after DEVSIX-2507 and DEVSIX-3005 fix
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
-    })
+    //TODO: update after DEVSIX-2507 fix
     public void tspanNestedExample() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanNestedExample");
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-2270 fixed
-    public void text_decoration_Test() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "text_decoration");
+    public void tspanDxDyAttributesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanDxDyAttributes");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void tspanBaselineShiftTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanBaselineShift");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void tspanRotateTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanRotate");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void tspanLengthAdjustTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanLengthAdjust");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void tspanTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanTextLength");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void tspanStretchedTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanStretchedTextLengthTest");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507, DEVSIX-5477 update cmp file after fix
+    public void tspanShrunkTextLengthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanShrunkTextLengthTest");
+    }
+
+    @Test
+    //TODO: DEVSIX-2507 update cmp file after fix
+    public void tspanCombinedAttributesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanCombinedAttributes");
+    }
+
+    @Test
+    public void textDecorationSvgTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationSvg");
+    }
+
+    @Test
+    public void textDecorationCssTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationCss");
+    }
+
+    @Test
+    // TODO update after DEVSIX-4063 is closed
+    public void textDecorationStyleTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationStyle");
+    }
+
+    @Test
+    public void textDecorationDashedStrokeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationDashedStroke");
     }
 
     @Test
@@ -237,5 +291,62 @@ public class TSpanNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void yWithoutXTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "yWithoutX");
+    }
+
+    @Test
+    // TODO DEVSIX-2507 support x, y, dx, dy attributes
+    public void absoluteAndRelativePositionTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "absoluteAndRelativePosition");
+    }
+
+    @Test
+    // TODO DEVSIX-2507 support x, y, dx, dy attributes, handle whitespaces
+    public void negativeAbsoluteAndRelativePositionTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "negativeAbsoluteAndRelativePosition");
+    }
+
+    @Test
+    // TODO DEVSIX-2507 support x, y, dx, dy attributes
+    public void noPositionAfterRelativeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "noPositionAfterRelative");
+    }
+
+    @Test
+    public void nestedPositioningTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedPositioningTest");
+    }
+
+    @Test
+    public void textDecorationTspanTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationTspan");
+    }
+
+    @Test
+    // TODO DEVSIX-8888 SVG: support text-decoration inheritance
+    public void textDecorationOnGroupTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationOnGroup");
+    }
+
+    @Test
+    // TODO DEVSIX-8888 SVG: support text-decoration inheritance
+    public void textDecorationOnSvgTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationOnSvg");
+    }
+
+    @Test
+    // TODO DEVSIX-8888 SVG: support text-decoration inheritance
+    public void textDecorationOnSymbolTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationOnSymbol");
+    }
+
+    @Test
+    public void textDecorationTspanSubTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "textDecorationTspanSub");
+    }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void tspanFillTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanFill");
     }
 }

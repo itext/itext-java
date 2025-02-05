@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -44,6 +44,11 @@ public class CircleNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void basicCircleTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "basicCircle");
+    }
+
+    @Test
+    public void relativeCircleTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "relativeCircle");
     }
 
     @Test
@@ -117,8 +122,12 @@ public class CircleNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: DEVSIX-3932 update cmp_ after fix
     public void circleWithBigStrokeWidthTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "circleWithBigStrokeWidth");
+    }
+
+    @Test
+    public void circleShapeRenderingTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "shape-rendering");
     }
 }

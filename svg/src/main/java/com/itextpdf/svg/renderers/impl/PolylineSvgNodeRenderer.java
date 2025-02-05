@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
@@ -39,12 +40,18 @@ import com.itextpdf.svg.utils.SvgCoordinateUtils;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;polyline&gt; tag.
  */
 public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMarkerCapable {
+
+    /**
+     * orientation vector which is used for marker angle calculation.
+     */
+    private Vector previousOrientationVector = new Vector(1, 0, 0);
 
     /**
      * A List of {@link Point} objects representing the path to be drawn by the polyline tag
@@ -127,6 +134,13 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         PdfCanvas canvas = context.getCurrentCanvas();
         canvas.writeLiteral("% polyline\n");
         if (points.size() > 1) {
+            AffineTransform transform = applyNonScalingStrokeTransform(context);
+            if (transform != null) {
+                Point[] pt = points.toArray(new Point[0]);
+                transform.transform(pt, 0, pt, 0, pt.length);
+                points = Arrays.asList(pt);
+            }
+
             Point currentPoint = points.get(0);
             canvas.moveTo(currentPoint.getX(), currentPoint.getY());
             for (int x = 1; x < points.size(); x++) {
@@ -145,39 +159,46 @@ public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
 
     @Override
     public void drawMarker(SvgDrawContext context, final MarkerVertexType markerVertexType) {
-        Point point = null;
+        List<Point> markerPoints = new ArrayList<>();
+        int startingPoint = 0;
         if (MarkerVertexType.MARKER_START.equals(markerVertexType)) {
-            point = points.get(0);
+            markerPoints.add(new Point(points.get(0)));
         } else if (MarkerVertexType.MARKER_END.equals(markerVertexType)) {
-            point = points.get(points.size() - 1);
+            markerPoints.add(new Point(points.get(points.size() - 1)));
+            startingPoint = points.size() - 2;
+        } else if (MarkerVertexType.MARKER_MID.equals(markerVertexType)) {
+            for (int i = 1; i < points.size() - 1; ++i) {
+                markerPoints.add(new Point(points.get(i)));
+            }
+            startingPoint = 1;
         }
-        if (point != null) {
-            String moveX = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.getX()));
-            String moveY = SvgCssUtils.convertDoubleToString(CssUtils.convertPtsToPx(point.getY()));
-            MarkerSvgNodeRenderer.drawMarker(context, moveX, moveY, markerVertexType, this);
+        for (Point point : markerPoints) {
+            point.setLocation(CssUtils.convertPtsToPx(point.getX()), CssUtils.convertPtsToPx(point.getY()));
+        }
+        if (!markerPoints.isEmpty()) {
+            MarkerSvgNodeRenderer.drawMarkers(context, startingPoint, markerPoints, markerVertexType, this);
         }
     }
 
     @Override
     public double getAutoOrientAngle(MarkerSvgNodeRenderer marker, boolean reverse) {
-        if (points.size() > 1) {
-            Vector v = new Vector(0, 0, 0);
-            if (SvgConstants.Attributes.MARKER_END.equals(marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
-                Point lastPoint = points.get(points.size() - 1);
-                Point secondToLastPoint = points.get(points.size() - 2);
-                v = new Vector((float) (lastPoint.getX() - secondToLastPoint.getX()),
-                        (float) (lastPoint.getY() - secondToLastPoint.getY()), 0f);
-            } else if (SvgConstants.Attributes.MARKER_START
-                    .equals(marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))) {
-                Point firstPoint = points.get(0);
-                Point secondPoint = points.get(1);
-                v = new Vector((float) (secondPoint.getX() - firstPoint.getX()),
-                        (float) (secondPoint.getY() - firstPoint.getY()), 0f);
-            }
-            Vector xAxis = new Vector(1, 0, 0);
+        int markerIndex = Integer.parseInt(marker.getAttribute(MarkerSvgNodeRenderer.MARKER_INDEX));
+        if (markerIndex < points.size() && points.size() > 1) {
+            Vector v;
+            Point firstPoint = points.get(markerIndex);
+            Point secondPoint = points.get(markerIndex + 1);
+            v = new Vector((float) (secondPoint.getX() - firstPoint.getX()),
+                    (float) (secondPoint.getY() - firstPoint.getY()), 0f);
+            Vector xAxis = SvgConstants.Attributes.MARKER_END.equals(
+                    marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))
+                    || SvgConstants.Attributes.MARKER_START.equals(
+                    marker.attributesAndStyles.get(SvgConstants.Tags.MARKER))
+                    ? new Vector(1, 0, 0) : new Vector(previousOrientationVector.get(1),
+                    previousOrientationVector.get(0) * -1.0F, 0.0F);
+            previousOrientationVector = v;
             double rotAngle = SvgCoordinateUtils.calculateAngleBetweenTwoVectors(xAxis, v);
-            return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1f;
+            return v.get(1) >= 0 && !reverse ? rotAngle : rotAngle * -1.0;
         }
-        return 0;
+        return 0.0;
     }
 }

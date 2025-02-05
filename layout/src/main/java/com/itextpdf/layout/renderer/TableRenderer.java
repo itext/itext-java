@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -808,7 +808,7 @@ public class TableRenderer extends AbstractRenderer {
                             rowspans[col] = ((Cell) cellSplit.getModelElement()).getRowspan();
                         }
                         if (splits[col].getStatus() != LayoutResult.NOTHING && (hasContent || cellWithBigRowspanAdded)) {
-                            childRenderers.add(cellSplit);
+                            splitResult[0].addChildRenderer(cellSplit);
                         }
                         LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
                         if (hasContent || cellWithBigRowspanAdded || splits[col].getStatus() == LayoutResult.NOTHING) {
@@ -1275,7 +1275,13 @@ public class TableRenderer extends AbstractRenderer {
         splitRenderer.rowRange = rowRange;
         splitRenderer.parent = parent;
         splitRenderer.modelElement = modelElement;
+        // Do not use splitRenderer.addAllChildRenderers(childRenderers); here
+        // because we want to share childRenderers with parent renderer. They are still used.
+        // It's ok to set all parent's child renderers because they are collected while layouting.
+        // The ones which have not been layouted are not there.
         splitRenderer.childRenderers = childRenderers;
+        splitRenderer.setThisAsParent(childRenderers);
+
         splitRenderer.addAllProperties(getOwnProperties());
         splitRenderer.headerRenderer = headerRenderer;
         splitRenderer.footerRenderer = footerRenderer;

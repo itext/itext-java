@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,11 +24,11 @@ package com.itextpdf.svg.renderers;
 
 import com.itextpdf.test.ITextTest;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class OpacityTest extends SvgIntegrationTest {
@@ -57,51 +57,36 @@ public class OpacityTest extends SvgIntegrationTest {
   }
 
   @Test
-  //TODO: update after DEVSIX-2673 fix
   public void testRGBA() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svg_rgba");
   }
 
   @Test
-  //TODO DEVSIX-2678
   public void testFillOpacityWithComma() throws IOException, InterruptedException {
-    Assertions.assertThrows(NumberFormatException.class,
-            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithComma")
-    );
+    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithComma");
   }
 
   @Test
-  //TODO DEVSIX-2678
   public void testFillOpacityWithPercents() throws IOException, InterruptedException {
-    Assertions.assertThrows(NumberFormatException.class,
-            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithPercents")
-    );
+      convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testFillOpacityWithPercents");
   }
 
   @Test
-  //TODO: update after DEVSIX-2678 fix
   public void testFillOpacity() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svg_fill_opacity");
   }
 
   @Test
-  //TODO DEVSIX-2679
   public void testStrokeOpacityWithComma() throws IOException, InterruptedException {
-    Assertions.assertThrows(Exception.class,
-            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithComma")
-    );
+    convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithComma");
   }
 
   @Test
-  //TODO DEVSIX-2679
   public void testStrokeOpacityWithPercents() throws IOException, InterruptedException {
-    Assertions.assertThrows(NumberFormatException.class,
-            () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithPercents")
-    );
+      convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "testStrokeOpacityWithPercents");
   }
 
   @Test
-  //TODO: update after DEVSIX-2679 fix
   public void testStrokeOpacity() throws IOException, InterruptedException {
     convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "svg_stroke_opacity");
   }

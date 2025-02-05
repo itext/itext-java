@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,7 +23,6 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
@@ -32,8 +31,8 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PatternTest extends SvgIntegrationTest {
@@ -93,6 +92,21 @@ public class PatternTest extends SvgIntegrationTest {
     @Test
     public void hrefAttributeTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hrefAttribute");
+    }
+
+    @Test
+    public void hrefBasicReferenceTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hrefBasicReference");
+    }
+
+    @Test
+    public void hrefAndXlinkHrefPriorityTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hrefAndXlinkHrefPriority");
+    }
+
+    @Test
+    public void transitiveHrefBasicReferenceTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "transitiveHrefBasicReference");
     }
 
     @Test
@@ -201,17 +215,11 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
-    // TODO DEVSIX-4834 support relative units in attributes of svg elements
     public void patternContentUnitsObjBoundBoxAbsoluteCoordTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternContentUnitsObjBoundBoxAbsoluteCoord");
     }
 
     @Test
-    //TODO DEVSIX-4834 support relative units in attributes of svg elements
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 8)})
     public void viewBoxAndAbsoluteCoordinatesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "viewBoxAndAbsoluteCoordinates");
     }
@@ -307,14 +315,16 @@ public class PatternTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void linearGradientInsidePatternTextTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradientInsidePatternText");
+    }
+
+    @Test
     public void nestedPatternsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedPatterns");
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2)})
-    // TODO DEVSIX-4834 support relative units in attributes of svg elements
     public void severalComplexElementsInsidePatternTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "severalComplexElementsInsidePattern");
     }
@@ -432,6 +442,16 @@ public class PatternTest extends SvgIntegrationTest {
     @Test
     public void coordSystemTransform() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "coordSystemTransform");
+    }
+
+    @Test
+    public void textCoordSystemTransformTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textCoordSystemTransform");
+    }
+
+    @Test
+    public void textAnchorTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textAnchorTest");
     }
 
     @Test

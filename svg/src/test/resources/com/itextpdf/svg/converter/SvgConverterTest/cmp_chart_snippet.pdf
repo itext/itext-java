@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174040+03'00')/ModDate(D:20211108174040+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250124014615+03'00')/ModDate(D:20250124014615+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 675 375]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 375 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675 375]/Length 3271/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R/Gs3 11 0 R/Gs4 12 0 R/Gs5 13 0 R/Gs6 14 0 R/Gs7 15 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 3211/Resources<</ExtGState<</Gs1 9 0 R/Gs2 10 0 R/Gs3 11 0 R/Gs4 12 0 R/Gs5 13 0 R/Gs6 14 0 R/Gs7 15 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -145,13 +144,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 328.38 171.3 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 328.38 171.3 Tm
+1 1 1 rg
 (45.8%)Tj
 ET
 Q
@@ -196,13 +193,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 169.44 138.15 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 169.44 138.15 Tm
+1 1 1 rg
 (29.2%)Tj
 ET
 Q
@@ -246,13 +241,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 163.98 215.96 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 163.98 215.96 Tm
+1 1 1 rg
 (8.3%)Tj
 ET
 Q
@@ -296,13 +289,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 196.53 243.15 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 196.53 243.15 Tm
+1 1 1 rg
 (8.3%)Tj
 ET
 Q
@@ -335,13 +326,11 @@ q
 B
 Q
 q
-1 1 1 rg
 q
 BT
-1 0 0 -1 243 256.49 Tm
-0 Tr
 /F1 10.5 Tf
-0 0 Td
+1 0 0 -1 243 256.49 Tm
+1 1 1 rg
 (8.3%)Tj
 ET
 Q
@@ -378,23 +367,23 @@ xref
 0 16
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
-0000004237 00000 n 
-0000004262 00000 n 
-0000004288 00000 n 
-0000004314 00000 n 
-0000004340 00000 n 
-0000004366 00000 n 
-0000004392 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000737 00000 n 
+0000004163 00000 n 
+0000004188 00000 n 
+0000004214 00000 n 
+0000004240 00000 n 
+0000004266 00000 n 
+0000004292 00000 n 
+0000004318 00000 n 
 trailer
-<</ID [<b4313dcc0bf35b671ed4e7e1ae002d07><b4313dcc0bf35b671ed4e7e1ae002d07>]/Info 3 0 R/Root 1 0 R/Size 16>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<baa0de184ba20ab8f019ff85dcb329befbabe6ec95c27eb869a1feca8cd44af192f63ea0109cfedf9b6f4f68be17436ab9addb9d0f2b2ce16f639d4c7b7b7b7b><baa0de184ba20ab8f019ff85dcb329befbabe6ec95c27eb869a1feca8cd44af192f63ea0109cfedf9b6f4f68be17436ab9addb9d0f2b2ce16f639d4c7b7b7b7b>]/Info 3 0 R/Root 1 0 R/Size 16>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-4418
+4344
 %%EOF

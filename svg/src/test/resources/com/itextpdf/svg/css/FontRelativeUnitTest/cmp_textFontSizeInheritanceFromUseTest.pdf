@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108180034+03'00')/ModDate(D:20211108180034+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250103175836+03'00')/ModDate(D:20250103175836+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 375 300]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 300]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 300 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 375 300]/Length 520/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 300]/Length 618/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 375 300 re
 W
 n
@@ -43,7 +42,7 @@ q
 0 0 0 RG
 0.75 w
 % rect
-7.5 82.5 277.5 37.5 re
+7.5 82.5 352.5 37.5 re
 S
 Q
 q
@@ -51,22 +50,15 @@ q
 1 0 0 1 0 75 cm
 q
 BT
-1 0 0 -1 7.5 37.5 Tm
-0 Tr
 /F1 37.5 Tf
-0 0 Td
+1 0 0 -1 7.5 37.5 Tm
 (SOME TEXT)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 7.5 37.5 Tm
-0 Tr
-/F1 37.5 Tf
-0 0 0 rg
-0 Tr
-/F1 0.5 Tf
-209.36 0 Td
+/F1 18.75 Tf
+1 0 0 -1 216.86 37.5 Tm
 (CHILD)Tj
 ET
 Q
@@ -75,7 +67,7 @@ q
 0 0 0 RG
 0.75 w
 % rect
-7.5 172.5 142.5 18.75 re
+7.5 172.5 180 18.75 re
 S
 Q
 q
@@ -83,23 +75,41 @@ q
 1 0 0 1 0 150 cm
 q
 BT
-1 0 0 -1 7.5 37.5 Tm
-0 Tr
 /F1 18.75 Tf
-0 0 Td
+1 0 0 -1 7.5 37.5 Tm
 (SOME TEXT)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 7.5 37.5 Tm
-0 Tr
-/F1 18.75 Tf
-0 0 0 rg
-0 Tr
-/F1 0.5 Tf
-104.68 0 Td
+/F1 9.38 Tf
+1 0 0 -1 112.18 37.5 Tm
 (CHILD)Tj
+ET
+Q
+Q
+q
+0 0 0 RG
+0.75 w
+% rect
+7.5 225 180 18.75 re
+S
+Q
+q
+0 0.50196 0 rg
+1 0 0 1 0 202.5 cm
+q
+BT
+/F1 7.5 Tf
+1 0 0 -1 7.5 37.5 Tm
+(SOME REM TEXT)Tj
+ET
+Q
+q
+BT
+/F1 15 Tf
+1 0 0 -1 67.5 37.5 Tm
+(CHILD 2)Tj
 ET
 Q
 Q
@@ -110,16 +120,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000737 00000 n 
 trailer
-<</ID [<548a7a9009b4004a91ae60ff690d9359><548a7a9009b4004a91ae60ff690d9359>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<09819c3fe555fc480d6c05726c92b1584c039d3acd0b6c79a9f37e1706728a003f1b866825fdb1c27d757b46b26512f8697bac508686a84a7a9f6c43308ccfef><09819c3fe555fc480d6c05726c92b1584c039d3acd0b6c79a9f37e1706728a003f1b866825fdb1c27d757b46b26512f8697bac508686a84a7a9f6c43308ccfef>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-1395
+1479
 %%EOF

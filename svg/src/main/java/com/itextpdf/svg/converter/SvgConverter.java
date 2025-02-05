@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,14 +33,11 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.styledxmlparser.IXmlParser;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
-import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.processors.ISvgProcessorResult;
@@ -56,7 +53,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -294,6 +290,9 @@ public final class SvgConverter {
      */
     public static void drawOnPage(InputStream stream, PdfPage page, float x, float y, ISvgConverterProperties props) throws IOException {
         checkNull(page);
+        if (props instanceof SvgConverterProperties && ((SvgConverterProperties) props).getCustomViewport() == null) {
+            ((SvgConverterProperties) props).setCustomViewport(page.getMediaBox());
+        }
         drawOnCanvas(stream, new PdfCanvas(page), x, y, props);
     }
 
@@ -541,14 +540,13 @@ public final class SvgConverter {
             // Extract topmost dimensions
             checkNull(topSvgRenderer);
             checkNull(pdfDocument);
-            float width, height;
 
-            float[] wh = extractWidthAndHeight(topSvgRenderer);
-            width = wh[0];
-            height = wh[1];
+            // Since svg is a single object in the document, em = rem
+            float em = drawContext.getCssContext().getRootFontSize();
+            Rectangle wh = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, em, drawContext);
 
             // Adjust pagesize and create new page
-            pdfDocument.setDefaultPageSize(new PageSize(width, height));
+            pdfDocument.setDefaultPageSize(new PageSize(wh.getWidth(), wh.getHeight()));
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas pageCanvas = new PdfCanvas(page);
             // Add to the first page
@@ -646,6 +644,9 @@ public final class SvgConverter {
         final SvgDrawContext drawContext = new SvgDrawContext(resourceResolver, processorResult.getFontProvider());
         if (processorResult instanceof SvgProcessorResult) {
             drawContext.setCssContext(((SvgProcessorResult) processorResult).getContext().getCssContext());
+        }
+        if (props instanceof SvgConverterProperties) {
+            drawContext.setCustomViewport(((SvgConverterProperties) props).getCustomViewport());
         }
         drawContext.setTempFonts(processorResult.getTempFonts());
         drawContext.addNamedObjects(processorResult.getNamedObjects());
@@ -792,13 +793,12 @@ public final class SvgConverter {
         checkNull(topSvgRenderer);
         checkNull(document);
         checkNull(context);
-        float width, height;
 
-        float[] wh = extractWidthAndHeight(topSvgRenderer);
-        width = wh[0];
-        height = wh[1];
+        // Can't determine em value here, so em=rem
+        float em = context.getCssContext().getRootFontSize();
+        Rectangle bbox = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, em, context);
 
-        PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, width, height));
+        PdfFormXObject pdfForm = new PdfFormXObject(bbox);
         PdfCanvas canvas = new PdfCanvas(pdfForm, document);
 
         context.pushCanvas(canvas);
@@ -899,64 +899,19 @@ public final class SvgConverter {
      * Extract width and height of the passed SVGNodeRenderer,
      * defaulting to respective viewbox values if either one is not present or
      * to browser default if viewbox is missing as well
+     * <p>
+     * Deprecated in favour of {@link SvgCssUtils#extractWidthAndHeight(ISvgNodeRenderer, float, SvgDrawContext)}
      *
      * @param topSvgRenderer the {@link ISvgNodeRenderer} instance that contains
      *                       the renderer tree
      * @return float[2], width is in position 0, height in position 1
      */
+    @Deprecated
     public static float[] extractWidthAndHeight(ISvgNodeRenderer topSvgRenderer) {
-        float[] res = new float[2];
-        boolean viewBoxPresent = false;
-
-        //Parse viewbox
-        String vbString = topSvgRenderer.getAttribute(SvgConstants.Attributes.VIEWBOX);
-        // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-        if (vbString == null) {
-            vbString = topSvgRenderer.getAttribute(SvgConstants.Attributes.VIEWBOX.toLowerCase());
-        }
-        float[] values = {0, 0, 0, 0};
-        if (vbString != null) {
-            List<String> valueStrings = SvgCssUtils.splitValueList(vbString);
-            values = new float[valueStrings.size()];
-            for (int i = 0; i < values.length; i++) {
-                values[i] = CssDimensionParsingUtils.parseAbsoluteLength(valueStrings.get(i));
-            }
-            viewBoxPresent = true;
-        }
-        float width, height;
-        String wString, hString;
-        wString = topSvgRenderer.getAttribute(SvgConstants.Attributes.WIDTH);
-        if (wString == null) {
-            if (viewBoxPresent) {
-                width = values[2];
-            } else {
-                //Log Warning
-                LOGGER.warn(SvgLogMessageConstant.MISSING_WIDTH);
-                //Set to browser default
-                width = CssDimensionParsingUtils.parseAbsoluteLength("300px");
-            }
-        } else {
-            width = CssDimensionParsingUtils.parseAbsoluteLength(wString);
-        }
-        hString = topSvgRenderer.getAttribute(SvgConstants.Attributes.HEIGHT);
-        if (hString == null) {
-            if (viewBoxPresent) {
-                height = values[3];
-            } else {
-                //Log Warning
-                LOGGER.warn(SvgLogMessageConstant.MISSING_HEIGHT);
-                //Set to browser default
-                height = CssDimensionParsingUtils.parseAbsoluteLength("150px");
-            }
-        } else {
-            height = CssDimensionParsingUtils.parseAbsoluteLength(hString);
-        }
-
-        res[0] = width;
-        res[1] = height;
-        return res;
-
-
+        SvgDrawContext context = new SvgDrawContext(null, null);
+        float em = context.getCssContext().getRootFontSize();
+        Rectangle rectangle = SvgCssUtils.extractWidthAndHeight(topSvgRenderer, em, context);
+        return new float[] {rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight()};
     }
 
     static ResourceResolver getResourceResolver(ISvgProcessorResult processorResult, ISvgConverterProperties props) {

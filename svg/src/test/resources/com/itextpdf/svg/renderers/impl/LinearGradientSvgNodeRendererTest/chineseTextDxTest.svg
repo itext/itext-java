@@ -1,0 +1,81 @@
+<svg x="0" y="0" width="600" height="1000" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <linearGradient id="myStrokeGradient">
+            <stop offset="0" stop-color="black"/>
+            <stop offset="0.5" stop-color="yellow"/>
+            <stop offset="1" stop-color="magenta"/>
+        </linearGradient>
+    </defs>
+
+    <style type="text/css">
+        @font-face {
+        font-family: 'Noto Serif CJK JP';
+        font-weight: 400;
+        font-style:normal;
+        src: url('../../../css/SvgStyleResolver/web-fonts/NotoSerifCJKjp-Regular.otf')
+        format('OpenType');
+        }
+    </style>
+
+    <g font-family="Courier" font-size="32">
+        <text x="150" y="50" fill="url(#myStrokeGradient)">
+            教育部
+            <tspan>iText</tspan>
+        </text>
+        <text x="150" y="100" fill="url(#myStrokeGradient)">
+            教育部
+            <tspan dx="-250">iText</tspan>
+        </text>
+        <text x="150" y="150" fill="url(#myStrokeGradient)">
+            iText
+            <tspan>教育部</tspan>
+        </text>
+        <text x="150" y="200" transform="rotate(5) skewX(15)" fill="url(#myStrokeGradient)">
+            iText
+            <tspan dx="-300">教育部</tspan>
+        </text>
+    </g>
+
+    <g font-family="Courier" font-size="32" transform="translate(0, 250)">
+        <text x="150" y="50">
+            教育部
+            <tspan fill="url(#myStrokeGradient)">iText</tspan>
+        </text>
+        <text x="150" y="100">
+            教育部
+            <tspan dx="-250" fill="url(#myStrokeGradient)">iText</tspan>
+        </text>
+        <text x="150" y="150">
+            iText
+            <tspan fill="url(#myStrokeGradient)">教育部</tspan>
+        </text>
+        <text x="150" y="200" transform="scale(1.1) skewY(-5)">
+            iText
+            <tspan dx="-300" fill="url(#myStrokeGradient)">教育部</tspan>
+        </text>
+    </g>
+    <g font-family="Courier" font-size="32" transform="translate(0, 500)">
+        <text x="150" y="50">
+            教育部
+            <tspan fill="url(#myStrokeGradient)">
+                iText
+                <tspan x="150" y="100">
+                    教育部
+                    <tspan dx="-300" font-size="50" fill="url(#myStrokeGradient)">
+                        iText
+                        <tspan x="150" y="150">
+                            iText
+                            <tspan fill="url(#myStrokeGradient)">
+                                教育部
+                                <tspan x="150" y="200" stroke="url(#myStrokeGradient)" font-size="40" stroke-width="2" fill="none">
+                                    iText
+                                    <tspan dx="-300" fill="none">教育部</tspan>
+                                </tspan>
+                            </tspan>
+                        </tspan>
+                    </tspan>
+                </tspan>
+            </tspan>
+        </text>
+    </g>
+</svg>

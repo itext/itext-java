@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="2.0"
+     width="18cm" height="24cm" viewBox="0 0 600 800">
+    <defs>
+        <g id="group">
+            <circle cx="0" cy="0" r="8" fill="none" stroke="magenta" stroke-width="3"/>
+            <text x="0" y="2" fill="none" stroke="indigo" font-size="10" text-anchor="middle">use</text>
+        </g>
+    </defs>
+
+    <desc>Example non-scaling stroke</desc>
+    <rect x="1" y="1" width="598" height="796" fill="none" stroke="black"/>
+
+    <g transform="scale(9,2)">
+        <rect x="5" y="10" width="10" height="50" fill="none" stroke="teal" stroke-width="5"/>
+        <rect x="5" y="70" width="10" height="50" fill="none" stroke="teal" stroke-width="5"
+              vector-effect="non-scaling-stroke"/>
+
+        <circle cx="15" cy="150" r="10" fill="none" stroke="pink" stroke-width="5"/>
+        <circle cx="15" cy="180" r="10" fill="none" stroke="pink" stroke-width="5" vector-effect="non-scaling-stroke"/>
+
+        <ellipse cx="10" cy="220" rx="5" ry="20" fill="none" stroke="yellow" stroke-width="5"/>
+        <ellipse cx="10" cy="270" rx="5" ry="20" fill="none" stroke="yellow" stroke-width="5"
+                 vector-effect="non-scaling-stroke"/>
+
+        <line x1="22" y1="200" x2="22" y2="290" stroke="orange" stroke-width="3"/>
+        <line x1="27" y1="200" x2="27" y2="290" stroke="orange" stroke-width="3" vector-effect="non-scaling-stroke"/>
+
+        <path d="M 15,300 L 21,380 L 5,330 L 25,330 L 9,380 z" fill="none" stroke="red" stroke-width="3"/>
+        <path d="M 40,300 L 46,380 L 30,330 L 50,330 L 34,380 z" fill="none" stroke="red" stroke-width="3"
+              vector-effect="non-scaling-stroke"/>
+
+        <polygon points="30,10 35,25 35,45 30,60 25,45 25,25" fill="none" stroke="lightblue" stroke-width="5"/>
+        <polygon points="30,80 35,95 35,115 30,130 25,115 25,95" fill="none" stroke="lightblue" stroke-width="5"
+                 vector-effect="non-scaling-stroke"/>
+
+        <polyline points="45,10 50,25 50,45 45,60 40,45 40,25" fill="none" stroke="blue" stroke-width="5"/>
+        <polyline points="45,80 50,95 50,115 45,130 40,115 40,95" fill="none" stroke="blue" stroke-width="5"
+                  vector-effect="non-scaling-stroke"/>
+
+        <text x="35" y="150" fill="none" stroke="green" stroke-width="2">text</text>
+        <text x="35" y="170" fill="none" stroke="green" stroke-width="2" vector-effect="non-scaling-stroke">text</text>
+
+        <text>
+            <tspan x="30" y="190" fill="none" stroke="purple" stroke-width="2">tspan</tspan>
+            <tspan x="30" y="210" fill="none" stroke="purple" stroke-width="2" vector-effect="non-scaling-stroke">
+                tspan
+            </tspan>
+        </text>
+
+        <!-- no effect -->
+        <image href="image.png" x="30" y="215" height="50" width="30"/>
+        <image href="image.png" x="30" y="250" height="50" width="30" vector-effect="non-scaling-stroke"/>
+
+        <!-- no effect -->
+        <use x="57" y="320" href="#group" stroke="gray" stroke-width="0.5"/>
+        <use x="57" y="350" href="#group" stroke="gray" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+    </g>
+
+</svg>

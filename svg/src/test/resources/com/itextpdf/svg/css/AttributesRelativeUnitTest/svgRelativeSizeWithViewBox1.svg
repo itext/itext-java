@@ -1,0 +1,8 @@
+<svg width="25%" height="50%" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="25" cy="25" r="25" fill="green" />
+    <line x1="0" y1="50" x2="100%" y2="50" stroke="blue" />
+    <line x1="0" y1="75" x2="100%" y2="75" stroke="black" />
+
+    <line x1="0" y1="50%" x2="100%" y2="50%" stroke="red" />
+    <line x1="50%" y1="0" x2="50%" y2="100%" stroke="red" />
+</svg>

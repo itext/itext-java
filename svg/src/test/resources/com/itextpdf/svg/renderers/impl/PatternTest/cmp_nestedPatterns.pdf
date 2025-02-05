@@ -15,25 +15,26 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211018115920+03'00')/ModDate(D:20211018115920+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250124014539+03'00')/ModDate(D:20250124014539+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 6 0 obj
-<</BBox[0 0 300 300]/Length 56/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
-1 0 0 -1 0 300 cm
+<</BBox[0 0 595 842]/Length 81/Resources<</XObject<</Fm1 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+1 0 0 -1 0 842 cm
 % svg root
+1 0 0 1 0 123.5 cm
+1.98 0 0 1.98 0 0 cm
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 300 300]/Length 84/Resources<</Pattern<</P1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
-0 0 300 300 re
+<</BBox[0 -62.27 300 362.27]/Length 92/Resources<</Pattern<</P1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 -62.27 300 424.54 re
 W
 n
 q
@@ -62,7 +63,7 @@ endobj
 8.22 31.5 1.5 24.78 1.5 16.5 c
 1.5 8.22 8.22 1.5 16.5 1.5 c
 24.78 1.5 31.5 8.22 31.5 16.5 c
-B
+b
 
 endstream
 endobj
@@ -99,17 +100,17 @@ xref
 0 10
 0000000000 65535 f 
 0000000211 00000 n 
-0000000427 00000 n 
+0000000428 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000478 00000 n 
-0000000661 00000 n 
-0000000871 00000 n 
-0000001276 00000 n 
+0000000479 00000 n 
+0000000687 00000 n 
+0000000913 00000 n 
+0000001318 00000 n 
 trailer
-<</ID [<b0c22cacca84604441500414d6f45a8c><b0c22cacca84604441500414d6f45a8c>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<d0587048712603a07fad0e2e36bfa1665520cda90971f4edfb1700670d99c3d01a4a5bebaeb9bf8f5b15efbf321f68f5e2ea4abe22e261acd69e20412a425916><d0587048712603a07fad0e2e36bfa1665520cda90971f4edfb1700670d99c3d01a4a5bebaeb9bf8f5b15efbf321f68f5e2ea4abe22e261acd69e20412a425916>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-1650
+1692
 %%EOF

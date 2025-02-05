@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -39,6 +39,7 @@ public final class TaggingHintKey {
     private String overriddenRole;
     private boolean elementBasedFinishingOnly;
     private  TagTreePointer tagPointer;
+    private final boolean isAccessible;
 
     /**
      * Instantiate a new {@link TaggingHintKey} instance.
@@ -49,6 +50,11 @@ public final class TaggingHintKey {
     TaggingHintKey(IAccessibleElement elem, boolean createdElementBased) {
         this.elem = elem;
         this.elementBasedFinishingOnly = createdElementBased;
+        if (elem == null){
+            isAccessible = false;
+        }else{
+            isAccessible = elem.getAccessibilityProperties().getRole() != null;
+        }
     }
 
     /**
@@ -142,5 +148,9 @@ public final class TaggingHintKey {
      */
     boolean isElementBasedFinishingOnly() {
         return elementBasedFinishingOnly;
+    }
+
+    boolean isAccessible() {
+        return isAccessible;
     }
 }
