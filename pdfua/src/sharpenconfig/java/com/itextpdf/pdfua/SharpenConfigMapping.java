@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.bouncycastleconnector;
+package com.itextpdf.pdfua;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
@@ -32,15 +32,15 @@ import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
 
-public class SharpenMapping implements MappingConfiguration {
+public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 16;
+        return 12;
     }
 
     @Override
     public String getModuleName() {
-        return "bouncycastleconnector";
+        return "pdfua";
     }
 
     @Override
@@ -69,16 +69,16 @@ public class SharpenMapping implements MappingConfiguration {
 
     @Override
     public Collection<String> getIgnoredSourceFiles() {
-        return Collections.EMPTY_LIST;
+        return null;
     }
 
     @Override
     public Collection<String> getIgnoredResources() {
-        return Collections.EMPTY_LIST;
+        return null;
     }
 
     @Override
     public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
-        return Collections.EMPTY_LIST;
+        return null;
     }
 }

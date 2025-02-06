@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout;
 
-public class ITextSharpCustomMembers {
+public class SharpenConfigCustomMembers {
     public static final String getTypographyClass;
     public static final String cloneLayoutArea;
     public static final String cloneMarginsCollapse;

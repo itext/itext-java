@@ -32,7 +32,7 @@ import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
 
-public class SharpenMapping implements MappingConfiguration {
+public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
         return 15;
@@ -72,9 +72,9 @@ public class SharpenMapping implements MappingConfiguration {
         configurator.ignoreSuperInterface("java.lang.Cloneable", "com.itextpdf.layout.layout.LayoutArea");
         configurator.ignoreSuperInterface("java.lang.Cloneable", "com.itextpdf.layout.layout.RootLayoutArea");
         configurator.ignoreSuperInterface("java.lang.Cloneable", "com.itextpdf.layout.margincollapse.MarginsCollapse");
-        configurator.mapMethodToCustomMember("com.itextpdf.layout.renderer.TypographyUtils.getTypographyClass", "GetTypographyClass", ITextSharpCustomMembers.getTypographyClass);
-        configurator.mapMethodToCustomMember("com.itextpdf.layout.layout.LayoutArea.clone", "Clone", ITextSharpCustomMembers.cloneLayoutArea);
-        configurator.mapMethodToCustomMember("com.itextpdf.layout.margincollapse.MarginsCollapse.clone", "Clone", ITextSharpCustomMembers.cloneMarginsCollapse);
+        configurator.mapMethodToCustomMember("com.itextpdf.layout.renderer.TypographyUtils.getTypographyClass", "GetTypographyClass", SharpenConfigCustomMembers.getTypographyClass);
+        configurator.mapMethodToCustomMember("com.itextpdf.layout.layout.LayoutArea.clone", "Clone", SharpenConfigCustomMembers.cloneLayoutArea);
+        configurator.mapMethodToCustomMember("com.itextpdf.layout.margincollapse.MarginsCollapse.clone", "Clone", SharpenConfigCustomMembers.cloneMarginsCollapse);
     }
 
     @Override

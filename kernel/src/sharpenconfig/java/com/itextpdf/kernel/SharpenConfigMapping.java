@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class SharpenMapping implements MappingConfiguration {
+public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
         return 18;
@@ -142,12 +142,12 @@ public class SharpenMapping implements MappingConfiguration {
         configurator.removeMethod("com.itextpdf.kernel.xmp.properties.XMPPropertyInfo.getValue");
         configurator.removeMethod("com.itextpdf.kernel.xmp.properties.XMPPropertyInfo.getOptions");
         configurator.mapMethod("com.itextpdf.kernel.xmp.impl.Utils.normalizeLangValue", "iText.Kernel.XMP.Impl.Utils.NormalizeLangValue");
-        configurator.mapMethodToCustomMember("com.itextpdf.kernel.pdf.canvas.PdfCanvas.iteratorToList", "EnumeratorToList", ITextSharpCustomMembers.enumeratorToList);
-        configurator.mapMethodToCustomMember("com.itextpdf.kernel.pdf.EncryptionProperties.randomBytes", "RandomBytes", ITextSharpCustomMembers.encryptionPropertiesRandomBytes);
+        configurator.mapMethodToCustomMember("com.itextpdf.kernel.pdf.canvas.PdfCanvas.iteratorToList", "EnumeratorToList", SharpenConfigCustomMembers.enumeratorToList);
+        configurator.mapMethodToCustomMember("com.itextpdf.kernel.pdf.EncryptionProperties.randomBytes", "RandomBytes", SharpenConfigCustomMembers.encryptionPropertiesRandomBytes);
         configurator.addCustomUsingDeclaration("com.itextpdf.kernel.pdf.EncryptionProperties", Arrays.asList("System.Security.Cryptography"));
         configurator.mapVariableType("com.itextpdf.kernel.colors.DeviceRgbTest.colorByAWTColorTest.color", "System.Drawing.Color");
-        configurator.mapMethodToCustomMember("com.itextpdf.kernel.geom.Rectangle.clone", "Clone", ITextSharpCustomMembers.cloneRectangle);
-        configurator.mapMethodToCustomMember("com.itextpdf.kernel.geom.AffineTransform.clone", "Clone", ITextSharpCustomMembers.cloneAffineTransform);
+        configurator.mapMethodToCustomMember("com.itextpdf.kernel.geom.Rectangle.clone", "Clone", SharpenConfigCustomMembers.cloneRectangle);
+        configurator.mapMethodToCustomMember("com.itextpdf.kernel.geom.AffineTransform.clone", "Clone", SharpenConfigCustomMembers.cloneAffineTransform);
 
     }
 

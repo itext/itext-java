@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfa;
+package com.itextpdf.forms;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
@@ -32,7 +32,7 @@ import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
 
-public class SharpenMapping implements MappingConfiguration {
+public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
         return 15;
@@ -40,11 +40,12 @@ public class SharpenMapping implements MappingConfiguration {
 
     @Override
     public String getModuleName() {
-        return "pdfa";
+        return "forms";
     }
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
+        configurator.removeMethod("com.itextpdf.forms.xfdf.XfdfSecurityTest.customXmlParserCreateNewXfdfDocumentExceptionTest");
     }
 
     @Override

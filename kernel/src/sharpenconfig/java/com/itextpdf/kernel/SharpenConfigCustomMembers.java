@@ -22,7 +22,7 @@
  */
 package com.itextpdf.kernel;
 
-public class ITextSharpCustomMembers {
+public class SharpenConfigCustomMembers {
     public static final String enumeratorToList;
     public static final String deviceRgbDrawingConstructor;
     public static final String encryptionPropertiesRandomBytes;

@@ -323,7 +323,7 @@
             <!-- svg -->
             <sourceFileExclude>com/itextpdf/svg/utils/SvgCoordinateUtils.java</sourceFileExclude>
             <!-- sharpen mapping -->
-            <sourceFileExclude>**/SharpenMapping.java</sourceFileExclude>
+            <sourceFileExclude>**/sharpenconfig/**</sourceFileExclude>
           </sourceFileExcludes>
           <groups>
             <group>
@@ -845,7 +845,7 @@
                 <phase>package</phase>
                 <configuration>
                   <excludes>
-                    <exclude>**/SharpenMapping.class</exclude>
+                    <exclude>**/SharpenConfig*.class</exclude>
                     <exclude>**/sharpen.config.MappingConfiguration</exclude>
                   </excludes>
                 </configuration>
@@ -859,7 +859,7 @@
                 <configuration>
                   <classifier>sharpen-configuration</classifier>
                   <includes>
-                    <include>**/SharpenMapping.class</include>
+                    <include>**/SharpenConfig*.class</include>
                     <include>**/sharpen.config.MappingConfiguration</include>
                   </includes>
                 </configuration>

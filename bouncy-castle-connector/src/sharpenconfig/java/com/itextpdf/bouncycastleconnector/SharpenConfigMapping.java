@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.forms;
+package com.itextpdf.bouncycastleconnector;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
@@ -32,20 +32,19 @@ import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
 
-public class SharpenMapping implements MappingConfiguration {
+public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 15;
+        return 16;
     }
 
     @Override
     public String getModuleName() {
-        return "forms";
+        return "bouncycastleconnector";
     }
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
-        configurator.removeMethod("com.itextpdf.forms.xfdf.XfdfSecurityTest.customXmlParserCreateNewXfdfDocumentExceptionTest");
     }
 
     @Override

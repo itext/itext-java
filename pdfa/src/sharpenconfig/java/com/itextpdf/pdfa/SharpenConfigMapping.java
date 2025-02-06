@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua;
+package com.itextpdf.pdfa;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
@@ -32,15 +32,15 @@ import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
 
-public class SharpenMapping implements MappingConfiguration {
+public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 12;
+        return 15;
     }
 
     @Override
     public String getModuleName() {
-        return "pdfua";
+        return "pdfa";
     }
 
     @Override
@@ -69,16 +69,16 @@ public class SharpenMapping implements MappingConfiguration {
 
     @Override
     public Collection<String> getIgnoredSourceFiles() {
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
     @Override
     public Collection<String> getIgnoredResources() {
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
     @Override
     public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
-        return null;
+        return Collections.EMPTY_LIST;
     }
 }
