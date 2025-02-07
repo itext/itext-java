@@ -239,6 +239,9 @@ public class Paragraph extends BlockElement<Paragraph> {
         return tagProperties;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected IRenderer makeNewRenderer() {
         return new ParagraphRenderer(this);

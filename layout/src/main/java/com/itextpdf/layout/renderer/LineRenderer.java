@@ -986,6 +986,14 @@ public class LineRenderer extends AbstractRenderer {
         return result.getMinMaxWidth();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Float retrieveResolvedDeclaredHeight() {
+        return ((AbstractRenderer) parent).retrieveResolvedDeclaredHeight();
+    }
+
     boolean hasChildRendererInHtmlMode() {
         for (final IRenderer childRenderer : getChildRenderers()) {
             if (RenderingMode.HTML_MODE.equals(childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE))) {

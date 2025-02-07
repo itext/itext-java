@@ -170,7 +170,7 @@ public abstract class AbstractElement<T extends IElement>
     }
 
     /**
-     * Creates new renderer instance.
+     * Creates a new renderer instance.
      *
      * @return new {@link IRenderer}
      */

@@ -1526,7 +1526,8 @@ public abstract class AbstractRenderer implements IRenderer {
     protected Float retrieveHeight() {
         Float height = null;
         UnitValue heightUV = getPropertyAsUnitValue(Property.HEIGHT);
-        Float parentResolvedHeight = retrieveResolvedParentDeclaredHeight();
+        Float parentResolvedHeight = parent == null ?
+                null : ((AbstractRenderer) parent).retrieveResolvedDeclaredHeight();
         Float minHeight = null;
         Float maxHeight = null;
         if (heightUV != null) {
@@ -2051,23 +2052,23 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Retrieve the parent's resolved height declaration.
-     * If the parent has a relative height declaration, it will check it's parent recursively,
+     * Retrieve the resolved height declaration.
+     * If it has a relative height declaration, {@link AbstractRenderer#retrieveHeight} is called.
      *
-     * @return null if no height declaration is set on the parent, or if it's own height declaration cannot be resolved
-     * The float value of the resolved height otherwiser
+     * @return {@code null} if no height declaration is set on the parent, or if its own height declaration
+     * cannot be resolved. The float value of the resolved height otherwise
      */
-    private Float retrieveResolvedParentDeclaredHeight() {
-        if (parent != null && parent.<UnitValue>getProperty(Property.HEIGHT) != null) {
-            UnitValue parentHeightUV = getPropertyAsUnitValue(parent, Property.HEIGHT);
-            if (parentHeightUV.isPointValue()) {
-                return parentHeightUV.getValue();
+    protected Float retrieveResolvedDeclaredHeight() {
+        if (this.<UnitValue>getProperty(Property.HEIGHT) != null) {
+            UnitValue heightUV = getPropertyAsUnitValue(this, Property.HEIGHT);
+            if (heightUV.isPointValue()) {
+                return heightUV.getValue();
             } else {
-                return ((AbstractRenderer) parent).retrieveHeight();
+                return retrieveHeight();
             }
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -2110,7 +2111,8 @@ public abstract class AbstractRenderer implements IRenderer {
 
         // Update height related properties on split or overflow
         // For relative heights, we need the parent's resolved height declaration
-        Float parentResolvedHeightPropertyValue = retrieveResolvedParentDeclaredHeight();
+        Float parentResolvedHeightPropertyValue = parent == null ?
+                null : ((AbstractRenderer) parent).retrieveResolvedDeclaredHeight();
         UnitValue maxHeightUV = getPropertyAsUnitValue(this, Property.MAX_HEIGHT);
         if (maxHeightUV != null) {
             if (maxHeightUV.isPointValue()) {
