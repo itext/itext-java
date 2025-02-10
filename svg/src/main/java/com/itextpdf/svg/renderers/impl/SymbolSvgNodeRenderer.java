@@ -28,6 +28,9 @@ import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
+/**
+ * {@link ISvgNodeRenderer} implementation for the &lt;symbol&gt; tag.
+ */
 public class SymbolSvgNodeRenderer extends AbstractContainerSvgNodeRenderer implements INoDrawSvgNodeRenderer {
     @Override
     public ISvgNodeRenderer createDeepCopy() {

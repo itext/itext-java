@@ -32,6 +32,9 @@ import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
 
+/**
+ * Class containing the sharpen mappings for {@code svg} module.
+ */
 public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {

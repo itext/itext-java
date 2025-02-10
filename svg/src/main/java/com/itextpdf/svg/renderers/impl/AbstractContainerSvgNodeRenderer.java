@@ -27,9 +27,14 @@ import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 
+/**
+ * Abstract class that will be the superclass for any element that instantiates new view port.
+ */
 public abstract class AbstractContainerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     @Override
-    public boolean canConstructViewPort(){ return true;}
+    public boolean canConstructViewPort() {
+        return true;
+    }
 
     @Override
     protected boolean canElementFill() {

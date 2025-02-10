@@ -91,11 +91,25 @@ public class SvgConverterProperties implements ISvgConverterProperties {
         this.customViewport = customViewport;
     }
 
+    /**
+     * Sets renderer factory.
+     *
+     * @param rendererFactory {@link ISvgNodeRendererFactory} to set
+     *
+     * @return this {@link SvgConverterProperties} instance
+     */
     public SvgConverterProperties setRendererFactory(ISvgNodeRendererFactory rendererFactory) {
         this.rendererFactory = rendererFactory;
         return this;
     }
 
+    /**
+     * Sets font provider.
+     *
+     * @param fontProvider {@link FontProvider} to set
+     *
+     * @return this {@link SvgConverterProperties} instance
+     */
     public SvgConverterProperties setFontProvider(FontProvider fontProvider) {
         this.fontProvider = fontProvider;
         return this;
@@ -112,6 +126,13 @@ public class SvgConverterProperties implements ISvgConverterProperties {
         return charset;
     }
 
+    /**
+     * Sets the character set.
+     *
+     * @param charset the character set to set
+     *
+     * @return this {@link SvgConverterProperties} instance
+     */
     public SvgConverterProperties setCharset(String charset) {
         this.charset = charset;
         return this;

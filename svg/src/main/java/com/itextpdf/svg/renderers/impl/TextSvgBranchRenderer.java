@@ -85,6 +85,9 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
 
     private boolean whiteSpaceProcessed = false;
 
+    /**
+     * Creates new {@link TextSvgBranchRenderer} instance.
+     */
     public TextSvgBranchRenderer() {
         performRootTransformations = true;
         moveResolved = false;
@@ -103,6 +106,11 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         deepCopyChildren(copy);
     }
 
+    /**
+     * Adds a child to the current {@link TextSvgBranchRenderer} renderer.
+     *
+     * @param child {@link ISvgTextNodeRenderer} child to add
+     */
     public final void addChild(ISvgTextNodeRenderer child) {
         // Final method, in order to disallow adding null
         if (child != null) {
@@ -110,6 +118,11 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
     }
 
+    /**
+     * Retrieves a list of all children of the current {@link TextSvgBranchRenderer} renderer.
+     *
+     * @return a list of {@link ISvgTextNodeRenderer} children
+     */
     public final List<ISvgTextNodeRenderer> getChildren() {
         // Final method, in order to disallow modifying the List
         return Collections.unmodifiableList(children);
@@ -127,6 +140,13 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         return getRelativeTranslation(new SvgDrawContext(null, null));
     }
 
+    /**
+     * Gets relative translation of the current &lt;text&gt; or &lt;tspan&gt; element.
+     *
+     * @param context current {@link SvgDrawContext}
+     *
+     * @return float array that contains relative {@code dx} and {@code dy} translations
+     */
     public float[] getRelativeTranslation(SvgDrawContext context) {
         if (!moveResolved) {
             resolveRelativeTextMove(context);
@@ -140,6 +160,13 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         return containsRelativeMove(new SvgDrawContext(null, null));
     }
 
+    /**
+     * Checks whether current &lt;text&gt; or &lt;tspan&gt; element contains relative position change.
+     *
+     * @param context current {@link SvgDrawContext}
+     *
+     * @return {@code true} is current element contains relative position, {@code false} otherwise
+     */
     public boolean containsRelativeMove(SvgDrawContext context) {
         if (!moveResolved) {
             resolveRelativeTextMove(context);
@@ -153,6 +180,13 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         return containsAbsolutePositionChange(new SvgDrawContext(null, null));
     }
 
+    /**
+     * Checks whether current &lt;text&gt; or &lt;tspan&gt; element contains absolute position attributes.
+     *
+     * @param context current {@link SvgDrawContext}
+     *
+     * @return {@code true} is current element contains absolute position, {@code false} otherwise
+     */
     public boolean containsAbsolutePositionChange(SvgDrawContext context) {
         if (!posResolved) {
             resolveAbsoluteTextPosition(context);
@@ -165,6 +199,14 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         return getAbsolutePositionChanges(new SvgDrawContext(null, null));
     }
 
+    /**
+     * Gets absolute position of the current &lt;text&gt; or &lt;tspan&gt; element.
+     *
+     * @param context current {@link SvgDrawContext}
+     *
+     * @return float array that contains absolute {@code x} and {@code y} positions as either single item arrays
+     * or null if attribute is not present
+     */
     public float[][] getAbsolutePositionChanges(SvgDrawContext context) {
         if (!posResolved) {
             resolveAbsoluteTextPosition(context);
@@ -172,6 +214,9 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         return new float[][]{xPos, yPos};
     }
 
+    /**
+     * Marks white-space property as processed.
+     */
     public void markWhiteSpaceProcessed() {
         whiteSpaceProcessed = true;
     }

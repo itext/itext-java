@@ -93,8 +93,6 @@ public class SvgStyleResolver implements ICssResolver {
             Tags.MARKER, Tags.LINEAR_GRADIENT, Tags.LINEAR_GRADIENT.toLowerCase(), Tags.PATTERN
     };
 
-
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgStyleResolver.class);
 
     private CssStyleSheet css;
@@ -162,6 +160,13 @@ public class SvgStyleResolver implements ICssResolver {
         collectFonts();
     }
 
+    /**
+     * Resolves the font size stored inside the current element.
+     *
+     * @param styles attributes map of the current element
+     * @param cssContext {@link SvgCssContext} instance in order to resolve relative font size
+     * @param parentFontSizeStr parent font size value
+     */
     public static void resolveFontSizeStyle(Map<String, String> styles, SvgCssContext cssContext, String parentFontSizeStr) {
         String elementFontSize = styles.get(SvgConstants.Attributes.FONT_SIZE);
         String resolvedFontSize;
@@ -191,6 +196,15 @@ public class SvgStyleResolver implements ICssResolver {
         styles.put(SvgConstants.Attributes.FONT_SIZE, resolvedFontSize + CommonCssConstants.PT);
     }
 
+    /**
+     * Checks whether element is nested within the passed parent element. Nesting is checked at several levels
+     * (recursively).
+     *
+     * @param element {@link IElementNode} element to check
+     * @param parentElementNameForSearch expected parent element name
+     *
+     * @return {@code true} if element is nested within the expected parent, {@code false} otherwise
+     */
     public static boolean isElementNested(IElementNode element, String parentElementNameForSearch) {
         if (!(element.parentNode() instanceof IElementNode)) {
             return false;

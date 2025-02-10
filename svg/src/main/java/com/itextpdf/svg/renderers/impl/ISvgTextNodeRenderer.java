@@ -28,8 +28,19 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.TextRectangle;
 
+/**
+ * Interface for &lt;text&gt; and &lt;tspan&gt; related renderers.
+ */
 public interface ISvgTextNodeRenderer extends ISvgNodeRenderer {
 
+    /**
+     * Gets text content length.
+     *
+     * @param parentFontSize parent font size
+     * @param font current font
+     *
+     * @return text content length
+     */
     @Deprecated
     float getTextContentLength(float parentFontSize, PdfFont font);
 
