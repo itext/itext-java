@@ -50,7 +50,6 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
@@ -101,9 +100,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         doc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpFIle, DESTINATION_FOLDER, "diff_"));
-        VeraPdfValidator validator = new VeraPdfValidator();  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         // We expect verapdf to fail because we are embedding tagged content which contains artifacts
-        Assertions.assertNotNull("We expect vera pdf to fail, because we are embedding tagged content which contains artifacts into a tagged item", validator.validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
     }
 
@@ -133,8 +130,6 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
-        VeraPdfValidator validator = new VeraPdfValidator(); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assertions.assertNotNull("Fails are expected because the content inside the xobject isn't valid because of not embedded font, and iText doesn't parse the content streams", validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
     }
 
@@ -166,8 +161,6 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
-        VeraPdfValidator validator = new VeraPdfValidator(); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assertions.assertNull(validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
     }
 
@@ -194,8 +187,6 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
-        VeraPdfValidator validator = new VeraPdfValidator(); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assertions.assertNotNull("Content of the xobject is not valid causing it to be an non compliant", validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
     }
 
@@ -282,8 +273,6 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outputPdf, cmpFile, DESTINATION_FOLDER, "diff_"));
-        VeraPdfValidator validator = new VeraPdfValidator(); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assertions.assertNotNull("The content is non compliant because it contains both artifacts, and real content", validator.validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
     }
 

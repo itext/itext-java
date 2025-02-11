@@ -143,7 +143,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6441 fix problem with System#getEnv method)
+    @org.junit.jupiter.api.Disabled
     public void runProcessAndWaitWithWorkingDirectoryTest() throws IOException, InterruptedException {
         String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
         if (imageMagickPath == null) {
@@ -166,7 +166,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6441 fix problem with System#getEnv method)
+    @org.junit.jupiter.api.Disabled
     public void runProcessAndGetProcessInfoTest() throws IOException, InterruptedException {
         String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
         if (imageMagickPath == null) {

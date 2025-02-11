@@ -37,7 +37,7 @@ import org.junit.jupiter.api.condition.DisabledInNativeImage;
 public class SignUtilsManualTest extends ExtendedITextTest {
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6446 fix differences in java.security)
+    @org.junit.jupiter.api.Disabled
     public void removeCertificatesIteratorTest() throws KeyStoreException {
         Iterable<X509Certificate> iterable = SignUtils.getCertificates(KeyStoreUtil.loadCacertsKeyStore());
         Iterator<X509Certificate> it = iterable.iterator();

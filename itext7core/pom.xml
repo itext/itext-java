@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-<modelVersion>4.0.0</modelVersion>
-  <groupId>com.itextpdf</groupId>
-  <artifactId>itext7-core</artifactId>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.itextpdf.android</groupId>
+  <artifactId>itext7-core-android</artifactId>
   <version>9.1.0</version>
   <packaging>pom</packaging>
   <name>iText 7 Core</name>
@@ -47,7 +48,7 @@
   </scm>
   <distributionManagement>
     <relocation>
-      <artifactId>itext-core</artifactId>
+      <artifactId>itext-core-android</artifactId>
     </relocation>
   </distributionManagement>
 </project>

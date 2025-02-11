@@ -194,8 +194,6 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
      * @param factory {@link TransformerFactory} instance to be configured
      */
     protected void configureSafeTransformerFactory(TransformerFactory factory) {
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Android-Conversion-Skip-Line (android XMLConstants doesn't have such property)
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); // Android-Conversion-Skip-Line (android XMLConstants doesn't have such property)
     }
 
     private void tryToSetFeature(DocumentBuilderFactory factory, String feature, boolean value) {

@@ -51,7 +51,6 @@ import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua
 // validation on Android)
 
 import java.io.ByteArrayOutputStream;
@@ -142,7 +141,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                         DESTINATION_FOLDER,
                         "diff_")
         );
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -192,7 +190,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_TextArtifactIsNotInTagTree.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -303,7 +300,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_TextGlyphLineContentIsArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -334,7 +330,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_TextGlyphLineContentIsContentCorrect.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -362,7 +357,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_allowPureBmcInArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -392,7 +386,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_allowNestedPureBmcInArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -476,7 +469,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_LineContentThatIsMarkedAsArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -604,7 +596,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_RectangleMarkedArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -662,7 +653,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_RectangleMarkedContent.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -688,7 +678,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .restoreState();
 
         pdfDoc.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_004_bezierCurveShouldBeTagged.pdf",
                 DESTINATION_FOLDER, "diff_"));
@@ -713,7 +702,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .restoreState();
 
         pdfDoc.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_004_bezierMarkedAsArtifact.pdf",
                 DESTINATION_FOLDER, "diff_"));
@@ -772,7 +760,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_01_005_RandomOperationsWithoutActuallyAddingContent.pdf",
                 DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -838,7 +825,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContent.pdf",
                 DESTINATION_FOLDER, "diff_")
         );
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -876,7 +862,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .closeTag();
         pdfDoc.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContentMultiple.pdf",
                 DESTINATION_FOLDER, "diff_")
@@ -921,7 +906,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 .closeTag();
         pdfDoc.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         Assertions.assertNull(new CompareTool().compareByContent(outPdf,
                 SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContentMCR_IN_MCR.pdf",
                 DESTINATION_FOLDER, "diff_")

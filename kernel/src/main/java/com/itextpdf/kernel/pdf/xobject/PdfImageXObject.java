@@ -155,18 +155,6 @@ public class PdfImageXObject extends PdfXObject {
         return image;
     }
 
-    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
-    /**
-     * Gets image bytes, wrapped with buffered image.
-     *
-     * @return {@link java.awt.image.BufferedImage} image.
-     * @throws IOException if an error occurs during reading.
-     */
-    public java.awt.image.BufferedImage getBufferedImage() throws IOException {
-        byte[] img = getImageBytes();
-        return javax.imageio.ImageIO.read(new ByteArrayInputStream(img));
-    }
-    // Android-Conversion-Skip-Block-End
 
     /**
      * Gets decoded image bytes.

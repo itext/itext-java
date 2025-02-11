@@ -55,7 +55,6 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -813,7 +812,6 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     private void compareResult(String outPdf, String cmpPdf, String expectedVeraPdfWarning) throws IOException, InterruptedException {
-        new VeraPdfValidator().validateWarning(outPdf, expectedVeraPdfWarning); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);

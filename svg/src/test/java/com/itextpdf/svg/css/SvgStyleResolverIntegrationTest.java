@@ -199,7 +199,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6459 Android: fix the SecurityException(Permission denied) from UrlUtil method)
+    @org.junit.jupiter.api.Disabled
     public void googleFontsTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "googleFontsTest");
     }

@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>9.1.0</version>
   </parent>
-
-  <artifactId>commons</artifactId>
-
+  <artifactId>commons-android</artifactId>
   <name>iText - commons</name>
   <url>https://itextpdf.com/</url>
-
   <properties>
     <sonar.coverage.exclusions>**/com/itextpdf/commons/bouncycastle/**</sonar.coverage.exclusions>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -24,15 +20,13 @@
       <version>${jackson.core.version}</version>
       <optional>true</optional>
     </dependency>
-
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdftest-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <profiles>
     <profile>
       <id>with-sharpen</id>
