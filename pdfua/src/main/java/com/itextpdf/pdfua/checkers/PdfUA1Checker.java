@@ -45,7 +45,6 @@ import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
-import com.itextpdf.kernel.validation.IValidationChecker;
 import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
@@ -71,21 +70,21 @@ import com.itextpdf.pdfua.checkers.utils.headings.HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import org.slf4j.LoggerFactory;
 
 /**
- * The class defines the requirements of the PDF/UA-1 standard.
+ * The class defines the requirements of the PDF/UA-1 standard and contains
+ * method implementations from the abstract {@link PdfUAChecker} class.
+ *
  * <p>
- * The specification implemented by this class is ISO 14289-1
+ * The specification implemented by this class is ISO 14289-1.
  */
-public class PdfUA1Checker implements IValidationChecker {
+public class PdfUA1Checker extends PdfUAChecker {
 
     private final PdfDocument pdfDocument;
 
@@ -95,14 +94,13 @@ public class PdfUA1Checker implements IValidationChecker {
 
     private final PdfUAValidationContext context;
 
-    private boolean warnedOnPageFlush = false;
-
     /**
      * Creates PdfUA1Checker instance with PDF document which will be validated against PDF/UA-1 standard.
      *
      * @param pdfDocument the document to validate
      */
     public PdfUA1Checker(PdfDocument pdfDocument) {
+        super();
         this.pdfDocument = pdfDocument;
         this.tagStructureContext = new TagStructureContext(pdfDocument);
         this.context = new PdfUAValidationContext(pdfDocument);
@@ -160,16 +158,6 @@ public class PdfUA1Checker implements IValidationChecker {
     @Override
     public boolean isPdfObjectReadyToFlush(PdfObject object) {
         return true;
-    }
-
-    /**
-     * Logs a warn on page flushing that page flushing is disabled in PDF/UA mode.
-     */
-    public void warnOnPageFlush() {
-        if (!warnedOnPageFlush) {
-            LoggerFactory.getLogger(PdfUA1Checker.class).warn(PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED);
-            warnedOnPageFlush = true;
-        }
     }
 
     /**

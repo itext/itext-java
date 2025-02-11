@@ -27,16 +27,59 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
+import com.itextpdf.pdfua.checkers.PdfUAChecker;
 
 class PdfUAPage extends PdfPage {
-    private final PdfUA1Checker checker;
+    private final PdfUAChecker checker;
 
+    /**
+     * Creates new {@link PdfUAPage} instance.
+     *
+     * @param pdfObject the {@link PdfDictionary} object on which the {@link PdfUAPage} will be based
+     * @param checker {@link PdfUA1Checker} to check the requirements of the PDF/UA-1 standard
+     *
+     * @deprecated in favour of {@link #PdfUAPage(PdfDictionary, PdfUAChecker)}
+     */
+    @Deprecated
     protected PdfUAPage(PdfDictionary pdfObject, PdfUA1Checker checker) {
         super(pdfObject);
         this.checker = checker;
     }
 
+    /**
+     * Creates new {@link PdfUAPage} instance.
+     *
+     * @param pdfDocument the {@link PdfDocument} object which will contain the {@link PdfUAPage}
+     * @param pageSize {@link PageSize} the size of the {@link PdfUAPage}
+     * @param checker {@link PdfUA1Checker} to check the requirements of the PDF/UA-1 standard
+     *
+     * @deprecated in favour of {@link #PdfUAPage(PdfDocument, PageSize, PdfUAChecker)}
+     */
+    @Deprecated
     protected PdfUAPage(PdfDocument pdfDocument, PageSize pageSize, PdfUA1Checker checker) {
+        super(pdfDocument, pageSize);
+        this.checker = checker;
+    }
+
+    /**
+     * Creates new {@link PdfUAPage} instance.
+     *
+     * @param pdfObject the {@link PdfDictionary} object on which the {@link PdfUAPage} will be based
+     * @param checker {@link PdfUAChecker} to check the requirements of the PDF/UA standard
+     */
+    protected PdfUAPage(PdfDictionary pdfObject, PdfUAChecker checker) {
+        super(pdfObject);
+        this.checker = checker;
+    }
+
+    /**
+     * Creates new {@link PdfUAPage} instance.
+     *
+     * @param pdfDocument the {@link PdfDocument} object which will contain the {@link PdfUAPage}
+     * @param pageSize {@link PageSize} the size of the {@link PdfUAPage}
+     * @param checker {@link PdfUAChecker} to check the requirements of the PDF/UA standard
+     */
+    protected PdfUAPage(PdfDocument pdfDocument, PageSize pageSize, PdfUAChecker checker) {
         super(pdfDocument, pageSize);
         this.checker = checker;
     }

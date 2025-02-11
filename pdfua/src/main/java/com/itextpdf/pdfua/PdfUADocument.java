@@ -36,8 +36,10 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
+import com.itextpdf.pdfua.checkers.PdfUA2Checker;
+import com.itextpdf.pdfua.checkers.PdfUAChecker;
+import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,12 +69,12 @@ public class PdfUADocument extends PdfDocument {
      * @param config     The configuration for the PDF/UA document.
      */
     public PdfUADocument(PdfWriter writer, DocumentProperties properties, PdfUAConfig config) {
-        super(configureWriterProperties(writer), properties);
+        super(configureWriterProperties(writer, config.getConformance()), properties);
         this.pdfConformance = new PdfConformance(config.getConformance());
 
         setupUAConfiguration(config);
         final ValidationContainer validationContainer = new ValidationContainer();
-        final PdfUA1Checker checker = new PdfUA1Checker(this);
+        final PdfUAChecker checker = getCorrectCheckerFromConformance(config.getConformance());
         validationContainer.addChecker(checker);
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfUAPageFactory(checker);
@@ -106,14 +108,14 @@ public class PdfUADocument extends PdfDocument {
         setupUAConfiguration(config);
 
         final ValidationContainer validationContainer = new ValidationContainer();
-        final PdfUA1Checker checker = new PdfUA1Checker(this);
+        final PdfUAChecker checker = getCorrectCheckerFromConformance(config.getConformance());
         validationContainer.addChecker(checker);
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfUAPageFactory(checker);
     }
 
-    private static PdfWriter configureWriterProperties(PdfWriter writer) {
-        writer.getProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1);
+    private static PdfWriter configureWriterProperties(PdfWriter writer, PdfUAConformance uaConformance) {
+        writer.getProperties().addPdfUaXmpMetadata(uaConformance);
         if (writer.getPdfVersion() != null && !writer.getPdfVersion().equals(PdfVersion.PDF_1_7)) {
             LoggerFactory.getLogger(PdfUADocument.class).warn(MessageFormatUtil.format(
                     PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_1_7));
@@ -123,11 +125,34 @@ public class PdfUADocument extends PdfDocument {
     }
 
     private void setupUAConfiguration(PdfUAConfig config) {
-        //basic configuration
+        // Basic configuration.
         this.setTagged();
         this.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
         this.getCatalog().setLang(new PdfString(config.getLanguage()));
         final PdfDocumentInfo info = this.getDocumentInfo();
         info.setTitle(config.getTitle());
+    }
+
+    /**
+     * Gets correct {@link PdfUAChecker} for specified PDF/UA conformance.
+     *
+     * @param uaConformance the conformance for which checker is needed
+     *
+     * @return the correct PDF/UA checker
+     */
+    private PdfUAChecker getCorrectCheckerFromConformance(PdfUAConformance uaConformance) {
+        PdfUAChecker checker;
+        switch (uaConformance.getPart()) {
+            case "1":
+                checker = new PdfUA1Checker(this);
+                break;
+            case "2":
+                checker = new PdfUA2Checker(this);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        PdfUAExceptionMessageConstants.CANNOT_FIND_PDF_UA_CHECKER_FOR_SPECIFIED_CONFORMANCE);
+        }
+        return checker;
     }
 }

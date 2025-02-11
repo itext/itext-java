@@ -49,6 +49,7 @@ public class PdfConformance {
     public static final PdfConformance PDF_A_4F = new PdfConformance(PdfAConformance.PDF_A_4F);
 
     public static final PdfConformance PDF_UA_1 = new PdfConformance(PdfUAConformance.PDF_UA_1);
+    public static final PdfConformance PDF_UA_2 = new PdfConformance(PdfUAConformance.PDF_UA_2);
 
     public static final PdfConformance PDF_NONE_CONFORMANCE = new PdfConformance();
 
@@ -297,6 +298,9 @@ public class PdfConformance {
     private static PdfUAConformance getUAConformance(String part) {
         if ("1".equals(part)) {
             return PdfUAConformance.PDF_UA_1;
+        }
+        if ("2".equals(part)) {
+            return PdfUAConformance.PDF_UA_2;
         }
         return null;
     }

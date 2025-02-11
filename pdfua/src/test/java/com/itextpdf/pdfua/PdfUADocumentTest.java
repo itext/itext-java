@@ -47,12 +47,24 @@ public class PdfUADocumentTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED, logLevel = LogLevelConstants.WARN)
     })
-    public void openNotUaDocumentTest() {
+    public void openNotUa1DocumentTest() {
         AssertUtil.doesNotThrow(() ->
                 new PdfUADocument(
                         new PdfReader(SOURCE_FOLDER + "usualPdf.pdf"),
                         new PdfWriter(new ByteArrayOutputStream()),
                         new PdfUAConfig(PdfUAConformance.PDF_UA_1, "simple doc", "eng")));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED, logLevel = LogLevelConstants.WARN)
+    })
+    public void openNotUa2DocumentTest() {
+        AssertUtil.doesNotThrow(() ->
+                new PdfUADocument(
+                        new PdfReader(SOURCE_FOLDER + "usualPdf.pdf"),
+                        new PdfWriter(new ByteArrayOutputStream()),
+                        new PdfUAConfig(PdfUAConformance.PDF_UA_2, "simple doc", "eng")));
     }
 
     @Test
