@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" style="border: 1px solid black;">
+  <text x="10" y="40" font-family="Arial" font-size="24" fill="black" writing-mode="horizontal-tb">
+    writing-mode="horizontal-tb"
+  </text>
+  
+  <text x="10" y="100" font-family="Arial" font-size="24" fill="black" writing-mode="vertical-rl">
+    writing-mode="vertical-rl"
+  </text>
+  
+  <text x="50" y="160" font-family="Arial" font-size="24" fill="black" writing-mode="vertical-lr">
+    writing-mode="vertical-lr"
+  </text>
+  
+  <text x="90" y="220" font-family="Arial" font-size="24" fill="black" writing-mode="sideways-rl">
+    writing-mode="sideways-rl"
+  </text>
+  
+  <text x="130" y="280" font-family="Arial" font-size="24" fill="black" writing-mode="sideways-lr">
+    writing-mode="sideways-lr"
+  </text>
+
+</svg>

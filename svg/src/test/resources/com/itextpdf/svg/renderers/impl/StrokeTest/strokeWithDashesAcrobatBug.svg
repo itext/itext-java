@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="595pt" height="842pt">
+   <rect x="280" y="230" width="460" height="420" fill="green" fill-opacity="0.2"/>
+   <line x1="290" y1="240" x2="730" y2="640" stroke="red" stroke-width="10" stroke-opacity="0.5" stroke-linecap="round"/>
+   <line x1="500" y1="240" x2="730" y2="640" stroke="red" stroke-width="10" stroke-opacity="0.5" stroke-linecap="round"/>
+   <line x1="290" y1="420" x2="730" y2="640" stroke="red" stroke-width="10" stroke-opacity="0.5" stroke-linecap="round"/>
+   <line x1="290" y1="620" x2="730" y2="640" stroke="red" stroke-width="10" stroke-opacity="0.5" stroke-linecap="round"/>
+   <line x1="700" y1="240" x2="730" y2="640" stroke="red" stroke-width="10" stroke-opacity="0.5" stroke-linecap="round"/>
+   <text dx="300" dy="325" font-size="100" stroke="teal"
+         stroke-opacity="0.5"
+         stroke-width="5"
+         stroke-dasharray="10 10 1% 0.5% 0.1em 0.5rem 20 20"
+         stroke-dashoffset="5%">H E L L O
+   </text>
+   <text dx="300" dy="425" font-size="100" stroke="teal"
+         stroke-opacity="0"
+         stroke-width="5"
+         stroke-dasharray="10 10 1% 0.5% 0.1em 0.5rem 20 20"
+         stroke-dashoffset="5%">H E L L O
+   </text>
+   <text dx="300" dy="525" font-size="100" stroke="teal"
+         stroke-opacity="0.5"
+         stroke-width="10"
+         stroke-dasharray="10 10 1% 0.5% 0.1em 0.5rem 20 20"
+         stroke-dashoffset="5%">H E L L O
+   </text>
+   <text dx="300" dy="625" font-size="100" stroke="teal"
+         stroke-opacity="0"
+         stroke-width="10"
+         stroke-dasharray="10 10 1% 0.5% 0.1em 0.5rem 20 20"
+         stroke-dashoffset="5%">H E L L O
+   </text>
+</svg>

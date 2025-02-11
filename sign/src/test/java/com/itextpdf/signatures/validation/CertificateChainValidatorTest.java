@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,8 +23,8 @@
 package com.itextpdf.signatures.validation;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.crypto.OID.X509Extensions;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
@@ -35,6 +35,8 @@ import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
+import com.itextpdf.signatures.validation.extensions.DynamicBasicConstraintsExtension;
+import com.itextpdf.signatures.validation.extensions.DynamicCertificateExtension;
 import com.itextpdf.signatures.validation.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.extensions.KeyUsageExtension;
 import com.itextpdf.signatures.validation.mocks.MockIssuingCertificateRetriever;
@@ -46,6 +48,7 @@ import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResu
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
@@ -157,17 +160,65 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 )
                 .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                        .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                                l -> "2.5.29.19")
+                        .withMessage(CertificateChainValidator.EXTENSION_MISSING , l -> MessageFormatUtil.format(DynamicBasicConstraintsExtension.ERROR_MESSAGE,
+                                1, 0))
                         .withCertificate(rootCert)
                 )
                 .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                        .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                                l -> "2.5.29.19")
+                        .withMessage(CertificateChainValidator.EXTENSION_MISSING , l -> MessageFormatUtil.format(DynamicBasicConstraintsExtension.ERROR_MESSAGE,
+                                0, -1))
                         .withCertificate(intermediateCert)
                 )
         );
+    }
+
+    @Test
+    public void chainWithAiaTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chainWithAia.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        IssuingCertificateRetriever customRetriever = new IssuingCertificateRetriever() {
+            @Override
+            protected InputStream getIssuerCertByURI(String uri) throws IOException {
+                return FileUtil.getInputStreamForFile(CERTS_SRC + "intermediateCertFromAia.pem");
+            }
+        };
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> customRetriever);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        properties.setRequiredExtensions(CertificateSources.of(CertificateSource.CERT_ISSUER), Collections.<CertificateExtension>emptyList());
+        customRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        ValidationReport report = validator.validateCertificate(baseContext, signingCert,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 21));
+        AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+    }
+
+    @Test
+    public void chainWithAiaWhichPointsToRandomCertTest() throws CertificateException, IOException {
+        String chainName = CERTS_SRC + "chainWithAia.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        IssuingCertificateRetriever customRetriever = new IssuingCertificateRetriever() {
+            @Override
+            protected InputStream getIssuerCertByURI(String uri) throws IOException {
+                return FileUtil.getInputStreamForFile(CERTS_SRC + "randomCert.pem");
+            }
+        };
+        validatorChainBuilder.withIssuingCertificateRetrieverFactory(() -> customRetriever);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        properties.setRequiredExtensions(CertificateSources.of(CertificateSource.CERT_ISSUER), Collections.<CertificateExtension>emptyList());
+        customRetriever.addKnownCertificates(Collections.<Certificate>singletonList(intermediateCert));
+        customRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        ValidationReport report = validator.validateCertificate(baseContext, signingCert,
+                DateTimeUtil.addYearsToDate(TimeTestUtil.TEST_DATE_TIME, 21));
+        AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
     }
 
     @Test
@@ -219,29 +270,22 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         ValidationReport report = validator.validateCertificate(baseContext, signingCert, DateTimeUtil.getCurrentTimeDate());
 
         Assertions.assertEquals(ValidationResult.INVALID, report.getValidationResult());
-        Assertions.assertEquals(3, report.getFailures().size());
-        Assertions.assertEquals(4, report.getLogs().size());
+        Assertions.assertEquals(2, report.getFailures().size());
+        Assertions.assertEquals(3, report.getLogs().size());
         Assertions.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
         Assertions.assertEquals(report.getFailures().get(1), report.getLogs().get(1));
-        Assertions.assertEquals(report.getFailures().get(2), report.getLogs().get(2));
 
         CertificateReportItem failure1 = report.getCertificateFailures().get(0);
-        Assertions.assertEquals(signingCert, failure1.getCertificate());
+        Assertions.assertEquals(intermediateCert, failure1.getCertificate());
         Assertions.assertEquals("Required certificate extensions check.", failure1.getCheckName());
-        Assertions.assertEquals(MessageFormatUtil.format(
-                "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure1.getMessage());
+        Assertions.assertEquals(buildKeyUsageWrongMessagePart(KeyUsage.DECIPHER_ONLY, KeyUsage.KEY_CERT_SIGN),
+                failure1.getMessage());
 
         CertificateReportItem failure2 = report.getCertificateFailures().get(1);
-        Assertions.assertEquals(intermediateCert, failure2.getCertificate());
+        Assertions.assertEquals(rootCert, failure2.getCertificate());
         Assertions.assertEquals("Required certificate extensions check.", failure2.getCheckName());
-        Assertions.assertEquals(MessageFormatUtil.format(
-                "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure2.getMessage());
-
-        CertificateReportItem failure3 = report.getCertificateFailures().get(2);
-        Assertions.assertEquals(rootCert, failure3.getCertificate());
-        Assertions.assertEquals("Required certificate extensions check.", failure3.getCheckName());
-        Assertions.assertEquals(MessageFormatUtil.format(
-                "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure3.getMessage());
+        Assertions.assertEquals(buildKeyUsageWrongMessagePart(KeyUsage.DECIPHER_ONLY, KeyUsage.KEY_CERT_SIGN),
+                failure2.getMessage());
     }
 
     @Test
@@ -269,10 +313,33 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         Assertions.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
 
         CertificateReportItem failure1 = report.getCertificateFailures().get(0);
-        Assertions.assertEquals(signingCert, failure1.getCertificate());
+        Assertions.assertEquals(intermediateCert, failure1.getCertificate());
         Assertions.assertEquals("Required certificate extensions check.", failure1.getCheckName());
-        Assertions.assertEquals(MessageFormatUtil.format(
-                "Required extension {0} is missing or incorrect.", X509Extensions.KEY_USAGE), failure1.getMessage());
+        Assertions.assertEquals(
+                buildKeyUsageWrongMessagePart(KeyUsage.DECIPHER_ONLY, KeyUsage.KEY_CERT_SIGN),
+                failure1.getMessage());
+    }
+
+    @Test
+    public void unusualKeyUsageExtensionsTest() throws CertificateException, IOException {
+        // Both root and intermediate certificates in this chain doesn't have KeyUsage extension.
+        // Sign certificate contains digital signing.
+        String chainName = CERTS_SRC + "chainWithUnusualKeyUsages.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Collections.singletonList(intermediateCert));
+        certificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
+
+        properties.setContinueAfterFailure(ValidatorContexts.all() , CertificateSources.all(),false);
+
+        ValidationReport report = validator.validateCertificate(baseContext, signingCert, DateTimeUtil.getCurrentTimeDate());
+
+        Assertions.assertEquals(ValidationResult.VALID, report.getValidationResult());
+        Assertions.assertEquals(1, report.getLogs().size());
     }
 
     @Test
@@ -339,8 +406,8 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                 signingCert, DateTimeUtil.getCurrentTimeDate());
 
         AssertValidationReport.assertThat(report, a -> a
-                .hasNumberOfFailures(2)
-                .hasNumberOfLogs(3)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(la -> la
                     .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                     .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -349,19 +416,11 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                    )
                 .hasLogItem(la -> la
                     .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                    .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                                            l ->X509Extensions.KEY_USAGE)
-                    .withCertificate(signingCert)
-                   )
-                .hasLogItem(la -> la
-                    .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                    .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                                    l -> X509Extensions.BASIC_CONSTRAINTS)
+                    .withMessageContains(buildKeyUsageWrongMessagePart(
+                                    KeyUsage.KEY_CERT_SIGN))
                     .withCertificate(signingCert)
                    ));
-
     }
-
     @Test
     public void validChainTrustedRootIsnSetTest() throws CertificateException, IOException {
         String chainName = CERTS_SRC + "chain.pem";
@@ -870,4 +929,19 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         Assertions.assertEquals(0, mockCertificateRetriever.getCrlIssuerCertificatesByNameCalls.size());
         Assertions.assertEquals(1, mockRevocationDataValidator.calls.size());
     }
+
+    private String buildKeyUsageWrongMessagePart(KeyUsage expectedKeyUsage,  KeyUsage ... actualKeyUsage) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String sep = "";
+
+        for (KeyUsage usage: actualKeyUsage) {
+            stringBuilder.append(sep).append(usage);
+            sep = ", ";
+        }
+
+        return MessageFormatUtil.format(CertificateChainValidator.EXTENSION_MISSING,
+                MessageFormatUtil.format(KeyUsageExtension.EXPECTED_VALUE, expectedKeyUsage)
+                        + MessageFormatUtil.format(KeyUsageExtension.ACTUAL_VALUE, stringBuilder.toString()));
+    }
+
 }

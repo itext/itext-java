@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -71,7 +71,7 @@ public class AddFingerPrintEventTest  extends ExtendedITextTest {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             try (PdfDocument doc = new PdfDocument(new PdfWriter(outputStream))) {
                 ProductData productData = new ProductData("public product name"
-                        , "product name", "1", 2000, 2024);
+                        , "product name", "1", 2000, 2025);
                 doc.getFingerPrint().registerProduct(productData);
                 AssertUtil.doesNotThrow(() -> doc.close());
             }

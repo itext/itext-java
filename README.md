@@ -86,6 +86,9 @@ public class HelloPdfApp {
 }
 ```
 
+### GraalVM compatibility
+Starting from version 8.0.3 iText Core supports native image compilation using GraalVM. See [building] for details. 
+
 ### Examples
 
 This is a small subset of examples to get you started. For more advanced examples, refer to our [Knowledge Base](https://kb.itextpdf.com/home/it7kb/examples) or the following links:
@@ -118,8 +121,9 @@ results.
 | **PDF/UA, PDF/A**                          |                                                                                                                                                                                                                                                                 |
 | Create PDF/UA document                     | [Java](https://github.com/itext/i7js-examples/blob/master/src/main/java/com/itextpdf/samples/sandbox/pdfua/PdfUA.java),  [PDF](https://github.com/itext/i7js-examples/blob/master/cmpfiles/sandbox/pdfua/cmp_pdf_ua.pdf)                                        |
 | Create PDF/A-3 document                    | [Java](https://github.com/itext/i7js-examples/blob/master/src/main/java/com/itextpdf/samples/sandbox/pdfa/PdfA3.java)                                                                                                                                           |
-| Create PDF/A-4 document                    | [Java](https://github.com/itext/i7js-examples/blob/develop/src/main/java/com/itextpdf/samples/sandbox/pdfa/PdfA4.java)                                                                                                                                          |
-| Create WTPDF document                      | [Java](https://github.com/itext/i7js-examples/blob/develop/src/main/java/com/itextpdf/samples/sandbox/pdfua/Wtpdf.java)                                                                                                                                         |
+| Create PDF/A-4 document                    | [Java](https://github.com/itext/itext-publications-examples-java/blob/master/src/main/java/com/itextpdf/samples/sandbox/pdfa/PdfA4.java)                                                                                                                                           |
+| Create WTPDF document                      | [Java](https://github.com/itext/itext-publications-examples-java/blob/master/src/main/java/com/itextpdf/samples/sandbox/pdfua/Wtpdf.java)                                                                                                                                          |
+| Create ZUGFeRD/Factur-X document           | [Java](https://github.com/itext/itext-publications-examples-java/blob/master/src/main/java/com/itextpdf/samples/sandbox/zugferd/BasicSample.java), [PDF](https://github.com/itext/itext-publications-examples-java/blob/master/cmpfiles/sandbox/zugferd/cmp_invoice_with_zugferd.pdf)|
 | <br>                                       |                                                                                                                                                                                                                                                                 |
 | **FIPS**                                   |                                                                                                                                                                                                                                                                 |
 | Enable FIPS                                | [Java](https://kb.itextpdf.com/home/it7kb/releases/release-itext-core-8-0-0/breaking-changes-for-itext-core-8-0-0/bouncy-castle-changes)                                                                                                                        |

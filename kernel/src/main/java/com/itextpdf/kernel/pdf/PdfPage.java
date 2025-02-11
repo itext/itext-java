@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -889,12 +889,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                         // "Annot" tag was added starting from PDF 1.5
                         && PdfVersion.PDF_1_4.compareTo(getDocument().getPdfVersion()) < 0) {
 
-                    if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) > 0) {
-                        if (!(annotation instanceof PdfWidgetAnnotation) && !(annotation instanceof PdfLinkAnnotation)
-                                && !(annotation instanceof PdfPrinterMarkAnnotation)) {
-                            tagPointer.addTag(StandardRoles.ANNOT);
-                        }
-                    } else if (annotation instanceof PdfMarkupAnnotation) {
+                    if (!(annotation instanceof PdfWidgetAnnotation) && !(annotation instanceof PdfLinkAnnotation)
+                            && !(annotation instanceof PdfPrinterMarkAnnotation)) {
                         tagPointer.addTag(StandardRoles.ANNOT);
                     }
                 }
@@ -1475,9 +1471,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private void rebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument) {
+        rebuildFormFieldParent(field, newField, toDocument, new HashSet<>());
+    }
+
+    private void rebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument, Set<PdfDictionary> visitedForms) {
         if (newField.containsKey(PdfName.Parent)) {
             return;
         }
+        visitedForms.add(field);
         PdfDictionary oldParent = field.getAsDictionary(PdfName.Parent);
         if (oldParent != null) {
             PdfDictionary newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids,
@@ -1486,10 +1487,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 newParent = oldParent.copyTo(toDocument, Arrays.asList(PdfName.P, PdfName.Kids, PdfName.Parent),
                         true, NullCopyFilter.getInstance());
             }
-            if (oldParent == oldParent.getAsDictionary(PdfName.Parent)) {
+            if (visitedForms.contains(oldParent)) {
                 return;
             }
-            rebuildFormFieldParent(oldParent, newParent, toDocument);
+            rebuildFormFieldParent(oldParent, newParent, toDocument, visitedForms);
 
             PdfArray kids = newParent.getAsArray(PdfName.Kids);
             if (kids == null) {

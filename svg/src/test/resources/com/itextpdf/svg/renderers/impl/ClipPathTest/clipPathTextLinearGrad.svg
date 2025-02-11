@@ -1,0 +1,16 @@
+<svg width="660" height="220" xmlns="http://www.w3.org/2000/svg" style="outline: 1px solid red">
+<defs>
+<clipPath id="textPath">
+<text x="50" y="133" font-size="40pt" font-weight="bold">ClipPathText</text>
+</clipPath>
+<linearGradient id="originalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:blue;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:green;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:red;stop-opacity:1" />
+    </linearGradient>
+</defs>
+
+<g clip-path="url(#textPath)">
+<rect x="50" width="600" height="200" fill="url(#originalGrad)" />
+</g>
+</svg>

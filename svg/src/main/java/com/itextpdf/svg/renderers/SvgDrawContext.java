@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,10 +33,13 @@ import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.utils.SvgTextProperties;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -53,19 +56,22 @@ public class SvgDrawContext {
     private final Stack<String> patternIds = new Stack<>();
     private final ResourceResolver resourceResolver;
     private final FontProvider fontProvider;
+    private SvgTextProperties textProperties = new SvgTextProperties();
     private FontSet tempFonts;
     private SvgCssContext cssContext;
 
-    private AffineTransform lastTextTransform;
     private AffineTransform rootTransform;
+    private AffineTransform clippingElementTransform = new AffineTransform();
     private float[] textMove = new float[]{0.0f, 0.0f};
-    private float[] previousElementTextMove;
+    private float[] relativePosition;
+
+    private Rectangle customViewport;
 
     /**
      * Create an instance of the context that is used to store information when converting SVG.
      *
      * @param resourceResolver instance of {@link ResourceResolver}
-     * @param fontProvider instance of {@link FontProvider}
+     * @param fontProvider     instance of {@link FontProvider}
      */
     public SvgDrawContext(ResourceResolver resourceResolver, FontProvider fontProvider) {
         if (resourceResolver == null) {
@@ -77,6 +83,28 @@ public class SvgDrawContext {
         }
         this.fontProvider = fontProvider;
         cssContext = new SvgCssContext();
+    }
+
+    /**
+     * Gets the custom viewport of SVG.
+     * <p>
+     * The custom viewport is used to resolve percent values of the top level svg.
+     *
+     * @return the custom viewport
+     */
+    public Rectangle getCustomViewport() {
+        return customViewport;
+    }
+
+    /**
+     * Sets the custom viewport of SVG.
+     * <p>
+     * The custom viewport is used to resolve percent values of the top level svg.
+     *
+     * @param customViewport the custom viewport
+     */
+    public void setCustomViewport(Rectangle customViewport) {
+        this.customViewport = customViewport;
     }
 
     /**
@@ -136,6 +164,9 @@ public class SvgDrawContext {
      * @return the viewbox as it is currently set
      */
     public Rectangle getCurrentViewPort() {
+        if (viewports.isEmpty()) {
+            return null;
+        }
         return viewports.getFirst();
     }
 
@@ -152,7 +183,7 @@ public class SvgDrawContext {
      * Remove the currently set view box.
      */
     public void removeCurrentViewPort() {
-        if (this.viewports.size() > 0) {
+        if (!this.viewports.isEmpty()) {
             viewports.removeFirst();
         }
     }
@@ -261,22 +292,27 @@ public class SvgDrawContext {
     }
 
     /**
-     * Get the text transformation that was last applied
+     * Get the text transformation that was last applied.
+     *
      * @return {@link AffineTransform} representing the last text transformation
+     *
+     * @deprecated in favour of {@link #getRootTransform()}
      */
+    @Deprecated
     public AffineTransform getLastTextTransform() {
-        if (lastTextTransform == null) {
-            lastTextTransform = new AffineTransform();
-        }
-        return this.lastTextTransform;
+        return new AffineTransform();
     }
 
     /**
-     * Set the last text transformation
+     * Set the last text transformation.
+     *
      * @param newTransform last text transformation
+     *
+     * @deprecated in favour of {@link #setRootTransform(AffineTransform)}
      */
+    @Deprecated
     public void setLastTextTransform(AffineTransform newTransform) {
-        this.lastTextTransform = newTransform;
+        // Do nothing.
     }
 
     /**
@@ -301,7 +337,8 @@ public class SvgDrawContext {
     }
 
     /**
-     * Get the stored current text move
+     * Get the stored current text move.
+     *
      * @return [horizontal text move, vertical text move]
      */
     public float[] getTextMove() {
@@ -316,7 +353,8 @@ public class SvgDrawContext {
     }
 
     /**
-     * Increment the stored text move
+     * Increment the stored text move.
+     *
      * @param additionalMoveX horizontal value to add
      * @param additionalMoveY vertical value to add
      */
@@ -326,7 +364,8 @@ public class SvgDrawContext {
     }
 
     /**
-     * Get the current canvas transformation
+     * Get the current canvas transformation.
+     *
      * @return the {@link AffineTransform} representing the current canvas transformation
      */
     public AffineTransform getCurrentCanvasTransform() {
@@ -379,11 +418,105 @@ public class SvgDrawContext {
         this.patternIds.pop();
     }
 
+    @Deprecated
     public void setPreviousElementTextMove(float[] previousElementTextMove) {
-        this.previousElementTextMove = previousElementTextMove;
+        // Do nothing.
     }
 
+    @Deprecated
     public float[] getPreviousElementTextMove() {
-        return previousElementTextMove;
+        return new float[]{0.0f, 0.0f};
+    }
+
+    /**
+     * Retrieves {@link SvgTextProperties} for text SVG elements.
+     *
+     * @return {@link SvgTextProperties} text properties
+     */
+    public SvgTextProperties getSvgTextProperties() {
+        return textProperties;
+    }
+
+    /**
+     * Sets {@link SvgTextProperties} for textSVG elements.
+     *
+     * @param textProperties {@link SvgTextProperties} to set
+     */
+    public void setSvgTextProperties(SvgTextProperties textProperties) {
+        this.textProperties = textProperties;
+    }
+
+    /**
+     * Retrieves relative position for the current text SVG element relative to the last origin
+     * identified by absolute position.
+     *
+     * @return relative position for the current text SVG element
+     */
+    public float[] getRelativePosition() {
+        return relativePosition;
+    }
+
+    /**
+     * Adds move to the current relative position for the text SVG element.
+     *
+     * @param dx x-axis movement
+     * @param dy y-axis movement
+     */
+    public void moveRelativePosition(float dx, float dy) {
+        relativePosition[0] += dx;
+        relativePosition[1] += dy;
+    }
+
+    /**
+     * Resets current relative position for the text SVG element.
+     */
+    public void resetRelativePosition() {
+        relativePosition = new float[]{0.0f, 0.0f};
+    }
+
+    /**
+     * Gets clipping element transformation matrix.
+     *
+     * <p>
+     * It is used to preserve clipping element transformation matrix and before drawing clipped element revert canvas
+     * transformation matrix into original state. After clipped element will be drawn, clipping element transformation
+     * matrix will be used once again to return clipping element matrix for next siblings.
+     *
+     * @return the current clipping element transformation matrix
+     */
+    public AffineTransform getClippingElementTransform() {
+        return clippingElementTransform;
+    }
+
+    /**
+     * Resets clipping element transformation matrix.
+     *
+     * <p>
+     * See {@link #getClippingElementTransform()} for more info about clipping element transformation matrix.
+     */
+    public void resetClippingElementTransform() {
+        this.clippingElementTransform.setToIdentity();
+    }
+
+    /**
+     * Concatenates all transformations applied from the top level of the svg to the current one.
+     *
+     * @return {@link AffineTransform} instance
+     */
+    public AffineTransform getConcatenatedTransform() {
+        List<PdfCanvas> canvasList = new ArrayList<>();
+        int canvasesSize = this.size();
+        for (int i = 0; i < canvasesSize; i++) {
+            canvasList.add(this.popCanvas());
+        }
+        AffineTransform transform = new AffineTransform();
+        for (int i = canvasList.size() - 1; i >= 0; i--) {
+            PdfCanvas pdfCanvas = canvasList.get(i);
+            Matrix matrix = pdfCanvas.getGraphicsState().getCtm();
+            transform.concatenate(new AffineTransform(matrix.get(0), matrix.get(1), matrix.get(3),
+                    matrix.get(4), matrix.get(6), matrix.get(7)));
+            this.pushCanvas(pdfCanvas);
+        }
+        return transform;
     }
 }

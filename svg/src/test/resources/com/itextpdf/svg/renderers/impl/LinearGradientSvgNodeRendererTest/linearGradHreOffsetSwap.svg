@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <defs>
+    <linearGradient id="originalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:blue;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:green;stop-opacity:1" />
+      <stop offset="20%" style="stop-color:red;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="hrefGrad" href="#originalGrad" />
+  </defs>
+
+  <rect x="0" y="0" width="200" height="200" fill="url(#hrefGrad)" />
+</svg>

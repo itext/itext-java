@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200">
+  <defs>
+    <pattern id="origPattern" patternUnits="userSpaceOnUse" width="20" height="20">
+      <circle cx="10" cy="10" r="5" fill="blue" />
+    </pattern>
+    
+    <pattern id="hrefPattern" xlink:href="#origPattern" />
+  </defs>
+
+  <rect x="0" y="0" width="200" height="200" fill="url(#hrefPattern)" />
+</svg>

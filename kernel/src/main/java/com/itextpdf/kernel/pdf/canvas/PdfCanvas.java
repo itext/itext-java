@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -86,6 +86,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * PdfCanvas class represents an algorithm for writing data into content stream.
@@ -1225,14 +1227,34 @@ public class PdfCanvas {
     /**
      * Draws rounded rectangle.
      *
-     * @param x      x coordinate of the starting point.
-     * @param y      y coordinate of the starting point.
-     * @param width  width.
-     * @param height height.
-     * @param radius radius of the arc corner.
-     * @return current canvas.
+     * @param x         x coordinate of the starting point
+     * @param y         y coordinate of the starting point
+     * @param width     width
+     * @param height    height
+     * @param radius    radius of the arc corner
+     *
+     * @return current canvas
      */
     public PdfCanvas roundRectangle(double x, double y, double width, double height, double radius) {
+        return roundRectangle(x, y, width, height, radius, radius, null);
+    }
+
+    /**
+     * Draws rounded rectangle.
+     *
+     * @param x x coordinate of the starting point
+     * @param y y coordinate of the starting point
+     * @param width width
+     * @param height height
+     * @param rx x radius of the arc corner
+     * @param ry y radius of the arc corner
+     * @param transform {@link AffineTransform} to apply before drawing,
+     *                  or {@code null} in case transform shouldn't be applied
+     *
+     * @return current canvas
+     */
+    public PdfCanvas roundRectangle(double x, double y, double width, double height, double rx, double ry,
+                                    AffineTransform transform) {
         if (width < 0) {
             x += width;
             width = -width;
@@ -1241,18 +1263,29 @@ public class PdfCanvas {
             y += height;
             height = -height;
         }
-        if (radius < 0)
-            radius = -radius;
-        final double curv = 0.4477f;
-        moveTo(x + radius, y);
-        lineTo(x + width - radius, y);
-        curveTo(x + width - radius * curv, y, x + width, y + radius * curv, x + width, y + radius);
-        lineTo(x + width, y + height - radius);
-        curveTo(x + width, y + height - radius * curv, x + width - radius * curv, y + height, x + width - radius, y + height);
-        lineTo(x + radius, y + height);
-        curveTo(x + radius * curv, y + height, x, y + height - radius * curv, x, y + height - radius);
-        lineTo(x, y + radius);
-        curveTo(x, y + radius * curv, x + radius * curv, y, x + radius, y);
+        if (rx < 0) {
+            rx = -rx;
+        }
+        if (ry < 0) {
+            ry = -ry;
+        }
+
+        double[] points = getEllipseRoundedRectPoints(x, y, width, height, rx, ry);
+        if (transform != null) {
+            transform.transform(points, 0, points, 0, points.length / 2);
+        }
+
+        int i = 0;
+        this.moveTo(points[i++], points[i++])
+                .lineTo(points[i++], points[i++])
+                .curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i++])
+                .lineTo(points[i++], points[i++])
+                .curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i++])
+                .lineTo(points[i++], points[i++])
+                .curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i++])
+                .lineTo(points[i++], points[i++])
+                .curveTo(points[i++], points[i++], points[i++], points[i++], points[i++], points[i])
+                .closePath();
         return this;
     }
 
@@ -1511,7 +1544,8 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(float phase) {
-        currentGs.setDashPattern(getDashPatternArray(phase));
+        PdfArray dashPattern = getDashPatternArray(phase);
+        currentGs.setDashPattern(dashPattern);
         contentStream.getOutputStream().writeByte('[').writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
@@ -1531,7 +1565,11 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(float unitsOn, float phase) {
-        currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn}, phase));
+        PdfArray dashPattern = getDashPatternArray(new float[]{unitsOn}, phase);
+        if (dashPattern == null) {
+            return this;
+        }
+        currentGs.setDashPattern(dashPattern);
         contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
                 .writeBytes(d);
@@ -1553,7 +1591,11 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(float unitsOn, float unitsOff, float phase) {
-        currentGs.setDashPattern(getDashPatternArray(new float[]{unitsOn, unitsOff}, phase));
+        PdfArray dashPattern = getDashPatternArray(new float[]{unitsOn, unitsOff}, phase);
+        if (dashPattern == null) {
+            return this;
+        }
+        currentGs.setDashPattern(dashPattern);
         contentStream.getOutputStream().writeByte('[').writeFloat(unitsOn).writeSpace()
                 .writeFloat(unitsOff).writeByte(']').writeSpace()
                 .writeFloat(phase).writeSpace()
@@ -1574,7 +1616,11 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setLineDash(float[] array, float phase) {
-        currentGs.setDashPattern(getDashPatternArray(array, phase));
+        PdfArray dashPattern = getDashPatternArray(array, phase);
+        if (dashPattern == null) {
+            return this;
+        }
+        currentGs.setDashPattern(dashPattern);
         PdfOutputStream out = contentStream.getOutputStream();
         out.writeByte('[');
         for (int iter = 0; iter < array.length; iter++) {
@@ -1885,16 +1931,10 @@ public class PdfCanvas {
             layerDepth.add(1);
             addToPropertiesAndBeginLayer(layer);
         } else if (layer instanceof PdfLayer) {
-            int num = 0;
             PdfLayer la = (PdfLayer) layer;
-            while (la != null) {
-                if (la.getTitle() == null) {
-                    addToPropertiesAndBeginLayer(la);
-                    num++;
-                }
-                la = la.getParent();
-            }
-            layerDepth.add(num);
+            Set<PdfLayer> layers = new HashSet<>();
+            int depth = beginLayerTree(la, layers);
+            layerDepth.add(depth);
         } else
             throw new UnsupportedOperationException("Unsupported type for operand: layer");
         return this;
@@ -2162,11 +2202,12 @@ public class PdfCanvas {
         PdfOutputStream out = contentStream.getOutputStream().write(tag).writeSpace();
         if (properties == null) {
             out.writeBytes(BMC);
-        } else if (properties.getIndirectReference() == null) {
-            out.write(properties).writeSpace().writeBytes(BDC);
-        } else {
+        } else if (properties.containsIndirectReference()) {
             out.write(resources.addProperties(properties)).writeSpace().writeBytes(BDC);
+        } else {
+            out.write(properties).writeSpace().writeBytes(BDC);
         }
+
         final Tuple2<PdfName, PdfDictionary> tuple2 = new Tuple2<>(tag, properties);
         if (this.drawingOnPage){
             document.checkIsoConformance(new CanvasBmcValidationContext(tagStructureStack, tuple2));
@@ -2501,8 +2542,18 @@ public class PdfCanvas {
         PdfArray dashPatternArray = new PdfArray();
         PdfArray dArray = new PdfArray();
         if (dashArray != null) {
+            float sum = 0;
             for (float fl : dashArray) {
+                if (fl < 0) {
+                    // Negative values are not allowed.
+                    return null;
+                }
+                sum += fl;
                 dArray.add(new PdfNumber(fl));
+            }
+            if (sum < 1e-6) {
+                // All 0 values are not allowed.
+                return null;
             }
         }
         dashPatternArray.add(dArray);
@@ -2608,6 +2659,68 @@ public class PdfCanvas {
     private static boolean isIdentityMatrix(float a, float b, float c, float d, float e, float f) {
         return Math.abs(1 - a) < IDENTITY_MATRIX_EPS && Math.abs(b) < IDENTITY_MATRIX_EPS && Math.abs(c) < IDENTITY_MATRIX_EPS &&
                 Math.abs(1 - d) < IDENTITY_MATRIX_EPS && Math.abs(e) < IDENTITY_MATRIX_EPS && Math.abs(f) < IDENTITY_MATRIX_EPS;
+    }
+
+    private static double[] getEllipseRoundedRectPoints(double x, double y, double width, double height,
+                                                        double rx, double ry) {
+        /*
+
+			y+h    ->    ____________________________
+						/                            \
+					   /                              \
+			y+h-ry -> /                                \
+					  |                                |
+					  |                                |
+					  |                                |
+					  |                                |
+			y+ry   -> \                                /
+					   \                              /
+			y      ->   \____________________________/
+					  ^  ^                          ^  ^
+					  x  x+rx                  x+w-rx  x+w
+
+             */
+
+        double[] pt1 = PdfCanvas.bezierArc(x + width - 2 * rx, y, x + width, y + 2 * ry, -90, 90).get(0);
+        double[] pt2 = PdfCanvas.bezierArc(x + width, y + height - 2 * ry, x + width - 2 * rx, y + height, 0, 90).get(0);
+        double[] pt3 = PdfCanvas.bezierArc(x + 2 * rx, y + height, x, y + height - 2 * ry, 90, 90).get(0);
+        double[] pt4 = PdfCanvas.bezierArc(x, y + 2 * ry, x + 2 * rx, y, 180, 90).get(0);
+
+        return new double[]{x + rx, y,
+                x + width - rx, y,
+                pt1[2], pt1[3], pt1[4], pt1[5], pt1[6], pt1[7],
+                x + width, y + height - ry,
+                pt2[2], pt2[3], pt2[4], pt2[5], pt2[6], pt2[7],
+                x + rx, y + height,
+                pt3[2], pt3[3], pt3[4], pt3[5], pt3[6], pt3[7],
+                x, y + ry,
+                pt4[2], pt4[3], pt4[4], pt4[5], pt4[6], pt4[7]};
+    }
+
+    /**
+     * This method is used to traverse parent tree and begin all layers in it.
+     * If layer was already begun during method call, it will not be processed again.
+     */
+    private int beginLayerTree(PdfLayer layer, Set<PdfLayer> layers) {
+        if (layer == null || layers.contains(layer)) {
+            return 0;
+        }
+
+        layers.add(layer);
+        int depth = 0;
+        if (layer.getTitle() == null) {
+            addToPropertiesAndBeginLayer(layer);
+            depth++;
+        }
+
+        List<PdfLayer> parentLayers = layer.getParents();
+        if (parentLayers != null) {
+            for (PdfLayer parentLayer : parentLayers) {
+                depth += beginLayerTree(parentLayer, layers);
+            }
+        }
+
+        return depth;
     }
 
     private enum CheckColorMode {

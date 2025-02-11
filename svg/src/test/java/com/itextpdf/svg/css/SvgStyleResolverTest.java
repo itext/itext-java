@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,7 +23,6 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
 import com.itextpdf.styledxmlparser.css.resolve.AbstractCssContext;
@@ -32,6 +31,7 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.nodes.TextNode;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
@@ -47,7 +47,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -202,7 +201,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
     public void overrideDefaultStyleTest() {
         ICssResolver styleResolver = new SvgStyleResolver(new SvgProcessorContext(new SvgConverterProperties()));
         Element svg = new Element(Tag.valueOf("svg"), "");
-        svg.attributes().put(SvgConstants.Attributes.STROKE, "white");
+        svg.attributes().put(SvgConstants.Attributes.STYLE, "stroke:white");
         INode svgNode = new JsoupElementNode(svg);
         Map<String, String> resolvedStyles = styleResolver.resolveStyles(svgNode, new SvgCssContext());
 
@@ -254,5 +253,64 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         List<CssFontFaceRule> fontFaceRuleList = resolver.getFonts();
         Assertions.assertEquals(1, fontFaceRuleList.size());
         Assertions.assertEquals(2, fontFaceRuleList.get(0).getProperties().size());
+    }
+
+    @Test
+    public void fontFamilyResolvingTest1() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("font-family", "courier");
+        expected.put("font-size", "12pt");
+        fontFamilyResolving("font-family:Courier;", expected);
+    }
+
+    @Test
+    public void fontFamilyResolvingTest2() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("font-family", "Courier");
+        expected.put("font-size", "12pt");
+        fontFamilyResolving("font-family:'Courier';", expected);
+    }
+
+    @Test
+    public void fontFamilyResolvingTest3() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("font-family", "Courier");
+        expected.put("font-size", "12pt");
+        fontFamilyResolving("font-family:\"Courier\";", expected);
+    }
+
+    @Test
+    public void fontFamilyResolvingTest4() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("font-family", " Courier");
+        expected.put("font-size", "12pt");
+        fontFamilyResolving("font-family:\" Courier\" ;", expected);
+    }
+
+    @Test
+    public void fontFamilyResolvingTest5() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("font-family", "Courier");
+        expected.put("font-size", "12pt");
+        fontFamilyResolving("font-family:\"Courier\", serif, Times;", expected);
+    }
+
+    @Test
+    public void fontFamilyResolvingTest6() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("font-family", "serif");
+        expected.put("font-size", "12pt");
+        fontFamilyResolving("font-family:serif, \"Courier\", Times;", expected);
+    }
+
+    private static void fontFamilyResolving(String styleAttr, Map<String, String> expected) {
+        Element jsoupText = new Element(Tag.valueOf("text"), "");
+        Attributes textAttributes = jsoupText.attributes();
+        textAttributes.put(new Attribute("style", styleAttr));
+
+        INode text = new JsoupElementNode(jsoupText);
+        ICssResolver resolver = new SvgStyleResolver(text, new SvgProcessorContext(new SvgConverterProperties()));
+        Map<String, String> actual = resolver.resolveStyles(text, new SvgCssContext());
+        Assertions.assertEquals(expected, actual);
     }
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -25,6 +25,7 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
@@ -230,6 +231,15 @@ public class ResourceResolver {
     }
 
     /**
+     * Gets the base URI.
+     *
+     * @return the base uri
+     */
+    public String getBaseUri() {
+        return uriResolver.getBaseUri();
+    }
+
+    /**
      * Resets the simple image cache.
      */
     public void resetCache() {
@@ -258,7 +268,10 @@ public class ResourceResolver {
             PdfXObject imageXObject = imageCache.getImage(imageResolvedSrc);
             if (imageXObject == null) {
                 imageXObject = createImageByUrl(url);
-                if (imageXObject != null) {
+                //relative sized xObject can't be cached because it's internal state depends on the context
+                boolean isAbsoluteSized = imageXObject != null && !(imageXObject instanceof PdfFormXObject
+                        && ((PdfFormXObject)imageXObject).isRelativeSized());
+                if (isAbsoluteSized) {
                     imageCache.putImage(imageResolvedSrc, imageXObject);
                 }
             }

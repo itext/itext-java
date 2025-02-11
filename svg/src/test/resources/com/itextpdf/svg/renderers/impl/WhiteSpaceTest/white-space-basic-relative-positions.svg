@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" style="border: 1px solid black; font-family: Arial, sans-serif;">
+  <rect x="0" y="0" width="600" height="600" fill="none" /> 
+
+
+  <text x="20" y="20" style="font-size: 14px; white-space: normal;">
+    <tspan dx="50,3,3" dy="40,5,5" fill="red">    1. white-space: normal.   This text has some extra     spaces in front which are       also ignored by relative positioning.</tspan>
+  </text>
+
+  <text x="20" y="50" style="font-size: 14px; white-space: pre;">
+  <tspan dy="20" dx="60, 5, 5,5, 7, 9, 11,5,7,7,7,7,7,7" fill="green">     2. white-space: pre.     This text     also        has extra spaces    in front but
+	   these do not    
+	        get ignored by white-space attribute         </tspan> 
+  </text>
+
+  <text x="20" y="140" style="font-size: 14px; white-space: nowrap;">
+    <tspan dx="3,3,3,5,10" dy="5,4,4,4,1" fill="blue">    3. white-space: nowrap. The extra leading spaces are ignored
+	by relative positioning.
+	New line
+	is ignored</tspan>
+  </text>
+
+  <text x="20" y="170" style="font-size: 14px; white-space: pre-wrap;">
+  <tspan dx="100, 3,3,3,3,3,3" dy="12,12,12,20,5,5,5" fill="purple">  4. white-space: pre-wrap.   Leading spaces          count    for relative
+	    positioning      .          </tspan>       
+  </text>
+
+  <text x="20" y="300" style="font-size: 14px; white-space: pre-line;">
+  <tspan dx="5,5,5" dy="5,5,5" fill="orange">    5. white-space: pre-line. The leading spaces             will         not get ignored    for  
+	relative </tspan>
+	positioning.
+  </text>
+
+  <text x="20" y="320" style="font-size: 14px; white-space: break-spaces;">
+  <tspan dx="80" dy="10,10, 10, 10" fill="brown">   6. white-space: break-spaces. Here leading             spaces       are counted  
+	for  
+	relative</tspan> positioning                                                                                           
+  </text>
+</svg>

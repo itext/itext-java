@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,10 +24,10 @@ package com.itextpdf.svg.css.impl;
 
 import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.io.util.ResourceUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssFontFaceRule;
+import com.itextpdf.styledxmlparser.css.CssRuleSet;
 import com.itextpdf.styledxmlparser.css.CssStatement;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.ICssResolver;
@@ -42,22 +42,25 @@ import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IAttribute;
+import com.itextpdf.styledxmlparser.node.IAttributesContainer;
 import com.itextpdf.styledxmlparser.node.IDataNode;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.IStylesContainer;
 import com.itextpdf.styledxmlparser.node.ITextNode;
+import com.itextpdf.styledxmlparser.node.IXmlDeclarationNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
+import com.itextpdf.styledxmlparser.util.FontFamilySplitterUtil;
 import com.itextpdf.styledxmlparser.util.StyleUtil;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Tags;
 import com.itextpdf.svg.css.SvgCssContext;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,6 +74,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of SVG`s styles and attribute resolver .
@@ -80,13 +85,15 @@ public class SvgStyleResolver implements ICssResolver {
     public static final Set<IStyleInheritance> INHERITANCE_RULES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList((IStyleInheritance) new CssInheritance(), (IStyleInheritance) new SvgAttributeInheritance())));
 
+    public static final float DEFAULT_FONT_SIZE = CssDimensionParsingUtils.parseAbsoluteFontSize(
+            CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
+
     // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
     private static final String[] ELEMENTS_INHERITING_PARENT_STYLES = new String[]{
             Tags.MARKER, Tags.LINEAR_GRADIENT, Tags.LINEAR_GRADIENT.toLowerCase(), Tags.PATTERN
     };
 
-    private static final float DEFAULT_FONT_SIZE = CssDimensionParsingUtils.parseAbsoluteFontSize(
-            CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgStyleResolver.class);
 
@@ -119,6 +126,7 @@ public class SvgStyleResolver implements ICssResolver {
     public SvgStyleResolver(InputStream defaultCssStream, SvgProcessorContext context) throws IOException {
         this.css = CssStyleSheetParser.parse(defaultCssStream);
         this.resourceResolver = context.getResourceResolver();
+        this.css.appendCssStyleSheet(context.getCssStyleSheet());
     }
 
     /**
@@ -134,6 +142,7 @@ public class SvgStyleResolver implements ICssResolver {
             this.css = new CssStyleSheet();
         }
         this.resourceResolver = context.getResourceResolver();
+        this.css.appendCssStyleSheet(context.getCssStyleSheet());
     }
 
     /**
@@ -147,6 +156,8 @@ public class SvgStyleResolver implements ICssResolver {
         // TODO DEVSIX-2060. Fetch default styles first.
         this.deviceDescription = context.getDeviceDescription();
         this.resourceResolver = context.getResourceResolver();
+        this.css = new CssStyleSheet();
+        this.css.appendCssStyleSheet(context.getCssStyleSheet());
         collectCssDeclarations(rootNode, this.resourceResolver);
         collectFonts();
     }
@@ -164,8 +175,7 @@ public class SvgStyleResolver implements ICssResolver {
             if (CssTypesValidationUtils.isRemValue(elementFontSize)) {
                 baseFontSize = cssContext == null ? DEFAULT_FONT_SIZE : cssContext.getRootFontSize();
             } else if (parentFontSizeStr == null) {
-                baseFontSize = CssDimensionParsingUtils.parseAbsoluteFontSize(
-                        CssDefaults.getDefaultValue(SvgConstants.Attributes.FONT_SIZE));
+                baseFontSize = DEFAULT_FONT_SIZE;
             } else {
                 baseFontSize = CssDimensionParsingUtils.parseAbsoluteLength(parentFontSizeStr);
             }
@@ -213,6 +223,19 @@ public class SvgStyleResolver implements ICssResolver {
      */
     public Map<String, String> resolveNativeStyles(INode node, AbstractCssContext cssContext) {
         final Map<String, String> styles = new HashMap<>();
+        IAttribute styleAttr = null;
+        // Load in attributes declarations except style
+        if (node instanceof IElementNode) {
+            IElementNode eNode = (IElementNode) node;
+            for (IAttribute attr : eNode.getAttributes()) {
+                if (Attributes.STYLE.equals(attr.getKey())) {
+                    styleAttr = attr;
+                } else {
+                    processAttribute(attr, styles);
+                }
+            }
+        }
+
         // Load in from collected style sheets
         final List<CssDeclaration> styleSheetDeclarations = css.getCssDeclarations(node,
                 MediaDeviceDescription.createDefault());
@@ -220,12 +243,9 @@ public class SvgStyleResolver implements ICssResolver {
             styles.put(ssd.getProperty(), ssd.getExpression());
         }
 
-        // Load in attributes declarations
-        if (node instanceof IElementNode) {
-            IElementNode eNode = (IElementNode) node;
-            for (IAttribute attr : eNode.getAttributes()) {
-                processAttribute(attr, styles);
-            }
+        // Inline CSS from style attribute overrides presentation attributes and collected style sheets
+        if (styleAttr != null) {
+            processAttribute(styleAttr, styles);
         }
         return styles;
     }
@@ -267,6 +287,12 @@ public class SvgStyleResolver implements ICssResolver {
         }
 
         SvgStyleResolver.resolveFontSizeStyle(styles, context, parentFontSizeStr);
+        // TODO DEVSIX-2534 Process CSS "font-family" property value according to CSS specification rules
+        List<String> fontFamilies = FontFamilySplitterUtil.splitFontFamily(styles.get(CommonCssConstants.FONT_FAMILY));
+        if (fontFamilies != null && !fontFamilies.isEmpty()) {
+            // TODO DEVSIX-8792 SVG: implement styles appliers like in html2pdf
+            styles.put(CommonCssConstants.FONT_FAMILY, fontFamilies.get(0));
+        }
 
         // Set root font size
         final boolean isSvgElement = element instanceof IElementNode
@@ -312,7 +338,6 @@ public class SvgStyleResolver implements ICssResolver {
     }
 
     private void collectCssDeclarations(INode rootNode, ResourceResolver resourceResolver) {
-        this.css = new CssStyleSheet();
         LinkedList<INode> q = new LinkedList<>();
         if (rootNode != null) {
             q.add(rootNode);
@@ -323,38 +348,44 @@ public class SvgStyleResolver implements ICssResolver {
                 IElementNode headChildElement = (IElementNode) currentNode;
                 if (SvgConstants.Tags.STYLE.equals(headChildElement.name())) {
                     // XML parser will parse style tag contents as text nodes
-                    if (!currentNode.childNodes().isEmpty() && (currentNode.childNodes().get(0) instanceof IDataNode ||
-                            currentNode.childNodes().get(0) instanceof ITextNode)) {
-                        String styleData;
-                        if (currentNode.childNodes().get(0) instanceof IDataNode) {
-                            styleData = ((IDataNode) currentNode.childNodes().get(0)).getWholeData();
-                        } else {
-                            styleData = ((ITextNode) currentNode.childNodes().get(0)).wholeText();
-                        }
-                        CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData);
-                        // TODO (DEVSIX-2263): media query wrap
-                        // styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
-                        this.css.appendCssStyleSheet(styleSheet);
-                    }
+                    for (INode node : currentNode.childNodes()) {
+                        if (node instanceof IDataNode || node instanceof ITextNode) {
+                            String styleData = node instanceof IDataNode ? ((IDataNode) node).getWholeData() :
+                                    ((ITextNode) node).wholeText();
 
-                } else if (CssUtils.isStyleSheetLink(headChildElement)) {
-                    String styleSheetUri = headChildElement.getAttribute(SvgConstants.Attributes.HREF);
-                    try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(styleSheetUri)) {
-                        if (stream != null) {
-                            CssStyleSheet styleSheet = CssStyleSheetParser.parse(stream,
-                                    resourceResolver.resolveAgainstBaseUri(styleSheetUri).toExternalForm());
+                            CssStyleSheet styleSheet = CssStyleSheetParser.parse(styleData, resourceResolver.getBaseUri());
+                            // TODO (DEVSIX-2263): media query wrap
+                            // styleSheet = wrapStyleSheetInMediaQueryIfNecessary(headChildElement, styleSheet);
                             this.css.appendCssStyleSheet(styleSheet);
                         }
-                    } catch (Exception exc) {
-                        LOGGER.error(StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc);
                     }
+                } else if (CssUtils.isStyleSheetLink(headChildElement)) {
+                    parseStylesheet(headChildElement);
+                }
+            } else if (currentNode instanceof IXmlDeclarationNode) {
+                IXmlDeclarationNode declarationNode = (IXmlDeclarationNode) currentNode;
+                if (SvgConstants.Tags.XML_STYLESHEET.equals(declarationNode.name())) {
+                    parseStylesheet(declarationNode);
                 }
             }
             for (INode child : currentNode.childNodes()) {
-                if (child instanceof IElementNode) {
+                if (child instanceof IElementNode || child instanceof IXmlDeclarationNode) {
                     q.add(child);
                 }
             }
+        }
+    }
+
+    private void parseStylesheet(IAttributesContainer attributesNode) {
+        String styleSheetUri = attributesNode.getAttribute(SvgConstants.Attributes.HREF);
+        try (InputStream stream = resourceResolver.retrieveResourceAsInputStream(styleSheetUri)) {
+            if (stream != null) {
+                CssStyleSheet styleSheet = CssStyleSheetParser.parse(stream,
+                        resourceResolver.resolveAgainstBaseUri(styleSheetUri).toExternalForm());
+                this.css.appendCssStyleSheet(styleSheet);
+            }
+        } catch (Exception exc) {
+            LOGGER.error(StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc);
         }
     }
 
@@ -410,12 +441,8 @@ public class SvgStyleResolver implements ICssResolver {
     }
 
     private Map<String, String> parseStylesFromStyleAttribute(String style) {
-        Map<String, String> parsed = new HashMap<>();
-        List<CssDeclaration> declarations = CssRuleSetParser.parsePropertyDeclarations(style);
-        for (CssDeclaration declaration : declarations) {
-            parsed.put(declaration.getProperty(), declaration.getExpression());
-        }
-        return parsed;
+        List<CssRuleSet> ruleSets = Collections.singletonList(new CssRuleSet(null,
+                CssRuleSetParser.parsePropertyDeclarations(style)));
+        return CssStyleSheet.extractStylesFromRuleSets(ruleSets);
     }
-
 }

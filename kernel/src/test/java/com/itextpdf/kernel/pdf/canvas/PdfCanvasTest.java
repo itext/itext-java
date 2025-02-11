@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -60,6 +60,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 @Tag("IntegrationTest")
 public class PdfCanvasTest extends ExtendedITextTest {
@@ -1804,8 +1805,6 @@ public class PdfCanvasTest extends ExtendedITextTest {
         }
     }
 
-
-
     @Test
     public void glyphlineActualTextTest() throws IOException {
         String outFileName = DESTINATION_FOLDER + "glyphlineActualText.pdf";
@@ -1831,6 +1830,30 @@ public class PdfCanvasTest extends ExtendedITextTest {
 
             Assertions.assertTrue(contentstream.contains("/ActualText"));
         }
+    }
+
+    @Test
+    public void lineDashTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "lineDash.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_lineDash.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
+            canvas.saveState()
+                    .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE)
+                    .setStrokeColor(ColorConstants.BLUE)
+                    .setLineWidth(2)
+                    .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 30);
+            canvas.setLineDash(3);
+            canvas.beginText().moveText(180, 250).showText("phase 3").endText();
+            canvas.setLineDash(new float[]{0, 0, 0}, 2);
+            canvas.beginText().moveText(180, 350).showText("dashArray [0, 0, 0]").endText();
+            canvas.setLineDash(new float[]{5, -5}, 1);
+            canvas.beginText().moveText(180, 450).showText("dashArray [5, -5]").endText();
+            canvas.setLineDash(5, -10);
+            canvas.beginText().moveText(180, 550).showText("phase -10").endText().restoreState();
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     private void createStandardDocument(PdfWriter writer, int pageCount, ContentProvider contentProvider) throws IOException {

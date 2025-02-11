@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -83,6 +83,12 @@ public class ParagraphRenderer extends BlockRenderer {
         ParagraphWidowsControl widowsControl = this.<ParagraphWidowsControl>getProperty(Property.WIDOWS_CONTROL);
         if (orphansControl != null || widowsControl != null) {
             return OrphansWidowsLayoutHelper.orphansWidowsAwareLayout(this, layoutContext, orphansControl, widowsControl);
+        }
+        if (RenderingMode.SVG_MODE == this.<RenderingMode>getProperty(Property.RENDERING_MODE) &&
+                !TypographyUtils.isPdfCalligraphAvailable()) {
+            // BASE_DIRECTION property is always set to the SVG text since we can't easily check whether typography is
+            // available at svg module level, but it makes no sense without typography, so it is removed here.
+            this.deleteProperty(Property.BASE_DIRECTION);
         }
         final LayoutResult layoutResult = directLayout(layoutContext);
         updateParentLines(this);

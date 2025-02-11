@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -48,9 +48,11 @@ import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.io.InputStream;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+@DisabledInNativeImage // java.awt is not compatible with graalvm
 @Tag("IntegrationTest")
 public class PdfABarcodeTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";

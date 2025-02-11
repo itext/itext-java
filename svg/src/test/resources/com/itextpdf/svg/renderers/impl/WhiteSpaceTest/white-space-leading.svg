@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"
+     style="border: 1px solid black; font-family: Arial, sans-serif;">
+    <defs>
+        <linearGradient id="Gradient1">
+            <stop offset="0%" stop-color="teal"/>
+            <stop offset="100%" stop-color="white"/>
+        </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="600" height="400" fill="none"/>
+    <g fill="url(#Gradient1)">
+        <text x="0" y="100" style="font-size: 35px;">
+            <tspan style="white-space: normal;">
+                white-space: normal
+            </tspan>
+        </text>
+
+        <text x="0" y="150" style="font-size: 35px;">
+            <tspan style="white-space: pre;">
+                white-space: pre
+            </tspan>
+        </text>
+
+        <text x="0" y="200" style="font-size: 35px;">
+            <tspan style="white-space: nowrap;">
+                white-space: nowrap
+            </tspan>
+        </text>
+
+        <text x="0" y="250" style="font-size: 35px;">
+            <tspan style="white-space: pre-wrap;">
+                white-space: pre-wrap
+            </tspan>
+        </text>
+
+        <text x="0" y="300" style="font-size: 35px;">
+            <tspan style="white-space: pre-line;">
+                white-space: pre-line
+            </tspan>
+        </text>
+
+        <text x="0" y="350" style="font-size: 35px;">
+            <tspan style="white-space: break-spaces;">
+                white-space: break-spaces
+            </tspan>
+        </text>
+    </g>
+</svg>

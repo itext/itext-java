@@ -1,0 +1,12 @@
+<svg version="1.1" width="500" height="350" viewBox="0 0 700 10"
+     xmlns="http://www.w3.org/2000/svg">
+    <line x1="250" y1="40" x2="400" y2="40" stroke="green"/>
+    <line x1="250" y1="61" x2="400" y2="61" stroke="blue"/>
+    <line x1="405" y1="61" x2="515" y2="61" stroke="red"/>
+
+    <text font-size="20">
+        <tspan x="250" y="60" fill="blue">1. x="250" y="60"</tspan>
+        <tspan fill="red">2. no position</tspan>
+        <tspan x="250" y="40" fill="green">3. x="250" y="40"</tspan>
+    </text>
+</svg>

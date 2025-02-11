@@ -80,30 +80,30 @@
     <text x="620" y="150"> refX,Y  (0,-5) </text>
   
     <line  x1="20" y1="220" x2="100" y2="300" stroke-width="8" stroke="blue" marker-end="url(#marker5)" />
-    <text x="20" y="390" style="font-size: 20"> refX,Y  (0em,2em)  </text>
+    <text x="20" y="390" style="font-size: 20px"> refX,Y  (0em,2em)  </text>
   
     <line  x1="220" y1="220" x2="300" y2="300" stroke-width="8" stroke="blue" marker-end="url(#marker6)" />
-    <text x="220" y="390" style="font-size: 20"> refX,Y  (0px,5px)  </text>
+    <text x="220" y="390" style="font-size: 20px"> refX,Y  (0px,5px)  </text>
 
     <line  x1="420" y1="220" x2="500" y2="300" stroke-width="8" stroke="blue" marker-end="url(#marker7)" />
-    <text x="420" y="390" style="font-size: 20"> refX,Y  (0pt,5pt) ) </text>
+    <text x="420" y="390" style="font-size: 20px"> refX,Y  (0pt,5pt) ) </text>
 
     <line  x1="620" y1="220" x2="700" y2="300" stroke-width="8" stroke="blue" marker-end="url(#marker8)" />
-    <text x="620" y="390" style="font-size: 20"> refX,Y  (0mm,5mm)  </text>
+    <text x="620" y="390" style="font-size: 20px"> refX,Y  (0mm,5mm)  </text>
 
     <line  x1="820" y1="220" x2="900" y2="300" stroke-width="8" stroke="blue" marker-end="url(#marker13)" />
-    <text x="820" y="390" style="font-size: 20"> refX,Y  (0ex,5ex)  </text>
+    <text x="820" y="390" style="font-size: 20px"> refX,Y  (0ex,5ex)  </text>
 
     <line  x1="20" y1="420" x2="100" y2="500" stroke-width="8" stroke="blue" marker-end="url(#marker9)" />
-    <text x="20" y="580" style="font-size: 20"> refX,Y  (0cm,0.5cm)  </text>
+    <text x="20" y="580" style="font-size: 20px"> refX,Y  (0cm,0.5cm)  </text>
 
     <line  x1="220" y1="420" x2="300" y2="500" stroke-width="8" stroke="blue" marker-end="url(#marker10)" />
-    <text x="220" y="580" style="font-size: 20"> refX,Y  (0pc,2pc)  </text>
+    <text x="220" y="580" style="font-size: 20px"> refX,Y  (0pc,2pc)  </text>
 
     <line  x1="420" y1="420" x2="500" y2="500" stroke-width="8" stroke="blue" marker-end="url(#marker11)" />
-    <text x="420" y="580" style="font-size: 20"> refX,Y  (0%,5%)  </text>
+    <text x="420" y="580" style="font-size: 20px"> refX,Y  (0%,5%)  </text>
 
     <line  x1="620" y1="420" x2="700" y2="500" stroke-width="8" stroke="blue" marker-end="url(#marker12)" />
-    <text x="620" y="580" style="font-size: 20"> refX,Y  (0in,0.1in) </text>
+    <text x="620" y="580" style="font-size: 20px"> refX,Y  (0in,0.1in) </text>
 
 </svg>

@@ -10,7 +10,7 @@
           font-style: italic;
 
           src:local('Open Sans Regular'), local('OpenSans-Regular'),
-          url('web-fonts/open-sans-v15-latin-regular.ttf') format('truetype');
+          url('web-fonts/OpenSans-Regular.ttf') format('truetype');
         }
       ]]>
         </style>

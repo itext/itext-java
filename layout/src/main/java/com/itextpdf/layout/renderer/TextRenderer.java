@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -43,6 +43,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Text;
@@ -62,6 +63,7 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.properties.BaseDirection;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.FontKerning;
+import com.itextpdf.layout.properties.IBeforeTextRestoreExecutor;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -94,6 +96,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
     private static final float ITALIC_ANGLE = 0.21256f;
     private static final float BOLD_SIMULATION_STROKE_COEFF = 1 / 30f;
+    //Line height is recalculated several times during layout and small difference is expected.
+    private static final float HEIGHT_EPS = 5.1e-2F;
 
     protected float yLineOffset;
 
@@ -516,8 +520,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                     for (int i = hyph.length() - 1; i >= 0; i--) {
                                         String pre = hyph.getPreHyphenText(i);
                                         String pos = hyph.getPostHyphenText(i);
+                                        char hyphen = hyphenationConfig.getHyphenSymbol();
+                                        String glyphLine = text.toUnicodeString(currentTextPos, wordBounds[0]) + pre;
+                                        if (font.containsGlyph(hyphen)) {
+                                            glyphLine += hyphen;
+                                        }
                                         float currentHyphenationChoicePreTextWidth =
-                                                getGlyphLineWidth(convertToGlyphLine(text.toUnicodeString(currentTextPos, wordBounds[0]) + pre + hyphenationConfig.getHyphenSymbol()), fontSize.getValue(), hScale, characterSpacing, wordSpacing);
+                                                getGlyphLineWidth(convertToGlyphLine(glyphLine),
+                                                        fontSize.getValue(), hScale, characterSpacing, wordSpacing);
                                         if (currentLineWidth + currentHyphenationChoicePreTextWidth + italicSkewAddition + boldSimulationAddition <= layoutBox.getWidth()) {
                                             hyphenationApplied = true;
 
@@ -525,10 +535,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                                 line.setStart(currentTextPos);
                                             }
                                             line.setEnd(Math.max(line.getEnd(), wordBounds[0] + pre.length()));
-                                            GlyphLine lineCopy = line.copy(line.getStart(), line.getEnd());
-                                            lineCopy.add(font.getGlyph(hyphenationConfig.getHyphenSymbol()));
-                                            lineCopy.setEnd(lineCopy.getEnd() +1);
-                                            line = lineCopy;
+                                            if (font.containsGlyph(hyphen)) {
+                                                GlyphLine lineCopy = line.copy(line.getStart(), line.getEnd());
+                                                lineCopy.add(font.getGlyph(hyphen));
+                                                lineCopy.setEnd(lineCopy.getEnd() + 1);
+                                                line = lineCopy;
+                                            }
 
                                             // TODO DEVSIX-7010 recalculate line properties in case of word hyphenation.
                                             // These values are based on whole word. Recalculate properly based on hyphenated part.
@@ -637,7 +649,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
         // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
         boolean isPlacingForcedWhileNothing = false;
-        if (currentLineHeight > layoutBox.getHeight()) {
+        if (currentLineHeight > layoutBox.getHeight() + HEIGHT_EPS) {
             if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && isOverflowFit(overflowY)) {
                 applyPaddings(occupiedArea.getBBox(), paddings, true);
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -653,7 +665,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
         }
 
-        yLineOffset = FontProgram.convertTextSpaceToGlyphSpace(currentLineAscender * fontSize.getValue());
+        yLineOffset = RenderingMode.SVG_MODE == mode ? 0 :
+                FontProgram.convertTextSpaceToGlyphSpace(currentLineAscender * fontSize.getValue());
 
         occupiedArea.getBBox().moveDown(currentLineHeight);
         occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + currentLineHeight);
@@ -856,8 +869,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             applyRelativePositioningTranslation(false);
         }
 
-        float leftBBoxX = getInnerAreaBBox().getX();
-
         if (line.getEnd() > line.getStart() || savedWordBreakAtLineEnding != null) {
             UnitValue fontSize = this.getPropertyAsUnitValue(Property.FONT_SIZE);
             if (!fontSize.isPointValue()) {
@@ -867,11 +878,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             TransparentColor fontColor = getPropertyAsTransparentColor(Property.FONT_COLOR);
             Integer textRenderingMode = this.<Integer>getProperty(Property.TEXT_RENDERING_MODE);
-            Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
-            Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
-            Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
-            Float horizontalScaling = this.<Float>getProperty(Property.HORIZONTAL_SCALING);
-            float[] skew = this.<float[]>getProperty(Property.SKEW);
             boolean italicSimulation = Boolean.TRUE.equals(getPropertyAsBoolean(Property.ITALIC_SIMULATION));
             boolean boldSimulation = Boolean.TRUE.equals(getPropertyAsBoolean(Property.BOLD_SIMULATION));
             Float strokeWidth = null;
@@ -890,101 +896,36 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 }
             }
             beginElementOpacityApplying(drawContext);
-            canvas.saveState().beginText().setFontAndSize(font, fontSize.getValue());
+            canvas.saveState();
 
-            if (skew != null && skew.length == 2) {
-                canvas.setTextMatrix(1, skew[0], skew[1], 1, leftBBoxX, getYLine());
-            } else if (italicSimulation) {
-                canvas.setTextMatrix(1, 0, ITALIC_ANGLE, 1, leftBBoxX, getYLine());
+            // TODO DEVSIX-8808 Refactor this logic to use getPropertyAsTransparentColor(Property.STROKE_COLOR)
+            TransparentColor strokeColor = null;
+            Object color = this.<Object>getProperty(Property.STROKE_COLOR);
+            if (color instanceof TransparentColor) {
+                strokeColor = (TransparentColor) color;
+            } else if (color instanceof Color) {
+                // Get color for backwards compatibility.
+                strokeColor = new TransparentColor((Color) color, 1);
+            } else if (fontColor != null) {
+                strokeColor = fontColor;
+            }
+            boolean isStrokeTransparent = textRenderingMode == TextRenderingMode.FILL_STROKE && strokeColor != null &&
+                    strokeColor.getOpacity() < 1;
+            if (isStrokeTransparent) {
+                // Most of the viewers display stroke opacity incorrectly, that's why we draw stroked text in 2 steps:
+                // first only the filled text, and then only the transparent stroke.
+                drawText(canvas, fontSize, italicSimulation, TextRenderingMode.FILL, strokeWidth, fontColor, strokeColor);
+                drawText(canvas, fontSize, italicSimulation, TextRenderingMode.STROKE, strokeWidth, fontColor, strokeColor);
             } else {
-                canvas.moveText(leftBBoxX, getYLine());
+                drawText(canvas, fontSize, italicSimulation, textRenderingMode, strokeWidth, fontColor, strokeColor);
             }
 
-            if (textRenderingMode != PdfCanvasConstants.TextRenderingMode.FILL) {
-                canvas.setTextRenderingMode((int) textRenderingMode);
+            IBeforeTextRestoreExecutor beforeTextRestoreExecutor = this.<IBeforeTextRestoreExecutor>getProperty(
+                    Property.BEFORE_TEXT_RESTORE_EXECUTOR);
+            if (beforeTextRestoreExecutor != null) {
+                beforeTextRestoreExecutor.execute();
             }
-            if (textRenderingMode == PdfCanvasConstants.TextRenderingMode.STROKE || textRenderingMode == PdfCanvasConstants.TextRenderingMode.FILL_STROKE) {
-                if (strokeWidth == null) {
-                    strokeWidth = this.getPropertyAsFloat(Property.STROKE_WIDTH);
-                }
-                if (strokeWidth != null && strokeWidth != 1f) {
-                    canvas.setLineWidth((float) strokeWidth);
-                }
-                Color strokeColor = getPropertyAsColor(Property.STROKE_COLOR);
-                if (strokeColor == null && fontColor != null) {
-                    strokeColor = fontColor.getColor();
-                }
-                if (strokeColor != null) {
-                    canvas.setStrokeColor(strokeColor);
-                }
-            }
-            if (fontColor != null) {
-                canvas.setFillColor(fontColor.getColor());
-                fontColor.applyFillTransparency(canvas);
-            }
-            if (textRise != null && textRise != 0) {
-                canvas.setTextRise((float) textRise);
-            }
-            if (characterSpacing != null && characterSpacing != 0) {
-                canvas.setCharacterSpacing((float) characterSpacing);
-            }
-            if (wordSpacing != null && wordSpacing != 0) {
-                if (font instanceof PdfType0Font) {
-                    // From the spec: Word spacing is applied to every occurrence of the single-byte character code 32 in
-                    // a string when using a simple font or a composite font that defines code 32 as a single-byte code.
-                    // It does not apply to occurrences of the byte value 32 in multiple-byte codes.
-                    //
-                    // For PdfType0Font we must add word manually with glyph offsets
-                    for (int gInd = line.getStart(); gInd < line.getEnd(); gInd++) {
-                        if (TextUtil.isUni0020(line.get(gInd))) {
-                            final short advance = (short) (FontProgram.convertGlyphSpaceToTextSpace((float) wordSpacing)
-                                    / fontSize.getValue());
-                            Glyph copy = new Glyph(line.get(gInd));
-                            copy.setXAdvance(advance);
-                            line.set(gInd, copy);
-                        }
-                    }
-                } else {
-                    canvas.setWordSpacing((float) wordSpacing);
-                }
-            }
-            if (horizontalScaling != null && horizontalScaling != 1) {
-                canvas.setHorizontalScaling((float) horizontalScaling * 100);
-            }
-
-            GlyphLine.IGlyphLineFilter filter = new CustomGlyphLineFilter();
-
-            boolean appearanceStreamLayout = Boolean.TRUE.equals(getPropertyAsBoolean(Property.APPEARANCE_STREAM_LAYOUT));
-
-            if (getReversedRanges() != null) {
-                boolean writeReversedChars = !appearanceStreamLayout;
-                ArrayList<Integer> removedIds = new ArrayList<>();
-                for (int i = line.getStart(); i < line.getEnd(); i++) {
-                    if (!filter.accept(line.get(i))) {
-                        removedIds.add(i);
-                    }
-                }
-                for (int[] range : getReversedRanges()) {
-                    updateRangeBasedOnRemovedCharacters(removedIds, range);
-                }
-                line = line.filter(filter);
-                if (writeReversedChars) {
-                    canvas.showText(line, new ReversedCharsIterator(reversedRanges, line).
-                            setUseReversed(true));
-                } else {
-                    canvas.showText(line);
-                }
-            } else {
-                if (appearanceStreamLayout) {
-                    line.setActualText(line.getStart(), line.getEnd(), null);
-                }
-                canvas.showText(line.filter(filter));
-            }
-            if (savedWordBreakAtLineEnding != null) {
-                canvas.showText(savedWordBreakAtLineEnding);
-            }
-
-            canvas.endText().restoreState();
+            canvas.restoreState();
             endElementOpacityApplying(drawContext);
 
             if (isTagged) {
@@ -1477,27 +1418,82 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return new TextRenderer[]{splitRenderer, overflowRenderer};
     }
 
-    protected void drawSingleUnderline(Underline underline, TransparentColor fontStrokeColor, PdfCanvas canvas, float fontSize, float italicAngleTan) {
-        TransparentColor underlineColor = underline.getColor() != null ? new TransparentColor(underline.getColor(), underline.getOpacity()) : fontStrokeColor;
-        canvas.saveState();
+    protected void drawSingleUnderline(Underline underline, TransparentColor fontColor, PdfCanvas canvas,
+                                       float fontSize, float italicAngleTan) {
+        TransparentColor underlineFillColor = underline.getColor() != null ?
+                new TransparentColor(underline.getColor(), underline.getOpacity()) : null;
+        TransparentColor underlineStrokeColor = underline.getStrokeColor();
 
-        if (underlineColor != null) {
-            canvas.setStrokeColor(underlineColor.getColor());
-            underlineColor.applyStrokeTransparency(canvas);
+        boolean doStroke = underlineStrokeColor != null;
+        boolean isClippingMode = this.<Integer>getProperty(Property.TEXT_RENDERING_MODE) > TextRenderingMode.INVISIBLE;
+        RenderingMode renderingMode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
+        // In SVG renderingMode we should always use underline color, it is not related to the font color of the current text,
+        // but to the font color of the text element where text-decoration has been declared. In case of none value
+        // for fill and stroke in SVG renderingMode, underline shouldn't be drawn at all.
+        if (underlineFillColor == null && !doStroke) {
+            if (RenderingMode.SVG_MODE == renderingMode && !isClippingMode) {
+                return;
+            }
+            underlineFillColor = fontColor;
+        }
+        boolean doFill = underlineFillColor != null;
+
+        canvas.saveState();
+        if (doFill) {
+            canvas.setFillColor(underlineFillColor.getColor());
+            underlineFillColor.applyFillTransparency(canvas);
+        }
+        boolean isStrokeTransparent = false;
+        if (doStroke) {
+            canvas.setStrokeColor(underlineStrokeColor.getColor());
+            underlineStrokeColor.applyStrokeTransparency(canvas);
+            isStrokeTransparent = underlineStrokeColor.getOpacity() < 1;
+            float[] strokeDashArray = underline.getDashArray();
+            if (strokeDashArray != null) {
+                canvas.setLineDash(strokeDashArray, underline.getDashPhase());
+            }
         }
         canvas.setLineCapStyle(underline.getLineCapStyle());
         float underlineThickness = underline.getThickness(fontSize);
         if (underlineThickness != 0) {
-            canvas.setLineWidth(underlineThickness);
+            if (doStroke) {
+                canvas.setLineWidth(underline.getStrokeWidth());
+            }
             float yLine = getYLine();
             float underlineYPosition = underline.getYPosition(fontSize) + yLine;
             float italicWidthSubstraction = .5f * fontSize * italicAngleTan;
             Rectangle innerAreaBbox = getInnerAreaBBox();
-            canvas.moveTo(innerAreaBbox.getX(), underlineYPosition).
-                    lineTo(innerAreaBbox.getX() + innerAreaBbox.getWidth() - italicWidthSubstraction, underlineYPosition).
-                    stroke();
+            Rectangle underlineBBox = new Rectangle(innerAreaBbox.getX(), underlineYPosition - underlineThickness / 2,
+                    innerAreaBbox.getWidth() - italicWidthSubstraction, underlineThickness);
+            canvas.rectangle(underlineBBox);
+
+            if (isClippingMode) {
+                canvas.clip().endPath();
+            } else {
+                if (doFill && doStroke) {
+                    if (isStrokeTransparent) {
+                        // Most of the viewers display stroke opacity incorrectly, that's why we draw stroked underline
+                        // in 2 steps: first only the filled underline, and then only the transparent stroke.
+                        canvas.fill();
+                        canvas.rectangle(underlineBBox).stroke();
+                    } else {
+                        canvas.fillStroke();
+                    }
+                } else if (doStroke) {
+                    canvas.stroke();
+                } else {
+                    // In layout/html we should use default color in case underline and fontColor are null
+                    // and still draw underline.
+                    canvas.fill();
+                }
+            }
         }
 
+        IBeforeTextRestoreExecutor beforeTextRestoreExecutor = this.<IBeforeTextRestoreExecutor>getProperty(
+                Property.BEFORE_TEXT_RESTORE_EXECUTOR);
+        if (beforeTextRestoreExecutor != null) {
+            beforeTextRestoreExecutor.execute();
+        }
         canvas.restoreState();
     }
 
@@ -1659,6 +1655,121 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             return new boolean[]{startsWithBreak, endsWithBreak};
         }
+    }
+
+    private void drawText(PdfCanvas canvas, UnitValue fontSize, boolean italicSimulation, Integer textRenderingMode,
+                          Float strokeWidth, TransparentColor fontColor, TransparentColor strokeColor) {
+        canvas.beginText().setFontAndSize(font, fontSize.getValue());
+
+        float leftBBoxX = getInnerAreaBBox().getX();
+        float[] skew = this.<float[]>getProperty(Property.SKEW);
+        float verticalScale = (float) this.getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
+        if (skew != null && skew.length == 2) {
+            canvas.setTextMatrix(1, skew[0], skew[1], verticalScale, leftBBoxX, getYLine());
+        } else if (italicSimulation) {
+            canvas.setTextMatrix(1, 0, ITALIC_ANGLE, verticalScale, leftBBoxX, getYLine());
+        } else if (Math.abs(verticalScale - 1) < EPS) {
+            canvas.moveText(leftBBoxX, getYLine());
+        } else {
+            canvas.setTextMatrix(1, 0, 0, verticalScale, leftBBoxX, getYLine());
+        }
+
+        if (textRenderingMode != TextRenderingMode.FILL) {
+            canvas.setTextRenderingMode((int) textRenderingMode);
+        }
+        if (textRenderingMode == TextRenderingMode.STROKE ||
+                textRenderingMode == TextRenderingMode.FILL_STROKE) {
+            List<Float> strokeDashPattern = this.<List<Float>>getProperty(Property.STROKE_DASH_PATTERN);
+            if (strokeDashPattern != null && !strokeDashPattern.isEmpty()) {
+                float[] dashArray = new float[strokeDashPattern.size() - 1];
+                for (int i = 0; i < strokeDashPattern.size() - 1; ++i) {
+                    dashArray[i] = strokeDashPattern.get(i);
+                }
+                float dashPhase = strokeDashPattern.get(strokeDashPattern.size() - 1);
+                canvas.setLineDash(dashArray, dashPhase);
+            }
+            if (strokeWidth == null) {
+                strokeWidth = this.getPropertyAsFloat(Property.STROKE_WIDTH);
+            }
+            if (strokeWidth != null && strokeWidth != 1f) {
+                canvas.setLineWidth((float) strokeWidth);
+            }
+            if (strokeColor != null) {
+                canvas.setStrokeColor(strokeColor.getColor());
+                strokeColor.applyStrokeTransparency(canvas);
+            }
+        }
+        if (fontColor != null) {
+            canvas.setFillColor(fontColor.getColor());
+            fontColor.applyFillTransparency(canvas);
+        }
+        Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
+        if (textRise != null && textRise != 0) {
+            canvas.setTextRise((float) textRise);
+        }
+        Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
+        if (characterSpacing != null && characterSpacing != 0) {
+            canvas.setCharacterSpacing((float) characterSpacing);
+        }
+        Float wordSpacing = this.getPropertyAsFloat(Property.WORD_SPACING);
+        if (wordSpacing != null && wordSpacing != 0) {
+            if (font instanceof PdfType0Font) {
+                // From the spec: Word spacing is applied to every occurrence of the single-byte character code 32 in
+                // a string when using a simple font or a composite font that defines code 32 as a single-byte code.
+                // It does not apply to occurrences of the byte value 32 in multiple-byte codes.
+                //
+                // For PdfType0Font we must add word manually with glyph offsets
+                for (int gInd = line.getStart(); gInd < line.getEnd(); gInd++) {
+                    if (TextUtil.isUni0020(line.get(gInd))) {
+                        final short advance = (short) (FontProgram.convertGlyphSpaceToTextSpace((float) wordSpacing)
+                                / fontSize.getValue());
+                        Glyph copy = new Glyph(line.get(gInd));
+                        copy.setXAdvance(advance);
+                        line.set(gInd, copy);
+                    }
+                }
+            } else {
+                canvas.setWordSpacing((float) wordSpacing);
+            }
+        }
+        Float horizontalScaling = this.<Float>getProperty(Property.HORIZONTAL_SCALING);
+        if (horizontalScaling != null && horizontalScaling != 1) {
+            canvas.setHorizontalScaling((float) horizontalScaling * 100);
+        }
+
+        GlyphLine.IGlyphLineFilter filter = new CustomGlyphLineFilter();
+
+        boolean appearanceStreamLayout = Boolean.TRUE.equals(getPropertyAsBoolean(Property.APPEARANCE_STREAM_LAYOUT));
+
+        if (getReversedRanges() != null) {
+            boolean writeReversedChars = !appearanceStreamLayout;
+            ArrayList<Integer> removedIds = new ArrayList<>();
+            for (int i = line.getStart(); i < line.getEnd(); i++) {
+                if (!filter.accept(line.get(i))) {
+                    removedIds.add(i);
+                }
+            }
+            for (int[] range : getReversedRanges()) {
+                updateRangeBasedOnRemovedCharacters(removedIds, range);
+            }
+            line = line.filter(filter);
+            if (writeReversedChars) {
+                canvas.showText(line, new ReversedCharsIterator(reversedRanges, line).
+                        setUseReversed(true));
+            } else {
+                canvas.showText(line);
+            }
+        } else {
+            if (appearanceStreamLayout) {
+                line.setActualText(line.getStart(), line.getEnd(), null);
+            }
+            canvas.showText(line.filter(filter));
+        }
+        if (savedWordBreakAtLineEnding != null) {
+            canvas.showText(savedWordBreakAtLineEnding);
+        }
+
+        canvas.endText();
     }
 
     private void drawAndTagSingleUnderline(boolean isTagged, Underline underline,

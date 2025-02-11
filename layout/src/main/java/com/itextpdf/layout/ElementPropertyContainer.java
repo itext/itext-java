@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -604,9 +604,23 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      * The stroke color is the color of the outlines or edges of a shape.
      *
      * @return the current stroke color
+     *
+     * @deprecated in favour of {@link #getTransparentStrokeColor()} which should be renamed to {@code getStrokeColor}
+     * after this method will be removed
      */
+    @Deprecated
     public Color getStrokeColor() {
-        return this.<Color>getProperty(Property.STROKE_COLOR);
+        return this.<TransparentColor>getProperty(Property.STROKE_COLOR).getColor();
+    }
+
+    /**
+     * Gets the stroke color for the current element.
+     * The stroke color is the color of the outlines or edges of a shape.
+     *
+     * @return the current stroke color
+     */
+    public TransparentColor getTransparentStrokeColor() {
+        return this.<TransparentColor>getProperty(Property.STROKE_COLOR);
     }
 
     /**
@@ -614,10 +628,62 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      * The stroke color is the color of the outlines or edges of a shape.
      *
      * @param strokeColor a new stroke color
-     * @return this Element.
+     *
+     * @return this element
      */
     public T setStrokeColor(Color strokeColor) {
-        setProperty(Property.STROKE_COLOR, strokeColor);
+        return setStrokeColor(strokeColor, 1f);
+    }
+
+    /**
+     * Sets the stroke color for the current element.
+     * The stroke color is the color of the outlines or edges of a shape.
+     *
+     * @param strokeColor a {@link Color} for the stroke
+     * @param opacity an opacity for the stroke color; a float between 0 and 1, where 1 stands for fully opaque color
+     *                and 0 - for fully transparent
+     *
+     * @return this element
+     */
+    public T setStrokeColor(Color strokeColor, float opacity) {
+        setProperty(Property.STROKE_COLOR, strokeColor != null ? new TransparentColor(strokeColor, opacity) : null);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the stroke color for the current element.
+     * The stroke color is the color of the outlines or edges of a shape.
+     *
+     * @param transparentColor a new stroke color with transparency
+     *
+     * @return this element
+     */
+    public T setStrokeColor(TransparentColor transparentColor) {
+        setProperty(Property.STROKE_COLOR, transparentColor);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets the stroke dash pattern for the current text. Dash pattern is an array of the form [ dashArray dashPhase ],
+     * where {@code dashArray} is a float array that specifies the length of the alternating dashes and gaps,
+     * {@code dashPhase} is a float that specifies the distance into the dash pattern to start the dash.
+     *
+     * @param dashArray float array that specifies the length of the alternating dashes and gaps,
+     *                  use {@code null} for solid line
+     * @param dashPhase float that specifies the distance into the dash pattern to start the dash,
+     *                  use 0 in case offset isn't needed
+     *
+     * @return this element
+     */
+    public T setDashPattern(float[] dashArray, float dashPhase) {
+        List<Float> dashPattern = new ArrayList<>();
+        if (dashArray != null) {
+            for (float fl : dashArray) {
+                dashPattern.add(fl);
+            }
+        }
+        dashPattern.add(dashPhase);
+        setProperty(Property.STROKE_DASH_PATTERN, dashPattern);
         return (T) (Object) this;
     }
 
@@ -722,36 +788,53 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
     }
 
     /**
-     * Sets an horizontal line that can be an underline or a strikethrough.
+     * Sets horizontal line that can be an underline or a strikethrough.
      * Actually, the line can be anywhere vertically due to position parameter.
      * Multiple call to this method will produce multiple lines.
+     *
      * <p>
      * The thickness of the line will be {@code thickness + thicknessMul * fontSize}.
      * The position of the line will be {@code baseLine + yPosition + yPositionMul * fontSize}.
      *
      * @param color        the color of the line or <CODE>null</CODE> to follow the
      *                     text color
-     * @param opacity      the opacity of the line; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     * @param opacity      the opacity of the line; a float between 0 and 1, where 1 stands for fully opaque color and
+     *                     0 - for fully transparent
      * @param thickness    the absolute thickness of the line
      * @param thicknessMul the thickness multiplication factor with the font size
      * @param yPosition    the absolute y position relative to the baseline
      * @param yPositionMul the position multiplication factor with the font size
      * @param lineCapStyle the end line cap style. Allowed values are enumerated in
      *                     {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineCapStyle}
+     *
      * @return this element
      */
-    public T setUnderline(Color color, float opacity, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
-        Underline newUnderline = new Underline(color, opacity, thickness, thicknessMul, yPosition, yPositionMul, lineCapStyle);
+    public T setUnderline(Color color, float opacity, float thickness, float thicknessMul, float yPosition,
+                          float yPositionMul, int lineCapStyle) {
+        return setUnderline(new Underline(color, opacity, thickness, thicknessMul, yPosition,
+                yPositionMul, lineCapStyle));
+    }
+
+    /**
+     * Sets horizontal line that can be an underline, overline or a strikethrough.
+     * Actually, the line can be anywhere vertically due to position parameter.
+     * Multiple call to this method will produce multiple lines.
+     *
+     * @param underline {@link Underline} to set
+     *
+     * @return this element
+     */
+    public T setUnderline(Underline underline) {
         Object currentProperty = this.<Object>getProperty(Property.UNDERLINE);
         if (currentProperty instanceof List) {
-            ((List) currentProperty).add(newUnderline);
+            ((List) currentProperty).add(underline);
         } else if (currentProperty instanceof Underline) {
             List<Underline> mergedUnderlines = new ArrayList<>();
             mergedUnderlines.add((Underline) currentProperty);
-            mergedUnderlines.add(newUnderline);
+            mergedUnderlines.add(underline);
             setProperty(Property.UNDERLINE, mergedUnderlines);
         } else {
-            setProperty(Property.UNDERLINE, newUnderline);
+            setProperty(Property.UNDERLINE, underline);
         }
         return (T) (Object) this;
     }

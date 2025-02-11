@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -81,8 +81,7 @@ public class UaValidationTestFramework {
         checkError(checkErrorLayout("layout_" + filename + ".pdf"), expectedMsg);
 
         final String createdFileName = "vera_" + filename + ".pdf";
-        String veraPdf = verAPdfResult(createdFileName);
-        System.out.println(veraPdf);
+        verAPdfResult(createdFileName, true);
 
         if (checkDocClosing) {
             System.out.println("Checking closing");
@@ -92,7 +91,7 @@ public class UaValidationTestFramework {
 
     public void assertBothValid(String fileName) throws IOException {
         Exception e = checkErrorLayout("layout_" + fileName + ".pdf");
-        String veraPdf = verAPdfResult("vera_" + fileName + ".pdf");
+        String veraPdf = verAPdfResult("vera_" + fileName + ".pdf", false);
         Exception eClosing =  checkErrorOnClosing("vera_" + fileName + ".pdf");
         if (e == null && veraPdf == null && eClosing == null) {
             return;
@@ -122,7 +121,11 @@ public class UaValidationTestFramework {
         Assertions.fail(sb.toString());
     }
 
-    public String verAPdfResult(String filename) throws IOException {
+    public void addBeforeGenerationHook(Consumer<PdfDocument> action) {
+        this.beforeGeneratorHook.add(action);
+    }
+
+    private String verAPdfResult(String filename, boolean failureExpected) throws IOException {
         String outfile = UrlUtil.getNormalizedFileUriString(destinationFolder + filename);
         System.out.println(outfile);
         PdfDocument pdfDoc = new PdfUATestPdfDocument(
@@ -138,11 +141,10 @@ public class UaValidationTestFramework {
         }
         document.close();
         String validate = null;
+        if (failureExpected) {
+        } else {
+        }
         return validate;
-    }
-
-    public void addBeforeGenerationHook(Consumer<PdfDocument> action) {
-        this.beforeGeneratorHook.add(action);
     }
 
     private void checkError(Exception e, String expectedMsg) {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -34,12 +34,13 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Values;
-import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
+import com.itextpdf.svg.utils.SvgCssUtils;
+import com.itextpdf.svg.utils.TemplateResolveUtils;
 import com.itextpdf.svg.utils.TransformUtils;
 
 import org.slf4j.Logger;
@@ -73,6 +74,8 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             return null;
         }
         try {
+            //create color is an entry point method for pattern when drawing svg, so resolving href values here
+            TemplateResolveUtils.resolve(this, context);
             PdfPattern.Tiling tilingPattern = createTilingPattern(context, objectBoundingBox);
             drawPatternContent(context, tilingPattern);
             return (tilingPattern == null) ? null : new PatternColor(tilingPattern);
@@ -114,9 +117,9 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
 
         patternMatrixTransform.translate(originalPatternRectangle.getX(), originalPatternRectangle.getY());
 
-        final float[] viewBoxValues = getViewBoxValues();
+        final float[] viewBoxValues = SvgCssUtils.parseViewBox(this);
         Rectangle bbox;
-        if (viewBoxValues.length < VIEWBOX_VALUES_NUMBER) {
+        if (viewBoxValues == null || viewBoxValues.length < SvgConstants.Values.VIEWBOX_VALUES_NUMBER) {
             if (isObjectBoundingBoxInPatternUnits != isObjectBoundingBoxInPatternContentUnits) {
                 // If pattern units are not the same as pattern content units, then we need to scale
                 // the resulted space into a space to draw pattern content. The pattern rectangle origin
@@ -152,18 +155,20 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             Rectangle viewBox = new Rectangle(viewBoxValues[0], viewBoxValues[1], viewBoxValues[2], viewBoxValues[3]);
             Rectangle appliedViewBox = calculateAppliedViewBox(viewBox, xStep, yStep);
 
-            patternMatrixTransform.translate(appliedViewBox.getX(), appliedViewBox.getY());
-
             double scaleX = (double) appliedViewBox.getWidth() / (double) viewBox.getWidth();
             double scaleY = (double) appliedViewBox.getHeight() / (double) viewBox.getHeight();
+
+            double xOffset = (double) appliedViewBox.getX() / scaleX - (double) viewBox.getX();
+            double yOffset = (double) appliedViewBox.getY() / scaleY - (double) viewBox.getY();
+
+            patternMatrixTransform.translate(xOffset, yOffset);
+
             patternMatrixTransform.scale(scaleX, scaleY);
             xStep /= scaleX;
             yStep /= scaleY;
 
-            patternMatrixTransform.translate(-viewBox.getX(), -viewBox.getY());
-
-            double bboxXOriginal = viewBox.getX() - appliedViewBox.getX() / scaleX;
-            double bboxYOriginal = viewBox.getY() - appliedViewBox.getY() / scaleY;
+            double bboxXOriginal = -xOffset / scaleX;
+            double bboxYOriginal = -yOffset / scaleY;
             bbox = new Rectangle((float) bboxXOriginal, (float) bboxYOriginal, (float) xStep, (float) yStep);
         }
 
@@ -205,12 +210,12 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             yStep = SvgCoordinateUtils.getCoordinateForObjectBoundingBox(
                     getAttribute(Attributes.HEIGHT), 0) * CONVERT_COEFF;
         } else {
-            final Rectangle currentViewPort = context.getCurrentViewPort();
+            final Rectangle currentViewPort = this.getCurrentViewBox(context);
             final double viewPortX = currentViewPort.getX();
             final double viewPortY = currentViewPort.getY();
             final double viewPortWidth = currentViewPort.getWidth();
             final double viewPortHeight = currentViewPort.getHeight();
-            final float em = getCurrentFontSize();
+            final float em = getCurrentFontSize(context);
             final float rem = context.getCssContext().getRootFontSize();
             // get pattern coordinates in userSpaceOnUse coordinate system
             xOffset = SvgCoordinateUtils.getCoordinateForUserSpaceOnUse(
@@ -301,8 +306,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         // of the element (according to the viewBox documentation)
         if (viewBoxValues[2] == 0 || viewBoxValues[3] == 0) {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info(MessageFormatUtil
-                        .format(SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO));
+                LOGGER.info(SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO);
             }
             return true;
         } else {

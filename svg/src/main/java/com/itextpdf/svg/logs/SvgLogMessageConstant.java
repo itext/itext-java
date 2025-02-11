@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -61,10 +61,18 @@ public final class SvgLogMessageConstant {
     public static final String PATTERN_WIDTH_OR_HEIGHT_IS_NEGATIVE =
             "Pattern width or height is negative value. This pattern will not be rendered.";
 
+    /**
+     * The constant not used anymore and will be removed in the next major release.
+     */
+    @Deprecated
     public static final String MISSING_WIDTH =
             "Top Svg tag has no defined width attribute and viewbox width is not present, so browser default of 300px "
                     + "is used";
 
+    /**
+     * The constant not used anymore and will be removed in the next major release.
+     */
+    @Deprecated
     public static final String MISSING_HEIGHT =
             "Top Svg tag has no defined height attribute and viewbox height is not present, so browser default of "
                     + "150px is used";
@@ -72,6 +80,10 @@ public final class SvgLogMessageConstant {
     public static final String NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH =
             "Non-invertible transformation matrix was used in a clipping path context. Clipped elements may show "
                     + "undefined behavior.";
+
+    public static final String NON_INVERTIBLE_TRANSFORMATION_MATRIX_FOR_NON_SCALING_STROKE =
+            "Unable to get inverse transformation matrix and thus apply non-scaling-stroke vector-effect property: " +
+                    "some of the transformation matrices, written to the document, have a determinant of zero value.";
 
     public static final String UNABLE_TO_GET_INVERSE_MATRIX_DUE_TO_ZERO_DETERMINANT =
             "Unable to get inverse transformation matrix and thus calculate a viewport for the element because some of"

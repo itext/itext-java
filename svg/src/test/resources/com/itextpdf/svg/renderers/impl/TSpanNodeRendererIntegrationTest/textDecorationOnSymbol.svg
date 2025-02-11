@@ -1,0 +1,116 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="12cm" height="12cm" viewBox="0 0 300 250"
+     xmlns="http://www.w3.org/2000/svg" version="2.0">
+    <symbol id="symb1" viewBox="0 0 250 200" stroke="none" text-decoration="line-through">
+        <text x="10" y="50" fill="red">
+            a
+            <tspan text-decoration="underline" fill="#00F">b</tspan>
+            <tspan text-decoration="underline" fill="#0B0">c</tspan>
+            <tspan text-decoration="underline" fill="#00F">d</tspan>
+            <tspan text-decoration="underline" fill="#0B0">e</tspan>
+            <tspan text-decoration="underline" fill="#00F">f</tspan>
+            g
+        </text>
+    </symbol>
+    <symbol id="symb2" viewBox="0 0 250 200" font-size="20" stroke="none" fill="pink" text-decoration="line-through">
+        <text x="10" y="10">
+            a
+            <tspan text-decoration="underline" fill="#00F">b</tspan>
+            <tspan text-decoration="underline" fill="#0B0">c</tspan>
+            <tspan text-decoration="underline" fill="#00F">d</tspan>
+            <tspan text-decoration="underline" fill="#0B0">e</tspan>
+            <tspan text-decoration="underline" fill="#00F">f</tspan>
+            g
+        </text>
+    </symbol>
+    <symbol id="symb3" viewBox="0 0 200 200" font-size="20" stroke="none" text-decoration="line-through">
+        <text x="10" y="50" fill="red">
+            a
+            <tspan text-decoration="underline" fill="#00F">b</tspan>
+            <tspan text-decoration="underline" fill="#0B0">c</tspan>
+            <tspan text-decoration="underline" fill="#00F">d</tspan>
+            <tspan text-decoration="underline" fill="#0B0">e</tspan>
+            <tspan text-decoration="underline" fill="#00F">f</tspan>
+            g
+        </text>
+    </symbol>
+    <symbol id="symb4" viewBox="0 0 200 200" font-size="20" stroke="none" fill="pink" text-decoration="line-through">
+        <symbol id="symb5" viewBox="0 0 200 200" font-size="20" stroke="none" text-decoration="overline">
+            <text x="10" y="90" fill="red">
+                a
+                <tspan text-decoration="underline" fill="#00F">b</tspan>
+                <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                <tspan text-decoration="underline" fill="#00F">d</tspan>
+                <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                <tspan text-decoration="underline" fill="#00F">f</tspan>
+                g
+            </text>
+        </symbol>
+        <use href="#symb5" x="0" y="0" />
+    </symbol>
+    <symbol id="symb6" viewBox="0 0 200 200"  fill="pink" text-decoration="line-through">
+        <symbol id="symb7" viewBox="0 0 200 200"  font-size="20" fill="purple" stroke="none">
+            <text x="10" y="130">
+                a
+                <tspan text-decoration="underline" fill="#00F">b</tspan>
+                <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                <tspan text-decoration="underline" fill="#00F">d</tspan>
+                <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                <tspan text-decoration="underline" fill="#00F">f</tspan>
+                g
+            </text>
+        </symbol>
+        <use href="#symb7" x="0"  y="0" />
+    </symbol>
+    <symbol id="symb8" viewBox="0 0 200 200"  fill="pink" text-decoration="line-through">
+        <symbol id="symb9" viewBox="0 0 200 200"  font-size="20" fill="purple" stroke="none" text-decoration="underline none">
+            <text x="10" y="170" text-decoration="overline">
+                a
+                <tspan text-decoration="underline" fill="#00F">b</tspan>
+                <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                <tspan text-decoration="underline" fill="#00F">d</tspan>
+                <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                <tspan text-decoration="underline" fill="#00F">f</tspan>
+                g
+            </text>
+        </symbol>
+        <use href="#symb9" x="0"  y="0" />
+    </symbol>
+
+    <symbol id="symb10" viewBox="0 0 250 250"  fill="pink" text-decoration="line-through">
+        <g font-size="20" fill="purple" stroke="none" text-decoration="underline none">
+            <text x="10" y="210" text-decoration="overline none">
+                a
+                <tspan text-decoration="underline" fill="#00F">b</tspan>
+                <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                <tspan text-decoration="underline" fill="#00F">d</tspan>
+                <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                <tspan text-decoration="underline" fill="#00F">f</tspan>
+                g
+            </text>
+        </g>
+    </symbol>
+
+    <g fill="pink" text-decoration="line-through">
+        <symbol id="symb11" viewBox="0 0 250 300"  font-size="20" fill="purple" stroke="none" text-decoration="underline">
+            <text x="10" y="250" fill="red" text-decoration="overline none">
+                a
+                <tspan text-decoration="underline" fill="#00F">b</tspan>
+                <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                <tspan text-decoration="underline" fill="#00F">d</tspan>
+                <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                <tspan text-decoration="underline" fill="#00F">f</tspan>
+                g
+            </text>
+        </symbol>
+        <use href="#symb11" x="0"  y="-170" />
+    </g>
+
+    <use href="#symb1" x="0"  y="0" />
+    <use href="#symb2" x="20"  y="0" />
+    <use href="#symb3" x="0"  y="30" />
+    <use href="#symb4" x="0"  y="30" />
+    <use href="#symb6" x="0"  y="20" />
+    <use href="#symb8" x="0"  y="20" />
+    <use href="#symb10" x="0"  y="50" />
+</svg>

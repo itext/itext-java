@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,102 +22,250 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
-
 import java.io.IOException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
-
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/ClipPathTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/ClipPathTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/ClipPathTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/ClipPathTest/";
 
     private SvgConverterProperties properties;
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @Test
+    public void emptyClipPathTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "emptyClipPath");
+    }
+
+    @Test
+    public void invalidClipPathTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidClipPath");
     }
 
     @Test
     public void rectClipPathComplexTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_rect_complex");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clippath_rect_complex");
     }
 
     @Test
     public void rectClipPathSimpleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_rect_simple");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clippath_rect_simple");
     }
 
     @Test
     public void circleClipPathComplexTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_circle_complex");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clippath_circle_complex");
     }
 
     @Test
     public void circleClipPathSimpleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_circle_simple");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clippath_circle_simple");
     }
 
     @Test
-    //TODO: update cmp file after DEVSIX-4044 will be fixed
+    //TODO DEVSIX-4044 SVG: support outline CSS property
     public void multiClipPathComplexTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_multi_complex");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clippath_multi_complex");
     }
 
     @Test
     public void moveClipPathTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_move");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clippath_move");
     }
 
     @Test
     public void moveClipPathRuleMultipleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_rule_multiple");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clippath_rule_multiple");
+    }
+
+    @Test
+    public void simpleTranslateTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "simpleTranslate");
     }
 
     @Test
     public void clipRule() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipRule");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipRule");
     }
 
     @Test
     public void clipPathRuleParameterVsFillRule() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRuleParameterVsFillRule");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathRuleParameterVsFillRule");
     }
 
     @Test
     public void clipPathRuleEvenoddNonzero() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRuleEvenoddNonzero");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathRuleEvenoddNonzero");
     }
 
     @Test
-    //TODO: update after DEVSIX-2827
     public void clipPathCss() throws IOException, InterruptedException {
-        properties = new SvgConverterProperties().setBaseUri(sourceFolder);
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathCss", properties);
+        properties = new SvgConverterProperties().setBaseUri(SOURCE_FOLDER);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathCss", properties);
     }
 
     @Test
+    //TODO DEVSIX-2946 Support clip-path CSS property
     public void clipPathCssProperty() throws IOException, InterruptedException {
-        properties = new SvgConverterProperties().setBaseUri(sourceFolder);
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathCssProperty", properties);
+        properties = new SvgConverterProperties().setBaseUri(SOURCE_FOLDER);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathCssProperty", properties);
     }
 
     @Test
-    //TODO: update after DEVSIX-2377
+    // TODO DEVSIX-2589 Support clip and overflow attribute for symbol
     public void clipPathRulesCombined() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clipPathRulesCombined");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathRulesCombined");
     }
 
     @Test
-    // TODO: DEVSIX-3923 update cmp_ after fix
+    // TODO: DEVSIX-3923 SVG: tags are processed in сase-insensitive way
     public void invalidClipPathTagTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "clippath_invalid_tag");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clippath_invalid_tag");
+    }
+
+    @Test
+    public void clipPathUnitsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathUnits");
+    }
+
+    @Test
+    public void clipPathUrlTopLevelTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathUrlTopLevel");
+    }
+
+    @Test
+    public void clipPathUrl2ndLevelTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathUrl2ndLevel");
+    }
+
+    @Test
+    public void clipPathUseTest() throws IOException, InterruptedException {
+        // doesn't work in Chrome and Firefox too
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathUse");
+    }
+
+    @Test
+    public void clipPathTextSimpleTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathText");
+    }
+
+    @Test
+    public void clipPathSimpleNestedTextTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathSimpleNestedTextTest");
+    }
+
+    @Test
+    public void clipPathNestedTextTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathNestedTextTest");
+    }
+
+    @Test
+    public void clipPathNestedTextImageTest() throws IOException, InterruptedException {
+        ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(SOURCE_FOLDER);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathNestedTextImage", properties);
+    }
+
+    @Test
+    public void clipPathComplexTest() throws IOException, InterruptedException {
+        ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(SOURCE_FOLDER);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathComplex", properties);
+    }
+
+    @Test
+    public void clipPathTranslateText() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTranslateText");
+    }
+
+    @Test
+    public void clipPathNegativeXTranslateText() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathNegativeXTranslateText");
+    }
+
+    @Test
+    public void clipPathNegativeDxText() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathNegativeDxText");
+    }
+
+    @Test
+    public void clipPathTextBoldTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTextBold");
+    }
+
+    @Test
+    public void clipPathTextItalicTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTextItalic");
+    }
+
+    @Test
+    public void clipPathTextItalicBoldTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTextItalicBold");
+    }
+
+    @Test
+    public void clipPathTextMultiObjectsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTextMultiObjects");
+    }
+
+    @Test
+    public void clipPathTextMultiObjects2Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTextMultiObjects2");
+    }
+
+    @Test
+    public void clipPathTextMultiObjects3Test() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTextMultiObjects3");
+    }
+
+    @Test
+    public void clipPathTextLinearGradientTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTextLinearGrad");
+    }
+
+    @Test
+    public void clipPathTextPatternTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTextPattern");
+    }
+
+    @Test
+    public void clipPathTextImageTest() throws IOException, InterruptedException {
+        ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(SOURCE_FOLDER);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathTextImage", properties);
+    }
+
+    @Test
+    public void clipPathStrokeText() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathStrokeText");
+    }
+
+    @Test
+    public void clipPathOnlyStrokeText() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathOnlyStrokeText");
+    }
+
+    @Test
+    public void clipPathFillText() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathFillText");
+    }
+
+    @Test
+    public void clipPathUnderlineText() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathUnderlineText");
+    }
+
+    @Test
+    public void notUsedClipPathOutsideDefsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "notUsedClipPathOutsideDefs");
     }
 }

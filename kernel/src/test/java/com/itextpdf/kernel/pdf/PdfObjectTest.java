@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -258,6 +258,88 @@ public class PdfObjectTest extends ExtendedITextTest {
         Assertions.assertTrue(dict1 == dict);
 
         document.close();
+    }
+
+    @Test
+    public void containsIndirectReference1Test() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDictionary testDict = getTestPdfDictionary();
+        Assertions.assertFalse(testDict.containsIndirectReference());
+
+        testDict.get(new PdfName("b")).makeIndirect(pdfDoc);
+        Assertions.assertTrue(testDict.containsIndirectReference());
+    }
+
+    @Test
+    public void containsIndirectReference2Test() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDictionary testDict = getTestPdfDictionary();
+        PdfObject arrValue = new PdfName("arrValue");
+        PdfArray pdfArr = new PdfArray();
+        pdfArr.add(arrValue);
+
+        testDict.put(new PdfName("array"), pdfArr);
+        Assertions.assertFalse(testDict.containsIndirectReference());
+
+        arrValue.makeIndirect(pdfDoc);
+        Assertions.assertTrue(testDict.containsIndirectReference());
+    }
+
+    @Test
+    public void containsIndirectReferenceFlushedDictValueTest() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDictionary testDict = getTestPdfDictionary();
+        Assertions.assertFalse(testDict.containsIndirectReference());
+
+        testDict.get(new PdfName("b")).makeIndirect(pdfDoc).flush();
+        Assertions.assertTrue(testDict.containsIndirectReference());
+    }
+
+    @Test
+    public void containsIndirectReferenceFlushedArrayTest() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDictionary testDict = getTestPdfDictionary();
+        PdfObject arrValue = new PdfName("arrValue");
+        PdfArray pdfArr = new PdfArray();
+        pdfArr.add(arrValue);
+        pdfArr.makeIndirect(pdfDoc);
+        pdfArr.flush();
+
+        testDict.put(new PdfName("array"), pdfArr);
+        Assertions.assertTrue(testDict.containsIndirectReference());
+    }
+
+    @Test
+    public void containsIndirectReferenceFlushedArrayValueTest() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDictionary testDict = getTestPdfDictionary();
+        PdfObject arrValue = new PdfName("arrValue");
+        PdfArray pdfArr = new PdfArray();
+        pdfArr.add(arrValue);
+
+        arrValue.makeIndirect(pdfDoc);
+        arrValue.flush();
+
+        testDict.put(new PdfName("array"), pdfArr);
+        Assertions.assertTrue(testDict.containsIndirectReference());
+    }
+
+    @Test
+    public void containsIndirectReferenceFlushedArrayAndArrayValueTest() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDictionary testDict = getTestPdfDictionary();
+        PdfObject arrValue = new PdfName("arrValue");
+        PdfArray pdfArr = new PdfArray();
+        pdfArr.add(arrValue);
+
+        arrValue.makeIndirect(pdfDoc);
+        arrValue.flush();
+
+        pdfArr.makeIndirect(pdfDoc);
+        pdfArr.flush();
+
+        testDict.put(new PdfName("array"), pdfArr);
+        Assertions.assertTrue(testDict.containsIndirectReference());
     }
 
     private static PdfDictionary getTestPdfDictionary() {

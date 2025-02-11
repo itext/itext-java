@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -260,6 +260,20 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
                 SOURCE_FOLDER + "cmp_flattenReadOnlyAddIndexTo.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
+    @Test
+    public void fieldsWithSameNamesTest() throws IOException {
+        String source = SOURCE_FOLDER + "fieldsWithSameNamesTest.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(source), new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, false, new AddIndexStrategy());
+
+            Assertions.assertNotNull(form.getField("test"));
+            Assertions.assertNotNull(form.getField("test_1"));
+            Assertions.assertNotNull(form.getField("test_2"));
+            Assertions.assertNotNull(form.getField("bingbong"));
+            Assertions.assertNotNull(form.getField("bingbong_1"));
+            Assertions.assertNotNull(form.getField("bingbong_2"));
+        }
+    }
 
     @Test
     public void addIndexStrategySeparatesTheFields() throws IOException, InterruptedException {

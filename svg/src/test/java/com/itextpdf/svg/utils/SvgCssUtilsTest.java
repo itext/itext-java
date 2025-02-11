@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,16 +22,10 @@
  */
 package com.itextpdf.svg.utils;
 
-import com.itextpdf.styledxmlparser.CommonAttributeConstants;
-import com.itextpdf.styledxmlparser.css.util.CssUtils;
-import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
-import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
-import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -165,6 +159,14 @@ public class SvgCssUtilsTest extends ExtendedITextTest {
     public void convertLongerFloatToStringTest() {
         String expected = "0.1234567";
         String actual = SvgCssUtils.convertFloatToString(0.1234567f);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void convertLongerDoubleToStringTest() {
+        String expected = "0.1234567";
+        String actual = SvgCssUtils.convertDoubleToString(0.1234567d);
 
         Assertions.assertEquals(expected, actual);
     }

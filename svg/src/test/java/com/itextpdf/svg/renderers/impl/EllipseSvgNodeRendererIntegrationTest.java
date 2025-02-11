@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -27,11 +27,15 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 
 import java.nio.charset.StandardCharsets;
+
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -78,13 +82,11 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp_ when DEVSIX-3119
     public void ellipseRxAbsentTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseRxAbsent");
     }
 
     @Test
-    //TODO: update cmp_ when DEVSIX-3119
     public void ellipseRyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseRyAbsent");
     }
@@ -146,12 +148,13 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         ellipseRenderer.setAttribute(SvgConstants.Attributes.RX, "6");
         ellipseRenderer.setAttribute(SvgConstants.Attributes.RY, "6");
 
-        // Parse parameters with better precision (in double type) in the method CssUtils#parseAbsoluteLength
-        ellipseRenderer.setParameters();
-
         SvgDrawContext context = new SvgDrawContext(null, null);
+
         PdfCanvas cv = new PdfCanvas(doc, 1);
         context.pushCanvas(cv);
+
+        // Parse parameters with better precision (in double type) in the method CssUtils#parseAbsoluteLength
+        ellipseRenderer.setParameters(context);
 
         // Calculate coordinates with better precision (in double type) in the method EllipseSvgNodeRenderer#doDraw
         ellipseRenderer.draw(context);
@@ -168,7 +171,6 @@ public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO: DEVSIX-3932 update cmp_ after fix
     public void ellipseWithBigStrokeWidthTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipseWithBigStrokeWidth");
     }

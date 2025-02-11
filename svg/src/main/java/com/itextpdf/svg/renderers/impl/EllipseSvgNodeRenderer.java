@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,9 +22,9 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -41,17 +41,22 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
     protected void doDraw(SvgDrawContext context) {
         PdfCanvas cv = context.getCurrentCanvas();
         cv.writeLiteral("% ellipse\n");
-        if (setParameters()) {
+        if (setParameters(context)) {
             // Use double type locally to have better precision of the result after applying arithmetic operations
-            cv.moveTo((double) cx + (double) rx, cy);
+            double[] startPoint = new double[]{(double) cx + (double) rx, cy};
+            AffineTransform transform = applyNonScalingStrokeTransform(context);
+            if (transform != null) {
+                transform.transform(startPoint, 0, startPoint, 0, startPoint.length / 2);
+            }
+            cv.moveTo(startPoint[0], startPoint[1]);
             DrawUtils.arc((double) cx - (double) rx, (double) cy - (double) ry, (double) cx + (double) rx,
-                    (double) cy + (double) ry, 0, 360, cv);
+                    (double) cy + (double) ry, 0, 360, cv, transform);
         }
     }
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        if (setParameters()) {
+        if (setParameters(context)) {
             return new Rectangle(cx - rx, cy - ry, rx + rx, ry + ry);
         } else {
             return null;
@@ -61,34 +66,54 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
     /**
      * Fetches a map of String values by calling getAttribute(String s) method
      * and maps it's values to arc parameter cx, cy , rx, ry respectively
+     * <p>
+     * This method is deprecated in favour of {@link EllipseSvgNodeRenderer#setParameters(SvgDrawContext)}, because
+     * x/y/rx/ry can contain relative values which can't be resolved without {@link SvgDrawContext}.
      *
      * @return boolean values to indicate whether all values exit or not
      */
+    @Deprecated
     protected boolean setParameters() {
+        return setParameters(new SvgDrawContext(null, null));
+    }
+
+    /**
+     * Fetches a map of String values by calling getAttribute(String s) method
+     * and maps it's values to arc parameter cx, cy , rx, ry respectively
+     *
+     * @param context the SVG draw context
+     *
+     * @return boolean values to indicate whether all values exit or not
+     */
+    protected boolean setParameters(SvgDrawContext context) {
+        initCenter(context);
+        String rxValue = getAttribute(SvgConstants.Attributes.RX);
+        String ryValue = getAttribute(SvgConstants.Attributes.RY);
+        rx = parseHorizontalLength(rxValue, context);
+        ry = parseVerticalLength(ryValue, context);
+        if (rxValue == null) {
+            rx = ry;
+        }
+        if (ryValue == null) {
+            ry = rx;
+        }
+        return rx > 0.0F && ry > 0.0F;
+    }
+
+    /**
+     * Initialize ellipse cx and cy.
+     *
+     * @param context svg draw context
+     */
+    protected void initCenter(SvgDrawContext context) {
         cx = 0;
         cy = 0;
-        if (getAttribute(SvgConstants.Attributes.CX) != null) {
-            cx = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CX));
+        if(getAttribute(SvgConstants.Attributes.CX) != null){
+            cx = parseHorizontalLength(getAttribute(SvgConstants.Attributes.CX), context);
         }
-        if (getAttribute(SvgConstants.Attributes.CY) != null) {
-            cy = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.CY));
+        if(getAttribute(SvgConstants.Attributes.CY) != null){
+            cy = parseVerticalLength(getAttribute(SvgConstants.Attributes.CY), context);
         }
-
-        if (getAttribute(SvgConstants.Attributes.RX) != null
-                && CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX)) > 0) {
-            rx = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RX));
-        } else {
-            //No drawing if rx is absent
-            return false;
-        }
-        if (getAttribute(SvgConstants.Attributes.RY) != null
-                && CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY)) > 0) {
-            ry = CssDimensionParsingUtils.parseAbsoluteLength(getAttribute(SvgConstants.Attributes.RY));
-        } else {
-            //No drawing if ry is absent
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -96,6 +121,11 @@ public class EllipseSvgNodeRenderer extends AbstractSvgNodeRenderer {
         EllipseSvgNodeRenderer copy = new EllipseSvgNodeRenderer();
         deepCopyAttributesAndStyles(copy);
         return copy;
+    }
+
+    @Override
+    void doStrokeOrFill(String fillRuleRawValue, PdfCanvas currentCanvas) {
+        DrawUtils.doStrokeOrFillForClosedFigure(fillRuleRawValue, currentCanvas, doStroke);
     }
 
 }

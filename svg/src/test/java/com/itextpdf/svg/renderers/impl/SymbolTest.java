@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,20 +22,16 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class SymbolTest extends SvgIntegrationTest {
@@ -70,12 +66,13 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
-    })
-    // TODO DEVSIX-4388 The handling of width and height attributes with percentages is not currently supported
     public void heightPercentsAttrTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "heightPercentsAttrTest");
+    }
+
+    @Test
+    public void heightEmTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "heightEmTest");
     }
 
     @Test
@@ -84,10 +81,6 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
-    })
-    // TODO DEVSIX-4388 The handling of width and height attributes with percentages is not currently supported
     public void widthPercentsAttrTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthPercentsAttrTest");
     }
@@ -98,10 +91,6 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 2),
-    })
-    // TODO DEVSIX-4388 The handling of width and height attributes with percentages is not currently supported
     public void widthHeightAttrPercentsPxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightAttrPercentsPxTest");
     }
@@ -118,7 +107,6 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4563 Processing of attributes from an external CSS is not currently supported
     public void classAttributeTestWithCssTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "classAttrTest");
     }
@@ -139,7 +127,6 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-2258 Processing of stroke attribute is not currently correct supported
     public void opacityAttributeTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "opacityAttrTest");
     }
@@ -174,44 +161,29 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-4566 Processing of width&height attributes in use tag are not currently supported
     public void useHeightWidthAllUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useHeightWidthAllUnitsTest", properties);
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED),
-    })
-    // TODO DEVSIX-4388 The handling of width and height attributes with percentages is not currently supported
-    // TODO DEVSIX-4566 Processing of width&height attributes in use tag are not currently supported
     public void useSymbolHeightWidthAllUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useSymbolHeightWidthAllUnitsTest",
                 properties);
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 3),
-    })
-    // TODO DEVSIX-4388 The handling of x and y attributes with percentages is not currently supported
     public void useSymbolXYContrudictionAllUnitsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useSymbolXYContrudictionAllUnitsTest",
                 properties);
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 6)
-    })
-    // TODO DEVSIX-2654 Percent values are not correctly processed
     public void useSymbolCoordinatesContrudictionTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "useSymbolCoordinatesContrudiction",
                 properties);
     }
 
     @Test
-    // TODO DEVSIX-4566 Processing of width&height attributes in use tag are not currently supported
     public void widthHeightAttrInteractionTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "widthHeightAttrInteraction",
                 properties);

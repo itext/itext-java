@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -42,8 +42,8 @@ import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontFaceTest extends SvgIntegrationTest {
@@ -57,14 +57,12 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO fix cmp file after DEVSIX-2256 is finished. Right now unicode range is not processed correctly
+    // Unicode range is processed correctly: in case Droid Serif font doesn't include current glyph, Times font is used.
     public void unicodeRangeTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "unicodeRangeTest");
     }
 
     @Test
-    // TODO fix cmp file after DEVSIX-2534 is finished. Right now droid fonts are not applied if
-    //  their aliases are inside single quotes and contain spaces
     public void droidSerifSingleQuotesTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "droidSerifSingleQuotesTest");
     }
@@ -97,6 +95,16 @@ public class FontFaceTest extends SvgIntegrationTest {
     @Test
     public void fontSelectorTest01() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "fontSelectorTest01");
+    }
+
+    @Test
+    public void fontSelectorTest03() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "fontSelectorTest03");
+    }
+
+    @Test
+    public void fontSelectorMissingFontWithSize() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "fontSelectorMissingWithFontSize");
     }
 
     @Test

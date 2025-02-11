@@ -1,0 +1,22 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" style="stop-color:black;stop-opacity:1" />
+    <stop offset="100%" style="stop-color:white;stop-opacity:1" />
+  </linearGradient>
+
+  <mask id="myMask1" maskContentUnits="userSpaceOnUse">
+    <rect fill="url(#gradient)" x="0" y="0" width="100%" height="100%" />
+    <circle fill="white" cx="50" cy="50" r="35" />
+  </mask>
+
+  <mask id="myMask2" maskContentUnits="objectBoundingBox">
+    <rect fill="black" x="0" y="0" width="100%" height="100%" />
+    <circle fill="url(#gradient)" cx=".5" cy=".5" r=".35" />
+  </mask>
+
+  <rect id="r1" x="0" y="0" width="45" height="45" />
+  <rect id="r2" x="0" y="55" width="45" height="45" />
+
+  <use mask="url(#myMask1)" href="#r1" fill="red" />
+  <use mask="url(#myMask2)" href="#r2" fill="red" />
+</svg>

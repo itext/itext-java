@@ -58,6 +58,9 @@
             <fileset reason="Ignored because of different work with standard output on Java and .NET">
                 <file path="com/itextpdf/commons/actions/ProductEventHandlerIntegrationTest.java"/>
             </fileset>
+            <fileset reason="Different implementation of thread-safe set on Java and .NET">
+                <file path="com/itextpdf/commons/datastructures/ConcurrentHashSet.java"/>
+            </fileset>
             <!-- io -->
             <fileset reason="This class seems to be specific for java and used for getting an instance of an Image from java.awt.Image.
         In .Net it looks not trivial to port automatically as it needs java.awt.BufferedImage and java.awt.PixelGrabber alternative in .Net.
@@ -153,7 +156,6 @@
             <!-- barcodes -->
             <file path="com/itextpdf/barcodes/BarcodeMultiThreadingTest.java"/>
 
-            <file path="com/itextpdf/pdfua/PemFileHelper.java"/>
             <!-- bouncy-castle -->
             <fileset reason="Logic of some methods in BC and BCFips differs at Java and .NET.">
                 <file path="com/itextpdf/bouncycastleconnector/BouncyCastleDefaultFactory.java"/>
@@ -351,7 +353,9 @@
                 <file path="com/itextpdf/commons/bouncycastle/pkcs/AbstractPKCSException.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampToken.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampTokenGenerator.java"/>
+                <file path="com/itextpdf/commons/bouncycastle/SecurityProviderProxy.java"/>
             </fileset>
+
             <fileset reason="These classes are used only in Java.">
                 <file path="com/itextpdf/commons/bouncycastle/crypto/fips/AbstractFipsUnapprovedOperationError.java"/>
                 <file path="com/itextpdf/bouncycastlefips/crypto/fips/FipsUnapprovedOperationErrorBCFips.java"/>
@@ -517,6 +521,11 @@
                 <file path="com/itextpdf/signatures/validation/context/CertificateSources.java" />
                 <file path="com/itextpdf/signatures/validation/SignatureValidationProperties.java" />
             </fileset>
+            <fileset reason="Xml tooling is not translatable">
+                <file path="com/itextpdf/signatures/validation/report/xml/XmlReportGenerator.java"/>
+                <file path="com/itextpdf/signatures/testutils/report/xml/ReportNamespaceContext.java"/>
+                <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
+            </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />
             <file path="com/itextpdf/styledxmlparser/jsoup/helper/DataUtil.java" />
@@ -564,6 +573,9 @@
             <fileset reason="The ignore is added here because the work with absolute path and URI is not autoportable.">
                 <file path="com/itextpdf/styledxmlparser/resolver/resource/UriResolverTest.java" />
                 <file path="com/itextpdf/styledxmlparser/resolver/resource/ResourceResolverTest.java" />
+            </fileset>
+            <fileset reason="This test uses threads and sockets which are not autoportable">
+                <file path="com/itextpdf/styledxmlparser/resolver/resource/DefaultResourceRetrieverTest.java" />
             </fileset>
 
             <!-- svg -->
@@ -669,13 +681,11 @@
         <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">
             <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/grayImages.png" />
         </fileset>
-        
     </resource>
     <src>
         <module name="pdftest" />
         <module name="font-asian" />
         <module name="hyph" />
-        <module name="native-image-test" />
     </src>
 
     <test>

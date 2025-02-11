@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -37,6 +37,13 @@ public class PointTest extends ExtendedITextTest {
         Point first = new Point();
         Assertions.assertEquals(0, first.getX(), EPSILON_COMPARISON);
         Assertions.assertEquals(0, first.getY(), EPSILON_COMPARISON);
+    }
+
+    @Test
+    public void copyConstructorTest() {
+        Point first = new Point(new Point(4.0, 5.0));
+        Assertions.assertEquals(4.0, first.getX(), EPSILON_COMPARISON);
+        Assertions.assertEquals(5.0, first.getY(), EPSILON_COMPARISON);
     }
 
     @Test

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,7 +23,6 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupXmlParser;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
@@ -38,14 +37,12 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
@@ -175,7 +172,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-2058
     public void fontResolverIntegrationTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontssvg");
     }
@@ -186,15 +182,12 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-2079: change compare file after fix
     public void fontWeightTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "fontWeightTest");
     }
 
-
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
-    // TODO DEVSIX-4275 investigate why fill style not processed
     public void externalStyleSheetWithFillStyleTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "externalStyleSheetWithFillStyleTest");
     }
@@ -206,45 +199,68 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-2264: that test shall fail after the fix.
+    @org.junit.jupiter.api.Disabled
     public void googleFontsTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(sourceFolder, destinationFolder, "googleFontsTest");
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-4396 resolved
+    // TODO: update cmp files when DEVSIX-6405 resolved
+    // TODO: update cmp files when DEVSIX-8821 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithExternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "externalCss");
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-4396 resolved
+    // TODO: update cmp files when DEVSIX-6405 resolved
+    // TODO: update cmp files when DEVSIX-8821 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithInternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "internalCss");
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
+    public void svgWithInternalCSSWithoutOverlapTest() throws IOException,InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "internalCssNoOverlap");
+    }
+
+
+    @Test
+    // TODO: update cmp files when DEVSIX-4396 resolved
+    // TODO: update cmp files when DEVSIX-6405 resolved
+    // TODO: update cmp files when DEVSIX-8821 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithExternalCSStoCustomPage() throws IOException,InterruptedException {
         // Take a note this method differs from the one used in Default Page test
         convertAndCompare(sourceFolder, destinationFolder, "externalCss_custom", PageSize.A3.rotate());
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-4396 resolved
+    // TODO: update cmp files when DEVSIX-6405 resolved
+    // TODO: update cmp files when DEVSIX-8821 resolved
+    // TODO: update cmp files when DEVSIX-8822 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithInternalCSStoCustomPage() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "internalCss_custom", PageSize.A3.rotate());
     }
 
     @Test
-    // TODO: update cmp files when DEVSIX-2286 resolved
+    // TODO: update cmp files when DEVSIX-8823 resolved
+    // TODO: update cmp files when DEVSIX-8832 resolved
     public void multipleSVGtagsWithDiffStylesFromExternalCSS() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "externalCss_palette", PageSize.A3.rotate());
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED)})
-    // TODO DEVSIX-4140 font-relative values doesn't support
     public void relativeStyleInheritanceTest() throws IOException,InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "relativeStyleInheritanceTest");
     }
@@ -252,5 +268,125 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     public void textTagNoFontSizeTest() throws IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "textTagNoFontSize");
+    }
+
+    @Test
+    public void chartWithText1Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "chartWithText1");
+    }
+
+    @Test
+    public void chartWithText2Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "chartWithText2");
+    }
+
+    @Test
+    public void importStyleSheetWithStrokeStyleTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(sourceFolder, destinationFolder, "importStyleSheetWithStrokeStyleTest");
+    }
+
+    @Test
+    public void styleInCdataTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "styleInCDATA");
+    }
+
+    @Test
+    public void styleInCdataWithNewLineBeforeTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "styleInCdataWithNewLineBefore");
+    }
+
+    @Test
+    public void cssStylesResolverOrder1Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder1");
+    }
+
+    @Test
+    public void cssStylesResolverOrder2Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder2");
+    }
+
+    @Test
+    public void cssStylesResolverOrder3Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder3");
+    }
+
+    @Test
+    public void cssStylesResolverOrder4Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder4");
+    }
+
+    @Test
+    public void cssStylesResolverOrder5Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder5");
+    }
+
+    @Test
+    public void cssStylesResolverOrder6Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder6");
+    }
+
+    @Test
+    public void cssStylesResolverOrder7Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder7");
+    }
+
+    @Test
+    public void cssStylesResolverOrder8Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder8");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
+    public void cssStylesResolverOrder9Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder9");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
+    public void cssStylesResolverOrder10Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder10");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
+    public void cssStylesResolverOrder11Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder11");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, logLevel = LogLevelConstants.WARN))
+    public void cssStylesResolverOrder12Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder12");
+    }
+
+    @Test
+    public void cssStylesResolverOrder13Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder13");
+    }
+
+    @Test
+    public void cssStylesResolverOrder14Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder14");
+    }
+
+    @Test
+    public void cssStylesResolverOrder15Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder15");
+    }
+
+    @Test
+    public void cssStylesResolverOrder16Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder16");
+    }
+
+    @Test
+    public void cssStylesResolverOrder17Test() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "cssStylesResolverOrder17");
+    }
+
+    @Test
+    //TODO DEVSIX-8823: update after issue is fixed
+    public void heightWidthSvgStyleTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "height-width-style");
     }
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -136,8 +136,6 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void cryptFilterFlushedBeforeReadStreamTest() throws IOException {
         String file = sourceFolder + "cryptFilterTest.pdf";
         String destFile = destinationFolder + "cryptFilterReadStreamTest.pdf";
@@ -162,8 +160,6 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void cryptFilterFlushedBeforeStreamTest() throws IOException {
         String file = sourceFolder + "cryptFilterTest.pdf";
         String destFile = destinationFolder + "cryptFilterStreamNotReadTest.pdf";
@@ -187,8 +183,6 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
-            ignore = true))
     public void cryptFilterFlushedAfterStreamTest() throws IOException, InterruptedException {
         String file = sourceFolder + "cryptFilterTest.pdf";
         String cmpFile = sourceFolder + "cmp_cryptFilterTest.pdf";

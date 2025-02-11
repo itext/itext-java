@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174929+03'00')/ModDate(D:20211108174929+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250103181559+03'00')/ModDate(D:20250103181559+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Courier/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,47 +24,40 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 450 450]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 450]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 450 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 450]/Length 229/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R/P2 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 450]/Length 187/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R/P2 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 450 re
 W
 n
 q
 0 0 0 rg
 q
+q
+BT
+/F1 48 Tf
+1 0 0 -1 373.5 112.5 Tm
 /Pattern cs
 
 /P1 scn
-q
-BT
-1 0 0 -1 172.5 112.5 Tm
-0 Tr
-/F1 48 Tf
-0 0 Td
 (iText)Tj
 ET
 Q
 q
 BT
-1 0 0 -1 172.5 112.5 Tm
-0 Tr
 /F1 48 Tf
+1 0 0 -1 172.5 112.5 Tm
 /Pattern cs
 
 /P2 scn
-0 Tr
-/F1 48 Tf
--201 0 Td
 ( iText)Tj
 ET
 Q
@@ -74,10 +67,10 @@ Q
 endstream
 endobj
 9 0 obj
-<</Matrix[460 0 0 60.36 -28.5 76.27]/PatternType 2/Shading 11 0 R/Type/Pattern>>
+<</Matrix[460 0 0 60.36 172.5 76.27]/PatternType 2/Shading 11 0 R/Type/Pattern>>
 endobj
 10 0 obj
-<</Matrix[460 0 0 60.36 -28.5 76.27]/PatternType 2/Shading 12 0 R/Type/Pattern>>
+<</Matrix[460 0 0 60.36 172.5 76.27]/PatternType 2/Shading 12 0 R/Type/Pattern>>
 endobj
 11 0 obj
 <</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 13 0 R/ShadingType 2>>
@@ -107,26 +100,26 @@ xref
 0 19
 0000000000 65535 f 
 0000000211 00000 n 
-0000000513 00000 n 
+0000000514 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000564 00000 n 
-0000000747 00000 n 
-0000001131 00000 n 
-0000001227 00000 n 
-0000001324 00000 n 
-0000001427 00000 n 
-0000001530 00000 n 
-0000001631 00000 n 
-0000001732 00000 n 
-0000001804 00000 n 
-0000001876 00000 n 
-0000001948 00000 n 
+0000000428 00000 n 
+0000000565 00000 n 
+0000000733 00000 n 
+0000001075 00000 n 
+0000001171 00000 n 
+0000001268 00000 n 
+0000001371 00000 n 
+0000001474 00000 n 
+0000001575 00000 n 
+0000001676 00000 n 
+0000001748 00000 n 
+0000001820 00000 n 
+0000001892 00000 n 
 trailer
-<</ID [<948f07f1321ff9320f574184a56b2d6f><948f07f1321ff9320f574184a56b2d6f>]/Info 3 0 R/Root 1 0 R/Size 19>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<c0057a5f2392aaf560b9c2778b1096ff638c507b4af5cc4588d6806719ed2193c263afb37fb09adc434a79bc68d23eb5a3f1f7f8dfa01f7d59a4f2c1cea228eb><c0057a5f2392aaf560b9c2778b1096ff638c507b4af5cc4588d6806719ed2193c263afb37fb09adc434a79bc68d23eb5a3f1f7f8dfa01f7d59a4f2c1cea228eb>]/Info 3 0 R/Root 1 0 R/Size 19>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-2020
+1964
 %%EOF

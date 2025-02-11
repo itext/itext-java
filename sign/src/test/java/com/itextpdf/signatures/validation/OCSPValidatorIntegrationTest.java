@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,11 +26,13 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
+import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
@@ -42,6 +44,7 @@ import com.itextpdf.signatures.validation.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.extensions.ExtendedKeyUsageExtension;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
@@ -51,6 +54,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
@@ -218,11 +222,31 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
                 .hasNumberOfFailures(1)
                 .hasLogItem(al -> al
                     .withCheckName(CertificateChainValidator.EXTENSIONS_CHECK)
-                    .withMessage(CertificateChainValidator.EXTENSION_MISSING,
-                            l -> OID.X509Extensions.EXTENDED_KEY_USAGE)
+                    .withMessageContains(ExtendedKeyUsageExtension.OCSP_SIGNING)
                     )
                 .hasStatus(ValidationReport.ValidationResult.INDETERMINATE)
                 );
+    }
+
+    @Test
+    public void ocspResponseWithoutHashAlgoParametersTest() throws IOException {
+        TestOcspClient ocspClient = new TestOcspClient();
+        IBasicOCSPResp caBasicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
+                FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert,
+                        SOURCE_FOLDER + "ocspResponseWithoutHashAlgoParameters.dat"))));
+
+        ValidationReport report = new ValidationReport();
+        // Configure OCSP signing authority for the certificate in question
+        certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
+
+        OCSPValidator validator = validatorChainBuilder.buildOCSPValidator();
+        validator.validate(report, baseContext, checkCert, caBasicOCSPResp.getResponses()[0], caBasicOCSPResp,
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasNumberOfFailures(0)
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+        );
     }
 
     private ValidationReport validateTest(Date checkDate) throws CertificateException, IOException {

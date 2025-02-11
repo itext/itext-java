@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" style="border: 1px solid black;">
+  
+  <path id="p1" d="M 0,150 h500" stroke="black" fill="transparent" />
+  <path id="p2" d="M 0,350 h500" stroke="black" fill="transparent" />
+  
+  <text font-family="Arial" font-size="20" fill="blue">
+    <textPath href="#p1" startOffset="10%">
+      startOffset 10%
+    </textPath>
+  </text> 
+</svg>

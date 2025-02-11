@@ -1,0 +1,57 @@
+[
+  {
+    "name": "com.itextpdf.commons.utils.JsonUtilTest$ComplexStructure",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.commons.utils.JsonUtilTest$ChildInComplexStructure",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.commons.utils.JsonUtilTest$GrandsonComplexStructure",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.commons.utils.JsonUtilTest$ClassWithEnum",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.commons.utils.JsonUtilTest$ClassWithEnum",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.commons.utils.JsonUtilTest$SomeEnum",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.commons.utils.JsonUtilTest$ClassWithDefaultValue",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.io.codec.brotli.dec.RunningState",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.io.codec.brotli.dec.WordTransformType",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.layout.properties.Property",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  },
+  {
+    "name": "com.itextpdf.styledxmlparser.jsoup.parser.HtmlTreeBuilderState$Constants",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true
+  }
+]

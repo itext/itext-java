@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -318,5 +318,23 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         pdfDocument.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+    }
+
+    @Test
+    public void setFontSizeChoiceFieldTest() throws IOException, InterruptedException {
+        String outPdf = destinationFolder + "setFontSizeChoiceField.pdf";
+        String cmpPdf = sourceFolder + "cmp_setFontSizeChoiceField.pdf";
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            doc.addNewPage();
+            Rectangle rectangle = new Rectangle(150, 500, 200, 150);
+            PdfChoiceFormField choiceBoxField = new ChoiceFormFieldBuilder(doc, "choiceBox")
+                    .setPage(1).setWidgetRectangle(rectangle)
+                    .setOptions(new String[]{"option1", "option2", "option3"}).createList();
+            choiceBoxField.setFontSize(40);
+            PdfAcroForm acroForm = PdfAcroForm.getAcroForm(doc, true);
+            acroForm.addField(choiceBoxField);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
     }
 }

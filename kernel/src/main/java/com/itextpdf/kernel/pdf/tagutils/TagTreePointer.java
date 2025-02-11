@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -389,7 +389,7 @@ public class TagTreePointer {
                 pointerToNewParent.setNextNewKidIndex(pointerToNewParent.nextNewKidIndex - 1);
             }
         }
-        if (getCurrentStructElem().getKids().get(kidIndex) == null) {
+        if (getCurrentStructElem().isKidFlushed(kidIndex)) {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_RELOCATE_TAG_WHICH_IS_ALREADY_FLUSHED);
         }
         IStructureNode removedKid = getCurrentStructElem().removeKid(kidIndex, true);

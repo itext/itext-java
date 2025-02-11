@@ -5,13 +5,14 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>9.0.0</version>
+    <version>9.1.0</version>
   </parent>
   <artifactId>kernel-android</artifactId>
   <name>iText - kernel</name>
   <url>https://itextpdf.com/</url>
   <properties>
-    <sonar.exclusions>**/com/itextpdf/kernel/xmp/**</sonar.exclusions>
+    <sonar.exclusions>**/com/itextpdf/kernel/xmp/**,
+      **com/itextpdf/kernel/pdf/canvas/parser/clipper/**</sonar.exclusions>
   </properties>
   <dependencies>
     <dependency>
@@ -48,6 +49,54 @@
     </resources>
   </build>
   <profiles>
+    <profile>
+      <id>with-sharpen</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>sharpen</groupId>
+            <artifactId>sharpen-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>install</phase>
+                <goals>
+                  <goal>sharpen</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>sharpen</groupId>
+                <artifactId>standard-framework-mapping</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <projectName>kernel</projectName>
+              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
+              <cSharpSourceCodeDestination>itext/itext.kernel</cSharpSourceCodeDestination>
+              <cSharpTestCodeDestination>itext.tests/itext.kernel.tests</cSharpTestCodeDestination>
+              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
+              <showDiff>${sharpen.showdiff}</showDiff>
+              <sourceCodeFiles>
+                <file>**/src/main/java/**/*.java</file>
+              </sourceCodeFiles>
+              <testCodeFiles>
+                <file>**/src/test/java/**/*.java</file>
+              </testCodeFiles>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>com.itextpdf.android</groupId>
+          <artifactId>bouncy-castle-adapter-android</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
     <profile>
       <id>bouncy-castle-test</id>
       <activation>

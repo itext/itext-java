@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="400" style="border:1px solid black;">
+  <image xlink:href="star.jpg" x="50" y="50" width="200" height="200" style="image-rendering: smooth;" />
+  <text x="120" y="270" font-size="16" fill="blue">Smooth</text>
+
+  <image xlink:href="star.jpg" x="300" y="50" width="200" height="200" style="image-rendering: pixelated;" />
+  <text x="370" y="270" font-size="16" fill="red">Pixelated</text>
+</svg>

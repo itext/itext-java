@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -59,7 +59,7 @@ public final class StreamUtil {
      *
      * @param stream   the {@code InputStream}
      * @param size the number of bytes to skip
-     * @throws java.io.IOException
+     * @throws java.io.IOException if an I/O error occurs.
      */
     public static void skip(InputStream stream, long size) throws java.io.IOException {
         long n;
@@ -230,9 +230,10 @@ public final class StreamUtil {
      *
      * Reads {@code len}  bytes from an input stream.
      *
-     * @param b the buffer into which the data is read.
-     * @param off an int specifying the offset into the data.
-     * @param len an int specifying the number of bytes to read.
+     * @param input the stream to read
+     * @param b     the buffer into which the data is read.
+     * @param off   an int specifying the offset into the data.
+     * @param len   an int specifying the number of bytes to read.
      * @exception IOException   if an I/O error occurs.
      */
     public static void readFully(InputStream input, byte[] b, int off, int len) throws IOException {

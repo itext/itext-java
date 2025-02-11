@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174915+03'00')/ModDate(D:20211108174915+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250103181447+03'00')/ModDate(D:20250103181447+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Courier/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 450 300]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 300]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 300 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 300]/Length 135/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 300]/Length 123/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 300 re
 W
 n
@@ -45,15 +44,13 @@ Q
 q
 0 0 0 rg
 q
+q
+BT
+/F1 96 Tf
+1 0 0 -1 37.5 112.5 Tm
 /Pattern cs
 
 /P1 scn
-q
-BT
-1 0 0 -1 37.5 112.5 Tm
-0 Tr
-/F1 96 Tf
-0 0 Td
 (iText)Tj
 ET
 Q
@@ -66,10 +63,10 @@ endobj
 <</PatternType 2/Shading 10 0 R/Type/Pattern>>
 endobj
 10 0 obj
-<</ColorSpace/DeviceRGB/Coords[37.5 0 1477.5 0]/Domain[0.06944 2.74]/Function 11 0 R/ShadingType 2>>
+<</ColorSpace/DeviceRGB/Coords[37.5 0 325.5 0]/Domain[0.06944 0.60278]/Function 11 0 R/ShadingType 2>>
 endobj
 11 0 obj
-<</Bounds[0.5 1]/Domain[0 2.74]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[12 0 R 13 0 R 14 0 R]>>
+<</Bounds[0.5]/Domain[0 1]/Encode[0 1 0 1]/FunctionType 3/Functions[12 0 R 13 0 R]>>
 endobj
 12 0 obj
 <</C0[1 0 0]/C1[0 0.50196 0]/Domain[0 1]/FunctionType 2/N 1>>
@@ -77,29 +74,25 @@ endobj
 13 0 obj
 <</C0[0 0.50196 0]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
-14 0 obj
-<</C0[0 0 1]/C1[0 0 1]/Domain[0 1]/FunctionType 2/N 1>>
-endobj
 xref
-0 15
+0 14
 0000000000 65535 f 
 0000000211 00000 n 
-0000000513 00000 n 
+0000000514 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000564 00000 n 
-0000000747 00000 n 
-0000001027 00000 n 
-0000001089 00000 n 
-0000001206 00000 n 
-0000001323 00000 n 
-0000001401 00000 n 
-0000001479 00000 n 
+0000000428 00000 n 
+0000000565 00000 n 
+0000000733 00000 n 
+0000001001 00000 n 
+0000001063 00000 n 
+0000001182 00000 n 
+0000001283 00000 n 
+0000001361 00000 n 
 trailer
-<</ID [<90fe9e7d6eb4355eca21673e8800b3b6><90fe9e7d6eb4355eca21673e8800b3b6>]/Info 3 0 R/Root 1 0 R/Size 15>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<a3cd9ca164e47a0957a332ae430b73aaf138fb7d45dcedcf6466472a8590956fd371df6c674942214eb93d6274dbd265e457b71a6ebca44b4f309fb0ddd491e5><a3cd9ca164e47a0957a332ae430b73aaf138fb7d45dcedcf6466472a8590956fd371df6c674942214eb93d6274dbd265e457b71a6ebca44b4f309fb0ddd491e5>]/Info 3 0 R/Root 1 0 R/Size 14>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-1551
+1439
 %%EOF

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -145,6 +145,14 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
     boolean isPdf2(PdfDictionary encryptionDictionary) {
         return encryptionDictionary.getAsNumber(PdfName.R).getValue() == 6;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initMd5MessageDigest() {
+        //Do nothing to not initialize md5 message digest, since it's not used by AES256 handler
     }
 
     private void initKeyAndFillDictionary(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword,

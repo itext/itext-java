@@ -1,0 +1,12 @@
+<svg width="660" height="400" xmlns="http://www.w3.org/2000/svg">
+<defs>
+	<clipPath id="textPath">
+		<text x="50" y="133" font-size="40pt" stroke="blue" stroke-width="4">ClipPathText</text>
+	</clipPath>
+</defs>
+
+<g clip-path="url(#textPath)">
+	<rect x="50" width="600" height="200" fill="red" />
+</g>
+<text x="50" y="300" font-size="40pt" stroke="blue" stroke-width="4">ClipPathText</text>
+</svg>

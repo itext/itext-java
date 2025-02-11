@@ -1,0 +1,12 @@
+<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg" color="red">
+  <defs>
+    <style type="text/css">
+        .font { font: italic 10px Verdana; fill: blue; }
+    </style>
+  </defs> 
+  <g>
+    <text style="font: 10px Verdana" x="20" y="20">normal 10px Verdana black</text>
+    <text class="font" x="20" y="40">italic 10px Verdana blue</text>
+  </g>
+</svg>
+

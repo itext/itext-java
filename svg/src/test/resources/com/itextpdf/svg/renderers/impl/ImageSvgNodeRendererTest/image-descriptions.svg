@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="500">
+	<image xlink:href="star.jpg" x="300" y="50" width="200" height="200" style="image-rendering: pixelated;">
+		<title>Star image title</title>
+		<desc>
+			This is a description of the star image in a desc tag.
+		</desc>
+		<aria-describedby>
+			This description inside the aria-describedby will take precedent over desc tag description.
+		</aria-describedby>
+	</image>
+</svg>

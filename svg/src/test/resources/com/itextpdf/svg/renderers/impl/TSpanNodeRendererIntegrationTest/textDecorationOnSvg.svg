@@ -1,0 +1,96 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="12cm" height="12cm" viewBox="0 0 300 250"
+     xmlns="http://www.w3.org/2000/svg" version="2.0">
+    <svg viewBox="0 -10 300 250" font-size="20" stroke="none" fill="pink" text-decoration="line-through">
+        <text x="10" y="10">
+            a
+            <tspan text-decoration="underline" fill="#00F">b</tspan>
+            <tspan text-decoration="underline" fill="#0B0">c</tspan>
+            <tspan text-decoration="underline" fill="#00F">d</tspan>
+            <tspan text-decoration="underline" fill="#0B0">e</tspan>
+            <tspan text-decoration="underline" fill="#00F">f</tspan>
+            g
+        </text>
+    </svg>
+    <svg viewBox="0 -10 300 250"  font-size="20" stroke="none" text-decoration="line-through">
+        <text x="10" y="50" fill="red">
+            a
+            <tspan text-decoration="underline" fill="#00F">b</tspan>
+            <tspan text-decoration="underline" fill="#0B0">c</tspan>
+            <tspan text-decoration="underline" fill="#00F">d</tspan>
+            <tspan text-decoration="underline" fill="#0B0">e</tspan>
+            <tspan text-decoration="underline" fill="#00F">f</tspan>
+            g
+        </text>
+    </svg>
+    <svg viewBox="0 -10 300 250" font-size="20" stroke="none" fill="pink" text-decoration="line-through">
+        <svg viewBox="0 0 300 250" font-size="20" stroke="none" text-decoration="overline">
+            <text x="10" y="90" fill="red">
+                a
+                <tspan text-decoration="underline" fill="#00F">b</tspan>
+                <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                <tspan text-decoration="underline" fill="#00F">d</tspan>
+                <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                <tspan text-decoration="underline" fill="#00F">f</tspan>
+                g
+            </text>
+        </svg>
+    </svg>
+    <svg viewBox="0 -10 300 250" fill="pink" text-decoration="line-through">
+        <svg viewBox="0 0 300 250" font-size="20" fill="purple" stroke="none">
+            <text x="10" y="130">
+                a
+                <tspan text-decoration="underline" fill="#00F">b</tspan>
+                <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                <tspan text-decoration="underline" fill="#00F">d</tspan>
+                <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                <tspan text-decoration="underline" fill="#00F">f</tspan>
+                g
+            </text>
+        </svg>
+    </svg>
+    <svg viewBox="0 -10 300 250" fill="pink" text-decoration="line-through">
+        <g font-size="20" fill="purple" stroke="none" text-decoration="underline none">
+            <symbol id="symb" viewBox="0 0 300 250">
+                <text x="10" y="170" text-decoration="overline">
+                    a
+                    <tspan text-decoration="underline" fill="#00F">b</tspan>
+                    <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                    <tspan text-decoration="underline" fill="#00F">d</tspan>
+                    <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                    <tspan text-decoration="underline" fill="#00F">f</tspan>
+                    g
+                </text>
+            </symbol>
+            <use href="#symb" x="0" y="0"/>
+        </g>
+    </svg>
+
+    <svg viewBox="0 0 300 250" fill="pink" text-decoration="line-through">
+        <svg viewBox="0 0 300 250" font-size="20" fill="purple" stroke="none" text-decoration="underline none">
+            <text x="10" y="210" text-decoration="overline none">
+                a
+                <tspan text-decoration="underline" fill="#00F">b</tspan>
+                <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                <tspan text-decoration="underline" fill="#00F">d</tspan>
+                <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                <tspan text-decoration="underline" fill="#00F">f</tspan>
+                g
+            </text>
+        </svg>
+    </svg>
+
+    <svg viewBox="0 10 300 250" fill="pink" text-decoration="line-through">
+        <svg viewBox="0 5 300 250" font-size="20" fill="purple" stroke="none" text-decoration="underline">
+            <text x="10" y="250" fill="red" text-decoration="overline none">
+                a
+                <tspan text-decoration="underline" fill="#00F">b</tspan>
+                <tspan text-decoration="underline" fill="#0B0">c</tspan>
+                <tspan text-decoration="underline" fill="#00F">d</tspan>
+                <tspan text-decoration="underline" fill="#0B0">e</tspan>
+                <tspan text-decoration="underline" fill="#00F">f</tspan>
+                g
+            </text>
+        </svg>
+    </svg>
+</svg>

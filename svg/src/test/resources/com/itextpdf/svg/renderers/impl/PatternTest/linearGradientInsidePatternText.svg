@@ -1,0 +1,22 @@
+<svg x="0" y="0" width="800" height="1000" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+        <linearGradient x1="20%" y1="20%" x2="80%" y2="80%" id="Gradient1">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="#cc6699"/>
+            <stop offset="1" stop-color="#66cc99"/>
+        </linearGradient>
+        <linearGradient x1="80%" y1="80%" x2="20%" y2="20%" id="Gradient2">
+            <stop offset="0" stop-color="#ffcc00"/>
+            <stop offset="0.5" stop-color="magenta"/>
+            <stop offset="1" stop-color="#66cc99"/>
+        </linearGradient>
+
+        <pattern id="ptrn" x="0" y="0" width="0.03" height="0.07">
+            <circle cx="25" cy="25" r="10" fill="url(#Gradient2)"/>
+            <rect x="25" y="25" width="25" height="25" fill="url(#Gradient1)" fill-opacity="0.8"/>
+        </pattern>
+    </defs>
+
+    <line x1="400" y1="0" x2="400" y2="730" stroke="teal"/>
+    <text x="400" y="600" fill="url(#ptrn)" stroke="pink" font-size="700" text-anchor="middle">OOO</text>
+</svg>

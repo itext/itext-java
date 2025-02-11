@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108175948+03'00')/ModDate(D:20211108175948+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250124014525+03'00')/ModDate(D:20250124014525+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 375 375]/Length 56/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 375]/Length 41/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 375 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 375 375]/Length 1964/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 375]/Length 1924/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 375 375 re
 W
 n
@@ -46,13 +45,11 @@ q
 f
 Q
 q
-0 0 0 rg
 q
 BT
-1 0 0 -1 15 11.25 Tm
-0 Tr
 /F1 7.5 Tf
-0 0 Td
+1 0 0 -1 15 11.25 Tm
+0 0 0 rg
 (Inheritance in groups test)Tj
 ET
 Q
@@ -70,10 +67,9 @@ Q
 q
 q
 BT
+/F1 12 Tf
 1 0 0 -1 22.5 30 Tm
 2 Tr
-/F1 12 Tf
-0 0 Td
 (Text inheriting font-size 16 and stroke and fill properties)Tj
 ET
 Q
@@ -85,7 +81,7 @@ q
 54.29 112.5 37.5 95.71 37.5 75 c
 37.5 54.29 54.29 37.5 75 37.5 c
 95.71 37.5 112.5 54.29 112.5 75 c
-B
+b
 Q
 q
 1 0 0 RG
@@ -95,7 +91,7 @@ q
 129.29 112.5 112.5 95.71 112.5 75 c
 112.5 54.29 129.29 37.5 150 37.5 c
 170.71 37.5 187.5 54.29 187.5 75 c
-B
+b
 Q
 q
 1 0 0 rg
@@ -105,17 +101,16 @@ q
 204.29 112.5 187.5 95.71 187.5 75 c
 187.5 54.29 204.29 37.5 225 37.5 c
 245.71 37.5 262.5 54.29 262.5 75 c
-B
+b
 Q
 q
-0.50196 0.50196 0.50196 rg
-0 0 0 RG
 q
 BT
+/F1 9 Tf
 1 0 0 -1 37.5 127.5 Tm
 2 Tr
-/F1 9 Tf
-0 0 Td
+0 0 0 RG
+0.50196 0.50196 0.50196 rg
 (Text with its own properties overwriting inherited properties)Tj
 ET
 Q
@@ -131,10 +126,9 @@ Q
 q
 q
 BT
+/F1 12 Tf
 1 0 0 -1 22.5 165 Tm
 2 Tr
-/F1 12 Tf
-0 0 Td
 (nested group tag only overwriting fill property)Tj
 ET
 Q
@@ -146,7 +140,7 @@ q
 54.29 262.5 37.5 245.71 37.5 225 c
 37.5 204.29 54.29 187.5 75 187.5 c
 95.71 187.5 112.5 204.29 112.5 225 c
-B
+b
 Q
 q
 1 0 0 RG
@@ -156,7 +150,7 @@ q
 129.29 262.5 112.5 245.71 112.5 225 c
 112.5 204.29 129.29 187.5 150 187.5 c
 170.71 187.5 187.5 204.29 187.5 225 c
-B
+b
 Q
 q
 1 0 0 rg
@@ -166,17 +160,16 @@ q
 204.29 262.5 187.5 245.71 187.5 225 c
 187.5 204.29 204.29 187.5 225 187.5 c
 245.71 187.5 262.5 204.29 262.5 225 c
-B
+b
 Q
 q
-0.50196 0.50196 0.50196 rg
-0 0 0 RG
 q
 BT
+/F1 9 Tf
 1 0 0 -1 37.5 277.5 Tm
 2 Tr
-/F1 9 Tf
-0 0 Td
+0 0 0 RG
+0.50196 0.50196 0.50196 rg
 (Text with its own properties overwriting inherited properties)Tj
 ET
 Q
@@ -190,16 +183,16 @@ xref
 0 9
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000751 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000737 00000 n 
 trailer
-<</ID [<c4e361f186e60d6ec41b7aa2a02f5377><c4e361f186e60d6ec41b7aa2a02f5377>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<3d05260166c6a11a568c449206e1cbd3f8c58a0130821fff222a07a3864f89bec2a5ee6ab7a6bafb5eafbff857e213f323a14da9906c40efd7bc725a14dbeeb2><3d05260166c6a11a568c449206e1cbd3f8c58a0130821fff222a07a3864f89bec2a5ee6ab7a6bafb5eafbff857e213f323a14da9906c40efd7bc725a14dbeeb2>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-2840
+2786
 %%EOF

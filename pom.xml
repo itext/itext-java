@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf.android</groupId>
   <artifactId>root-android</artifactId>
-  <version>9.0.0</version>
+  <version>9.1.0</version>
   <packaging>pom</packaging>
   <name>iText</name>
   <description>A Free Java-PDF library</description>
@@ -61,7 +61,6 @@
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
     <module>pdfua</module>
-    <module>native-image-test</module>
   </modules>
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
@@ -77,26 +76,31 @@
   </ciManagement>
   <properties>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
-    <java.version>1.8</java.version>
-    <bouncycastle.version>1.78</bouncycastle.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <javadoc.version>3.7.0</javadoc.version>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
-    <junit.jupiter.version>5.10.2</junit.jupiter.version>
     <junitparams.version>1.0.4</junitparams.version>
-    <jacoco.version>0.8.4</jacoco.version>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <surefire.version>3.0.0-M3</surefire.version>
-    <dependencyCheck.version>7.0.0</dependencyCheck.version>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <native.maven.plugin.version>0.10.1</native.maven.plugin.version>
+    <junit.platform.version>1.10.2</junit.platform.version>
+    <sharpen.showdiff>false</sharpen.showdiff>
     <slf4j.version>2.0.9</slf4j.version>
-    <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
-    <failsafe.version>3.0.0-M3</failsafe.version>
     <maven.source.version>3.0.1</maven.source.version>
-    <javadoc-additionalOptions></javadoc-additionalOptions>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <skipTests>true</skipTests>
     <logback.version>1.3.14</logback.version>
+    <java.version>1.8</java.version>
+    <bouncycastle.version>1.78.1</bouncycastle.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <javadoc.version>3.7.0</javadoc.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+    <jacoco.version>0.8.4</jacoco.version>
+    <sharpen.builddotnet>false</sharpen.builddotnet>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <dependencyCheck.version>7.0.0</dependencyCheck.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
+    <failsafe.version>3.0.0-M3</failsafe.version>
+    <javadoc-additionalOptions></javadoc-additionalOptions>
+    <jackson.core.version>2.17.0</jackson.core.version>
     <maven.jar.version>3.1.0</maven.jar.version>
     <argLine>-Xmx1024m</argLine>
   </properties>
@@ -116,6 +120,12 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>${junit.platform.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -188,6 +198,11 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>sharpen</groupId>
+        <artifactId>sharpen-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -283,6 +298,7 @@
             <sourceFileExclude>com/itextpdf/styledxmlparser/jsoup/**/*.java</sourceFileExclude>
             <sourceFileExclude>com/itextpdf/kernel/crypto/CryptoUtil.java</sourceFileExclude>
             <sourceFileExclude>com/itextpdf/svg/utils/SvgCoordinateUtils.java</sourceFileExclude>
+            <sourceFileExclude>**/SharpenMapping.java</sourceFileExclude>
           </sourceFileExcludes>
           <groups>
             <group>
@@ -464,7 +480,6 @@
                   <excludeModule>bouncy-castle-connector</excludeModule>
                 </excludeModules>
               </parameter>
-              <skip>true</skip>
             </configuration>
           </plugin>
           <plugin>
@@ -563,7 +578,7 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
-              <groups>SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest</groups>
+              <groups>SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest,UnitTest</groups>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
               <argLine>@{jacoco.agent.argLine}</argLine>
               <threadCount>1</threadCount>
@@ -675,6 +690,162 @@
         <maven.test.skip>true</maven.test.skip>
         <maven.main.skip>true</maven.main.skip>
       </properties>
+    </profile>
+    <profile>
+      <id>sharpen-configuration</id>
+      <activation>
+        <file>
+          <missing>noSharpen.txt</missing>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>add-sharpenConfiguration-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-source</goal>
+                  <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>${project.basedir}/src/sharpenconfig/java</source>
+                  </sources>
+                  <resources>
+                    <resource>
+                      <directory>${project.basedir}/src/sharpenconfig/resources</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.4.2</version>
+            <executions>
+              <execution>
+                <id>default-jar</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+                    <exclude>**/SharpenMapping.class</exclude>
+                    <exclude>**/sharpen.config.MappingConfiguration</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>sharpen-config-jar</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <classifier>sharpen-configuration</classifier>
+                  <includes>
+                    <include>**/SharpenMapping.class</include>
+                    <include>**/sharpen.config.MappingConfiguration</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>sharpen-config</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>native</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>add-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-source</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>${basedir}/../resources/graalvm</source>
+                  </sources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <version>${native.maven.plugin.version}</version>
+            <extensions>true</extensions>
+            <executions>
+              <execution>
+                <id>test-native</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <buildArgs>
+                <arg>--initialize-at-build-time=org.junit.validator.PublicClassValidator
+                  --initialize-at-build-time=org.junit.platform.engine.TestTag
+
+                  --initialize-at-run-time=org.bouncycastle.crypto.prng.SP800SecureRandom
+                  --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV
+                  --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default
+
+                  --features=com.itextpdf.BouncyCastleFeature
+
+                  --enable-all-security-services
+                  --enable-url-protocols=http,https,ftp
+
+                  -H:+AddAllCharsets
+                  -H:ReflectionConfigurationFiles=${basedir}/../resources/graalvm/reflect-config.json
+                  
+                  -H:-CheckToolchain</arg>
+              </buildArgs>
+              <skipTests>false</skipTests>
+              <metadataRepository>
+                <enabled>true</enabled>
+              </metadataRepository>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.graalvm.nativeimage</groupId>
+          <artifactId>svm</artifactId>
+          <version>22.3.5</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15to18</artifactId>
+          <version>${bouncycastle.version}</version>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>

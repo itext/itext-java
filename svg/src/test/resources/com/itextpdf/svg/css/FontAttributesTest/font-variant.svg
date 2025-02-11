@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" style="border:1px solid black;">
+  <text x="20" y="70" style="font-family: 'Times New Roman', Times, serif; font-size: 40px; font-variant: normal;">
+    Normal Text
+  </text>
+
+  <text x="20" y="130" style="font-family: 'Times New Roman', Times, serif; font-size: 40px; font-variant: small-caps;">
+    Small-Caps Text
+  </text>
+</svg>

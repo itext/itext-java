@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="300" style="border:1px solid black;">
+  <defs>
+    <filter id="dropshadow" width="100" height="100">
+      <feOffset in="SourceGraphic" dx="20" dy="20" />
+      <feBlend in="SourceGraphic" in2="offOut" />
+    </filter>
+  </defs>
+  <rect x="50" y="50" width="100" height="100" stroke="black" stroke-width="0.5" fill="gray" filter="url(#dropshadow)" />
+</svg>

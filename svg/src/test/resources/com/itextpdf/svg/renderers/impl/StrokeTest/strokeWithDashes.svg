@@ -107,15 +107,27 @@
            style="stroke: black;stroke-dasharray: 1rem 1rem; stroke-dashoffset: -0.5rem; font-size: 9pt"
    />
 
+   <rect x="150" y="300" width="380" height="100" fill="yellow" fill-opacity="0.5"/>
+   <line x1="150" y1="350" x2="750" y2="400" stroke="red" stroke-width="3"/>
+
    <circle
            r="60"
            cx="150"
            cy="400"
-           fill="none"
+           fill="pink"
            stroke="teal"
            stroke-opacity=".5"
            stroke-width="40"
            stroke-dasharray="30 30 5% 5% 2em 2rem 10 10"
            stroke-dashoffset="3%"
    />
+
+   <text dx="300" dy="425" font-size="100" stroke="teal"
+         text-decoration="underline"
+         fill="pink"
+         stroke-opacity="0.2"
+         stroke-width="5"
+         stroke-dasharray="10 1 1% 0.1em 0.5rem 20"
+         stroke-dashoffset="5%">H E L L O
+   </text>
 </svg>

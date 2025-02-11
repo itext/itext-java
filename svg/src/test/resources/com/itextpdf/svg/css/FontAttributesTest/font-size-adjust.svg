@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" style="border:1px solid black;">
+  <text y="20" font-family="Times, serif" font-size="20px">
+    This text is here to compare.
+  </text>
+  <text y="40" font-family="Verdana, sans-serif" font-size="20px">
+    This text is here to compare.
+  </text>
+  <text y="60" font-family="Times, serif" font-size="20px" font-size-adjust="0.545">
+    This text is here to compare.
+  </text>
+</svg>

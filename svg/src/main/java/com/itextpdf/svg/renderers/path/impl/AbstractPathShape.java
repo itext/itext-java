@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,11 +22,16 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.path.IPathShape;
+import com.itextpdf.svg.utils.SvgCssUtils;
 
 import java.util.Map;
 
@@ -35,11 +40,12 @@ import java.util.Map;
  */
 public abstract class AbstractPathShape implements IPathShape {
 
+    private PathSvgNodeRenderer parent;
+    private AffineTransform transform = null;
     /**
      * The properties of this shape.
      */
     protected Map<String, String> properties;
-
     /**
      * Whether this is a relative operator or not.
      */
@@ -47,6 +53,7 @@ public abstract class AbstractPathShape implements IPathShape {
     protected final IOperatorConverter copier;
     // Original coordinates from path instruction, according to the (x1 y1 x2 y2 x y)+ spec
     protected String[] coordinates;
+    protected SvgDrawContext context;
 
     public AbstractPathShape() {
         this(false);
@@ -86,5 +93,68 @@ public abstract class AbstractPathShape implements IPathShape {
         return new Rectangle((float) CssUtils.convertPxToPts(getEndingPoint().getX()),
                 (float) CssUtils.convertPxToPts(getEndingPoint().getY()), 0,
                 0);
+    }
+
+    @Override
+    public void draw(PdfCanvas canvas) {
+        draw();
+    }
+
+    /**
+     * Draws this instruction to a canvas object.
+     */
+    public abstract void draw();
+
+    /**
+     * Set parent path for this shape.
+     *
+     * @param parent {@link PathSvgNodeRenderer} instance
+     */
+    public void setParent(PathSvgNodeRenderer parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * Set svg draw context for this shape.
+     *
+     * @param context {@link SvgDrawContext} instance.
+     */
+    public void setContext(SvgDrawContext context) {
+        this.context = context;
+    }
+
+    /**
+     * Sets {@link AffineTransform} to apply before drawing the shape.
+     *
+     * @param transform {@link AffineTransform} to apply before drawing
+     */
+    public void setTransform(AffineTransform transform) {
+        this.transform = transform;
+    }
+
+    /**
+     * Parse x axis length value.
+     *
+     * @param length {@link String} length for parsing
+     * @return absolute length in points
+     */
+    protected float parseHorizontalLength(String length) {
+        return SvgCssUtils.parseAbsoluteHorizontalLength(parent, length, 0.0F, context);
+    }
+
+    /**
+     * Parse y axis length value.
+     *
+     * @param length {@link String} length for parsing
+     * @return absolute length in points
+     */
+    protected float parseVerticalLength(String length) {
+        return SvgCssUtils.parseAbsoluteVerticalLength(parent, length, 0.0F, context);
+    }
+
+    void applyTransform(double[] points) {
+        if (transform != null) {
+            transform.transform(points, 0, points, 0, points.length / 2);
+        }
     }
 }

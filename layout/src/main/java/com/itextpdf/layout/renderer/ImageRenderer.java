@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -494,7 +494,8 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         Float verticalScaling = this.getPropertyAsFloat(Property.VERTICAL_SCALING, 1f);
 
 
-        if (xObject instanceof PdfFormXObject && width != imageWidth) {
+        if (xObject instanceof PdfFormXObject
+                && (Float.compare((float) width, imageWidth) != 0 || Float.compare((float) height, imageHeight) != 0)) {
             horizontalScaling *= width / imageWidth;
             verticalScaling *= height / imageHeight;
         }

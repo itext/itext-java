@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="600">
+	<rect x="0" y="0" width="400" height="140" fill="none" stroke="red"></rect>
+	<text xmlns="http://www.w3.org/2000/svg" x="0" y="20">
+        <tspan x="0" dx="20" y="20" dy="25">All attr are set: x=0, dx=20, y=20 and dy=25</tspan>
+        <tspan x="0" dy="25">x=0 and dy=25</tspan>
+        <tspan x="0" dx="20" y="90">x=0, dx=20 and y=90</tspan>
+        <tspan dx="20" y="100">dx=20 and y=100</tspan>
+    </text>
+</svg>

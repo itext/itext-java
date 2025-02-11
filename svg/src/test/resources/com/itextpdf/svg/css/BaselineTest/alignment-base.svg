@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" style="border:1px solid black;">
+  <!-- Horizontal guide line -->
+  <line x1="50" y1="300" x2="750" y2="300" stroke="black" stroke-width="1" />
+  <text x="50" y="300" font-size="20" fill="blue" alignment-baseline="baseline">baseline</text>
+  <line x1="50" y1="320" x2="750" y2="320" stroke="black" stroke-width="1" />
+  <text x="50" y="320" font-size="20" fill="blue" alignment-baseline="middle">middle</text>
+  <line x1="50" y1="340" x2="750" y2="340" stroke="black" stroke-width="1" />
+  <text x="50" y="340" font-size="20" fill="blue" alignment-baseline="top">top</text>
+  <line x1="50" y1="360" x2="750" y2="360" stroke="black" stroke-width="1" />
+  <text x="50" y="360" font-size="20" fill="blue" alignment-baseline="bottom">bottom</text>
+  <line x1="50" y1="380" x2="750" y2="380" stroke="black" stroke-width="1" />
+  <text x="50" y="380" font-size="20" fill="blue" alignment-baseline="hanging">hanging</text>
+  <line x1="50" y1="440" x2="750" y2="440" stroke="black" stroke-width="1" />
+  <text x="50" y="440" font-size="20" fill="blue" alignment-baseline="ideographic">ideographic</text>
+  <line x1="50" y1="460" x2="750" y2="460" stroke="black" stroke-width="1" />
+  <text x="50" y="460" font-size="20" fill="blue" alignment-baseline="alphabetic">alphabetic</text>
+  <line x1="50" y1="480" x2="750" y2="480" stroke="black" stroke-width="1" />
+  <text x="50" y="480" font-size="20" fill="blue" alignment-baseline="mathematical">mathematical</text>
+  <line x1="50" y1="520" x2="750" y2="520" stroke="black" stroke-width="1" />
+  <text x="50" y="520" font-size="20" fill="blue" alignment-baseline="central">central</text>
+  <line x1="50" y1="560" x2="750" y2="560" stroke="black" stroke-width="1" />
+  <text x="50" y="560" font-size="20" fill="blue" alignment-baseline="text-before-edge">text-before-edge</text>
+  <line x1="50" y1="600" x2="750" y2="600" stroke="black" stroke-width="1" />
+  <text x="50" y="600" font-size="20" fill="blue" alignment-baseline="text-after-edge">text-after-edge</text>
+</svg>

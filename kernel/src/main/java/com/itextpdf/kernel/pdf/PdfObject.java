@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -180,6 +180,35 @@ public abstract class PdfObject {
      */
     public PdfIndirectReference getIndirectReference() {
         return indirectReference;
+    }
+
+    /**
+     * Checks recursively whether the object contains indirect reference at any level.
+     *
+     * @return {@code true} if indirect reference was found, {@code false} otherwise
+     */
+    public boolean containsIndirectReference() {
+        if (isIndirect()) {
+            return true;
+        }
+
+        if (isDictionary()) {
+            PdfDictionary dict = (PdfDictionary) this;
+            for (PdfObject value : dict.values()) {
+                if (value.containsIndirectReference()) {
+                    return true;
+                }
+            }
+        } else if (isArray()) {
+            PdfArray arr = (PdfArray) this;
+            for (PdfObject value : arr) {
+                if (value.containsIndirectReference()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

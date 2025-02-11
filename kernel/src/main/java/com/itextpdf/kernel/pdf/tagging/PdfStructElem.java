@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -111,6 +111,29 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
             setAttributes(attributes);
         }
         return attributes;
+    }
+
+    /**
+     * Gets a list of PDF attribute objects.
+     *
+     * @return list of PDF attribute objects.
+     */
+    public List<PdfStructureAttributes> getAttributesList(){
+        List<PdfStructureAttributes> attributesList = new ArrayList<>();
+        PdfObject elemAttributesObj = getAttributes(false);
+        if (elemAttributesObj != null) {
+            if (elemAttributesObj.isDictionary()) {
+                attributesList.add(new PdfStructureAttributes((PdfDictionary) elemAttributesObj));
+            } else if (elemAttributesObj.isArray()) {
+                PdfArray attributesArray = (PdfArray) elemAttributesObj;
+                for (PdfObject attributeObj : attributesArray) {
+                    if (attributeObj.isDictionary()) {
+                        attributesList.add(new PdfStructureAttributes((PdfDictionary) attributeObj));
+                    }
+                }
+            }
+        }
+        return attributesList;
     }
 
     public void setAttributes(PdfObject attributes) {
@@ -311,6 +334,27 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
             }
         }
         return kids;
+    }
+
+    /**
+     * Checks if the kid with the given index is flushed.
+     *
+     * @param index index of the kid to check.
+     * @return {@code true} if the kid with the given index is flushed, {@code false} otherwise.
+     */
+    public boolean isKidFlushed(int index) {
+        PdfObject k = getK();
+        if (k == null) {
+            return false;
+        }
+        if (k.isArray()) {
+            PdfArray array = (PdfArray) k;
+            if (index >= array.size()) {
+                return false;
+            }
+            return array.get(index).isFlushed();
+        }
+        return index == 0 && k.isFlushed();
     }
 
     public PdfObject getK() {

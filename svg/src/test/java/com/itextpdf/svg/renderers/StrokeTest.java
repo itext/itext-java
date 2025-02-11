@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,16 +22,13 @@
  */
 package com.itextpdf.svg.renderers;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class StrokeTest extends SvgIntegrationTest {
@@ -60,8 +57,29 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
+    // TODO DEVSIX-8854 Draw SVG elements with transparent stroke in 2 steps
     public void strokeWithDashesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWithDashes");
+    }
+
+    @Test
+    public void strokeWithDashesAcrobatBugTest() throws IOException, InterruptedException {
+        // Acrobat displays the result incorrectly, however e.g. Xodo PDF Studio displays the document exactly the same
+        // as svg (in terms of stroke opacity and view box). Same issue is reproduced in the
+        // DefaultStyleInheritanceIntegrationTest#usePropertiesInheritanceTest and nestedInheritanceTest,
+        // ClipPathSvgNodeRendererIntegrationTest#clipPathComplexTest.
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWithDashesAcrobatBug");
+    }
+
+    @Test
+    // TODO DEVSIX-8854 Draw SVG elements with transparent stroke in 2 steps
+    public void strokeOpacityTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOpacity");
+    }
+
+    @Test
+    public void overrideStrokeWidthTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "overrideStrokeWidth");
     }
 
     @Test
@@ -71,10 +89,85 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-3432 relative values doesn't support correctly for stroke-width attribute
-    @LogMessages(messages = @LogMessage
-            (messageTemplate = StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED, count = 12))
     public void strokeWidthMeasureUnitsTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeWidthMeasureUnitsTest");
+    }
+
+    @Test
+    public void pathLengthTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "path-length");
+    }
+
+    @Test
+    //TODO DEVSIX-2258: update cmp after supporting
+    public void strokeAttributesTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-attributes");
+    }
+
+    @Test
+    public void zeroStrokeWidthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "zeroStrokeWidth");
+    }
+
+    @Test
+    public void negativeStrokeWidthTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "negativeStrokeWidth");
+    }
+
+    @Test
+    public void heightWidthZeroTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "heightWidthZero");
+    }
+
+    @Test
+    public void heightWidthNegativeTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "heightWidthNegative");
+    }
+
+    @Test
+    //TODO: update cmp-file after DEVSIX-2258
+    public void strokeDashArrayLinesTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeDashArrayLines");
+    }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void strokeTextTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeText");
+    }
+
+    //TODO DEVSIX-2507: Update cmp file after supporting
+    @Test
+    public void strokeTspanTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeTspan");
+    }
+
+    @Test
+    public void strokeObjectsOverlap1Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroup");
+    }
+
+    @Test
+    //TODO DEVSIX-7338: SVG stroke on group applied incorrectly
+    public void strokeObjectsOverlap2Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroup2");
+    }
+
+    @Test
+    //TODO DEVSIX-7338: SVG stroke on group applied incorrectly
+    public void strokeObjectsOverlap3Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroupNoInsideStroke");
+    }
+
+    @Test
+    //TODO DEVSIX-7338: SVG stroke on group applied incorrectly
+    public void strokeObjectsOverlap4Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroupNoInsideStroke2");
+    }
+
+    @Test
+    //TODO DEVSIX-7338: Update cmp file
+    public void strokeObjectsOverlap5Test() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeOnGroupNoInsideStroke3");
     }
 }

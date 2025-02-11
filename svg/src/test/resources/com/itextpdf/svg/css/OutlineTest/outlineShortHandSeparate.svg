@@ -1,0 +1,31 @@
+<svg width="660" height="1220" xmlns="http://www.w3.org/2000/svg">
+<style>
+	.solid{outline: 5px solid blue}
+	.dotted{outline: 0.3em dotted #32a1ce}
+	.dashed{outline: 0.4rem dashed rgba(170, 50, 220, .6)}
+	.double{outline: 1ex double hsla(90, 90%, 30%, .8)}
+	.groove{outline: medium groove currentcolor}
+	.ridge{outline: thick ridge blue}
+	.inset{outline: thin inset #32a1ce}
+	.outset{outline: 7px outset rgba(170, 50, 220, .6)}
+</style>
+
+<g color="orange">
+<rect x="50" y="50" width="400" height="80" fill="red" class="solid"/>
+<text x="60" y="75" font-size="15" fill="white">outline: 5px solid blue</text>
+<rect x="50" y="150" width="400" height="80" fill="red" class="dotted"/>
+<text x="60" y="175" font-size="15" fill="white">outline: 0.3em dotted #32a1ce</text>
+<rect x="50" y="250" width="400" height="80" fill="red" class="dashed"/>
+<text x="60" y="275" font-size="15" fill="white">outline: 0.4rem dashed rgba(170, 50, 220, .6)</text>
+<rect x="50" y="350" width="400" height="80" fill="red" class="double"/>
+<text x="60" y="375" font-size="15" fill="white">outline: 1ex double hsla(90, 90%, 30%, .8)</text>
+<rect x="50" y="450" width="400" height="80" fill="red" class="groove"/>
+<text x="60" y="475" font-size="15" fill="white">outline: medium groove currentcolor</text>
+<rect x="50" y="550" width="400" height="80" fill="red" class="ridge"/>
+<text x="60" y="575" font-size="15" fill="white">outline: thick ridge blue</text>
+<rect x="50" y="650" width="400" height="80" fill="red" class="inset"/>
+<text x="60" y="675" font-size="15" fill="white">outline: thin inset #32a1ce</text>
+<rect x="50" y="750" width="400" height="80" fill="red" class="outset"/>
+<text x="60" y="775" font-size="15" fill="white">outline: 7px outset rgba(170, 50, 220, .6)</text>
+</g>
+</svg>

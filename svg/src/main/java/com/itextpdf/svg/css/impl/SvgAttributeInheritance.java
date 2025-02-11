@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,7 +23,7 @@
 package com.itextpdf.svg.css.impl;
 
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
-import com.itextpdf.svg.SvgConstants;
+import com.itextpdf.svg.SvgConstants.Attributes;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,30 +36,35 @@ import java.util.Set;
 public class SvgAttributeInheritance implements IStyleInheritance {
 
     /**
-     * Set of inheritable SVG style attributes
-     * in accordance with "http://www.w3schools.com/cssref/"
-     * and "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference"
+     * Set of inheritable SVG style attributes in accordance with "https://www.w3.org/TR/SVG2/propidx.html".
      */
     private static final Set<String> inheritableProperties = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            // The following attributes haven't been supported in iText yet:
+            // color-interpolation, color-rendering, glyph-orientation-vertical, image-rendering,
+            // paint-order, pointer-events, shape-rendering, text-rendering.
 
-            // clip-rule
-            SvgConstants.Attributes.CLIP_RULE,
+            // All the rest are either here or in com.itextpdf.styledxmlparser.css.resolve.CssInheritance
+            Attributes.DIRECTION,
+            // TODO DEVSIX-5890 Add Support to SVG dominant-baseline attribute
+            Attributes.FILL,
+            Attributes.FILL_OPACITY,
+            Attributes.FILL_RULE,
+            Attributes.MARKER,
+            Attributes.MARKER_MID,
+            Attributes.MARKER_END,
+            Attributes.MARKER_START,
+            Attributes.STROKE,
+            Attributes.STROKE_DASHARRAY,
+            Attributes.STROKE_DASHOFFSET,
+            Attributes.STROKE_LINECAP,
+            Attributes.STROKE_LINEJOIN,
+            Attributes.STROKE_MITERLIMIT,
+            Attributes.STROKE_OPACITY,
+            Attributes.STROKE_WIDTH,
+            Attributes.TEXT_ANCHOR,
 
-            // fill
-            SvgConstants.Attributes.FILL,
-
-            // fill-rule
-            SvgConstants.Attributes.FILL_RULE,
-
-            // stroke
-            SvgConstants.Attributes.STROKE,
-
-            // stroke-width
-            SvgConstants.Attributes.STROKE_WIDTH,
-
-            // text-anchor
-            SvgConstants.Attributes.TEXT_ANCHOR
-
+            // CLIP_RULE isn't from the spec above, but seems it's required according to some tests
+            Attributes.CLIP_RULE
     )));
 
     @Override

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" style="border:1px solid black;">
+  <text x="20" y="70" font-family="Arial" font-size="24">
+    No lengthAdjust
+  </text>
+
+  <text x="20" y="130" font-family="Arial" font-size="24" textLength="300" lengthAdjust="spacing">
+    lengthAdjust="spacing"
+  </text>
+
+  <text x="20" y="190" font-family="Arial" font-size="24" textLength="300" lengthAdjust="spacingAndGlyphs">
+    lengthAdjust="spacingAndGlyphs">
+  </text>
+</svg>

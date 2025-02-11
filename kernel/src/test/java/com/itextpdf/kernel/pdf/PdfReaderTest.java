@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -86,7 +86,7 @@ public class PdfReaderTest extends ExtendedITextTest {
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(DESTINATION_FOLDER);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @AfterAll
@@ -2925,6 +2925,20 @@ public class PdfReaderTest extends ExtendedITextTest {
             Assertions.assertEquals(PdfAConformance.PDF_A_2B, pdfDoc.getConformance().getAConformance());
             Assertions.assertEquals(PdfUAConformance.PDF_UA_1, pdfDoc.getConformance().getUAConformance());
         }
+    }
+
+    @Test
+    public void xrefStreamMissingBytesTest() throws IOException, InterruptedException {
+        String inputFile = SOURCE_FOLDER + "xrefStreamMissingBytes.pdf";
+        String outputFile = DESTINATION_FOLDER + "xrefStreamMissingBytes.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_xrefStreamMissingBytes.pdf";
+
+        PdfReader pdfReader = new PdfReader(inputFile).setUnethicalReading(true);
+        try (PdfDocument pdfDoc = new PdfDocument(pdfReader, CompareTool.createTestPdfWriter(outputFile))) {
+            pdfDoc.removePage(2);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 
     private static PdfDictionary getTestPdfDictionary() {

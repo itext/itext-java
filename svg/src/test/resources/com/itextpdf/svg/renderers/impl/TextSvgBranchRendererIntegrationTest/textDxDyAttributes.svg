@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="100">
+  <text x="10" y="30" font-size="16" fill="black">BaseText</text>
+  <text x="10" y="30" font-size="16" dx="10" dy="20" fill="red">ShiftedText</text>
+</svg>

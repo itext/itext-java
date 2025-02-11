@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="700" height="600">
+  <g font-size="20px" fill="blue" text-anchor="middle" alignment-baseline="middle" stroke="black" stroke-width="2">
+    
+    <text x="300" y="50">Main Text (Level 1)</text>
+
+    <g font-family="Arial" font-style="italic" fill="green">
+      <text x="300" y="100">Text with Arial, italic (Level 2)</text>
+      
+      <g font-size="16px" fill="purple">
+        <text x="300" y="150">Text with smaller font (Level 3)</text>
+
+        <g stroke="red" stroke-width="3">
+          <text x="300" y="200" text-anchor="start">Text with red border (Level 4)</text>
+        </g>
+      </g>
+	  
+      <g opacity="0.5">
+        <text x="300" y="250">Text with 50% opacity (Level 4)</text>
+      </g>
+    </g>
+  </g>
+</svg>

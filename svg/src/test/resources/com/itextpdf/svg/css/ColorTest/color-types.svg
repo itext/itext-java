@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="550" style="border:1px solid black;">
+    <g stroke="black" stroke-width="2" transform="translate(30, 50)">
+      
+		<rect y="60" width="40" height="40" fill="#FF0000 cielab(83.25, 16.45, 96.89)"/>
+      
+        <rect y="120" width="40" height="40" fill="#FF0000 cielch(83.25, 98.28, 80.36)"/>
+	  
+		<rect y="180" width="40" height="40" fill="#FF0000 device-gray(0.4)"/>
+
+        <rect y="240" width="40" height="40" fill="#FF0000 device-rgb(153, 153, 122)"/>
+
+        <rect y="300" width="40" height="40" fill="#FF0000 device-cmyk(0.0,0.0,0.2,0.4)"/>
+
+        <rect y="360" width="40" height="40" fill="#FF0000 device-nchannel(0.5,1.0)"/>
+      
+    </g>
+
+
+<g text-anchor="start" transform="translate(75, 130)">
+        <text y="0">
+          <tspan>#FF0000 cielab(83.25, 16.45, 96.89)</tspan>
+        </text>
+        <text y="60">
+          <tspan>#FF0000 cielch(83.25, 98.28, 80.36)"</tspan>
+        </text>
+        <text y="120">
+          <tspan>#FF0000 device-gray(0.4)"</tspan>
+        </text>
+        <text y="180">
+          <tspan>#FF0000 device-rgb(153, 153, 122)"</tspan>
+        </text>
+        <text y="240">
+          <tspan>#FF0000 device-cmyk(0.0,0.0,0.2,0.4)</tspan>
+        </text>
+        <text y="300">
+          <tspan>#FF0000 device-nchannel(0.5,1.0)</tspan>
+        </text>
+      </g>
+</svg>

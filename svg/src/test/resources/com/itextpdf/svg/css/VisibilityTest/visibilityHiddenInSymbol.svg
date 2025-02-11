@@ -1,0 +1,12 @@
+<svg viewBox="0 0 80 20"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <symbol id="circ"
+            width="10"
+            height="10"
+            viewBox="0 0 2 2" style="visibility:hidden">
+        <rect height="10" width="10"  />
+    </symbol>
+
+    <use xlink:href="#circ" x="5"
+         y="5" opacity="0.5" fill="green"/>
+</svg>

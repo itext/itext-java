@@ -1,0 +1,24 @@
+<svg width="500" height="250" xmlns="http://www.w3.org/2000/svg" style="outline: 1px solid red">
+<defs>
+	<clipPath id="textPath">
+		<!-- <text x="50" y="133" font-size="40pt" >ClipPathText</text> -->
+    <rect x="100" y="0" width="1" height="250" fill="red" />
+		<text fill="green">
+        <tspan x="70" y="45" fill="green">
+            x="-30"
+            <tspan dx="-70" dy="20" fill="orange">
+                dx="-70" dy="20"
+                <tspan x="100" dy="20" fill="red">
+                    x="0" dy="20"
+                </tspan>
+            </tspan>
+        </tspan>
+        <tspan dx="-150" dy="20" fill="blue">dx="-150" dy="20"</tspan>
+    </text>
+	</clipPath>
+</defs>
+
+<g clip-path="url(#textPath)">
+	<rect width="100%" height="100%" fill="red" />
+</g>
+</svg>

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -360,6 +360,32 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
 
             flexContainer.add(table);
             document.add(flexContainer);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void tableInFlexOnSplit2Test() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "tableInFlexOnSplit2Test.pdf";
+        String cmpFileName = SOURCE_FOLDER + "tableInFlexOnSplitTest2.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDocument);
+            pdfDocument.setDefaultPageSize(PageSize.A5);
+
+            Div flexContainer = new FlexContainer();
+            flexContainer.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            Table table = new Table(UnitValue.createPercentArray(new float[] {10, 10, 10}));
+            for (int i = 1; i <= 3; i++) {
+                table.addHeaderCell("Header" + i);
+            }
+            for (int i = 1; i <= 81; i++) {
+                table.addCell("Cell" + i);
+            }
+
+            flexContainer.add(table);
+            Paragraph p = new Paragraph("Some text").setBorder(new SolidBorder(1)).setMargin(0);
+            document.add(new FlexContainer().add(flexContainer).add(table));
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));

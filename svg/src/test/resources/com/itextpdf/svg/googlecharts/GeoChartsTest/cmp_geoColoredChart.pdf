@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20211108174714+03'00')/ModDate(D:20211108174714+03'00')/Producer(iText® Core 7.2.1-SNAPSHOT \(AGPL version\) ©2000-2021 iText Group NV)>>
+<</CreationDate(D:20250124141750+03'00')/ModDate(D:20250124141750+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -24,18 +24,17 @@ endobj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
 7 0 obj
-<</BBox[0 0 525.75 325.5]/Length 58/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 525.75 325.5]/Length 43/Resources<</XObject<</Fm1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 1 0 0 -1 0 325.5 cm
 % svg root
 q
-1 0 0 1 0 0 cm
 /Fm1 Do
 Q
 
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 525.75 325.5]/Length 151298/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 525.75 325.5]/Length 151377/Resources<</ExtGState<</Gs1 9 0 R/Gs10 10 0 R/Gs11 11 0 R/Gs12 12 0 R/Gs13 13 0 R/Gs14 14 0 R/Gs2 15 0 R/Gs3 16 0 R/Gs4 17 0 R/Gs5 18 0 R/Gs6 19 0 R/Gs7 20 0 R/Gs8 21 0 R/Gs9 22 0 R>>/Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 525.75 325.5 re
 W
 n
@@ -5864,6 +5863,7 @@ h
 B
 Q
 q
+/Gs1 gs
 % path
 453.59 35.2 m
 455.02 34.08 l
@@ -5895,6 +5895,7 @@ h
 f
 Q
 q
+/Gs2 gs
 % path
 505.51 47.05 m
 502.88 46.62 l
@@ -5917,6 +5918,7 @@ h
 f
 Q
 q
+/Gs3 gs
 % path
 451.6 35.79 m
 452.49 36.93 l
@@ -5925,6 +5927,7 @@ h
 f
 Q
 q
+/Gs4 gs
 % path
 456.91 41.15 m
 455.46 40.53 l
@@ -5934,6 +5937,7 @@ h
 f
 Q
 q
+/Gs5 gs
 % path
 453.9 40.53 m
 454.55 40.03 l
@@ -5944,6 +5948,7 @@ h
 f
 Q
 q
+/Gs6 gs
 % path
 438.23 29.64 m
 436.56 27.93 l
@@ -5967,6 +5972,7 @@ h
 f
 Q
 q
+/Gs7 gs
 % path
 315.48 33.96 m
 315.92 31.76 l
@@ -5975,6 +5981,7 @@ h
 f
 Q
 q
+/Gs8 gs
 % path
 445.53 22.06 m
 448.39 23.26 l
@@ -5985,6 +5992,7 @@ h
 f
 Q
 q
+/Gs9 gs
 % path
 454.95 27.67 m
 456.66 26.54 l
@@ -6004,6 +6012,7 @@ h
 f
 Q
 q
+/Gs10 gs
 % path
 316.14 32.4 m
 315.87 33.96 l
@@ -11909,6 +11918,7 @@ h
 B
 Q
 q
+/Gs11 gs
 % path
 312.09 38.44 m
 311.14 39.62 l
@@ -11917,6 +11927,7 @@ h
 f
 Q
 q
+/Gs12 gs
 % path
 315.19 36.83 m
 315.26 35.31 l
@@ -11961,51 +11972,49 @@ Q
 Q
 q
 q
+/Gs13 gs
 % rect
 24.35 306.7 70.03 9.05 re
 f
 Q
 q
+/Gs14 gs
 % rect
 94.38 306.7 70.03 9.05 re
 f
 Q
 q
 q
-1 1 1 RG
-2.25 w
 q
 BT
+/F1 9.75 Tf
 1 0 0 -1 4.88 314.29 Tm
 2 Tr
-/F1 9.75 Tf
-0 0 Td
-(-30)Tj
-ET
-Q
-Q
-q
-q
-BT
-1 0 0 -1 4.88 314.29 Tm
-0 Tr
-/F1 9.75 Tf
-0 0 Td
-(-30)Tj
-ET
-Q
-Q
-Q
-q
-q
-1 1 1 RG
 2.25 w
+1 1 1 RG
+(-30)Tj
+ET
+Q
+Q
+q
 q
 BT
+/F1 9.75 Tf
+1 0 0 -1 4.88 314.29 Tm
+(-30)Tj
+ET
+Q
+Q
+Q
+q
+q
+q
+BT
+/F1 9.75 Tf
 1 0 0 -1 169.63 314.29 Tm
 2 Tr
-/F1 9.75 Tf
-0 0 Td
+2.25 w
+1 1 1 RG
 (36)Tj
 ET
 Q
@@ -12013,10 +12022,8 @@ Q
 q
 q
 BT
-1 0 0 -1 169.63 314.29 Tm
-0 Tr
 /F1 9.75 Tf
-0 0 Td
+1 0 0 -1 169.63 314.29 Tm
 (36)Tj
 ET
 Q
@@ -12031,20 +12038,76 @@ Q
 
 endstream
 endobj
+9 0 obj
+<</ca 0>>
+endobj
+10 0 obj
+<</ca 0>>
+endobj
+11 0 obj
+<</ca 0>>
+endobj
+12 0 obj
+<</ca 0>>
+endobj
+13 0 obj
+<</ca 0>>
+endobj
+14 0 obj
+<</ca 0>>
+endobj
+15 0 obj
+<</ca 0>>
+endobj
+16 0 obj
+<</ca 0>>
+endobj
+17 0 obj
+<</ca 0>>
+endobj
+18 0 obj
+<</ca 0>>
+endobj
+19 0 obj
+<</ca 0>>
+endobj
+20 0 obj
+<</ca 0>>
+endobj
+21 0 obj
+<</ca 0>>
+endobj
+22 0 obj
+<</ca 0>>
+endobj
 xref
-0 9
+0 23
 0000000000 65535 f 
 0000000211 00000 n 
-0000000517 00000 n 
+0000000518 00000 n 
 0000000256 00000 n 
 0000000074 00000 n 
 0000000015 00000 n 
-0000000427 00000 n 
-0000000568 00000 n 
-0000000758 00000 n 
+0000000428 00000 n 
+0000000569 00000 n 
+0000000744 00000 n 
+0000152425 00000 n 
+0000152450 00000 n 
+0000152476 00000 n 
+0000152502 00000 n 
+0000152528 00000 n 
+0000152554 00000 n 
+0000152580 00000 n 
+0000152606 00000 n 
+0000152632 00000 n 
+0000152658 00000 n 
+0000152684 00000 n 
+0000152710 00000 n 
+0000152736 00000 n 
+0000152762 00000 n 
 trailer
-<</ID [<b71eed233537cfe398124069ca480411><b71eed233537cfe398124069ca480411>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-7.2.1-SNAPSHOT
+<</ID [<e530befde0df3c4ab3e4516a0d7f992b0773322e006b872ba89d4ff6f72c1b4f367a422d18a7a5fd66868f173734c94bff56c887c9f292b2e48b171b927c4339><e530befde0df3c4ab3e4516a0d7f992b0773322e006b872ba89d4ff6f72c1b4f367a422d18a7a5fd66868f173734c94bff56c887c9f292b2e48b171b927c4339>]/Info 3 0 R/Root 1 0 R/Size 23>>
+%iText-Core-9.1.0-SNAPSHOT
 startxref
-152188
+152788
 %%EOF

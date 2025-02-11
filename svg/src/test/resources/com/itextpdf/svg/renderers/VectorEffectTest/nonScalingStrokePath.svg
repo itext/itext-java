@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="2.0"
+     width="18cm" height="12cm" viewBox="0 0 800 240">
+    <!-- normal -->
+    <path d="M10,20 L30,0 L50,20 z V 50 H 50 V 20
+    M 10 80 C 20 10, 40 10, 55 80 S -40 10, 80 80
+    M 10 150 Q 20 -20 40 180
+    M 10 230 Q 22.5 150, 35 180 T 50 90
+    M 10 280 L 50 215 A 15 15 0 0 1 80 240 z"
+          stroke="black" stroke-width="2px" fill="none"/>
+
+    <!-- scaled -->
+    <path transform="translate(100,0) scale(4,1)"
+          d="M10,20 L30,0 L50,20 z V 50 H 50 V 20
+    M 10 80 C 20 10, 40 10, 55 80 S -40 10, 80 80
+    M 10 150 Q 20 -20 40 180
+    M 10 230 Q 22.5 150, 35 180 T 50 90
+    M 10 280 L 50 215 A 15 15 0 0 1 80 240 z"
+          stroke="black" stroke-width="2px" fill="none"/>
+
+    <!-- fixed-->
+    <path vector-effect="non-scaling-stroke"
+          transform="translate(410, 0) scale(4, 1)"
+          d="M10,20 L30,0 L50,20 z V 50 H 50 V 20
+    M 10 80 C 20 10, 40 10, 55 80 S -40 10, 80 80
+    M 10 150 Q 20 -20 40 180
+    M 10 230 Q 22.5 150, 35 180 T 50 90
+    M 10 280 L 50 215 A 15 15 0 0 1 80 240 z"
+          stroke="black" stroke-width="2px" fill="none"/>
+</svg>

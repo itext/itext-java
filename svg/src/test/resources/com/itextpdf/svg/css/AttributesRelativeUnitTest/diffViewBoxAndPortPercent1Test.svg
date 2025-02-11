@@ -1,0 +1,12 @@
+<svg viewBox="0 0 220 100" width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+    <!--    rectangle with absolute values-->
+    <rect x="0" y="0" width="100px" height="100px" fill="none" stroke="red" stroke-width="2"/>
+
+    <line x1="0" y1="9" x2="200" y2="9" stroke="blue" />
+    <!--    rectangle with relative values-->
+    <rect x="3%" y="9%" width="40%" height="30%"/>
+    <line x1="0" y1="39" x2="200" y2="39" stroke="blue" />
+
+    <line x1="0" y1="50%" x2="100%" y2="50%" stroke="green" />
+    <line x1="50%" y1="0" x2="50%" y2="100%" stroke="green" />
+</svg>

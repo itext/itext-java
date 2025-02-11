@@ -1,0 +1,49 @@
+<?xml version="1.0" standalone="no"?>
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+
+    "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg width="400" height="200"
+
+     viewBox="0 0 400 200" version="1.1"
+
+     xmlns="http://www.w3.org/2000/svg"
+
+     xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/">
+
+    <style type="text/css">
+
+        <![CDATA[
+
+        .st8 {fill:none;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+
+		.st9 {fill:#000000;font-family:Calibri;font-size:3em}
+
+		]]>
+
+    </style>
+
+    <rect x="1" y="1" width="398" height="198"
+
+          fill="none" stroke="blue" stroke-width="1" />
+
+    <g id="shape30-97" v:mID="30" v:groupContext="shape">
+
+        <title>Tabelle.30</title>
+
+        <desc>CCC</desc>
+
+        <v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+
+        <v:textRect cx="42.5197" cy="545.068" width="85.04" height="43.0405"/>
+
+        <rect x="10" y="10" width="85.0394" height="43.0405" class="st8"/>
+
+        <text x="30" y="30" class="st9" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>CCC</text>
+
+
+
+    </g>
+
+</svg>

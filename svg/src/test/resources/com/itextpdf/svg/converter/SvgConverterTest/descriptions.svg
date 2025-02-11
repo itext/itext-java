@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">
+	<rect width="300" height="200" fill="blue">
+		<title>Blue rectangle title</title>
+		<desc>
+			This is a description of a blue rectangle in a desc tag.
+		</desc>
+		<aria-describedby>
+			This description inside the aria-describedby will take precedent over desc tag description.
+		</aria-describedby>
+	</rect>
+</svg>

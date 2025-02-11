@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,7 +22,9 @@
  */
 package com.itextpdf.svg.processors.impl;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
@@ -53,6 +55,10 @@ public class SvgConverterProperties implements ISvgConverterProperties {
 
     private String charset = StandardCharsets.UTF_8.name();
 
+    private CssStyleSheet cssStyleSheet = null;
+
+    private Rectangle customViewport = null;
+
     /**
      * Creates a new {@link SvgConverterProperties} instance.
      * Instantiates its members, IResourceRetriever and ISvgNodeRendererFactory, to its default implementations.
@@ -60,6 +66,29 @@ public class SvgConverterProperties implements ISvgConverterProperties {
     public SvgConverterProperties() {
         this.resourceRetriever = new DefaultResourceRetriever();
         this.rendererFactory = new DefaultSvgNodeRendererFactory();
+    }
+
+    /**
+     * Gets the custom viewport of SVG.
+     * <p>
+     * The custom viewport is used to resolve percent values of the top level svg.
+     *
+     * @return the custom viewport
+     */
+    public Rectangle getCustomViewport() {
+        // TODO DEVSIX-8808 add this getter to the interface ISvgConverterProperties and remove class casting where getCustomViewport is called
+        return customViewport;
+    }
+
+    /**
+     * Sets the custom viewport of SVG.
+     * <p>
+     * The custom viewport is used to resolve percent values of the top level svg.
+     *
+     * @param customViewport the custom viewport
+     */
+    public void setCustomViewport(Rectangle customViewport) {
+        this.customViewport = customViewport;
     }
 
     public SvgConverterProperties setRendererFactory(ISvgNodeRendererFactory rendererFactory) {
@@ -155,6 +184,24 @@ public class SvgConverterProperties implements ISvgConverterProperties {
      */
     public SvgConverterProperties setResourceRetriever(IResourceRetriever resourceRetriever) {
         this.resourceRetriever = resourceRetriever;
+        return this;
+    }
+
+    @Override
+    public CssStyleSheet getCssStyleSheet() {
+        return cssStyleSheet;
+    }
+
+    /**
+     * Sets the CSS style sheet.
+     * Style sheet is used to apply CSS statements to elements.
+     *
+     * @param cssStyleSheet the CSS style sheet
+     *
+     * @return the {@link SvgConverterProperties} instance
+     */
+    public SvgConverterProperties setCssStyleSheet(CssStyleSheet cssStyleSheet) {
+        this.cssStyleSheet = cssStyleSheet;
         return this;
     }
 }

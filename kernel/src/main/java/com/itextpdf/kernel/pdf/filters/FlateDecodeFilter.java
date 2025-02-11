@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -35,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.zip.InflaterInputStream;
 
 /**
@@ -101,7 +102,10 @@ public class FlateDecodeFilter extends MemoryLimitsAwareFilter {
                 if (filter < 0) {
                     return fout.toByteArray();
                 }
-                dataStream.readFully(curr, 0, bytesPerRow);
+                final int bytesRead = dataStream.read(curr, 0, bytesPerRow);
+                if (bytesRead < bytesPerRow) {
+                    Arrays.fill(curr, bytesRead, bytesPerRow, (byte) 0);
+                }
             } catch (Exception e) {
                 return fout.toByteArray();
             }

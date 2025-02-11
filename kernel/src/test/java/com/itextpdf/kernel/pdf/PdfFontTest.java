@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -1920,6 +1920,17 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.addNewPage();
 
         pdfDoc.close();
+    }
+
+    @Test
+    public void fontDirectoryRegisterRecursivelyTest() throws IOException {
+        PdfFontFactory.registerDirectoryRecursively(sourceFolder);
+        for (String name : PdfFontFactory.getRegisteredFonts()) {
+            PdfFont pdfFont = PdfFontFactory.createRegisteredFont(name);
+            if (pdfFont == null) {
+                Assertions.assertTrue(false, "Font {" + name + "} can't be empty");
+            }
+        }
     }
 
     @Test

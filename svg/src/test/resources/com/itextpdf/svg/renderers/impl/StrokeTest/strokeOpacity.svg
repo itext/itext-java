@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="595pt" height="842pt">
+    <circle r="60" cx="100" cy="100" fill="pink"
+            stroke="teal" stroke-opacity="0.5" stroke-width="40"/>
+
+    <rect x="300" y="50" width="200" height="100" fill="pink" stroke="teal" stroke-opacity="0.5" stroke-width="40"/>
+
+    <text dx="100" dy="300" font-size="100" stroke="teal" text-decoration="underline"
+          fill="pink" stroke-opacity="0.2" stroke-width="5">
+        H E L L O
+    </text>
+
+    <ellipse rx="60" ry="40" cx="150" cy="450" fill="pink"
+             stroke="teal" stroke-opacity="0.5" stroke-width="40"/>
+
+    <path fill="pink" stroke="teal" stroke-width="10px" stroke-opacity="0.5" stroke-linejoin="round"
+          d="M20 620 L100 700 L130 650 L50 680" transform="translate(300, -200)"/>
+
+    <polygon fill="pink" stroke="teal" stroke-width="30" stroke-opacity="0.5" transform="translate(100, 400)"
+             points="150,205  179,291 269,291 197,345 223,431 150,380 77,431 103,345 31,291 121,291"/>
+
+    <polyline points="400 500, 450 470, 460 440, 420 400" transform="translate(100, 300)"
+              stroke="teal" fill="pink" stroke-width="30" stroke-opacity="0.5"/>
+</svg>

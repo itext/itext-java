@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="400" viewBox="0 0 500 300">
+  <text x="20" y="20">
+    <tspan fill="red">tspan with red fill</tspan>
+  </text>
+  
+  <text x="20" y="60">
+    <tspan fill="#0d52bf">tspan with HEX color blue fill</tspan>
+  </text>
+  
+  <text x="20" y="100">
+    <tspan fill="rgb(255 0 153)">tspan with RGB color pink fill</tspan>
+  </text>
+  
+  <text x="20" y="140">
+    <tspan fill="currentColor">tspan with currentColor fill</tspan>
+  </text>
+  
+  <text x="20" y="180">
+    <tspan fill="none">tspan with fill none should not be visible</tspan>
+  </text>
+</svg>

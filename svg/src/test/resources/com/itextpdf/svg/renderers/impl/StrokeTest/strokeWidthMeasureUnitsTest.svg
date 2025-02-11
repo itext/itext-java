@@ -17,34 +17,34 @@
 	<text x="20" y="405"> Polyline element </text>
   
     <polyline  points="220,220 300,300" stroke-width="1ex" stroke="blue" />
-    <text x="220" y="390" style="font-size: 20"> stroke-width="1ex"  </text>
-	<text x="220" y="370" style="font-size: 20"> Polyline element </text>
-  
+    <text x="220" y="390" style="font-size: 20px"> stroke-width="1ex"  </text>
+	<text x="220" y="370" style="font-size: 20px"> Polyline element </text>
+
     <polyline  points="420,220 500,300" stroke-width="1%" stroke="blue" />
-    <text x="420" y="390" style="font-size: 20"> stroke-width="1%"  </text>
-	<text x="420" y="405" style="font-size: 20"> Polyline element  </text>
+    <text x="420" y="390" style="font-size: 20px"> stroke-width="1%"  </text>
+	<text x="420" y="405" style="font-size: 20px"> Polyline element  </text>
 
     <polygon  points="20,420 100,500 130,450" fill="none" stroke-width="1ex" stroke="blue" />
-    <text x="20" y="550" style="font-size: 20"> stroke-width="1ex" </text>
-	<text x="20" y="565" style="font-size: 20"> Polygon element </text>
+    <text x="20" y="550" style="font-size: 20px"> stroke-width="1ex" </text>
+	<text x="20" y="565" style="font-size: 20px"> Polygon element </text>
 
     <polygon  points="220,420 300,500 330,450" fill="none" stroke-width="1em" stroke="blue" />
-    <text x="220" y="550" style="font-size: 20"> stroke-width="1em"  </text>
-	<text x="220" y="565" style="font-size: 20"> Polygon element  </text>
+    <text x="220" y="550" style="font-size: 20px"> stroke-width="1em"  </text>
+	<text x="220" y="565" style="font-size: 20px"> Polygon element  </text>
 
     <polygon  points="420,420 500,500 530,450" fill="none" stroke-width="0.3%" stroke="blue" />
-    <text x="420" y="550" style="font-size: 20"> stroke-width="0.3%"  </text>
-	<text x="420" y="565" style="font-size: 20"> Polygon element  </text>
-	
+    <text x="420" y="550" style="font-size: 20px"> stroke-width="0.3%"  </text>
+	<text x="420" y="565" style="font-size: 20px"> Polygon element  </text>
+
     <path d="M20 620 L100 700 L130 650 L50 680" fill="none" stroke-width="1em" stroke="blue" />
-    <text x="20" y="750" style="font-size: 20"> stroke-width="0.3em"  </text>
-	<text x="20" y="765" style="font-size: 20"> Path element  </text>
-	
+    <text x="20" y="750" style="font-size: 20px"> stroke-width="0.3em"  </text>
+	<text x="20" y="765" style="font-size: 20px"> Path element  </text>
+
 	<path d="M220 620 L300 700 L330 650 L260 680" fill="none" stroke-width="1ex" stroke="blue" />
-    <text x="220" y="750" style="font-size: 20"> stroke-width="0.3ex"  </text>
-	<text x="220" y="765" style="font-size: 20"> Path element  </text>
-	
+    <text x="220" y="750" style="font-size: 20px"> stroke-width="0.3ex"  </text>
+	<text x="220" y="765" style="font-size: 20px"> Path element  </text>
+
 	<path d="M420 620 L500 700 L530 650 L460 680" fill="none" stroke-width="1%" stroke="blue" />
-    <text x="420" y="750" style="font-size: 20"> stroke-width="0.3%"  </text>
-	<text x="420" y="765" style="font-size: 20"> Path element  </text>
+    <text x="420" y="750" style="font-size: 20px"> stroke-width="0.3%"  </text>
+	<text x="420" y="765" style="font-size: 20px"> Path element  </text>
 </svg>

@@ -12,14 +12,14 @@
     <text x="200" y="150"> stroke-width="1pt" </text>
   
     <polygon  points="20,220 100,300 130,250" fill="none" stroke-width="1mm" stroke="blue" marker-end="url(#marker1" />
-    <text x="20" y="390" style="font-size: 20"> stroke-width="1mm"  </text>
+    <text x="20" y="390" style="font-size: 20px"> stroke-width="1mm"  </text>
   
     <line  x1="220" y1="220" x2="300" y2="300" stroke-width="1cm" stroke="blue" marker-end="url(#marker1)" />
-    <text x="220" y="390" style="font-size: 20"> stroke-width="1cm"  </text>
+    <text x="220" y="390" style="font-size: 20px"> stroke-width="1cm"  </text>
 
     <line  x1="420" y1="220" x2="500" y2="300" stroke-width="1pc" stroke="blue" marker-end="url(#marker1)" />
-    <text x="420" y="390" style="font-size: 20"> stroke-width="1pc" </text>
+    <text x="420" y="390" style="font-size: 20px"> stroke-width="1pc" </text>
 
     <line  x1="420" y1="20" x2="500" y2="100" stroke-width="0.3in" stroke="blue" marker-end="url(#marker1)" />
-    <text x="420" y="200" style="font-size: 20"> stroke-width="0.3in"  </text>
+    <text x="420" y="200" style="font-size: 20px"> stroke-width="0.3in"  </text>
 </svg>

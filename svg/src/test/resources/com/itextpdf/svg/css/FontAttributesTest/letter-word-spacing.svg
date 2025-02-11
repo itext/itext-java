@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="400" style="border:1px solid black;">
+  <text x="20" y="70" font-family="Arial" font-size="24" fill="blue">
+    No spacing specified
+  </text>
+
+  <text x="20" y="120" font-family="Arial" font-size="24" fill="green" letter-spacing="5">
+    Positive letter-spacing
+  </text>
+
+  <text x="20" y="170" font-family="Arial" font-size="24" fill="red" letter-spacing="-2">
+    Negative letter-spacing
+  </text>
+
+  <text x="20" y="220" font-family="Arial" font-size="24" fill="green" word-spacing="20">
+    Positive word-spacing applied
+  </text>
+
+  <text x="20" y="270" font-family="Arial" font-size="24" fill="red" word-spacing="-5">
+    Negative word-spacing applied
+  </text>
+
+  <text x="20" y="320" font-family="Arial" font-size="24" fill="brown" letter-spacing="3" word-spacing="-10">
+    Both letter and word spacing
+  </text>
+  
+  <text x="20" y="370" font-family="Arial" font-size="24" fill="blue" word-spacing="normal" letter-spacing="normal">
+    Normal spacing for both
+  </text>
+</svg>

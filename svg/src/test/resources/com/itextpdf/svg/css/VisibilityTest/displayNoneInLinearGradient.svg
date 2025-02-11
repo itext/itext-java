@@ -1,0 +1,9 @@
+<svg height="400" width="400" xmlns="http://www.w3.org/2000/svg" style="border: 1px solid black;">
+<circle cx="50%" cy="50%" r="50" fill="url(#myGradient)" stroke="black" stroke-width="1"/>
+<defs>
+  <linearGradient id="myGradient" style="display:none">
+    <stop offset="5%" stop-color="gold" />
+    <stop offset="95%" stop-color="red" />
+  </linearGradient>
+</defs>
+</svg>

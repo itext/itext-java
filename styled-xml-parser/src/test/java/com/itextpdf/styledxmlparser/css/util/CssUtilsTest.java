@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,11 +24,11 @@ package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.layout.properties.BlendMode;
 import com.itextpdf.styledxmlparser.CommonAttributeConstants;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.pseudo.CssPseudoElementNode;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
@@ -38,7 +38,6 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -115,7 +114,7 @@ public class CssUtilsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void normalizeProperty() {
+    public void normalizePropertyTest() {
         Assertions.assertEquals("part1 part2", CssUtils.normalizeCssProperty("   part1   part2  "));
         Assertions.assertEquals("\" the next quote is ESCAPED \\\\\\\" still  IN string \"", CssUtils.normalizeCssProperty("\" the next quote is ESCAPED \\\\\\\" still  IN string \""));
         Assertions.assertEquals("\" the next quote is NOT ESCAPED \\\\\" not in the string", CssUtils.normalizeCssProperty("\" the next quote is NOT ESCAPED \\\\\" NOT in   THE string"));
@@ -126,6 +125,10 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assertions.assertEquals("rgba(255,255,255,0.2)", CssUtils.normalizeCssProperty("rgba(  255,  255 ,  255 ,0.2   )"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.URL_IS_EMPTY_IN_CSS_EXPRESSION)
+    })
     @Test
     public void normalizeUrlTest() {
         Assertions.assertEquals("url(data:application/font-woff;base64,2CBPCRXmgywtV1t4oWwjBju0kqkvfhPs0cYdMgFtDSY5uL7MIGT5wiGs078HrvBHekp0Yf=)",
@@ -133,6 +136,8 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assertions.assertEquals("url(\"quoted  Url\")", CssUtils.normalizeCssProperty("  url(  \"quoted  Url\")"));
         Assertions.assertEquals("url('quoted  Url')", CssUtils.normalizeCssProperty("  url(  'quoted  Url')"));
         Assertions.assertEquals("url(haveEscapedEndBracket\\))", CssUtils.normalizeCssProperty("url(  haveEscapedEndBracket\\) )"));
+        Assertions.assertEquals("url(", CssUtils.normalizeCssProperty("url(https://example.com/"));
+        Assertions.assertEquals("url(", CssUtils.normalizeCssProperty("url("));
     }
 
     @Test
@@ -184,7 +189,7 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assertions.assertEquals(new ArrayList<String>(), CssUtils.splitStringWithComma(null));
         Assertions.assertEquals(Arrays.asList("value1", "value2", "value3"),
                 CssUtils.splitStringWithComma("value1,value2,value3"));
-        Assertions.assertEquals(Arrays.asList("value1", " value2", " value3"),
+        Assertions.assertEquals(Arrays.asList("value1", "value2", "value3"),
                 CssUtils.splitStringWithComma("value1, value2, value3"));
         Assertions.assertEquals(Arrays.asList("value1", "(value,with,comma)", "value3"),
                 CssUtils.splitStringWithComma("value1,(value,with,comma),value3"));
@@ -203,12 +208,12 @@ public class CssUtilsTest extends ExtendedITextTest {
         Assertions.assertEquals(new ArrayList<String>(), CssUtils.splitString(null, ','));
         Assertions.assertEquals(Arrays.asList("value1", "(value,with,comma)", "value3"),
                 CssUtils.splitString("value1,(value,with,comma),value3", ',', new EscapeGroup('(', ')')));
-        Assertions.assertEquals(Arrays.asList("value1 ", " (val(ue,with,comma),value3"),
+        Assertions.assertEquals(Arrays.asList("value1", "(val(ue,with,comma),value3"),
                 CssUtils.splitString("value1 , (val(ue,with,comma),value3", ',', new EscapeGroup('(', ')')));
-        Assertions.assertEquals(Arrays.asList("some text", " (some", " text in", " brackets)", " \"some, text, in quotes,\""),
+        Assertions.assertEquals(Arrays.asList("some text", "(some", "text in", "brackets)", "\"some, text, in quotes,\""),
                 CssUtils.splitString("some text, (some, text in, brackets), \"some, text, in quotes,\"", ',',
                         new EscapeGroup('\"')));
-        Assertions.assertEquals(Arrays.asList("some text", " (some. text in. brackets)", " \"some. text. in quotes.\""),
+        Assertions.assertEquals(Arrays.asList("some text", "(some. text in. brackets)", "\"some. text. in quotes.\""),
                 CssUtils.splitString("some text. (some. text in. brackets). \"some. text. in quotes.\"", '.',
                         new EscapeGroup('\"'), new EscapeGroup('(', ')')));
         Assertions.assertEquals(Arrays.asList("value1", "(value", "with" ,"comma)", "value3"),
@@ -363,5 +368,36 @@ public class CssUtilsTest extends ExtendedITextTest {
         String strToParse = "attr(str mem lol)";
         String result = CssUtils.extractAttributeValue(strToParse, iNode);
         Assertions.assertNull(result);
+    }
+
+    @Test
+    public void extractUrlTest() {
+        Assertions.assertEquals("file.png", CssUtils.extractUrl("url(\"file.png\")"));
+        Assertions.assertEquals("file.png", CssUtils.extractUrl("url(file.png)"));
+        Assertions.assertEquals("\"file.png", CssUtils.extractUrl("url(\"file.png)"));
+        Assertions.assertEquals("file.png\"", CssUtils.extractUrl("url(file.png\")"));
+
+        // invalid
+        Assertions.assertEquals("url\"file.png\"", CssUtils.extractUrl("url\"file.png\""));
+        Assertions.assertEquals("urlfile.png", CssUtils.extractUrl("urlfile.png"));
+        Assertions.assertEquals("rl(\"file.png\")", CssUtils.extractUrl("rl(\"file.png\")"));
+
+        // trimming
+        Assertions.assertEquals(" url(\"file.png\") ", CssUtils.extractUrl(" url(\"file.png\") "));
+        Assertions.assertEquals("file.png", CssUtils.extractUrl("url(\"file.png\")  "));
+        Assertions.assertEquals("file.png", CssUtils.extractUrl("url(\" file.png \")"));
+
+        // just string
+        Assertions.assertEquals("file.png", CssUtils.extractUrl("file.png"));
+        Assertions.assertEquals("file.png", CssUtils.extractUrl("\"file.png\""));
+        Assertions.assertEquals("file.png", CssUtils.extractUrl("\" file.png  \""));
+        Assertions.assertEquals(" \"file.png\"", CssUtils.extractUrl(" \"file.png\""));
+        Assertions.assertEquals("\"file.png\" ", CssUtils.extractUrl("\"file.png\" "));
+        Assertions.assertEquals("file.png", CssUtils.extractUrl("'file.png'"));
+        Assertions.assertEquals("file.png", CssUtils.extractUrl("' file.png '"));
+
+        // src which can be according to the spec
+        Assertions.assertEquals("scr(file.png)", CssUtils.extractUrl("scr(file.png)"));
+        Assertions.assertEquals("scr(\"file.png\")", CssUtils.extractUrl("scr(\"file.png\")"));
     }
 }

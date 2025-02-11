@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -66,7 +66,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
     public static final String THAI_FONT = "./src/test/resources/com/itextpdf/layout/fonts/NotoSansThai-Regular.ttf";
     public static final String REGULAR_FONT = "./src/test/resources/com/itextpdf/layout/fonts/NotoSans-Regular.ttf";
-    public static final String KHMER_FONT = "./src/test/resources/com/itextpdf/layout/fonts/KhmerOS.ttf";
+    public static final String KHMER_FONT = "./src/test/resources/com/itextpdf/layout/fonts/NotoSansKhmer-Regular.ttf";
 
     // หากอากาศดีในวันพรุ่งนี้เราจะไปปิกนิก - one sentence, multiple words.
     public static final String THAI_TEXT = "\u0E2B\u0E32\u0E01\u0E2D\u0E32\u0E01\u0E32\u0E28\u0E14\u0E35"

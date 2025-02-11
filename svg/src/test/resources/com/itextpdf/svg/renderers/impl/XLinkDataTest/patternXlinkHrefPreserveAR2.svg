@@ -1,0 +1,10 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <pattern id="slicePattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <image xlink:href="star.jpg" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid meet" />
+    </pattern>
+	<pattern id="hrefPattern" xlink:href="#slicePattern" />
+  </defs>
+
+  <rect width="300" height="300" fill="url(#hrefPattern)" />
+</svg>

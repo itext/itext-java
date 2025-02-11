@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,8 +24,6 @@ package com.itextpdf.svg.renderers.path.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Point;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 
 import java.util.Arrays;
@@ -46,10 +44,12 @@ public class LineTo extends AbstractPathShape {
     }
 
     @Override
-    public void draw(PdfCanvas canvas) {
-        float x = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[0]);
-        float y = CssDimensionParsingUtils.parseAbsoluteLength(coordinates[1]);
-        canvas.lineTo(x, y);
+    public void draw() {
+        double x = parseHorizontalLength(coordinates[0]);
+        double y = parseVerticalLength(coordinates[1]);
+        double[] points = new double[]{x, y};
+        applyTransform(points);
+        context.getCurrentCanvas().lineTo(points[0], points[1]);
     }
 
     @Override

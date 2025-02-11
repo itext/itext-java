@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,10 +22,10 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -61,12 +61,18 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 19)
-    })
     public void differentAspectRatiosTest() throws IOException, InterruptedException {
-        //TODO: update cmp_ when DEVSIX-2250 fixed
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "differentAspectRatios");
+    }
+
+    @Test
+    public void imagePreserveAspectRatioTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imagePreserveAspectRatio");
+    }
+
+    @Test
+    public void imageNegativeWidthHeightTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageNegativeWidthHeight");
     }
 
     @Test
@@ -145,38 +151,46 @@ public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegr
     }
 
     @Test
-    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed 
     public void svgTranslationYMinMeetTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMinMeet");
     }
 
     @Test
-    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationYMidMeetTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMidMeet");
     }
 
     @Test
-    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationYMaxMeetTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationYMaxMeet");
     }
 
     @Test
-    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationXMinMeetTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMinMeet");
     }
 
     @Test
-    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationXMidMeetTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMidMeet");
     }
 
     @Test
-    //TODO (DEVSIX-3537) change cmp files after the ticket will be fixed
     public void svgTranslationXMaxMeetTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgTranslationXMaxMeet");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO,
+            logLevel = LogLevelConstants.INFO))
+    public void svgZeroWidthRatioTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgZeroWidthRatio");
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO,
+            logLevel = LogLevelConstants.INFO))
+    public void svgZeroHeightRatioTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "svgZeroHeightRatio");
     }
 }

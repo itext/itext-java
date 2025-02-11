@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,8 +23,11 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.utils.DrawUtils;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;polygon&gt; tag.
@@ -61,5 +64,10 @@ public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer implements I
         PolygonSvgNodeRenderer copy = new PolygonSvgNodeRenderer();
         deepCopyAttributesAndStyles(copy);
         return copy;
+    }
+
+    @Override
+    void doStrokeOrFill(String fillRuleRawValue, PdfCanvas currentCanvas) {
+        DrawUtils.doStrokeOrFillForClosedFigure(fillRuleRawValue, currentCanvas, doStroke);
     }
 }

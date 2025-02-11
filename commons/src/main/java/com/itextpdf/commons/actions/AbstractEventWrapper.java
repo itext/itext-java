@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -34,7 +34,7 @@ public abstract class AbstractEventWrapper extends AbstractProductProcessITextEv
     /**
      * Creates a wrapper for the event.
      *
-     * @param event is a {@link AbstractProductProcessITextEvent} to wrap
+     * @param event            is a {@link AbstractProductProcessITextEvent} to wrap
      * @param confirmationType event confirmation type
      */
     protected AbstractEventWrapper(AbstractProductProcessITextEvent event, EventConfirmationType confirmationType) {
@@ -47,8 +47,8 @@ public abstract class AbstractEventWrapper extends AbstractProductProcessITextEv
      *
      * @param updatedSequenceId is a {@link SequenceId} for the document. May be different with
      *                          sequence id of original event
-     * @param event is a {@link AbstractProductProcessITextEvent} to wrap
-     * @param confirmationType event confirmation type
+     * @param event             is a {@link AbstractProductProcessITextEvent} to wrap
+     * @param confirmationType  event confirmation type
      */
     protected AbstractEventWrapper(SequenceId updatedSequenceId,
                                    AbstractProductProcessITextEvent event, EventConfirmationType confirmationType) {
@@ -65,11 +65,21 @@ public abstract class AbstractEventWrapper extends AbstractProductProcessITextEv
         return event;
     }
 
+    /**
+     * Obtains the class from context of the wrapped event.
+     *
+     * @return class from context
+     */
     @Override
     public Class<?> getClassFromContext() {
         return getEvent().getClassFromContext();
     }
 
+    /**
+     * Obtains the event type of the wrapped event.
+     *
+     * @return event type
+     */
     @Override
     public String getEventType() {
         return getEvent().getEventType();

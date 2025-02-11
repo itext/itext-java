@@ -7,6 +7,12 @@
     font-style: normal;
     src: url('web-fonts/droid-serif-regular.ttf') format('truetype');
     }
+    @font-face {
+    font-family: 'Droid Serif';
+    font-weight: 700;
+    font-style: bold;
+    src: url('web-fonts/droid-serif-bold.ttf') format('truetype');
+    }
 
 </style >
     <g transform="translate(20,265)">

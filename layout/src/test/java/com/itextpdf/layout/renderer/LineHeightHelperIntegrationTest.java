@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2025 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Tag;
 @Tag("IntegrationTest")
 public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
 
+    private static final String FONTS = "./src/test/resources/com/itextpdf/layout/fonts/";
     private static final String CMP = "./src/test/resources/com/itextpdf/layout/LineHeightHelperIntegrationTest/";
     private static final String DESTINATION = "./target/test/com/itextpdf/layout/LineHeightHelperTest/";
     private static final String TEXT_SAMPLE = "Effects present letters inquiry no an removed or friends. "
@@ -82,6 +83,16 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
         String cmpPdf = CMP + "cmp_" + name;
         String outPdf = DESTINATION + name;
         testFont(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN), outPdf);
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
+    }
+
+    @Test
+    public void robotoFontTest() throws IOException, InterruptedException {
+        String name =  "robotoFontTest.pdf";
+        String cmpPdf = CMP + "cmp_" + name;
+        String outPdf = DESTINATION + name;
+        String robotoFont = FONTS + "Roboto-Regular.ttf";
+        testFont(PdfFontFactory.createFont(robotoFont), outPdf);
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION));
     }
 

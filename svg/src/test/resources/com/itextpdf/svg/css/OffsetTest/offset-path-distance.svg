@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+  <path id="path" d="M 50 50 C 150 150, 350 150, 450 50" fill="transparent" stroke="black" stroke-width="2" />
+
+  <circle cx="0" cy="0" r="20" fill="blue" style="offset-path: url(#path); offset-distance: 40px;" />
+</svg>
