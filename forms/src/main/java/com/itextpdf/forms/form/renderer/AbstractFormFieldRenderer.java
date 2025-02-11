@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.IFormField;
@@ -227,6 +228,11 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         final String alternativeDescription = properties.getAlternateDescription();
         if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
             formField.setAlternativeName(alternativeDescription);
+            for (PdfFormAnnotation annotation : formField.getChildFormAnnotations()) {
+                if (annotation.getAlternativeDescription() == null) {
+                    annotation.setAlternativeDescription(alternativeDescription);
+                }
+            }
         }
     }
 

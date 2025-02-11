@@ -356,4 +356,24 @@ public class ButtonTest extends ExtendedITextTest {
         Assertions.assertTrue(((InputFieldRenderer)buttonRenderer.getChildRenderers().get(0)
                 .setParent(buttonRenderer)).isFlatten());
     }
+
+    @Test
+    public void buttonAlternativeDescriptionTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "buttonAlternativeDescription.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_buttonAlternativeDescription.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf))) {
+            try (Document document = new Document(pdfDocument)) {
+                pdfDocument.setTagged();
+                Button formButton = new Button("form button");
+                formButton.setAlternativeDescription("alt description");
+                formButton.setValue("value");
+                formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
+                formButton.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
+                document.add(formButton);
+            }
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
 }

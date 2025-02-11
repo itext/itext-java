@@ -2006,6 +2006,44 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                 "diff_"));
     }
 
+    @Test
+    public void formFieldAnnotAlternativeDescriptionTest() throws IOException, InterruptedException {
+        String outputFileName = destinationFolder + "formFieldAnnotAlternativeDescriptionTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_formFieldAnnotAlternativeDescriptionTest.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputFileName));
+        pdfDoc.setTagged();
+        PdfAcroForm acroForm = PdfAcroForm.getAcroForm(pdfDoc, true);
+        PdfTextFormField textFormField = new TextFormFieldBuilder(pdfDoc, "text name")
+                .setWidgetRectangle(new Rectangle(200, 200, 200, 20)).createText();
+        textFormField.getFirstFormAnnotation().setAlternativeDescription("text description");
+        PdfButtonFormField buttonFormField = new PushButtonFormFieldBuilder(pdfDoc, "button name")
+                .setWidgetRectangle(new Rectangle(200, 300, 200, 20)).createPushButton();
+        buttonFormField.getFirstFormAnnotation().setAlternativeDescription("button description");
+        PdfChoiceFormField choiceFormField = new ChoiceFormFieldBuilder(pdfDoc, "choice name")
+                .setWidgetRectangle(new Rectangle(200, 400, 200, 20)).createComboBox();
+        choiceFormField.getFirstFormAnnotation().setAlternativeDescription("choice description");
+        RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, "radio name");
+        PdfButtonFormField radioGroup = builder.createRadioGroup();
+        PdfFormAnnotation radioAnnotation = builder
+                .createRadioButton("radio button 1", new Rectangle(200, 500, 20 , 20));
+        radioAnnotation.setAlternativeDescription("radio 1 description");
+        PdfFormAnnotation radioAnnotation2 = builder
+                .createRadioButton("radio button 2", new Rectangle(200, 550, 20 , 20));
+        radioAnnotation2.setAlternativeDescription("radio 2 description");
+        radioGroup.addKid(radioAnnotation);
+        radioGroup.addKid(radioAnnotation2);
+
+        acroForm.addField(textFormField);
+        acroForm.addField(buttonFormField);
+        acroForm.addField(choiceFormField);
+        acroForm.addField(radioGroup);
+        pdfDoc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outputFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+
     static class CustomButtonFormField extends PdfButtonFormField {
         private int counter = 0;
 

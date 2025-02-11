@@ -581,5 +581,21 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
+    @Test
+    public void comboBoxAlternativeDescriptionTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "comboBoxAlternativeDescription.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxAlternativeDescription.pdf";
 
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            document.getPdfDocument().setTagged();
+            ComboBoxField formComboBoxField = new ComboBoxField("form combo box field");
+            formComboBoxField.setInteractive(true);
+            formComboBoxField.setAlternativeDescription("description");
+            formComboBoxField.addOption(new SelectFieldItem("option 1"));
+            formComboBoxField.addOption(new SelectFieldItem("option 2"));
+            document.add(formComboBoxField);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
 }
