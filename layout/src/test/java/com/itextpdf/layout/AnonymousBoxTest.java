@@ -30,6 +30,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AnonymousBox;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -52,8 +53,8 @@ public class AnonymousBoxTest extends ExtendedITextTest {
 
     @Test
     public void relativeHeightTest() throws IOException, InterruptedException {
-        String outFileName = DESTINATION_FOLDER + "relativeHeightTest.pdf";
-        String cmpFileName = SOURCE_FOLDER + "cmp_relativeHeightTest.pdf";
+        String outFileName = DESTINATION_FOLDER + "relativeHeight.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_relativeHeight.pdf";
 
         try(PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
@@ -71,6 +72,25 @@ public class AnonymousBoxTest extends ExtendedITextTest {
             div.add(ab);
             doc.add(div);
 
+            doc.close();
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void defaultRoleTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "defaultRole.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_defaultRole.pdf";
+
+        try(PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+            pdfDocument.setTagged();
+            Document doc = new Document(pdfDocument);
+
+            AnonymousBox ab = new AnonymousBox();
+            ab.add(new Paragraph("Some text"));
+
+            doc.add(ab);
             doc.close();
         }
 

@@ -22,6 +22,8 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.renderer.AnonymousBoxRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
@@ -36,6 +38,17 @@ public class AnonymousBox extends Paragraph {
      */
     public AnonymousBox() {
         super();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new DefaultAccessibilityProperties(null);
+        }
+        return tagProperties;
     }
 
     /**

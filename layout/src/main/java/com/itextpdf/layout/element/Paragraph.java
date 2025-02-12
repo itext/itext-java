@@ -231,6 +231,9 @@ public class Paragraph extends BlockElement<Paragraph> {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
