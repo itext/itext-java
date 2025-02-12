@@ -27,6 +27,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -78,7 +79,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout01");
+        framework.assertBothFail("layout01", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -92,7 +93,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothValid("layout02");
+        framework.assertBothValid("layout02", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -107,7 +108,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothValid("layout03");
+        framework.assertBothValid("layout03", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -122,7 +123,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout04");
+        framework.assertBothFail("layout04", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -136,7 +137,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothValid("layout05");
+        framework.assertBothValid("layout05", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -151,7 +152,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("layout06",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"), false);
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
+                false, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -166,7 +168,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("layout07",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"), false);
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
+                false, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -184,7 +187,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             PdfStructTreeRoot tagStructureContext = pdfDocument.getStructTreeRoot();
             tagStructureContext.addRoleMapping("BING", StandardRoles.FORMULA);
         });
-        framework.assertBothValid("layoutWithValidRole");
+        framework.assertBothValid("layoutWithValidRole", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -202,7 +205,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             PdfStructTreeRoot tagStructureContext = pdfDocument.getStructTreeRoot();
             tagStructureContext.addRoleMapping("BING", StandardRoles.FORMULA);
         });
-        framework.assertBothFail("layoutWithValidRoleButNoDescription");
+        framework.assertBothFail("layoutWithValidRoleButNoDescription", PdfUAConformance.PDF_UA_1);
     }
 
     @Test

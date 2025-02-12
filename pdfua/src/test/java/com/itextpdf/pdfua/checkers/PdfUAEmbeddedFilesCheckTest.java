@@ -33,15 +33,19 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.pdfua.UaValidationTestFramework;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
@@ -62,8 +66,14 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
-    @Test
-    public void pdfuaWithEmbeddedFilesWithoutFTest() throws IOException {
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void pdfuaWithEmbeddedFilesWithoutFTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
                     pdfDocument, "file".getBytes(), "description", "file.txt", null, null, null);
@@ -71,12 +81,18 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
             fsDict.remove(PdfName.F);
             pdfDocument.addFileAttachment("file.txt", fs);
         });
-        framework.assertBothFail("pdfuaWithEmbeddedFilesWithoutF",
-                PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("pdfuaWithEmbeddedFilesWithoutF",
+                    PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("pdfuaWithEmbeddedFilesWithoutF", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void pdfuaWithEmbeddedFilesWithoutUFTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void pdfuaWithEmbeddedFilesWithoutUFTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             pdfDocument.addNewPage();
             PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -85,12 +101,18 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
             fsDict.remove(PdfName.UF);
             pdfDocument.addFileAttachment("file.txt", fs);
         });
-        framework.assertBothFail("pdfuaWithEmbeddedFilesWithoutUF",
-                PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("pdfuaWithEmbeddedFilesWithoutUF",
+                    PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("pdfuaWithEmbeddedFilesWithoutUF", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void pdfuaWithValidEmbeddedFileTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void pdfuaWithValidEmbeddedFileTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument -> {
             PdfFont font;
             try {
@@ -121,7 +143,7 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
                     PdfFileSpec.createEmbeddedFileSpec(pdfDocument, somePdf, "some test pdf file", "foo.pdf",
                             PdfName.ApplicationPdf, null, new PdfName("Data")));
         }));
-        framework.assertBothValid("pdfuaWithValidEmbeddedFile");
+        framework.assertBothValid("pdfuaWithValidEmbeddedFile", pdfUAConformance);
     }
 
 }

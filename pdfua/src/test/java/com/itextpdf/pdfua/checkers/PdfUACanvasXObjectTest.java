@@ -46,16 +46,22 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 
 @Tag("IntegrationTest")
@@ -80,6 +86,9 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+    }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)})
@@ -199,8 +208,10 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
 
     }
 
-    @Test
-    public void manuallyAddToCanvasCorrectFontAndUnTaggedContent() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void manuallyAddToCanvasCorrectFontAndUnTaggedContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addBeforeGenerationHook(pdfDoc -> {
             try {
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -223,12 +234,18 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
                 throw new RuntimeException();
             }
         });
-        framework.assertBothValid("manuallyAddToCanvasCorrectFontAndUnTaggedContent");
 
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("manuallyAddToCanvasCorrectFontAndUnTaggedContent", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("manuallyAddToCanvasCorrectFontAndUnTaggedContent", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void manuallyAddToCanvasAndCorrectFontAndArtifactUnTaggedContent() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void manuallyAddToCanvasAndCorrectFontAndArtifactUnTaggedContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
         //Now we are again adding untagged content with some artifacts and embedded font's so we should also be fine
         framework.addBeforeGenerationHook(pdfDocument -> {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -251,7 +268,12 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
                 throw new RuntimeException();
             }
         });
-        framework.assertBothValid("manuallyAddToCanvasAndCorrectFontAndArtifactUnTaggedContent");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("manuallyAddToCanvasCorrectFontArtifactUnTaggedContent", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("manuallyAddToCanvasCorrectFontArtifactUnTaggedContent", pdfUAConformance);
+        }
     }
 
     @Test
@@ -287,8 +309,10 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
 
     }
 
-    @Test
-    public void manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContentInsideArtifact() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContentInsideArtifact(PdfUAConformance pdfUAConformance)
+            throws IOException {
         // We are adding tagged content to an artifact. Looks like Verapdf doesn't check xobject stream at all because
         // page content is marked as artifact. We think it's wrong though.
         framework.addBeforeGenerationHook(pdfDoc -> {
@@ -312,12 +336,18 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
                 throw new RuntimeException();
             }
         });
-        framework.assertBothValid("manuallyAddToCanvasAndCorrectFontInsideArtifact");
 
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("manuallyAddToCanvasAndCorrectFontInsideArtifact", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("manuallyAddToCanvasAndCorrectFontInsideArtifact", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContent() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
         dummyDoc.setTagged();
@@ -338,12 +368,19 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             canvas.addXObject(xObject);
         });
 
-        framework.assertBothFail("untaggedAddXobject", PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("untaggedAddXobject",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("untaggedAddXobject", pdfUAConformance);
+        }
     }
 
 
-    @Test
-    public void manuallyAddToCanvasAtLocationAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContent() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void manuallyAddToCanvasAtLocationAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
         //We are adding untagged content we should throw an exception
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
@@ -364,11 +401,19 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             }
             canvas.addXObjectAt(xObject, 200f, 200f);
         });
-        framework.assertBothFail("untaggedAddXobjectAt", PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("untaggedAddXobjectAt",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("untaggedAddXobjectAt", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void manuallyAddToCanvasAtLocationAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContenta() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void manuallyAddToCanvasAtLocationAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContenta(PdfUAConformance pdfUAConformance)
+            throws IOException {
         //We are adding untagged content we should throw an exception
         UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
 
@@ -390,11 +435,19 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             }
             canvas.addXObjectFittedIntoRectangle(xObject, new Rectangle(200, 200, 200, 200));
         });
-        framework.assertBothFail("addXObjectFitted", PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("addXObjectFitted",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("addXObjectFitted", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void manuallyAddToCanvasAtLocationAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContentab() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void manuallyAddToCanvasAtLocationAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContentab(PdfUAConformance pdfUAConformance)
+            throws IOException {
         //We are adding untagged content we should throw an exception
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -415,11 +468,18 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             }
             canvas.addXObjectWithTransformationMatrix(xObject, 1, 1, 1, 1, 1, 1);
         });
-        framework.assertBothFail("addXObjectWithTransfoMatrix", PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("addXObjectWithTransfoMatrix",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("addXObjectWithTransfoMatrix", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void addImageObjectNotInline() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void addImageObjectNotInline(PdfUAConformance pdfUAConformance) throws IOException {
         //We are adding untagged content we should throw an exception
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -431,12 +491,19 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             }
             canvas.addImageAt(imd, 200, 200, false);
         });
-        framework.assertBothFail("addIMageObjectNotInline", PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("addIMageObjectNotInline",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("addIMageObjectNotInline", pdfUAConformance);
+        }
     }
 
 
-    @Test
-    public void addImageObjectInline() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void addImageObjectInline(PdfUAConformance pdfUAConformance) throws IOException {
         //We are adding untagged content we should throw an exception
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -448,11 +515,18 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             }
             canvas.addImageAt(imd, 200, 200, false);
         });
-        framework.assertBothFail("addIMageObjectInline", PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("addIMageObjectInline",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("addIMageObjectInline", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void addImageTranformationMatrix() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void addImageTranformationMatrix(PdfUAConformance pdfUAConformance) throws IOException {
         //We are adding untagged content we should throw an exception
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -464,12 +538,19 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             }
             canvas.addImageWithTransformationMatrix(imd, 1, 1, 1, 1, 1, 1, false);
         });
-        framework.assertBothFail("addIMageObjectTransfo", PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("addIMageObjectTransfo",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("addIMageObjectTransfo", pdfUAConformance);
+        }
     }
 
 
-    @Test
-    public void addImageFittedIntoRectangle() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void addImageFittedIntoRectangle(PdfUAConformance pdfUAConformance) throws IOException {
         //We are adding untagged content we should throw an exception
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -481,6 +562,12 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             }
             canvas.addImageFittedIntoRectangle(imd, new Rectangle(200, 200, 200, 200), false);
         });
-        framework.assertBothFail("addImageFittedIntoRectangle", PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("addImageFittedIntoRectangle",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("addImageFittedIntoRectangle", pdfUAConformance);
+        }
     }
 }

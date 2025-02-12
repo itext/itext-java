@@ -34,13 +34,13 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Class that helps to test PDF/UA conformance.
@@ -55,8 +55,6 @@ public class UaValidationTestFramework {
     private final List<Generator<IBlockElement>> elementProducers = new ArrayList<>();
 
     private final List<Consumer<PdfDocument>> beforeGeneratorHook = new ArrayList<>();
-    private PdfUAConformance conformance = PdfUAConformance.PDF_UA_1;
-
     public UaValidationTestFramework(String destinationFolder) {
         this(destinationFolder, true);
     }
@@ -66,43 +64,40 @@ public class UaValidationTestFramework {
         this.defaultCheckDocClosingByReopening = defaultCheckDocClosingByReopening;
     }
 
-    public UaValidationTestFramework setConformance(PdfUAConformance conformance) {
-        this.conformance = conformance;
-        return this;
-    }
-
     public void addSuppliers(Generator<IBlockElement>... suppliers) {
         Collections.addAll(elementProducers, suppliers);
     }
 
-    public void assertBothFail(String filename) throws IOException {
-        assertBothFail(filename, null);
+    public void assertBothFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
+        assertBothFail(filename, null, pdfUAConformance);
     }
 
-    public void assertBothFail(String filename, boolean checkDocClosing) throws IOException {
-        assertBothFail(filename, null, checkDocClosing);
+    public void assertBothFail(String filename, boolean checkDocClosing, PdfUAConformance pdfUAConformance)
+            throws IOException {
+        assertBothFail(filename, null, checkDocClosing, pdfUAConformance);
     }
 
-    public void assertBothFail(String filename, String expectedMsg) throws IOException {
-        assertBothFail(filename, expectedMsg, defaultCheckDocClosingByReopening);
+    public void assertBothFail(String filename, String expectedMsg, PdfUAConformance pdfUAConformance) throws IOException {
+        assertBothFail(filename, expectedMsg, defaultCheckDocClosingByReopening, pdfUAConformance);
     }
 
-    public void assertBothFail(String filename, String expectedMsg, boolean checkDocClosing) throws IOException {
-        checkError(checkErrorLayout("layout_" + filename + ".pdf"), expectedMsg);
+    public void assertBothFail(String filename, String expectedMsg, boolean checkDocClosing, PdfUAConformance pdfUAConformance)
+            throws IOException {
+        checkError(checkErrorLayout("layout_" + filename + pdfUAConformance + ".pdf", pdfUAConformance), expectedMsg);
 
-        final String createdFileName = "vera_" + filename + ".pdf";
-        verAPdfResult(createdFileName, true);
+        final String createdFileName = "vera_" + filename + pdfUAConformance + ".pdf";
+        veraPdfResult(createdFileName, true, pdfUAConformance);
 
         if (checkDocClosing) {
             System.out.println("Checking closing");
-            checkError(checkErrorOnClosing(createdFileName), expectedMsg);
+            checkError(checkErrorOnClosing(createdFileName, pdfUAConformance), expectedMsg);
         }
     }
 
-    public void assertBothValid(String fileName) throws IOException {
-        Exception e = checkErrorLayout("layout_" + fileName + ".pdf");
-        String veraPdf = verAPdfResult("vera_" + fileName + ".pdf", false);
-        Exception eClosing =  checkErrorOnClosing("vera_" + fileName + ".pdf");
+    public void assertBothValid(String fileName, PdfUAConformance pdfUAConformance) throws IOException {
+        Exception e = checkErrorLayout("layout_" + fileName + pdfUAConformance + ".pdf", pdfUAConformance);
+        String veraPdf = veraPdfResult("vera_" + fileName + pdfUAConformance + ".pdf", false, pdfUAConformance);
+        Exception eClosing =  checkErrorOnClosing("vera_" + fileName + pdfUAConformance + ".pdf", pdfUAConformance);
         if (e == null && veraPdf == null && eClosing == null) {
             return;
         }
@@ -135,12 +130,19 @@ public class UaValidationTestFramework {
         this.beforeGeneratorHook.add(action);
     }
 
-    private String verAPdfResult(String filename, boolean failureExpected) throws IOException {
+    public void assertVeraPdfFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
+        Assertions.assertNotNull(veraPdfResult(filename + pdfUAConformance + ".pdf", false, pdfUAConformance)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    }
+
+    public void assertVeraPdfValid(String filename, PdfUAConformance pdfUAConformance) throws IOException {
+        Assertions.assertNull(veraPdfResult(filename + pdfUAConformance + ".pdf", false, pdfUAConformance)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    }
+
+    private String veraPdfResult(String filename, boolean failureExpected, PdfUAConformance pdfUAConformance)
+            throws IOException {
         String outfile = UrlUtil.getNormalizedFileUriString(destinationFolder + filename);
         System.out.println(outfile);
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(destinationFolder + filename,
-                new WriterProperties().setPdfVersion(conformance == PdfUAConformance.PDF_UA_1 ? PdfVersion.PDF_1_7 :
-                        PdfVersion.PDF_2_0)), conformance);
+        PdfDocument pdfDoc = createPdfDocument(destinationFolder + filename, pdfUAConformance);
 
         Document document = new Document(pdfDoc);
         document.getPdfDocument().getDiContainer().register(ValidationContainer.class, new ValidationContainer());
@@ -173,13 +175,11 @@ public class UaValidationTestFramework {
         System.out.println(printStackTrace(e));
     }
 
-    private Exception checkErrorLayout(String filename) {
+    private Exception checkErrorLayout(String filename, PdfUAConformance pdfUAConformance) {
         try {
             final String outPath = destinationFolder + filename;
             System.out.println(UrlUtil.getNormalizedFileUriString(outPath));
-            PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPath, new WriterProperties()
-                    .setPdfVersion(conformance == PdfUAConformance.PDF_UA_1 ? PdfVersion.PDF_1_7 : PdfVersion.PDF_2_0)),
-                    conformance);
+            PdfDocument pdfDoc = createPdfDocument(outPath, pdfUAConformance);
             for (Consumer<PdfDocument> pdfDocumentConsumer : this.beforeGeneratorHook) {
                 pdfDocumentConsumer.accept(pdfDoc);
             }
@@ -194,14 +194,12 @@ public class UaValidationTestFramework {
         return null;
     }
 
-    private Exception checkErrorOnClosing(String filename) {
+    private Exception checkErrorOnClosing(String filename, PdfUAConformance pdfUAConformance) {
         try {
             final String outPath = destinationFolder + "reopen_" + filename;
             final String inPath = destinationFolder + filename;
             System.out.println(UrlUtil.getNormalizedFileUriString(outPath));
-            PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfReader(inPath), new PdfWriter(outPath,
-                    new WriterProperties().setPdfVersion(conformance == PdfUAConformance.PDF_UA_1 ? PdfVersion.PDF_1_7 :
-                            PdfVersion.PDF_2_0)), conformance);
+            PdfDocument pdfDoc = createPdfDocument(inPath, outPath, pdfUAConformance);
 
             pdfDoc.close();
         } catch (Exception e) {
@@ -212,6 +210,29 @@ public class UaValidationTestFramework {
 
     private static String printStackTrace(Exception e) {
         return e.toString();
+    }
+
+    private PdfDocument createPdfDocument(String filename, PdfUAConformance pdfUAConformance) throws IOException {
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            return new PdfUATestPdfDocument(new PdfWriter(filename));
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            return new PdfUA2TestPdfDocument(new PdfWriter(filename, new WriterProperties().setPdfVersion(
+                    PdfVersion.PDF_2_0)));
+        } else {
+            throw new IllegalArgumentException("Unsupported PdfUAConformance: " + pdfUAConformance);
+        }
+    }
+
+    private PdfDocument createPdfDocument(String inputFile, String outputFile, PdfUAConformance pdfUAConformance)
+            throws IOException {
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            return new PdfUATestPdfDocument(new PdfReader(inputFile), new PdfWriter(outputFile));
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            return new PdfUA2TestPdfDocument(new PdfReader(inputFile),
+                    new PdfWriter(outputFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        } else {
+            throw new IllegalArgumentException("Unsupported PdfUAConformance: " + pdfUAConformance);
+        }
     }
 
     public static interface Generator<IBlockElement> {

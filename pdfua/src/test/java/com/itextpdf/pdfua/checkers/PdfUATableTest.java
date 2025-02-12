@@ -37,6 +37,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -78,7 +79,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithoutHeaders01");
+        framework.assertBothValid("tableWithoutHeaders01", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -95,7 +96,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithoutHeaders02");
+        framework.assertBothValid("tableWithoutHeaders02", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -110,7 +111,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn01");
+        framework.assertBothValid("tableWithHeaderScopeColumn01", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -125,7 +126,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn02");
+        framework.assertBothValid("tableWithHeaderScopeColumn02", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -140,7 +141,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn03");
+        framework.assertBothValid("tableWithHeaderScopeColumn03", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -159,7 +160,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderScopeColumn04");
+        framework.assertBothFail("tableWithHeaderScopeColumn04", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -175,7 +176,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn05");
+        framework.assertBothValid("tableWithHeaderScopeColumn05", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -190,7 +191,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn06");
+        framework.assertBothValid("tableWithHeaderScopeColumn06", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -202,7 +203,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn07");
+        framework.assertBothValid("tableWithHeaderScopeColumn07", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -220,7 +221,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn08");
+        framework.assertBothValid("tableWithHeaderScopeColumn08", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -237,7 +238,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn09");
+        framework.assertBothValid("tableWithHeaderScopeColumn09", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -253,7 +254,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn10");
+        framework.assertBothValid("tableWithHeaderScopeColumn10", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -269,7 +270,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn11");
+        framework.assertBothValid("tableWithHeaderScopeColumn11", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -289,7 +290,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn12");
+        framework.assertBothValid("tableWithHeaderScopeColumn12", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -313,7 +314,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderScopeColumn13");
+        framework.assertBothFail("tableWithHeaderScopeColumn13", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -328,7 +329,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderScopeColumn14");
+        framework.assertBothFail("tableWithHeaderScopeColumn14", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -344,7 +345,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn15");
+        framework.assertBothValid("tableWithHeaderScopeColumn15", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -361,7 +362,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn16");
+        framework.assertBothValid("tableWithHeaderScopeColumn16", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -384,7 +385,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addFooterCell(new DataCellSupplier("Data 1", 1, 1, null));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope01");
+        framework.assertBothValid("tableWithHeaderRowScope01", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -397,7 +398,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope02");
+        framework.assertBothValid("tableWithHeaderRowScope02", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -410,7 +411,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope03");
+        framework.assertBothValid("tableWithHeaderRowScope03", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -428,7 +429,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope04");
+        framework.assertBothValid("tableWithHeaderRowScope04", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -448,7 +449,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope05");
+        framework.assertBothValid("tableWithHeaderRowScope05", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -493,7 +494,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder, tableBuilder1, tableBuilder2);
-        framework.assertBothValid("tableWithHeaderRowScope06");
+        framework.assertBothValid("tableWithHeaderRowScope06", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -517,7 +518,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderRowScope07");
+        framework.assertBothFail("tableWithHeaderRowScope07", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -535,7 +536,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope08");
+        framework.assertBothValid("tableWithHeaderRowScope08", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -553,7 +554,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderRowScope09");
+        framework.assertBothFail("tableWithHeaderRowScope09", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -571,7 +572,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderBothScope01");
+        framework.assertBothValid("tableWithHeaderBothScope01", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -593,7 +594,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderBothScope02");
+        framework.assertBothValid("tableWithHeaderBothScope02", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -609,7 +610,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderBothScope03");
+        framework.assertBothValid("tableWithHeaderBothScope03", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -626,7 +627,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithId01");
+        framework.assertBothFail("tableWithId01", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -643,7 +644,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithId02");
+        framework.assertBothFail("tableWithId02", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -660,7 +661,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId03");
+        framework.assertBothValid("tableWithId03", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -676,7 +677,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId04");
+        framework.assertBothValid("tableWithId04", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -692,7 +693,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId05");
+        framework.assertBothValid("tableWithId05", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -713,7 +714,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId06");
+        framework.assertBothValid("tableWithId06", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -735,7 +736,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId07");
+        framework.assertBothValid("tableWithId07", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -752,7 +753,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId08");
+        framework.assertBothValid("tableWithId08", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -768,7 +769,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId09");
+        framework.assertBothValid("tableWithId09", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -783,7 +784,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId10");
+        framework.assertBothValid("tableWithId10", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -802,7 +803,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId11");
+        framework.assertBothValid("tableWithId11", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -819,7 +820,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithId12");
+        framework.assertBothFail("tableWithId12", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -836,7 +837,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId13");
+        framework.assertBothValid("tableWithId13", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -853,7 +854,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId14");
+        framework.assertBothValid("tableWithId14", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -870,7 +871,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination01");
+        framework.assertBothFail("combination01", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -883,7 +884,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("combination02");
+        framework.assertBothValid("combination02", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -907,7 +908,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("combination04");
+        framework.assertBothValid("combination04", PdfUAConformance.PDF_UA_1);
     }
 
 
@@ -925,7 +926,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination05");
+        framework.assertBothFail("combination05", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -943,7 +944,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination06");
+        framework.assertBothFail("combination06", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -961,7 +962,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination07");
+        framework.assertBothFail("combination07", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -979,7 +980,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination08");
+        framework.assertBothFail("combination08", PdfUAConformance.PDF_UA_1);
 
     }
 
@@ -994,7 +995,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data3", 1, 1, null));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("combination09");
+        framework.assertBothValid("combination09", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -1026,7 +1027,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         });
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableCustomRoles");
+        framework.assertBothValid("tableCustomRoles", PdfUAConformance.PDF_UA_1);
     }
 
 

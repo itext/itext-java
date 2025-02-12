@@ -384,7 +384,8 @@ public class PdfUATest extends ExtendedITextTest {
             ocProperties.put(PdfName.Configs, configs);
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck01", PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck01",
+                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -400,7 +401,8 @@ public class PdfUATest extends ExtendedITextTest {
             ocProperties.put(PdfName.Configs, configs);
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck02", PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck02",
+                PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -418,7 +420,8 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck03", PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck03",
+                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -433,11 +436,12 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck04", PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY);
+        framework.assertBothFail("pdfuaOCGPropertiesCheck04",
+                PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
-    public void nameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigsTest() throws IOException, InterruptedException {
+    public void nameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigsTest() throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -451,7 +455,7 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothValid("pdfuaOCGPropertiesCheck");
+        framework.assertBothValid("pdfuaOCGPropertiesCheck", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -474,7 +478,7 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothValid("pdfuaOCGsPropertiesCheck");
+        framework.assertBothValid("pdfuaOCGsPropertiesCheck", PdfUAConformance.PDF_UA_1);
     }
 
     @Test

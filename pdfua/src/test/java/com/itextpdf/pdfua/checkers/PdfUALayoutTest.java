@@ -50,6 +50,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
@@ -175,7 +176,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("noteWithoutID",
-                PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY);
+                PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -215,7 +216,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
                 });
         framework.assertBothFail("twoNotesWithSameId",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "123"),
-                false);
+                false, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -236,7 +237,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
                 return note;
             }
         });
-        framework.assertBothValid("noteWithValidID");
+        framework.assertBothValid("noteWithValidID", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -273,7 +274,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
                         return note;
                     }
                 });
-        framework.assertBothValid("twoNotesWithDifferentId");
+        framework.assertBothValid("twoNotesWithDifferentId", PdfUAConformance.PDF_UA_1);
     }
 
 }

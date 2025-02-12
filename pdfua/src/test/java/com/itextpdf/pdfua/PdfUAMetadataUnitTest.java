@@ -159,8 +159,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void validMetadataUA2Test() throws IOException {
-        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2)) {
+        try (PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -177,8 +176,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void catalogNoMetadataUA2Test() {
-        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2)) {
+        try (PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
             catalog.remove(PdfName.Metadata);
@@ -192,8 +190,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void catalogInvalidMetadataUA2Test() {
-        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2)) {
+        try (PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
             catalog.put(PdfName.Metadata, new PdfString("Error"));
@@ -210,8 +207,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)
     })
     public void brokenMetadataUA2Test() throws IOException {
-        PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2);
+        PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDocument.addNewPage();
         PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -230,8 +226,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void documentWithNoPartInMetadataUA2Test() throws IOException {
-        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2)) {
+        try (PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -251,8 +246,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void documentWithInvalidPartInMetadataUA2Test() throws IOException {
-        PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2);
+        PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDocument.addNewPage();
         PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -272,8 +266,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void documentWithNoRevInMetadataUA2Test() throws IOException {
-        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2)) {
+        try (PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -293,8 +286,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void documentWithInvalidRevInMetadataUA2Test() throws IOException {
-        PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2);
+        PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDocument.addNewPage();
         PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -313,8 +305,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void documentWithInvalidLengthRevInMetadataUA2Test() throws IOException {
-        PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2);
+        PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         pdfDocument.addNewPage();
         PdfCatalog catalog = pdfDocument.getCatalog();
 
@@ -333,8 +324,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
 
     @Test
     public void documentWithNoTitleInMetadataUA2Test() throws IOException {
-        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
-                PdfUAConformance.PDF_UA_2)) {
+        try (PdfDocument pdfDocument = new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             pdfDocument.addNewPage();
             PdfCatalog catalog = pdfDocument.getCatalog();
 

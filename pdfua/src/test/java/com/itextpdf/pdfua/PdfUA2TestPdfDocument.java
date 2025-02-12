@@ -22,34 +22,21 @@
  */
 package com.itextpdf.pdfua;
 
-import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.StampingProperties;
 
-/**
- * PdfDocument extension for testing purposes.
- */
-public class PdfUATestPdfDocument extends PdfUADocument {
 
-    public PdfUATestPdfDocument(PdfWriter writer) {
+public class PdfUA2TestPdfDocument extends PdfUADocument {
+    public PdfUA2TestPdfDocument(PdfWriter writer) {
         super(writer, createConfig());
     }
 
-    public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties, createConfig());
-    }
-
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
+    public PdfUA2TestPdfDocument(PdfReader reader, PdfWriter writer) {
         super(reader, writer, createConfig());
     }
 
-    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties, createConfig());
-    }
-
     private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformance.PDF_UA_1, "English pangram", "en-US");
+        return new PdfUAConfig(PdfUAConformance.PDF_UA_2, "English pangram", "en-US");
     }
 }

@@ -76,6 +76,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
+
     // -------- Negative tests --------
     @Test
     public void addH2AsFirstHeaderTest() throws IOException {
@@ -90,7 +91,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("addH2FirstHeaderTest",
-                PdfUAExceptionMessageConstants.H1_IS_SKIPPED);
+                PdfUAExceptionMessageConstants.H1_IS_SKIPPED, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -114,7 +115,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("brokenHnParallelSequenceTest",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 2));
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 2), PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -134,7 +135,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("brokenHnInheritedSequenceTest1",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 2));
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 2), PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -159,7 +160,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("brokenHnMixedSequenceTest",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3));
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3), PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -188,7 +189,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("brokenHnMixedSequenceTest2",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3));
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3), PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -213,7 +214,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("fewHInOneNodeTest",
-                PdfUAExceptionMessageConstants.MORE_THAN_ONE_H_TAG);
+                PdfUAExceptionMessageConstants.MORE_THAN_ONE_H_TAG, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -237,7 +238,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("fewHInDocumentTest",
-                PdfUAExceptionMessageConstants.MORE_THAN_ONE_H_TAG);
+                PdfUAExceptionMessageConstants.MORE_THAN_ONE_H_TAG, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -261,7 +262,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("hAndHnInDocumentTest1",
-                PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN);
+                PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -285,7 +286,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("hAndHnInDocumentTest2",
-                PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN);
+                PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -310,7 +311,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothFail("hAndHnInDocumentTest3",
-                PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN);
+                PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -335,7 +336,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             root.addRoleMapping("header5", StandardRoles.H5);
 
         });
-        framework.assertBothFail("rolemappingTest");
+        framework.assertBothFail("rolemappingTest", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -360,7 +361,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             root.addRoleMapping("header5", StandardRoles.H2);
 
         });
-        framework.assertBothValid("rolemappingValid");
+        framework.assertBothValid("rolemappingValid", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -385,9 +386,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
 
     @Test
     public void hInUA2DocumentTest() throws IOException {
-        UaValidationTestFramework pdfUA2Framework = new UaValidationTestFramework(DESTINATION_FOLDER)
-                .setConformance(PdfUAConformance.PDF_UA_2);
-        pdfUA2Framework.addSuppliers(new Generator<IBlockElement>() {
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph header1 = new Paragraph("Header");
@@ -396,14 +395,12 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return header1;
             }
         });
-        pdfUA2Framework.assertBothFail("hInUA2DocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG);
+        framework.assertBothFail("hInUA2DocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, PdfUAConformance.PDF_UA_2);
     }
 
     @Test
     public void hAndHnInUA2DocumentTest() throws IOException {
-        UaValidationTestFramework pdfUA2Framework = new UaValidationTestFramework(DESTINATION_FOLDER)
-                .setConformance(PdfUAConformance.PDF_UA_2);
-        pdfUA2Framework.addSuppliers(new Generator<IBlockElement>() {
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -422,14 +419,12 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        pdfUA2Framework.assertBothFail("hAndHnInUA2DocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG);
+        framework.assertBothFail("hAndHnInUA2DocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, PdfUAConformance.PDF_UA_2);
     }
 
     @Test
     public void incorrectHeadingLevelInUA2Test() throws IOException {
-        UaValidationTestFramework pdfUA2Framework = new UaValidationTestFramework(DESTINATION_FOLDER)
-                .setConformance(PdfUAConformance.PDF_UA_2);
-        pdfUA2Framework.addSuppliers(new Generator<IBlockElement>() {
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Div div = new Div();
@@ -450,7 +445,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         // Where a heading’s level is evident, the heading level of the structure element enclosing it shall match that
         // heading level, e.g. a heading with the real content “5.1.6.4 Some header” is evidently at heading level 4.
         // This requirement is not checked by both iText and veraPDF.
-        pdfUA2Framework.assertBothValid("incorrectHeadingLevelInUA2Test");
+        framework.assertBothValid("incorrectHeadingLevelInUA2Test", PdfUAConformance.PDF_UA_2);
     }
 
     // -------- Positive tests --------
@@ -534,7 +529,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnInheritedSequenceTest");
+        framework.assertBothValid("hnInheritedSequenceTest", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -572,7 +567,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h5;
             }
         });
-        framework.assertBothValid("hnInheritedSequenceTest");
+        framework.assertBothValid("hnInheritedSequenceTest", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -610,7 +605,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h33;
             }
         });
-        framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2");
+        framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -639,7 +634,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2");
+        framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -671,7 +666,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h3;
             }
         });
-        framework.assertBothValid("hnParallelSequenceTest");
+        framework.assertBothValid("hnParallelSequenceTest", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -737,7 +732,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return div;
             }
         });
-        framework.assertBothValid("hnParallelSequenceTest");
+        framework.assertBothValid("hnParallelSequenceTest", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -767,7 +762,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnMixedSequenceTest");
+        framework.assertBothValid("hnMixedSequenceTest", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -791,7 +786,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnMixedSequenceTest2");
+        framework.assertBothValid("hnMixedSequenceTest2", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -819,14 +814,12 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnMixedSequenceTest3");
+        framework.assertBothValid("hnMixedSequenceTest3", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
     public void nonSequentialHeadersInUA2Test() throws IOException {
-        UaValidationTestFramework pdfUA2Framework = new UaValidationTestFramework(DESTINATION_FOLDER)
-                .setConformance(PdfUAConformance.PDF_UA_2);
-        pdfUA2Framework.addSuppliers(new Generator<IBlockElement>() {
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Div div = new Div();
@@ -844,7 +837,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h2;
             }
         });
-        pdfUA2Framework.assertBothValid("nonSequentialHeadersInUA2Test");
+        framework.assertBothValid("nonSequentialHeadersInUA2Test", PdfUAConformance.PDF_UA_2);
     }
 
     private static PdfFont loadFont() {

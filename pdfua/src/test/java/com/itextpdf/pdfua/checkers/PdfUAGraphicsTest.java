@@ -42,6 +42,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
@@ -132,7 +133,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 return new Div().add(img);
             }
         });
-        framework.assertBothValid("imageWithCustomRoleOk");
+        framework.assertBothValid("imageWithCustomRoleOk", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -156,7 +157,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 return new Div().add(img);
             }
         });
-        framework.assertBothValid("imageWithDoubleMapping");
+        framework.assertBothValid("imageWithDoubleMapping", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -178,7 +179,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 return new Div().add(img);
             }
         });
-        framework.assertBothFail("imageWithCustomRoleAndNoDescription");
+        framework.assertBothFail("imageWithCustomRoleAndNoDescription", PdfUAConformance.PDF_UA_1);
     }
 
     @Test
@@ -201,7 +202,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 return new Div().add(img);
             }
         });
-        framework.assertBothFail("imageCustomDoubleMapping_Throws");
+        framework.assertBothFail("imageCustomDoubleMapping_Throws", PdfUAConformance.PDF_UA_1);
     }
 
     @Test

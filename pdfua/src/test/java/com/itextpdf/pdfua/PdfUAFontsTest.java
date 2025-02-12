@@ -30,8 +30,7 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -39,14 +38,15 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
-import org.junit.jupiter.api.Assertions;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUAFontsTest extends ExtendedITextTest {
@@ -66,8 +66,13 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
-    @Test
-    public void tryToUseType0Cid0FontTest() throws IOException {
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tryToUseType0Cid0FontTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -81,12 +86,20 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph("Simple paragraph");
             document.add(paragraph);
         });
-        framework.assertBothFail("tryToUseType0Cid0FontTest",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "KozMinPro-Regular"), false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("tryToUseType0Cid0FontTest",
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "KozMinPro-Regular"),
+                    false, pdfUAConformance);
+        }
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("tryToUseType0Cid0FontTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void type0Cid2FontTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void type0Cid2FontTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -100,11 +113,12 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph("Simple paragraph");
             document.add(paragraph);
         });
-        framework.assertBothValid("type0Cid2FontTest");
+        framework.assertBothValid("type0Cid2FontTest", pdfUAConformance);
     }
 
-    @Test
-    public void trueTypeFontTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void trueTypeFontTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -118,11 +132,12 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph("Simple paragraph");
             document.add(paragraph);
         });
-        framework.assertBothValid("trueTypeFontTest");
+        framework.assertBothValid("trueTypeFontTest", pdfUAConformance);
     }
 
-    @Test
-    public void trueTypeFontGlyphNotPresentTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void trueTypeFontGlyphNotPresentTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfFont font;
             try {
@@ -143,14 +158,20 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     endText().
                     restoreState().closeTag();
         });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
         framework.assertBothFail("trueTypeFontGlyphNotPresentTest",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "w"), false);
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "w"),
+                false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("trueTypeFontGlyphNotPresentTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void trueTypeFontWithDifferencesTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "trueTypeFontWithDifferencesTest.pdf";
-        try (PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf))) {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void trueTypeFontWithDifferencesTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT, "# simple 32 0077 006f 0072 006c 0064", EmbeddingStrategy.PREFER_EMBEDDED);
@@ -169,13 +190,19 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     showText("world").
                     endText().
                     restoreState().closeTag();
-        }
+        });
 
-        new VeraPdfValidator().validateFailure(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1){
+            framework.assertVeraPdfFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
+        }
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void tryToUseStandardFontsTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tryToUseStandardFontsTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -190,12 +217,20 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             document.add(paragraph);
             document.close();
         });
-        framework.assertBothFail("tryToUseStandardFontsTest",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"), false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1){
+            framework.assertBothFail("tryToUseStandardFontsTest",
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"), false,
+                    pdfUAConformance);
+        }
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("tryToUseStandardFontsTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void type1EmbeddedFontTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void type1EmbeddedFontTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -211,6 +246,6 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph("Helloworld");
             document.add(paragraph);
         });
-        framework.assertBothValid("type1EmbeddedFontTest");
+        framework.assertBothValid("type1EmbeddedFontTest", pdfUAConformance);
     }
 }

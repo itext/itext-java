@@ -36,6 +36,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
@@ -55,14 +56,17 @@ import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line 
 // validation on Android)
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("UnitTest")
 public class PdfUACanvasTest extends ExtendedITextTest {
@@ -84,8 +88,13 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
-    @Test
-    public void checkPoint_01_005_TextContentIsNotTagged() throws IOException {
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_TextContentIsNotTagged(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.saveState()
@@ -94,12 +103,18 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .showText("Hello World!");
 
         });
-        framework.assertBothFail("checkPoint_01_005_TextContentIsNotTagged",
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("textContentIsNotTagged",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("textContentIsNotTagged", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_005_TextNoContentIsNotTagged() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_TextNoContentIsNotTagged(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.saveState()
@@ -108,7 +123,12 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .endText();
 
         });
-        framework.assertBothValid("checkPoint_01_005_TextNoContentIsNotTagged");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("textNoContentIsNotTagged", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("textNoContentIsNotTagged", pdfUAConformance);
+        }
     }
 
 
@@ -395,34 +415,44 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
-    @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged() throws IOException {
-
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
                     .setLineWidth(2);
             canvas.lineTo(200, 200).fill();
         });
-        framework.assertBothFail("checkPoint_01_005_LineContentThatIsContentIsNotTagged",
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("lineContentThatIsContentIsNotTagged",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("lineContentThatIsContentIsNotTagged", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent() throws IOException {
-
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
                     .setLineWidth(2);
             canvas.lineTo(200, 200);
         });
-        framework.assertBothValid("checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("lineContentThatIsContentIsNotTagged_noContent", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("lineContentThatIsContentIsNotTagged_noContent", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact() throws IOException {
-
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
             canvas.openTag(new CanvasTag(PdfName.P))
@@ -431,14 +461,19 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.lineTo(200, 200).fill();
         });
 
-        framework.assertBothFail("checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact",
-                PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("lineContentThatIsContentIsTaggedButIsNotAnArtifact",
+                    PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("lineContentThatIsContentIsTaggedButIsNotAnArtifact", pdfUAConformance);
+        }
     }
 
 
-    @Test
-    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing() throws IOException {
-
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
             canvas.openTag(new CanvasTag(PdfName.P))
@@ -448,7 +483,12 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.lineTo(300, 200);
 
         });
-        framework.assertBothValid("checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("lineContentThatIsContentIsTaggedButIsNotAnArtifactNoDrawing", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("lineContentThatIsContentIsTaggedButIsNotAnArtifactNoDrawing", pdfUAConformance);
+        }
     }
 
     @Test
@@ -479,9 +519,9 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
-    @Test
-    public void checkPoint_01_005_RectangleNotMarked() throws IOException {
-
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_RectangleNotMarked(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -489,25 +529,32 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
             canvas.fill();
         });
-        framework.assertBothFail("checkPoint_01_005_RectangleNotMarked",
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("checkPoint_01_005_RectangleNotMarked",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_005_RectangleNotMarked", pdfUAConformance);
+        }
     }
 
 
-    @Test
-    public void checkPoint_01_005_RectangleNoContent() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_RectangleNoContent(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
                     .setLineWidth(2);
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
         });
-        framework.assertBothValid("checkPoint_01_005_RectangleNoContent");
+        framework.assertBothValid("checkPoint_01_005_RectangleNoContent", PdfUAConformance.PDF_UA_1);
     }
 
 
-    @Test
-    public void checkPoint_01_005_RectangleClip() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_RectangleClip(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -515,11 +562,17 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
             canvas.clip();
         });
-        framework.assertBothValid("checkPoint_01_005_RectangleNoContent");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("checkPoint_01_005_RectangleNoContent", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_005_RectangleNoContent", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_005_RectangleClosePathStroke() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_RectangleClosePathStroke(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -528,12 +581,17 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.closePathStroke();
         });
 
-        framework.assertBothFail("checkPoint_01_005_RectangleClosePathStroke",
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("checkPoint_01_005_RectangleClosePathStroke",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_005_RectangleClosePathStroke", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_005_Rectangle_EOFIllStroke() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_Rectangle_EOFIllStroke(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -541,12 +599,18 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
             canvas.closePathEoFillStroke();
         });
-        framework.assertBothFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke",
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_005_Rectangle_FillStroke() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_Rectangle_FillStroke(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -554,12 +618,18 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
             canvas.fillStroke();
         });
-        framework.assertBothFail("checkPoint_01_005_Rectangle_FillStroke",
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("checkPoint_01_005_Rectangle_FillStroke",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_FillStroke", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_005_Rectangle_eoFill() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_Rectangle_eoFill(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -567,12 +637,18 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
             canvas.eoFill();
         });
-        framework.assertBothFail("checkPoint_01_005_Rectangle_eoFill",
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("checkPoint_01_005_Rectangle_eoFill",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_eoFill", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_005_Rectangle_eoFillStroke() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_Rectangle_eoFillStroke(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -580,8 +656,13 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
             canvas.eoFillStroke();
         });
-        framework.assertBothFail("checkPoint_01_005_Rectangle_eoFillStroke",
-                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("checkPoint_01_005_Rectangle_eoFillStroke",
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_eoFillStroke", pdfUAConformance);
+        }
     }
 
     @Test
@@ -607,9 +688,9 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
-    @Test
-    public void checkPoint_01_005_RectangleMarkedContentWithoutMcid() throws IOException {
-
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_RectangleMarkedContentWithoutMcid(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -619,13 +700,17 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100)).fill();
         });
 
-        framework.assertBothFail("checkPoint_01_005_RectangleMarkedContentWithoutMcid",
-                PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("checkPoint_01_005_RectangleMarkedContentWithoutMcid",
+                    PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_005_RectangleMarkedContentWithoutMcid", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent() throws IOException {
-
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -634,7 +719,12 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .setFillColor(ColorConstants.RED);
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
         });
-        framework.assertBothValid("checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent", pdfUAConformance);
+        }
     }
 
     @Test
@@ -719,8 +809,9 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 DESTINATION_FOLDER, "diff_"));
     }
 
-    @Test
-    public void checkPoint_01_004_bezierCurveInvalidMCID() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_004_bezierCurveInvalidMCID(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -733,12 +824,18 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .setStrokeColor(ColorConstants.RED)
                     .fill();
         });
-        framework.assertBothFail("checkPoint_01_004_bezierCurveInvalidMCID",
-                PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT, false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("checkPoint_01_004_bezierCurveInvalidMCID",
+                    PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT, false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_004_bezierCurveInvalidMCID", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_004_bezierCurveInvalidMCID_NoContent() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_004_bezierCurveInvalidMCID_NoContent(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -750,7 +847,12 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .lineTo(300, 300)
                     .setStrokeColor(ColorConstants.RED);
         });
-        framework.assertBothValid("checkPoint_01_004_bezierCurveInvalidMCID_NoContent");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("checkPoint_01_004_bezierCurveInvalidMCID_NoContent", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("checkPoint_01_004_bezierCurveInvalidMCID_NoContent", pdfUAConformance);
+        }
     }
 
     @Test
@@ -981,8 +1083,9 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
-    @Test
-    public void checkPoint_19_003_iDEntryInNoteTagIsNotPresent() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_19_003_iDEntryInNoteTagIsNotPresent(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfFont font = null;
             try {
@@ -1010,11 +1113,18 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .restoreState()
                     .closeTag();
         });
-        framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY,
+                    pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("invalidNoteTag02", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_19_003_validNoteTagIsPresent() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_19_003_validNoteTagIsPresent(PdfUAConformance pdfUAConformance) throws IOException, InterruptedException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfFont font = null;
             try {
@@ -1042,17 +1152,22 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .restoreState()
                     .closeTag();
         });
-        framework.assertBothValid("validNoteTagPresent");
 
-        String outPdf = DESTINATION_FOLDER + "layout_validNoteTagPresent.pdf";
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_validNoteTagPresent.pdf",
-                DESTINATION_FOLDER, "diff_")
-        );
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("validNoteTagPresent", pdfUAConformance);
+            String outPdf = DESTINATION_FOLDER + "layout_validNoteTagPresent" + pdfUAConformance + ".pdf";
+            Assertions.assertNull(new CompareTool().compareByContent(outPdf,
+                    SOURCE_FOLDER + "cmp_validNoteTagPresent.pdf",
+                    DESTINATION_FOLDER, "diff_")
+            );
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("invalidNoteTag02", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void usingCharacterWithoutUnicodeMappingTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void usingCharacterWithoutUnicodeMappingTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfFont font;
             try {
@@ -1080,8 +1195,14 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .restoreState()
                     .closeTag();
         });
-        framework.assertBothFail("usingCharacterWithoutUnicodeMappingTest",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, " "), false);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("usingCharacterWithoutUnicodeMappingTest",
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, " "),
+                    false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertVeraPdfFail("usingCharacterWithoutUnicodeMappingTest", pdfUAConformance);
+        }
     }
 
     private PdfFont getFont() {
