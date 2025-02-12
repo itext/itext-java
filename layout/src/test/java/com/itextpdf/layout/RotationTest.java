@@ -482,6 +482,387 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void cellRotationNoSizesSetTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationNoSizesSetTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationNoSizesSetTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void cellRotationTableWidthTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableWidthTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableWidthTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1);
+        table.setWidth(60);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void cellRotationTableHeightTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableHeightTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableHeightTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1);
+        table.setHeight(60);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void cellRotationTableSetSizeTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableSetSizeTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableSetSizeTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1);
+        table.setHeight(70).setWidth(200);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void cellRotationCellWidthTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationCellWidthTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationCellWidthTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setWidth(140)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT),
+    @LogMessage(messageTemplate = IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER)})
+    public void cellRotationCellHeightTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationCellHeightTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationCellHeightTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setHeight(70)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void cellRotationCellSizesTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationCellSizesTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationCellSizesTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setHeight(70)
+                .setWidth(140)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    public void cellRotationTableAndCellSizesTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableAndCellSizesTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableAndCellSizesTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1)
+                .setHeight(140)
+                .setWidth(70);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setHeight(70)
+                .setWidth(140)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    public void cellRotationTableWidthCellSizesTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableWidthCellSizesTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableWidthCellSizesTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1)
+                .setWidth(70);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setHeight(70)
+                .setWidth(140)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
+    public void cellRotationTableHeightCellSizesTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableHeightCellSizesTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableHeightCellSizesTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1)
+                .setHeight(140);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setHeight(70)
+                .setWidth(140)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    public void cellRotationTableSizesCellHeightTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableSizesCellHeightTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableSizesCellHeightTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1)
+                .setWidth(70)
+                .setHeight(140);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setHeight(70)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void cellRotationTableSizesCellWidthTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableSizesCellWidthTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableSizesCellWidthTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1)
+                .setWidth(70)
+                .setHeight(140);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setWidth(140)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void cellRotationTableWidthCellWidthTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableWidthCellWidthTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableWidthCellWidthTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1)
+                .setWidth(70);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setWidth(140)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    public void cellRotationTableWidthCellHeightTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableWidthCellHeightTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableWidthCellHeightTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1)
+                .setWidth(70);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setHeight(70)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT),
+            @LogMessage(messageTemplate = IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER)})
+    public void cellRotationTableHeightCellHeightTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableHeightCellHeightTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableHeightCellHeightTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1)
+                .setHeight(140);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setHeight(70)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
+    public void cellRotationTableHeightCellWidthTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "cellRotationTableHeightCellWidthTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableHeightCellWidthTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1)
+                .setHeight(140);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
+                .setWidth(140)
+                .setRotationAngle(Math.toRadians(90));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
     // TODO DEVSIX-5029 Content of the first cell is missing
     public void cellRotationParagraphIsGone() throws IOException, InterruptedException {
         String testName = "cellRotationParagraphIsGone.pdf";
