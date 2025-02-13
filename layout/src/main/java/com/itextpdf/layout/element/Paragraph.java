@@ -23,15 +23,18 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.properties.Leading;
+import com.itextpdf.layout.properties.LineHeight;
 import com.itextpdf.layout.properties.ParagraphOrphansControl;
 import com.itextpdf.layout.properties.ParagraphWidowsControl;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -209,25 +212,46 @@ public class Paragraph extends BlockElement<Paragraph> {
 
     /**
      * Sets the leading value, using the {@link Leading#FIXED} strategy.
+     * <p>
+     * If for the element {@link RenderingMode#HTML_MODE} is enabled, than {@link Property#LINE_HEIGHT}
+     * property will be set instead of default layout {@link Property#LEADING}.
      *
      * @param leading the new leading value
+     *
      * @return this Paragraph
+     *
      * @see Leading
+     * @see LineHeight
      */
     public Paragraph setFixedLeading(float leading) {
-        setProperty(Property.LEADING, new Leading(Leading.FIXED, leading));
+        if (RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
+            setProperty(Property.LINE_HEIGHT, LineHeight.createFixedValue(leading));
+        } else {
+            setProperty(Property.LEADING, new Leading(Leading.FIXED, leading));
+        }
         return this;
     }
 
     /**
      * Sets the leading value, using the {@link Leading#MULTIPLIED} strategy.
+     * <p>
+     * If for the element {@link RenderingMode#HTML_MODE} is enabled, than {@link Property#LINE_HEIGHT}
+     * property will be set instead of default layout {@link Property#LEADING}.
      *
      * @param leading the new leading value
+     *
      * @return this Paragraph
+     *
      * @see Leading
+     * @see LineHeight
      */
     public Paragraph setMultipliedLeading(float leading) {
-        setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, leading));
+        if (RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
+            setProperty(Property.LINE_HEIGHT, LineHeight.createMultipliedValue(leading));
+        } else {
+            setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, leading));
+        }
+
         return this;
     }
 

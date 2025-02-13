@@ -38,28 +38,27 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ParagraphTest extends ExtendedITextTest {
-
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/ParagraphTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ParagraphTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/ParagraphTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/ParagraphTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void cannotPlaceABigChunkOnALineTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "cannotPlaceABigChunkOnALineTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_cannotPlaceABigChunkOnALineTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "cannotPlaceABigChunkOnALineTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_cannotPlaceABigChunkOnALineTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
@@ -72,13 +71,13 @@ public class ParagraphTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void cannotPlaceABigChunkOnALineTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "cannotPlaceABigChunkOnALineTest02.pdf";
-        String cmpFileName = sourceFolder + "cmp_cannotPlaceABigChunkOnALineTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "cannotPlaceABigChunkOnALineTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_cannotPlaceABigChunkOnALineTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
@@ -91,13 +90,13 @@ public class ParagraphTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void forceOverflowForTextRendererPartialResult01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "forceOverflowForTextRendererPartialResult01.pdf";
-        String cmpFileName = sourceFolder + "cmp_forceOverflowForTextRendererPartialResult01.pdf";
+        String outFileName = DESTINATION_FOLDER + "forceOverflowForTextRendererPartialResult01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_forceOverflowForTextRendererPartialResult01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
@@ -111,7 +110,7 @@ public class ParagraphTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -121,8 +120,8 @@ public class ParagraphTest extends ExtendedITextTest {
     })
     // TODO DEVSIX-4622
     public void wordWasSplitAndItWillFitOntoNextLineTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "wordWasSplitAndItWillFitOntoNextLineTest02.pdf";
-        String cmpFileName = sourceFolder + "cmp_wordWasSplitAndItWillFitOntoNextLineTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "wordWasSplitAndItWillFitOntoNextLineTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_wordWasSplitAndItWillFitOntoNextLineTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -137,13 +136,13 @@ public class ParagraphTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void paragraphUsingSvgRenderingModeTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "paragraphUsingSvgRenderingMode.pdf";
-        String cmpFileName = sourceFolder + "cmp_paragraphUsingSvgRenderingMode.pdf";
+        String outFileName = DESTINATION_FOLDER + "paragraphUsingSvgRenderingMode.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_paragraphUsingSvgRenderingMode.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             Paragraph paragraph1 = new Paragraph().setBorder(new SolidBorder(ColorConstants.YELLOW, 1));
@@ -164,6 +163,46 @@ public class ParagraphTest extends ExtendedITextTest {
             document.add(paragraph2);
         }
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void leadingInHtmlModeTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "leadingInHtmlModeTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_leadingInHtmlModeTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+
+            String longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. "
+                    + "Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa.";
+
+
+            Paragraph paragraph1 = new Paragraph(longText).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+            paragraph1.setFixedLeading(40);
+
+            Paragraph paragraph2 = new Paragraph(longText).setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+            paragraph2.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            paragraph2.setFixedLeading(40);
+
+            document.add(new Paragraph("Default rendering mode:"));
+            document.add(paragraph1);
+            document.add(new Paragraph("HTML rendering mode:"));
+            document.add(paragraph2);
+
+            Paragraph paragraph3 = new Paragraph(longText).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+            paragraph3.setMultipliedLeading(5);
+
+            Paragraph paragraph4 = new Paragraph(longText).setBorder(new SolidBorder(ColorConstants.BLUE, 1));
+            paragraph4.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            paragraph4.setMultipliedLeading(5);
+
+            document.add(new Paragraph("Default rendering mode:"));
+            document.add(paragraph3);
+            document.add(new Paragraph("HTML rendering mode:"));
+            document.add(paragraph4);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 }
