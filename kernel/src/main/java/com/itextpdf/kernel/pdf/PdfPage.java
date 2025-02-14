@@ -885,19 +885,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (getDocument().isTagged()) {
             if (tagAnnotation) {
                 TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
-                if (!StandardRoles.ANNOT.equals(tagPointer.getRole())
-                        // "Annot" tag was added starting from PDF 1.5
-                        && PdfVersion.PDF_1_4.compareTo(getDocument().getPdfVersion()) < 0) {
-
-                    if (!(annotation instanceof PdfWidgetAnnotation) && !(annotation instanceof PdfLinkAnnotation)
-                            && !(annotation instanceof PdfPrinterMarkAnnotation)) {
-                        tagPointer.addTag(StandardRoles.ANNOT);
-                    }
-                }
+                boolean tagAdded = addAnnotationTag(tagPointer, annotation);
                 PdfPage prevPage = tagPointer.getCurrentPage();
                 tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
                 if (prevPage != null) {
                     tagPointer.setPageForTagging(prevPage);
+                }
+                if (tagAdded) {
+                    tagPointer.moveToParent();
                 }
             }
             if (getTabOrder() == null) {
@@ -921,6 +916,30 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
 
         return this;
+    }
+
+    private boolean addAnnotationTag(TagTreePointer tagPointer, PdfAnnotation annotation) {
+        if (annotation instanceof PdfLinkAnnotation) {
+            // "Link" tag was added starting from PDF 1.4
+            if (PdfVersion.PDF_1_3.compareTo(getDocument().getPdfVersion()) < 0) {
+                if (!StandardRoles.LINK.equals(tagPointer.getRole())) {
+                    tagPointer.addTag(StandardRoles.LINK);
+                    return true;
+                }
+            }
+        } else {
+            if (!(annotation instanceof PdfWidgetAnnotation)
+                    && !(annotation instanceof PdfPrinterMarkAnnotation)) {
+                // "Annot" tag was added starting from PDF 1.5
+                if (PdfVersion.PDF_1_4.compareTo(getDocument().getPdfVersion()) < 0) {
+                    if (!StandardRoles.ANNOT.equals(tagPointer.getRole())) {
+                        tagPointer.addTag(StandardRoles.ANNOT);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

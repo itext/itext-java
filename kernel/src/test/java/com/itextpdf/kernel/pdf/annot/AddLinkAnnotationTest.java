@@ -32,20 +32,17 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
@@ -262,4 +259,24 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 
+    @Test
+    public void addLinkAnnotInTagged13PdfTest() throws Exception {
+        String outPdf = destinationFolder + "addLinkAnnotInTagged13PdfTest.pdf";
+        String cmpPdf = sourceFolder + "cmp_addLinkAnnotInTagged13PdfTest.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(
+                outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_1_3)))) {
+            pdfDoc.setTagged();
+
+            PdfPage page = pdfDoc.addNewPage();
+
+            PdfLinkAnnotation annot = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(100, 600, 50, 40))
+                    .setAction(PdfAction.createURI("http://itextpdf.com"))
+                    .setBorder(new PdfArray(new float[]{0, 0, 1}))
+                    .setColor(new PdfArray(new float[]{1, 0, 0}));
+            page.addAnnotation(annot);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_"));
+    }
 }

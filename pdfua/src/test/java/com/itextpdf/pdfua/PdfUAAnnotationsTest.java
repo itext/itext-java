@@ -29,6 +29,7 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
@@ -111,7 +112,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void ua1LinkAnnotNoDirectChildOfAnnotTest() throws IOException {
+    public void linkAnnotNotDirectChildOfAnnotLayoutTest() throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -127,7 +128,19 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                 return paragraph;
             }
         });
-        framework.assertBothValid("ua1LinkAnnotNoDirectChildOfAnnotTest");
+        framework.assertBothValid("linkAnnotNotDirectChildOfAnnotLayoutTest");
+    }
+
+    @Test
+    public void linkAnnotNotDirectChildOfAnnotKernelTest() throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            Rectangle rect = new Rectangle(100, 650, 400, 100);
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+            annot.setContents("link annot");
+            pdfDoc.addNewPage();
+            pdfDoc.getPage(1).addAnnotation(annot);
+        });
+        framework.assertBothValid("linkAnnotNotDirectChildOfAnnotKernelTest");
     }
 
     @Test
@@ -262,6 +275,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
             pdfPage.addAnnotation(stamp);
             TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            tagPointer.moveToKid(0);
             tagPointer.getProperties().setAlternateDescription("Alt description");
         });
         framework.assertBothValid("ua1StampAnnotWithAltTest");
@@ -274,8 +288,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
             pdfPage.addAnnotation(screen);
             TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            tagPointer.moveToKid(0);
             tagPointer.getProperties().setAlternateDescription("Alt description");
-
         });
         framework.assertBothValid("ua1ScreenAnnotWithAltTest");
     }
@@ -397,19 +411,6 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void linkAnnotNotDirectChildOfLinkTest1() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
-            PdfPage page = pdfDoc.addNewPage();
-
-            Rectangle rect = new Rectangle(100, 650, 400, 100);
-            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
-            annot.setContents("link annot");
-            page.addAnnotation(annot);
-        });
-        framework.assertBothFail("linkAnnotNotDirectChildOfLinkTest1", PdfUAExceptionMessageConstants.LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK);
-    }
-
-    @Test
     public void linkAnnotNotDirectChildOfLinkTest2() throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -430,7 +431,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             p1.add(p2);
             doc.add(p1);
         });
-        framework.assertBothFail("linkAnnotNotDirectChildOfLinkTest2", PdfUAExceptionMessageConstants.LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK);
+        framework.assertBothValid("linkAnnotNotDirectChildOfLinkTest2");
     }
 
     @Test
@@ -681,26 +682,6 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             page.addAnnotation(screen);
         });
         framework.assertBothFail("screenAnnotationWithMediaDataTest", PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP);
-    }
-
-    @Test
-    public void linkAnnotNotDirectChildOfLinkInvalidCropTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "linkAnnotNotDirectChildOfLinkInvalidCropTest.pdf";
-
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfPage page = pdfDoc.addNewPage();
-        PdfArray array = new PdfArray();
-        array.add(new PdfString("hey"));
-        page.put(PdfName.CropBox, array);
-
-        Rectangle rect = new Rectangle(10000, 6500, 400, 100);
-        PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
-        annot.setContents("link annot");
-        page.addAnnotation(annot);
-        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
-        // VeraPdf doesn't complain, but the document is invalid, so it is also accepted behaviour
-        Assertions.assertEquals(PdfUAExceptionMessageConstants.LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK, e.getMessage());
     }
 
     @Test
