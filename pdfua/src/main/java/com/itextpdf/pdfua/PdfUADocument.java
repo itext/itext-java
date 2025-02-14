@@ -34,6 +34,8 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.Pdf20Checker;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 import com.itextpdf.pdfua.checkers.PdfUA2Checker;
@@ -50,6 +52,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfUADocument extends PdfDocument {
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfUADocument.class);
+
+    private IValidationChecker pdf20Checker;
 
     /**
      * Creates a PdfUADocument instance.
@@ -75,6 +79,9 @@ public class PdfUADocument extends PdfDocument {
         setupUAConfiguration(config);
         final ValidationContainer validationContainer = new ValidationContainer();
         final PdfUAChecker checker = getCorrectCheckerFromConformance(config.getConformance());
+        if (pdf20Checker != null) {
+            validationContainer.addChecker(pdf20Checker);
+        }
         validationContainer.addChecker(checker);
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfUAPageFactory(checker);
@@ -109,6 +116,9 @@ public class PdfUADocument extends PdfDocument {
 
         final ValidationContainer validationContainer = new ValidationContainer();
         final PdfUAChecker checker = getCorrectCheckerFromConformance(config.getConformance());
+        if (pdf20Checker != null) {
+            validationContainer.addChecker(pdf20Checker);
+        }
         validationContainer.addChecker(checker);
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfUAPageFactory(checker);
@@ -155,6 +165,7 @@ public class PdfUADocument extends PdfDocument {
                 break;
             case "2":
                 checker = new PdfUA2Checker(this);
+                pdf20Checker = new Pdf20Checker();
                 break;
             default:
                 throw new IllegalArgumentException(

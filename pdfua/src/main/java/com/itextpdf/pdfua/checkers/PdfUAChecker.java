@@ -22,7 +22,14 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.kernel.pdf.PdfBoolean;
+import com.itextpdf.kernel.pdf.PdfCatalog;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
+import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +63,27 @@ public abstract class PdfUAChecker implements IValidationChecker {
         if (!warnedOnPageFlush) {
             LoggerFactory.getLogger(PdfUAChecker.class).warn(PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED);
             warnedOnPageFlush = true;
+        }
+    }
+
+    /**
+     * Checks that the {@code ViewerPreferences} dictionary of the document catalog dictionary is present and contains
+     * at least the {@code DisplayDocTitle} key with a value of {@code true}, as defined in
+     * ISO 32000-1:2008, 12.2, Table 150 or ISO 32000-2:2020, Table 147.
+     *
+     * @param catalog {@link PdfCatalog} document catalog dictionary
+     */
+    void checkViewerPreferences(PdfCatalog catalog) {
+        PdfDictionary viewerPreferences = catalog.getPdfObject().getAsDictionary(PdfName.ViewerPreferences);
+        if (viewerPreferences == null) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES);
+        }
+        PdfObject displayDocTitle = viewerPreferences.get(PdfName.DisplayDocTitle);
+        if (!(displayDocTitle instanceof PdfBoolean)) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES);
+        }
+        if (PdfBoolean.FALSE.equals(displayDocTitle)) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.VIEWER_PREFERENCES_IS_FALSE);
         }
     }
 }

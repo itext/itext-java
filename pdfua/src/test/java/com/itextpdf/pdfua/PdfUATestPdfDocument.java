@@ -34,22 +34,30 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 public class PdfUATestPdfDocument extends PdfUADocument {
 
     public PdfUATestPdfDocument(PdfWriter writer) {
-        super(writer, createConfig());
+        this(writer, PdfUAConformance.PDF_UA_1);
+    }
+
+    public PdfUATestPdfDocument(PdfWriter writer, PdfUAConformance conformance) {
+        super(writer, createConfig(conformance));
     }
 
     public PdfUATestPdfDocument(PdfWriter writer, DocumentProperties properties) {
-        super(writer, properties, createConfig());
+        super(writer, properties, createConfig(PdfUAConformance.PDF_UA_1));
     }
 
     public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer) {
-        super(reader, writer, createConfig());
+        this(reader, writer, PdfUAConformance.PDF_UA_1);
+    }
+
+    public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer,  PdfUAConformance conformance) {
+        super(reader, writer, createConfig(conformance));
     }
 
     public PdfUATestPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
-        super(reader, writer, properties, createConfig());
+        super(reader, writer, properties, createConfig(PdfUAConformance.PDF_UA_1));
     }
 
-    private static PdfUAConfig createConfig() {
-        return new PdfUAConfig(PdfUAConformance.PDF_UA_1, "English pangram", "en-US");
+    private static PdfUAConfig createConfig(PdfUAConformance uaConformance) {
+        return new PdfUAConfig(uaConformance, "English pangram", "en-US");
     }
 }

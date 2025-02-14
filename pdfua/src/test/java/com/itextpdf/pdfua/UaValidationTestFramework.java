@@ -25,20 +25,22 @@ package com.itextpdf.pdfua;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import org.junit.jupiter.api.Assertions;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import org.junit.jupiter.api.Assertions;
 
 /**
  * Class that helps to test PDF/UA conformance.
@@ -53,6 +55,8 @@ public class UaValidationTestFramework {
     private final List<Generator<IBlockElement>> elementProducers = new ArrayList<>();
 
     private final List<Consumer<PdfDocument>> beforeGeneratorHook = new ArrayList<>();
+    private PdfUAConformance conformance = PdfUAConformance.PDF_UA_1;
+
     public UaValidationTestFramework(String destinationFolder) {
         this(destinationFolder, true);
     }
@@ -60,6 +64,11 @@ public class UaValidationTestFramework {
     public UaValidationTestFramework(String destinationFolder, boolean defaultCheckDocClosingByReopening) {
         this.destinationFolder = destinationFolder;
         this.defaultCheckDocClosingByReopening = defaultCheckDocClosingByReopening;
+    }
+
+    public UaValidationTestFramework setConformance(PdfUAConformance conformance) {
+        this.conformance = conformance;
+        return this;
     }
 
     public void addSuppliers(Generator<IBlockElement>... suppliers) {
@@ -129,8 +138,9 @@ public class UaValidationTestFramework {
     private String verAPdfResult(String filename, boolean failureExpected) throws IOException {
         String outfile = UrlUtil.getNormalizedFileUriString(destinationFolder + filename);
         System.out.println(outfile);
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(destinationFolder + filename));
+        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(destinationFolder + filename,
+                new WriterProperties().setPdfVersion(conformance == PdfUAConformance.PDF_UA_1 ? PdfVersion.PDF_1_7 :
+                        PdfVersion.PDF_2_0)), conformance);
 
         Document document = new Document(pdfDoc);
         document.getPdfDocument().getDiContainer().register(ValidationContainer.class, new ValidationContainer());
@@ -167,8 +177,9 @@ public class UaValidationTestFramework {
         try {
             final String outPath = destinationFolder + filename;
             System.out.println(UrlUtil.getNormalizedFileUriString(outPath));
-            PdfDocument pdfDoc = new PdfUATestPdfDocument(
-                    new PdfWriter(outPath));
+            PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPath, new WriterProperties()
+                    .setPdfVersion(conformance == PdfUAConformance.PDF_UA_1 ? PdfVersion.PDF_1_7 : PdfVersion.PDF_2_0)),
+                    conformance);
             for (Consumer<PdfDocument> pdfDocumentConsumer : this.beforeGeneratorHook) {
                 pdfDocumentConsumer.accept(pdfDoc);
             }
@@ -188,9 +199,9 @@ public class UaValidationTestFramework {
             final String outPath = destinationFolder + "reopen_" + filename;
             final String inPath = destinationFolder + filename;
             System.out.println(UrlUtil.getNormalizedFileUriString(outPath));
-            PdfDocument pdfDoc = new PdfUATestPdfDocument(
-                    new PdfReader(inPath),
-                    new PdfWriter(outPath));
+            PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfReader(inPath), new PdfWriter(outPath,
+                    new WriterProperties().setPdfVersion(conformance == PdfUAConformance.PDF_UA_1 ? PdfVersion.PDF_1_7 :
+                            PdfVersion.PDF_2_0)), conformance);
 
             pdfDoc.close();
         } catch (Exception e) {

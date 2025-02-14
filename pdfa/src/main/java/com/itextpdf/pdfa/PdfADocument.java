@@ -32,6 +32,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.validation.Pdf20Checker;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.pdfa.checker.PdfA1Checker;
 import com.itextpdf.pdfa.checker.PdfA2Checker;
@@ -87,6 +88,10 @@ public class PdfADocument extends PdfDocument {
 
         PdfAChecker checker = getCorrectCheckerFromConformance(getConformance().getAConformance());
         ValidationContainer validationContainer = new ValidationContainer();
+        if (PdfVersion.PDF_2_0.compareTo(
+                getPdfVersionAccordingToConformance(getConformance().getAConformance())) <= 0) {
+            validationContainer.addChecker(new Pdf20Checker());
+        }
         validationContainer.addChecker(checker);
         getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfAPageFactory(checker);
@@ -123,6 +128,10 @@ public class PdfADocument extends PdfDocument {
 
         PdfAChecker checker = getCorrectCheckerFromConformance(getConformance().getAConformance());
         ValidationContainer validationContainer = new ValidationContainer();
+        if (PdfVersion.PDF_2_0.compareTo(
+                getPdfVersionAccordingToConformance(getConformance().getAConformance())) <= 0) {
+            validationContainer.addChecker(new Pdf20Checker());
+        }
         validationContainer.addChecker(checker);
         getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfAPageFactory(checker);

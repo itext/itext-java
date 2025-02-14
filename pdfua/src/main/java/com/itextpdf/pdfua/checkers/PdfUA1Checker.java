@@ -66,8 +66,8 @@ import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.NoteCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.XfaCheckUtil;
-import com.itextpdf.pdfua.checkers.utils.headings.HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1HeadingsChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
@@ -90,7 +90,7 @@ public class PdfUA1Checker extends PdfUAChecker {
 
     private final TagStructureContext tagStructureContext;
 
-    private final HeadingsChecker headingsChecker;
+    private final PdfUA1HeadingsChecker headingsChecker;
 
     private final PdfUAValidationContext context;
 
@@ -104,7 +104,7 @@ public class PdfUA1Checker extends PdfUAChecker {
         this.pdfDocument = pdfDocument;
         this.tagStructureContext = new TagStructureContext(pdfDocument);
         this.context = new PdfUAValidationContext(pdfDocument);
-        this.headingsChecker = new HeadingsChecker(context);
+        this.headingsChecker = new PdfUA1HeadingsChecker(context);
     }
 
     /**
@@ -182,6 +182,17 @@ public class PdfUA1Checker extends PdfUAChecker {
         }
     }
 
+    /**
+     * Checks that the {@code Catalog} dictionary of a conforming file (the version number of a file may be any value
+     * from 1.0 to 1.7) contains the {@code Metadata} key whose value is a metadata stream. Also checks that the value
+     * of {@code pdfuaid:part} is 1 for conforming PDF files.
+     *
+     * <p>
+     * Checks that the {@code Metadata} stream in the document catalog dictionary includes a {@code dc:title} entry
+     * reflecting the title of the document.
+     *
+     * @param catalog {@link PdfCatalog} document catalog dictionary
+     */
     protected void checkMetadata(PdfCatalog catalog) {
         if (catalog.getDocument().getPdfVersion().compareTo(PdfVersion.PDF_1_7) > 0) {
             throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.INVALID_PDF_VERSION);
@@ -190,34 +201,23 @@ public class PdfUA1Checker extends PdfUAChecker {
         try {
             XMPMeta metadata = catalog.getDocument().getXmpMetadata();
             if (metadata == null) {
-                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM);
+                throw new PdfUAConformanceException(
+                        PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM);
             }
 
             Integer part = metadata.getPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART);
             if (!Integer.valueOf(1).equals(part)) {
-                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.METADATA_SHALL_CONTAIN_UA_VERSION_IDENTIFIER);
+                throw new PdfUAConformanceException(
+                        PdfUAExceptionMessageConstants.METADATA_SHALL_CONTAIN_UA_VERSION_IDENTIFIER);
             }
             if (metadata.getProperty(XMPConst.NS_DC, XMPConst.TITLE) == null) {
-                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.METADATA_SHALL_CONTAIN_DC_TITLE_ENTRY);
+                throw new PdfUAConformanceException(
+                        PdfUAExceptionMessageConstants.METADATA_SHALL_CONTAIN_DC_TITLE_ENTRY);
             }
         } catch (XMPException e) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM, e);
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM, e);
         }
-    }
-
-    private void checkViewerPreferences(PdfCatalog catalog) {
-        PdfDictionary viewerPreferences = catalog.getPdfObject().getAsDictionary(PdfName.ViewerPreferences);
-        if (viewerPreferences == null) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES);
-        }
-        PdfObject displayDocTitle = viewerPreferences.get(PdfName.DisplayDocTitle);
-        if (!(displayDocTitle instanceof PdfBoolean)) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES);
-        }
-        if (PdfBoolean.FALSE.equals(displayDocTitle)) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.VIEWER_PREFERENCES_IS_FALSE);
-        }
-
     }
 
     private void checkOnWritingCanvasToContent(Stack<Tuple2<PdfName, PdfDictionary>> tagStack) {
@@ -354,7 +354,7 @@ public class PdfUA1Checker extends PdfUAChecker {
         tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
         tagTreeIterator.addHandler(new FormulaCheckUtil.FormulaTagHandler(context));
         tagTreeIterator.addHandler(new NoteCheckUtil.NoteTagHandler(context));
-        tagTreeIterator.addHandler(new HeadingsChecker.HeadingHandler(context));
+        tagTreeIterator.addHandler(new PdfUA1HeadingsChecker.PdfUA1HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
         tagTreeIterator.addHandler(new AnnotationCheckUtil.AnnotationHandler(context));
         tagTreeIterator.addHandler(new FormCheckUtil.FormTagHandler(context));

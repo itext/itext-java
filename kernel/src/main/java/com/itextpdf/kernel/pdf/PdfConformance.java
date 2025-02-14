@@ -213,8 +213,13 @@ public class PdfConformance {
         // But if e.g. for PDF/A-4 revision wasn't specified, we will fix it.
         if (conformance.isPdfUA()) {
             if (xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.PART) == null) {
-                xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1,
+                xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART,
+                        Integer.parseInt(conformance.getUAConformance().getPart()),
                         new PropertyOptions(PropertyOptions.SEPARATE_NODE));
+            }
+            if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2 &&
+                    xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.REV) == null) {
+                xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.REV, 2024);
             }
         }
         if (conformance.isPdfA()) {

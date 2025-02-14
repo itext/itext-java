@@ -22,18 +22,24 @@
  */
 package com.itextpdf.pdfua;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.Pdf20ConformanceException;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
+import com.itextpdf.pdfua.checkers.PdfUA2Checker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -42,6 +48,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -150,6 +157,200 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
+    @Test
+    public void validMetadataUA2Test() throws IOException {
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2)) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "metadata_ua2.xmp"));
+            PdfStream metadata = new PdfStream(bytes);
+            metadata.put(PdfName.Type, PdfName.Metadata);
+            metadata.put(PdfName.Subtype, PdfName.XML);
+            catalog.put(PdfName.Metadata, metadata);
+
+            PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+            AssertUtil.doesNotThrow(() -> checker.checkMetadata(catalog));
+        }
+    }
+
+    @Test
+    public void catalogNoMetadataUA2Test() {
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2)) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+            catalog.remove(PdfName.Metadata);
+
+            PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+            Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> checker.checkMetadata(catalog));
+            Assertions.assertEquals(KernelExceptionMessageConstant.METADATA_SHALL_BE_PRESENT_IN_THE_CATALOG_DICTIONARY,
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void catalogInvalidMetadataUA2Test() {
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2)) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+            catalog.put(PdfName.Metadata, new PdfString("Error"));
+
+            PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+            Exception e = Assertions.assertThrows(PdfUAConformanceException.class,
+                    () -> checker.checkMetadata(catalog));
+            Assertions.assertEquals(KernelExceptionMessageConstant.INVALID_METADATA_VALUE, e.getMessage());
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)
+    })
+    public void brokenMetadataUA2Test() throws IOException {
+        PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2);
+        pdfDocument.addNewPage();
+        PdfCatalog catalog = pdfDocument.getCatalog();
+
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "invalid_metadata_ua2.xmp"));
+        PdfStream metadata = new PdfStream(bytes);
+        metadata.put(PdfName.Type, PdfName.Metadata);
+        metadata.put(PdfName.Subtype, PdfName.XML);
+        catalog.put(PdfName.Metadata, metadata);
+
+        PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> checker.checkMetadata(catalog));
+        Assertions.assertEquals(KernelExceptionMessageConstant.INVALID_METADATA_VALUE, e.getMessage());
+        e = Assertions.assertThrows(Pdf20ConformanceException.class, () -> pdfDocument.close());
+        Assertions.assertEquals(KernelExceptionMessageConstant.INVALID_METADATA_VALUE, e.getMessage());
+    }
+
+    @Test
+    public void documentWithNoPartInMetadataUA2Test() throws IOException {
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2)) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "metadata_no_part_ua2.xmp"));
+            PdfStream metadata = new PdfStream(bytes);
+            metadata.put(PdfName.Type, PdfName.Metadata);
+            metadata.put(PdfName.Subtype, PdfName.XML);
+            catalog.put(PdfName.Metadata, metadata);
+
+            PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+            Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> checker.checkMetadata(catalog));
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, 2, null),
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void documentWithInvalidPartInMetadataUA2Test() throws IOException {
+        PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2);
+        pdfDocument.addNewPage();
+        PdfCatalog catalog = pdfDocument.getCatalog();
+
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "metadata_invalid_part_ua2.xmp"));
+        PdfStream metadata = new PdfStream(bytes);
+        metadata.put(PdfName.Type, PdfName.Metadata);
+        metadata.put(PdfName.Subtype, PdfName.XML);
+        catalog.put(PdfName.Metadata, metadata);
+
+        PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> checker.checkMetadata(catalog));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, 2, 1),
+                e.getMessage());
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDocument.close());
+    }
+
+    @Test
+    public void documentWithNoRevInMetadataUA2Test() throws IOException {
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2)) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "metadata_no_rev_ua2.xmp"));
+            PdfStream metadata = new PdfStream(bytes);
+            metadata.put(PdfName.Type, PdfName.Metadata);
+            metadata.put(PdfName.Subtype, PdfName.XML);
+            catalog.put(PdfName.Metadata, metadata);
+
+            PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+            Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> checker.checkMetadata(catalog));
+            Assertions.assertEquals(
+                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void documentWithInvalidRevInMetadataUA2Test() throws IOException {
+        PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2);
+        pdfDocument.addNewPage();
+        PdfCatalog catalog = pdfDocument.getCatalog();
+
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "metadata_invalid_rev_ua2.xmp"));
+        PdfStream metadata = new PdfStream(bytes);
+        metadata.put(PdfName.Type, PdfName.Metadata);
+        metadata.put(PdfName.Subtype, PdfName.XML);
+        catalog.put(PdfName.Metadata, metadata);
+
+        PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> checker.checkMetadata(catalog));
+        Assertions.assertEquals(KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
+                e.getMessage());
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDocument.close());
+    }
+
+    @Test
+    public void documentWithInvalidLengthRevInMetadataUA2Test() throws IOException {
+        PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2);
+        pdfDocument.addNewPage();
+        PdfCatalog catalog = pdfDocument.getCatalog();
+
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "metadata_invalid_len_rev_ua2.xmp"));
+        PdfStream metadata = new PdfStream(bytes);
+        metadata.put(PdfName.Type, PdfName.Metadata);
+        metadata.put(PdfName.Subtype, PdfName.XML);
+        catalog.put(PdfName.Metadata, metadata);
+
+        PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> checker.checkMetadata(catalog));
+        Assertions.assertEquals(KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
+                e.getMessage());
+        Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDocument.close());
+    }
+
+    @Test
+    public void documentWithNoTitleInMetadataUA2Test() throws IOException {
+        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()),
+                PdfUAConformance.PDF_UA_2)) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "no_title_metadata_ua2.xmp"));
+            PdfStream metadata = new PdfStream(bytes);
+            metadata.put(PdfName.Type, PdfName.Metadata);
+            metadata.put(PdfName.Subtype, PdfName.XML);
+            catalog.put(PdfName.Metadata, metadata);
+
+            PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
+            Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> checker.checkMetadata(catalog));
+            Assertions.assertEquals(PdfUAExceptionMessageConstants.METADATA_SHALL_CONTAIN_DC_TITLE_ENTRY,
+                    e.getMessage());
+        }
+    }
+
     private static class PdfUA1MetadataChecker extends PdfUA1Checker {
         /**
          * Creates PdfUA1Checker instance with PDF document which will be validated against PDF/UA-1 standard.
@@ -157,6 +358,22 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
          * @param pdfDocument the document to validate
          */
         public PdfUA1MetadataChecker(PdfDocument pdfDocument) {
+            super(pdfDocument);
+        }
+
+        @Override
+        public void checkMetadata(PdfCatalog catalog) {
+            super.checkMetadata(catalog);
+        }
+    }
+
+    private static class PdfUA2MetadataChecker extends PdfUA2Checker {
+        /**
+         * Creates PdfUA2Checker instance with PDF document which will be validated against PDF/UA-2 standard.
+         *
+         * @param pdfDocument the document to validate
+         */
+        public PdfUA2MetadataChecker(PdfDocument pdfDocument) {
             super(pdfDocument);
         }
 

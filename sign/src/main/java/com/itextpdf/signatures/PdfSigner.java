@@ -72,6 +72,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.utils.IdleOutputStream;
+import com.itextpdf.kernel.validation.Pdf20Checker;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
 import com.itextpdf.kernel.validation.context.SignatureValidationContext;
@@ -1684,6 +1685,9 @@ public class PdfSigner {
             if (getConformance().isPdfA()) {
                 PdfAChecker checker = PdfADocument.getCorrectCheckerFromConformance(getConformance().getAConformance());
                 ValidationContainer validationContainer = new ValidationContainer();
+                if ("4".equals(getConformance().getAConformance().getPart())) {
+                    validationContainer.addChecker(new Pdf20Checker());
+                }
                 validationContainer.addChecker(checker);
                 getDiContainer().register(ValidationContainer.class, validationContainer);
                 this.pdfPageFactory = new PdfAPageFactory(checker);

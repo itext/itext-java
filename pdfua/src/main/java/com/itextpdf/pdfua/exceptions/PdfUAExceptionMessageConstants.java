@@ -47,6 +47,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM
             = "Document shall contain a XMP metadata stream.";
     public static final String DOCUMENT_USES_BOTH_H_AND_HN = "Document uses both H and H# tags.";
+    public static final String DOCUMENT_USES_H_TAG = "Document uses H tag: conforming files shall use the explicitly " +
+            "numbered heading structure types (H1-Hn) and shall not use the H structure type.";
     public static final String DYNAMIC_XFA_FORMS_SHALL_NOT_BE_USED = "Dynamic XFA forms shall not be used.";
     public static final String FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY =
             "File specification dictionary shall contain f key and uf key.";

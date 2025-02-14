@@ -28,6 +28,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -38,6 +39,7 @@ import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfCieBasedCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -501,14 +503,26 @@ public class PdfA4Checker extends PdfA3Checker {
      */
     @Override
     protected void checkMetaData(PdfDictionary catalog) {
-        super.checkMetaData(catalog);
         try {
+            try {
+                PdfCheckersUtil.checkMetadata(catalog, PdfConformance.PDF_A_4);
+            } catch (PdfException e) {
+                throw new PdfAConformanceException(e.getMessage());
+            }
             final PdfStream xmpMetadata = catalog.getAsStream(PdfName.Metadata);
             byte[] bytes = xmpMetadata.getBytes();
             isValidEncoding(bytes);
             checkPacketHeader(bytes);
             final XMPMeta meta = XMPMetaFactory.parse(new ByteArrayInputStream(bytes));
-            checkVersionIdentification(meta);
+            try {
+                XMPProperty prop = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE);
+                if (prop != null && !isValidXmpConformance(prop.getValue())) {
+                    throw new PdfAConformanceException(PdfaExceptionMessageConstant
+                            .XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_CONFORMANCE);
+                }
+            } catch (XMPException e) {
+                // Ignored because it is not required.
+            }
             checkFileProvenanceSpec(meta);
         } catch (XMPException ex) {
             throw new PdfException(ex);
@@ -607,29 +621,20 @@ public class PdfA4Checker extends PdfA3Checker {
         }
     }
 
+    /**
+     * A PDF/A-4e conforming file shall specify the value of {@code pdfa:conformance} as E. A PDF/A-4f conforming file
+     * shall specify the value of {@code pdfa:conformance} as F. A file that does not conform to either PDF/A-4e or
+     * PDF/A-4f shall not provide any {@code pdfa:conformance}.
+     *
+     * @param value {@code pdfa:conformance} value to check
+     *
+     * @return {@code true} if {@code pdfa:conformance} value is valid, {@code false} otherwise
+     */
     private static boolean isValidXmpConformance(String value) {
-        if (value == null) {
-            return false;
-        }
-        if (value.length() != 1) {
+        if (value == null || value.length() != 1) {
             return false;
         }
         return "F".equals(value) || "E".equals(value);
-    }
-
-    private static boolean isValidXmpRevision(String value) {
-        if (value == null) {
-            return false;
-        }
-        if (value.length() != 4) {
-            return false;
-        }
-        for (final char c : value.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private void checkPacketHeader(byte[] meta) {
@@ -673,42 +678,6 @@ public class PdfA4Checker extends PdfA3Checker {
             }
         } catch (XMPException e) {
             throw new PdfException(e);
-        }
-    }
-
-    private void checkVersionIdentification(XMPMeta meta) {
-        try {
-            XMPProperty prop = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
-            if (prop == null || !getAConformance().getPart().equals(prop.getValue())) {
-                throw new PdfAConformanceException(MessageFormatUtil.format(
-                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART,
-                        getAConformance().getPart()));
-            }
-        } catch (XMPException e) {
-            throw new PdfAConformanceException(MessageFormatUtil.format(
-                    PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART,
-                    getAConformance().getPart()));
-        }
-
-        try {
-            XMPProperty prop = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.REV);
-            if (prop == null || !isValidXmpRevision(prop.getValue())) {
-                throw new PdfAConformanceException(
-                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV);
-            }
-        } catch (XMPException e) {
-            throw new PdfAConformanceException(
-                    PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV);
-        }
-
-        try {
-            XMPProperty prop = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE);
-            if (prop != null && !isValidXmpConformance(prop.getValue())) {
-                throw new PdfAConformanceException(
-                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_CONFORMANCE);
-            }
-        } catch (XMPException e) {
-            // ignored because it is not required
         }
     }
 

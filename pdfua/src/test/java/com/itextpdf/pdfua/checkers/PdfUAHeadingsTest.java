@@ -29,6 +29,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -380,6 +381,76 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         canvas.closeTag();
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
         Assertions.assertEquals(PdfUAExceptionMessageConstants.H1_IS_SKIPPED, e.getMessage());
+    }
+
+    @Test
+    public void hInUA2DocumentTest() throws IOException {
+        UaValidationTestFramework pdfUA2Framework = new UaValidationTestFramework(DESTINATION_FOLDER)
+                .setConformance(PdfUAConformance.PDF_UA_2);
+        pdfUA2Framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Paragraph header1 = new Paragraph("Header");
+                header1.setFont(loadFont());
+                header1.getAccessibilityProperties().setRole(StandardRoles.H);
+                return header1;
+            }
+        });
+        pdfUA2Framework.assertBothFail("hInUA2DocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG);
+    }
+
+    @Test
+    public void hAndHnInUA2DocumentTest() throws IOException {
+        UaValidationTestFramework pdfUA2Framework = new UaValidationTestFramework(DESTINATION_FOLDER)
+                .setConformance(PdfUAConformance.PDF_UA_2);
+        pdfUA2Framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Paragraph h1 = new Paragraph("Header level 1");
+                h1.setFont(loadFont());
+                h1.getAccessibilityProperties().setRole(StandardRoles.H1);
+
+                Paragraph h2 = new Paragraph("Header level 2");
+                h2.setFont(loadFont());
+                h2.getAccessibilityProperties().setRole(StandardRoles.H2);
+                h1.add(h2);
+
+                Paragraph header1 = new Paragraph("Header");
+                header1.setFont(loadFont());
+                header1.getAccessibilityProperties().setRole(StandardRoles.H);
+                h2.add(header1);
+                return h1;
+            }
+        });
+        pdfUA2Framework.assertBothFail("hAndHnInUA2DocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG);
+    }
+
+    @Test
+    public void incorrectHeadingLevelInUA2Test() throws IOException {
+        UaValidationTestFramework pdfUA2Framework = new UaValidationTestFramework(DESTINATION_FOLDER)
+                .setConformance(PdfUAConformance.PDF_UA_2);
+        pdfUA2Framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Div div = new Div();
+                div.setBackgroundColor(ColorConstants.CYAN);
+
+                Paragraph h2 = new Paragraph("1.2 Header level 2");
+                h2.setFont(loadFont());
+                h2.getAccessibilityProperties().setRole(StandardRoles.H2);
+                div.add(h2);
+
+                Paragraph h1 = new Paragraph("1.2.3 Header level 3");
+                h1.setFont(loadFont());
+                h1.getAccessibilityProperties().setRole(StandardRoles.H1);
+                div.add(h1);
+                return h2;
+            }
+        });
+        // Where a heading’s level is evident, the heading level of the structure element enclosing it shall match that
+        // heading level, e.g. a heading with the real content “5.1.6.4 Some header” is evidently at heading level 4.
+        // This requirement is not checked by both iText and veraPDF.
+        pdfUA2Framework.assertBothValid("incorrectHeadingLevelInUA2Test");
     }
 
     // -------- Positive tests --------
@@ -749,6 +820,31 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.assertBothValid("hnMixedSequenceTest3");
+    }
+
+    @Test
+    public void nonSequentialHeadersInUA2Test() throws IOException {
+        UaValidationTestFramework pdfUA2Framework = new UaValidationTestFramework(DESTINATION_FOLDER)
+                .setConformance(PdfUAConformance.PDF_UA_2);
+        pdfUA2Framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Div div = new Div();
+                div.setBackgroundColor(ColorConstants.CYAN);
+
+                Paragraph h2 = new Paragraph("Header level 2");
+                h2.setFont(loadFont());
+                h2.getAccessibilityProperties().setRole(StandardRoles.H2);
+                div.add(h2);
+
+                Paragraph h1 = new Paragraph("Header level 1");
+                h1.setFont(loadFont());
+                h1.getAccessibilityProperties().setRole(StandardRoles.H1);
+                div.add(h1);
+                return h2;
+            }
+        });
+        pdfUA2Framework.assertBothValid("nonSequentialHeadersInUA2Test");
     }
 
     private static PdfFont loadFont() {

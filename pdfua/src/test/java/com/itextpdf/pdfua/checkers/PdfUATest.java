@@ -229,6 +229,25 @@ public class PdfUATest extends ExtendedITextTest {
     }
 
     @Test
+    public void documentWithoutViewerPreferencesUA2Test() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "documentWithoutViewerPreferencesUA2Test.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties()
+                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_2).setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDoc.setTagged();
+        ValidationContainer validationContainer = new ValidationContainer();
+        validationContainer.addChecker(new PdfUA2Checker(pdfDoc));
+        pdfDoc.getDiContainer().register(ValidationContainer.class, validationContainer);
+
+        pdfDoc.getCatalog().setLang(new PdfString("en-US"));
+        PdfDocumentInfo info = pdfDoc.getDocumentInfo();
+        info.setTitle("English pangram");
+
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES,
+                e.getMessage());
+    }
+
+    @Test
     public void documentWithEmptyViewerPreferencesTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithEmptyViewerPreferencesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
@@ -249,6 +268,26 @@ public class PdfUATest extends ExtendedITextTest {
     }
 
     @Test
+    public void documentWithEmptyViewerPreferencesUA2Test() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "documentWithEmptyViewerPreferencesUA2Test.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties()
+                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_2).setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDoc.setTagged();
+        ValidationContainer validationContainer = new ValidationContainer();
+        validationContainer.addChecker(new PdfUA2Checker(pdfDoc));
+        pdfDoc.getDiContainer().register(ValidationContainer.class, validationContainer);
+
+        pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences());
+        pdfDoc.getCatalog().setLang(new PdfString("en-US"));
+        PdfDocumentInfo info = pdfDoc.getDocumentInfo();
+        info.setTitle("English pangram");
+
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES,
+                e.getMessage());
+    }
+
+    @Test
     public void documentWithInvalidViewerPreferencesTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithEmptyViewerPreferencesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
@@ -256,6 +295,26 @@ public class PdfUATest extends ExtendedITextTest {
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
+        pdfDoc.getDiContainer().register(ValidationContainer.class, validationContainer);
+
+        pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(false));
+        pdfDoc.getCatalog().setLang(new PdfString("en-US"));
+        PdfDocumentInfo info = pdfDoc.getDocumentInfo();
+        info.setTitle("English pangram");
+
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.VIEWER_PREFERENCES_IS_FALSE,
+                e.getMessage());
+    }
+
+    @Test
+    public void documentWithInvalidViewerPreferencesUA2Test() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "documentWithEmptyViewerPreferencesUA2Test.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties()
+                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_2).setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDoc.setTagged();
+        ValidationContainer validationContainer = new ValidationContainer();
+        validationContainer.addChecker(new PdfUA2Checker(pdfDoc));
         pdfDoc.getDiContainer().register(ValidationContainer.class, validationContainer);
 
         pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(false));

@@ -30,8 +30,8 @@ import com.itextpdf.kernel.font.PdfFont;
  */
 public final class FontCheckUtil {
 
-    private FontCheckUtil(){
-        // Empty constructor
+    private FontCheckUtil() {
+        // Empty constructor.
     }
 
     /**
