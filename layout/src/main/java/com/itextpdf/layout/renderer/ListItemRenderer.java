@@ -255,43 +255,49 @@ public class ListItemRenderer extends DivRenderer {
     }
 
     private void applyListSymbolPosition() {
-        if (symbolRenderer != null) {
-            ListSymbolPosition symbolPosition = (ListSymbolPosition) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_POSITION);
-            if (symbolPosition == ListSymbolPosition.INSIDE) {
-                boolean isRtl = BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION));
-                if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
-                    ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
-                    // TODO DEVSIX-6876 LIST_SYMBOL_INDENT is not inherited
-                    Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
-                    if (symbolRenderer instanceof LineRenderer) {
-                        if (symbolIndent != null) {
-                            symbolRenderer.getChildRenderers().get(1).setProperty(isRtl ? Property.MARGIN_LEFT : Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
-                        }
-                        if (!paragraphRenderer.childRenderers.contains(symbolRenderer.getChildRenderers().get(1))) {
-                            for (IRenderer childRenderer : symbolRenderer.getChildRenderers()) {
-                                paragraphRenderer.childRenderers.add(0, childRenderer);
-                            }
-                        }
-                    } else {
-                        if (symbolIndent != null) {
-                            symbolRenderer.setProperty(isRtl ? Property.MARGIN_LEFT : Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
-                        }
-                        if (!paragraphRenderer.childRenderers.contains(symbolRenderer)) {
-                            paragraphRenderer.childRenderers.add(0, symbolRenderer);
-                        }
-                    }
-                    symbolAddedInside = true;
-                } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
-                    IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
-                    paragraphRenderer.addChild(childRenderers.get(0));
-                    childRenderers.set(0, paragraphRenderer);
-                    symbolAddedInside = true;
+        if (symbolRenderer == null) {
+            return;
+        }
+
+        ListSymbolPosition symbolPosition = (ListSymbolPosition) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_POSITION);
+        if (symbolPosition == ListSymbolPosition.INSIDE) {
+            if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
+                ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
+                injectSymbolRendererIntoParagraphRenderer(paragraphRenderer);
+                symbolAddedInside = true;
+            } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
+                IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
+                paragraphRenderer.addChild(childRenderers.get(0));
+                childRenderers.set(0, paragraphRenderer);
+                symbolAddedInside = true;
+            }
+            if (!symbolAddedInside) {
+                IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
+                childRenderers.add(0, paragraphRenderer);
+                symbolAddedInside = true;
+            }
+        }
+    }
+
+    private void injectSymbolRendererIntoParagraphRenderer(ParagraphRenderer paragraphRenderer) {
+        final boolean isRtl = BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION));
+        // TODO DEVSIX-6876 LIST_SYMBOL_INDENT is not inherited
+        Float symbolIndent = this.getPropertyAsFloat(Property.LIST_SYMBOL_INDENT);
+        if (symbolRenderer instanceof LineRenderer) {
+            if (symbolIndent != null) {
+                symbolRenderer.getChildRenderers().get(1).setProperty(isRtl ? Property.MARGIN_LEFT : Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
+            }
+            if (!paragraphRenderer.childRenderers.contains(symbolRenderer.getChildRenderers().get(1))) {
+                for (IRenderer childRenderer : symbolRenderer.getChildRenderers()) {
+                    paragraphRenderer.childRenderers.add(0, childRenderer);
                 }
-                if (!symbolAddedInside) {
-                    IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
-                    childRenderers.add(0, paragraphRenderer);
-                    symbolAddedInside = true;
-                }
+            }
+        } else {
+            if (symbolIndent != null) {
+                symbolRenderer.setProperty(isRtl ? Property.MARGIN_LEFT : Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
+            }
+            if (!paragraphRenderer.childRenderers.contains(symbolRenderer)) {
+                paragraphRenderer.childRenderers.add(0, symbolRenderer);
             }
         }
     }
@@ -299,12 +305,8 @@ public class ListItemRenderer extends DivRenderer {
     private IRenderer renderSymbolInNeutralParagraph() {
         Paragraph p = new Paragraph().setNeutralRole();
         IRenderer paragraphRenderer = p.setMargin(0).createRendererSubTree();
-        Float symbolIndent = (Float) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_INDENT);
-        if (symbolIndent != null) {
-            // cast to float is necessary for autoporting reasons
-            symbolRenderer.setProperty(Property.MARGIN_RIGHT, UnitValue.createPointValue((float) symbolIndent));
-        }
-        paragraphRenderer.addChild(symbolRenderer);
+        injectSymbolRendererIntoParagraphRenderer((ParagraphRenderer) paragraphRenderer);
+
         return paragraphRenderer;
     }
 

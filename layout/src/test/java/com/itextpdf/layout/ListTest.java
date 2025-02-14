@@ -750,7 +750,6 @@ public class ListTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 
-    // TODO DEVSIX-6877 wrapping list item content in a div causes the bullet to be misaligned
     @Test
     public void listItemWrappedDivSymbolInside() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listItemWrappedDivSymbolInside.pdf";
@@ -769,6 +768,30 @@ public class ListTest extends ExtendedITextTest {
         l.add(listItem);
         l.add("Regular item 2");
 
+        document.add(l);
+        document.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void listSymbolOnPageSplit() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listSymbolOnPageSplit.pdf";
+        String cmpFileName = sourceFolder + "cmp_listSymbolOnPageSplit.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        Div div = new Div().setHeight(750);
+        List l = new List();
+        l.setMarginLeft(50);
+        l.setListSymbol("\u2022");
+
+        l.add("Item 1");
+
+        ListItem listItem2 = new ListItem();
+        listItem2.setProperty(Property.LIST_SYMBOL_POSITION, ListSymbolPosition.INSIDE);
+        l.add(listItem2);
+        l.add("Item 3");
+
+        document.add(div);
         document.add(l);
         document.close();
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
