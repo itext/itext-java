@@ -116,10 +116,17 @@ public class PdfUADocument extends PdfDocument {
 
     private static PdfWriter configureWriterProperties(PdfWriter writer, PdfUAConformance uaConformance) {
         writer.getProperties().addPdfUaXmpMetadata(uaConformance);
-        if (writer.getPdfVersion() != null && !writer.getPdfVersion().equals(PdfVersion.PDF_1_7)) {
-            LoggerFactory.getLogger(PdfUADocument.class).warn(MessageFormatUtil.format(
-                    PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_1_7));
-            writer.getProperties().setPdfVersion(PdfVersion.PDF_1_7);
+        if (writer.getPdfVersion() != null) {
+            if (uaConformance == PdfUAConformance.PDF_UA_1 && !writer.getPdfVersion().equals(PdfVersion.PDF_1_7)) {
+                LOGGER.warn(MessageFormatUtil.format(
+                        PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_1_7));
+                writer.getProperties().setPdfVersion(PdfVersion.PDF_1_7);
+            }
+            if (uaConformance == PdfUAConformance.PDF_UA_2 && !writer.getPdfVersion().equals(PdfVersion.PDF_2_0)) {
+                LOGGER.warn(MessageFormatUtil.format(
+                        PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_2_0));
+                writer.getProperties().setPdfVersion(PdfVersion.PDF_2_0);
+            }
         }
         return writer;
     }
