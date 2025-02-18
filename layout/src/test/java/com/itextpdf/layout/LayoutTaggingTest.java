@@ -26,7 +26,6 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
@@ -994,10 +993,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
-    })
-    //TODO update cmp-file after DEVSIX-3335 fixed
     public void notAsciiCharTest() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfWriter writer = new PdfWriter(destinationFolder + "notAsciiCharTest.pdf");
         PdfDocument pdf = new PdfDocument(writer);
