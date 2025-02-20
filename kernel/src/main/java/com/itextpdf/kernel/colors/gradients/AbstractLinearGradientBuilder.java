@@ -44,6 +44,7 @@ import com.itextpdf.kernel.pdf.function.PdfType3Function;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.LoggerFactory;
 
@@ -327,7 +328,7 @@ public abstract class AbstractLinearGradientBuilder {
     // with all offsets on coordinates domain dimension and adjusted for ascending values
     private static List<GradientColorStop> normalizeStops(List<GradientColorStop> toNormalize, double baseVectorLength) {
         if (baseVectorLength < ZERO_EPSILON) {
-            return Arrays.asList(new GradientColorStop(toNormalize.get(toNormalize.size() - 1),
+            return Collections.singletonList(new GradientColorStop(toNormalize.get(toNormalize.size() - 1),
                     0d, OffsetType.RELATIVE));
         }
         // get rid of all absolute on vector offsets and hint offsets

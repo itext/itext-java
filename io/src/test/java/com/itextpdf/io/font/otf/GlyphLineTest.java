@@ -29,11 +29,11 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class GlyphLineTest extends ExtendedITextTest {
@@ -54,8 +54,10 @@ public class GlyphLineTest extends ExtendedITextTest {
         Glyph glyph = new Glyph(200, 200, 200);
         GlyphLine.ActualText actualText = new GlyphLine.ActualText("-");
 
-        GlyphLine one = new GlyphLine(new ArrayList<Glyph>(Arrays.asList(glyph)), new ArrayList<GlyphLine.ActualText>(Arrays.asList(actualText)), 0, 1);
-        GlyphLine two = new GlyphLine(new ArrayList<Glyph>(Arrays.asList(glyph)), new ArrayList<GlyphLine.ActualText>(Arrays.asList(actualText)), 0, 1);
+        GlyphLine one = new GlyphLine(new ArrayList<Glyph>(Collections.singletonList(glyph)), new ArrayList<GlyphLine.ActualText>(
+                Collections.singletonList(actualText)), 0, 1);
+        GlyphLine two = new GlyphLine(new ArrayList<Glyph>(Collections.singletonList(glyph)), new ArrayList<GlyphLine.ActualText>(
+                Collections.singletonList(actualText)), 0, 1);
 
         one.add(glyph);
         two.add(glyph);

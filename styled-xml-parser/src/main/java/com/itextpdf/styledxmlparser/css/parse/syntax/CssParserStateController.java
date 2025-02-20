@@ -72,9 +72,8 @@ public final class CssParserStateController {
     )));
 
     /** Set of conditional group rules. */
-    private static final Set<String> CONDITIONAL_GROUP_RULES = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
-            CssRuleName.MEDIA
-    )));
+    private static final Set<String> CONDITIONAL_GROUP_RULES = Collections.unmodifiableSet(new HashSet<String>(
+            Collections.singletonList(CssRuleName.MEDIA)));
 
 
     /** The current state. */

@@ -23,35 +23,39 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class CssDeclarationValueTokenizerTest extends ExtendedITextTest {
     @Test
     public void functionTest01() {
-        runTest("func(param)", Arrays.asList("func(param)"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION));
+        runTest("func(param)", Collections.singletonList("func(param)"), Collections.singletonList(TokenType.FUNCTION));
     }
 
     @Test
     public void functionTest02() {
-        runTest("func(param1, param2)", Arrays.asList("func(param1, param2)"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION));
+        runTest("func(param1, param2)", Collections.singletonList("func(param1, param2)"),
+                Collections.singletonList(TokenType.FUNCTION));
     }
 
     @Test
     public void functionTest03() {
-        runTest("func(param,'param)',\"param))\")", Arrays.asList("func(param,'param)',\"param))\")"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION));
+        runTest("func(param,'param)',\"param))\")", Collections.singletonList("func(param,'param)',\"param))\")"),
+                Collections.singletonList(TokenType.FUNCTION));
     }
 
     @Test
     public void functionTest04() {
-        runTest("func(param, innerFunc())", Arrays.asList("func(param, innerFunc())"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION));
+        runTest("func(param, innerFunc())", Collections.singletonList("func(param, innerFunc())"),
+                Collections.singletonList(TokenType.FUNCTION));
     }
 
     @Test
@@ -66,18 +70,18 @@ public class CssDeclarationValueTokenizerTest extends ExtendedITextTest {
 
     @Test
     public void stringTest01() {
-        runTest("'a b c'", Arrays.asList("a b c"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING));
+        runTest("'a b c'", Collections.singletonList("a b c"), Collections.singletonList(TokenType.STRING));
     }
 
     @Test
     public void stringTest02() {
-        runTest("\"a b c\"", Arrays.asList("a b c"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING));
+        runTest("\"a b c\"", Collections.singletonList("a b c"), Collections.singletonList(TokenType.STRING));
     }
 
     @Test
     public void stringTest03() {
-        runTest("[ aa  bb  cc ]", Arrays.asList("[ aa  bb  cc ]"),
-                Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING));
+        runTest("[ aa  bb  cc ]", Collections.singletonList("[ aa  bb  cc ]"),
+                Collections.singletonList(TokenType.STRING));
     }
 
     @Test

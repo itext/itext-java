@@ -46,6 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -705,7 +706,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
 
-        List<Integer> pages = Arrays.asList(4);
+        List<Integer> pages = Collections.singletonList(4);
         Set<Integer> nullPages = new HashSet<>(pages);
 
         findAndAssertNullPages(pdfDocument, nullPages);
@@ -718,7 +719,7 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
 
-        List<Integer> pages = Arrays.asList(3);
+        List<Integer> pages = Collections.singletonList(3);
         Set<Integer> nullPages = new HashSet<>(pages);
 
         findAndAssertNullPages(pdfDocument, nullPages);

@@ -60,7 +60,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -270,7 +270,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
 
     private static Map<Integer, List<Rectangle>> getTestMap(Rectangle ignoredArea) {
         Map<Integer, List<Rectangle>> result = new HashMap<Integer, List<Rectangle>>();
-        result.put(1, Arrays.asList(ignoredArea));
+        result.put(1, Collections.singletonList(ignoredArea));
         return result;
     }
 }

@@ -51,6 +51,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -193,9 +194,9 @@ public class FlexUtilTest extends ExtendedITextTest {
         stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignmentPropertyValue.STRETCH);
         List<List<FlexItemInfo>> rectangleTable = testFlex(
                 stretchStyle,
-                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f)),
-                Arrays.asList(0f),
-                Arrays.asList(0f)
+                Collections.<UnitValue>singletonList(UnitValue.createPointValue(100f)),
+                Collections.singletonList(0f),
+                Collections.singletonList(0f)
         );
 
         // after checks
@@ -786,9 +787,9 @@ public class FlexUtilTest extends ExtendedITextTest {
     public void basisGtWidthGrow0Shrink0Test01() {
         List<List<FlexItemInfo>> rectangleTable = testFlex(
                 WRAP_STYLE,
-                Arrays.<UnitValue>asList(UnitValue.createPointValue(500f)),
-                Arrays.asList(0f),
-                Arrays.asList(0f)
+                Collections.<UnitValue>singletonList(UnitValue.createPointValue(500f)),
+                Collections.singletonList(0f),
+                Collections.singletonList(0f)
         );
 
         // after checks
@@ -805,9 +806,9 @@ public class FlexUtilTest extends ExtendedITextTest {
     public void basisGtWidthGrow0Shrink1Test01() {
         List<List<FlexItemInfo>> rectangleTable = testFlex(
                 WRAP_STYLE,
-                Arrays.<UnitValue>asList(UnitValue.createPointValue(500f)),
-                Arrays.asList(0f),
-                Arrays.asList(1f)
+                Collections.<UnitValue>singletonList(UnitValue.createPointValue(500f)),
+                Collections.singletonList(0f),
+                Collections.singletonList(1f)
         );
 
         // after checks

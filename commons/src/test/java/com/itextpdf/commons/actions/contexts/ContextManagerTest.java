@@ -85,7 +85,7 @@ public class ContextManagerTest extends ExtendedITextTest {
         Assertions.assertNull(manager.getRecognisedNamespace(testNamespace));
         Assertions.assertNull(manager.getRecognisedNamespace(testNamespaceWithCapitals));
 
-        manager.registerGenericContext(testNamespaces, Arrays.asList("myProduct"));
+        manager.registerGenericContext(testNamespaces, Collections.singletonList("myProduct"));
 
         Assertions.assertEquals(testNamespace,
                 manager.getRecognisedNamespace(testNamespace + ".MyClass"));

@@ -39,6 +39,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -117,7 +118,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFile));
 
         PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
-        srcDoc.copyPagesTo(Arrays.asList(1), destDoc);
+        srcDoc.copyPagesTo(Collections.singletonList(1), destDoc);
         destDoc.close();
         
         srcDoc.close();
