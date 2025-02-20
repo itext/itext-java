@@ -24,6 +24,7 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.pdf.PdfAConformance;
@@ -59,12 +60,15 @@ import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
 import com.itextpdf.kernel.validation.context.SignatureValidationContext;
 import com.itextpdf.kernel.validation.context.TagStructElementValidationContext;
 import com.itextpdf.kernel.validation.context.XrefTableValidationContext;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+
 import org.slf4j.LoggerFactory;
 
 /**
@@ -145,6 +149,8 @@ public abstract class PdfAChecker implements IValidationChecker {
      */
     protected Set<PdfObject> checkedObjects = new HashSet<>();
     protected Map<PdfObject, PdfColorSpace> checkedObjectsColorspace = new HashMap<>();
+
+    static final Function<String, PdfException> EXCEPTION_SUPPLIER = (msg) -> new PdfAConformanceException(msg);
 
     private boolean fullCheckMode = false;
     private boolean alreadyLoggedThatPageFlushingWasNotPerformed = false;

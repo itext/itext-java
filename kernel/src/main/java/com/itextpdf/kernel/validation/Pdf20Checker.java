@@ -24,20 +24,27 @@ package com.itextpdf.kernel.validation;
 
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.Pdf20ConformanceException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
+
+import java.util.function.Function;
 
 /**
  * Class that will run through all necessary checks defined in the PDF 2.0 standard. The standard that is followed is
  * the series of ISO 32000 specifications, starting from ISO 32000-2:2020.
  */
 public class Pdf20Checker implements IValidationChecker {
+
+    private static final Function<String, PdfException> EXCEPTION_SUPPLIER = (msg) -> new Pdf20ConformanceException(msg);
 
     /**
      * Creates new {@link Pdf20Checker} instance to validate PDF document against PDF 2.0 standard.
@@ -70,7 +77,21 @@ public class Pdf20Checker implements IValidationChecker {
      * @param catalog {@link PdfCatalog} document catalog dictionary to check
      */
     private void checkCatalog(PdfCatalog catalog) {
+        checkLang(catalog);
         checkMetadata(catalog);
+    }
+
+    /**
+     * Checks that natural language is declared using the methods described in ISO 32000-2:2020, 14.9.2.
+     *
+     * @param catalog {@link PdfCatalog} document catalog dictionary
+     */
+    void checkLang(PdfCatalog catalog) {
+        PdfDictionary catalogDict = catalog.getPdfObject();
+        PdfObject lang = catalogDict.get(PdfName.Lang);
+        if (lang instanceof PdfString && !((PdfString) lang).getValue().isEmpty()) {
+            PdfCheckersUtil.validateLang(catalogDict, EXCEPTION_SUPPLIER);
+        }
     }
 
     /**

@@ -45,6 +45,7 @@ import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
@@ -58,7 +59,6 @@ import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.layout.validation.context.LayoutValidationContext;
 import com.itextpdf.pdfua.checkers.utils.AnnotationCheckUtil;
-import com.itextpdf.pdfua.checkers.utils.BCP47Validator;
 import com.itextpdf.pdfua.checkers.utils.FormCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
@@ -320,10 +320,9 @@ public class PdfUA1Checker extends PdfUAChecker {
             throw new PdfUAConformanceException(
                     PdfUAExceptionMessageConstants.METADATA_SHALL_BE_PRESENT_IN_THE_CATALOG_DICTIONARY);
         }
-        if (!(catalogDict.get(PdfName.Lang) instanceof PdfString) || !BCP47Validator.validate(catalogDict.get(PdfName.Lang).toString())) {
-            throw new PdfUAConformanceException(
-                    PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY);
-        }
+        checkLang(catalog);
+        PdfCheckersUtil.validateLang(catalogDict, EXCEPTION_SUPPLIER);
+
         PdfDictionary markInfo = catalogDict.getAsDictionary(PdfName.MarkInfo);
         if (markInfo != null && markInfo.containsKey(PdfName.Suspects)) {
             PdfBoolean markInfoSuspects = markInfo.getAsBoolean(PdfName.Suspects);

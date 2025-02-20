@@ -124,7 +124,6 @@ public class PdfA4Checker extends PdfA3Checker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfAChecker.class);
 
-
     private static final Set<PdfName> forbiddenActionsE = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
                     PdfName.Launch,
@@ -137,6 +136,7 @@ public class PdfA4Checker extends PdfA3Checker {
                     PdfName.Rendition,
                     PdfName.Trans
             )));
+
     private static final Set<PdfName> allowedEntriesInAAWhenNonWidget = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
                     PdfName.E,
@@ -505,7 +505,7 @@ public class PdfA4Checker extends PdfA3Checker {
     protected void checkMetaData(PdfDictionary catalog) {
         try {
             try {
-                PdfCheckersUtil.checkMetadata(catalog, PdfConformance.PDF_A_4);
+                PdfCheckersUtil.checkMetadata(catalog, PdfConformance.PDF_A_4, EXCEPTION_SUPPLIER);
             } catch (PdfException e) {
                 throw new PdfAConformanceException(e.getMessage());
             }

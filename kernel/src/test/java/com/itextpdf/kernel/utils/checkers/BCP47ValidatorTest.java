@@ -20,12 +20,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua.checkers.utils;
+package com.itextpdf.kernel.utils.checkers;
 
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class BCP47ValidatorTest extends ExtendedITextTest {
@@ -34,78 +34,78 @@ public class BCP47ValidatorTest extends ExtendedITextTest {
     public void simpleLanguageSubtagTest() {
         Assertions.assertTrue(BCP47Validator.validate("de"));
         Assertions.assertTrue(BCP47Validator.validate("fr"));
-        //example of a grandfathered tag
+        // Example of a grandfathered tag.
         Assertions.assertTrue(BCP47Validator.validate("i-enochian"));
     }
 
     @Test
     public void languageSubtagAndScriptSubtagTest() {
-        //Chinese written using the Traditional Chinese script
+        // Chinese written using the Traditional Chinese script.
         Assertions.assertTrue(BCP47Validator.validate("zh-Hant"));
-        //Chinese written using the Simplified Chinese script
+        // Chinese written using the Simplified Chinese script.
         Assertions.assertTrue(BCP47Validator.validate("zh-Hans"));
-        //Serbian written using the Cyrillic script
+        // Serbian written using the Cyrillic script.
         Assertions.assertTrue(BCP47Validator.validate("sr-Cyrl"));
-        //Serbian written using the Latin script
+        // Serbian written using the Latin script.
         Assertions.assertTrue(BCP47Validator.validate("sr-Latn"));
     }
 
     @Test
     public void extLangSubtagsAndPrimaryLangSubtagsTest() {
-        //Chinese, Mandarin, Simplified script, as used in China
+        // Chinese, Mandarin, Simplified script, as used in China.
         Assertions.assertTrue(BCP47Validator.validate("zh-cmn-Hans-CN"));
-        //Mandarin Chinese, Simplified script, as used in China
+        // Mandarin Chinese, Simplified script, as used in China.
         Assertions.assertTrue(BCP47Validator.validate("cmn-Hans-CN"));
-        //Chinese, Cantonese, as used in Hong Kong SAR
+        // Chinese, Cantonese, as used in Hong Kong SAR.
         Assertions.assertTrue(BCP47Validator.validate("zh-yue-HK"));
         Assertions.assertTrue(BCP47Validator.validate("sr-Latn"));
     }
 
     @Test
     public void languageScriptRegionsTest() {
-        //Chinese written using the Simplified script as used in mainland China
+        // Chinese written using the Simplified script as used in mainland China.
         Assertions.assertTrue(BCP47Validator.validate("zh-Hans-CN"));
-        //Serbian written using the Latin script as used in Serbia
+        // Serbian written using the Latin script as used in Serbia.
         Assertions.assertTrue(BCP47Validator.validate("sr-Latn-RS"));
     }
 
     @Test
     public void languageVariantTest() {
-        //Resian dialect of Slovenian
+        // Resian dialect of Slovenian.
         Assertions.assertTrue(BCP47Validator.validate("sl-rozaj"));
-        //San Giorgio dialect of Resian dialect of Slovenian
+        // San Giorgio dialect of Resian dialect of Slovenian.
         Assertions.assertTrue(BCP47Validator.validate("sl-rozaj-biske"));
-        //Nadiza dialect of Slovenian
+        // Nadiza dialect of Slovenian.
         Assertions.assertTrue(BCP47Validator.validate("sl-nedis"));
     }
 
     @Test
     public void languageRegionVariantTest() {
-        //German as used in Switzerland using the 1901 variant [orthography]
+        // German as used in Switzerland using the 1901 variant [orthography].
         Assertions.assertTrue(BCP47Validator.validate("de-CH-1901"));
-        //Slovenian as used in Italy, Nadiza dialect
+        // Slovenian as used in Italy, Nadiza dialect.
         Assertions.assertTrue(BCP47Validator.validate("sl-IT-nedis"));
     }
 
     @Test
     public void languageScriptRegionVariantTest() {
-        //Eastern Armenian written in Latin script, as used in Italy
+        // Eastern Armenian written in Latin script, as used in Italy.
         Assertions.assertTrue(BCP47Validator.validate("hy-Latn-IT-arevela"));
     }
 
     @Test
     public void languageRegionTest() {
-        //German for Germany
+        // German for Germany.
         Assertions.assertTrue(BCP47Validator.validate("de-DE"));
-        //English as used in the United States
+        // English as used in the United States.
         Assertions.assertTrue(BCP47Validator.validate("en-US"));
-        //Spanish appropriate for the Latin America and Caribbean region using the UN region code
+        // Spanish appropriate for the Latin America and Caribbean region using the UN region code.
         Assertions.assertTrue(BCP47Validator.validate("es-419"));
-        //Invalid, two region tags
+        // Invalid, two region tags.
         Assertions.assertFalse(BCP47Validator.validate("de-419-DE"));
-        //use of a single-character subtag in primary position; note
-        //that there are a few grandfathered tags that start with "i-" that
-        //are valid
+        // Use of a single-character subtag in primary position; note
+        // that there are a few grandfathered tags that start with "i-" that
+        // are valid.
         Assertions.assertFalse(BCP47Validator.validate("a-DE"));
     }
 
@@ -117,15 +117,15 @@ public class BCP47ValidatorTest extends ExtendedITextTest {
 
     @Test
     public void privateUseRegistryValuesTest() {
-        //private use using the singleton 'x'
+        // Private use using the singleton 'x'.
         Assertions.assertTrue(BCP47Validator.validate("x-whatever"));
-        //all private tags
+        // All private tags.
         Assertions.assertTrue(BCP47Validator.validate("qaa-Qaaa-QM-x-southern"));
-        //German, with a private script
+        // German, with a private script.
         Assertions.assertTrue(BCP47Validator.validate("de-Qaaa"));
-        //Serbian, Latin script, private region
+        // Serbian, Latin script, private region.
         Assertions.assertTrue(BCP47Validator.validate("sr-Latn-QM"));
-        //Serbian, private script, for Serbia
+        // Serbian, private script, for Serbia.
         Assertions.assertTrue(BCP47Validator.validate("sr-Qaaa-RS"));
     }
 

@@ -22,16 +22,20 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.validation.IValidationChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import org.slf4j.LoggerFactory;
+
+import java.util.function.Function;
 
 /**
  * An abstract class that will run through all necessary checks defined in the different PDF/UA standards. A number of
@@ -46,6 +50,8 @@ import org.slf4j.LoggerFactory;
  * pdfua project.
  */
 public abstract class PdfUAChecker implements IValidationChecker {
+
+    static final Function<String, PdfException> EXCEPTION_SUPPLIER = (msg) -> new PdfUAConformanceException(msg);
 
     private boolean warnedOnPageFlush = false;
 
@@ -63,6 +69,24 @@ public abstract class PdfUAChecker implements IValidationChecker {
         if (!warnedOnPageFlush) {
             LoggerFactory.getLogger(PdfUAChecker.class).warn(PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED);
             warnedOnPageFlush = true;
+        }
+    }
+
+    /**
+     * Checks that the default natural language for content and text strings is specified using the {@code Lang}
+     * entry, with a nonempty value, in the document catalog dictionary.
+     *
+     * @param catalog {@link PdfCatalog} document catalog dictionary
+     */
+    void checkLang(PdfCatalog catalog) {
+        PdfDictionary catalogDict = catalog.getPdfObject();
+        PdfObject lang = catalogDict.get(PdfName.Lang);
+        if (!(lang instanceof PdfString)) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.CATALOG_SHOULD_CONTAIN_LANG_ENTRY);
+        }
+        if (((PdfString) lang).getValue().isEmpty()) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY);
         }
     }
 

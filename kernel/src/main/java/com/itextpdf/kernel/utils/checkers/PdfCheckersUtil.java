@@ -36,6 +36,7 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
 
 import java.io.ByteArrayInputStream;
+import java.util.function.Function;
 
 /**
  * Utility class that contains common checks used in both the PDF/A and PDF/UA modules.
@@ -44,6 +45,19 @@ public final class PdfCheckersUtil {
 
     private PdfCheckersUtil() {
         // Private constructor will prevent the instantiation of this class directly.
+    }
+
+    /**
+     * Checks that natural language is declared using the methods described in ISO 32000-2:2020, 14.9.2 or
+     * ISO 32000-1:2008, 14.9.2 (same requirements).
+     *
+     * @param catalogDict {@link PdfDictionary} document catalog dictionary containing {@code Lang} entry to check
+     * @param exceptionSupplier {@code Function<String, PdfException>} in order to provide correct exception
+     */
+    public static void validateLang(PdfDictionary catalogDict, Function<String, PdfException> exceptionSupplier) {
+        if (!BCP47Validator.validate(catalogDict.get(PdfName.Lang).toString())) {
+            throw exceptionSupplier.apply(KernelExceptionMessageConstant.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY);
+        }
     }
 
     /**
@@ -61,16 +75,18 @@ public final class PdfCheckersUtil {
      *
      * @param catalog {@link PdfDictionary} document catalog dictionary
      * @param conformance either PDF/A or PDF/UA conformance to check
+     * @param exceptionSupplier {@code Function<String, PdfException>} in order to provide correct exception
      */
-    public static void checkMetadata(PdfDictionary catalog, PdfConformance conformance) {
+    public static void checkMetadata(PdfDictionary catalog, PdfConformance conformance,
+                                     Function<String, PdfException> exceptionSupplier) {
         if (!catalog.containsKey(PdfName.Metadata)) {
-            throw new PdfException(
+            throw exceptionSupplier.apply(
                     KernelExceptionMessageConstant.METADATA_SHALL_BE_PRESENT_IN_THE_CATALOG_DICTIONARY);
         }
         try {
             final PdfStream xmpMetadata = catalog.getAsStream(PdfName.Metadata);
             if (xmpMetadata == null) {
-                throw new PdfException(KernelExceptionMessageConstant.INVALID_METADATA_VALUE);
+                throw exceptionSupplier.apply(KernelExceptionMessageConstant.INVALID_METADATA_VALUE);
             }
             final XMPMeta metadata = XMPMetaFactory.parse(new ByteArrayInputStream(xmpMetadata.getBytes()));
 
@@ -80,18 +96,18 @@ public final class PdfCheckersUtil {
             String expectedPart = conformance.isPdfA() ? conformance.getAConformance().getPart() :
                     conformance.getUAConformance().getPart();
             if (actualPart == null || !expectedPart.equals(actualPart.getValue())) {
-                throw new PdfException(MessageFormatUtil.format(KernelExceptionMessageConstant
+                throw exceptionSupplier.apply(MessageFormatUtil.format(KernelExceptionMessageConstant
                         .XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, expectedPart,
                         (actualPart != null && actualPart.getValue().isEmpty()) ? null : actualPart));
             }
 
             XMPProperty rev = metadata.getProperty(NS_ID, XMPConst.REV);
             if (rev == null || !isValidXmpRevision(rev.getValue())) {
-                throw new PdfException(KernelExceptionMessageConstant
+                throw exceptionSupplier.apply(KernelExceptionMessageConstant
                         .XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV);
             }
         } catch (XMPException e) {
-            throw new PdfException(KernelExceptionMessageConstant.INVALID_METADATA_VALUE, e);
+            throw exceptionSupplier.apply(KernelExceptionMessageConstant.INVALID_METADATA_VALUE);
         }
     }
 

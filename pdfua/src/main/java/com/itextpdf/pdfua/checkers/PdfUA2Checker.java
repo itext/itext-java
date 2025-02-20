@@ -22,7 +22,6 @@
  */
 package com.itextpdf.pdfua.checkers;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -98,14 +97,14 @@ public class PdfUA2Checker extends PdfUAChecker {
      * @param catalog {@link PdfCatalog} document catalog dictionary
      */
     protected void checkMetadata(PdfCatalog catalog) {
+        PdfCheckersUtil.checkMetadata(catalog.getPdfObject(), PdfConformance.PDF_UA_2, EXCEPTION_SUPPLIER);
         try {
-            PdfCheckersUtil.checkMetadata(catalog.getPdfObject(), PdfConformance.PDF_UA_2);
             XMPMeta metadata = catalog.getDocument().getXmpMetadata();
             if (metadata.getProperty(XMPConst.NS_DC, XMPConst.TITLE) == null) {
                 throw new PdfUAConformanceException(
                         PdfUAExceptionMessageConstants.METADATA_SHALL_CONTAIN_DC_TITLE_ENTRY);
             }
-        } catch (PdfException | XMPException e) {
+        } catch (XMPException e) {
             throw new PdfUAConformanceException(e.getMessage());
         }
     }
@@ -119,6 +118,7 @@ public class PdfUA2Checker extends PdfUAChecker {
      * @param catalog {@link PdfCatalog} document catalog dictionary to check
      */
     private void checkCatalog(PdfCatalog catalog) {
+        checkLang(catalog);
         checkMetadata(catalog);
         checkViewerPreferences(catalog);
     }

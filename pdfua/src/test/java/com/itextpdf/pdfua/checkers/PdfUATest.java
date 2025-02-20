@@ -26,6 +26,8 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.Pdf20ConformanceException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -165,8 +167,8 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     public void documentWithNoLangEntryTest() throws IOException {
         final String outPdf = DESTINATION_FOLDER + "documentWithNoLangEntryTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
-                new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1).setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties()
+                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1).setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
         ValidationContainer validationContainer = new ValidationContainer();
         validationContainer.addChecker(new PdfUA1Checker(pdfDoc));
@@ -177,7 +179,26 @@ public class PdfUATest extends ExtendedITextTest {
         info.setTitle("English pangram");
 
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
-        Assertions.assertEquals(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.CATALOG_SHOULD_CONTAIN_LANG_ENTRY,
+                e.getMessage());
+    }
+
+    @Test
+    public void documentWithNoLangEntryUA2Test() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "documentWithNoLangEntryUA2Test.pdf";
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf, new WriterProperties()
+                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_2).setPdfVersion(PdfVersion.PDF_2_0)));
+        pdfDoc.setTagged();
+        ValidationContainer validationContainer = new ValidationContainer();
+        validationContainer.addChecker(new PdfUA2Checker(pdfDoc));
+        pdfDoc.getDiContainer().register(ValidationContainer.class, validationContainer);
+
+        pdfDoc.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
+        PdfDocumentInfo info = pdfDoc.getDocumentInfo();
+        info.setTitle("English pangram");
+
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.CATALOG_SHOULD_CONTAIN_LANG_ENTRY,
                 e.getMessage());
     }
 
@@ -196,6 +217,28 @@ public class PdfUATest extends ExtendedITextTest {
         info.setTitle("English pangram");
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
         Assertions.assertEquals(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
+                e.getMessage());
+    }
+
+    @Test
+    public void documentWithEmptyStringLangEntryUA2Test() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "documentWithEmptyStringLangEntryTestUA2.pdf";
+        PdfDocument pdfDoc = new PdfUADocument(new PdfWriter(outPdf, new WriterProperties()
+                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_2).setPdfVersion(PdfVersion.PDF_2_0)),
+                new PdfUAConfig(PdfUAConformance.PDF_UA_2, "English pangram", ""));
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
+                e.getMessage());
+    }
+
+    @Test
+    public void documentWithInvalidLangEntryUA2Test() throws IOException {
+        final String outPdf = DESTINATION_FOLDER + "documentWithInvalidLangEntryUA2Test.pdf";
+        PdfDocument pdfDoc = new PdfUADocument(new PdfWriter(outPdf, new WriterProperties()
+                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_2).setPdfVersion(PdfVersion.PDF_2_0)),
+                new PdfUAConfig(PdfUAConformance.PDF_UA_2, "English pangram", "inv:alid"));
+        Exception e = Assertions.assertThrows(Pdf20ConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
                 e.getMessage());
     }
 

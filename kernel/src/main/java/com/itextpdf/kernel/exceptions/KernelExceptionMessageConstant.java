@@ -153,6 +153,7 @@ public final class KernelExceptionMessageConstant {
     public static final String DOCUMENT_HAS_NOT_BEEN_READ_YET = "The PDF document has not been read yet. Document "
             + "reading occurs in PdfDocument class constructor";
     public static final String DOCUMENT_HAS_NO_PDF_CATALOG_OBJECT = "Document has no PDF Catalog object.";
+    public static final String DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY = "Document does not contain valid lang entry.";
     public static final String DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED = ""
             + "During decompression multiple streams in sum occupied more memory than allowed. Please either check "
             + "your pdf or increase the allowed single decompressed pdf stream maximum size value by setting "
