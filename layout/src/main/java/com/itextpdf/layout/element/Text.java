@@ -142,6 +142,16 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
         return this;
     }
 
+    /**
+     * Disable otf features applying for this text element.
+     *
+     * @return this {@code Text} element
+     */
+    public Text disableOtfFeatures() {
+        this.setProperty(Property.FONT_SCRIPT, Character.UnicodeScript.UNKNOWN);
+        return this;
+    }
+
     @Override
     protected IRenderer makeNewRenderer() {
         return new TextRenderer(this, text);
