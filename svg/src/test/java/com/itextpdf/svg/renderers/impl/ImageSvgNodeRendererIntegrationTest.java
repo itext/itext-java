@@ -194,7 +194,6 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-8769: adapt after supporting
     @LogMessages(messages = {
             @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG)
     })

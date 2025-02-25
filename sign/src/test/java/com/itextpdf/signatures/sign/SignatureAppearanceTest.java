@@ -665,9 +665,13 @@ public class SignatureAppearanceTest extends ExtendedITextTest {
         new PdfDocument(new PdfReader(dest)).close();
 
         try {
-            // TODO DEVSIX-864 compareVisually() should be changed to compareByContent() because it slows down the test
+            // compareByContent will fail due to signing dates, compareSignatures doesn't check appearance
             String testResult = new CompareTool().compareVisually(dest, SOURCE_FOLDER + "cmp_" + fileName,
                     DESTINATION_FOLDER, "diff_");
+            if (null != testResult) {
+                assertionResults.append(testResult);
+            }
+            testResult = SignaturesCompareTool.compareSignatures(dest, SOURCE_FOLDER + "cmp_" + fileName);
             if (null != testResult) {
                 assertionResults.append(testResult);
             }

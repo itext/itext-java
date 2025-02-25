@@ -224,7 +224,6 @@ class XfdfReader {
         String annotName = annotObject.getName();
         if (annotName != null) {
             switch (annotName) {
-                //TODO DEVSIX-4027 add all attributes properly one by one
                 case XfdfConstants.TEXT:
                     PdfTextAnnotation pdfTextAnnotation = new PdfTextAnnotation(XfdfObjectUtils.convertRectFromString(annotObject.getAttributeValue(XfdfConstants.RECT)));
                     addCommonAnnotationAttributes(pdfTextAnnotation, annotObject);

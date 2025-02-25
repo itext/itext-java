@@ -88,16 +88,12 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         PdfPage page1 = pdfDocument.addNewPage();
         page1.addOutputIntent(createOutputIntent());
 
-        InputStream streamGray = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "BlackWhite.icc");
-        IccBased gray = new IccBased(streamGray, new float[]{0.2f});
-
         PdfCanvas canvas = new PdfCanvas(page1);
         canvas.saveState();
         PdfExtGState state = new PdfExtGState();
         state.setFillOpacity(0.6f);
         canvas.setExtGState(state);
         canvas.beginText()
-                .setColor(gray, true) // required here till TODO: DEVSIX-7775 - Check Output intents and colorspaces is implemented
                 .moveText(36, 750)
                 .setFontAndSize(font, 16)
                 .showText("Page with transparency")

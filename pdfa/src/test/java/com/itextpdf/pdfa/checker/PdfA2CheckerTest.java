@@ -367,13 +367,13 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
 
         PdfDictionary currentColorSpaces = new PdfDictionary();
 
-        //TODO DEVSIX-4203 should not cause an IndexOutOfBoundException.
-        // Should throw PdfAConformanceException as Colorants dictionary always must be present
-        // for Pdf/A-2
-        Assertions.assertThrows(RuntimeException.class,
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA2Checker.checkColorSpace(new PdfSpecialCs.DeviceN(tmpArray, new PdfDeviceCs.Rgb(), function),
                         null, currentColorSpaces, true, false)
         );
+        Assertions.assertEquals(
+                PdfaExceptionMessageConstant.COLORANTS_DICTIONARY_SHALL_NOT_BE_EMPTY_IN_DEVICE_N_COLORSPACE,
+                e.getMessage());
     }
 
     @Test

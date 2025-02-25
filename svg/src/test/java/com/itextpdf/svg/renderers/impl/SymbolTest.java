@@ -96,7 +96,6 @@ public class SymbolTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-3537 Processing of preserveAspectRatio attribute with offsets x and y is not currently supported
     public void preserveAspectRatioViewBoxTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "preserveAspectRatioViewBoxTest");
     }

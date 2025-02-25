@@ -207,7 +207,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO: update cmp files when DEVSIX-4396 resolved
     // TODO: update cmp files when DEVSIX-6405 resolved
-    // TODO: update cmp files when DEVSIX-8821 resolved
     // TODO: update cmp files when DEVSIX-8822 resolved
     // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithExternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
@@ -217,7 +216,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO: update cmp files when DEVSIX-4396 resolved
     // TODO: update cmp files when DEVSIX-6405 resolved
-    // TODO: update cmp files when DEVSIX-8821 resolved
     // TODO: update cmp files when DEVSIX-8822 resolved
     // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithInternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
@@ -235,7 +233,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO: update cmp files when DEVSIX-4396 resolved
     // TODO: update cmp files when DEVSIX-6405 resolved
-    // TODO: update cmp files when DEVSIX-8821 resolved
     // TODO: update cmp files when DEVSIX-8822 resolved
     // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithExternalCSStoCustomPage() throws IOException,InterruptedException {
@@ -246,7 +243,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO: update cmp files when DEVSIX-4396 resolved
     // TODO: update cmp files when DEVSIX-6405 resolved
-    // TODO: update cmp files when DEVSIX-8821 resolved
     // TODO: update cmp files when DEVSIX-8822 resolved
     // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithInternalCSStoCustomPage() throws IOException,InterruptedException {
