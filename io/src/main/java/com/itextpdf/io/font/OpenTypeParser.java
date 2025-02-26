@@ -772,10 +772,11 @@ class OpenTypeParser implements Closeable {
             os_2.ulCodePageRange2 = raf.readInt();
         }
         if (version > 1) {
-            raf.skipBytes(2);
+            os_2.sxHeight = raf.readShort();
             os_2.sCapHeight = raf.readShort();
         } else {
             os_2.sCapHeight = (int) (0.7 * head.unitsPerEm);
+            os_2.sxHeight = (int) (0.5 * head.unitsPerEm);
         }
     }
 

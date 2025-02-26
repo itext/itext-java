@@ -109,6 +109,14 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         checkCmapTableEntry(fontProgram, 'i', 3);
     }
 
+    @Test
+    public void checkSxHeightTtfTest() throws IOException {
+        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "glyphs-fmt-6.ttf");
+        FontMetrics metrics = fontProgram.getFontMetrics();
+        int xHeight = metrics.getXHeight();
+        Assertions.assertEquals(536, xHeight);
+    }
+
     private void checkCmapTableEntry(FontProgram fontProgram, char uniChar, int expectedGlyphId) {
 
         Glyph glyph = fontProgram.getGlyph(uniChar);

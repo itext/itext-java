@@ -42,7 +42,6 @@ import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import org.junit.jupiter.api.Assertions;
@@ -634,6 +633,72 @@ public class AlignmentTest extends ExtendedITextTest {
                     .setWidth(60)
                     .setTextAlignment(TextAlignment.JUSTIFIED);
 
+            document.add(p);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void middleAlignmentWithTtfOS2Version3Test() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "middleAlignmentWithTtfOS2Version3Test.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_middleAlignmentWithTtfOS2Version3Test.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDoc);
+
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "Open_Sans/OpenSans-Bold.ttf");
+            document.setFont(font);
+
+            Paragraph p = new Paragraph();
+            p.setBackgroundColor(new DeviceRgb(189, 239, 73));
+            p.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            p.setFontSize(30);
+
+            Text heightDefiner = new Text(" Xj ");
+
+            p.add(heightDefiner).setMarginTop(30);
+            Text text1 = new Text(" mAlign Middle Alignment ");
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, new InlineVerticalAlignment(InlineVerticalAlignmentType.MIDDLE));
+
+            text1.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            text1.setFontSize(12);
+
+            p.add(text1);
+            p.add(heightDefiner);
+            document.add(p);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void middleAlignmentWithTtfOS2Version1Test() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "middleAlignmentWithTtfOS2Version1Test.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_middleAlignmentWithTtfOS2Version1Test.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDoc);
+
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf");
+            document.setFont(font);
+
+            Paragraph p = new Paragraph();
+            p.setBackgroundColor(new DeviceRgb(189, 239, 73));
+            p.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            p.setFontSize(30);
+
+            Text heightDefiner = new Text(" Xj ");
+
+            p.add(heightDefiner).setMarginTop(30);
+            Text text1 = new Text(" mAlign Middle Alignment ");
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, new InlineVerticalAlignment(InlineVerticalAlignmentType.MIDDLE));
+
+            text1.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            text1.setFontSize(12);
+
+            p.add(text1);
+            p.add(heightDefiner);
             document.add(p);
         }
 
