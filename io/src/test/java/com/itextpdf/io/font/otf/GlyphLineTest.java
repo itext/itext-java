@@ -223,6 +223,22 @@ public class GlyphLineTest extends ExtendedITextTest {
     }
 
     @Test
+    public void testCharsForSubstitutedGlyphProcessingInSubstituteOneToMany() throws IOException {
+        TrueTypeFont font = initializeFont();
+
+        GlyphLine line = new GlyphLine(constructGlyphListFromString("1", font));
+        line.get(0).setChars(new char[]{(char) 37, (char) 38});
+        // Modify glyphs from font program not to have chars so that old chars are preserved
+        font.getGlyphByCode(39).setChars(null);
+        font.getGlyphByCode(40).setChars(null);
+
+        line.substituteOneToMany(font.getGsubTable(), new int[] {39, 40});
+
+        Assertions.assertNull(line.get(0).getChars());
+        Assertions.assertNull(line.get(1).getChars());
+    }
+
+    @Test
     public void defaultConstructorTest() {
         GlyphLine glyphLine = new GlyphLine();
         Assertions.assertEquals(0, glyphLine.getStart());

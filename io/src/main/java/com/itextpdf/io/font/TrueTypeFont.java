@@ -35,6 +35,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -468,27 +469,35 @@ public class TrueTypeFont extends FontProgram {
      * This set of used glyphs can be used for building width array and ToUnicode CMAP.
      *
      * @param usedGlyphs a set of integers, which are glyph ids that denote used glyphs.
-     *                   This set is updated inside of the method if needed.
+     *                   This set is updated inside the method if needed.
      * @param subset subset status
      * @param subsetRanges additional subset ranges
      */
     public void updateUsedGlyphs(SortedSet<Integer> usedGlyphs, boolean subset, List<int[]> subsetRanges) {
-        int[] compactRange;
-        if (subsetRanges != null) {
-            compactRange = toCompactRange(subsetRanges);
-        } else if (!subset) {
-            compactRange = new int[]{0, 0xFFFF};
-        } else {
-            compactRange = new int[]{};
+        int[] compactRange = toCompactRange(subsetRanges, subset);
+        Set<Integer> missingGlyphs = getMissingGlyphs(compactRange);
+        for(Integer glyphId : missingGlyphs) {
+            if (getGlyphByCode(glyphId.intValue()) != null) {
+                usedGlyphs.add(glyphId.intValue());
+            }
         }
+    }
 
-        for (int k = 0; k < compactRange.length; k += 2) {
-            int from = compactRange[k];
-            int to = compactRange[k + 1];
-            for (int glyphId = from; glyphId <= to; glyphId++) {
-                if (getGlyphByCode(glyphId) != null) {
-                    usedGlyphs.add(glyphId);
-                }
+    /**
+     * The method will update usedGlyphs with additional range or with all glyphs if there is no subset.
+     * This map of used glyphs can be used for building width array and ToUnicode CMAP.
+     *
+     * @param usedGlyphs a map of glyph ids to glyphs. This map is updated inside the method if needed
+     * @param subset subset status
+     * @param subsetRanges additional subset ranges
+     */
+    public void updateUsedGlyphs(Map<Integer, Glyph> usedGlyphs, boolean subset, List<int[]> subsetRanges) {
+        int[] compactRange = toCompactRange(subsetRanges, subset);
+        Set<Integer> missingGlyphs = getMissingGlyphs(compactRange);
+        for(Integer glyphId : missingGlyphs) {
+            Glyph glyph = getGlyphByCode(glyphId.intValue());
+            if (glyph != null && !usedGlyphs.containsKey(glyphId.intValue())) {
+                usedGlyphs.put(glyphId.intValue(), glyph);
             }
         }
     }
@@ -499,10 +508,20 @@ public class TrueTypeFont extends FontProgram {
      *
      * @param ranges a {@link List} of integer arrays, which are constituted by pairs of ints that denote
      *               each range limits. Each integer array size shall be a multiple of two
+     * @param subset {@code true} if a font subset is required. Used only if {@code ranges} is {@code null}
      *
      * @return single merged array consisting of pairs of integers, each of them denoting a range
      */
-    private static int[] toCompactRange(List<int[]> ranges) {
+    private static int[] toCompactRange(List<int[]> ranges, boolean subset) {
+        if (ranges == null) {
+            if (subset) {
+                return new int[]{};
+            } else {
+                return new int[]{0, 0xFFFF};
+            }
+        }
+
+        // Ranges are requested
         List<int[]> simp = new ArrayList<>();
         for (int[] range : ranges) {
             for (int j = 0; j < range.length; j += 2) {
@@ -528,5 +547,18 @@ public class TrueTypeFont extends FontProgram {
             s[k * 2 + 1] = r[1];
         }
         return s;
+    }
+
+    private static Set<Integer> getMissingGlyphs(int[] compactRange) {
+        Set<Integer> missingGlyphs = new HashSet<>();
+        for (int k = 0; k < compactRange.length; k += 2) {
+            int from = compactRange[k];
+            int to = compactRange[k + 1];
+            for (int glyphId = from; glyphId <= to; glyphId++) {
+                missingGlyphs.add(glyphId);
+            }
+        }
+
+        return missingGlyphs;
     }
 }

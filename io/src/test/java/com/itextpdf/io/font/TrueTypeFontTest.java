@@ -27,11 +27,14 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -123,6 +126,54 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         Assertions.assertEquals(1, fontProgram.getNumberOfCmaps());
         Assertions.assertTrue(fontProgram.isCmapPresent(0, 3));
         Assertions.assertFalse(fontProgram.isCmapPresent(1, 0));
+    }
+
+    @Test
+    public void updateUsedGlyphsSetTest() throws IOException {
+        TrueTypeFont trueTypeFontProgram =
+                (TrueTypeFont) FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansSC-Regular.otf");
+
+        SortedSet<Integer> usedGlyphs = new TreeSet<>();
+
+        trueTypeFontProgram.updateUsedGlyphs(usedGlyphs, true, null);
+        Assertions.assertTrue(usedGlyphs.isEmpty());
+
+        trueTypeFontProgram.updateUsedGlyphs(usedGlyphs, false, null);
+        Assertions.assertEquals(40644, usedGlyphs.size());
+
+        usedGlyphs.clear();
+        List<int[]> subsetRanges = new ArrayList<>();
+        subsetRanges.add(new int[]{0, 100});
+        trueTypeFontProgram.updateUsedGlyphs(usedGlyphs, false, subsetRanges);
+        Assertions.assertEquals(101, usedGlyphs.size());
+    }
+
+    @Test
+    public void updateUsedGlyphsMapTest() throws IOException {
+        TrueTypeFont trueTypeFontProgram =
+                (TrueTypeFont) FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansSC-Regular.otf");
+
+        Map<Integer, Glyph> usedGlyphs = new HashMap<>();
+
+        trueTypeFontProgram.updateUsedGlyphs(usedGlyphs, true, null);
+        Assertions.assertTrue(usedGlyphs.isEmpty());
+
+        trueTypeFontProgram.updateUsedGlyphs(usedGlyphs, false, null);
+        Assertions.assertEquals(40644, usedGlyphs.size());
+
+        usedGlyphs.clear();
+        List<int[]> subsetRanges = new ArrayList<>();
+        subsetRanges.add(new int[]{0, 100});
+        trueTypeFontProgram.updateUsedGlyphs(usedGlyphs, false, subsetRanges);
+        Assertions.assertEquals(101, usedGlyphs.size());
+
+        usedGlyphs.clear();
+        usedGlyphs.put(1, trueTypeFontProgram.getGlyphByCode(10));
+        subsetRanges = new ArrayList<>();
+        subsetRanges.add(new int[]{1, 1});
+        trueTypeFontProgram.updateUsedGlyphs(usedGlyphs, false, subsetRanges);
+        Assertions.assertEquals(1, usedGlyphs.size());
+        Assertions.assertSame(trueTypeFontProgram.getGlyphByCode(10), usedGlyphs.get(1));
     }
 
     private void checkCmapTableEntry(FontProgram fontProgram, char uniChar, int expectedGlyphId) {
