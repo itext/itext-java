@@ -107,7 +107,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("textContentIsNotTagged",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("textContentIsNotTagged", pdfUAConformance);
         }
@@ -124,13 +124,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .endText();
 
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("textNoContentIsNotTagged", pdfUAConformance);
-            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("textNoContentIsNotTagged", pdfUAConformance);
-        }
+        framework.assertBothValid("textNoContentIsNotTagged", pdfUAConformance);
     }
 
 
@@ -430,7 +424,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("lineContentThatIsContentIsNotTagged",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("lineContentThatIsContentIsNotTagged", pdfUAConformance);
         }
@@ -445,13 +439,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .setLineWidth(2);
             canvas.lineTo(200, 200);
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("lineContentThatIsContentIsNotTagged_noContent", pdfUAConformance);
-            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("lineContentThatIsContentIsNotTagged_noContent", pdfUAConformance);
-        }
+       framework.assertBothValid("lineContentThatIsContentIsNotTagged_noContent", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -468,7 +456,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("lineContentThatIsContentIsTaggedButIsNotAnArtifact",
                     PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("lineContentThatIsContentIsTaggedButIsNotAnArtifact", pdfUAConformance);
         }
@@ -488,13 +476,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.lineTo(300, 200);
 
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("lineContentTaggedNotAnArtifactNoDrawing", pdfUAConformance);
-            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("lineContentTaggedNotAnArtifactNoDrawing", pdfUAConformance);
-        }
+        framework.assertBothValid("lineContentThatIsContentIsTaggedButIsNotAnArtifactNoDrawing", pdfUAConformance);
     }
 
     @Test
@@ -539,7 +521,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_RectangleNotMarked",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("checkPoint_01_005_RectangleNotMarked", pdfUAConformance);
         }
@@ -569,13 +551,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
             canvas.clip();
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("checkPoint_01_005_RectangleNoContent", pdfUAConformance);
-            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("checkPoint_01_005_RectangleNoContent", pdfUAConformance);
-        }
+        framework.assertBothValid("checkPoint_01_005_RectangleNoContent", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -592,7 +568,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_RectangleClosePathStroke",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("checkPoint_01_005_RectangleClosePathStroke", pdfUAConformance);
         }
@@ -612,7 +588,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke", pdfUAConformance);
         }
@@ -632,7 +608,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_Rectangle_FillStroke",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_FillStroke", pdfUAConformance);
         }
@@ -652,7 +628,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_Rectangle_eoFill",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_eoFill", pdfUAConformance);
         }
@@ -672,7 +648,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_Rectangle_eoFillStroke",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_eoFillStroke", pdfUAConformance);
         }
@@ -716,7 +692,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("rectangleMarkedContentWithoutMcid",
                     PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("rectangleMarkedContentWithoutMcid", pdfUAConformance);
         }
@@ -734,12 +710,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("rectangleMarkedContentWithoutMcid_NoContent", pdfUAConformance);
-            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("rectangleMarkedContentWithoutMcid_NoContent", pdfUAConformance);
-        }
+        framework.assertBothValid("checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent", pdfUAConformance);
     }
 
     @Test
@@ -843,7 +814,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_004_bezierCurveInvalidMCID",
                     PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT, false, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("checkPoint_01_004_bezierCurveInvalidMCID", pdfUAConformance);
         }
@@ -863,13 +834,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .lineTo(300, 300)
                     .setStrokeColor(ColorConstants.RED);
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("checkPoint_01_004_bezierCurveInvalidMCID_NoContent", pdfUAConformance);
-            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("checkPoint_01_004_bezierCurveInvalidMCID_NoContent", pdfUAConformance);
-        }
+        framework.assertBothValid("checkPoint_01_004_bezierCurveInvalidMCID_NoContent", pdfUAConformance);
     }
 
     @Test

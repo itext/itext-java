@@ -228,7 +228,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                 Assertions.assertEquals(PdfName.Document, docNode.getRole());
                 Assertions.assertEquals(PdfName.PrinterMark, ((PdfObjRef) docNode.getKids().get(0)).getReferencedObject().get(PdfName.Subtype));
             }
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("printerMAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
         }
@@ -902,7 +902,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("printerMAnnotIsInLogicalStructureTest",
                     PdfUAExceptionMessageConstants.PRINTER_MARK_IS_NOT_PERMITTED, pdfUAConformance);
-            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("printerMAnnotIsInLogicalStructureTest", pdfUAConformance);
         }

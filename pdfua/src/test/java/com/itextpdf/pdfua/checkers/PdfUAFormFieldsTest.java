@@ -2146,7 +2146,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("FormFieldAsStream", pdfUAConformance);
-            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
             // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("FormFieldAsStream", pdfUAConformance);

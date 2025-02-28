@@ -1248,6 +1248,47 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         compareResult(outFile, "cmp_" + outFile);
     }
 
+    @Test
+    public void emptyTaggedDocumentStillAddsDocumentTag()
+            throws IOException, ParserConfigurationException, InterruptedException, SAXException {
+        String outFile = "emptyTaggedDocumentStillAddsDocumentTag.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        document.close();
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
+
+    @Test
+    public void emptyTaggedCanvasStillAddsDocumentTag1()
+            throws IOException, ParserConfigurationException, InterruptedException, SAXException {
+        String outFile = "emptyTaggedCanvasStillAddsDocumentTag1.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+        PdfPage page = pdfDocument.addNewPage();
+        Canvas canvas = new Canvas(page,page.getMediaBox());
+        canvas.close();
+        pdfDocument.close();
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
+
+    @Test
+    public void emptyTaggedCanvasStillAddsDocumentTag2()
+            throws IOException, ParserConfigurationException, InterruptedException, SAXException {
+        String outFile = "emptyTaggedCanvasStillAddsDocumentTag2.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+        PdfPage page = pdfDocument.addNewPage();
+        Canvas canvas = new Canvas(new PdfFormXObject(page),pdfDocument);
+        canvas.close();
+        pdfDocument.close();
+
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
     private Paragraph createParagraph1() throws IOException {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
         Paragraph p = new Paragraph().add("text chunk. ").add("explicitly added separate text chunk");

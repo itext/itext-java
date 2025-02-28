@@ -135,6 +135,10 @@ public class UaValidationTestFramework {
         veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
     }
 
+    public void assertVeraPdfValid(String filename, PdfUAConformance pdfUAConformance) throws IOException {
+        veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", false, pdfUAConformance);
+    }
+
     private String veraPdfResult(String filename, boolean failureExpected, PdfUAConformance pdfUAConformance)
             throws IOException {
         String outfile = UrlUtil.getNormalizedFileUriString(destinationFolder + filename);

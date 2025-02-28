@@ -75,6 +75,13 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
     private LayoutTaggingHelper defaultLayoutTaggingHelper;
 
     /**
+     * Creates a new {@link RootElement} instance.
+     */
+    public RootElement() {
+        // Empty constructor.
+    }
+
+    /**
      * Adds an element to the root. The element is immediately placed in the contents.
      *
      * @param element an element with spacial margins, tabbing, and alignment
@@ -346,6 +353,19 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
         }
         ensureRootRendererNotNull().addChild(rendererSubTreeRoot);
         traverseAndCallIso(pdfDocument, rendererSubTreeRoot);
+    }
+
+    /**
+     * Ensures that the root tag is created in the tagging structure.
+     */
+    protected final void ensureRootTagIsCreated() {
+        if (!this.pdfDocument.isTagged()) {
+            return;
+        }
+        if (pdfDocument.getWriter() == null){
+            return;
+        }
+        this.pdfDocument.getTagStructureContext().normalizeDocumentRootTag();
     }
 
     private LayoutTaggingHelper initTaggingHelperIfNeeded() {
