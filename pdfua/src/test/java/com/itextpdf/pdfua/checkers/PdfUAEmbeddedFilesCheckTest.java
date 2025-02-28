@@ -85,6 +85,7 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("pdfuaWithEmbeddedFilesWithoutF",
                     PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, pdfUAConformance);
+            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("pdfuaWithEmbeddedFilesWithoutF", pdfUAConformance);
         }
@@ -105,6 +106,7 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("pdfuaWithEmbeddedFilesWithoutUF",
                     PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, pdfUAConformance);
+            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("pdfuaWithEmbeddedFilesWithoutUF", pdfUAConformance);
         }

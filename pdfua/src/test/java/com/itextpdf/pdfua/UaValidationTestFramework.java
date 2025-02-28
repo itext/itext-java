@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfua;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -83,9 +84,9 @@ public class UaValidationTestFramework {
 
     public void assertBothFail(String filename, String expectedMsg, boolean checkDocClosing, PdfUAConformance pdfUAConformance)
             throws IOException {
-        checkError(checkErrorLayout("layout_" + filename + pdfUAConformance + ".pdf", pdfUAConformance), expectedMsg);
+        checkError(checkErrorLayout("layout_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance), expectedMsg);
 
-        final String createdFileName = "vera_" + filename + pdfUAConformance + ".pdf";
+        final String createdFileName = "vera_" + filename + getUAConformance(pdfUAConformance) + ".pdf";
         veraPdfResult(createdFileName, true, pdfUAConformance);
 
         if (checkDocClosing) {
@@ -95,9 +96,9 @@ public class UaValidationTestFramework {
     }
 
     public void assertBothValid(String fileName, PdfUAConformance pdfUAConformance) throws IOException {
-        Exception e = checkErrorLayout("layout_" + fileName + pdfUAConformance + ".pdf", pdfUAConformance);
-        String veraPdf = veraPdfResult("vera_" + fileName + pdfUAConformance + ".pdf", false, pdfUAConformance);
-        Exception eClosing =  checkErrorOnClosing("vera_" + fileName + pdfUAConformance + ".pdf", pdfUAConformance);
+        Exception e = checkErrorLayout("layout_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
+        String veraPdf = veraPdfResult("vera_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", false, pdfUAConformance);
+        Exception eClosing =  checkErrorOnClosing("vera_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
         if (e == null && veraPdf == null && eClosing == null) {
             return;
         }
@@ -131,11 +132,7 @@ public class UaValidationTestFramework {
     }
 
     public void assertVeraPdfFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
-        veraPdfResult(filename + pdfUAConformance + ".pdf", true, pdfUAConformance);
-    }
-
-    public void assertVeraPdfValid(String filename, PdfUAConformance pdfUAConformance) throws IOException {
-        Assertions.assertNull(veraPdfResult(filename + pdfUAConformance + ".pdf", false, pdfUAConformance)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
     }
 
     private String veraPdfResult(String filename, boolean failureExpected, PdfUAConformance pdfUAConformance)
@@ -237,5 +234,9 @@ public class UaValidationTestFramework {
 
     public static interface Generator<IBlockElement> {
         IBlockElement generate();
+    }
+
+    private static String getUAConformance(PdfUAConformance conformance) {
+        return MessageFormatUtil.format("_UA_{0}", conformance.getPart());
     }
 }

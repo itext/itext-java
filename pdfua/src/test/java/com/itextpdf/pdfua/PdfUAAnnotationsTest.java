@@ -168,6 +168,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("widgetAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("widgetAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
         }
@@ -189,9 +190,10 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("widgetAnnotNoDirectChildAnnotAutomaticConformanceLvl", pdfUAConformance);
+            framework.assertBothValid("widgetAnnotNoDirectChildAutoConformanceLvl", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("widgetAnnotNoDirectChildAnnotAutomaticConformanceLvl", pdfUAConformance);
+            framework.assertVeraPdfFail("widgetAnnotNoDirectChildAutoConformanceLvl", pdfUAConformance);
         }
     }
 
@@ -220,12 +222,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("printerMAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
-            String layoutPdf = "layout_printerMAnnotNoDirectChildOfAnnotTest" + pdfUAConformance + ".pdf";
+            String layoutPdf = "layout_printerMAnnotNoDirectChildOfAnnotTest" + "_UA_" + pdfUAConformance.getPart() + ".pdf";
             try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(DESTINATION_FOLDER + layoutPdf))) {
                 final IStructureNode docNode = pdfDoc.getStructTreeRoot().getKids().get(0);
                 Assertions.assertEquals(PdfName.Document, docNode.getRole());
                 Assertions.assertEquals(PdfName.PrinterMark, ((PdfObjRef) docNode.getKids().get(0)).getReferencedObject().get(PdfName.Subtype));
             }
+            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("printerMAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
         }
@@ -287,6 +290,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             framework.assertBothFail("screenAnnotWithoutContentsAndAltTest", MessageFormatUtil.format(
                             PdfUAExceptionMessageConstants.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_OR_ALT_KEY, "Screen"),
                     pdfUAConformance);
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("screenAnnotWithoutContentsAndAltTest", pdfUAConformance);
         }
@@ -303,6 +307,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("popupWithoutContentOrAltTest", pdfUAConformance);
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("popupWithoutContentOrAltTest", pdfUAConformance);
         }
@@ -339,6 +344,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("screenAnnotWithAltTest", pdfUAConformance);
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("screenAnnotWithAltTest", pdfUAConformance);
         }
@@ -415,6 +421,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("trapNetAnnotNotPermittedTest",
                     PdfUAExceptionMessageConstants.ANNOT_TRAP_NET_IS_NOT_PERMITTED, pdfUAConformance);
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("trapNetAnnotNotPermittedTest", pdfUAConformance);
         }
@@ -443,6 +450,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("invisibleTrapNetAnnotTest", pdfUAConformance);
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("invisibleTrapNetAnnotTest", pdfUAConformance);
         }
@@ -461,6 +469,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("soundAnnotDirectChildOfAnnotTest", pdfUAConformance);
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("soundAnnotDirectChildOfAnnotTest", pdfUAConformance);
         }
@@ -483,6 +492,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("pushBtnNestedWithinFormTest", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("pushBtnNestedWithinFormTest", pdfUAConformance);
         }
@@ -549,10 +559,10 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("linkAnnotNestedWithinLinkWithAnAlternateDescriptionTest",
+            framework.assertBothFail("linkAnnotNestedWithinLinkWithAnAltDescr",
                     PdfUAExceptionMessageConstants.LINK_ANNOTATION_SHOULD_HAVE_CONTENTS_KEY, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfValid("linkAnnotNestedWithinLinkWithAnAlternateDescriptionTest", pdfUAConformance);
+            framework.assertBothValid("linkAnnotNestedWithinLinkWithAnAltDescr", pdfUAConformance);
         }
     }
 
@@ -748,7 +758,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             framework.assertBothFail("screenAnnotationWithMediaDataTest",
                     PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfValid("screenAnnotationWithMediaDataTest", pdfUAConformance);
+            framework.assertBothValid("screenAnnotationWithMediaDataTest", pdfUAConformance);
         }
     }
 
@@ -765,8 +775,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             screen.setContents("screen annotation");
             page.addAnnotation(screen);
         });
-        framework.assertBothFail("screenAnnotationWithMediaDataTest",
-                PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("screenAnnotationWithMediaDataTest",
+                    PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("screenAnnotationWithMediaDataTest", pdfUAConformance);
+        }
     }
 
     @ParameterizedTest
@@ -789,7 +804,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             framework.assertBothFail("screenAnnotationWithMediaDataTest",
                     PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfValid("screenAnnotationWithMediaDataTest", pdfUAConformance);
+            framework.assertBothValid("screenAnnotationWithMediaDataTest", pdfUAConformance);
         }
     }
 
@@ -819,6 +834,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("tabsEntryAbsentInPageTest",
                     PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("tabsEntryAbsentInPageTest", pdfUAConformance);
         }
@@ -836,6 +852,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("tabsEntryNotSInPageTest", PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("tabsEntryNotSInPageTest", pdfUAConformance);
         }
@@ -855,6 +872,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("invalidTabsEntryButAnnotInvisibleTest",
                     PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
+            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("invalidTabsEntryButAnnotInvisibleTest", pdfUAConformance);
         }
@@ -884,6 +902,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("printerMAnnotIsInLogicalStructureTest",
                     PdfUAExceptionMessageConstants.PRINTER_MARK_IS_NOT_PERMITTED, pdfUAConformance);
+            // TODO DEVSIX-8242, DEVSIX-8865 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("printerMAnnotIsInLogicalStructureTest", pdfUAConformance);
         }

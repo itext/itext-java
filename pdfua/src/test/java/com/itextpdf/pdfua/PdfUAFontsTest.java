@@ -92,6 +92,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "KozMinPro-Regular"),
                     false, pdfUAConformance);
         }
+        // TODO DEVSIX-8242 The layout level does’t throw an error
         if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("tryToUseType0Cid0FontTest", pdfUAConformance);
         }
@@ -163,8 +164,9 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         framework.assertBothFail("trueTypeFontGlyphNotPresentTest",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "w"),
                 false, pdfUAConformance);
+        // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("trueTypeFontGlyphNotPresentTest", pdfUAConformance);
+            framework.assertBothFail("trueTypeFontGlyphNotPresentTest", pdfUAConformance);
         }
     }
 
@@ -192,6 +194,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     restoreState().closeTag();
         });
 
+        // TODO DEVSIX-8242 The layout level does’t throw an error for UA1
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1){
             framework.assertVeraPdfFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
         }
@@ -218,11 +221,12 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             document.close();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1){
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("tryToUseStandardFontsTest",
                     MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"), false,
                     pdfUAConformance);
         }
+        // TODO DEVSIX-8242 The layout level does’t throw an error
         if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("tryToUseStandardFontsTest", pdfUAConformance);
         }

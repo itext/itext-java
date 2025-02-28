@@ -226,7 +226,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return checkBox;
             }
         });
-        framework.assertBothValid("testCheckBoxInteractiveCustomAppearanceChecked", pdfUAConformance);
+        framework.assertBothValid("checkBoxInteractiveCustomAppChecked", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -426,7 +426,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonCustomAppearanceCheckedInteractive", pdfUAConformance);
+        framework.assertBothValid("radioBtnCustomAppCheckedInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -512,7 +512,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("radioBtnGroupCustomAppCheckedInteractive", pdfUAConformance);
+        framework.assertBothValid("radioBtnCustomAppCheckedInteractive", pdfUAConformance);
     }
 
 
@@ -594,9 +594,10 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testButtonSingleLine", pdfUAConformance);
+            framework.assertBothValid("testButtonCustomContentIsAlsoForm", pdfUAConformance);
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testButtonSingleLine", pdfUAConformance);
+            framework.assertVeraPdfFail("testButtonCustomContentIsAlsoForm", pdfUAConformance);
         }
     }
 
@@ -823,7 +824,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithCustomAppearanceInteractive", pdfUAConformance);
+        framework.assertBothValid("inputFieldCustomAppInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -842,7 +843,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("inputFieldCustomAppearanceValueInteractive", pdfUAConformance);
+        framework.assertBothValid("inputFieldCustomAppValueInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -861,7 +862,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("inputFieldCustomAppearancePlaceHolderInteractive", pdfUAConformance);
+        framework.assertBothValid("inpFieldCustomAppPlaceholderInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1029,7 +1030,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("textAreaCustomAppearancePlaceHolderInteractive", pdfUAConformance);
+        framework.assertBothValid("textAreaCustomAppPlaceHolderInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1143,7 +1144,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("listBoxCustomAppearanceSelectedInteractive", pdfUAConformance);
+        framework.assertBothValid("listBoxCustomAppSelectedInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1257,7 +1258,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("comboBoxCustomAppearanceSelectedInteractive", pdfUAConformance);
+        framework.assertBothValid("comboBoxCustomAppInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1388,7 +1389,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("signAppearanceSignedAppearanceTextInteractive", pdfUAConformance);
+        framework.assertBothValid("signedAppearanceTextInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1412,7 +1413,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("signedAndCustomAppearanceTextInteractive", pdfUAConformance);
+        framework.assertBothValid("signedCustomAppTextInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1422,7 +1423,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setInteractive(true);
                 return cb;
             }
@@ -1431,6 +1431,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveCheckBoxNoAlternativeDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("interactiveCheckBoxNoAlternativeDescription", pdfUAConformance);
         }
@@ -1449,10 +1450,11 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("interactiveRadioButtonNoAlternativeDescription",
+            framework.assertBothFail("interactiveRadioButtonNoAltDescr",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("interactiveRadioButtonNoAlternativeDescription", pdfUAConformance);
+            framework.assertVeraPdfFail("interactiveRadioButtonNoAltDescr", pdfUAConformance);
         }
     }
 
@@ -1472,6 +1474,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveButtonNoAlternativeDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("interactiveButtonNoAlternativeDescription", pdfUAConformance);
         }
@@ -1491,10 +1494,11 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("interactiveInputFieldNoAlternativeDescription",
+            framework.assertBothFail("interactiveInputFieldNoAltDescr",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("interactiveInputFieldNoAlternativeDescription", pdfUAConformance);
+            framework.assertVeraPdfFail("interactiveInputFieldNoAltDescr", pdfUAConformance);
         }
     }
 
@@ -1514,6 +1518,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveTextAreaNoAlternativeDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("interactiveTextAreaNoAlternativeDescription", pdfUAConformance);
         }
@@ -1535,6 +1540,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveListBoxNoAlternativeDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("interactiveListBoxNoAlternativeDescription", pdfUAConformance);
         }
@@ -1556,6 +1562,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveComboBoxNoAlternativeDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("interactiveComboBoxNoAlternativeDescription", pdfUAConformance);
         }
@@ -1577,6 +1584,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveSignAppearanceNoAltDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("interactiveSignAppearanceNoAltDescription", pdfUAConformance);
         }
@@ -1611,7 +1619,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             }
         });
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertVeraPdfValid("testCheckBoxArtifactRoleua1", pdfUAConformance);
+            framework.assertBothValid("testCheckBoxArtifactRoleua1", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             //TODO DEVSIX-8974 Tagging formfield as artifact will put the inner content into bad places in tagstructure
             framework.assertVeraPdfFail("testCheckBoxArtifactRoleua2", pdfUAConformance);
@@ -1842,7 +1850,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             field.setAlternativeName("Some tu entry value");
@@ -1851,6 +1858,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testTextBuilderWithTu", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testTextBuilderWithTu", pdfUAConformance);
         }
@@ -1864,7 +1872,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             form.addField(field);
@@ -1874,6 +1881,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("testTextBuilderNoTu", PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION,
                     pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testTextBuilderNoTu", pdfUAConformance);
         }
@@ -1887,7 +1895,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createComboBox();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
@@ -1895,6 +1902,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testChoiceBuilderWithTu", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testChoiceBuilderWithTu", pdfUAConformance);
         }
@@ -1908,7 +1916,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createComboBox();
             form.addField(field);
         });
@@ -1916,6 +1923,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("tesChoicetBuilderNoTu", PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION,
                     pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("tesChoicetBuilderNoTu", pdfUAConformance);
         }
@@ -1929,7 +1937,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
@@ -1937,6 +1944,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testButtonBuilderWithTu", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testButtonBuilderWithTu", pdfUAConformance);
         }
@@ -1950,7 +1958,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             form.addField(field);
         });
@@ -1958,6 +1965,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("testButtonBuilderNoTu", PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION,
                     pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testButtonBuilderNoTu", pdfUAConformance);
         }
@@ -1971,7 +1979,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             List<PdfFormAnnotation> annList = field.getChildFormAnnotations();
             annList.get(0).setVisibility(PdfFormAnnotation.HIDDEN);
@@ -1980,6 +1987,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testButtonBuilderNoTuNotVisible", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testButtonBuilderNoTuNotVisible", pdfUAConformance);
         }
@@ -2007,6 +2015,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("testRadioButtonBuilderNoTu",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testRadioButtonBuilderNoTu", pdfUAConformance);
         }
@@ -2035,6 +2044,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testRadioButtonBuilderWithTu", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testRadioButtonBuilderWithTu", pdfUAConformance);
         }
@@ -2048,7 +2058,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createSignature();
             field.setValue("some value");
             field.setAlternativeName("Some tu entry value");
@@ -2057,6 +2066,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testSignatureBuilderWithTu", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testSignatureBuilderWithTu", pdfUAConformance);
         }
@@ -2070,7 +2080,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createSignature();
             field.setValue("some value");
             form.addField(field);
@@ -2079,6 +2088,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("testSignatureBuilderNoTu",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("testSignatureBuilderNoTu", pdfUAConformance);
         }
@@ -2092,7 +2102,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
@@ -2103,6 +2112,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("FormFieldAltDescription", pdfUAConformance);
+            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("FormFieldAltDescription", pdfUAConformance);
         }
@@ -2136,6 +2146,8 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("FormFieldAsStream", pdfUAConformance);
+            // TODO DEVSIX-8865 PDF document does not contain Document tag if it does not contain any content
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertVeraPdfFail("FormFieldAsStream", pdfUAConformance);
         }
