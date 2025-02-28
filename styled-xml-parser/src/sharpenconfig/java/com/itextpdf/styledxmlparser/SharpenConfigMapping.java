@@ -81,6 +81,12 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.addCustomUsingDeclaration("com.itextpdf.styledxmlparser.css.page.PageMarginBoxContextNode", Arrays.asList("System.Collections"));
 
         configurator.mapStringLiteral("com.itextpdf.styledxmlparser.jsoup.integration.ParseTest.newsHref", "http://news.baidu.com/");
+
+        configurator.addCustomMember("com.itextpdf.styledxmlparser.css.pseudo.CssPseudoElementNode.AttributesStub",
+                SharpenConfigCustomMembers.getEnumerator);
+        configurator.addCustomMember("com.itextpdf.styledxmlparser.css.page.PageMarginBoxContextNode.AttributesStub",
+                SharpenConfigCustomMembers.getEnumerator);
+        configurator.ignoreUsing("Java.IO");
     }
 
     @Override

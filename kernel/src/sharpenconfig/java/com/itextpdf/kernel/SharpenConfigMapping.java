@@ -148,7 +148,11 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapVariableType("com.itextpdf.kernel.colors.DeviceRgbTest.colorByAWTColorTest.color", "System.Drawing.Color");
         configurator.mapMethodToCustomMember("com.itextpdf.kernel.geom.Rectangle.clone", "Clone", SharpenConfigCustomMembers.cloneRectangle);
         configurator.mapMethodToCustomMember("com.itextpdf.kernel.geom.AffineTransform.clone", "Clone", SharpenConfigCustomMembers.cloneAffineTransform);
+        configurator.addCustomMember("com.itextpdf.kernel.colors.DeviceRgb", SharpenConfigCustomMembers.deviceRgbDrawingConstructor, 8);
+        configurator.addCustomMember("com.itextpdf.kernel.pdf.PdfArray", SharpenConfigCustomMembers.getEnumerator);
 
+        configurator.mapMethodParametersOrder("com.itextpdf.kernel.crypto.CryptoUtil.getMessageDigest", "1");
+        configurator.mapMethodParametersOrder("com.itextpdf.kernel.crypto.CryptoUtil.getMessageDigest(java.lang.String,java.lang.String)", "1");
     }
 
     @Override

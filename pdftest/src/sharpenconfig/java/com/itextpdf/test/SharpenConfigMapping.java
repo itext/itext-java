@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfa;
+package com.itextpdf.test;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
@@ -31,21 +31,34 @@ import sharpen.config.MappingConfigurator;
 import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
+import sharpen.core.csharp.ast.CSExpression;
+import sharpen.core.csharp.ast.CSStringLiteralExpression;
 
 public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 15;
+        return 18;
     }
 
     @Override
     public String getModuleName() {
-        return "pdfa";
+        return "pdftest";
     }
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
-        configurator.removeField("com.itextpdf.pdfa.checker.PdfAChecker.LOGGER");
+        configurator.removeMethod("com.itextpdf.test.ITextTest.removeCryptographyRestrictions");
+        configurator.removeMethod("com.itextpdf.test.ITextTest.restoreCryptographyRestrictions");
+
+        configurator.mapType("com.itextpdf.test.LoggerHelper", "iText.Test.LogListenerHelper");
+        configurator.mapMethod("com.itextpdf.test.AssertUtil.doesNotThrow", "NUnit.Framework.Assert.DoesNotThrow", false);
+
+        // getCurrentTimeDate is mapped to the GetCurrentUtcTime because the returned value is ultimately used for the
+        // date comparison, however dates comparison must be done using UTC time in c#
+        configurator.mapMethodParametersOrder("com.itextpdf.test.signutils.Pkcs12FileHelper.initStore(java.lang.String,char[],java.security.Provider)", "1,2");
+
+        configurator.mapAnnotationParameter("com.itextpdf.test.annotations.LogMessage", "messageTemplate", "");
+        configurator.mapType("com.itextpdf.test.annotations.LogMessage", "iText.Test.Attributes.LogMessage");
     }
 
     @Override
@@ -70,16 +83,16 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
     @Override
     public Collection<String> getIgnoredSourceFiles() {
-        return Collections.EMPTY_LIST;
+        return null;
     }
 
     @Override
     public Collection<String> getIgnoredResources() {
-        return Collections.EMPTY_LIST;
+        return null;
     }
 
     @Override
     public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
-        return Collections.EMPTY_LIST;
+        return null;
     }
 }

@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
+import sharpen.config.MemberKind;
 import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
@@ -209,6 +210,86 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.addCustomUsingDeclaration("com.itextpdf.layout.renderer.TypographyUtils", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "Microsoft.Extensions.Logging", "iText.Commons"));
         configurator.mapType("org.junit.jupiter.api.condition.DisabledInNativeImage", "iText.Commons.Utils.NoopAnnotation");
         configurator.addFullName("iText.Commons.Utils.NoopAnnotation");
+
+        configurator.mapType("java.security.cert.Certificate", "iText.Commons.Bouncycastle.Cert.IX509Certificate");
+        configurator.mapType("java.security.cert.X509Certificate", "iText.Commons.Bouncycastle.Cert.IX509Certificate");
+        configurator.mapType("java.security.InvalidAlgorithmParameterException", "System.Exception");
+        configurator.mapType("java.security.cert.CRL", "iText.Commons.Bouncycastle.Cert.IX509Crl");
+        configurator.mapType("java.security.cert.CRLException", "iText.Commons.Bouncycastle.Security.AbstractCrlException");
+        configurator.mapType("java.security.cert.X509CRL", "iText.Commons.Bouncycastle.Cert.IX509Crl");
+        configurator.mapType("java.security.cert.CRLReason", "iText.Commons.Bouncycastle.Cert.CRLReason");
+        configurator.mapType("java.security.PrivateKey", "iText.Commons.Bouncycastle.Crypto.IPrivateKey");
+        configurator.mapType("java.security.Signature", "iText.Commons.Bouncycastle.Crypto.ISigner");
+        configurator.mapType("java.security.PublicKey", "iText.Commons.Bouncycastle.Crypto.IPublicKey");
+        configurator.mapType("javax.security.auth.x500.X500Principal", "iText.Commons.Bouncycastle.Asn1.X500.IX500Name");
+        configurator.mapType("java.security.Key", "iText.Commons.Bouncycastle.Crypto.IPrivateKey");
+        configurator.mapType("java.security.KeyStore", "System.Collections.Generic.List<IX509Certificate>");
+        configurator.mapType("java.security.GeneralSecurityException",
+                "iText.Commons.Bouncycastle.Security.AbstractGeneralSecurityException");
+        configurator.mapType("java.security.SignatureException",
+                "iText.Commons.Bouncycastle.Security.AbstractGeneralSecurityException");
+        configurator.mapType("java.security.cert.CertificateExpiredException",
+                "iText.Commons.Bouncycastle.Security.AbstractCertificateExpiredException");
+        configurator.mapType("java.security.cert.CertificateNotYetValidException",
+                "iText.Commons.Bouncycastle.Security.AbstractCertificateNotYetValidException");
+        configurator.mapType("java.security.cert.CertificateParsingException",
+                "iText.Commons.Bouncycastle.Security.AbstractCertificateParsingException");
+        configurator.mapType("java.security.KeyPairGenerator", "iText.Commons.Bouncycastle.Crypto.Generators.IRsaKeyPairGenerator");
+        configurator.mapType("java.security.KeyPair", "iText.Commons.Bouncycastle.Crypto.IAsymmetricCipherKeyPair");
+        configurator.mapType("com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp",
+                "iText.Commons.Bouncycastle.Asn1.Ocsp.IBasicOcspResponse");
+        configurator.mapType("com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC",
+                "iText.Bouncycastle.Asn1.Ocsp.BasicOCSPResponseBC");
+        configurator.mapType("com.itextpdf.bouncycastlefips.cert.ocsp.BasicOCSPRespBCFips",
+                "iText.Bouncycastlefips.Asn1.Ocsp.BasicOCSPResponseBCFips");
+        configurator.mapType("com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp",
+                "iText.Commons.Bouncycastle.Asn1.Ocsp.IOcspResponse");
+        configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams",
+                "iText.Commons.Bouncycastle.Asn1.Pkcs.IRsassaPssParameters");
+
+
+        configurator.mapMethod("java.math.BigInteger.intValue", "GetIntValue");
+        configurator.mapMethod("java.security.cert.X509Certificate.getIssuerX500Principal", "GetIssuerDN");
+        configurator.mapMethod("java.security.cert.X509Certificate.getSubjectX500Principal", "GetSubjectDN");
+        configurator.mapMethod("java.security.cert.X509CRL.getIssuerX500Principal", "GetIssuerDN");
+        configurator.mapMethod("java.security.cert.X509Extension.getCriticalExtensionOIDs", "GetCriticalExtensionOids");
+        configurator.mapMethod("java.security.MessageDigest.getAlgorithm", "GetAlgorithmName");
+
+        configurator.mapMethod("java.security.KeyPair.getPrivate", "GetPrivateKey");
+        configurator.mapMethod("java.security.KeyPair.getPublic", "GetPublicKey");
+
+        configurator.mapMethod("com.itextpdf.commons.bouncycastle.IBouncyCastleFactory.createOCSPRespBuilder", "");
+        configurator.mapMethod("com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPRespBuilder.build", "CreateOCSPResponse");
+        configurator.mapMethod("com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp.getCerts", "GetOcspCerts");
+        configurator.mapMethod("com.itextpdf.commons.bouncycastle.IBouncyCastleFactory.createExtension()", "CreateExtensions");
+        configurator.mapMethod("com.itextpdf.commons.bouncycastle.IBouncyCastleFactory.createX509CertificateHolder", "CreateX509Certificate");
+
+        configurator.unwrapInvocation("com.itextpdf.commons.bouncycastle.IBouncyCastleFactory.createBasicOCSPResp"
+                + "(com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse)");
+        configurator.unwrapInvocation("com.itextpdf.commons.bouncycastle.IBouncyCastleFactory.createOCSPResp"
+                + "(com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse)");
+
+        configurator.mapMemberToInvocationsChain(
+                "java.security.GeneralSecurityException.GeneralSecurityException(java.lang.String,java.lang.Throwable)",
+                "iText.Bouncycastleconnector.BouncyCastleFactoryCreator.GetFactory().CreateGeneralSecurityException",
+                MemberKind.Method);
+        configurator.mapMemberToInvocationsChain(
+                "java.security.GeneralSecurityException.GeneralSecurityException(java.lang.String)",
+                "iText.Bouncycastleconnector.BouncyCastleFactoryCreator.GetFactory().CreateGeneralSecurityException",
+                MemberKind.Method);
+        configurator.mapMemberToInvocationsChain(
+                "java.security.GeneralSecurityException.GeneralSecurityException()",
+                "iText.Bouncycastleconnector.BouncyCastleFactoryCreator.GetFactory().CreateGeneralSecurityException",
+                MemberKind.Method);
+        configurator.mapMemberToInvocationsChain("java.math.BigInteger.valueOf(long)",
+                "iText.Bouncycastleconnector.BouncyCastleFactoryCreator.GetFactory().CreateBigInteger().ValueOf",
+                MemberKind.Method);
+        configurator.mapMemberToInvocationsChain("java.math.BigInteger.BigInteger(int,byte[])",
+                "iText.Bouncycastleconnector.BouncyCastleFactoryCreator.GetFactory().CreateBigInteger",
+                MemberKind.Method);
+
+        configurator.removeMethod("java.security.Security.addProvider");
+        configurator.mapStringLiteral("com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT", "Either itext7.bouncy-castle-adapter or itext7.bouncy-castle-fips-adapter dependency must be added in order to use BouncyCastleFactoryCreator");
     }
 
     @Override

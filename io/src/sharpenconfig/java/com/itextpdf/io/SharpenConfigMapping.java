@@ -46,7 +46,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
-
         configurator.removeMethod("com.itextpdf.io.source.RandomAccessFileOrArray.readUTF");
         configurator.mapMethod("com.itextpdf.io.codec.TIFFField.getType", "GetFieldType");
         configurator.mapMethod("com.itextpdf.io.font.cmap.CMapObject.getType", "GetObjectType");
@@ -84,6 +83,9 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("java.nio.charset.Charset.newEncoder", "iText.IO.Util.TextUtil.NewEncoder");
         configurator.mapMethod("java.io.DataInputStreamReadFully", "iText.IO.Util.StreamUtil.ReadFully", false);
         configurator.mapMethod("java.net.URL.openStream", "iText.IO.Util.UrlUtil.OpenStream", false);
+
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.io.image.ImageDataFactory.create(java.awt.Image,java.awt.Color)", "!NETSTANDARD2_0");
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.io.image.ImageDataFactory.create(java.awt.Image,java.awt.Color,boolean)", "!NETSTANDARD2_0");
     }
 
     @Override

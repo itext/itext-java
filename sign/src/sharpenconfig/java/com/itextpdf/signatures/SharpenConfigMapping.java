@@ -71,6 +71,36 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.removeField("com.itextpdf.signatures.LtvVerifier.securityProviderCode");
         configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.signatures.PdfSigner$ISignatureDataProvider");
         configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.signatures.testutils.SignaturesCompareTool$SequenceComparator");
+
+        configurator.mapType("com.itextpdf.signatures.BouncyCastleDigest", "Org.BouncyCastle.Security.DigestUtilities");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.PdfPKCS7.PdfPKCS7(java.security.PrivateKey," + "java.security.cert.Certificate[],java.lang.String,java.lang.String,com.itextpdf.signatures.IExternalDigest,boolean)", "1, 2, 3, 6");
+
+        configurator.mapType("com.itextpdf.signatures.BouncyCastleDigest", "iText.Signatures.BouncyCastleDigest");
+        configurator.mapMethodParametersOrder("com.itextpdf.signatures.PdfPKCS7.PdfPKCS7(java.security.PrivateKey," +
+                        "java.security.cert.Certificate[],java.lang.String,java.lang.String,com.itextpdf.signatures.IExternalDigest,boolean)",
+                "1, 2, 3, 5, 6");
+
+        configurator.removeField("com.itextpdf.signatures.verify.CertificateVerificationClassTest.PROVIDER");
+        configurator.removeField("com.itextpdf.signatures.verify.LtvVerifierTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.verify.LtvVerifierTest.PROVIDER");
+        configurator.removeField("com.itextpdf.signatures.verify.OcspCertificateVerificationTest.PROVIDER");
+        configurator.removeField("com.itextpdf.signatures.LtvVerificationTest.BOUNCY_CASTLE_FACTORY");
+        configurator.removeField("com.itextpdf.signatures.PdfSignatureAppearanceUnitTest.BOUNCY_CASTLE_FACTORY");
+        configurator.removeField("com.itextpdf.signatures.PdfSignerUnitTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.SignatureUtilTest.BOUNCY_CASTLE_FACTORY");
+        configurator.removeField("com.itextpdf.signatures.verify.pdfinsecurity.SignatureWrappingAttackTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.verify.pdfinsecurity.IncrementalSavingAttackTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.TimestampSigTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.TaggedPdfSigningTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.SimpleSigningTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.SignDeferredTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.SequentialSignaturesTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.PdfSignatureAppearanceTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.PdfASigningTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.PadesSignatureLevelTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.LtvWithTwoSignaturesTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.LtvSigTest.FACTORY");
+        configurator.removeField("com.itextpdf.signatures.sign.AnnotationsSigningTest.FACTORY");
     }
 
     @Override
