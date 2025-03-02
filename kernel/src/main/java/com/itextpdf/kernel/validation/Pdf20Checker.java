@@ -22,15 +22,24 @@
  */
 package com.itextpdf.kernel.validation;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.Pdf20ConformanceException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.IStructureNode;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagutils.ITagTreeIteratorHandler;
+import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -46,11 +55,15 @@ public class Pdf20Checker implements IValidationChecker {
 
     private static final Function<String, PdfException> EXCEPTION_SUPPLIER = (msg) -> new Pdf20ConformanceException(msg);
 
+    private final TagStructureContext tagStructureContext;
+
     /**
      * Creates new {@link Pdf20Checker} instance to validate PDF document against PDF 2.0 standard.
+     *
+     * @param pdfDocument {@link PdfDocument} to check
      */
-    public Pdf20Checker() {
-        // Empty constructor.
+    public Pdf20Checker(PdfDocument pdfDocument) {
+        this.tagStructureContext = pdfDocument.isTagged() ? pdfDocument.getTagStructureContext() : null;
     }
 
     @Override
@@ -59,6 +72,7 @@ public class Pdf20Checker implements IValidationChecker {
             case PDF_DOCUMENT:
                 PdfDocumentValidationContext pdfDocContext = (PdfDocumentValidationContext) validationContext;
                 checkCatalog(pdfDocContext.getPdfDocument().getCatalog());
+                checkStructureTreeRoot(pdfDocContext.getPdfDocument().getStructTreeRoot());
                 break;
         }
     }
@@ -66,19 +80,6 @@ public class Pdf20Checker implements IValidationChecker {
     @Override
     public boolean isPdfObjectReadyToFlush(PdfObject object) {
         return true;
-    }
-
-    /**
-     * Validates document catalog dictionary against PDF 2.0 standard.
-     *
-     * <p>
-     * For now, only {@code Metadata} is checked.
-     *
-     * @param catalog {@link PdfCatalog} document catalog dictionary to check
-     */
-    private void checkCatalog(PdfCatalog catalog) {
-        checkLang(catalog);
-        checkMetadata(catalog);
     }
 
     /**
@@ -122,6 +123,80 @@ public class Pdf20Checker implements IValidationChecker {
         } catch (XMPException e) {
             throw new Pdf20ConformanceException(
                     KernelExceptionMessageConstant.INVALID_METADATA_VALUE, e);
+        }
+    }
+
+    /**
+     * Validates document structure tree root dictionary against PDF 2.0 standard.
+     *
+     * <p>
+     * Checks, that all structure elements are belong to, or role mapped to (such role mapping may be transitive through
+     * other namespaces), at least one of the following namespaces specified in ISO 32000-2:2020, 14.8.6:
+     * — the PDF 1.7 namespace;
+     * — the PDF 2.0 namespace;
+     * — the MathML namespace.
+     * A structure element with no explicit namespace may be present. Such a structure element shall have, after
+     * any role mapping, a structure type matching one of the unique PDF 1.7 element types (the default standard
+     * structure namespace in ISO 32000-2 is defined as the PDF 1.7 namespace).
+     *
+     * @param structTreeRoot {@link PdfStructTreeRoot} to validate
+     */
+    void checkStructureTreeRoot(PdfStructTreeRoot structTreeRoot) {
+        if (tagStructureContext == null) {
+            return;
+        }
+        TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
+        tagTreeIterator.addHandler(new StructureTreeRootHandler(tagStructureContext));
+        tagTreeIterator.traverse();
+    }
+
+    /**
+     * Validates document catalog dictionary against PDF 2.0 standard.
+     *
+     * <p>
+     * For now, only {@code Metadata} and {@code Lang} are checked.
+     *
+     * @param catalog {@link PdfCatalog} document catalog dictionary to check
+     */
+    private void checkCatalog(PdfCatalog catalog) {
+        checkLang(catalog);
+        checkMetadata(catalog);
+    }
+
+    /**
+     * Handler class that checks structure nodes while traversing the document structure tree.
+     */
+    private static class StructureTreeRootHandler implements ITagTreeIteratorHandler {
+        private final TagStructureContext tagStructureContext;
+
+        /**
+         * Creates new {@link StructureTreeRootHandler} instance.
+         *
+         * @param tagStructureContext {@link TagStructureContext} of the current tagged document
+         */
+        public StructureTreeRootHandler(TagStructureContext tagStructureContext) {
+            this.tagStructureContext = tagStructureContext;
+        }
+
+        @Override
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
+            if (!(elem instanceof PdfStructElem)) {
+                return;
+            }
+            PdfStructElem structElem = (PdfStructElem) elem;
+            String role = structElem.getRole().getValue();
+            PdfNamespace namespace = structElem.getNamespace();
+            if (!tagStructureContext.checkIfRoleShallBeMappedToStandardRole(role, namespace)) {
+                throw new Pdf20ConformanceException(MessageFormatUtil.format(namespace == null ?
+                                KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE :
+                                KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
+                        role, namespace != null ? namespace.getNamespaceName() : null));
+            }
         }
     }
 }

@@ -1686,7 +1686,7 @@ public class PdfSigner {
                 PdfAChecker checker = PdfADocument.getCorrectCheckerFromConformance(getConformance().getAConformance());
                 ValidationContainer validationContainer = new ValidationContainer();
                 if ("4".equals(getConformance().getAConformance().getPart())) {
-                    validationContainer.addChecker(new Pdf20Checker());
+                    validationContainer.addChecker(new Pdf20Checker(this));
                 }
                 validationContainer.addChecker(checker);
                 getDiContainer().register(ValidationContainer.class, validationContainer);

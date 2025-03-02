@@ -42,6 +42,8 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -54,8 +56,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@code TagStructureContext} class is used to track necessary information of document's tag structure.
@@ -80,16 +80,15 @@ public class TagStructureContext {
         ALLOWED_ROOT_TAG_ROLES = Collections.unmodifiableSet(tempSet);
     }
 
-    private PdfDocument document;
-    private PdfStructElem rootTagElement;
+    private final PdfDocument document;
+    private final PdfVersion tagStructureTargetVersion;
+    private final WaitingTagsManager waitingTagsManager;
+    private final Set<PdfDictionary> namespaces;
+    private final Map<String, PdfNamespace> nameToNamespace;
+
     protected TagTreePointer autoTaggingPointer;
-    private PdfVersion tagStructureTargetVersion;
+    private PdfStructElem rootTagElement;
     private boolean forbidUnknownRoles;
-
-    private WaitingTagsManager waitingTagsManager;
-
-    private Set<PdfDictionary> namespaces;
-    private Map<String, PdfNamespace> nameToNamespace;
     private PdfNamespace documentDefaultNamespace;
 
     /**
@@ -281,12 +280,13 @@ public class TagStructureContext {
      * Checks if the given role and namespace are specified to be obligatory mapped to the standard structure namespace
      * in order to be a valid role in the Tagged PDF.
      *
-     * @param role a role in the given namespace which mapping necessity is to be checked.
-     * @param namespace a {@link PdfNamespace} which this role belongs to, null value refers to the default standard
-     *                  structure namespace.
+     * @param role a role in the given namespace which mapping necessity is to be checked
+     * @param namespace a {@link PdfNamespace} which this role belongs to, {@code null} value refers to the default
+     *                  standard structure namespace
      *
-     * @return true, if the given role in the given namespace is either mapped to the standard structure role or doesn't
-     * have to; otherwise false.
+     * @return {@code true}, if the given role in the given namespace is either mapped to the standard structure role
+     * or doesn't have to; otherwise {@code false} which means that role is not mapped to the standard or domain
+     * specific namespace, and it shall be mapped to standard role to become valid in the Tagged PDF
      */
     public boolean checkIfRoleShallBeMappedToStandardRole(String role, PdfNamespace namespace) {
         return resolveMappingToStandardOrDomainSpecificRole(role, namespace) != null;
@@ -466,7 +466,7 @@ public class TagStructureContext {
      * For PDF 2.0 and higher root tag is allowed to have only the Document role.
      */
     public void normalizeDocumentRootTag() {
-        // in this method we could deal with existing document, so we don't won't to throw exceptions here
+        // In this method we could deal with existing document, so we don't want to throw exceptions here.
         boolean forbid = forbidUnknownRoles;
         forbidUnknownRoles = false;
 

@@ -22,11 +22,16 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfConformance;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.IValidationContext;
@@ -39,6 +44,12 @@ import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
+import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * The class defines the requirements of the PDF/UA-2 standard and contains
@@ -127,11 +138,46 @@ public class PdfUA2Checker extends PdfUAChecker {
      * Validates structure tree root dictionary against PDF/UA-2 standard.
      *
      * <p>
-     * For now, only headings check is performed.
+     * Checks that within a given explicitly provided namespace, structure types are not role mapped to other structure
+     * types in the same namespace. In the StructTreeRoot RoleMap there is no explicitly provided namespace, that's why
+     * it is not checked.
+     *
+     * <p>
+     * Besides this, only headings check is performed for now.
      *
      * @param structTreeRoot {@link PdfStructTreeRoot} structure tree root dictionary to check
      */
     private void checkStructureTreeRoot(PdfStructTreeRoot structTreeRoot) {
+        List<PdfNamespace> namespaces = structTreeRoot.getNamespaces();
+        for (PdfNamespace namespace : namespaces) {
+            PdfDictionary roleMap = namespace.getNamespaceRoleMap();
+            if (roleMap != null) {
+                for (Map.Entry<PdfName, PdfObject> entry : roleMap.entrySet()) {
+                    final String role = entry.getKey().getValue();
+                    final IRoleMappingResolver roleMappingResolver = pdfDocument.getTagStructureContext()
+                            .getRoleMappingResolver(role, namespace);
+
+                    int i = 0;
+                    // Reasonably large arbitrary number that will help to avoid a possible infinite loop.
+                    int maxIters = 100;
+                    while (roleMappingResolver.resolveNextMapping()) {
+                        if (++i > maxIters) {
+                            Logger logger = LoggerFactory.getLogger(PdfUA2Checker.class);
+                            logger.error(MessageFormatUtil.format(PdfUALogMessageConstants.
+                                    CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, role, namespace));
+                            break;
+                        }
+                        final PdfNamespace roleMapToNamespace = roleMappingResolver.getNamespace();
+                        if (namespace.getNamespaceName().equals(roleMapToNamespace.getNamespaceName())) {
+                            throw new PdfUAConformanceException(MessageFormatUtil.format(PdfUAExceptionMessageConstants.
+                                            STRUCTURE_TYPE_IS_ROLE_MAPPED_TO_OTHER_STRUCTURE_TYPE_IN_THE_SAME_NAMESPACE,
+                                    namespace.getNamespaceName(), role));
+                        }
+                    }
+                }
+            }
+        }
+
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(new PdfUA2HeadingsChecker.PdfUA2HeadingHandler(context));
         tagTreeIterator.traverse();

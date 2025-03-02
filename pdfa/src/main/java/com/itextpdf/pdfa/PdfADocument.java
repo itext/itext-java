@@ -90,7 +90,7 @@ public class PdfADocument extends PdfDocument {
         ValidationContainer validationContainer = new ValidationContainer();
         if (PdfVersion.PDF_2_0.compareTo(
                 getPdfVersionAccordingToConformance(getConformance().getAConformance())) <= 0) {
-            validationContainer.addChecker(new Pdf20Checker());
+            validationContainer.addChecker(new Pdf20Checker(this));
         }
         validationContainer.addChecker(checker);
         getDiContainer().register(ValidationContainer.class, validationContainer);
@@ -130,7 +130,7 @@ public class PdfADocument extends PdfDocument {
         ValidationContainer validationContainer = new ValidationContainer();
         if (PdfVersion.PDF_2_0.compareTo(
                 getPdfVersionAccordingToConformance(getConformance().getAConformance())) <= 0) {
-            validationContainer.addChecker(new Pdf20Checker());
+            validationContainer.addChecker(new Pdf20Checker(this));
         }
         validationContainer.addChecker(checker);
         getDiContainer().register(ValidationContainer.class, validationContainer);

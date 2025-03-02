@@ -164,9 +164,12 @@ public final class StandardNamespaces {
 
     /**
      * Checks if the given namespace is identified as the one that is common within broad ranges of documents types
-     * and doesn't require a role mapping for it's roles.
-     * @param namespace a namespace to be checked, whether it defines a namespace of the known domain specific language.
-     * @return true, if the given {@link PdfNamespace} belongs to the domain-specific namespace, false otherwise.
+     * and doesn't require a role mapping for its roles.
+     *
+     * @param namespace a namespace to be checked, whether it defines a namespace of the known domain specific language
+     *
+     * @return {@code true}, if the given {@link PdfNamespace} belongs to the domain-specific namespace,
+     *         {@code false} otherwise
      */
     public static boolean isKnownDomainSpecificNamespace(PdfNamespace namespace) {
         return MATH_ML.equals(namespace.getNamespaceName());

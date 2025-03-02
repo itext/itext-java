@@ -31,11 +31,15 @@ import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
@@ -68,7 +72,7 @@ public class PdfCheckerTest extends ExtendedITextTest {
             PdfStream metadata = new PdfStream(bytes);
             catalog.put(PdfName.Metadata, metadata);
 
-            Pdf20Checker checker = new Pdf20Checker();
+            Pdf20Checker checker = new Pdf20Checker(pdfDocument);
             Exception e = Assertions.assertThrows(Pdf20ConformanceException.class,
                     () -> checker.checkMetadata(catalog));
             Assertions.assertEquals(
@@ -208,7 +212,7 @@ public class PdfCheckerTest extends ExtendedITextTest {
             PdfCatalog catalog = pdfDocument.getCatalog();
             catalog.setLang(new PdfString("en-US"));
 
-            Pdf20Checker checker = new Pdf20Checker();
+            Pdf20Checker checker = new Pdf20Checker(pdfDocument);
             AssertUtil.doesNotThrow(() -> checker.checkLang(catalog));
         }
     }
@@ -222,7 +226,7 @@ public class PdfCheckerTest extends ExtendedITextTest {
             PdfCatalog catalog = pdfDocument.getCatalog();
             catalog.setLang(new PdfString(""));
 
-            Pdf20Checker checker = new Pdf20Checker();
+            Pdf20Checker checker = new Pdf20Checker(pdfDocument);
             AssertUtil.doesNotThrow(() -> checker.checkLang(catalog));
         }
     }
@@ -236,12 +240,69 @@ public class PdfCheckerTest extends ExtendedITextTest {
             PdfCatalog catalog = pdfDocument.getCatalog();
             catalog.setLang(new PdfString("inva:lid"));
 
-            Pdf20Checker checker = new Pdf20Checker();
+            Pdf20Checker checker = new Pdf20Checker(pdfDocument);
             Exception e = Assertions.assertThrows(Pdf20ConformanceException.class,
                     () -> checker.checkLang(catalog));
             Assertions.assertEquals(
                     KernelExceptionMessageConstant.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
                     e.getMessage());
+        }
+    }
+
+    @Test
+    public void roleIsNotMappedToStandardNamespaceTest() {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            pdfDocument.setTagged();
+            PdfPage page = pdfDocument.addNewPage();
+
+            PdfStructElem doc = pdfDocument.getStructTreeRoot().addKid(new PdfStructElem(pdfDocument, PdfName.Document));
+            PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+            doc.setNamespace(namespace);
+            pdfDocument.getStructTreeRoot().addNamespace(namespace);
+
+            PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDocument, PdfName.P));
+            paragraph.addKid(new PdfStructElem(pdfDocument, new PdfName("chapter"), page));
+
+            Pdf20Checker checker = new Pdf20Checker(pdfDocument);
+            Exception e = Assertions.assertThrows(Pdf20ConformanceException.class,
+                    () -> checker.checkStructureTreeRoot(pdfDocument.getStructTreeRoot()));
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "chapter"), e.getMessage());
+        }
+    }
+
+    @Test
+    public void roleWithNamespaceIsNotMappedToStandardNamespaceTest() {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            pdfDocument.setTagged();
+            PdfPage page = pdfDocument.addNewPage();
+
+            PdfStructElem doc = pdfDocument.getStructTreeRoot().addKid(new PdfStructElem(pdfDocument, PdfName.Document));
+            PdfNamespace namespace20 = new PdfNamespace(StandardNamespaces.PDF_2_0);
+            doc.setNamespace(namespace20);
+
+            PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDocument, PdfName.P));
+            PdfStructElem chapter = paragraph.addKid(new PdfStructElem(pdfDocument, new PdfName("chapter"), page));
+
+            PdfNamespace namespace = new PdfNamespace("http://www.w3.org/1999/xhtml");
+            chapter.setNamespace(namespace);
+
+            PdfNamespace otherNamespace = new PdfNamespace("http://www.w3.org/2000/svg");
+            namespace.addNamespaceRoleMapping("chapter", "chapterChild", otherNamespace);
+            otherNamespace.addNamespaceRoleMapping("chapterChild", "chapterGrandchild");
+
+            pdfDocument.getStructTreeRoot().addNamespace(namespace20);
+            pdfDocument.getStructTreeRoot().addNamespace(namespace);
+            pdfDocument.getStructTreeRoot().addNamespace(otherNamespace);
+
+            Pdf20Checker checker = new Pdf20Checker(pdfDocument);
+            Exception e = Assertions.assertThrows(Pdf20ConformanceException.class,
+                    () -> checker.checkStructureTreeRoot(pdfDocument.getStructTreeRoot()));
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "chapter",
+                    namespace.getNamespaceName()), e.getMessage());
         }
     }
 }
