@@ -131,7 +131,7 @@ public class UaValidationTestFramework {
     }
 
     public void assertVeraPdfFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
-        Assertions.assertNotNull(veraPdfResult(filename + pdfUAConformance + ".pdf", false, pdfUAConformance)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        veraPdfResult(filename + pdfUAConformance + ".pdf", true, pdfUAConformance);
     }
 
     public void assertVeraPdfValid(String filename, PdfUAConformance pdfUAConformance) throws IOException {
