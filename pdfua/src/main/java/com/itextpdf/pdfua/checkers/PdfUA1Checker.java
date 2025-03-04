@@ -417,7 +417,7 @@ public class PdfUA1Checker extends PdfUAChecker {
                 throw new PdfUAConformanceException(
                         PdfUAExceptionMessageConstants.P_VALUE_IS_ABSENT_IN_ENCRYPTION_DICTIONARY);
             }
-            int permissions = ((PdfNumber) encryptionDictionary.get(PdfName.P)).intValue();
+            int permissions = (int) ((PdfNumber) encryptionDictionary.get(PdfName.P)).longValue();
             if ((EncryptionConstants.ALLOW_SCREENREADERS & permissions) == 0) {
                 throw new PdfUAConformanceException(
                         PdfUAExceptionMessageConstants.TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO);

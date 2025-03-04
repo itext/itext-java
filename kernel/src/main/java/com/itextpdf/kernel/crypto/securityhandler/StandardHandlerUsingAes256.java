@@ -262,7 +262,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             byte[] perms = getIsoBytes(encryptionDictionary.getAsString(PdfName.Perms));
             PdfNumber pValue = (PdfNumber) encryptionDictionary.get(PdfName.P);
 
-            this.permissions = pValue.intValue();
+            this.permissions = (int) pValue.longValue();
 
             byte[] hash;
 

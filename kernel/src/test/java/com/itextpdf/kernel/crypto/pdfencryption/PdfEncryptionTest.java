@@ -586,6 +586,16 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void checkPermissionsLongValue() throws IOException {
+        // The test checks
+        // that no IoLogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY is logged
+        PdfDocument doc = new PdfDocument(
+                new PdfReader(sourceFolder + "encryptedWithPasswordAes256_modifiedPermissions.pdf",
+                        new ReaderProperties().setPassword(PdfEncryptionTestUtils.OWNER)));
+        doc.close();
+    }
+
     public void encryptWithPassword2(String filename, int encryptionType, int compression)
             throws IOException, InterruptedException {
         encryptWithPassword2(filename, encryptionType, compression, false);
