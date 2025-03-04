@@ -37,6 +37,7 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.validation.IValidationChecker;
 import com.itextpdf.kernel.validation.Pdf20Checker;
 import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.layout.tagging.ProhibitedTagRelationsResolver;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 import com.itextpdf.pdfua.checkers.PdfUA2Checker;
 import com.itextpdf.pdfua.checkers.PdfUAChecker;
@@ -85,6 +86,7 @@ public class PdfUADocument extends PdfDocument {
         validationContainer.addChecker(checker);
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfUAPageFactory(checker);
+        getDiContainer().register(ProhibitedTagRelationsResolver.class, new ProhibitedTagRelationsResolver(this));
     }
 
     /**

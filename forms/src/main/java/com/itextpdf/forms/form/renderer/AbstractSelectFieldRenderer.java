@@ -44,8 +44,10 @@ import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -68,7 +70,15 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         childRenderers.clear();
-        addChild(createFlatRenderer());
+        IRenderer renderer = createFlatRenderer();
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            //Strictly speaking it's not necessary as no custom content can be added at the moment, but
+            // in the future if we would allow it we won't have to add anything else
+            taggingHelper.addKidsHint(this, Collections.singletonList(renderer));
+            LayoutTaggingHelper.addTreeHints(taggingHelper, renderer);
+        }
+        addChild(renderer);
 
         // Resolve width here in case it's relative, while parent width is still intact.
         // If it's inline-block context, relative width is already resolved.
@@ -184,7 +194,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     /**
      * Applies the accessibility properties to the form field.
      *
-     * @param formField The form field to which the accessibility properties should be applied.
+     * @param formField   The form field to which the accessibility properties should be applied.
      * @param pdfDocument The document to which the form field belongs.
      */
     protected void applyAccessibilityProperties(PdfFormField formField, PdfDocument pdfDocument) {
@@ -279,7 +289,6 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * @param availableHeight available height of the layout area
      * @param actualHeight    actual occupied height of the select field
      * @param isClippedHeight indicates whether the layout area's height is clipped or not
-     *
      * @return final height of the select field.
      */
     protected float getFinalSelectFieldHeight(float availableHeight, float actualHeight, boolean isClippedHeight) {
@@ -297,7 +306,6 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * Gets the conformance. If the conformance is not set, the conformance of the document is used.
      *
      * @param document the document
-     *
      * @return the conformance or null if the conformance is not set.
      */
     protected PdfConformance getConformance(PdfDocument document) {
@@ -315,7 +323,6 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * Gets options that are marked as selected from the select field options subtree.
      *
      * @param optionsSubTree options subtree to get selected options
-     *
      * @return selected options list.
      */
     protected List<IRenderer> getOptionsMarkedSelected(IRenderer optionsSubTree) {

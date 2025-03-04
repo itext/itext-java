@@ -41,6 +41,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
@@ -149,6 +150,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         paragraph.setProperty(Property.BACKGROUND, this.<Background>getProperty(Property.BACKGROUND));
         paragraph.setBorderRadius(new BorderRadius(UnitValue.createPercentValue(50)));
 
+        paragraph.getAccessibilityProperties().setRole(StandardRoles.LBL);
         return new FlatParagraphRenderer(paragraph);
     }
 

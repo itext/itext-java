@@ -22,21 +22,21 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.element.AnonymousBox;
+import com.itextpdf.layout.element.AnonymousInlineBox;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
 /**
- * This class represents the {@link IRenderer} object for a {@link AnonymousBox} object.
+ * This class represents the {@link IRenderer} object for a {@link AnonymousInlineBox} object.
  */
-public class AnonymousBoxRenderer extends ParagraphRenderer {
+public class AnonymousInlineBoxRenderer extends ParagraphRenderer {
 
     /**
-     * Creates an {@link AnonymousBoxRenderer} from its corresponding layout model element.
+     * Creates an {@link AnonymousInlineBoxRenderer} from its corresponding layout model element.
      *
-     * @param modelElement the {@link AnonymousBox} layout model element to render
+     * @param modelElement the {@link AnonymousInlineBox} layout model element to render
      */
-    public AnonymousBoxRenderer(AnonymousBox modelElement) {
+    public AnonymousInlineBoxRenderer(AnonymousInlineBox modelElement) {
         super(modelElement);
     }
 
@@ -45,8 +45,8 @@ public class AnonymousBoxRenderer extends ParagraphRenderer {
      */
     @Override
     public IRenderer getNextRenderer() {
-        logWarningIfGetNextRendererNotOverridden(AnonymousBoxRenderer.class, this.getClass());
-        return new AnonymousBoxRenderer((AnonymousBox) modelElement);
+        logWarningIfGetNextRendererNotOverridden(AnonymousInlineBoxRenderer.class, this.getClass());
+        return new AnonymousInlineBoxRenderer((AnonymousInlineBox) modelElement);
     }
 
     /**

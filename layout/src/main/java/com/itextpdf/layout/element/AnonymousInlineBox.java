@@ -22,21 +22,22 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
-import com.itextpdf.layout.renderer.AnonymousBoxRenderer;
+import com.itextpdf.layout.renderer.AnonymousInlineBoxRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
 /**
  * A layout element that represents anonymous box,
  * see https://developer.mozilla.org/en-US/docs/Web/CSS/Visual_formatting_model#anonymous_boxes.
  */
-public class AnonymousBox extends Paragraph {
+public class AnonymousInlineBox extends Paragraph {
 
     /**
-     * Creates an {@link AnonymousBox}.
+     * Creates an {@link AnonymousInlineBox}.
      */
-    public AnonymousBox() {
+    public AnonymousInlineBox() {
         super();
     }
 
@@ -46,7 +47,7 @@ public class AnonymousBox extends Paragraph {
     @Override
     public AccessibilityProperties getAccessibilityProperties() {
         if (tagProperties == null) {
-            tagProperties = new DefaultAccessibilityProperties(null);
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.NONSTRUCT);
         }
         return tagProperties;
     }
@@ -56,6 +57,6 @@ public class AnonymousBox extends Paragraph {
      */
     @Override
     protected IRenderer makeNewRenderer() {
-        return new AnonymousBoxRenderer(this);
+        return new AnonymousInlineBoxRenderer(this);
     }
 }

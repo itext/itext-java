@@ -27,7 +27,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.layout.element.AnonymousBox;
+import com.itextpdf.layout.element.AnonymousInlineBox;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
@@ -41,10 +41,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
-public class AnonymousBoxTest extends ExtendedITextTest {
+public class AnonymousInlineBoxTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/AnonymousBoxTest/";
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/AnonymousBoxTest/";
+    public static final String DESTINATION_FOLDER =
+            "./target/test/com/itextpdf/layout/AnonymousInlineBox/";
+    public static final String SOURCE_FOLDER =
+            "./src/test/resources/com/itextpdf/layout/AnonymousInlineBox/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -66,7 +68,7 @@ public class AnonymousBoxTest extends ExtendedITextTest {
             Image image = new Image(xObject, 100);
             image.setHeight(UnitValue.createPercentValue(50));
 
-            AnonymousBox ab = new AnonymousBox();
+            AnonymousInlineBox ab = new AnonymousInlineBox();
             ab.add(image);
 
             div.add(ab);
@@ -87,7 +89,7 @@ public class AnonymousBoxTest extends ExtendedITextTest {
             pdfDocument.setTagged();
             Document doc = new Document(pdfDocument);
 
-            AnonymousBox ab = new AnonymousBox();
+            AnonymousInlineBox ab = new AnonymousInlineBox();
             ab.add(new Paragraph("Some text"));
 
             doc.add(ab);

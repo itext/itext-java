@@ -99,6 +99,7 @@ public class LayoutTaggingHelper {
         for (IRenderer childRenderer : childRenderers) {
             addTreeHints(taggingHelper, childRenderer);
         }
+
     }
 
     public static TaggingHintKey getHintKey(IPropertyContainer container) {
@@ -130,6 +131,14 @@ public class LayoutTaggingHelper {
         }
 
         TaggingHintKey parentKey = getOrCreateHintKey(parent);
+
+        if (parent instanceof IRenderer &&
+                this.getPdfDocument().getDiContainer().isRegistered(ProhibitedTagRelationsResolver.class)) {
+            this.getPdfDocument()
+                    .getDiContainer()
+                    .getInstance(ProhibitedTagRelationsResolver.class)
+                    .repairTagStructure(this, (IRenderer) parent);
+        }
 
         List<TaggingHintKey> newKidsKeys = new ArrayList<>();
         for (IPropertyContainer kid : newKids) {

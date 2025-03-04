@@ -29,6 +29,7 @@ import com.itextpdf.forms.util.BorderStyleUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -78,6 +79,7 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
         }
 
         Text text = new Text(defaultValue);
+        text.getAccessibilityProperties().setRole(StandardRoles.SPAN);
         FormFieldValueNonTrimmingTextRenderer nextRenderer = new FormFieldValueNonTrimmingTextRenderer(text);
         text.setNextRenderer(nextRenderer);
 

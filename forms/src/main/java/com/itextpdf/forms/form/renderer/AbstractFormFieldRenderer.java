@@ -47,7 +47,10 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 
+import java.util.Collections;
 import java.util.List;
+
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -122,7 +125,11 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
             renderer.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
         }
         addChild(renderer);
-
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            taggingHelper.addKidsHint(this, Collections.singletonList(renderer));
+            LayoutTaggingHelper.addTreeHints(taggingHelper, renderer);
+        }
         Rectangle bBox = layoutContext.getArea().getBBox().clone().moveDown(INF - parentHeight).setHeight(INF);
         layoutContext.getArea().setBBox(bBox);
         // A workaround for the issue that super.layout clears Property.FORCED_PLACEMENT,

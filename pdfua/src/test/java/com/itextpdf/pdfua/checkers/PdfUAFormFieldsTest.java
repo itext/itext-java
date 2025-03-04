@@ -72,7 +72,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -107,12 +106,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return new CheckBox("name");
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testCheckBox", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testCheckBox", pdfUAConformance);
-        }
+        framework.assertBothValid("testCheckBox", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -128,12 +122,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return cb;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testCheckBoxWithCustomAppearance", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testCheckBoxWithCustomAppearance", pdfUAConformance);
-        }
+        framework.assertBothValid("testCheckBoxWithCustomAppearance", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -148,12 +137,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return cb;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testCheckBox", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testCheckBox", pdfUAConformance);
-        }
+        framework.assertBothValid("testCheckBox", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -169,12 +153,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return cb;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testCheckBoxCheckedAlternativeDescription", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testCheckBoxCheckedAlternativeDescription", pdfUAConformance);
-        }
+        framework.assertBothValid("testCheckBoxCheckedAlternativeDescription", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -193,12 +172,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return cb;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testCheckBoxCheckedCustomAppearance", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testCheckBoxCheckedCustomAppearance", pdfUAConformance);
-        }
+        framework.assertBothValid("testCheckBoxCheckedCustomAppearance", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -264,12 +238,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return new Radio("name");
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testRadioButton", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testRadioButton", pdfUAConformance);
-        }
+        framework.assertBothValid("testRadioButton", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -283,12 +252,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testRadioButtonChecked", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testRadioButtonChecked", pdfUAConformance);
-        }
+        framework.assertBothValid("testRadioButtonChecked", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -304,12 +268,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testRadioButtonCustomAppearance", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testRadioButtonCustomAppearance", pdfUAConformance);
-        }
+        framework.assertBothValid("testRadioButtonCustomAppearance", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -326,12 +285,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testRadioButtonCustomAppearanceChecked", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testRadioButtonCustomAppearanceChecked", pdfUAConformance);
-        }
+        framework.assertBothValid("testRadioButtonCustomAppearanceChecked", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -349,12 +303,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return new Radio("name2", "group");
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testRadioButtonGroup", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testRadioButtonGroup", pdfUAConformance);
-        }
+        framework.assertBothValid("testRadioButtonGroup", pdfUAConformance);
     }
 
 
@@ -381,12 +330,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testRadioButtonGroupCustom", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testRadioButtonGroupCustom", pdfUAConformance);
-        }
+        framework.assertBothValid("testRadioButtonGroupCustom", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -413,12 +357,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testRadioButtonGroupCustomAppearanceChecked", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testRadioButtonGroupCustomAppearanceChecked", pdfUAConformance);
-        }
+        framework.assertBothValid("testRadioButtonGroupCustomAppearanceChecked", pdfUAConformance);
     }
 
 
@@ -589,12 +528,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testButton", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testButton", pdfUAConformance);
-        }
+        framework.assertBothValid("testButton", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -611,12 +545,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testButtonCustomAppearance", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testButtonCustomAppearance", pdfUAConformance);
-        }
+        framework.assertBothValid("testButtonCustomAppearance", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -631,12 +560,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testButtonSingleLine", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testButtonSingleLine", pdfUAConformance);
-        }
+        framework.assertBothValid("testButtonSingleLine", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -652,12 +576,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testButtonSingleLine", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testButtonSingleLine", pdfUAConformance);
-        }
+        framework.assertBothValid("testButtonSingleLine", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -788,12 +707,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testInputField", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testInputField", pdfUAConformance);
-        }
+        framework.assertBothValid("testInputField", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -808,12 +722,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testInputFieldWithValue", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testInputFieldWithValue", pdfUAConformance);
-        }
+        framework.assertBothValid("testInputFieldWithValue", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -829,12 +738,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testInputFieldWithCustomAppearance", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testInputFieldWithCustomAppearance", pdfUAConformance);
-        }
+        framework.assertBothValid("testInputFieldWithCustomAppearance", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -851,12 +755,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testInputFieldWithCustomAppearanceAndValue", pdfUAConformance);
-        }
+        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -873,12 +772,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testInputFieldWithCustomAppearanceAndValue", pdfUAConformance);
-        }
+        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -981,12 +875,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testTextArea", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testTextArea", pdfUAConformance);
-        }
+        framework.assertBothValid("testTextArea", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1001,12 +890,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testTextAreaWithValue", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testTextAreaWithValue", pdfUAConformance);
-        }
+        framework.assertBothValid("testTextAreaWithValue", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1022,12 +906,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testTextAreaWithCustomAppearance", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testTextAreaWithCustomAppearance", pdfUAConformance);
-        }
+        framework.assertBothValid("testTextAreaWithCustomAppearance", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1044,12 +923,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
-        }
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1066,12 +940,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
-        }
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1176,12 +1045,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testListBox", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testListBox", pdfUAConformance);
-        }
+        framework.assertBothValid("testListBox", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1200,12 +1064,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testListBoxCustomAppearance", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testListBoxCustomAppearance", pdfUAConformance);
-        }
+        framework.assertBothValid("testListBoxCustomAppearance", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1224,12 +1083,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testListBoxCustomAppearanceSelected", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testListBoxCustomAppearanceSelected", pdfUAConformance);
-        }
+        framework.assertBothValid("testListBoxCustomAppearanceSelected", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1305,12 +1159,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testComboBox", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testComboBox", pdfUAConformance);
-        }
+        framework.assertBothValid("testComboBox", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1329,12 +1178,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testComboBoxCustomAppearance", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testComboBoxCustomAppearance", pdfUAConformance);
-        }
+        framework.assertBothValid("testComboBoxCustomAppearance", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1353,12 +1197,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testListBoxCustomAppearanceSelected", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testListBoxCustomAppearanceSelected", pdfUAConformance);
-        }
+        framework.assertBothValid("testListBoxCustomAppearanceSelected", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1433,12 +1272,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testSignatureAppearance", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testSignatureAppearance", pdfUAConformance);
-        }
+        framework.assertBothValid("testSignatureAppearance", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1457,12 +1291,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("signatureAppearanceSignedAppearanceText", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("signatureAppearanceSignedAppearanceText", pdfUAConformance);
-        }
+        framework.assertBothValid("signatureAppearanceSignedAppearanceText", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1480,12 +1309,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("signatureAppearanceSignedAppearanceText", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("signatureAppearanceSignedAppearanceText", pdfUAConformance);
-        }
+        framework.assertBothValid("signatureAppearanceSignedAppearanceText", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1506,12 +1330,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("signAppSignedAppCustomAppText", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("signAppSignedAppCustomAppText", pdfUAConformance);
-        }
+        framework.assertBothValid("signAppSignedAppCustomAppText", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1766,16 +1585,22 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
-                cb.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
-                cb.getAccessibilityProperties().setAlternateDescription("Hello");
-                return cb;
-            }
-        });
+       framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+           @Override
+           public IBlockElement generate() {
+               CheckBox cb = new CheckBox("name");
+               cb.setPdfConformance(PdfConformance.PDF_UA_1);
+               cb.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
+               cb.getAccessibilityProperties().setAlternateDescription("Hello");
+               return cb;
+           }
+       });
+        framework.assertBothValid("testCheckBoxDifferentRole", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxArtifactDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1785,7 +1610,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return cb;
             }
         });
-        framework.assertBothValid("testCheckBoxDifferentRole", pdfUAConformance);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertVeraPdfValid("testCheckBoxArtifactRoleua1", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            //TODO DEVSIX-8974 Tagging formfield as artifact will put the inner content into bad places in tagstructure
+            framework.assertVeraPdfFail("testCheckBoxArtifactRoleua2", pdfUAConformance);
+        }
     }
 
     @ParameterizedTest
@@ -1884,12 +1714,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testInputFieldDifferentRole", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testInputFieldDifferentRole", pdfUAConformance);
-        }
+        framework.assertBothValid("testInputFieldDifferentRole", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1923,13 +1748,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testTextAreaDifferentRole", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("testTextAreaDifferentRole", pdfUAConformance);
-        }
-
+        framework.assertBothValid("testTextAreaDifferentRole", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -2321,8 +2140,6 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             framework.assertVeraPdfFail("FormFieldAsStream", pdfUAConformance);
         }
     }
-
-
 
     private PdfFont getFont() {
         try {

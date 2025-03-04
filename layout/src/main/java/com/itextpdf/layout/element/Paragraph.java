@@ -50,9 +50,10 @@ public class Paragraph extends BlockElement<Paragraph> {
     protected DefaultAccessibilityProperties tagProperties;
 
     /**
-     * Creates a Paragraph.
+     * Creates a new {@link Paragraph} instance.
      */
     public Paragraph() {
+        super();
     }
 
     /**
