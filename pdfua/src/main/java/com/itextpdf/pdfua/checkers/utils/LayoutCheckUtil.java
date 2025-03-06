@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfua.checkers.utils;
 
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Table;
@@ -38,7 +39,7 @@ public final class LayoutCheckUtil {
     /**
      * Creates a new {@link LayoutCheckUtil} instance.
      *
-     * @param context The validation context.
+     * @param context the validation context
      */
     public LayoutCheckUtil(PdfUAValidationContext context) {
         this.context = context;
@@ -47,7 +48,7 @@ public final class LayoutCheckUtil {
     /**
      * Checks renderer for PDF UA compliance.
      *
-     * @param renderer The renderer to check.
+     * @param renderer the renderer to check
      */
     public void checkRenderer(IRenderer renderer) {
         if (renderer == null) {

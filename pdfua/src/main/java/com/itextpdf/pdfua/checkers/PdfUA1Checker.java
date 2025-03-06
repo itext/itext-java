@@ -157,7 +157,7 @@ public class PdfUA1Checker extends PdfUAChecker {
      */
     @Override
     public boolean isPdfObjectReadyToFlush(PdfObject object) {
-        return true;
+        return false;
     }
 
     /**

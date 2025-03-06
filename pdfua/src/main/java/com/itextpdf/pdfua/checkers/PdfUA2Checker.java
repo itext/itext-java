@@ -40,7 +40,9 @@ import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.layout.validation.context.LayoutValidationContext;
+import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
+import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
@@ -86,6 +88,7 @@ public class PdfUA2Checker extends PdfUAChecker {
                 break;
             case LAYOUT:
                 LayoutValidationContext layoutContext = (LayoutValidationContext) context;
+                new LayoutCheckUtil(this.context).checkRenderer(layoutContext.getRenderer());
                 headingsChecker.checkLayoutElement(layoutContext.getRenderer());
                 break;
         }
@@ -93,7 +96,7 @@ public class PdfUA2Checker extends PdfUAChecker {
 
     @Override
     public boolean isPdfObjectReadyToFlush(PdfObject object) {
-        return true;
+        return false;
     }
 
     /**
@@ -180,6 +183,7 @@ public class PdfUA2Checker extends PdfUAChecker {
 
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(new PdfUA2HeadingsChecker.PdfUA2HeadingHandler(context));
+        tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
         tagTreeIterator.traverse();
     }
 }

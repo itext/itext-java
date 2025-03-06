@@ -48,7 +48,7 @@ final class CellResultMatrix extends AbstractResultMatrix<Cell> {
      * @param context The validation context.
      */
     public CellResultMatrix(Table table, PdfUAValidationContext context) {
-        super(new TableCellIterator(table, context));
+        super(new TableCellIterator(table, context), context.getUAConformance());
     }
 
     /**

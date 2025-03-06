@@ -88,8 +88,8 @@ class PdfUAPage extends PdfPage {
     public void flush(boolean flushResourcesContentStreams) {
         if (getDocument().isClosing()) {
             super.flush(flushResourcesContentStreams);
-            return;
+        } else {
+            checker.warnOnPageFlush();
         }
-        checker.warnOnPageFlush();
     }
 }

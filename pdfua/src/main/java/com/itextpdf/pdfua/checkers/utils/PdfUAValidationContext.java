@@ -24,6 +24,7 @@ package com.itextpdf.pdfua.checkers.utils;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
@@ -39,7 +40,7 @@ public class PdfUAValidationContext {
     /**
      * Creates a new instance of {@link PdfUAValidationContext}.
      *
-     * @param pdfDocument The pdfDocument where the validation is happening.
+     * @param pdfDocument the {@link PdfDocument} instance that is being validated
      */
     public PdfUAValidationContext(PdfDocument pdfDocument) {
         this.pdfDocument = pdfDocument;
@@ -107,5 +108,14 @@ public class PdfUAValidationContext {
             return (PdfStructElem) structureNode;
         }
         return null;
+    }
+
+    /**
+     * Retrieves the PDF/UA conformance of the {@link PdfDocument}.
+     *
+     * @return {@link PdfUAConformance} value
+     */
+    public PdfUAConformance getUAConformance() {
+        return this.pdfDocument.getConformance().getUAConformance();
     }
 }
