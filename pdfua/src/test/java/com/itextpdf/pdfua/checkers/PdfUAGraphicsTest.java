@@ -27,9 +27,12 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -42,22 +45,25 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
-import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Arrays;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAGraphicsTest extends ExtendedITextTest {
@@ -81,6 +87,10 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    }
+
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
     }
 
     @Test
@@ -113,9 +123,16 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
-    @Test
-    public void imageCustomRole_Ok() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageCustomRole_Ok(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("CustomImage", StandardRoles.FIGURE);
+            }
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
         });
@@ -133,12 +150,21 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 return new Div().add(img);
             }
         });
-        framework.assertBothValid("imageWithCustomRoleOk", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("imageWithCustomRoleOk", pdfUAConformance);
     }
 
-    @Test
-    public void imageCustomDoubleMapping_Ok() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageCustomDoubleMapping_Ok(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("CustomImage", StandardRoles.FIGURE);
+                namespace.addNamespaceRoleMapping("CustomImage2", "CustomImage");
+
+            }
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
             root.addRoleMapping("CustomImage2", "CustomImage");
@@ -157,12 +183,19 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 return new Div().add(img);
             }
         });
-        framework.assertBothValid("imageWithDoubleMapping", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("imageWithDoubleMapping", pdfUAConformance);
     }
 
-    @Test
-    public void imageCustomRoleNoAlternateDescription_Throws() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageCustomRoleNoAlternateDescription_Throws(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("CustomImage", StandardRoles.FIGURE);
+            }
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
         });
@@ -179,12 +212,26 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 return new Div().add(img);
             }
         });
-        framework.assertBothFail("imageWithCustomRoleAndNoDescription", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("imageWithCustomRoleAndNoDescription", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
+            framework.assertVeraPdfFail("imageWithCustomRoleAndNoDescription", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void imageCustomDoubleMapping_Throws() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageCustomDoubleMapping_Throws(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("CustomImage", StandardRoles.FIGURE);
+                namespace.addNamespaceRoleMapping("CustomImage2", "CustomImage");
+            }
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
             root.addRoleMapping("CustomImage2", "CustomImage");
@@ -202,7 +249,13 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 return new Div().add(img);
             }
         });
-        framework.assertBothFail("imageCustomDoubleMapping_Throws", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("imageCustomDoubleMapping_Throws", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
+            framework.assertVeraPdfFail("imageCustomDoubleMapping_Throws", pdfUAConformance);
+        }
     }
 
     @Test

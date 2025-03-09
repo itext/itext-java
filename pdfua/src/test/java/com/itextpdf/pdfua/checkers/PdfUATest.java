@@ -73,16 +73,19 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
 
 @Tag("IntegrationTest")
 public class PdfUATest extends ExtendedITextTest {
@@ -104,6 +107,10 @@ public class PdfUATest extends ExtendedITextTest {
     @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    }
+
+    public static java.util.List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
     }
 
     @Test
@@ -370,8 +377,9 @@ public class PdfUATest extends ExtendedITextTest {
                 e.getMessage());
     }
 
-    @Test
-    public void checkNameEntryShouldPresentInAllOCGDictionariesTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkNameEntryShouldPresentInAllOCGDictionariesTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             pdfDocument.addNewPage();
             PdfDictionary ocProperties = new PdfDictionary();
@@ -384,12 +392,19 @@ public class PdfUATest extends ExtendedITextTest {
             ocProperties.put(PdfName.Configs, configs);
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck01",
-                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("pdfuaOCGPropertiesCheck01",
+                    PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 PDF/UA-2 checks
+            framework.assertVeraPdfFail("pdfuaOCGPropertiesCheck01", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkAsKeyInContentConfigDictTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkAsKeyInContentConfigDictTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             pdfDocument.addNewPage();
             PdfDictionary ocProperties = new PdfDictionary();
@@ -401,12 +416,19 @@ public class PdfUATest extends ExtendedITextTest {
             ocProperties.put(PdfName.Configs, configs);
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck02",
-                PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("pdfuaOCGPropertiesCheck02",
+                    PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 PDF/UA-2 checks
+            framework.assertVeraPdfFail("pdfuaOCGPropertiesCheck02", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void nameEntryisEmptyTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void nameEntryisEmptyTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -420,12 +442,19 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck03",
-                PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("pdfuaOCGPropertiesCheck03",
+                    PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 PDF/UA-2 checks
+            framework.assertVeraPdfFail("pdfuaOCGPropertiesCheck03", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void configsEntryisNotAnArrayTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void configsEntryisNotAnArrayTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -436,12 +465,18 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothFail("pdfuaOCGPropertiesCheck04",
-                PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("pdfuaOCGPropertiesCheck04",
+                    PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("pdfuaOCGPropertiesCheck04", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void nameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigsTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void nameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigsTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -455,11 +490,12 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothValid("pdfuaOCGPropertiesCheck", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("pdfuaOCGPropertiesCheck", pdfUAConformance);
     }
 
-    @Test
-    public void validOCGsTest() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void validOCGsTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -478,7 +514,7 @@ public class PdfUATest extends ExtendedITextTest {
 
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
-        framework.assertBothValid("pdfuaOCGsPropertiesCheck", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("pdfuaOCGsPropertiesCheck", pdfUAConformance);
     }
 
     @Test

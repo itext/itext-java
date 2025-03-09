@@ -107,8 +107,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("textContentIsNotTagged",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("textContentIsNotTagged", pdfUAConformance);
         }
     }
@@ -424,8 +424,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("lineContentThatIsContentIsNotTagged",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("lineContentThatIsContentIsNotTagged", pdfUAConformance);
         }
     }
@@ -456,8 +456,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("lineContentThatIsContentIsTaggedButIsNotAnArtifact",
                     PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("lineContentThatIsContentIsTaggedButIsNotAnArtifact", pdfUAConformance);
         }
     }
@@ -521,8 +521,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_RectangleNotMarked",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("checkPoint_01_005_RectangleNotMarked", pdfUAConformance);
         }
     }
@@ -568,8 +568,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_RectangleClosePathStroke",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("checkPoint_01_005_RectangleClosePathStroke", pdfUAConformance);
         }
     }
@@ -588,8 +588,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke", pdfUAConformance);
         }
     }
@@ -608,8 +608,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_Rectangle_FillStroke",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_FillStroke", pdfUAConformance);
         }
     }
@@ -628,8 +628,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_Rectangle_eoFill",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_eoFill", pdfUAConformance);
         }
     }
@@ -648,8 +648,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_005_Rectangle_eoFillStroke",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_eoFillStroke", pdfUAConformance);
         }
     }
@@ -692,8 +692,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("rectangleMarkedContentWithoutMcid",
                     PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("rectangleMarkedContentWithoutMcid", pdfUAConformance);
         }
     }
@@ -814,8 +814,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("checkPoint_01_004_bezierCurveInvalidMCID",
                     PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("checkPoint_01_004_bezierCurveInvalidMCID", pdfUAConformance);
         }
     }
@@ -1099,8 +1099,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY,
                     pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("invalidNoteTag02", pdfUAConformance);
         }
     }
@@ -1143,8 +1143,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     SOURCE_FOLDER + "cmp_validNoteTagPresent.pdf",
                     DESTINATION_FOLDER, "diff_")
             );
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("invalidNoteTag02", pdfUAConformance);
         }
     }
@@ -1184,8 +1184,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             framework.assertBothFail("usingCharacterWithoutUnicodeMappingTest",
                     MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, " "),
                     false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("usingCharacterWithoutUnicodeMappingTest", pdfUAConformance);
         }
     }

@@ -368,8 +368,8 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("untaggedAddXobject",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("untaggedAddXobject", pdfUAConformance);
         }
     }
@@ -403,8 +403,8 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("untaggedAddXobjectAt",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("untaggedAddXobjectAt", pdfUAConformance);
         }
     }
@@ -438,8 +438,8 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("addXObjectFitted",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("addXObjectFitted", pdfUAConformance);
         }
     }
@@ -472,8 +472,8 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("addXObjectWithTransfoMatrix",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("addXObjectWithTransfoMatrix", pdfUAConformance);
         }
     }
@@ -496,8 +496,8 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("addIMageObjectNotInline",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("addIMageObjectNotInline", pdfUAConformance);
         }
     }
@@ -521,8 +521,8 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("addIMageObjectInline",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("addIMageObjectInline", pdfUAConformance);
         }
     }
@@ -545,8 +545,8 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("addIMageObjectTransfo",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("addIMageObjectTransfo", pdfUAConformance);
         }
     }
@@ -570,8 +570,8 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("addImageFittedIntoRectangle",
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-            // TODO DEVSIX-8242 The layout level does’t throw an error
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
             framework.assertVeraPdfFail("addImageFittedIntoRectangle", pdfUAConformance);
         }
     }

@@ -30,7 +30,9 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.IBlockElement;
@@ -42,14 +44,18 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAFormulaTest extends ExtendedITextTest {
@@ -69,8 +75,13 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
-    @Test
-    public void layoutTest01() throws IOException {
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void layoutTest01(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -79,11 +90,17 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout01", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("layout01", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("layout01", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void layoutTest02() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void layoutTest02(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -93,12 +110,12 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothValid("layout02", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("layout02", pdfUAConformance);
     }
 
-
-    @Test
-    public void layoutTest03() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void layoutTest03(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -108,12 +125,12 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothValid("layout03", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("layout03", pdfUAConformance);
     }
 
-
-    @Test
-    public void layoutTest04() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void layoutTest04(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -123,11 +140,17 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout04", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("layout04", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("layout04", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void layoutTest05() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void layoutTest05(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -137,11 +160,12 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothValid("layout05", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("layout05", pdfUAConformance);
     }
 
-    @Test
-    public void layoutTest06() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void layoutTest06(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -151,13 +175,20 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout06",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
-                false, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("layout06",
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
+                    false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
+            framework.assertVeraPdfFail("layout06", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void layoutTest07() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void layoutTest07(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -167,13 +198,19 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothFail("layout07",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
-                false, PdfUAConformance.PDF_UA_1);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("layout07",
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
+                    false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
+            framework.assertVeraPdfFail("layout07", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void layoutWithValidRole() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void layoutWithValidRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -184,15 +221,22 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
         framework.addBeforeGenerationHook((pdfDocument) -> {
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("BING", StandardRoles.FORMULA);
+            }
+
             PdfStructTreeRoot tagStructureContext = pdfDocument.getStructTreeRoot();
             tagStructureContext.addRoleMapping("BING", StandardRoles.FORMULA);
         });
-        framework.assertBothValid("layoutWithValidRole", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("layoutWithValidRole", pdfUAConformance);
     }
 
-
-    @Test
-    public void layoutWithValidRoleButNoAlternateDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void layoutWithValidRoleButNoAlternateDescription(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -202,10 +246,22 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
         framework.addBeforeGenerationHook((pdfDocument) -> {
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("BING", StandardRoles.FORMULA);
+            }
+
             PdfStructTreeRoot tagStructureContext = pdfDocument.getStructTreeRoot();
             tagStructureContext.addRoleMapping("BING", StandardRoles.FORMULA);
         });
-        framework.assertBothFail("layoutWithValidRoleButNoDescription", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("layoutWithValidRoleButNoDescription", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("layoutWithValidRoleButNoDescription", pdfUAConformance);
+        }
     }
 
     @Test
@@ -225,7 +281,6 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.close();
         });
-
     }
 
     @Test
@@ -275,6 +330,4 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             throw new RuntimeException(e.getMessage());
         }
     }
-
-
 }

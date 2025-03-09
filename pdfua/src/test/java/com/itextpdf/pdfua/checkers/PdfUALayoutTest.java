@@ -26,6 +26,8 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -33,14 +35,12 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DottedBorder;
@@ -50,21 +50,22 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
-import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUALayoutTest extends ExtendedITextTest {
@@ -74,14 +75,18 @@ public class PdfUALayoutTest extends ExtendedITextTest {
 
     private UaValidationTestFramework framework;
 
+    @BeforeAll
+    public static void before() {
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
     @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
-    @BeforeAll
-    public static void before() {
-        createOrClearDestinationFolder(DESTINATION_FOLDER);
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
     }
 
     @Test
@@ -158,8 +163,9 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
-    @Test
-    public void addNoteWithoutIdTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void addNoteWithoutIdTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -175,13 +181,22 @@ public class PdfUALayoutTest extends ExtendedITextTest {
                 return note;
             }
         });
-        framework.assertBothFail("noteWithoutID",
-                PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY, PdfUAConformance.PDF_UA_1);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("noteWithoutID",
+                    PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            Assertions.assertThrows(PdfException.class,
+                    () -> framework.assertVeraPdfFail("noteWithoutID", pdfUAConformance),
+                    MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
+                            StandardRoles.NOTE, StandardNamespaces.PDF_2_0));
+        }
     }
 
-    @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, count = 2)})
-    public void addTwoNotesWithSameIdTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, ignore = true)})
+    public void addTwoNotesWithSameIdTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -213,14 +228,23 @@ public class PdfUALayoutTest extends ExtendedITextTest {
                  note.getAccessibilityProperties().setStructureElementIdString("123");
                  return note;
              }
-                });
-        framework.assertBothFail("twoNotesWithSameId",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "123"),
-                false, PdfUAConformance.PDF_UA_1);
+        });
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("twoNotesWithSameId", MessageFormatUtil.format(
+                    PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "123"),
+                    false, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            Assertions.assertThrows(PdfException.class,
+                    () -> framework.assertVeraPdfFail("twoNotesWithSameId", pdfUAConformance),
+                    MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
+                            StandardRoles.NOTE, StandardNamespaces.PDF_2_0));
+        }
     }
 
-    @Test
-    public void addNoteWithValidIdTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void addNoteWithValidIdTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -237,11 +261,20 @@ public class PdfUALayoutTest extends ExtendedITextTest {
                 return note;
             }
         });
-        framework.assertBothValid("noteWithValidID", PdfUAConformance.PDF_UA_1);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("noteWithValidID", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            Assertions.assertThrows(PdfException.class,
+                    () -> framework.assertVeraPdfFail("noteWithValidID", pdfUAConformance),
+                    MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
+                            StandardRoles.NOTE, StandardNamespaces.PDF_2_0));
+        }
     }
 
-    @Test
-    public void addTwoNotesWithDifferentIdTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void addTwoNotesWithDifferentIdTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
                                    @Override
                                    public IBlockElement generate() {
@@ -274,7 +307,15 @@ public class PdfUALayoutTest extends ExtendedITextTest {
                         return note;
                     }
                 });
-        framework.assertBothValid("twoNotesWithDifferentId", PdfUAConformance.PDF_UA_1);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("twoNotesWithDifferentId", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            Assertions.assertThrows(PdfException.class,
+                    () -> framework.assertVeraPdfFail("twoNotesWithDifferentId", pdfUAConformance),
+                    MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
+                            StandardRoles.NOTE, StandardNamespaces.PDF_2_0));
+        }
     }
 
 }

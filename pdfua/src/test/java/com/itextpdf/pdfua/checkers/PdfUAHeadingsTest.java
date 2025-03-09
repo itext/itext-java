@@ -32,7 +32,9 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -50,13 +52,17 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAHeadingsTest extends ExtendedITextTest {
@@ -76,10 +82,14 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+    }
 
     // -------- Negative tests --------
-    @Test
-    public void addH2AsFirstHeaderTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void addH2AsFirstHeaderTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -90,12 +100,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h2;
             }
         });
-        framework.assertBothFail("addH2FirstHeaderTest",
-                PdfUAExceptionMessageConstants.H1_IS_SKIPPED, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("addH2FirstHeaderTest",
+                    PdfUAExceptionMessageConstants.H1_IS_SKIPPED, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("addH2FirstHeaderTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void brokenHnParallelSequenceTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void brokenHnParallelSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -114,12 +130,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h3;
             }
         });
-        framework.assertBothFail("brokenHnParallelSequenceTest",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 2), PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("brokenHnParallelSequenceTest",
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 2), pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("brokenHnParallelSequenceTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void brokenHnInheritedSequenceTest1() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void brokenHnInheritedSequenceTest1(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -134,12 +156,19 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothFail("brokenHnInheritedSequenceTest1",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 2), PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("brokenHnInheritedSequenceTest1",
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 2), pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("brokenHnInheritedSequenceTest1", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void brokenHnMixedSequenceTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void brokenHnMixedSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -159,12 +188,19 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothFail("brokenHnMixedSequenceTest",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3), PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("brokenHnMixedSequenceTest",
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3), pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("brokenHnMixedSequenceTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void brokenHnMixedSequenceTest2() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void brokenHnMixedSequenceTest2(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -188,18 +224,24 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothFail("brokenHnMixedSequenceTest2",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3), PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("brokenHnMixedSequenceTest2",
+                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3), pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("brokenHnMixedSequenceTest2", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void fewHInOneNodeTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void fewHInOneNodeTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Div div = new Div();
                 div.setBackgroundColor(ColorConstants.CYAN);
-
 
                 Paragraph header1 = new Paragraph("Header");
                 header1.setFont(loadFont());
@@ -213,12 +255,19 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return div;
             }
         });
-        framework.assertBothFail("fewHInOneNodeTest",
-                PdfUAExceptionMessageConstants.MORE_THAN_ONE_H_TAG, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("fewHInOneNodeTest",
+                    PdfUAExceptionMessageConstants.MORE_THAN_ONE_H_TAG, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("fewHInOneNodeTest",
+                    PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void fewHInDocumentTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void fewHInDocumentTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -237,12 +286,19 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return header2;
             }
         });
-        framework.assertBothFail("fewHInDocumentTest",
-                PdfUAExceptionMessageConstants.MORE_THAN_ONE_H_TAG, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("fewHInDocumentTest",
+                    PdfUAExceptionMessageConstants.MORE_THAN_ONE_H_TAG, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("fewHInDocumentTest",
+                    PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hAndHnInDocumentTest1() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hAndHnInDocumentTest1(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -261,12 +317,19 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothFail("hAndHnInDocumentTest1",
-                PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("hAndHnInDocumentTest1",
+                    PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("hAndHnInDocumentTest1",
+                    PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hAndHnInDocumentTest2() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hAndHnInDocumentTest2(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -285,12 +348,19 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return header1;
             }
         });
-        framework.assertBothFail("hAndHnInDocumentTest2",
-                PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("hAndHnInDocumentTest2",
+                    PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("hAndHnInDocumentTest2",
+                    PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hAndHnInDocumentTest3() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hAndHnInDocumentTest3(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -310,12 +380,19 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothFail("hAndHnInDocumentTest3",
-                PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("hAndHnInDocumentTest3",
+                    PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("hAndHnInDocumentTest3",
+                    PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void roleMappingTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void roleMappingTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -332,15 +409,29 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         });
         framework.addBeforeGenerationHook((pdfDocument)->{
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("header1", StandardRoles.H1);
+                namespace.addNamespaceRoleMapping("header5", StandardRoles.H5);
+            }
             root.addRoleMapping("header1", StandardRoles.H1);
             root.addRoleMapping("header5", StandardRoles.H5);
 
         });
-        framework.assertBothFail("rolemappingTest", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("rolemappingTest", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("rolemappingTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void roleMappingTestValid() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void roleMappingTestValid(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -356,12 +447,25 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             }
         });
         framework.addBeforeGenerationHook((pdfDocument)->{
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("header1", StandardRoles.H1);
+                namespace.addNamespaceRoleMapping("header5", StandardRoles.H2);
+            }
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("header1", StandardRoles.H1);
             root.addRoleMapping("header5", StandardRoles.H2);
 
         });
-        framework.assertBothValid("rolemappingValid", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("rolemappingValid", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("rolemappingValid", pdfUAConformance);
+        }
     }
 
     @Test
@@ -384,8 +488,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         Assertions.assertEquals(PdfUAExceptionMessageConstants.H1_IS_SKIPPED, e.getMessage());
     }
 
-    @Test
-    public void hInUA2DocumentTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hInDocumentTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -395,11 +500,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return header1;
             }
         });
-        framework.assertBothFail("hInUA2DocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, PdfUAConformance.PDF_UA_2);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("hInDocumentTest", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("hInDocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG,
+                    pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hAndHnInUA2DocumentTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hAndHnInDocumentTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -419,11 +531,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothFail("hAndHnInUA2DocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, PdfUAConformance.PDF_UA_2);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("hAndHnInDocumentTest", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("hAndHnInDocumentTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG,
+                    pdfUAConformance);
+        }
     }
 
-    @Test
-    public void incorrectHeadingLevelInUA2Test() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void incorrectHeadingLevelInUA2Test(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -445,7 +564,11 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         // Where a heading’s level is evident, the heading level of the structure element enclosing it shall match that
         // heading level, e.g. a heading with the real content “5.1.6.4 Some header” is evidently at heading level 4.
         // This requirement is not checked by both iText and veraPDF.
-        framework.assertBothValid("incorrectHeadingLevelInUA2Test", PdfUAConformance.PDF_UA_2);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("incorrectHeadingLevelInUA2Test", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("incorrectHeadingLevelInUA2Test", pdfUAConformance);
+        }
     }
 
     // -------- Positive tests --------
@@ -508,8 +631,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
-    @Test
-    public void hnInheritedSequenceTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hnInheritedSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -529,11 +653,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnInheritedSequenceTest", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("hnInheritedSequenceTest", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("hnInheritedSequenceTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hnCompareWithLastFromAnotherBranchTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hnCompareWithLastFromAnotherBranchTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -567,11 +698,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h5;
             }
         });
-        framework.assertBothValid("hnInheritedSequenceTest", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("hnInheritedSequenceTest", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("hnInheritedSequenceTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hnCompareWithLastFromAnotherBranchTest2() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hnCompareWithLastFromAnotherBranchTest2(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -605,11 +743,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h33;
             }
         });
-        framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hnInheritedSequenceTest2() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hnInheritedSequenceTest2(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -634,11 +779,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hnParallelSequenceTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hnParallelSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -666,7 +818,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h3;
             }
         });
-        framework.assertBothValid("hnParallelSequenceTest", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("hnParallelSequenceTest", pdfUAConformance);
     }
 
     @Test
@@ -703,8 +855,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         // with the same code, but div role is replaced by section role
     }
 
-    @Test
-    public void usualHTest2() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void usualHTest2(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -732,11 +885,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return div;
             }
         });
-        framework.assertBothValid("hnParallelSequenceTest", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("hnParallelSequenceTest", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("hnParallelSequenceTest",
+                    PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hnMixedSequenceTest() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hnMixedSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -762,11 +922,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnMixedSequenceTest", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("hnMixedSequenceTest", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("hnMixedSequenceTest", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hnMixedSequenceTest2() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hnMixedSequenceTest2(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -786,11 +953,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnMixedSequenceTest2", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("hnMixedSequenceTest2", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("hnMixedSequenceTest2", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void hnMixedSequenceTest3() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void hnMixedSequenceTest3(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -814,11 +988,18 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.assertBothValid("hnMixedSequenceTest3", PdfUAConformance.PDF_UA_1);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("hnMixedSequenceTest3", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
+            framework.assertVeraPdfFail("hnMixedSequenceTest3", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void nonSequentialHeadersInUA2Test() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void nonSequentialHeadersTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -837,7 +1018,12 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h2;
             }
         });
-        framework.assertBothValid("nonSequentialHeadersInUA2Test", PdfUAConformance.PDF_UA_2);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("nonSequentialHeadersTest", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("nonSequentialHeadersTest", pdfUAConformance);
+        }
     }
 
     private static PdfFont loadFont() {
