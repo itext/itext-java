@@ -160,7 +160,15 @@ public class VeraPdfValidatorApp {
         }
     }
 
+    /**
+     * Interface for writing to the console.
+     */
     public interface ConsoleWriter {
+        /**
+         * Writes a message to the console.
+         *
+         * @param message The message to write.
+         */
         void write(String message);
     }
 

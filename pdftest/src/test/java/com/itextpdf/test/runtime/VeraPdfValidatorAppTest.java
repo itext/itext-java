@@ -42,9 +42,13 @@ public class VeraPdfValidatorAppTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/test/VeraPdfValidatorAppTest/";
 
+    private static final boolean isNative = System.getProperty("org.graalvm.nativeimage.imagecode") != null;
 
     @Test
     public void cliValidPdf() throws IOException {
+        if (isNative){
+            return;
+        }
         String path = SOURCE_FOLDER + "testf001.pdf";
         String result1 = new VeraPdfValidator().validate(path);
         String pathB64 = Base64.getEncoder().encodeToString(path.getBytes());
@@ -60,6 +64,9 @@ public class VeraPdfValidatorAppTest extends ExtendedITextTest {
 
     @Test
     public void cliInvalidPdf() throws IOException {
+        if (isNative){
+            return;
+        }
         String path = SOURCE_FOLDER + "testfail.pdf";
         String result1 = new VeraPdfValidator().validate(path);
         String pathB64 = Base64.getEncoder().encodeToString(path.getBytes());
@@ -75,6 +82,9 @@ public class VeraPdfValidatorAppTest extends ExtendedITextTest {
 
     @Test
     public void serverValidPdf() throws IOException, InterruptedException {
+        if (isNative){
+            return;
+        }
         String path = SOURCE_FOLDER + "testf001.pdf";
         String result1 = new VeraPdfValidator().validate(path);
         String pathB64 = Base64.getEncoder().encodeToString(path.getBytes());
@@ -106,6 +116,9 @@ public class VeraPdfValidatorAppTest extends ExtendedITextTest {
 
     @Test
     public void serverInValidPdf() throws IOException, InterruptedException {
+        if (isNative){
+            return;
+        }
         String path = SOURCE_FOLDER + "testfail.pdf";
         String result1 = new VeraPdfValidator().validate(path);
         String pathB64 = Base64.getEncoder().encodeToString(path.getBytes());
