@@ -39,6 +39,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
@@ -70,7 +71,7 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
-import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.AssertUtil;import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -1287,6 +1288,15 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         pdfDocument.close();
 
         compareResult(outFile, "cmp_" + outFile);
+    }
+
+    @Test
+    public void nullPdfDoesNotThrowNPE() {
+        Rectangle rect = new Rectangle(0, 0);
+        PdfCanvas pdfCanvas = new PdfCanvas(new PdfStream(), null, null);
+        AssertUtil.doesNotThrow(() -> {
+            new Canvas(pdfCanvas, rect);
+        });
     }
 
     private Paragraph createParagraph1() throws IOException {

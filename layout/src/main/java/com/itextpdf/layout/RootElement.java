@@ -359,6 +359,9 @@ public abstract class RootElement<T extends IPropertyContainer> extends ElementP
      * Ensures that the root tag is created in the tagging structure.
      */
     protected final void ensureRootTagIsCreated() {
+        if (this.pdfDocument == null) {
+            return;
+        }
         if (!this.pdfDocument.isTagged()) {
             return;
         }
