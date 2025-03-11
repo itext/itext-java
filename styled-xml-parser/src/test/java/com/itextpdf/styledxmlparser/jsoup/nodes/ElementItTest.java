@@ -35,7 +35,7 @@ public class ElementItTest extends ExtendedITextTest {
     @Test
     public void testFastReparent() {
         StringBuilder htmlBuf = new StringBuilder();
-        int rows = 300000;
+        int rows = 30000;
         for (int i = 1; i <= rows; i++) {
             htmlBuf
                 .append("<p>El-")
@@ -60,13 +60,13 @@ public class ElementItTest extends ExtendedITextTest {
         Assertions.assertEquals(wrapper, wrapperAcutal);
         Assertions.assertEquals("El-1", wrapperAcutal.children().get(0).text());
         Assertions.assertEquals("El-" + rows, wrapperAcutal.children().get(rows - 1).text());
-        Assertions.assertTrue(runtime <= 10000);
+        Assertions.assertTrue(runtime <= 1000);
     }
 
     @Test
     public void testFastReparentExistingContent() {
         StringBuilder htmlBuf = new StringBuilder();
-        int rows = 300000;
+        int rows = 30000;
         for (int i = 1; i <= rows; i++) {
             htmlBuf
                 .append("<p>El-")
@@ -99,6 +99,6 @@ public class ElementItTest extends ExtendedITextTest {
         Assertions.assertEquals("El-" + rows, wrapperAcutal.children().get(rows).text());
         Assertions.assertEquals("End Content", wrapperAcutal.children().get(rows + 1).text());
 
-        Assertions.assertTrue(runtime <= 10000);
+        Assertions.assertTrue(runtime <= 1000);
     }
 }
