@@ -44,6 +44,7 @@ import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line 
 import java.io.IOException;
 import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -54,8 +55,8 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
 
-    @BeforeEach
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 

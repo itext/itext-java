@@ -595,6 +595,10 @@
             <fileset reason="There's no serialization functionality in .Net, so there's no sense in this test class in .Net version">
                 <file path="com/itextpdf/kernel/pdf/DocumentSerializationTest.java"/>
             </fileset>
+            <fileset>
+                <file path="com/itextpdf/test/runtime/VeraPdfValidatorAppTest.java"/>
+                <file path="com/itextpdf/test/utils/UriUtilTest.java"/>
+            </fileset>
         </java>
     </ignored>
      <resource>

@@ -54,6 +54,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.IOException;
 import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -65,8 +66,8 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/GridContainerTest/";
 
-    @BeforeEach
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
