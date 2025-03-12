@@ -22,7 +22,6 @@
  */
 package com.itextpdf.pdfua.checkers.utils;
 
-import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Table;

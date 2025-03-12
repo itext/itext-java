@@ -44,6 +44,7 @@ import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2ListChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
@@ -184,6 +185,7 @@ public class PdfUA2Checker extends PdfUAChecker {
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(new PdfUA2HeadingsChecker.PdfUA2HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2ListChecker.PdfUA2ListHandler(context));
         tagTreeIterator.traverse();
     }
 }

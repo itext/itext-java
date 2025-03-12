@@ -70,6 +70,11 @@ public final class PdfUAExceptionMessageConstants {
             "shall contain an alternate description via their Contents key.";
     public static final String LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK =
             "A link annotation is not nested within a <Link> tag.";
+    public static final String LIST_ITEM_CONTENT_HAS_INVALID_TAG = "Any real content within an LI structure element " +
+            "that is not enclosed in a Lbl structure element shall be enclosed in an LBody structure element.";
+    public static final String LIST_NUMBERING_IS_NOT_SPECIFIED = "If Lbl structure elements are present, the " +
+            "ListNumbering attribute shall be specified for the respective L structure element; " +
+            "the value None shall not be used.";
     public static final String METADATA_SHALL_BE_PRESENT_IN_THE_CATALOG_DICTIONARY =
             "Metadata shall be present in the catalog dictionary";
     public static final String METADATA_SHALL_CONTAIN_DC_TITLE_ENTRY

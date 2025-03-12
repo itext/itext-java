@@ -118,7 +118,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
      *
      * @return list of PDF attribute objects.
      */
-    public List<PdfStructureAttributes> getAttributesList(){
+    public List<PdfStructureAttributes> getAttributesList() {
         List<PdfStructureAttributes> attributesList = new ArrayList<>();
         PdfObject elemAttributesObj = getAttributes(false);
         if (elemAttributesObj != null) {
