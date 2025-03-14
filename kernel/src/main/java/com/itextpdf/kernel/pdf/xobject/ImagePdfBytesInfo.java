@@ -68,7 +68,7 @@ class ImagePdfBytesInfo {
         height = (int) imageXObject.getHeight();
         colorspace = imageXObject.getPdfObject().get(PdfName.ColorSpace);
         decode = imageXObject.getPdfObject().getAsArray(PdfName.Decode);
-        findColorspace(colorspace, true);
+        findColorspace(colorspace, false);
     }
 
     public int getPngColorType() {
@@ -100,15 +100,15 @@ class ImagePdfBytesInfo {
             stride = 4 * width;
             TiffWriter wr = new TiffWriter();
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_SAMPLESPERPIXEL, 4));
-            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_BITSPERSAMPLE, new int[]{8, 8, 8, 8}));
+            wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_BITSPERSAMPLE, new int[] {8, 8, 8, 8}));
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_PHOTOMETRIC, TIFFConstants.PHOTOMETRIC_SEPARATED));
             wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_IMAGEWIDTH, (int) width));
             wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_IMAGELENGTH, (int) height));
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_COMPRESSION, TIFFConstants.COMPRESSION_LZW));
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_PREDICTOR, TIFFConstants.PREDICTOR_HORIZONTAL_DIFFERENCING));
             wr.addField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP, (int) height));
-            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_XRESOLUTION, new int[]{300, 1}));
-            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_YRESOLUTION, new int[]{300, 1}));
+            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_XRESOLUTION, new int[] {300, 1}));
+            wr.addField(new TiffWriter.FieldRational(TIFFConstants.TIFFTAG_YRESOLUTION, new int[] {300, 1}));
             wr.addField(new TiffWriter.FieldShort(TIFFConstants.TIFFTAG_RESOLUTIONUNIT, TIFFConstants.RESUNIT_INCH));
             wr.addField(new TiffWriter.FieldAscii(TIFFConstants.TIFFTAG_SOFTWARE, TIFFTAG_SOFTWARE_VALUE));
             java.io.ByteArrayOutputStream comp = new java.io.ByteArrayOutputStream();
@@ -147,7 +147,6 @@ class ImagePdfBytesInfo {
             throw new UnsupportedOperationException(KernelExceptionMessageConstant.
                     GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB);
         }
-
 
         stride = (width * bpc * 3 + 7) / 8;
         return processPng(newImageBytes, pngBitDepth, 2);
@@ -189,17 +188,16 @@ class ImagePdfBytesInfo {
     /**
      * Sets state of this object according to the color space
      *
-     * @param csObj   the colorspace to use
-     * @param allowIndexed whether indexed color spaces will be resolved (used for recursive call)
-     * @throws IOException if there is a problem with reading from the underlying stream
+     * @param csObj the colorspace to use
+     * @param checkIndexedBase whether base of indexed color space is currently resolved or not
      */
-    private void findColorspace(PdfObject csObj, boolean allowIndexed) {
+    private void findColorspace(PdfObject csObj, boolean checkIndexedBase) {
         if (PdfName.DeviceGray.equals(csObj) || (csObj == null && bpc == 1)) {
             // handle imagemasks
             stride = (width * bpc + 7) / 8;
             pngColorType = 0;
         } else if (PdfName.DeviceRGB.equals(csObj)) {
-            if (bpc == 8 || bpc == 16) {
+            if (bpc == 8 || bpc == 16 || checkIndexedBase) {
                 stride = (width * bpc * 3 + 7) / 8;
                 pngColorType = 2;
             }
@@ -210,7 +208,7 @@ class ImagePdfBytesInfo {
                 stride = (width * bpc + 7) / 8;
                 pngColorType = 0;
             } else if (PdfName.CalRGB.equals(tyca)) {
-                if (bpc == 8 || bpc == 16) {
+                if (bpc == 8 || bpc == 16 || checkIndexedBase) {
                     stride = (width * bpc * 3 + 7) / 8;
                     pngColorType = 2;
                 }
@@ -226,14 +224,16 @@ class ImagePdfBytesInfo {
                     pngColorType = 2;
                     icc = pr.getBytes();
                 }
-            } else if (allowIndexed && PdfName.Indexed.equals(tyca)) {
-                findColorspace(ca.get(1), false);
+            } else if (!checkIndexedBase && PdfName.Indexed.equals(tyca)) {
+                // In Indexed color space BitsPerComponent defines amount of bits for Index component, not base.
+                // So ignore bpc checks in findColorspace for base color.
+                findColorspace(ca.get(1), true);
                 if (pngColorType == 2) {
-                    PdfObject id2 = ca.get(3);
-                    if (id2 instanceof PdfString) {
-                        palette = ((PdfString) id2).getValueBytes();
-                    } else if (id2 instanceof PdfStream) {
-                        palette = ((PdfStream) id2).getBytes();
+                    PdfObject lookupObj = ca.get(3);
+                    if (lookupObj instanceof PdfString) {
+                        palette = ((PdfString) lookupObj).getValueBytes();
+                    } else if (lookupObj instanceof PdfStream) {
+                        palette = ((PdfStream) lookupObj).getBytes();
                     }
                     stride = (width * bpc + 7) / 8;
                     pngColorType = 3;
@@ -241,7 +241,7 @@ class ImagePdfBytesInfo {
             } else if (PdfName.Separation.equals(tyca)) {
                 IPdfFunction fct = PdfFunctionFactory.create(ca.get(3));
                 int components = fct.getOutputSize();
-                pngColorType = components == 1? 1: 2;
+                pngColorType = components == 1 ? 1 : 2;
                 pngBitDepth = 8;
             }
         }
