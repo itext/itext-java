@@ -155,7 +155,7 @@ public class CssDeclarationValueTokenizer {
                     --functionDepth;
                     buff.append(curChar);
                     if (functionDepth == 0) {
-                        return new Token(buff.toString(), TokenType.FUNCTION);
+                        return new Token(buff.toString(), TokenType.FUNCTION, (char) 0, isSpaceNext());
                     }
                 } else if (curChar == '"' || curChar == '\'') {
                     stringQuote = curChar;
@@ -168,7 +168,7 @@ public class CssDeclarationValueTokenizer {
                 } else if (curChar == ']') {
                     inString = false;
                     buff.append(curChar);
-                    return new Token(buff.toString(), TokenType.STRING, stringQuote);
+                    return new Token(buff.toString(), TokenType.STRING, (char) 0, isSpaceNext());
                 } else if (curChar == ',' && !inString && functionDepth == 0) {
                     if (buff.length() == 0) {
                         return new Token(",", TokenType.COMMA);
@@ -181,7 +181,7 @@ public class CssDeclarationValueTokenizer {
                         buff.append(curChar);
                     }
                     if (!inString) {
-                        return new Token(buff.toString(), functionDepth > 0 ? TokenType.FUNCTION : TokenType.UNKNOWN);
+                        return new Token(buff.toString(), functionDepth > 0 ? TokenType.FUNCTION : TokenType.UNKNOWN, (char) 0, true);
                     }
                 } else {
                     buff.append(curChar);
@@ -189,6 +189,10 @@ public class CssDeclarationValueTokenizer {
             }
         }
         return new Token(buff.toString(), TokenType.FUNCTION);
+    }
+
+    private boolean isSpaceNext(){
+        return src.length() - 1 > index && src.charAt(index + 1) == ' ';
     }
 
     /**
@@ -199,11 +203,11 @@ public class CssDeclarationValueTokenizer {
      */
     private void processFunctionToken(Token token, StringBuilder functionBuffer) {
         if (token.isString()) {
-            if (stringQuote != 0) {
+            if (stringQuote != 0 && token.getStringQuote() != 0 ) {
                 functionBuffer.append(stringQuote);
             }
             functionBuffer.append(token.getValue());
-            if (stringQuote != 0) {
+            if (stringQuote != 0 && token.getStringQuote() != 0) {
                 functionBuffer.append(stringQuote);
             }
         } else {
@@ -234,6 +238,8 @@ public class CssDeclarationValueTokenizer {
 
         private final char stringQuote;
 
+        private final boolean hasSpace;
+
         /**
          * Creates a new {@link Token} instance.
          *
@@ -241,13 +247,18 @@ public class CssDeclarationValueTokenizer {
          * @param type the type
          */
         public Token(String value, TokenType type) {
-            this(value, type, (char) 0);
+            this(value, type, (char) 0, false);
         }
 
         Token(String value, TokenType type, char stringQuote) {
+            this(value, type, stringQuote, false);
+        }
+
+        Token(String value, TokenType type, char stringQuote, boolean hasSpace) {
             this.value = value;
             this.type = type;
             this.stringQuote = stringQuote;
+            this.hasSpace = hasSpace;
         }
 
         /**
@@ -275,6 +286,16 @@ public class CssDeclarationValueTokenizer {
          */
         public char getStringQuote() {
             return stringQuote;
+        }
+
+
+        /**
+         * Gets the flag if token contains whitespace.
+         *
+         * @return true, if containing whitespace
+         */
+        public boolean hasSpace() {
+            return hasSpace;
         }
 
         /**

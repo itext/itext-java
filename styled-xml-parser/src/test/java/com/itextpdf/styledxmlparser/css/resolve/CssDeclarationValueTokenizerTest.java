@@ -101,6 +101,43 @@ public class CssDeclarationValueTokenizerTest extends ExtendedITextTest {
                         CssDeclarationValueTokenizer.TokenType.STRING));
     }
 
+    @Test
+    public void closingQuoteInsideStringTest() {
+        runTest("a(\"a12x\")\"", Collections.singletonList("a(\"a12x\")"),
+                Collections.singletonList(TokenType.FUNCTION));
+    }
+
+    @Test
+    public void spaceAfterFunctionTest() {
+        runTest("a(\"a12x\") ,", Arrays.asList("a(\"a12x\")", ","), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.COMMA));
+    }
+
+    @Test
+    public void spaceAfterFunction123Test() {
+        runTest("a(\"a12x\") bold", Arrays.asList("a(\"a12x\")", "bold"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.FUNCTION));
+    }
+
+    @Test
+    public void closingSquareBracketOutsideStringTest() {
+        runTest("a[\"a12x\"] ,", Arrays.asList("a[","a12x", "]", ","), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.STRING, CssDeclarationValueTokenizer.TokenType.STRING, CssDeclarationValueTokenizer.TokenType.COMMA));
+    }
+
+    @Test
+    public void whitespaceTest() {
+        runTest("a[\"a12x\"]    ", Arrays.asList("a[","a12x", "]"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.STRING, CssDeclarationValueTokenizer.TokenType.STRING));
+    }
+
+    @Test
+    public void quoteInsideFunctionTest() {
+        runTest("a(\"a12x\"),", Arrays.asList("a(\"a12x\")", ","), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.COMMA));
+    }
+
+    @Test
+    public void triplingQuotesFunctionTest() {
+        runTest("p:not([class*=\"\"])", Collections.singletonList("p:not([class*=\"\"])"),
+                Collections.singletonList(TokenType.FUNCTION));
+    }
+
     private void runTest(String src, List<String> tokenValues, List<CssDeclarationValueTokenizer.TokenType> tokenTypes) {
         CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(src);
         CssDeclarationValueTokenizer.Token token = null;

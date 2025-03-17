@@ -23,17 +23,17 @@
 package com.itextpdf.styledxmlparser.css.parse;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssRuleSet;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.Token;
 import com.itextpdf.styledxmlparser.css.selector.CssSelector;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utilities class to parse CSS rule sets.
@@ -102,15 +102,19 @@ public final class CssRuleSetParser {
         List<CssRuleSet> ruleSets = new ArrayList<>();
 
         //check for rules like p, {…}
-        String[] selectors = selectorStr.split(",");
+
+        String[] selectors = splitByTokens(selectorStr);
+
         for (int i = 0; i < selectors.length; i++) {
             selectors[i] = CssUtils.removeDoubleSpacesAndTrim(selectors[i]);
-            if (selectors[i].length() == 0)
+            if (selectors[i].isEmpty()) {
                 return ruleSets;
+            }
         }
+
         for (String currentSelectorStr : selectors) {
             try {
-                ruleSets.add(new CssRuleSet( new CssSelector(currentSelectorStr), declarations));
+                ruleSets.add(new CssRuleSet(new CssSelector(currentSelectorStr), declarations));
             } catch (Exception exc) {
                 logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.ERROR_PARSING_CSS_SELECTOR,
                         currentSelectorStr), exc);
@@ -122,6 +126,40 @@ public final class CssRuleSetParser {
         }
 
         return ruleSets;
+    }
+
+    static String[] splitByTokens(String selectorGroup) {
+        List<String> selectors = new ArrayList<>();
+        StringBuilder currentSelector = new StringBuilder();
+
+        CssDeclarationValueTokenizer cssDeclarationValueTokenizer = new CssDeclarationValueTokenizer(selectorGroup);
+
+        Token nextValidToken = cssDeclarationValueTokenizer.getNextValidToken();
+        while (nextValidToken != null) {
+            if (nextValidToken.getValue().equals(",")) {
+                selectors.add(currentSelector.toString());
+                currentSelector.setLength(0);
+            } else {
+                if (nextValidToken.isString() && nextValidToken.getStringQuote() != 0) {
+                    currentSelector
+                            .append(nextValidToken.getStringQuote())
+                            .append(nextValidToken.getValue())
+                            .append(nextValidToken.getStringQuote());
+                } else {
+                    currentSelector.append(nextValidToken.getValue());
+                    if (nextValidToken.hasSpace()) {
+                        currentSelector.append(' ');
+                    }
+                }
+            }
+            nextValidToken = cssDeclarationValueTokenizer.getNextValidToken();
+        }
+
+
+        selectors.add(currentSelector.toString());
+
+
+        return selectors.toArray(new String[0]);
     }
 
     /**
