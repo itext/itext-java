@@ -2121,7 +2121,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testFormFieldAsStream(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addAfterGenerationHook(pdfDoc -> {
             PdfObject page = pdfDoc.addNewPage().getPdfObject();
 
             PdfStream streamObj = new PdfStream();
@@ -2146,8 +2146,8 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("FormFieldAsStream", pdfUAConformance);
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
             framework.assertVeraPdfFail("FormFieldAsStream", pdfUAConformance);
         }
     }

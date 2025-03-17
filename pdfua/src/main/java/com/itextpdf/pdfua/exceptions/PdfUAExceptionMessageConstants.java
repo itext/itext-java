@@ -40,6 +40,10 @@ public final class PdfUAExceptionMessageConstants {
     public static final String CELL_HAS_INVALID_ROLE = "Cell: row {0} ({1}) col {2} has invalid role.";
     public static final String CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT =
             "Content is neither marked as Artifact nor tagged as real content.";
+    public static final String CONTENT_NOT_REFERENCING_FE_NOTE = "Real content that refers to footnotes or endnotes "
+            + "shall use the Ref entry on the referring structure element to reference the FENote.";
+    public static final String INCORRECT_NOTE_TYPE_VALUE
+            = "The value of the NoteType attribute shall be either \"Footnote\", \"Endnote\" or \"None\".";
     public static final String CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT =
             "Content with MCID, but MCID wasn't found in StructTreeRoot.";
     public static final String CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP = "CT or Alt entry is missing from the media " +
@@ -50,7 +54,11 @@ public final class PdfUAExceptionMessageConstants {
     public static final String DOCUMENT_USES_BOTH_H_AND_HN = "Document uses both H and H# tags.";
     public static final String DOCUMENT_USES_H_TAG = "Document uses H tag: conforming files shall use the explicitly " +
             "numbered heading structure types (H1-Hn) and shall not use the H structure type.";
+    public static final String DOCUMENT_USES_NOTE_TAG = "Document uses Note tag: "
+            + "conforming files shall not use Note structure type. Instead FENote structure type shall be used.";
     public static final String DYNAMIC_XFA_FORMS_SHALL_NOT_BE_USED = "Dynamic XFA forms shall not be used.";
+    public static final String FE_NOTE_NOT_REFERENCING_CONTENT = "FENote structure element shall use the Ref entry "
+            + "to identify all citations that reference it.";
     public static final String FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY =
             "File specification dictionary shall contain f key and uf key.";
     public static final String FONT_SHOULD_BE_EMBEDDED = "Following font(s) are not embedded: {0}";

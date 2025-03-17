@@ -31,7 +31,10 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 /**
  * Utility class for delegating notes checks to the correct checking logic.
+ *
+ * @deprecated in favor of {@link com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1NotesChecker}
  */
+@Deprecated
 public class NoteCheckUtil {
     /**
      * Handler for checking Note elements in the TagTree.

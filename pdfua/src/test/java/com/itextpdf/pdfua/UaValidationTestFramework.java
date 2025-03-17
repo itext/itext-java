@@ -56,6 +56,7 @@ public class UaValidationTestFramework {
     private final List<Generator<IBlockElement>> elementProducers = new ArrayList<>();
 
     private final List<Consumer<PdfDocument>> beforeGeneratorHook = new ArrayList<>();
+    private final List<Consumer<PdfDocument>> afterGeneratorHook = new ArrayList<>();
     public UaValidationTestFramework(String destinationFolder) {
         this(destinationFolder, true);
     }
@@ -131,6 +132,10 @@ public class UaValidationTestFramework {
         this.beforeGeneratorHook.add(action);
     }
 
+    public void addAfterGenerationHook(Consumer<PdfDocument> action) {
+        this.afterGeneratorHook.add(action);
+    }
+
     public void assertVeraPdfFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
         veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
     }
@@ -144,16 +149,19 @@ public class UaValidationTestFramework {
         String outfile = UrlUtil.getNormalizedFileUriString(destinationFolder + filename);
         System.out.println(outfile);
         PdfDocument pdfDoc = createPdfDocument(destinationFolder + filename, pdfUAConformance);
+        pdfDoc.getDiContainer().register(ValidationContainer.class, new ValidationContainer());
 
-        Document document = new Document(pdfDoc);
-        document.getPdfDocument().getDiContainer().register(ValidationContainer.class, new ValidationContainer());
         for (Consumer<PdfDocument> pdfDocumentConsumer : this.beforeGeneratorHook) {
             pdfDocumentConsumer.accept(pdfDoc);
         }
-        for (Generator<IBlockElement> blockElementSupplier : elementProducers) {
-            document.add(blockElementSupplier.generate());
+        try (Document document = new Document(pdfDoc)) {
+            for (Generator<IBlockElement> blockElementSupplier : elementProducers) {
+                document.add(blockElementSupplier.generate());
+            }
+            for (Consumer<PdfDocument> pdfDocumentConsumer : this.afterGeneratorHook) {
+                pdfDocumentConsumer.accept(pdfDoc);
+            }
         }
-        document.close();
         VeraPdfValidator validator = new VeraPdfValidator();// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         String validate = null;
         if (failureExpected) {
@@ -184,11 +192,14 @@ public class UaValidationTestFramework {
             for (Consumer<PdfDocument> pdfDocumentConsumer : this.beforeGeneratorHook) {
                 pdfDocumentConsumer.accept(pdfDoc);
             }
-            Document document = new Document(pdfDoc);
-            for (Generator<IBlockElement> blockElementSupplier : elementProducers) {
-                document.add(blockElementSupplier.generate());
+            try (Document document = new Document(pdfDoc)) {
+                for (Generator<IBlockElement> blockElementSupplier : elementProducers) {
+                    document.add(blockElementSupplier.generate());
+                }
+                for (Consumer<PdfDocument> pdfDocumentConsumer : this.afterGeneratorHook) {
+                    pdfDocumentConsumer.accept(pdfDoc);
+                }
             }
-            document.close();
         } catch (Exception e) {
             return e;
         }

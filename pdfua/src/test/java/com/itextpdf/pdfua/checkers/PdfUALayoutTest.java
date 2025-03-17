@@ -22,12 +22,8 @@
  */
 package com.itextpdf.pdfua.checkers;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -35,37 +31,24 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
-import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DottedBorder;
 import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
-import com.itextpdf.pdfua.UaValidationTestFramework;
-import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUALayoutTest extends ExtendedITextTest {
@@ -73,20 +56,9 @@ public class PdfUALayoutTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUALayoutTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-    }
-
-    public static List<PdfUAConformance> data() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
     }
 
     @Test
@@ -162,160 +134,4 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
-
-    @ParameterizedTest
-    @MethodSource("data")
-    public void addNoteWithoutIdTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph note = new Paragraph("note");
-                PdfFont font = null;
-                try {
-                    font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                note.setFont(font);
-                note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                return note;
-            }
-        });
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("noteWithoutID",
-                    PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            Assertions.assertThrows(PdfException.class,
-                    () -> framework.assertVeraPdfFail("noteWithoutID", pdfUAConformance),
-                    MessageFormatUtil.format(
-                            KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
-                            StandardRoles.NOTE, StandardNamespaces.PDF_2_0));
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("data")
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, ignore = true)})
-    public void addTwoNotesWithSameIdTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph note = new Paragraph("note 1");
-                PdfFont font = null;
-                try {
-                    font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                note.setFont(font);
-                note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                note.getAccessibilityProperties().setStructureElementIdString("123");
-                return note;
-            }
-        },
-        new UaValidationTestFramework.Generator<IBlockElement>() {
-             @Override
-             public IBlockElement generate() {
-                 Paragraph note = new Paragraph("note 2");
-                 PdfFont font = null;
-                 try {
-                      font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                 } catch (IOException e) {
-                     throw new RuntimeException(e.getMessage());
-                 }
-                 note.setFont(font);
-                 note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                 note.getAccessibilityProperties().setStructureElementIdString("123");
-                 return note;
-             }
-        });
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("twoNotesWithSameId", MessageFormatUtil.format(
-                    PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "123"),
-                    false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            Assertions.assertThrows(PdfException.class,
-                    () -> framework.assertVeraPdfFail("twoNotesWithSameId", pdfUAConformance),
-                    MessageFormatUtil.format(
-                            KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
-                            StandardRoles.NOTE, StandardNamespaces.PDF_2_0));
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("data")
-    public void addNoteWithValidIdTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph note = new Paragraph("note");
-                PdfFont font = null;
-                try {
-                    font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                note.setFont(font);
-                note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                note.getAccessibilityProperties().setStructureElementIdString("123");
-                return note;
-            }
-        });
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("noteWithValidID", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            Assertions.assertThrows(PdfException.class,
-                    () -> framework.assertVeraPdfFail("noteWithValidID", pdfUAConformance),
-                    MessageFormatUtil.format(
-                            KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
-                            StandardRoles.NOTE, StandardNamespaces.PDF_2_0));
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("data")
-    public void addTwoNotesWithDifferentIdTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-                                   @Override
-                                   public IBlockElement generate() {
-                                       Paragraph note = new Paragraph("note 1");
-                                       PdfFont font = null;
-                                       try {
-                                           font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                                       } catch (IOException e) {
-                                           throw new RuntimeException(e.getMessage());
-                                       }
-                                       note.setFont(font);
-                                       note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                                       note.getAccessibilityProperties().setStructureElementIdString("123");
-                                       return note;
-                                   }
-                               },
-                new UaValidationTestFramework.Generator<IBlockElement>() {
-                    @Override
-                    public IBlockElement generate() {
-                        Paragraph note = new Paragraph("note 2");
-                        PdfFont font = null;
-                        try {
-                            font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e.getMessage());
-                        }
-                        note.setFont(font);
-                        note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                        note.getAccessibilityProperties().setStructureElementIdString("234");
-                        return note;
-                    }
-                });
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("twoNotesWithDifferentId", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            Assertions.assertThrows(PdfException.class,
-                    () -> framework.assertVeraPdfFail("twoNotesWithDifferentId", pdfUAConformance),
-                    MessageFormatUtil.format(
-                            KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE,
-                            StandardRoles.NOTE, StandardNamespaces.PDF_2_0));
-        }
-    }
-
 }

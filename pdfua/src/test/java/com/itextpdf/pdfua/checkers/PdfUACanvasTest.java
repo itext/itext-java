@@ -1100,8 +1100,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY,
                     pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("invalidNoteTag02", pdfUAConformance);
+            framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.DOCUMENT_USES_NOTE_TAG, pdfUAConformance);
         }
     }
 
@@ -1144,8 +1143,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     DESTINATION_FOLDER, "diff_")
             );
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("invalidNoteTag02", pdfUAConformance);
+            framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.DOCUMENT_USES_NOTE_TAG, pdfUAConformance);
         }
     }
 

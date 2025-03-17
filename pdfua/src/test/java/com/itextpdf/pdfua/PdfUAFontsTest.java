@@ -218,7 +218,6 @@ public class PdfUAFontsTest extends ExtendedITextTest {
 
             Paragraph paragraph = new Paragraph("Helloworld");
             document.add(paragraph);
-            document.close();
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
@@ -227,7 +226,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     pdfUAConformance);
         }
         if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
+            // TODO DEVSIX-8242 The layout level doesn't throw an error
             framework.assertVeraPdfFail("tryToUseStandardFontsTest", pdfUAConformance);
         }
     }

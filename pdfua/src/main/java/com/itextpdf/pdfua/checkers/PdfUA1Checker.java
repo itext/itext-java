@@ -69,6 +69,7 @@ import com.itextpdf.pdfua.checkers.utils.XfaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1ListChecker;
+import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1NotesChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
@@ -353,7 +354,7 @@ public class PdfUA1Checker extends PdfUAChecker {
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
         tagTreeIterator.addHandler(new FormulaCheckUtil.FormulaTagHandler(context));
-        tagTreeIterator.addHandler(new NoteCheckUtil.NoteTagHandler(context));
+        tagTreeIterator.addHandler(new PdfUA1NotesChecker.PdfUA1NotesTagHandler(context));
         tagTreeIterator.addHandler(new PdfUA1HeadingsChecker.PdfUA1HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
         tagTreeIterator.addHandler(new AnnotationCheckUtil.AnnotationHandler(context));
