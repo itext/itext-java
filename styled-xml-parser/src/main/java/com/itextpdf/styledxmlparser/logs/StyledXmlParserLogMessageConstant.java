@@ -69,6 +69,14 @@ public final class StyledXmlParserLogMessageConstant {
     /** The Constant INVALID_CSS_PROPERTY_DECLARATION. */
     public static final String INVALID_CSS_PROPERTY_DECLARATION = "Invalid css property declaration: {0}";
 
+    /** The Constant INVALID_CSS_VARIABLE_NESTING. */
+    public static final String INVALID_CSS_VARIABLE_COUNT
+            = "Css var expression count too high, possible cyclic backreference at declaration: {0}";
+
+    /** The Constant ERROR_DURING_CSS_VARIABLE_RESOLVING. */
+    public static final String ERROR_DURING_CSS_VARIABLE_RESOLVING
+            = "Css var expression can't be resolved at declaration: {0}";
+
     /**
      * The Constant INCORRECT_CHARACTER_SEQUENCE.
      */

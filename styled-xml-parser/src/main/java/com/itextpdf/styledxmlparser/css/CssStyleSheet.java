@@ -24,20 +24,21 @@ package com.itextpdf.styledxmlparser.css;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.CssRuleSetComparator;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.ShorthandResolverFactory;
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.INode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.styledxmlparser.util.CssVariableUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that stores all the CSS statements, and thus acts as a CSS style sheet.
@@ -145,7 +146,9 @@ public class CssStyleSheet {
     private static void populateDeclarationsMap(List<CssDeclaration> declarations, Map<String, CssDeclaration> map) {
         for (CssDeclaration declaration : declarations) {
             IShorthandResolver shorthandResolver = ShorthandResolverFactory.getShorthandResolver(declaration.getProperty());
-            if (shorthandResolver == null) {
+            // Shorthands containing css variables are resolved later
+            // in com.itextpdf.styledxmlparser.util.StyleUtil#resolveCssVariables
+            if (shorthandResolver == null || CssVariableUtil.containsVarExpression(declaration.getExpression())) {
                 putDeclarationInMapIfValid(map, declaration);
             } else {
                 List<CssDeclaration> resolvedShorthandProps = shorthandResolver.resolveShorthand(declaration.getExpression());

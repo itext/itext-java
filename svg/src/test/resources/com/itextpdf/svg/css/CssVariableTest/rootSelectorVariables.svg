@@ -1,0 +1,13 @@
+<svg x="0" y="0" width="600" height="600" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        :root {
+        --font-size: 55px;
+        }
+        .some-text {
+        font: var(--font-size) Courier;
+        }
+    </style>
+    <text class="some-text">
+        <tspan x="20" y="150" >iText</tspan>
+    </text>
+</svg>

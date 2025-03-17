@@ -28,19 +28,19 @@ package com.itextpdf.styledxmlparser.css.parse;
 public class CssDeclarationValueTokenizer {
     
     /** The source string. */
-    private final String src;
+    protected final String src;
     
     /** The current index. */
-    private int index = -1;
+    protected int index = -1;
     
     /** The quote string, either "'" or "\"". */
-    private char stringQuote;
+    protected char stringQuote;
     
     /** Indicates if we're inside a string. */
-    private boolean inString;
+    protected boolean inString;
     
     /** The depth. */
-    private int functionDepth = 0;
+    protected int functionDepth = 0;
 
     /**
      * Creates a new {@link CssDeclarationValueTokenizer} instance.
@@ -62,20 +62,40 @@ public class CssDeclarationValueTokenizer {
             token = getNextToken();
         }
         if (token != null && functionDepth > 0) {
-            StringBuilder functionBuffer = new StringBuilder();
-            while (token != null && functionDepth > 0) {
-                processFunctionToken(token, functionBuffer);
-                token = getNextToken();
-            }
-            functionDepth = 0;
-            if (functionBuffer.length() != 0) {
-                if (token != null) {
-                    processFunctionToken(token, functionBuffer);
-                }
-                return new Token(functionBuffer.toString(), TokenType.FUNCTION);
+            Token result = parseFunctionToken(token, 0);
+            if (result != null) {
+                return result;
             }
         }
         return token;
+    }
+
+    /**
+     * Parse internal function token to full function token, e.g.
+     *
+     * <p>
+     * {@code calc(calc(} to {@code calc(calc(50px + 5px) + 20px)}
+     *
+     * @param token function token to expand
+     * @param funcDepth function depth for resolving, e.g. if you want to resolve only nested function, not the whole
+     *                  declaration
+     *
+     * @return expanded function token
+     */
+    protected Token parseFunctionToken(Token token, int funcDepth) {
+        StringBuilder functionBuffer = new StringBuilder();
+        while (token != null && functionDepth > funcDepth) {
+            processFunctionToken(token, functionBuffer);
+            token = getNextToken();
+        }
+        functionDepth = 0;
+        if (functionBuffer.length() != 0) {
+            if (token != null) {
+                processFunctionToken(token, functionBuffer);
+            }
+            return new Token(functionBuffer.toString(), TokenType.FUNCTION);
+        }
+        return null;
     }
 
     /**
@@ -83,7 +103,7 @@ public class CssDeclarationValueTokenizer {
      *
      * @return the next token
      */
-    private Token getNextToken() {
+    protected Token getNextToken() {
         StringBuilder buff = new StringBuilder();
         char curChar;
         if (index >= src.length() - 1) {
@@ -172,16 +192,6 @@ public class CssDeclarationValueTokenizer {
     }
 
     /**
-     * Checks if a character is a hexadecimal digit.
-     *
-     * @param c the character
-     * @return true, if it's a hexadecimal digit
-     */
-    private boolean isHexDigit(char c) {
-        return (47 < c && c < 58) || (64 < c && c < 71) || (96 < c && c < 103);
-    }
-
-    /**
      * Processes a function token.
      *
      * @param token the token
@@ -199,6 +209,16 @@ public class CssDeclarationValueTokenizer {
         } else {
             functionBuffer.append(token.getValue());
         }
+    }
+
+    /**
+     * Checks if a character is a hexadecimal digit.
+     *
+     * @param c the character
+     * @return true, if it's a hexadecimal digit
+     */
+    private static boolean isHexDigit(char c) {
+        return (47 < c && c < 58) || (64 < c && c < 71) || (96 < c && c < 103);
     }
 
     /**

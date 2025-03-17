@@ -1,0 +1,14 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        :root {
+        --main-color: blue;
+        --circle-size: 50px;
+        }
+        .circle {
+        fill: var(--main-color);
+        stroke: black;
+        stroke-width: 3;
+        }
+    </style>
+    <circle class="circle" cx="100" cy="100" r="var(--circle-size)" />
+</svg>

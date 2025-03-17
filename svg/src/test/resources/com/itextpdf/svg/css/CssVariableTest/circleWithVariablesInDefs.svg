@@ -1,0 +1,17 @@
+<svg width="500px" height="500px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <style>
+        svg {
+            --stroke-color: maroon;
+        }
+    </style>
+    <defs>
+        <circle id="ele" cx="150" cy="150"
+                r="40" stroke="black"
+                stroke-width="10"
+                style="stroke: var(--stroke-color); fill: gold; stroke-width: 2px;"/>
+    </defs>
+
+    <circle cx="50" cy="50"
+            r="40" style="stroke: var(--stroke-color); fill: gold; stroke-width: 2px;"/>
+    <use xlink:href="#ele" />
+</svg>

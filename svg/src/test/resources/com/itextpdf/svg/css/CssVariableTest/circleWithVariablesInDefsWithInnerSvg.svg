@@ -1,0 +1,32 @@
+<svg width="800px" height="300px"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <style>
+        svg {
+        --stroke-color: maroon;
+        }
+    </style>
+
+    <defs>
+        <linearGradient id="Gradient01">
+            <stop offset="20%" stop-color="#39F" />
+            <stop offset="90%" stop-color="#F3F" />
+        </linearGradient>
+    </defs>
+
+    <rect x="10" y="10" width="60" height="10"
+          fill="url(#Gradient01)" />
+    <svg width="380px" height="330px"
+         xmlns="http://www.w3.org/2000/svg">
+
+        <defs>
+            <circle id="circle2" cx="150" cy="150"
+                    r="40" stroke="black"
+                    stroke-width="10"
+                    style="stroke: var(--stroke-color); fill: gold; stroke-width: 2px;"/>
+        </defs>
+
+        <use xlink:href="#circle2" />
+    </svg>
+</svg>

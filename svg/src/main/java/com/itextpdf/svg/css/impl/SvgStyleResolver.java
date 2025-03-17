@@ -52,6 +52,7 @@ import com.itextpdf.styledxmlparser.node.IStylesContainer;
 import com.itextpdf.styledxmlparser.node.ITextNode;
 import com.itextpdf.styledxmlparser.node.IXmlDeclarationNode;
 import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
+import com.itextpdf.styledxmlparser.util.CssVariableUtil;
 import com.itextpdf.styledxmlparser.util.FontFamilySplitterUtil;
 import com.itextpdf.styledxmlparser.util.StyleUtil;
 import com.itextpdf.svg.SvgConstants;
@@ -274,29 +275,51 @@ public class SvgStyleResolver implements ICssResolver {
         return SvgStyleResolver.isElementNested(element, Tags.DEFS);
     }
 
+    /**
+     * Merge variables from parent node with current one.
+     * This is needed for svg elements like &lt;defs&gt;, which do not inherit parent styles, but do inherit
+     * css variables.
+     *
+     * @param styles current element styles to put variable in
+     * @param parentStyles styles to search variables for
+     */
+    private static void putMissingVariables(Map<String, String> styles, Map<String, String> parentStyles) {
+        if (parentStyles == null) {
+            return;
+        }
+        for (Map.Entry<String, String> entry : parentStyles.entrySet()) {
+            if (CssVariableUtil.isCssVariable(entry.getKey()) && styles.get(entry.getKey()) == null) {
+                styles.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
     private Map<String, String> resolveStyles(INode element, SvgCssContext context) {
         // Resolves node styles without inheritance of parent element styles
         Map<String, String> styles = resolveNativeStyles(element, context);
-        if (element instanceof IElementNode && SvgStyleResolver.onlyNativeStylesShouldBeResolved((IElementNode) element)) {
-            return styles;
-        }
-
-        String parentFontSizeStr = null;
-        // Load in and merge inherited styles from parent
+        Map<String, String> parentStyles = null;
         if (element.parentNode() instanceof IStylesContainer) {
             final IStylesContainer parentNode = (IStylesContainer) element.parentNode();
-            Map<String, String> parentStyles = parentNode.getStyles();
+            parentStyles = parentNode.getStyles();
 
             if (parentStyles == null && !(parentNode instanceof IElementNode)) {
                 LOGGER.error(StyledXmlParserLogMessageConstant.ERROR_RESOLVING_PARENT_STYLES);
             }
+        }
 
-            if (parentStyles != null) {
-                parentFontSizeStr = parentStyles.get(SvgConstants.Attributes.FONT_SIZE);
-                for (Map.Entry<String, String> entry : parentStyles.entrySet()) {
-                    styles = StyleUtil.mergeParentStyleDeclaration(styles, entry.getKey(), entry.getValue(),
-                            parentFontSizeStr, INHERITANCE_RULES);
-                }
+        if (element instanceof IElementNode && SvgStyleResolver.onlyNativeStylesShouldBeResolved((IElementNode) element)) {
+            putMissingVariables(styles, parentStyles);
+            CssVariableUtil.resolveCssVariables(styles);
+            return styles;
+        }
+
+        String parentFontSizeStr = null;
+        // Merge inherited styles from parent
+        if (parentStyles != null) {
+            parentFontSizeStr = parentStyles.get(SvgConstants.Attributes.FONT_SIZE);
+            for (Map.Entry<String, String> entry : parentStyles.entrySet()) {
+                styles = StyleUtil.mergeParentStyleDeclaration(styles, entry.getKey(), entry.getValue(),
+                        parentFontSizeStr, INHERITANCE_RULES);
             }
         }
 
@@ -307,6 +330,8 @@ public class SvgStyleResolver implements ICssResolver {
             // TODO DEVSIX-8792 SVG: implement styles appliers like in html2pdf
             styles.put(CommonCssConstants.FONT_FAMILY, fontFamilies.get(0));
         }
+
+        CssVariableUtil.resolveCssVariables(styles);
 
         // Set root font size
         final boolean isSvgElement = element instanceof IElementNode

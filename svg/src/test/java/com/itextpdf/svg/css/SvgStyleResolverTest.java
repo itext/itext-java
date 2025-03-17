@@ -44,11 +44,14 @@ import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @org.junit.jupiter.api.Tag("UnitTest")
 public class SvgStyleResolverTest extends ExtendedITextTest{
@@ -253,6 +256,188 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         List<CssFontFaceRule> fontFaceRuleList = resolver.getFonts();
         Assertions.assertEquals(1, fontFaceRuleList.size());
         Assertions.assertEquals(2, fontFaceRuleList.get(0).getProperties().size());
+    }
+
+    @Test
+    public void nestedCssVariableTest() {
+        Element styleTag = new Element(Tag.valueOf("style"), "");
+        TextNode styleContents = new TextNode(
+                "\tspan {\n" +
+                        "\t\t--test-var: 30px;\n" +
+                        "\t}\n" +
+                        ".a {\n" +
+                        "    --test-var2: 50px;\n" +
+                        "}\n" +
+                        "div {\n" +
+                        "    margin: var(--test-var,var(--test-var2));\n" +
+                        "}\n"
+        );
+        JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
+        jSoupStyle.addChild(new JsoupTextNode(styleContents));
+
+        Element div = new Element(Tag.valueOf("div"), "");
+        div.attributes().put("class", "a");
+        JsoupElementNode jSoupDiv = new JsoupElementNode(div);
+
+        SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());
+        SvgStyleResolver resolver = new SvgStyleResolver(jSoupStyle, context);
+        AbstractCssContext svgContext = new SvgCssContext();
+
+        Map<String, String> actual = resolver.resolveStyles(jSoupDiv, svgContext);
+
+        Map<String, String> expected = new HashMap<>();
+        expected.put("class", "a");
+        expected.put("--test-var2", "50px");
+        expected.put("margin-top", "50px");
+        expected.put("margin-right", "50px");
+        expected.put("margin-bottom", "50px");
+        expected.put("margin-left", "50px");
+        expected.put("font-size", "12pt");
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 2))
+    @Test
+    public void invalidValueCssVariableTest() {
+        Element styleTag = new Element(Tag.valueOf("style"), "");
+        TextNode styleContents = new TextNode(
+                "    p {\n" +
+                        "        word-break: var(--test-var);\n" +
+                        "    }\n" +
+                        "    div {\n" +
+                        "\t\t--test-var: incorrect;\n" +
+                        "\t}");
+        JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
+        jSoupStyle.addChild(new JsoupTextNode(styleContents));
+
+        Element div = new Element(Tag.valueOf("div"), "");
+        Element paragraph = new Element(Tag.valueOf("p"), "");
+        Element nestedParagraph = new Element(Tag.valueOf("p"), "");
+        JsoupElementNode jSoupParagraph = new JsoupElementNode(paragraph);
+        JsoupElementNode jSoupNestedParagraph = new JsoupElementNode(nestedParagraph);
+        JsoupElementNode jSoupDiv = new JsoupElementNode(div);
+        jSoupDiv.addChild(jSoupNestedParagraph);
+
+        SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());
+        SvgStyleResolver resolver = new SvgStyleResolver(jSoupStyle, context);
+        AbstractCssContext svgContext = new SvgCssContext();
+
+
+        jSoupDiv.setStyles(resolver.resolveStyles(jSoupDiv, svgContext));
+        Map<String, String> nestedStyles = resolver.resolveStyles(jSoupNestedParagraph, svgContext);
+        Map<String, String> styles = resolver.resolveStyles(jSoupParagraph, svgContext);
+
+        Map<String, String> expectedStyles = new HashMap<>();
+        expectedStyles.put("font-size", "12pt");
+        Assertions.assertEquals(expectedStyles, styles);
+
+        Map<String, String> expectedNestedStyles = new HashMap<>();
+        expectedNestedStyles.put("--test-var", "incorrect");
+        expectedNestedStyles.put("font-size", "12pt");
+
+        Assertions.assertEquals(expectedNestedStyles, nestedStyles);
+    }
+
+    public static Iterable<Object[]> divVariablesTestProvider() {
+        return Arrays.asList(new Object[][]{
+                {"a", "30px", "30px"},
+                {"b", "50px", "30px"},
+                {"c d", "35px", "35px"}
+        });
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("divVariablesTestProvider")
+    public void cssVariableInTheSameScopeTest(String divClass, String expectedMargin, String expectedVarValue) {
+        Element styleTag = new Element(Tag.valueOf("style"), "");
+        TextNode styleContents = new TextNode(
+                "\tdiv {\n" +
+                        "\t\t--test-var: 30px;\n" +
+                        "\t}\n" +
+                        "    div.a {\n" +
+                        "        margin: var(--test-var,40px);\n" +
+                        "    }\n" +
+                        "    div.b {\n" +
+                        "        margin: var(--other-var,50px);\n" +
+                        "    }\n" +
+                        "    div.c {\n" +
+                        "        --test-var: 35px;\n" +
+                        "    }\n" +
+                        "    div.c.d {\n" +
+                        "        margin: var(--test-var,40px);\n" +
+                        "    }"
+        );
+        JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
+        jSoupStyle.addChild(new JsoupTextNode(styleContents));
+
+        Element div = new Element(Tag.valueOf("div"), "");
+        div.attributes().put("class", divClass);
+        JsoupElementNode jSoupDiv = new JsoupElementNode(div);
+
+        SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());
+        SvgStyleResolver resolver = new SvgStyleResolver(jSoupStyle, context);
+        AbstractCssContext svgContext = new SvgCssContext();
+
+        Map<String, String> actual = resolver.resolveStyles(jSoupDiv, svgContext);
+
+        Map<String, String> expected = new HashMap<>();
+        expected.put("class", divClass);
+        expected.put("--test-var", expectedVarValue);
+        expected.put("margin-top", expectedMargin);
+        expected.put("margin-right", expectedMargin);
+        expected.put("margin-bottom", expectedMargin);
+        expected.put("margin-left", expectedMargin);
+        expected.put("font-size", "12pt");
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void cssVariableInheritanceTest() {
+        Element styleTag = new Element(Tag.valueOf("style"), "");
+        TextNode styleContents = new TextNode("\tol {\n" +
+                "\t\t--test-var: circle;\n" +
+                "\t}\n" +
+                "    ul {\n" +
+                "        list-style-type: var(--test-var, square);\n" +
+                "    }\n" +
+                "    ol {\n" +
+                "        list-style-type: var(--test-var, square);\n" +
+                "    }");
+        JsoupElementNode jSoupStyle = new JsoupElementNode(styleTag);
+        jSoupStyle.addChild(new JsoupTextNode(styleContents));
+
+        Element unorderedList = new Element(Tag.valueOf("ul"), "");
+        Element orderedList = new Element(Tag.valueOf("ol"), "");
+        JsoupElementNode jSoupUnorderedList = new JsoupElementNode(unorderedList);
+        JsoupElementNode jSoupOrderedList = new JsoupElementNode(orderedList);
+        JsoupElementNode jSoupItemUnordered = new JsoupElementNode(new Element(Tag.valueOf("li"), ""));
+        JsoupElementNode jSoupItemOrdered = new JsoupElementNode(new Element(Tag.valueOf("li"), ""));
+        jSoupUnorderedList.addChild(jSoupItemUnordered);
+        jSoupOrderedList.addChild(jSoupItemOrdered);
+
+        SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());
+        SvgStyleResolver resolver = new SvgStyleResolver(jSoupStyle, context);
+        AbstractCssContext svgContext = new SvgCssContext();
+
+
+        jSoupUnorderedList.setStyles(resolver.resolveStyles(jSoupUnorderedList, svgContext));
+        jSoupOrderedList.setStyles(resolver.resolveStyles(jSoupOrderedList, svgContext));
+        Map<String, String> unorderedStyles = resolver.resolveStyles(jSoupItemUnordered, svgContext);
+        Map<String, String> orderedStyles = resolver.resolveStyles(jSoupItemOrdered, svgContext);
+
+        Map<String, String> expectedUnorderedStyles = new HashMap<>();
+        expectedUnorderedStyles.put("font-size", "12pt");
+        expectedUnorderedStyles.put("list-style-type", "square");
+        Assertions.assertEquals(expectedUnorderedStyles, unorderedStyles);
+
+        Map<String, String> expectedOrderedStyles = new HashMap<>();
+        expectedOrderedStyles.put("--test-var", "circle");
+        expectedOrderedStyles.put("list-style-type", "circle");
+        expectedOrderedStyles.put("font-size", "12pt");
+
+        Assertions.assertEquals(expectedOrderedStyles, orderedStyles);
     }
 
     @Test
