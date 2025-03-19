@@ -38,7 +38,6 @@ import java.util.regex.Pattern;
  * in a form that the font provider will understand.
  */
 public class CssFontFace {
-
     /** Name that will be used as the alias of the font. */
     private final String alias;
     /** A list of font face sources. */
@@ -221,14 +220,29 @@ public class CssFontFace {
         /** Indicates if the font is local. */
         final boolean isLocal;
 
+        /**
+         * Gets the font format.
+         *
+         * @return the font format
+         */
         public FontFormat getFormat() {
             return format;
         }
 
+        /**
+         * Gets the source path.
+         *
+         * @return the source path
+         */
         public String getSrc() {
             return src;
         }
 
+        /**
+         * Checks if the font is local.
+         *
+         * @return {@code true} if the font is local, {@code false} otherwise
+         */
         public boolean isLocal() {
             return isLocal;
         }

@@ -59,6 +59,9 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
                     CommonCssConstants.INHERIT, CommonCssConstants.CURRENTCOLOR),
             new CssColorValidator());
 
+    /**
+     * Instantiates a new {@link CssDefaultValidator} instance with the default validators map.
+     */
     public CssDefaultValidator() {
         final CssEnumValidator normalValidator = new CssEnumValidator(CommonCssConstants.NORMAL);
         final CssEnumValidator relativeSizeValidator =

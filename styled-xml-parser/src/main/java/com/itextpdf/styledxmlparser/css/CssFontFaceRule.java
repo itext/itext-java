@@ -81,6 +81,11 @@ public class CssFontFaceRule extends CssNestedAtRule {
         return sb.toString();
     }
 
+    /**
+     * Resolves `unicode-range` property if it exists in the properties.
+     *
+     * @return the resolved range or {@code null} if there is no `unicode-range` property
+     */
     public Range resolveUnicodeRange() {
         Range range = null;
         for (CssDeclaration descriptor : getProperties()) {

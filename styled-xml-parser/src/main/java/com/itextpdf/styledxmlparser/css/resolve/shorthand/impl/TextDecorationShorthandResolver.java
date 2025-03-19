@@ -33,6 +33,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * {@link IShorthandResolver} implementation for text-decoration.
+ */
 public class TextDecorationShorthandResolver implements IShorthandResolver {
 
     private static final Set<String> TEXT_DECORATION_LINE_VALUES = Collections

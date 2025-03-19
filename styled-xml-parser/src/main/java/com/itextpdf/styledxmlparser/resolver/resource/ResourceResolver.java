@@ -246,6 +246,13 @@ public class ResourceResolver {
         imageCache.reset();
     }
 
+    /**
+     * Creates {@link PdfXObject} based on passed base64 encoded string.
+     *
+     * @param src the base64 encoded string
+     *
+     * @return the {@link PdfXObject} based on passed base64 encoded string or {@code null}
+     */
     protected PdfXObject tryResolveBase64ImageSource(String src) {
         try {
             String fixedSrc = src.replaceAll("\\s", "");
@@ -261,6 +268,13 @@ public class ResourceResolver {
         return null;
     }
 
+    /**
+     * Creates {@link PdfXObject} based on the string which defines the path to local image.
+     *
+     * @param uri the path to the local image
+     *
+     * @return the {@link PdfXObject} based on local image or {@code null}
+     */
     protected PdfXObject tryResolveUrlImageSource(String uri) {
         try {
             URL url = uriResolver.resolveAgainstBaseUri(uri);

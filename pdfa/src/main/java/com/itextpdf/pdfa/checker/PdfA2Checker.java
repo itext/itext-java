@@ -405,6 +405,11 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
+    /**
+     * Checks the number of components in DeviceN color space.
+     *
+     * @param deviceN the color space to check
+     */
     protected void checkNumberOfDeviceNComponents(PdfSpecialCs.DeviceN deviceN) {
         if (deviceN.getNumberOfComponents() > MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS) {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.

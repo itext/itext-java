@@ -22,6 +22,9 @@
  */
 package com.itextpdf.styledxmlparser;
 
+/**
+ * Class containing the constant property names for the attributes of tags in the XML.
+ */
 public class CommonAttributeConstants {
     /** The Constant CLASS. */
     public static final String CLASS = "class";

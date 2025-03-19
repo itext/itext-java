@@ -64,6 +64,13 @@ public class CssRuleSet extends CssStatement {
         splitDeclarationsIntoNormalAndImportant(declarations, normalDeclarations, importantDeclarations);
     }
 
+    /**
+     * Creates a new {@link CssRuleSet} from a selector and a list of normal and important declarations.
+     *
+     * @param selector the CSS selector
+     * @param normalDeclarations the list of normal declarations
+     * @param importantDeclarations the list of important declarations
+     */
     public CssRuleSet(ICssSelector selector, List<CssDeclaration> normalDeclarations, List<CssDeclaration> importantDeclarations) {
         this.selector = selector;
         this.normalDeclarations = normalDeclarations;
