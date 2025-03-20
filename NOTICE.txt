@@ -1,6 +1,8 @@
 This software uses the following third-party libraries under the following licenses:
 | jsoup:1.14.1 | MIT | Library code and tests are embedded under com.itextpdf.styledxmlparser.jsoup package.
 
+TODO DEVSIX-9018 add all remaining relevant third-party notices according to
+  https://itextpdf.com/how-buy/legal/copyright-intellectual-property
 
 
 
