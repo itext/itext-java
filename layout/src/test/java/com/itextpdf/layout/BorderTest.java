@@ -66,10 +66,6 @@ public class BorderTest extends ExtendedITextTest {
     public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/BorderTest/";
     public static final String cmpPrefix = "cmp_";
 
-    String fileName;
-    String outFileName;
-    String cmpFileName;
-
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
@@ -77,8 +73,8 @@ public class BorderTest extends ExtendedITextTest {
 
     @Test
     public void simpleBordersTest() throws IOException, InterruptedException {
-        fileName = "simpleBordersTest.pdf";
-        Document doc = createDocument();
+        String fileName = "simpleBordersTest.pdf";
+        Document doc = createDocument(fileName);
 
         List list = new List();
 
@@ -109,7 +105,7 @@ public class BorderTest extends ExtendedITextTest {
 
         doc.add(list);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
@@ -137,8 +133,8 @@ public class BorderTest extends ExtendedITextTest {
 
     @Test
     public void borders3DTest() throws IOException, InterruptedException {
-        fileName = "borders3DTest.pdf";
-        Document doc = createDocument();
+        String fileName = "borders3DTest.pdf";
+        Document doc = createDocument(fileName);
 
         List list = new List();
 
@@ -213,13 +209,13 @@ public class BorderTest extends ExtendedITextTest {
 
         doc.add(list);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void borderSidesTest() throws IOException, InterruptedException {
-        fileName = "borderSidesTest.pdf";
-        Document doc = createDocument();
+        String fileName = "borderSidesTest.pdf";
+        Document doc = createDocument(fileName);
 
         String text =
                 "<p class=\"none\"  >No border.</p>\n" +
@@ -247,13 +243,13 @@ public class BorderTest extends ExtendedITextTest {
         doc.add(new Paragraph(text).setBorderLeft(new DashedBorder(DeviceGray.BLACK, 5)));
         doc.add(new Paragraph(text).setBorder(new DottedBorder(DeviceGray.BLACK, 1)));
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void borderBoxTest() throws IOException, InterruptedException {
-        fileName = "borderBoxTest.pdf";
-        Document doc = createDocument();
+        String fileName = "borderBoxTest.pdf";
+        Document doc = createDocument(fileName);
 
         String textBefore = "At the mid-oceanic ridges, two tectonic plates diverge from one another as new oceanic crust is formed by the cooling and " +
                 "solidifying of hot molten rock. Because the crust is very thin at these ridges due to the pull of the tectonic plates, the release of " +
@@ -288,13 +284,13 @@ public class BorderTest extends ExtendedITextTest {
 
         doc.add(new Paragraph(textAfter).setBorder(new DottedBorder(ColorConstants.BLACK, 3)).setBorderRight(new DottedBorder(ColorConstants.BLACK, 12)));
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void borderOutlineTest() throws IOException, InterruptedException {
-        fileName = "borderOutlineTest.pdf";
-        Document doc = createDocument();
+        String fileName = "borderOutlineTest.pdf";
+        Document doc = createDocument(fileName);
 
         String textBefore = "At the mid-oceanic ridges, two tectonic plates diverge from one another as new oceanic crust is formed by the cooling and " +
                 "solidifying of hot molten rock. Because the crust is very thin at these ridges due to the pull of the tectonic plates, the release of " +
@@ -320,15 +316,15 @@ public class BorderTest extends ExtendedITextTest {
         p.setProperty(Property.OUTLINE, new DoubleBorder(ColorConstants.RED, 25));
         doc.add(p);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 1)
     })
     public void rotatedBordersTest() throws IOException, InterruptedException {
-        fileName = "rotatedBordersTest.pdf";
-        Document doc = createDocument();
+        String fileName = "rotatedBordersTest.pdf";
+        Document doc = createDocument(fileName);
         doc.setMargins(0, 0, 0, 0);
 
         Paragraph p = new Paragraph("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -343,19 +339,19 @@ public class BorderTest extends ExtendedITextTest {
         doc.add(img);
         doc.close();
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
-    private Document createDocument() throws IOException {
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
-
+    private static Document createDocument(String fileName) throws IOException {
+        String outFileName = destinationFolder + fileName;
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         return new Document(pdfDocument);
     }
 
-    private void closeDocumentAndCompareOutputs(Document document) throws IOException, InterruptedException {
+    private static void closeDocumentAndCompareOutputs(Document document, String fileName) throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String outFileName = destinationFolder + fileName;
         document.close();
         String compareResult = new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff");
         if (compareResult != null) {

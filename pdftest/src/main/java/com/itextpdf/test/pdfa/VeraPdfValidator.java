@@ -100,7 +100,16 @@ public class VeraPdfValidator {
         Assertions.assertEquals(expectedWarning, validate(filePath));
     }
 
-    public String validate(String filePath) {
+    /**
+     * Validates pdf document by VeraPdf validator.
+     *
+     * <p>
+     * Verapdf has some issues with parallel validation.
+     *
+     * @param filePath file to validate
+     * @return error message if validation fails, null is validation succeeds
+     */
+    public synchronized String validate(String filePath) {
         // VeraPdf doesn't work in native mode so skip VeraPdf validation
         if (isNative) {
             return null;

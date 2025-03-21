@@ -106,7 +106,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         Assertions.assertEquals(BackgroundBox.BORDER_BOX, backgroundImage.getBackgroundClip());
         Assertions.assertEquals(BackgroundBox.PADDING_BOX, backgroundImage.getBackgroundOrigin());
 
-        backgroundImageGenericTest("backgroundImage", backgroundImage);
+        backgroundImageGenericTest("backgroundImageClipOriginDefaults", backgroundImage);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         Assertions.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundClip());
         Assertions.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundOrigin());
 
-        backgroundImageGenericTest("backgroundImage", backgroundImage);
+        backgroundImageGenericTest("backgroundImageClipOrigin", backgroundImage);
     }
 
     @Test

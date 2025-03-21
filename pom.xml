@@ -508,6 +508,7 @@
                   <excludeModule>bouncy-castle-adapter</excludeModule>
                   <excludeModule>bouncy-castle-connector</excludeModule>
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
+                  <excludeModule>pdftest</excludeModule>
                 </excludeModules>
               </parameter>
             </configuration>
