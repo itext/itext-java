@@ -25,6 +25,7 @@ package com.itextpdf.pdfua.checkers;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.pdfua.PdfUA2TestPdfDocument;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
@@ -80,5 +81,20 @@ public class PdfUAXfaTest extends ExtendedITextTest {
 
         final String result = new VeraPdfValidator().validate(output);  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         Assertions.assertNull(result); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    }
+
+    @Test
+    public void xfaFormInPdfUA2Test() throws IOException {
+        String input = SOURCE_FOLDER + "xfaInPdfUA2.pdf";
+        String output = DESTINATION_FOLDER + "xfaFormInPdfUA2_reopen.pdf";
+
+        PdfDocument pdfDoc = new PdfUA2TestPdfDocument(new PdfReader(input), new PdfWriter(output));
+
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.XFA_FORMS_SHALL_NOT_BE_PRESENT, e.getMessage());
+
+        FileUtil.copy(input, output);
+        // VeraPdf also complains only about the presence of the XFA forms
+        new VeraPdfValidator().validateFailure(output);  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 }

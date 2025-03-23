@@ -37,7 +37,9 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -46,27 +48,24 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.pdfua.PdfUA2TestPdfDocument;
+import com.itextpdf.pdfua.PdfUADocument;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua
-// validation on Android)
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Tag("UnitTest")
 public class PdfUACanvasTest extends ExtendedITextTest {
@@ -74,7 +73,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/pdfua/font/";
 
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUACanvasTest/";
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUACanvasTest/";
 
     private UaValidationTestFramework framework;
 
@@ -99,18 +97,13 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.saveState()
                     .beginText()
-                    .setFontAndSize(getFont(), 10)
+                    .setFontAndSize(getPdfFont(), 10)
                     .showText("Hello World!");
 
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("textContentIsNotTagged",
-                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("textContentIsNotTagged", pdfUAConformance);
-        }
+        framework.assertBothFail("textContentIsNotTagged",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -120,51 +113,47 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.saveState()
                     .beginText()
-                    .setFontAndSize(getFont(), 10)
+                    .setFontAndSize(getPdfFont(), 10)
                     .endText();
 
         });
         framework.assertBothValid("textNoContentIsNotTagged", pdfUAConformance);
     }
 
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_TextContentIsCorrectlyTaggedAsContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfFont font = getPdfFont();
+            PdfCanvas canvas = new PdfCanvas(page1);
 
-    @Test
-    public void checkPoint_01_005_TextContentIsCorrectlyTaggedAsContent() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_TextContentIsCorrectlyTaggedAsContent.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(page1)
+                    .addTag(StandardRoles.P);
 
-        PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1);
-
-        TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
-                .setPageForTagging(page1)
-                .addTag(StandardRoles.P);
-
-        canvas
-                .openTag(tagPointer.getTagReference())
-                .saveState()
-                .beginText()
-                .setFontAndSize(font, 12)
-                .moveText(200, 200)
-                .showText("Hello World!")
-                .endText()
-                .restoreState()
-                .closeTag();
-        pdfDoc.close();
-        Assertions.assertNull(
-                new CompareTool().compareByContent(outPdf,
-                        SOURCE_FOLDER + "cmp_01_005_TextContentIsCorrectlyTaggedAsContent.pdf",
-                        DESTINATION_FOLDER,
-                        "diff_")
-        );
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+            canvas
+                    .openTag(tagPointer.getTagReference())
+                    .saveState()
+                    .beginText()
+                    .setFontAndSize(font, 12)
+                    .moveText(200, 200)
+                    .showText("Hello World!")
+                    .endText()
+                    .restoreState()
+                    .closeTag();
+        });
+        framework.assertBothValid("01_005_TextContentIsCorrectlyTaggedAsContent", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_01_005_TextContentIsNotInTagTree() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_TextContentIsNotInTagTree.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_TextContentIsNotInTagTree(PdfUAConformance pdfUAConformance) throws IOException {
+        PdfUADocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfUADocument)
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfUADocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -183,39 +172,36 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
-    @Test
-    public void checkPoint_01_005_TextArtifactIsNotInTagTree() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_TextArtifactIsNotInTagTree.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_TextArtifactIsNotInTagTree(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfFont font = getPdfFont();
+            PdfCanvas canvas = new PdfCanvas(page1);
 
-        PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1);
-
-        canvas
-                .openTag(new CanvasTag(PdfName.Artifact))
-                .saveState()
-                .beginText()
-                .setFontAndSize(font, 12)
-                .moveText(200, 200)
-                .showText("Hello World!")
-                .endText()
-                .restoreState()
-                .closeTag();
-        pdfDoc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_005_TextArtifactIsNotInTagTree.pdf",
-                DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+            canvas
+                    .openTag(new CanvasTag(PdfName.Artifact))
+                    .saveState()
+                    .beginText()
+                    .setFontAndSize(font, 12)
+                    .moveText(200, 200)
+                    .showText("Hello World!")
+                    .endText()
+                    .restoreState()
+                    .closeTag();
+        });
+        framework.assertBothValid("01_005_TextArtifactIsNotInTagTree", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_01_005_TextContentWithMCIDButNotInTagTree() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "01_005_TextContentWithMCIDButNotInTagTree.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_TextContentWithMCIDButNotInTagTree(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        PdfUADocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfUADocument)
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfUADocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -235,11 +221,14 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
-    @Test
-    public void checkPoint_01_005_TextGlyphLineContentIsTaggedButNotInTagTree() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "01_005_TextGlyphLineContentIsTagged.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_TextGlyphLineContentIsTaggedButNotInTagTree(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        PdfUADocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfUADocument)
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfUADocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
         GlyphLine glyphLine = font.createGlyphLine("Hello World!");
@@ -256,18 +245,20 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
-    @Test
-    public void checkPoint_01_005_TextGlyphLineInBadStructure() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "checkPoint_01_005_TextGlyphLineInBadStructure.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_TextGlyphLineInBadStructure(PdfUAConformance pdfUAConformance) throws IOException {
+        PdfUADocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfUADocument)
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfUADocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage()) {
 
             @Override
             public PdfCanvas openTag(CanvasTag tag) {
-                // disable the checkIsoConformance call check by simulating  generating not tagged content
-                // same as in annotations of formfields.
+                // Disable the checkIsoConformance call check by simulating generating not tagged content
+                // same as in annotations of form fields.
                 setDrawingOnPage(false);
                 super.openTag(tag);
                 setDrawingOnPage(true);
@@ -296,124 +287,106 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
-    @Test
-    public void checkPoint_01_005_TextGlyphLineContentIsArtifact() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_TextGlyphLineContentIsArtifact.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        GlyphLine glyphLine = font.createGlyphLine("Hello World!");
-        canvas.saveState()
-                .openTag(new CanvasTag(PdfName.Artifact))
-                .setFontAndSize(font, 12)
-                .beginText()
-                .moveText(200, 200)
-                .setColor(ColorConstants.RED, true)
-                .showText(glyphLine)
-                .endText()
-                .closeTag()
-                .restoreState();
-        pdfDoc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_005_TextGlyphLineContentIsArtifact.pdf",
-                DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-    }
-
-    @Test
-    public void checkPoint_01_005_TextGlyphLineContentIsContentCorrect() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_TextGlyphLineContentIsContentCorrect.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        GlyphLine glyphLine = font.createGlyphLine("Hello World!");
-
-        TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
-                .setPageForTagging(pdfDoc.getFirstPage())
-                .addTag(StandardRoles.H1);
-
-        canvas.saveState()
-                .openTag(tagPointer.getTagReference())
-                .setFontAndSize(font, 12)
-                .beginText()
-                .moveText(200, 200)
-                .setColor(ColorConstants.RED, true)
-                .showText(glyphLine)
-                .endText()
-                .closeTag()
-                .restoreState();
-        pdfDoc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_005_TextGlyphLineContentIsContentCorrect.pdf",
-                DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-    }
-
-    @Test
-    public void checkPoint_01_005_allowPureBmcInArtifact() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_allowPureBmcInArtifact.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        GlyphLine glyphLine = font.createGlyphLine("Hello World!");
-        canvas.saveState()
-                .openTag(new CanvasTag(PdfName.Artifact))
-                .setFontAndSize(font, 12)
-                .beginMarkedContent(PdfName.P)
-                .beginText()
-                .moveText(200, 200)
-                .setColor(ColorConstants.RED, true)
-                .showText(glyphLine)
-                .endMarkedContent()
-                .endText()
-                .closeTag()
-                .restoreState();
-        pdfDoc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_005_allowPureBmcInArtifact.pdf",
-                DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-    }
-
-    @Test
-    public void checkPoint_01_005_allowNestedPureBmcInArtifact() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_allowNestedPureBmcInArtifact.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        GlyphLine glyphLine = font.createGlyphLine("Hello World!");
-        canvas.saveState()
-                .openTag(new CanvasTag(PdfName.Artifact))
-                .setFontAndSize(font, 12)
-                .beginMarkedContent(PdfName.P)
-                .openTag(new CanvasTag(PdfName.Artifact))
-                .beginText()
-                .moveText(200, 200)
-                .setColor(ColorConstants.RED, true)
-                .showText(glyphLine)
-                .closeTag()
-                .endMarkedContent()
-                .endText()
-                .closeTag()
-                .restoreState();
-        pdfDoc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_005_allowNestedPureBmcInArtifact.pdf",
-                DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_TextGlyphLineContentIsArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfFont font = getPdfFont();
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            GlyphLine glyphLine = font.createGlyphLine("Hello World!");
+            canvas.saveState()
+                    .openTag(new CanvasTag(PdfName.Artifact))
+                    .setFontAndSize(font, 12)
+                    .beginText()
+                    .moveText(200, 200)
+                    .setColor(ColorConstants.RED, true)
+                    .showText(glyphLine)
+                    .endText()
+                    .closeTag()
+                    .restoreState();
+        });
+        framework.assertBothValid("01_005_TextGlyphLineContentIsArtifact", pdfUAConformance);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged(PdfUAConformance pdfUAConformance) throws IOException {
+    public void checkPoint_01_005_TextGlyphLineContentIsContentCorrect(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfFont font = getPdfFont();
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            GlyphLine glyphLine = font.createGlyphLine("Hello World!");
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(pdfDoc.getFirstPage())
+                    .addTag(StandardRoles.H1);
+
+            canvas.saveState()
+                    .openTag(tagPointer.getTagReference())
+                    .setFontAndSize(font, 12)
+                    .beginText()
+                    .moveText(200, 200)
+                    .setColor(ColorConstants.RED, true)
+                    .showText(glyphLine)
+                    .endText()
+                    .closeTag()
+                    .restoreState();
+        });
+        framework.assertBothValid("01_005_TextGlyphLineContentIsContentCorrect", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_allowPureBmcInArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfFont font = getPdfFont();
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            GlyphLine glyphLine = font.createGlyphLine("Hello World!");
+            canvas.saveState()
+                    .openTag(new CanvasTag(PdfName.Artifact))
+                    .setFontAndSize(font, 12)
+                    .beginMarkedContent(PdfName.P)
+                    .beginText()
+                    .moveText(200, 200)
+                    .setColor(ColorConstants.RED, true)
+                    .showText(glyphLine)
+                    .endMarkedContent()
+                    .endText()
+                    .closeTag()
+                    .restoreState();
+        });
+        framework.assertBothValid("01_005_allowPureBmcInArtifact", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_allowNestedPureBmcInArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfFont font = getPdfFont();
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            GlyphLine glyphLine = font.createGlyphLine("Hello World!");
+            canvas.saveState()
+                    .openTag(new CanvasTag(PdfName.Artifact))
+                    .setFontAndSize(font, 12)
+                    .beginMarkedContent(PdfName.P)
+                    .openTag(new CanvasTag(PdfName.Artifact))
+                    .beginText()
+                    .moveText(200, 200)
+                    .setColor(ColorConstants.RED, true)
+                    .showText(glyphLine)
+                    .closeTag()
+                    .endMarkedContent()
+                    .endText()
+                    .closeTag()
+                    .restoreState();
+        });
+        framework.assertBothValid("01_005_allowNestedPureBmcInArtifact", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -421,30 +394,27 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.lineTo(200, 200).fill();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("lineContentThatIsContentIsNotTagged",
-                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("lineContentThatIsContentIsNotTagged", pdfUAConformance);
-        }
+        framework.assertBothFail("lineContentThatIsContentIsNotTagged",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent(PdfUAConformance pdfUAConformance) throws IOException {
+    public void checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
                     .setLineWidth(2);
             canvas.lineTo(200, 200);
         });
-       framework.assertBothValid("lineContentThatIsContentIsNotTagged_noContent", pdfUAConformance);
+        framework.assertBothValid("lineContentThatIsContentIsNotTagged_noContent", pdfUAConformance);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
             canvas.openTag(new CanvasTag(PdfName.P))
@@ -453,19 +423,14 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.lineTo(200, 200).fill();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("lineContentThatIsContentIsTaggedButIsNotAnArtifact",
-                    PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("lineContentThatIsContentIsTaggedButIsNotAnArtifact", pdfUAConformance);
-        }
+        framework.assertBothFail("lineContentThatIsContentIsTaggedButIsNotAnArtifact",
+                PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
     }
-
 
     @ParameterizedTest
     @MethodSource("data")
-    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing(PdfUAConformance pdfUAConformance)
+    public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing(
+            PdfUAConformance pdfUAConformance)
             throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -479,32 +444,27 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         framework.assertBothValid("lineContentThatIsContentIsTaggedButIsNotAnArtifactNoDrawing", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_01_005_LineContentThatIsMarkedAsArtifact() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_LineContentThatIsMarkedAsArtifact.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_LineContentThatIsMarkedAsArtifact(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-
-        TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
-                .setPageForTagging(pdfDoc.getFirstPage())
-                .addTag(StandardRoles.H);
-        canvas
-                .openTag(tagPointer.getTagReference())
-                .saveState()
-                .setStrokeColor(ColorConstants.MAGENTA)
-                .moveTo(300, 300)
-                .lineTo(400, 350)
-                .stroke()
-                .restoreState()
-                .closeTag();
-        pdfDoc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_005_LineContentThatIsMarkedAsArtifact.pdf",
-                DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(pdfDoc.getFirstPage())
+                    .addTag(StandardRoles.H1);
+            canvas
+                    .openTag(tagPointer.getTagReference())
+                    .saveState()
+                    .setStrokeColor(ColorConstants.MAGENTA)
+                    .moveTo(300, 300)
+                    .lineTo(400, 350)
+                    .stroke()
+                    .restoreState()
+                    .closeTag();
+        });
+        framework.assertBothValid("01_005_LineContentThatIsMarkedAsArtifact", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -518,15 +478,9 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.fill();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("checkPoint_01_005_RectangleNotMarked",
-                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("checkPoint_01_005_RectangleNotMarked", pdfUAConformance);
-        }
+        framework.assertBothFail("checkPoint_01_005_RectangleNotMarked",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
     }
-
 
     @ParameterizedTest
     @MethodSource("data")
@@ -537,9 +491,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .setLineWidth(2);
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
         });
-        framework.assertBothValid("checkPoint_01_005_RectangleNoContent", PdfUAConformance.PDF_UA_1);
+        framework.assertBothValid("checkPoint_01_005_RectangleNoContent", pdfUAConformance);
     }
-
 
     @ParameterizedTest
     @MethodSource("data")
@@ -565,13 +518,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.closePathStroke();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("checkPoint_01_005_RectangleClosePathStroke",
-                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("checkPoint_01_005_RectangleClosePathStroke", pdfUAConformance);
-        }
+        framework.assertBothFail("checkPoint_01_005_RectangleClosePathStroke",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -585,13 +533,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.closePathEoFillStroke();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke",
-                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke", pdfUAConformance);
-        }
+        framework.assertBothFail("checkPoint_01_005_Rectangle_ClosPathEOFIllStroke",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -605,13 +548,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.fillStroke();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("checkPoint_01_005_Rectangle_FillStroke",
-                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_FillStroke", pdfUAConformance);
-        }
+        framework.assertBothFail("checkPoint_01_005_Rectangle_FillStroke",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -625,13 +563,8 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.eoFill();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("checkPoint_01_005_Rectangle_eoFill",
-                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_eoFill", pdfUAConformance);
-        }
+        framework.assertBothFail("checkPoint_01_005_Rectangle_eoFill",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -645,41 +578,31 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.eoFillStroke();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("checkPoint_01_005_Rectangle_eoFillStroke",
-                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("checkPoint_01_005_Rectangle_eoFillStroke", pdfUAConformance);
-        }
-    }
-
-    @Test
-    public void checkPoint_01_005_RectangleMarkedArtifact() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_RectangleMarkedArtifact.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        canvas
-                .saveState()
-                .openTag(new CanvasTag(PdfName.Artifact))
-                .setFillColor(ColorConstants.RED)
-                .rectangle(new Rectangle(200, 200, 100, 100))
-                .fill()
-                .closeTag()
-                .restoreState();
-
-        pdfDoc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_005_RectangleMarkedArtifact.pdf",
-                DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        framework.assertBothFail("checkPoint_01_005_Rectangle_eoFillStroke",
+                PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING, false, pdfUAConformance);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void checkPoint_01_005_RectangleMarkedContentWithoutMcid(PdfUAConformance pdfUAConformance) throws IOException {
+    public void checkPoint_01_005_RectangleMarkedArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas
+                    .saveState()
+                    .openTag(new CanvasTag(PdfName.Artifact))
+                    .setFillColor(ColorConstants.RED)
+                    .rectangle(new Rectangle(200, 200, 100, 100))
+                    .fill()
+                    .closeTag()
+                    .restoreState();
+        });
+        framework.assertBothValid("01_005_RectangleMarkedArtifact", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_RectangleMarkedContentWithoutMcid(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -689,18 +612,14 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100)).fill();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("rectangleMarkedContentWithoutMcid",
-                    PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("rectangleMarkedContentWithoutMcid", pdfUAConformance);
-        }
+        framework.assertBothFail("rectangleMarkedContentWithoutMcid",
+                PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent(PdfUAConformance pdfUAConformance) throws IOException {
+    public void checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -713,86 +632,75 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         framework.assertBothValid("checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_01_005_RectangleMarkedContent() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_RectangleMarkedContent.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_RectangleMarkedContent(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
-        TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
-                .setPageForTagging(pdfDoc.getFirstPage())
-                .addTag(StandardRoles.H);
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(pdfDoc.getFirstPage())
+                    .addTag(StandardRoles.H1);
 
-        canvas
-                .saveState()
-                .openTag(tagPointer.getTagReference())
-                .setFillColor(ColorConstants.RED)
-                .rectangle(new Rectangle(200, 200, 100, 100))
-                .fill()
-                .closeTag()
-                .restoreState();
-
-        pdfDoc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_005_RectangleMarkedContent.pdf",
-                DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+            canvas
+                    .saveState()
+                    .openTag(tagPointer.getTagReference())
+                    .setFillColor(ColorConstants.RED)
+                    .rectangle(new Rectangle(200, 200, 100, 100))
+                    .fill()
+                    .closeTag()
+                    .restoreState();
+        });
+        framework.assertBothValid("01_005_RectangleMarkedContent", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_01_004_bezierMarkedAsContent() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_004_bezierCurveShouldBeTagged.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_004_bezierMarkedAsContent(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
-        TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
-                .setPageForTagging(pdfDoc.getFirstPage())
-                .addTag(StandardRoles.DIV);
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(pdfDoc.getFirstPage())
+                    .addTag(StandardRoles.DIV);
 
-        canvas
-                .saveState()
-                .openTag(tagPointer.getTagReference())
-                .setColor(ColorConstants.RED, true)
-                .setLineWidth(5)
-                .setStrokeColor(ColorConstants.RED)
-                .arc(400, 400, 500, 500, 30, 50)
-                .stroke()
-                .closeTag()
-                .restoreState();
-
-        pdfDoc.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_004_bezierCurveShouldBeTagged.pdf",
-                DESTINATION_FOLDER, "diff_"));
+            canvas
+                    .saveState()
+                    .openTag(tagPointer.getTagReference())
+                    .setColor(ColorConstants.RED, true)
+                    .setLineWidth(5)
+                    .setStrokeColor(ColorConstants.RED)
+                    .arc(400, 400, 500, 500, 30, 50)
+                    .stroke()
+                    .closeTag()
+                    .restoreState();
+        });
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("01_004_bezierCurveShouldBeTagged", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            // TODO DEVSIX-8242 The layout level doesn’t throw an error
+            framework.assertVeraPdfFail("01_004_bezierCurveShouldBeTagged", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void checkPoint_01_004_bezierMarkedAsArtifact() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_004_bezierMarkedAsArtifact.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_004_bezierMarkedAsArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
-        canvas
-                .saveState()
-                .openTag(new CanvasTag(PdfName.Artifact))
-                .setColor(ColorConstants.RED, true)
-                .setLineWidth(5)
-                .setStrokeColor(ColorConstants.RED)
-                .arc(400, 400, 500, 500, 30, 50)
-                .stroke()
-                .closeTag()
-                .restoreState();
-
-        pdfDoc.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_004_bezierMarkedAsArtifact.pdf",
-                DESTINATION_FOLDER, "diff_"));
+            canvas
+                    .saveState()
+                    .openTag(new CanvasTag(PdfName.Artifact))
+                    .setColor(ColorConstants.RED, true)
+                    .setLineWidth(5)
+                    .setStrokeColor(ColorConstants.RED)
+                    .arc(400, 400, 500, 500, 30, 50)
+                    .stroke()
+                    .closeTag()
+                    .restoreState();
+        });
+        framework.assertBothValid("01_004_bezierMarkedAsArtifact", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -811,18 +719,14 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .fill();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("checkPoint_01_004_bezierCurveInvalidMCID",
-                    PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT, false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("checkPoint_01_004_bezierCurveInvalidMCID", pdfUAConformance);
-        }
+        framework.assertBothFail("checkPoint_01_004_bezierCurveInvalidMCID", PdfUAExceptionMessageConstants
+                .CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT, false, pdfUAConformance);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void checkPoint_01_004_bezierCurveInvalidMCID_NoContent(PdfUAConformance pdfUAConformance) throws IOException {
+    public void checkPoint_01_004_bezierCurveInvalidMCID_NoContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -837,33 +741,31 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         framework.assertBothValid("checkPoint_01_004_bezierCurveInvalidMCID_NoContent", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_01_005_RandomOperationsWithoutActuallyAddingContent()
-            throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "01_005_RandomOperationsWithoutActuallyAddingContent.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_005_RandomOperationsWithoutActuallyAddingContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
-        canvas
-                .setColor(ColorConstants.RED, true)
-                .setLineCapStyle(1)
-                .setTextMatrix(20, 2)
-                .setLineWidth(2);
+            canvas
+                    .setColor(ColorConstants.RED, true)
+                    .setLineCapStyle(1)
+                    .setTextMatrix(20, 2)
+                    .setLineWidth(2);
+        });
 
-        pdfDoc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_01_005_RandomOperationsWithoutActuallyAddingContent.pdf",
-                DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        framework.assertBothValid("01_005_RandomOperationsWithoutActuallyAddingContent", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_01_003_ContentMarkedAsArtifactsPresentInsideTaggedContent() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "01_003_ContentMarkedAsArtifactsPresentInsideTaggedContent.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_003_ContentMarkedAsArtifactsPresentInsideTaggedContent(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        PdfUADocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfUADocument)
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfUADocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -889,135 +791,135 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
-    @Test
-    public void checkPoint_validRoleAddedInsideMarkedContent() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "validRoleAddedInsideMarkedContent.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_validRoleAddedInsideMarkedContent(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfFont font = getPdfFont();
 
-        PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1);
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
 
-        //Have to use low level tagging otherwise it throws error earlier
-        PdfStructElem doc = pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.Document));
-        PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDoc, PdfName.P, page1));
-        PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
+            // Have to use low level tagging, otherwise it throws error earlier.
+            pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
+            PdfStructElem paragraph = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+                    pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.P, page1)) :
+                    ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0))
+                            .addKid(new PdfStructElem(pdfDoc, PdfName.P, page1));
+            PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
 
-        canvas
-                .openTag(new CanvasTag(mcr))
-                .saveState()
-                .beginMarkedContent(PdfName.P)
-                .beginText()
-                .setFontAndSize(font, 12)
-                .moveText(200, 200)
-                .showText("Hello World!")
-                .endText()
-                .endMarkedContent()
-                .restoreState()
-                .closeTag();
-        pdfDoc.close();
+            canvas
+                    .openTag(new CanvasTag(mcr))
+                    .saveState()
+                    .beginMarkedContent(PdfName.P)
+                    .beginText()
+                    .setFontAndSize(font, 12)
+                    .moveText(200, 200)
+                    .showText("Hello World!")
+                    .endText()
+                    .endMarkedContent()
+                    .restoreState()
+                    .closeTag();
+        });
 
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContent.pdf",
-                DESTINATION_FOLDER, "diff_")
-        );
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        framework.assertBothValid("validRoleAddedInsideMarkedContent", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_validRoleAddedInsideMarkedContentMultiple() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_validRoleAddedInsideMarkedContentMultiple(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfFont font = getPdfFont();
 
-        String outPdf = DESTINATION_FOLDER + "validRoleAddedInsideMarkedContentMultiple.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
 
-        PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1);
+            // Have to use low level tagging, otherwise it throws error earlier.
+            pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
+            PdfStructElem paragraph = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+                    pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.P, page1)) :
+                    ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0))
+                            .addKid(new PdfStructElem(pdfDoc, PdfName.P, page1));
+            PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
 
-        //Have to use low level tagging otherwise it throws error earlier
-        PdfStructElem doc = pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.Document));
-        PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDoc, PdfName.P, page1));
-        PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
+            canvas
+                    .openTag(new CanvasTag(mcr))
+                    .saveState()
+                    .beginMarkedContent(PdfName.P)
+                    .beginText()
+                    .setFontAndSize(font, 12)
+                    .moveText(200, 200)
+                    .showText("Hello World!")
+                    .endText()
+                    .endMarkedContent()
+                    .beginMarkedContent(PdfName.H1)
+                    .beginText()
+                    .showText("Hello but nested")
+                    .endText()
+                    .endMarkedContent()
+                    .restoreState()
+                    .closeTag();
+        });
 
-        canvas
-                .openTag(new CanvasTag(mcr))
-                .saveState()
-                .beginMarkedContent(PdfName.P)
-                .beginText()
-                .setFontAndSize(font, 12)
-                .moveText(200, 200)
-                .showText("Hello World!")
-                .endText()
-                .endMarkedContent()
-                .beginMarkedContent(PdfName.H1)
-                .beginText()
-                .showText("Hello but nested")
-                .endText()
-                .endMarkedContent()
-                .restoreState()
-                .closeTag();
-        pdfDoc.close();
-
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContentMultiple.pdf",
-                DESTINATION_FOLDER, "diff_")
-        );
+        framework.assertBothValid("validRoleAddedInsideMarkedContentMultiple", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_validRoleAddedInsideMarkedContentMCR_IN_MCR() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "validRoleAddedInsideMarkedContentMCR_IN_MCR.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_validRoleAddedInsideMarkedContentMCR_IN_MCR(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfFont font = getPdfFont();
 
-        PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1);
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
 
-        PdfStructElem doc = pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.Document));
-        PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDoc, PdfName.P, page1));
-        PdfStructElem paragraph2 = doc.addKid(new PdfStructElem(pdfDoc, PdfName.P, page1));
+            pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
+            PdfStructElem paragraph = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+                    pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.P, page1)) :
+                    ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0))
+                            .addKid(new PdfStructElem(pdfDoc, PdfName.P, page1));
+            PdfStructElem paragraph2 = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+                    pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.P, page1)) :
+                    ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0))
+                            .addKid(new PdfStructElem(pdfDoc, PdfName.P, page1));
 
-        PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
-        PdfMcr mcr1 = paragraph2.addKid(new PdfMcrNumber(page1, paragraph2));
+            PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
+            PdfMcr mcr1 = paragraph2.addKid(new PdfMcrNumber(page1, paragraph2));
 
-        canvas
-                .openTag(new CanvasTag(mcr))
-                .saveState()
-                .beginMarkedContent(PdfName.P)
-                .beginText()
-                .setFontAndSize(font, 12)
-                .moveText(200, 200)
-                .showText("Hello World!")
-                .endText()
-                .endMarkedContent()
-                .openTag(new CanvasTag(mcr1))
-                .beginMarkedContent(PdfName.H1)
-                .beginText()
-                .showText("Hello but nested")
-                .endText()
-                .endMarkedContent()
-                .closeTag()
-                .restoreState()
-                .closeTag();
-        pdfDoc.close();
+            canvas
+                    .openTag(new CanvasTag(mcr))
+                    .saveState()
+                    .beginMarkedContent(PdfName.P)
+                    .beginText()
+                    .setFontAndSize(font, 12)
+                    .moveText(200, 200)
+                    .showText("Hello World!")
+                    .endText()
+                    .endMarkedContent()
+                    .openTag(new CanvasTag(mcr1))
+                    .beginMarkedContent(PdfName.H1)
+                    .beginText()
+                    .showText("Hello but nested")
+                    .endText()
+                    .endMarkedContent()
+                    .closeTag()
+                    .restoreState()
+                    .closeTag();
+        });
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                SOURCE_FOLDER + "cmp_validRoleAddedInsideMarkedContentMCR_IN_MCR.pdf",
-                DESTINATION_FOLDER, "diff_")
-        );
-
+        framework.assertBothValid("validRoleAddedInsideMarkedContentMCR_IN_MCR", pdfUAConformance);
     }
 
-    @Test
-    public void checkPoint_01_004_TaggedContentShouldNotBeInsideArtifact() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "01_004_TaggedContentShouldNotBeInsideArtifact.pdf";
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_01_004_TaggedContentShouldNotBeInsideArtifact(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        PdfUADocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfUADocument)
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfUADocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -1043,38 +945,37 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
-    @Test
-    public void checkPoint_31_009_FontIsNotEmbedded() throws IOException {
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
-        PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
-        PdfFont font = PdfFontFactory.createFont(StandardFonts.COURIER);
-        TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
-        tagPointer.setPageForTagging(pdfDoc.getFirstPage());
-        tagPointer.addTag(StandardRoles.P);
-        canvas.beginText()
-                .openTag(tagPointer.getTagReference())
-                .setFontAndSize(font, 12)
-                .showText("Please crash on close, tyvm")
-                .endText()
-                .closeTag();
-        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
-            pdfDoc.close();
+    @ParameterizedTest
+    @MethodSource("data")
+    public void checkPoint_31_009_FontIsNotEmbedded(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDoc) -> {
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(StandardFonts.COURIER);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            tagPointer.setPageForTagging(pdfDoc.getFirstPage());
+            tagPointer.addTag(StandardRoles.P);
+            canvas.beginText()
+                    .openTag(tagPointer.getTagReference())
+                    .setFontAndSize(font, 12)
+                    .showText("Please crash on close, tyvm")
+                    .endText()
+                    .closeTag();
         });
-        Assertions.assertEquals(MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"),
-                e.getMessage());
+
+        framework.assertBothFail("31_009_FontIsNotEmbedded", MessageFormatUtil.format(
+                PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"), false, pdfUAConformance);
     }
 
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_19_003_iDEntryInNoteTagIsNotPresent(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDoc) -> {
-            PdfFont font = null;
-            try {
-                font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-            } catch (IOException e) {
-                throw new RuntimeException();
-            }
+            PdfFont font = getPdfFont();
 
             PdfPage page1 = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page1);
@@ -1106,23 +1007,23 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void checkPoint_19_003_validNoteTagIsPresent(PdfUAConformance pdfUAConformance) throws IOException, InterruptedException {
+    public void checkPoint_19_003_validNoteTagIsPresent(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument) -> {
-            PdfFont font = null;
-            try {
-                font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-            } catch (IOException e) {
-                throw new RuntimeException();
-            }
+            PdfFont font = getPdfFont();
             PdfPage page1 = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page1);
 
-            PdfStructElem doc = pdfDocument.getStructTreeRoot().addKid(new PdfStructElem(pdfDocument, PdfName.Document));
-            PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDocument, PdfName.P, page1));
+            pdfDocument.getTagStructureContext().normalizeDocumentRootTag();
+            PdfStructElem paragraph = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+                    pdfDocument.getStructTreeRoot().addKid(new PdfStructElem(pdfDocument, PdfName.P, page1)) :
+                    ((PdfStructElem) pdfDocument.getStructTreeRoot().getKids().get(0))
+                            .addKid(new PdfStructElem(pdfDocument, PdfName.P, page1));
             PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
-            PdfStructElem note = doc.addKid(new PdfStructElem(pdfDocument, PdfName.Note, page1));
+            PdfStructElem note = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+                    pdfDocument.getStructTreeRoot().addKid(new PdfStructElem(pdfDocument, PdfName.Note, page1)) :
+                    ((PdfStructElem) pdfDocument.getStructTreeRoot().getKids().get(0))
+                            .addKid(new PdfStructElem(pdfDocument, PdfName.Note, page1));
             note.put(PdfName.ID, new PdfString("1"));
-
 
             canvas.openTag(new CanvasTag(mcr))
                     .saveState()
@@ -1137,11 +1038,6 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("validNoteTagPresent", pdfUAConformance);
-            String outPdf = DESTINATION_FOLDER + "layout_validNoteTagPresent" + "_UA_" + pdfUAConformance.getPart() + ".pdf";
-            Assertions.assertNull(new CompareTool().compareByContent(outPdf,
-                    SOURCE_FOLDER + "cmp_validNoteTagPresent.pdf",
-                    DESTINATION_FOLDER, "diff_")
-            );
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.DOCUMENT_USES_NOTE_TAG, pdfUAConformance);
         }
@@ -1178,21 +1074,18 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .closeTag();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("usingCharacterWithoutUnicodeMappingTest",
-                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, " "),
-                    false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("usingCharacterWithoutUnicodeMappingTest", pdfUAConformance);
-        }
+        framework.assertBothFail("usingCharacterWithoutUnicodeMappingTest",
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, " "),
+                false, pdfUAConformance);
     }
 
-    private PdfFont getFont() {
+    private static PdfFont getPdfFont() {
+        PdfFont font = null;
         try {
-            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+            font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         } catch (IOException e) {
             throw new RuntimeException();
         }
+        return font;
     }
 }

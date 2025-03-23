@@ -39,7 +39,7 @@ import java.io.ByteArrayInputStream;
 import java.util.function.Function;
 
 /**
- * Utility class that contains common checks used in both the PDF/A and PDF/UA modules.
+ * Utility class that contains common checks used in both PDF/A and PDF/UA modules.
  */
 public final class PdfCheckersUtil {
 

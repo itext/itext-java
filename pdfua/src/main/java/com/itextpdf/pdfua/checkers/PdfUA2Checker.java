@@ -35,17 +35,22 @@ import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
+import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
+import com.itextpdf.kernel.validation.context.FontValidationContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.layout.validation.context.LayoutValidationContext;
+import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2ListChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2NotesChecker;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2XfaCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
@@ -66,7 +71,6 @@ public class PdfUA2Checker extends PdfUAChecker {
 
     private final PdfDocument pdfDocument;
     private final PdfUAValidationContext context;
-    private final PdfUA2HeadingsChecker headingsChecker;
 
     /**
      * Creates {@link PdfUA2Checker} instance with PDF document which will be validated against PDF/UA-2 standard.
@@ -77,7 +81,6 @@ public class PdfUA2Checker extends PdfUAChecker {
         super();
         this.pdfDocument = pdfDocument;
         this.context = new PdfUAValidationContext(this.pdfDocument);
-        this.headingsChecker = new PdfUA2HeadingsChecker(this.context);
     }
 
     @Override
@@ -87,11 +90,26 @@ public class PdfUA2Checker extends PdfUAChecker {
                 PdfDocumentValidationContext pdfDocContext = (PdfDocumentValidationContext) context;
                 checkCatalog(pdfDocContext.getPdfDocument().getCatalog());
                 checkStructureTreeRoot(pdfDocContext.getPdfDocument().getStructTreeRoot());
+                checkFonts(pdfDocContext.getDocumentFonts());
+                PdfUA2XfaCheckUtil.check(pdfDocContext.getPdfDocument());
+                break;
+            case FONT:
+                FontValidationContext fontContext = (FontValidationContext) context;
+                checkText(fontContext.getText(), fontContext.getFont());
+                break;
+            case CANVAS_BEGIN_MARKED_CONTENT:
+                CanvasBmcValidationContext bmcContext = (CanvasBmcValidationContext) context;
+                checkLogicalStructureInBMC(bmcContext.getTagStructureStack(), bmcContext.getCurrentBmc(),
+                        this.pdfDocument);
+                break;
+            case CANVAS_WRITING_CONTENT:
+                CanvasWritingContentValidationContext writingContext = (CanvasWritingContentValidationContext) context;
+                checkContentInCanvas(writingContext.getTagStructureStack(), this.pdfDocument);
                 break;
             case LAYOUT:
                 LayoutValidationContext layoutContext = (LayoutValidationContext) context;
                 new LayoutCheckUtil(this.context).checkRenderer(layoutContext.getRenderer());
-                headingsChecker.checkLayoutElement(layoutContext.getRenderer());
+                new PdfUA2HeadingsChecker(this.context).checkLayoutElement(layoutContext.getRenderer());
                 break;
         }
     }
@@ -137,6 +155,7 @@ public class PdfUA2Checker extends PdfUAChecker {
         checkLang(catalog);
         checkMetadata(catalog);
         checkViewerPreferences(catalog);
+        checkOCProperties(catalog.getPdfObject().getAsDictionary(PdfName.OCProperties));
     }
 
     /**
@@ -184,8 +203,10 @@ public class PdfUA2Checker extends PdfUAChecker {
         }
 
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
+        tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
         tagTreeIterator.addHandler(new PdfUA2HeadingsChecker.PdfUA2HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
+        // TODO DEVSIX-9016 Support PDF/UA-2 rules for annotation types
         tagTreeIterator.addHandler(new PdfUA2ListChecker.PdfUA2ListHandler(context));
         tagTreeIterator.addHandler(new PdfUA2NotesChecker.PdfUA2NotesHandler(context));
         tagTreeIterator.traverse();

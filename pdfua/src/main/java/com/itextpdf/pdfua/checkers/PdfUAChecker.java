@@ -22,19 +22,31 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.PdfMcr;
+import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
 import com.itextpdf.kernel.validation.IValidationChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
 import java.util.function.Function;
 
 /**
@@ -108,6 +120,201 @@ public abstract class PdfUAChecker implements IValidationChecker {
         }
         if (PdfBoolean.FALSE.equals(displayDocTitle)) {
             throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.VIEWER_PREFERENCES_IS_FALSE);
+        }
+    }
+
+    /**
+     * Checks that all optional content configuration dictionaries in the file, including the default one, shall contain
+     * a Name entry (see ISO 32000-2:2020, Table 96, or ISO 32000-1:2008, 8.11.2.1, Table 98) whose value is a non-empty
+     * text string when document contains a Configs entry in the OCProperties entry of the document catalog dictionary
+     * (see ISO 32000-2:2020, Table 29, or ISO 32000-1:2008, 7.7.2, Table 28), and the Configs entry contains at least
+     * one optional content configuration dictionary.
+     *
+     * <p>
+     * Also checks that the AS key does not appear in any optional content configuration dictionary.
+     *
+     * @param ocProperties OCProperties entry of the Catalog dictionary
+     */
+    void checkOCProperties(PdfDictionary ocProperties) {
+        if (ocProperties == null) {
+            return;
+        }
+        PdfArray configs = ocProperties.getAsArray(PdfName.Configs);
+        if (configs != null && !configs.isEmpty()) {
+            PdfDictionary d = ocProperties.getAsDictionary(PdfName.D);
+            checkOCGNameAndASKey(d);
+            for (PdfObject config : configs) {
+                checkOCGNameAndASKey((PdfDictionary) config);
+            }
+            PdfArray ocgsArray = ocProperties.getAsArray(PdfName.OCGs);
+            if (ocgsArray != null) {
+                for (PdfObject ocg : ocgsArray) {
+                    checkOCGNameAndASKey((PdfDictionary) ocg);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if content marked as Artifact resides in Artifact content, but real content does not.
+     *
+     * @param stack      the tag structure stack
+     * @param currentBmc the current BMC
+     * @param document   {@link PdfDocument} to check
+     */
+    void checkLogicalStructureInBMC(Stack<Tuple2<PdfName, PdfDictionary>> stack,
+                                    Tuple2<PdfName, PdfDictionary> currentBmc, PdfDocument document) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        boolean isRealContent = isRealContent(currentBmc, document);
+        boolean isArtifact = PdfName.Artifact.equals(currentBmc.getFirst());
+
+        if (isArtifact && isInsideRealContent(stack, document)) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ARTIFACT_CANT_BE_INSIDE_REAL_CONTENT);
+        }
+        if (isRealContent && isInsideArtifact(stack)) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.REAL_CONTENT_CANT_BE_INSIDE_ARTIFACT);
+        }
+    }
+
+    /**
+     * Checks if content is neither marked as Artifact nor tagged as real content.
+     *
+     * @param tagStack tag structure stack
+     * @param document {@link PdfDocument} to check
+     */
+    void checkContentInCanvas(Stack<Tuple2<PdfName, PdfDictionary>> tagStack, PdfDocument document) {
+        if (tagStack.isEmpty()) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING);
+        }
+
+        final boolean insideRealContent = isInsideRealContent(tagStack, document);
+        final boolean insideArtifact = isInsideArtifact(tagStack);
+        if (insideRealContent && insideArtifact) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA);
+        } else if (!insideRealContent && !insideArtifact) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT);
+        }
+    }
+
+    /**
+     * Checks that font programs for all fonts used for rendering within a conforming file, as determined by whether at
+     * least one of its glyphs is referenced from one or more content streams, are embedded within that file, as defined
+     * in ISO 32000-2:2020, 9.9 and ISO 32000-1:2008, 9.9.
+     *
+     * @param fontsInDocument collection of fonts used in the document
+     */
+    void checkFonts(Collection<PdfFont> fontsInDocument) {
+        Set<String> fontNamesThatAreNotEmbedded = new HashSet<>();
+        for (PdfFont font : fontsInDocument) {
+            if (!font.isEmbedded()) {
+                fontNamesThatAreNotEmbedded.add(font.getFontProgram().getFontNames().getFontName());
+            }
+        }
+        if (!fontNamesThatAreNotEmbedded.isEmpty()) {
+            throw new PdfUAConformanceException(
+                    MessageFormatUtil.format(
+                            PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED,
+                            String.join(", ", fontNamesThatAreNotEmbedded)
+                    ));
+        }
+    }
+
+    /**
+     * Checks that embedded fonts define all glyphs referenced for rendering within the conforming file.
+     *
+     * @param str  the text to check
+     * @param font the font to check
+     */
+    void checkText(String str, PdfFont font) {
+        int index = FontCheckUtil.checkGlyphsOfText(str, font, new PdfUAChecker.UaCharacterChecker());
+
+        if (index != -1) {
+            throw new PdfUAConformanceException(MessageFormatUtil.format(
+                    PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, str.charAt(index)));
+        }
+    }
+
+    private static void checkOCGNameAndASKey(PdfDictionary dict) {
+        if (dict == null) {
+            return;
+        }
+        if (dict.get(PdfName.AS) != null) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY);
+        }
+        if (!(dict.get(PdfName.Name) instanceof PdfString) ||
+                (((PdfString) dict.get(PdfName.Name)).toString().isEmpty())) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
+        }
+    }
+
+    private static boolean isInsideArtifact(Stack<Tuple2<PdfName, PdfDictionary>> tagStack) {
+        for (Tuple2<PdfName, PdfDictionary> tag : tagStack) {
+            if (PdfName.Artifact.equals(tag.getFirst())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isInsideRealContent(Stack<Tuple2<PdfName, PdfDictionary>> tagStack, PdfDocument document) {
+        for (Tuple2<PdfName, PdfDictionary> tag : tagStack) {
+            if (isRealContent(tag, document)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isRealContent(Tuple2<PdfName, PdfDictionary> tag, PdfDocument document) {
+        if (PdfName.Artifact.equals(tag.getFirst())) {
+            return false;
+        }
+        PdfDictionary properties = tag.getSecond();
+        if (properties == null || !properties.containsKey(PdfName.MCID)) {
+            return false;
+        }
+        PdfMcr mcr = mcrExists(document, (int) properties.getAsInt(PdfName.MCID));
+        if (mcr == null) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT);
+        }
+        return true;
+    }
+
+    private static PdfMcr mcrExists(PdfDocument document, int mcid) {
+        int amountOfPages = document.getNumberOfPages();
+        for (int i = 1; i <= amountOfPages; ++i) {
+            PdfPage page = document.getPage(i);
+            PdfMcr mcr = document.getStructTreeRoot().findMcrByMcid(page.getPdfObject(), mcid);
+            if (mcr != null) {
+                return mcr;
+            }
+        }
+        return null;
+    }
+
+    private static final class UaCharacterChecker implements FontCheckUtil.CharacterChecker {
+
+        /**
+         * Creates new {@link UaCharacterChecker} instance.
+         */
+        public UaCharacterChecker() {
+            // Empty constructor.
+        }
+
+        @Override
+        public boolean check(int ch, PdfFont font) {
+            if (font.containsGlyph(ch)) {
+                return !font.getGlyph(ch).hasValidUnicode();
+            } else {
+                return true;
+            }
         }
     }
 }

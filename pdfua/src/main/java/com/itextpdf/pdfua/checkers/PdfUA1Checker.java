@@ -24,7 +24,6 @@ package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -34,17 +33,13 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
-import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
-import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
@@ -63,20 +58,16 @@ import com.itextpdf.pdfua.checkers.utils.FormCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
-import com.itextpdf.pdfua.checkers.utils.NoteCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
-import com.itextpdf.pdfua.checkers.utils.XfaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1ListChecker;
 import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1NotesChecker;
+import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1XfaCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -89,9 +80,7 @@ import java.util.Stack;
 public class PdfUA1Checker extends PdfUAChecker {
 
     private final PdfDocument pdfDocument;
-
     private final TagStructureContext tagStructureContext;
-
     private final PdfUA1HeadingsChecker headingsChecker;
 
     private final PdfUAValidationContext context;
@@ -120,7 +109,7 @@ public class PdfUA1Checker extends PdfUAChecker {
                 checkCatalog(pdfDocContext.getPdfDocument().getCatalog());
                 checkStructureTreeRoot(pdfDocContext.getPdfDocument().getStructTreeRoot());
                 checkFonts(pdfDocContext.getDocumentFonts());
-                XfaCheckUtil.check(pdfDocContext.getPdfDocument());
+                PdfUA1XfaCheckUtil.check(pdfDocContext.getPdfDocument());
                 break;
             case PDF_OBJECT:
                 PdfObjectValidationContext objContext = (PdfObjectValidationContext) context;
@@ -136,11 +125,12 @@ public class PdfUA1Checker extends PdfUAChecker {
                 break;
             case CANVAS_BEGIN_MARKED_CONTENT:
                 CanvasBmcValidationContext bmcContext = (CanvasBmcValidationContext) context;
-                checkOnOpeningBeginMarkedContent(bmcContext.getTagStructureStack(), bmcContext.getCurrentBmc());
+                checkLogicalStructureInBMC(bmcContext.getTagStructureStack(), bmcContext.getCurrentBmc(),
+                        this.pdfDocument);
                 break;
             case CANVAS_WRITING_CONTENT:
                 CanvasWritingContentValidationContext writingContext = (CanvasWritingContentValidationContext) context;
-                checkOnWritingCanvasToContent(writingContext.getTagStructureStack());
+                checkContentInCanvas(writingContext.getTagStructureStack(), this.pdfDocument);
                 break;
             case LAYOUT:
                 LayoutValidationContext layoutContext = (LayoutValidationContext) context;
@@ -172,15 +162,6 @@ public class PdfUA1Checker extends PdfUAChecker {
             if (!fileSpec.containsKey(PdfName.F) || !fileSpec.containsKey(PdfName.UF)) {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
             }
-        }
-    }
-
-    private void checkText(String str, PdfFont font) {
-        int index = FontCheckUtil.checkGlyphsOfText(str, font, new UaCharacterChecker());
-
-        if (index != -1) {
-            throw new PdfUAConformanceException(MessageFormatUtil.format(
-                    PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, str.charAt(index)));
         }
     }
 
@@ -222,41 +203,19 @@ public class PdfUA1Checker extends PdfUAChecker {
         }
     }
 
-    private void checkOnWritingCanvasToContent(Stack<Tuple2<PdfName, PdfDictionary>> tagStack) {
-        if (tagStack.isEmpty()) {
-            throw new PdfUAConformanceException(
-                    PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING);
+    @Override
+    void checkOCProperties(PdfDictionary ocProperties) {
+        if (ocProperties != null && !(ocProperties.get(PdfName.Configs) instanceof PdfArray)) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY);
         }
-
-        final boolean insideRealContent = isInsideRealContent(tagStack);
-        final boolean insideArtifact = isInsideArtifact(tagStack);
-        if (insideRealContent && insideArtifact) {
-            throw new PdfUAConformanceException(
-                    PdfUAExceptionMessageConstants.REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA);
-        } else if (!insideRealContent && !insideArtifact) {
-            throw new PdfUAConformanceException(
-                    PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT);
-        }
+        super.checkOCProperties(ocProperties);
     }
 
-    private void checkOnOpeningBeginMarkedContent(Stack<Tuple2<PdfName, PdfDictionary>> stack,
-            Tuple2<PdfName, PdfDictionary> currentBmc) {
-
+    @Override
+    void checkLogicalStructureInBMC(Stack<Tuple2<PdfName, PdfDictionary>> stack,
+                                    Tuple2<PdfName, PdfDictionary> currentBmc, PdfDocument document) {
         checkStandardRoleMapping(currentBmc);
-
-        if (stack.isEmpty()) {
-            return;
-        }
-
-        boolean isRealContent = isRealContent(currentBmc);
-        boolean isArtifact = PdfName.Artifact.equals(currentBmc.getFirst());
-
-        if (isArtifact && isInsideRealContent(stack)) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ARTIFACT_CANT_BE_INSIDE_REAL_CONTENT);
-        }
-        if (isRealContent && isInsideArtifact(stack)) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.REAL_CONTENT_CANT_BE_INSIDE_ARTIFACT);
-        }
+        super.checkLogicalStructureInBMC(stack, currentBmc, document);
     }
 
     private void checkStandardRoleMapping(Tuple2<PdfName, PdfDictionary> tag) {
@@ -268,52 +227,6 @@ public class PdfUA1Checker extends PdfUAChecker {
                     MessageFormatUtil.format(
                             PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, role));
         }
-    }
-
-    private boolean isInsideArtifact(Stack<Tuple2<PdfName, PdfDictionary>> tagStack) {
-        for (Tuple2<PdfName, PdfDictionary> tag : tagStack) {
-            if (PdfName.Artifact.equals(tag.getFirst())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isInsideRealContent(Stack<Tuple2<PdfName, PdfDictionary>> tagStack) {
-        for (Tuple2<PdfName, PdfDictionary> tag : tagStack) {
-            if (isRealContent(tag)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isRealContent(Tuple2<PdfName, PdfDictionary> tag) {
-        if (PdfName.Artifact.equals(tag.getFirst())) {
-            return false;
-        }
-        PdfDictionary properties = tag.getSecond();
-        if (properties == null || !properties.containsKey(PdfName.MCID)) {
-            return false;
-        }
-        PdfMcr mcr = mcrExists(pdfDocument, (int) properties.getAsInt(PdfName.MCID));
-        if (mcr == null) {
-            throw new PdfUAConformanceException(
-                    PdfUAExceptionMessageConstants.CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT);
-        }
-        return true;
-    }
-
-    private PdfMcr mcrExists(PdfDocument document, int mcid) {
-        int amountOfPages = document.getNumberOfPages();
-        for (int i = 1; i <= amountOfPages; ++i) {
-            PdfPage page = document.getPage(i);
-            PdfMcr mcr = document.getStructTreeRoot().findMcrByMcid(page.getPdfObject(), mcid);
-            if (mcr != null) {
-                return mcr;
-            }
-        }
-        return null;
     }
 
     private void checkCatalog(PdfCatalog catalog) {
@@ -363,57 +276,6 @@ public class PdfUA1Checker extends PdfUAChecker {
         tagTreeIterator.traverse();
     }
 
-    private void checkOCProperties(PdfDictionary ocProperties) {
-        if (ocProperties == null) {
-            return;
-        }
-        if (!(ocProperties.get(PdfName.Configs) instanceof PdfArray)) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY);
-        }
-        PdfArray configs = ocProperties.getAsArray(PdfName.Configs);
-        if (configs != null && !configs.isEmpty()) {
-            PdfDictionary d = ocProperties.getAsDictionary(PdfName.D);
-            checkOCGNameAndASKey(d);
-            for (PdfObject config : configs) {
-                checkOCGNameAndASKey((PdfDictionary) config);
-            }
-            PdfArray ocgsArray = ocProperties.getAsArray(PdfName.OCGs);
-            if (ocgsArray != null) {
-                for (PdfObject ocg : ocgsArray) {
-                    checkOCGNameAndASKey((PdfDictionary) ocg);
-                }
-            }
-        }
-    }
-
-    private void checkOCGNameAndASKey(PdfDictionary dict) {
-        if (dict == null) {
-            return;
-        }
-        if (dict.get(PdfName.AS) != null) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.OCG_SHALL_NOT_CONTAIN_AS_ENTRY);
-        }
-        if (!(dict.get(PdfName.Name) instanceof PdfString) || (((PdfString)dict.get(PdfName.Name)).toString().isEmpty())) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG);
-        }
-    }
-
-    private void checkFonts(Collection<PdfFont> fontsInDocument) {
-        Set<String> fontNamesThatAreNotEmbedded = new HashSet<>();
-        for (PdfFont font : fontsInDocument) {
-            if (!font.isEmbedded()) {
-                fontNamesThatAreNotEmbedded.add(font.getFontProgram().getFontNames().getFontName());
-            }
-        }
-        if (!fontNamesThatAreNotEmbedded.isEmpty()) {
-            throw new PdfUAConformanceException(
-                    MessageFormatUtil.format(
-                            PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED,
-                            String.join(", ", fontNamesThatAreNotEmbedded)
-                    ));
-        }
-    }
-
     private void checkCrypto(PdfDictionary encryptionDictionary) {
         if (encryptionDictionary != null) {
             if (!(encryptionDictionary.get(PdfName.P) instanceof PdfNumber)) {
@@ -440,17 +302,6 @@ public class PdfUA1Checker extends PdfUAChecker {
             PdfName type = dict.getAsName(PdfName.Type);
             if (PdfName.Filespec.equals(type)) {
                 checkFileSpec(dict);
-            }
-        }
-    }
-
-    private static final class UaCharacterChecker implements FontCheckUtil.CharacterChecker {
-        @Override
-        public boolean check(int ch, PdfFont font) {
-            if (font.containsGlyph(ch)) {
-                return !font.getGlyph(ch).hasValidUnicode();
-            } else {
-                return true;
             }
         }
     }

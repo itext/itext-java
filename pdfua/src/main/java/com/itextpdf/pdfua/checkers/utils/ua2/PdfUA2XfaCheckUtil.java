@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua.checkers.utils;
+package com.itextpdf.pdfua.checkers.utils.ua2;
 
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -28,32 +28,25 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 /**
- * Utility class which performs XFA forms check according to PDF/UA specification.
- *
- * @deprecated in favour of {@link com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1XfaCheckUtil}
+ * Utility class which performs XFA forms check according to PDF/UA-2 specification.
  */
-@Deprecated
-public final class XfaCheckUtil {
-    // Path defined according to XFA specification
-    private static final String PATH_TO_DYNAMIC_RENDER = "xdp.config.acrobat.acrobat7.dynamicRender";
-    private static final String REQUIRED_VALUE = "required";
+public final class PdfUA2XfaCheckUtil {
 
-    private XfaCheckUtil() {
-        // empty constructor
+    private PdfUA2XfaCheckUtil() {
+        // Private constructor will prevent the instantiation of this class directly.
     }
 
     /**
-     * Checks XFA form of the document if exists.
+     * Checks if XFA form of the document exists.
      *
      * @param pdfDocument the document to check
      *
-     * @throws PdfUAConformanceException if document contains dynamic XFA forms
+     * @throws PdfUAConformanceException if document contains XFA forms
      */
     public static void check(PdfDocument pdfDocument) {
         XfaForm xfaForm = new XfaForm(pdfDocument);
-        String dynamicValue = xfaForm.getNodeTextByPath(PATH_TO_DYNAMIC_RENDER);
-        if (REQUIRED_VALUE.equals(dynamicValue)) {
-            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.DYNAMIC_XFA_FORMS_SHALL_NOT_BE_USED);
+        if (xfaForm.isXfaPresent()) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.XFA_FORMS_SHALL_NOT_BE_PRESENT);
         }
     }
 }

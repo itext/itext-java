@@ -26,7 +26,7 @@ import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.font.PdfFont;
 
 /**
- * Utility class that contains common checks used in both the  PDFA and PDFUA module for fonts.
+ * Utility class that contains common checks used in both PDF/A and PDF/UA modules for fonts.
  */
 public final class FontCheckUtil {
 

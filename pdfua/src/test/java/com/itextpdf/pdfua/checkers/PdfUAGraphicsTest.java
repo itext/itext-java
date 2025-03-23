@@ -42,6 +42,7 @@ import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.pdfua.PdfUA2TestPdfDocument;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
@@ -68,7 +69,6 @@ import java.util.List;
 @Tag("IntegrationTest")
 public class PdfUAGraphicsTest extends ExtendedITextTest {
 
-
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAGraphicsTest/";
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUAGraphicsTest/";
@@ -93,9 +93,13 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
     }
 
-    @Test
-    public void imageWithoutAlternativeDescription_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageWithoutAlternativeDescription_ThrowsInLayout(PdfUAConformance pdfUAConformance)
+            throws MalformedURLException {
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
@@ -109,9 +113,13 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> new LayoutCheckUtil(null).checkRenderer(null));
     }
 
-    @Test
-    public void imageWithEmptyAlternativeDescription_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageWithEmptyAlternativeDescription_ThrowsInLayout(PdfUAConformance pdfUAConformance)
+            throws MalformedURLException {
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
 
         Image img = new Image(ImageDataFactory.create(DOG));
@@ -163,7 +171,6 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 pdfDocument.getStructTreeRoot().addNamespace(namespace);
                 namespace.addNamespaceRoleMapping("CustomImage", StandardRoles.FIGURE);
                 namespace.addNamespaceRoleMapping("CustomImage2", "CustomImage");
-
             }
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
@@ -213,12 +220,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             }
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("imageWithCustomRoleAndNoDescription", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("imageWithCustomRoleAndNoDescription", pdfUAConformance);
-        }
+        framework.assertBothFail("imageWithCustomRoleAndNoDescription", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -250,12 +252,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             }
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("imageCustomDoubleMapping_Throws", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("imageCustomDoubleMapping_Throws", pdfUAConformance);
-        }
+        framework.assertBothFail("imageCustomDoubleMapping_Throws", pdfUAConformance);
     }
 
     @Test
@@ -305,8 +302,6 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         imgWithCaption.add(img);
         imgWithCaption.add(caption);
 
-
-
         document.add(imgWithCaption);
         document.close();
         Assertions.assertNull(new VeraPdfValidator().validate(OUTPUT_FILE)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
@@ -315,9 +310,13 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                         DESTINATION_FOLDER, "diff_"));
     }
 
-    @Test
-    public void imageWithCaptionWithoutAlternateDescription_Throws() throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageWithCaptionWithoutAlternateDescription_Throws(PdfUAConformance pdfUAConformance)
+            throws IOException {
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
 
         Div imgWithCaption = new Div();
@@ -338,9 +337,12 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
-    @Test
-    public void imageWithoutActualText_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageWithoutActualText_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws MalformedURLException {
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(DOG));
         img.getAccessibilityProperties().setActualText(null);
@@ -350,9 +352,12 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
-    @Test
-    public void imageWithEmptyActualText_ThrowsInLayout() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageWithEmptyActualText_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws MalformedURLException {
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDoc);
 
         Image img = new Image(ImageDataFactory.create(DOG));
@@ -397,10 +402,13 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 DESTINATION_FOLDER, "diff_");
     }
 
-    @Test
-    public void imageDirectlyOnCanvasWithoutAlternateDescription_ThrowsOnClose()
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageDirectlyOnCanvasWithoutAlternateDescription_ThrowsOnClose(PdfUAConformance pdfUAConformance)
             throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
         PdfPage page = pdfDoc.addNewPage();
@@ -416,10 +424,13 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
-    @Test
-    public void imageDirectlyOnCanvasWithEmptyActualText_OK()
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageDirectlyOnCanvasWithEmptyActualText_OK(PdfUAConformance pdfUAConformance)
             throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
 
         TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
         PdfPage page = pdfDoc.addNewPage();
@@ -433,9 +444,12 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
     }
 
-    @Test
-    public void testOverflowImage() throws IOException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testOverflowImage(PdfUAConformance pdfUAConformance) throws MalformedURLException {
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         document.add(new Div().setHeight(730).setBackgroundColor(ColorConstants.CYAN));
@@ -446,9 +460,12 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     }
 
-    @Test
-    public void testEmbeddedImageInTable() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testEmbeddedImageInTable(PdfUAConformance pdfUAConformance) throws MalformedURLException {
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         Table table = new Table(2);
@@ -462,28 +479,36 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         });
     }
 
-    @Test
-    public void testEmbeddedImageInDiv() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testEmbeddedImageInDiv(PdfUAConformance pdfUAConformance) throws MalformedURLException {
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
         Div div = new Div();
         div.add(img);
-        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
             document.add(div);
         });
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
-    @Test
-    public void testEmbeddedImageInParagraph() throws MalformedURLException {
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testEmbeddedImageInParagraph(PdfUAConformance pdfUAConformance) throws MalformedURLException {
+        PdfDocument pdfDoc = pdfUAConformance == PdfUAConformance.PDF_UA_1 ? (PdfDocument) 
+                new PdfUATestPdfDocument(new PdfWriter(new ByteArrayOutputStream())) :
+                (PdfDocument) new PdfUA2TestPdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Image img = new Image(ImageDataFactory.create(DOG));
         Document document = new Document(pdfDoc);
-        Div div = new Div();
-        div.add(img);
-        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
-            document.add(div);
+        Paragraph paragraph = new Paragraph();
+        paragraph.add(img);
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> {
+            document.add(paragraph);
         });
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, e.getMessage());
     }
 
 }

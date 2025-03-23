@@ -214,7 +214,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDoc, PdfName.P));
         PdfStructElem chapter = paragraph.addKid(new PdfStructElem(pdfDoc, new PdfName("chapter"), page1));
 
-        // Napespaces are actual only for PDF-2.0, which is actual only for PDF/UA-2
+        // Namespaces are actual only for PDF-2.0, which is actual only for PDF/UA-2
         PdfNamespace namespace = new PdfNamespace("http://www.w3.org/1999/xhtml");
         chapter.setNamespace(namespace);
         namespace.addNamespaceRoleMapping("chapter", StandardRoles.SPAN);

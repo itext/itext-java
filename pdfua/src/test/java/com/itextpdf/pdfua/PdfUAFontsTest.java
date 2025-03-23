@@ -38,15 +38,15 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAFontsTest extends ExtendedITextTest {
@@ -87,15 +87,9 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             document.add(paragraph);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("tryToUseType0Cid0FontTest",
-                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "KozMinPro-Regular"),
-                    false, pdfUAConformance);
-        }
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("tryToUseType0Cid0FontTest", pdfUAConformance);
-        }
+        framework.assertBothFail("tryToUseType0Cid0FontTest",
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "KozMinPro-Regular"),
+                false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -160,14 +154,9 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     restoreState().closeTag();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
         framework.assertBothFail("trueTypeFontGlyphNotPresentTest",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "w"),
                 false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertBothFail("trueTypeFontGlyphNotPresentTest", pdfUAConformance);
-        }
     }
 
     @ParameterizedTest
@@ -183,7 +172,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
                     .setPageForTagging(pdfDoc.getFirstPage())
-                    .addTag(StandardRoles.H);
+                    .addTag(StandardRoles.H1);
             canvas.
                     saveState().openTag(tagPointer.getTagReference()).
                     beginText().
@@ -194,13 +183,8 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     restoreState().closeTag();
         });
 
-        // TODO DEVSIX-8242 The layout level doesn’t throw an error for UA1
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1){
-            framework.assertVeraPdfFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
-        }
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
-        }
+        // TODO DEVSIX-9017 Support PDF/UA rules for fonts.
+        framework.assertVeraPdfFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -220,15 +204,9 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             document.add(paragraph);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("tryToUseStandardFontsTest",
-                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"), false,
-                    pdfUAConformance);
-        }
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn't throw an error
-            framework.assertVeraPdfFail("tryToUseStandardFontsTest", pdfUAConformance);
-        }
+        framework.assertBothFail("tryToUseStandardFontsTest",
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"), false,
+                pdfUAConformance);
     }
 
     @ParameterizedTest

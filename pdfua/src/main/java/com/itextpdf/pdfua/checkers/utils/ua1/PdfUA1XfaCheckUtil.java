@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.pdfua.checkers.utils;
+package com.itextpdf.pdfua.checkers.utils.ua1;
 
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -28,18 +28,15 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 /**
- * Utility class which performs XFA forms check according to PDF/UA specification.
- *
- * @deprecated in favour of {@link com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1XfaCheckUtil}
+ * Utility class which performs XFA forms check according to PDF/UA-1 specification.
  */
-@Deprecated
-public final class XfaCheckUtil {
-    // Path defined according to XFA specification
+public final class PdfUA1XfaCheckUtil {
+    // Path defined according to XFA specification.
     private static final String PATH_TO_DYNAMIC_RENDER = "xdp.config.acrobat.acrobat7.dynamicRender";
     private static final String REQUIRED_VALUE = "required";
 
-    private XfaCheckUtil() {
-        // empty constructor
+    private PdfUA1XfaCheckUtil() {
+        // Private constructor will prevent the instantiation of this class directly.
     }
 
     /**

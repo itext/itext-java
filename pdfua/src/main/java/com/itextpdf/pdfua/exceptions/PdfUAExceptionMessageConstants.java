@@ -42,8 +42,6 @@ public final class PdfUAExceptionMessageConstants {
             "Content is neither marked as Artifact nor tagged as real content.";
     public static final String CONTENT_NOT_REFERENCING_FE_NOTE = "Real content that refers to footnotes or endnotes "
             + "shall use the Ref entry on the referring structure element to reference the FENote.";
-    public static final String INCORRECT_NOTE_TYPE_VALUE
-            = "The value of the NoteType attribute shall be either \"Footnote\", \"Endnote\" or \"None\".";
     public static final String CONTENT_WITH_MCID_BUT_MCID_NOT_FOUND_IN_STRUCT_TREE_ROOT =
             "Content with MCID, but MCID wasn't found in StructTreeRoot.";
     public static final String CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP = "CT or Alt entry is missing from the media " +
@@ -72,6 +70,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String IMAGE_SHALL_HAVE_ALT = "Figure tags shall include an alternative representation or "
             + "replacement text. call com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setActualText or com"
             + ".itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setAlternateDescription to be PDF/UA compliant.";
+    public static final String INCORRECT_NOTE_TYPE_VALUE
+            = "The value of the NoteType attribute shall be either \"Footnote\", \"Endnote\" or \"None\".";
     public static final String INVALID_PDF_VERSION
             = "Specified document pdf version isn't supported in pdf/ua.";
     public static final String LINK_ANNOTATION_SHOULD_HAVE_CONTENTS_KEY = "Annotation of type Link " +
@@ -130,6 +130,7 @@ public final class PdfUAExceptionMessageConstants {
             "Encryption dictionary should be 1 if the document is tagged.";
     public static final String VIEWER_PREFERENCES_IS_FALSE = "ViewerPreferences dictionary of the Catalog dictionary " +
             "contains a DisplayDocTitle entry with a value of false.";
+    public static final String XFA_FORMS_SHALL_NOT_BE_PRESENT = "XFA forms shall not be present.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor.
