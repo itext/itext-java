@@ -102,7 +102,7 @@ public final class PdfUA2ListChecker {
         private final PdfUA2ListChecker checker;
 
         /**
-         * Creates a new instance of {@link PdfUA2ListChecker}.
+         * Creates a new instance of {@link PdfUA2ListHandler}.
          *
          * @param context the validation context
          */

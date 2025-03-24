@@ -50,6 +50,7 @@ import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2ListChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2NotesChecker;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2TableOfContentsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2XfaCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
@@ -209,6 +210,7 @@ public class PdfUA2Checker extends PdfUAChecker {
         // TODO DEVSIX-9016 Support PDF/UA-2 rules for annotation types
         tagTreeIterator.addHandler(new PdfUA2ListChecker.PdfUA2ListHandler(context));
         tagTreeIterator.addHandler(new PdfUA2NotesChecker.PdfUA2NotesHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(context));
         tagTreeIterator.traverse();
     }
 }

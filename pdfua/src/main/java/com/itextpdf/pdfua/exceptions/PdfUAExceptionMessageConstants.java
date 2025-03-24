@@ -128,6 +128,9 @@ public final class PdfUAExceptionMessageConstants {
             "\"{0}\" tag mapping does not terminate with a standard type.";
     public static final String TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO = "10th bit of P value of " +
             "Encryption dictionary should be 1 if the document is tagged.";
+    public static final String TOCI_SHALL_IDENTIFY_REF =
+            "Each TOCI structure element shall contain the Ref entry, either directly on the TOCI structure element" +
+                    " itself or on at least one of its descendant structure elements.";
     public static final String VIEWER_PREFERENCES_IS_FALSE = "ViewerPreferences dictionary of the Catalog dictionary " +
             "contains a DisplayDocTitle entry with a value of false.";
     public static final String XFA_FORMS_SHALL_NOT_BE_PRESENT = "XFA forms shall not be present.";

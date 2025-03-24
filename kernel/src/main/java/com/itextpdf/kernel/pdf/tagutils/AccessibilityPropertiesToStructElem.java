@@ -42,7 +42,7 @@ final class AccessibilityPropertiesToStructElem {
         if (properties.getNamespace() != null) {
             elem.setNamespace(properties.getNamespace());
         }
-        if(properties.getStructureElementId() != null) {
+        if (properties.getStructureElementId() != null) {
             elem.setStructureElementId(new PdfString(properties.getStructureElementId()));
         }
         for (TagTreePointer ref : properties.getRefsList()) {
