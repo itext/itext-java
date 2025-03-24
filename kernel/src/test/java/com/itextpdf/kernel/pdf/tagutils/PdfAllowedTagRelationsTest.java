@@ -54,17 +54,6 @@ class PdfAllowedTagRelationsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void isContentObjectAllowedInRole() {
-        PdfAllowedTagRelations pdfAllowedTagRelations = new PdfAllowedTagRelations();
-        Assertions.assertFalse(pdfAllowedTagRelations.isContentObjectAllowedInRole(StandardRoles.H1));
-        Assertions.assertFalse(pdfAllowedTagRelations.isContentObjectAllowedInRole(StandardRoles.P));
-        Assertions.assertFalse(pdfAllowedTagRelations.isContentObjectAllowedInRole(StandardRoles.SPAN));
-        Assertions.assertFalse(pdfAllowedTagRelations.isContentObjectAllowedInRole(StandardRoles.LBL));
-
-        Assertions.assertFalse(pdfAllowedTagRelations.isContentAllowedInRole(StandardRoles.DIV));
-    }
-
-    @Test
     public void normalizeRole() {
         PdfAllowedTagRelations pdfAllowedTagRelations = new PdfAllowedTagRelations();
         Assertions.assertEquals(StandardRoles.P, pdfAllowedTagRelations.normalizeRole(StandardRoles.P));

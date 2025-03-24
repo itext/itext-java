@@ -37,7 +37,9 @@ import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.ITagTreeIteratorHandler;
+import com.itextpdf.kernel.pdf.tagutils.PdfAllowedTagRelations;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
@@ -53,7 +55,8 @@ import java.util.function.Function;
  */
 public class Pdf20Checker implements IValidationChecker {
 
-    private static final Function<String, PdfException> EXCEPTION_SUPPLIER = (msg) -> new Pdf20ConformanceException(msg);
+    private static final Function<String, PdfException> EXCEPTION_SUPPLIER = msg -> new Pdf20ConformanceException(msg);
+    private static final PdfAllowedTagRelations allowedTagRelations = new PdfAllowedTagRelations();
 
     private final TagStructureContext tagStructureContext;
 
@@ -147,6 +150,7 @@ public class Pdf20Checker implements IValidationChecker {
         }
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(new StructureTreeRootHandler(tagStructureContext));
+        tagTreeIterator.addHandler(new ParentChildRelationshipHandler(tagStructureContext));
         tagTreeIterator.traverse();
     }
 
@@ -162,6 +166,63 @@ public class Pdf20Checker implements IValidationChecker {
         checkLang(catalog);
         checkMetadata(catalog);
     }
+
+    static final class ParentChildRelationshipHandler implements ITagTreeIteratorHandler {
+        private final TagStructureContext tagStructureContext;
+
+        public ParentChildRelationshipHandler(TagStructureContext context) {
+            this.tagStructureContext = context;
+        }
+
+        private static void throwInvalidRelationshipException(String parentRole, String childRole) {
+            throw new Pdf20ConformanceException(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED,
+                    parentRole, childRole));
+        }
+
+        private String resolveRole(PdfStructElem elem) {
+            final IRoleMappingResolver parentResolver = tagStructureContext
+                    .resolveMappingToStandardOrDomainSpecificRole(elem.getRole().getValue(), elem.getNamespace());
+            if (parentResolver == null) {
+                return null;
+            }
+            return parentResolver.getRole();
+        }
+
+        @Override
+        public boolean accept(IStructureNode node) {
+            return node != null;
+        }
+
+        @Override
+        public void processElement(IStructureNode elem) {
+            if (!(elem instanceof PdfStructElem) && !(elem instanceof PdfStructTreeRoot)) {
+                return;
+            }
+            String parentRole = elem instanceof PdfStructElem ?
+                    resolveRole((PdfStructElem) elem) : PdfName.StructTreeRoot.getValue();
+            if (parentRole == null) {
+                return;
+            }
+            for (IStructureNode kid : elem.getKids()) {
+                if (kid instanceof PdfStructTreeRoot) {
+                    continue;
+                }
+                if (kid instanceof PdfStructElem) {
+                    final String childRole = resolveRole((PdfStructElem) kid);
+                    if (childRole == null) {
+                        continue;
+                    }
+                    if (!allowedTagRelations.isRelationAllowed(parentRole, childRole)) {
+                        throwInvalidRelationshipException(parentRole, kid.getRole().getValue());
+                    }
+                } else if (!allowedTagRelations.isContentAllowedInRole(parentRole)) {
+                    throwInvalidRelationshipException(parentRole, PdfAllowedTagRelations.ACTUAL_CONTENT);
+                }
+            }
+        }
+    }
+
 
     /**
      * Handler class that checks structure nodes while traversing the document structure tree.

@@ -25,6 +25,7 @@ package com.itextpdf.pdfua.checkers;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -77,13 +78,21 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+    }
+
+    private static PdfFont loadFont() {
+        try {
+            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-    }
-
-    public static List<PdfUAConformance> data() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
     }
 
     // -------- Negative tests --------
@@ -161,8 +170,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             framework.assertBothFail("brokenHnInheritedSequenceTest1",
                     MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 2), pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("brokenHnInheritedSequenceTest1", pdfUAConformance);
+            final String expectedMessage = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H3");
+            framework.assertBothFail("brokenHnInheritedSequenceTest1", expectedMessage, pdfUAConformance);
         }
     }
 
@@ -193,8 +203,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             framework.assertBothFail("brokenHnMixedSequenceTest",
                     MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3), pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("brokenHnMixedSequenceTest", pdfUAConformance);
+            final String expectedMessage = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
+            framework.assertBothFail("brokenHnInheritedSequenceTest1", expectedMessage, pdfUAConformance);
         }
     }
 
@@ -229,8 +240,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             framework.assertBothFail("brokenHnMixedSequenceTest2",
                     MessageFormatUtil.format(PdfUAExceptionMessageConstants.HN_IS_SKIPPED, 3), pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("brokenHnMixedSequenceTest2", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "Div");
+            framework.assertBothFail("brokenHnMixedSequenceTest2", message, pdfUAConformance);
         }
     }
 
@@ -380,7 +392,6 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("hAndHnInDocumentTest3",
                     PdfUAExceptionMessageConstants.DOCUMENT_USES_BOTH_H_AND_HN, pdfUAConformance);
@@ -407,7 +418,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.addBeforeGenerationHook((pdfDocument)->{
+        framework.addBeforeGenerationHook((pdfDocument) -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
@@ -424,8 +435,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("rolemappingTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("rolemappingTest", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "header5");
+            framework.assertBothFail("rolemappingTest", message, pdfUAConformance);
         }
     }
 
@@ -446,7 +458,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
                 return h1;
             }
         });
-        framework.addBeforeGenerationHook((pdfDocument)->{
+        framework.addBeforeGenerationHook((pdfDocument) -> {
             if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
                 pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
@@ -463,8 +475,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("rolemappingValid", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("rolemappingValid", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "header5");
+            framework.assertBothFail("rolemappingValid", message, pdfUAConformance);
         }
     }
 
@@ -657,8 +670,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("hnInheritedSequenceTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("hnInheritedSequenceTest", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
+            framework.assertBothFail("hnInheritedSequenceTest", message, pdfUAConformance);
         }
     }
 
@@ -702,8 +716,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("hnInheritedSequenceTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("hnInheritedSequenceTest", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
+            framework.assertBothFail("hnInheritedSequenceTest", message, pdfUAConformance);
         }
     }
 
@@ -747,8 +762,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
+            framework.assertBothFail("hnCompareWithLastFromAnotherBranchTest2", message, pdfUAConformance);
         }
     }
 
@@ -783,8 +799,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
+            framework.assertBothFail("hnCompareWithLastFromAnotherBranchTest2", message, pdfUAConformance);
         }
     }
 
@@ -926,8 +943,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("hnMixedSequenceTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("hnMixedSequenceTest", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
+            framework.assertBothFail("hnMixedSequenceTest", message, pdfUAConformance);
         }
     }
 
@@ -957,8 +975,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("hnMixedSequenceTest2", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("hnMixedSequenceTest2", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
+            framework.assertBothFail("hnMixedSequenceTest2", message, pdfUAConformance);
         }
     }
 
@@ -992,8 +1011,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("hnMixedSequenceTest3", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-            framework.assertVeraPdfFail("hnMixedSequenceTest3", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "Div");
+            framework.assertBothFail("hnMixedSequenceTest3", message, pdfUAConformance);
         }
     }
 
@@ -1023,14 +1043,6 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             framework.assertBothFail("nonSequentialHeadersTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertBothValid("nonSequentialHeadersTest", pdfUAConformance);
-        }
-    }
-
-    private static PdfFont loadFont() {
-        try {
-            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
         }
     }
 }

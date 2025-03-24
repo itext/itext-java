@@ -126,15 +126,15 @@ public class PdfADocument extends PdfDocument {
 
         }
 
-        PdfAChecker checker = getCorrectCheckerFromConformance(getConformance().getAConformance());
+        PdfAChecker pdfAChecker = getCorrectCheckerFromConformance(getConformance().getAConformance());
         ValidationContainer validationContainer = new ValidationContainer();
+        validationContainer.addChecker(pdfAChecker);
         if (PdfVersion.PDF_2_0.compareTo(
                 getPdfVersionAccordingToConformance(getConformance().getAConformance())) <= 0) {
             validationContainer.addChecker(new Pdf20Checker(this));
         }
-        validationContainer.addChecker(checker);
         getDiContainer().register(ValidationContainer.class, validationContainer);
-        this.pdfPageFactory = new PdfAPageFactory(checker);
+        this.pdfPageFactory = new PdfAPageFactory(pdfAChecker);
         this.documentInfoHelper = new PdfADocumentInfoHelper(this);
         this.defaultFontStrategy = new PdfADefaultFontStrategy(this);
     }

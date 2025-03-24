@@ -65,6 +65,7 @@ public class ProhibitedTagRelationsResolver {
         updateRules20.put(generateKey(PdfAllowedTagRelations.NUMBERED_HEADER, StandardRoles.P), StandardRoles.SUB);
 
         updateRules20.put(generateKey(StandardRoles.FORM, StandardRoles.P), StandardRoles.LBL);
+        updateRules20.put(generateKey(StandardRoles.FORM, StandardRoles.FORM), StandardRoles.DIV);
         updateRules20.put(generateKey(StandardRoles.FORM, StandardRoles.SPAN), StandardRoles.LBL);
         updateRules20.put(generateKey(StandardRoles.FORM, PdfAllowedTagRelations.NUMBERED_HEADER), StandardRoles.LBL);
 

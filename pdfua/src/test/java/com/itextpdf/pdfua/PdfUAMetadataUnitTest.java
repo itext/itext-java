@@ -220,7 +220,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
         PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> checker.checkMetadata(catalog));
         Assertions.assertEquals(KernelExceptionMessageConstant.INVALID_METADATA_VALUE, e.getMessage());
-        e = Assertions.assertThrows(Pdf20ConformanceException.class, () -> pdfDocument.close());
+        e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDocument.close());
         Assertions.assertEquals(KernelExceptionMessageConstant.INVALID_METADATA_VALUE, e.getMessage());
     }
 

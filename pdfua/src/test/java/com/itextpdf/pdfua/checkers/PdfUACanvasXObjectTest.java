@@ -22,10 +22,12 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -239,9 +241,10 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("addToCanvasCorrectFontUnTaggedContent", pdfUAConformance);
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("addToCanvasCorrectFontUnTaggedContent", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "Div", "CONTENT");
+            framework.assertBothFail("addToCanvasCorrectFontUnTaggedContent", message, pdfUAConformance);
         }
     }
 
@@ -274,9 +277,10 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("addToCanvasCorrectFontArtifactUnTaggedContent", pdfUAConformance);
-            // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfFail("addToCanvasCorrectFontArtifactUnTaggedContent", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "Div", "CONTENT");
+            framework.assertBothFail("addToCanvasCorrectFontArtifactUnTaggedContent", message, pdfUAConformance);
         }
     }
 

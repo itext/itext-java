@@ -493,10 +493,10 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
         showText(chapter, page1);
 
         // VeraPDF: Non-standard structure type chapter is not mapped to a standard type
-        Exception e = Assertions.assertThrows(Pdf20ConformanceException.class, () -> pdfDoc.close());
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
         Assertions.assertEquals(MessageFormatUtil.format(
-                KernelExceptionMessageConstant.ROLE_IN_NAMESPACE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, "chapter",
-                namespace.getNamespaceName()), e.getMessage());
+                PdfUAExceptionMessageConstants.STRUCTURE_TYPE_IS_ROLE_MAPPED_TO_OTHER_STRUCTURE_TYPE_IN_THE_SAME_NAMESPACE,
+                namespace.getNamespaceName() , "Span"), e.getMessage());
     }
 
     @Test

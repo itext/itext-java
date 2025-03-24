@@ -24,6 +24,7 @@ package com.itextpdf.pdfua;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
+import com.itextpdf.kernel.exceptions.Pdf20ConformanceException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
@@ -174,7 +175,7 @@ public class UaValidationTestFramework {
 
     private void checkError(Exception e, String expectedMsg) {
         Assertions.assertNotNull(e);
-        if (!(e instanceof PdfUAConformanceException)) {
+        if (!(e instanceof PdfUAConformanceException) && !(e instanceof Pdf20ConformanceException)) {
             System.out.println(printStackTrace(e));
             Assertions.fail();
         }

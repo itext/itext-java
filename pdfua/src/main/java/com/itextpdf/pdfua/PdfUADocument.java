@@ -46,6 +46,9 @@ import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Creates a Pdf/UA document.
  * This class is an extension of PdfDocument and adds the necessary configuration for PDF/UA conformance.
@@ -53,8 +56,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfUADocument extends PdfDocument {
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfUADocument.class);
-
-    private IValidationChecker pdf20Checker;
 
     /**
      * Creates a PdfUADocument instance.
@@ -79,13 +80,12 @@ public class PdfUADocument extends PdfDocument {
 
         setupUAConfiguration(config);
         final ValidationContainer validationContainer = new ValidationContainer();
-        final PdfUAChecker checker = getCorrectCheckerFromConformance(config.getConformance());
-        if (pdf20Checker != null) {
-            validationContainer.addChecker(pdf20Checker);
+        final List<IValidationChecker> checkers = getCorrectCheckerFromConformance(config.getConformance());
+        for (IValidationChecker checker : checkers) {
+            validationContainer.addChecker(checker);
         }
-        validationContainer.addChecker(checker);
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
-        this.pdfPageFactory = new PdfUAPageFactory(checker);
+        this.pdfPageFactory = new PdfUAPageFactory(getUaChecker(checkers));
         getDiContainer().register(ProhibitedTagRelationsResolver.class, new ProhibitedTagRelationsResolver(this));
     }
 
@@ -117,13 +117,12 @@ public class PdfUADocument extends PdfDocument {
         setupUAConfiguration(config);
 
         final ValidationContainer validationContainer = new ValidationContainer();
-        final PdfUAChecker checker = getCorrectCheckerFromConformance(config.getConformance());
-        if (pdf20Checker != null) {
-            validationContainer.addChecker(pdf20Checker);
+        final List<IValidationChecker> checkers = getCorrectCheckerFromConformance(config.getConformance());
+        for (IValidationChecker checker : checkers) {
+            validationContainer.addChecker(checker);
         }
-        validationContainer.addChecker(checker);
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
-        this.pdfPageFactory = new PdfUAPageFactory(checker);
+        this.pdfPageFactory = new PdfUAPageFactory(getUaChecker(checkers));
     }
 
     private static PdfWriter configureWriterProperties(PdfWriter writer, PdfUAConformance uaConformance) {
@@ -143,6 +142,15 @@ public class PdfUADocument extends PdfDocument {
         return writer;
     }
 
+    private static PdfUAChecker getUaChecker(List<IValidationChecker> checkers) {
+        for (IValidationChecker checker : checkers) {
+            if (checker instanceof PdfUAChecker) {
+                return (PdfUAChecker) checker;
+            }
+        }
+        return null;
+    }
+
     private void setupUAConfiguration(PdfUAConfig config) {
         // Basic configuration.
         this.setTagged();
@@ -156,23 +164,22 @@ public class PdfUADocument extends PdfDocument {
      * Gets correct {@link PdfUAChecker} for specified PDF/UA conformance.
      *
      * @param uaConformance the conformance for which checker is needed
-     *
      * @return the correct PDF/UA checker
      */
-    private PdfUAChecker getCorrectCheckerFromConformance(PdfUAConformance uaConformance) {
-        PdfUAChecker checker;
+    private List<IValidationChecker> getCorrectCheckerFromConformance(PdfUAConformance uaConformance) {
+        List<IValidationChecker> checkers = new ArrayList<>();
         switch (uaConformance.getPart()) {
             case "1":
-                checker = new PdfUA1Checker(this);
+                checkers.add(new PdfUA1Checker(this));
                 break;
             case "2":
-                checker = new PdfUA2Checker(this);
-                pdf20Checker = new Pdf20Checker(this);
+                checkers.add(new PdfUA2Checker(this));
+                checkers.add(new Pdf20Checker(this));
                 break;
             default:
                 throw new IllegalArgumentException(
                         PdfUAExceptionMessageConstants.CANNOT_FIND_PDF_UA_CHECKER_FOR_SPECIFIED_CONFORMANCE);
         }
-        return checker;
+        return checkers;
     }
 }

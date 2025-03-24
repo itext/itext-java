@@ -1683,14 +1683,15 @@ public class PdfSigner {
         public PdfSignerDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
             super(reader, writer, properties);
             if (getConformance().isPdfA()) {
-                PdfAChecker checker = PdfADocument.getCorrectCheckerFromConformance(getConformance().getAConformance());
+                PdfAChecker pdfAChecker = PdfADocument
+                        .getCorrectCheckerFromConformance(getConformance().getAConformance());
                 ValidationContainer validationContainer = new ValidationContainer();
+                validationContainer.addChecker(pdfAChecker);
                 if ("4".equals(getConformance().getAConformance().getPart())) {
                     validationContainer.addChecker(new Pdf20Checker(this));
                 }
-                validationContainer.addChecker(checker);
                 getDiContainer().register(ValidationContainer.class, validationContainer);
-                this.pdfPageFactory = new PdfAPageFactory(checker);
+                this.pdfPageFactory = new PdfAPageFactory(pdfAChecker);
                 this.documentInfoHelper = new PdfADocumentInfoHelper(this);
                 this.defaultFontStrategy = new PdfADefaultFontStrategy(this);
                 setFlushUnusedObjects(true);

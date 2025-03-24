@@ -31,24 +31,34 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DottedBorder;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
+import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUALayoutTest extends ExtendedITextTest {
@@ -56,9 +66,30 @@ public class PdfUALayoutTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUALayoutTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
+    private UaValidationTestFramework framework;
+
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+    }
+
+    public static Object[] roleData() {
+        return new Object[]{
+                // Parent role, child role, expected exception
+                new Object[]{StandardRoles.FORM, StandardRoles.FORM, false},
+                new Object[]{StandardRoles.H1, StandardRoles.H1, true},
+                new Object[]{StandardRoles.P, StandardRoles.P, false},
+                new Object[]{StandardRoles.DIV, StandardRoles.P, false},
+        };
+    }
+
+    @BeforeEach
+    public void initializeFramework() {
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     @Test
@@ -93,6 +124,33 @@ public class PdfUALayoutTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    }
+
+    @ParameterizedTest
+    @MethodSource("roleData")
+    public void testOfIllegalRelations(String parentRole, String childRole, boolean expectException)
+            throws IOException {
+        //expectException should take into account repair mechanism
+        // in example P:P will be replaced as P:Span so no exceptions should be thrown
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Div div1 = new Div();
+                div1.getAccessibilityProperties().setRole(parentRole);
+                Div div2 = new Div();
+                div2.getAccessibilityProperties().setRole(childRole);
+
+                div1.add(div2);
+                return div1;
+            }
+        });
+        if (expectException) {
+            framework.assertBothFail("testOfIllegalRelation_" + parentRole + "_" + childRole, false,
+                    PdfUAConformance.PDF_UA_2);
+        } else {
+            framework.assertBothValid("testOfIllegalRelation_" + parentRole + "_" + childRole,
+                    PdfUAConformance.PDF_UA_2);
+        }
     }
 
     @Test
