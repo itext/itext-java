@@ -37,6 +37,7 @@ import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.ITagTreeIteratorHandler;
 import com.itextpdf.kernel.pdf.tagutils.PdfAllowedTagRelations;
@@ -183,7 +184,9 @@ public class Pdf20Checker implements IValidationChecker {
         private String resolveRole(PdfStructElem elem) {
             final IRoleMappingResolver parentResolver = tagStructureContext
                     .resolveMappingToStandardOrDomainSpecificRole(elem.getRole().getValue(), elem.getNamespace());
-            if (parentResolver == null) {
+            if (parentResolver == null ||
+                    (parentResolver.getNamespace() != null &&
+                            StandardNamespaces.MATH_ML.equals(parentResolver.getNamespace().getNamespaceName()))) {
                 return null;
             }
             return parentResolver.getRole();

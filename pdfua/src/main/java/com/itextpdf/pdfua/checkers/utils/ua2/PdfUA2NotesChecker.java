@@ -46,7 +46,7 @@ public final class PdfUA2NotesChecker {
      *
      * @param elem list structure element to check
      *
-     * @throws PdfUAConformanceException if document has incorrect tag structure for list
+     * @throws PdfUAConformanceException if document has incorrect tag structure for Note and FENote tags
      */
     public void checkStructElement(IStructureNode elem) {
         final String role = context.resolveToStandardRole(elem);

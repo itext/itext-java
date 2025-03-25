@@ -55,11 +55,11 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.layout.validation.context.LayoutValidationContext;
 import com.itextpdf.pdfua.checkers.utils.AnnotationCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.FormCheckUtil;
-import com.itextpdf.pdfua.checkers.utils.FormulaCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1FormulaChecker;
 import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1ListChecker;
 import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1NotesChecker;
@@ -266,7 +266,7 @@ public class PdfUA1Checker extends PdfUAChecker {
 
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
-        tagTreeIterator.addHandler(new FormulaCheckUtil.FormulaTagHandler(context));
+        tagTreeIterator.addHandler(new PdfUA1FormulaChecker.PdfUA1FormulaTagHandler(context));
         tagTreeIterator.addHandler(new PdfUA1NotesChecker.PdfUA1NotesTagHandler(context));
         tagTreeIterator.addHandler(new PdfUA1HeadingsChecker.PdfUA1HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));

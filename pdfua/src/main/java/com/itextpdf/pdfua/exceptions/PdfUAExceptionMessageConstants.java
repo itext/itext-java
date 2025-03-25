@@ -83,6 +83,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String LIST_NUMBERING_IS_NOT_SPECIFIED = "If Lbl structure elements are present, the " +
             "ListNumbering attribute shall be specified for the respective L structure element; " +
             "the value None shall not be used.";
+    public static final String MATH_NOT_CHILD_OF_FORMULA =
+            "The math structure type shall occur only as a child of a Formula structure element.";
     public static final String METADATA_SHALL_BE_PRESENT_IN_THE_CATALOG_DICTIONARY =
             "Metadata shall be present in the catalog dictionary";
     public static final String METADATA_SHALL_CONTAIN_DC_TITLE_ENTRY

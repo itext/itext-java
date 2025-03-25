@@ -32,7 +32,10 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 /**
  * Class that provides methods for checking PDF/UA compliance of Formula elements.
+ *
+ * @deprecated in favor of {@link com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1FormulaChecker}
  */
+@Deprecated
 public final class FormulaCheckUtil {
 
     /**

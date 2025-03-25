@@ -124,7 +124,7 @@ public class UaValidationTestFramework {
             sb.append("OnClosing no expection expected but was:\n").append(eClosing);
         }
         if (counter != 3) {
-            Assertions.fail("One of the checks did not throw\n\n" + sb.toString());
+            Assertions.fail("One of the checks threw an exception\n\n" + sb.toString());
         }
         Assertions.fail(sb.toString());
     }
@@ -143,6 +143,10 @@ public class UaValidationTestFramework {
 
     public void assertVeraPdfValid(String filename, PdfUAConformance pdfUAConformance) throws IOException {
         veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", false, pdfUAConformance);
+    }
+
+    public void assertITextFail(String filename, String expectedMsg, PdfUAConformance pdfUAConformance) {
+        checkError(checkErrorLayout("layout_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance), expectedMsg);
     }
 
     private String veraPdfResult(String filename, boolean failureExpected, PdfUAConformance pdfUAConformance)

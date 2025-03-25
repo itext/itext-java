@@ -47,6 +47,7 @@ import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormulaChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2ListChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2NotesChecker;
@@ -211,6 +212,7 @@ public class PdfUA2Checker extends PdfUAChecker {
         tagTreeIterator.addHandler(new PdfUA2ListChecker.PdfUA2ListHandler(context));
         tagTreeIterator.addHandler(new PdfUA2NotesChecker.PdfUA2NotesHandler(context));
         tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2FormulaChecker.PdfUA2FormulaTagHandler(context));
         tagTreeIterator.traverse();
     }
 }

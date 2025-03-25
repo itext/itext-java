@@ -59,8 +59,6 @@ import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAFormulaTest extends ExtendedITextTest {
-
-
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAFormulaTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
     private UaValidationTestFramework framework;
@@ -321,6 +319,51 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         Assertions.assertEquals(
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
                 e.getMessage());
+    }
+
+    @Test
+    public void mathStructureElementInvalidUA2Test() throws IOException {
+        framework.addSuppliers(new Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
+                p.getAccessibilityProperties().setNamespace(new PdfNamespace(StandardNamespaces.MATH_ML));
+                p.getAccessibilityProperties().setRole("math");
+                return p;
+            }
+        });
+
+        // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
+        //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
+        framework.assertVeraPdfValid("mathStructureElementInvalidUA2Test", PdfUAConformance.PDF_UA_2);
+        framework.assertITextFail("mathStructureElementInvalidUA2Test",
+                PdfUAExceptionMessageConstants.MATH_NOT_CHILD_OF_FORMULA, PdfUAConformance.PDF_UA_2);
+    }
+
+    @Test
+    public void mathStructureElementValidUA2Test() throws IOException {
+        framework.addAfterGenerationHook(pdfDocument -> {
+            PdfPage page = pdfDocument.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONT);
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+
+            TagTreePointer tagPointer = new TagTreePointer(pdfDocument);
+            tagPointer.setPageForTagging(pdfDocument.getFirstPage());
+            tagPointer.addTag(StandardRoles.FORMULA);
+            tagPointer.setNamespaceForNewTags(new PdfNamespace(StandardNamespaces.MATH_ML));
+            tagPointer.addTag("math");
+            canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12)
+                    .showText("E=mc²")
+                    .endText().closeTag();
+        });
+
+        framework.assertBothValid("mathStructureElementValidUA2Test", PdfUAConformance.PDF_UA_2);
     }
 
     private static PdfFont loadFont(String fontPath) {

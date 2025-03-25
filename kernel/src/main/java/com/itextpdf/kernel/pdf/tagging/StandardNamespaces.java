@@ -38,8 +38,10 @@ public final class StandardNamespaces {
     private static final Set<String> STD_STRUCT_NAMESPACE_1_7_TYPES;
     private static final Set<String> STD_STRUCT_NAMESPACE_2_0_TYPES;
 
-    // other namespaces
-    private static final String MATH_ML = "http://www.w3.org/1998/Math/MathML";
+    /**
+     * Specifies the name of MathML namespace. MathML is domain-specific namespace defined in PDF 2.0.
+     */
+    public static final String MATH_ML = "http://www.w3.org/1998/Math/MathML";
 
     /**
      * Specifies the name of the standard structure namespace for PDF 1.7
