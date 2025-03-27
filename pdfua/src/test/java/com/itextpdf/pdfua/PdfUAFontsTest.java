@@ -41,13 +41,13 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
 
 @Tag("IntegrationTest")
 public class PdfUAFontsTest extends ExtendedITextTest {
@@ -68,13 +68,13 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     }
 
     public static List<PdfUAConformance> data() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+        return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
     @MethodSource("data")
     public void tryToUseType0Cid0FontTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
@@ -96,7 +96,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void type0Cid2FontTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
@@ -115,7 +115,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void trueTypeFontTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
@@ -134,7 +134,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void trueTypeFontGlyphNotPresentTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT, "# simple 32 0020 00C5 1987", EmbeddingStrategy.PREFER_EMBEDDED);
@@ -163,7 +163,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void trueTypeFontWithDifferencesTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT, "# simple 32 0077 006f 0072 006c 0064", EmbeddingStrategy.PREFER_EMBEDDED);
@@ -185,13 +185,13 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         });
 
         // TODO DEVSIX-9017 Support PDF/UA rules for fonts.
-        framework.assertVeraPdfFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
+        framework.assertOnlyVeraPdfFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
     }
 
     @ParameterizedTest
     @MethodSource("data")
     public void tryToUseStandardFontsTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
@@ -213,7 +213,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void type1EmbeddedFontTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {

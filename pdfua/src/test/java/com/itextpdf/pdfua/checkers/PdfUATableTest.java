@@ -76,7 +76,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     }
 
     public static List<PdfUAConformance> data() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+        return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest

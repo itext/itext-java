@@ -44,7 +44,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-import java.util.Arrays;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -70,7 +69,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
     }
 
     public static java.util.List<PdfUAConformance> testSources() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+        return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
@@ -78,7 +77,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate =
             IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY), ignore = true)
     public void checkTableOfContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             PdfFont font = getFont();
             document.setFont(font);
@@ -111,7 +110,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate =
             IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY), ignore = true)
     public void checkTableOfContentsWithReferenceChildTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             addTableOfContentsWithRefInChild(pdfDocument, StandardRoles.REFERENCE);
         });
         framework.assertBothValid("checkTableOfContentsWithReferenceChildTest", pdfUAConformance);
@@ -122,7 +121,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate =
             IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY), ignore = true)
     public void checkTableOfContentsWithRefOnDivChildTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             addTableOfContentsWithRefInChild(pdfDocument, StandardRoles.DIV);
         });
         framework.assertBothValid("checkTableOfContentsWithRefOnDivChildTest", pdfUAConformance);
@@ -133,7 +132,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate =
             IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY), ignore = true)
     public void checkTableOfContentsWithRefOnArtifactChildTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             addTableOfContentsWithRefInChild(pdfDocument, StandardRoles.ARTIFACT);
         });
         if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
@@ -149,7 +148,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate =
             IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY), ignore = true)
     public void checkTableOfContentsWithRefOnGrandchildTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             addTableOfContentsWithRefInGrandchild(pdfDocument, StandardRoles.REFERENCE);
         });
         framework.assertBothValid("checkTableOfContentsWithRefOnGrandchildTest", pdfUAConformance);
@@ -160,7 +159,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate =
             IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY), ignore = true)
     public void checkTableOfContentsWithRefOnGrandchildTest2(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             addTableOfContentsWithRefInGrandchild(pdfDocument, StandardRoles.P);
         });
         framework.assertBothValid("checkTableOfContentsWithRefOnGrandchildTest2", pdfUAConformance);
@@ -171,7 +170,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate =
             IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY), ignore = true)
     public void checkTableOfContentsNoRefTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             PdfFont font = getFont();
             document.setFont(font);
@@ -205,7 +204,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate =
             IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY), ignore = true)
     public void checkInvalidStructureTableOfContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             PdfFont font = getFont();
             document.setFont(font);

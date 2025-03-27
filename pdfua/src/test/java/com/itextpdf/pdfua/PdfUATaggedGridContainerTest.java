@@ -27,7 +27,7 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
@@ -40,143 +40,136 @@ import com.itextpdf.layout.properties.grid.PointValue;
 import com.itextpdf.layout.properties.grid.TemplateValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.util.Arrays;
-import org.junit.jupiter.api.Assertions;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUATaggedGridContainerTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
+    private UaValidationTestFramework framework;
 
     @BeforeAll
     public static void setup() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-
-    @Test
-    public void simpleBorderBoxSizingTest() throws IOException {
-        String outputPdf = DESTINATION_FOLDER + "border.pdf";
-        PdfUATestPdfDocument doc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
-        Document document = new Document(doc);
-
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        document.setFont(font);
-
-        GridContainer gridContainer0 = createGridBoxWithText();
-        document.add(new Paragraph("BOX_SIZING: BORDER_BOX"));
-        gridContainer0.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
-        gridContainer0.setBorder(new SolidBorder(ColorConstants.BLACK, 20));
-        document.add(gridContainer0);
-
-        document.add(new Paragraph("BOX_SIZING: CONTENT_BOX"));
-        GridContainer gridContainer1 = createGridBoxWithText();
-        gridContainer1.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.CONTENT_BOX);
-        gridContainer1.setBorder(new SolidBorder(ColorConstants.BLACK, 20));
-
-        document.add(gridContainer1);
-
-        document.close();
-
-        validateOutputPdf(outputPdf);
+    @BeforeEach
+    public void initializeFramework() {
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
-    @Test
-    public void simpleMarginTest() throws IOException {
-        String outputPdf = DESTINATION_FOLDER + "margin.pdf";
-        PdfUATestPdfDocument doc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
-        Document document = new Document(doc);
-
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        document.setFont(font);
-
-        document.add(new Paragraph("Validate Grid Container with Margin "));
-        GridContainer gridContainer0 = createGridBoxWithText();
-        gridContainer0.setMarginTop(50);
-        gridContainer0.setMarginBottom(100);
-        gridContainer0.setMarginLeft(10);
-        gridContainer0.setMarginRight(10);
-        document.add(gridContainer0);
-
-        document.close();
-
-        validateOutputPdf(outputPdf);
+    public static List<PdfUAConformance> data() {
+        return UaValidationTestFramework.getConformanceList();
     }
 
-    @Test
-    public void simplePaddingTest() throws IOException {
-        String outputPdf = DESTINATION_FOLDER + "padding.pdf";
-        PdfUATestPdfDocument doc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
-        Document document = new Document(doc);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void simpleBorderBoxSizingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font = loadFont();
 
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        document.setFont(font);
+            document.setFont(font);
 
-        document.add(new Paragraph("Validate Grid Container with Padding"));
-        GridContainer gridContainer0 = createGridBoxWithText();
-        gridContainer0.setPaddingTop(50);
-        gridContainer0.setPaddingBottom(100);
-        gridContainer0.setPaddingLeft(10);
-        gridContainer0.setPaddingRight(10);
-        document.add(gridContainer0);
+            GridContainer gridContainer0 = createGridBoxWithText();
+            document.add(new Paragraph("BOX_SIZING: BORDER_BOX"));
+            gridContainer0.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.BORDER_BOX);
+            gridContainer0.setBorder(new SolidBorder(ColorConstants.BLACK, 20));
+            document.add(gridContainer0);
 
-        document.close();
+            document.add(new Paragraph("BOX_SIZING: CONTENT_BOX"));
+            GridContainer gridContainer1 = createGridBoxWithText();
+            gridContainer1.setProperty(Property.BOX_SIZING, BoxSizingPropertyValue.CONTENT_BOX);
+            gridContainer1.setBorder(new SolidBorder(ColorConstants.BLACK, 20));
 
-        validateOutputPdf(outputPdf);
+            document.add(gridContainer1);
+        });
+        framework.assertVeraPdfValid("border", pdfUAConformance);
     }
 
-    @Test
-    public void simpleBackgroundTest() throws IOException {
-        String outputPdf = DESTINATION_FOLDER + "background.pdf";
-        PdfUATestPdfDocument doc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
-        Document document = new Document(doc);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void simpleMarginTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font = loadFont();
+            document.setFont(font);
 
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        document.setFont(font);
-
-        document.add(new Paragraph("Validate Grid Container with Background"));
-        GridContainer gridContainer0 = createGridBoxWithText();
-        gridContainer0.setBackgroundColor(ColorConstants.RED);
-        document.add(gridContainer0);
-
-        document.close();
-
-        validateOutputPdf(outputPdf);
+            document.add(new Paragraph("Validate Grid Container with Margin "));
+            GridContainer gridContainer0 = createGridBoxWithText();
+            gridContainer0.setMarginTop(50);
+            gridContainer0.setMarginBottom(100);
+            gridContainer0.setMarginLeft(10);
+            gridContainer0.setMarginRight(10);
+            document.add(gridContainer0);
+        });
+        framework.assertVeraPdfValid("margin", pdfUAConformance);
     }
 
-    @Test
-    public void emptyGridContainerTest() throws IOException {
-        String outputPdf = DESTINATION_FOLDER + "emptyGridContainer.pdf";
-        PdfUATestPdfDocument doc = new PdfUATestPdfDocument(new PdfWriter(outputPdf));
-        Document document = new Document(doc);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void simplePaddingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font = loadFont();
+            document.setFont(font);
 
-        GridContainer gridContainer0 = new GridContainer();
-
-        gridContainer0.setProperty(Property.COLUMN_GAP_BORDER, null);
-        gridContainer0.setBackgroundColor(ColorConstants.RED);
-        gridContainer0.setProperty(Property.GRID_TEMPLATE_COLUMNS,
-                Arrays.asList(
-                        (TemplateValue) new PointValue(150.0f),
-                        (TemplateValue) new PointValue(150.0f),
-                        (TemplateValue) new PointValue(150.0f)));
-        gridContainer0.setProperty(Property.COLUMN_GAP, 12.0f);
-        document.add(gridContainer0);
-
-        document.close();
-
-        validateOutputPdf(outputPdf);
+            document.add(new Paragraph("Validate Grid Container with Padding"));
+            GridContainer gridContainer0 = createGridBoxWithText();
+            gridContainer0.setPaddingTop(50);
+            gridContainer0.setPaddingBottom(100);
+            gridContainer0.setPaddingLeft(10);
+            gridContainer0.setPaddingRight(10);
+            document.add(gridContainer0);
+        });
+        framework.assertVeraPdfValid("padding", pdfUAConformance);
     }
 
-    private void validateOutputPdf(String outputPdf) {
-        Assertions.assertNull(new VeraPdfValidator().validate(outputPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    @ParameterizedTest
+    @MethodSource("data")
+    public void simpleBackgroundTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font = loadFont();
+            document.setFont(font);
+
+            document.add(new Paragraph("Validate Grid Container with Background"));
+            GridContainer gridContainer0 = createGridBoxWithText();
+            gridContainer0.setBackgroundColor(ColorConstants.RED);
+            document.add(gridContainer0);
+        });
+        framework.assertVeraPdfValid("background", pdfUAConformance);
     }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void emptyGridContainerTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            GridContainer gridContainer0 = new GridContainer();
+
+            gridContainer0.setProperty(Property.COLUMN_GAP_BORDER, null);
+            gridContainer0.setBackgroundColor(ColorConstants.RED);
+            gridContainer0.setProperty(Property.GRID_TEMPLATE_COLUMNS,
+                    Arrays.asList(
+                            (TemplateValue) new PointValue(150.0f),
+                            (TemplateValue) new PointValue(150.0f),
+                            (TemplateValue) new PointValue(150.0f)));
+            gridContainer0.setProperty(Property.COLUMN_GAP, 12.0f);
+            document.add(gridContainer0);
+        });
+        framework.assertVeraPdfValid("emptyGridContainer", pdfUAConformance);
+    }
+
 
     private GridContainer createGridBoxWithText() {
         GridContainer gridContainer0 = new GridContainer();
@@ -247,5 +240,13 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
 
         gridContainer0.add(div13);
         return gridContainer0;
+    }
+
+    private static PdfFont loadFont(){
+        try {
+            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

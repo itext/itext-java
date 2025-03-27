@@ -59,7 +59,6 @@ import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -91,7 +90,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
     }
 
     public static List<PdfUAConformance> data() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+        return UaValidationTestFramework.getConformanceList();
     }
 
     @Test

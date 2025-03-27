@@ -25,7 +25,6 @@ package com.itextpdf.pdfua;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.kernel.exceptions.Pdf20ConformanceException;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;

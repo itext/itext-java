@@ -43,7 +43,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +68,7 @@ public class PdfUAListTest extends ExtendedITextTest {
     }
 
     public static List<PdfUAConformance> testSources() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+        return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
@@ -163,7 +162,7 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void noListNumberingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
             PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
@@ -184,7 +183,7 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void noneListNumberingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
             PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
@@ -211,7 +210,7 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void noListNumberingNoLblTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
             PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
@@ -284,7 +283,7 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void severalListNumberingsFirstInvalidTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
             PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :

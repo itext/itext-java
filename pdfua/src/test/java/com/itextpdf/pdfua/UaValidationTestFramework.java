@@ -39,6 +39,7 @@ import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line 
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -141,6 +142,12 @@ public class UaValidationTestFramework {
         veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
     }
 
+    public void assertOnlyVeraPdfFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
+        veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
+        Exception e = checkErrorLayout("layout_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
+        Assertions.assertNull(e);
+    }
+
     public void assertVeraPdfValid(String filename, PdfUAConformance pdfUAConformance) throws IOException {
         veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", false, pdfUAConformance);
     }
@@ -229,7 +236,7 @@ public class UaValidationTestFramework {
         return e.toString();
     }
 
-    private PdfDocument createPdfDocument(String filename, PdfUAConformance pdfUAConformance) throws IOException {
+    private static PdfDocument createPdfDocument(String filename, PdfUAConformance pdfUAConformance) throws IOException {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             return new PdfUATestPdfDocument(new PdfWriter(filename));
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
@@ -240,7 +247,7 @@ public class UaValidationTestFramework {
         }
     }
 
-    private PdfDocument createPdfDocument(String inputFile, String outputFile, PdfUAConformance pdfUAConformance)
+    private static PdfDocument createPdfDocument(String inputFile, String outputFile, PdfUAConformance pdfUAConformance)
             throws IOException {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             return new PdfUATestPdfDocument(new PdfReader(inputFile), new PdfWriter(outputFile));
@@ -258,5 +265,9 @@ public class UaValidationTestFramework {
 
     private static String getUAConformance(PdfUAConformance conformance) {
         return MessageFormatUtil.format("_UA_{0}", conformance.getPart());
+    }
+
+    public static List<PdfUAConformance> getConformanceList() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
     }
 }

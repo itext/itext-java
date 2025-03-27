@@ -39,7 +39,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,14 +66,14 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
     }
 
     public static List<PdfUAConformance> data() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+        return UaValidationTestFramework.getConformanceList();
     }
 
 
     @ParameterizedTest
     @MethodSource("data")
     public void pdfuaWithEmbeddedFilesWithoutFTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
                     pdfDocument, "file".getBytes(), "description", "file.txt", null, null, null);
             PdfDictionary fsDict = (PdfDictionary) fs.getPdfObject();
@@ -94,7 +93,7 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void pdfuaWithEmbeddedFilesWithoutUFTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             pdfDocument.addNewPage();
             PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
                     pdfDocument, "file".getBytes(), "description", "file.txt", null, null, null);

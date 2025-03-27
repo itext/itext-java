@@ -40,17 +40,13 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
-import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -75,7 +71,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     }
 
     public static List<PdfUAConformance> data() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+        return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
@@ -174,15 +170,9 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("layout06",
-                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
-                    false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("layout06", pdfUAConformance);
-        }
+        framework.assertBothFail("layout06",
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
+                false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -197,14 +187,9 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("layout07",
-                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
-                    false, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertVeraPdfFail("layout07", pdfUAConformance);
-        }
+        framework.assertBothFail("layout07",
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
+                false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -219,7 +204,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
                 pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
@@ -244,7 +229,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.addBeforeGenerationHook((pdfDocument) -> {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
                 pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
@@ -263,63 +248,69 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         }
     }
 
-    @Test
-    public void canvasTest01() throws IOException {
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void canvasTest01(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
 
-        PdfFont font = PdfFontFactory.createFont(FONT);
+            PdfFont font = loadFont(FONT);
 
-        TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.setPageForTagging(document.getFirstPage());
-        tagPointer.addTag(StandardRoles.FORMULA);
-        canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12).showText("E=mc²")
-                .endText().closeTag();
-        Assertions.assertThrows(PdfUAConformanceException.class, () -> {
-            document.close();
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            tagPointer.setPageForTagging(pdfDoc.getFirstPage());
+            tagPointer.addTag(StandardRoles.FORMULA);
+            canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12).showText("E=mc²")
+                    .endText().closeTag();
         });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("canvasTest01", PdfUAExceptionMessageConstants.FORMULA_SHALL_HAVE_ALT, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("canvasTest01", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void canvasTest02() throws IOException {
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void canvasTest02(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
 
-        PdfFont font = PdfFontFactory.createFont(FONT);
+            PdfFont font = loadFont(FONT);
 
-        TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.setPageForTagging(document.getFirstPage());
-        tagPointer.addTag(StandardRoles.FORMULA);
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            tagPointer.setPageForTagging(pdfDoc.getFirstPage());
+            tagPointer.addTag(StandardRoles.FORMULA);
 
-        tagPointer.getProperties().setActualText("Einstein smart boy");
-        canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12).showText("E=mc²")
-                .endText().closeTag();
-        AssertUtil.doesNotThrow(() -> {
-            document.close();
+            tagPointer.getProperties().setActualText("Einstein smart boy");
+            canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12).showText("E=mc²")
+                    .endText().closeTag();
         });
+        framework.assertBothValid("canvasTest02", pdfUAConformance);
     }
 
-    @Test
-    public void canvasTest03() throws IOException {
-        PdfDocument document = new PdfUATestPdfDocument(
-                new PdfWriter(new ByteArrayOutputStream()));
-        PdfPage page = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void canvasTest03(PdfUAConformance pdfUAConformance) {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfDocument document = new PdfUATestPdfDocument(
+                    new PdfWriter(new ByteArrayOutputStream()));
+            PdfPage page = document.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
 
-        PdfFont font = PdfFontFactory.createFont(FONT);
+            PdfFont font = loadFont(FONT);
 
-        TagTreePointer tagPointer = new TagTreePointer(document);
-        tagPointer.setPageForTagging(document.getFirstPage());
-        tagPointer.addTag(StandardRoles.FORMULA);
-        canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12);
-        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> canvas.showText("⫊"));
-        Assertions.assertEquals(
+            TagTreePointer tagPointer = new TagTreePointer(document);
+            tagPointer.setPageForTagging(document.getFirstPage());
+            tagPointer.addTag(StandardRoles.FORMULA);
+            canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12);
+            canvas.showText("⫊");
+        });
+        framework.assertITextFail("canvasTest03",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
-                e.getMessage());
+                pdfUAConformance);
     }
 
     @Test
@@ -347,12 +338,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
-            PdfFont font = null;
-            try {
-                font = PdfFontFactory.createFont(FONT);
-            } catch (IOException e) {
-                throw new RuntimeException(e.getMessage());
-            }
+            PdfFont font = loadFont(FONT);
 
             TagTreePointer tagPointer = new TagTreePointer(pdfDocument);
             tagPointer.setPageForTagging(pdfDocument.getFirstPage());

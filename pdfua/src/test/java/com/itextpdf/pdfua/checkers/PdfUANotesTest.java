@@ -51,7 +51,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -78,7 +77,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
     }
 
     public static List<PdfUAConformance> data() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+        return UaValidationTestFramework.getConformanceList();
     }
 
     private static String getRoleBasedOnConformance(PdfUAConformance pdfUAConformance) {
@@ -107,7 +106,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
         String message = Assertions.assertThrows(PdfException.class,
                 // It doesn't matter what we call here.
                 // Test fails on document creation and verapdf validation isn't triggered anyway.
-                () -> framework.assertVeraPdfFail("addFENoteWithoutReferences", pdfUAConformance)).getMessage();
+                () -> framework.assertOnlyVeraPdfFail("addFENoteWithoutReferences", pdfUAConformance)).getMessage();
         String expectedExceptionMessage = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                 MessageFormatUtil.format(
                         KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, StandardRoles.FENOTE) :
