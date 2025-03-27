@@ -58,6 +58,8 @@ public class ProhibitedTagRelationsResolver {
         updateRules17.put(generateKey(StandardRoles.H, StandardRoles.P), StandardRoles.SPAN);
         updateRules17.put(generateKey(StandardRoles.P, StandardRoles.P), StandardRoles.SPAN);
         updateRules17.put(generateKey(StandardRoles.P, StandardRoles.DIV), StandardRoles.SPAN);
+        updateRules17.put(generateKey(StandardRoles.TOC, StandardRoles.SPAN), StandardRoles.CAPTION);
+        updateRules17.put(generateKey(StandardRoles.TOCI, StandardRoles.SPAN), StandardRoles.LBL);
 
 
         //PDF 2.0 rules
@@ -80,6 +82,9 @@ public class ProhibitedTagRelationsResolver {
         updateRules20.put(generateKey(StandardRoles.SUB, StandardRoles.P), StandardRoles.SPAN);
         updateRules20.put(generateKey(StandardRoles.SUB, StandardRoles.SUB), StandardRoles.SPAN);
         updateRules20.put(generateKey(StandardRoles.SUB, StandardRoles.DIV), StandardRoles.SPAN);
+
+        updateRules20.put(generateKey(StandardRoles.TOC, StandardRoles.SPAN), StandardRoles.CAPTION);
+        updateRules20.put(generateKey(StandardRoles.TOCI, StandardRoles.SPAN), StandardRoles.LBL);
 
         updateRules20.put(generateKey(StandardRoles.DOCUMENT, StandardRoles.SPAN), StandardRoles.P);
 

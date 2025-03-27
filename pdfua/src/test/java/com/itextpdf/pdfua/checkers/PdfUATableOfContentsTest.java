@@ -222,8 +222,7 @@ public class PdfUATableOfContentsTest extends ExtendedITextTest {
             tocTitle.add(tociElement);
             document.add(tocTitle);
         });
-        // TODO DEVSIX-8953 Introduce PDF 2.0 tag structure checker
-        framework.assertVeraPdfFail("invalidStructureTableOfContentsTest", pdfUAConformance);
+        framework.assertBothValid("invalidStructureTableOfContentsTest", pdfUAConformance);
     }
 
     private static void addTableOfContentsWithRefInChild(PdfDocument pdfDocument, String childRole) {
