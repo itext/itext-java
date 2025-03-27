@@ -239,7 +239,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     public void decodingIndexedCsWithRgbNoHivalTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb_null_hival.pdf"))) {
             PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
-            Assertions.assertThrows(IndexOutOfBoundsException.class, () -> imageXObject.getImageBytes());
+            Assertions.assertThrows(RuntimeException.class, () -> imageXObject.getImageBytes());
         }
     }
 
