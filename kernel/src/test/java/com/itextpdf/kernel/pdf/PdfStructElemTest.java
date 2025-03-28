@@ -40,6 +40,7 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -51,8 +52,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -61,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfStructElemTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStructElemTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStructElemTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfStructElemTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -33,6 +33,7 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -48,7 +49,7 @@ import org.junit.jupiter.api.Test;
 public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/css/SvgStyleResolver/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/css/SvgStyleResolver/";
 
     @BeforeAll
     public static void beforeClass() {

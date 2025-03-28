@@ -39,16 +39,18 @@ import com.itextpdf.layout.hyphenation.HyphenationConfig;
 import com.itextpdf.layout.hyphenation.Hyphenator;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class HyphenateLayoutTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/HyphenateLayoutTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/HyphenateLayoutTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/HyphenateLayoutTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

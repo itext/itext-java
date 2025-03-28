@@ -32,6 +32,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -47,14 +48,14 @@ import java.security.cert.CertificateException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleIntegrationTest")
 public class PdfDecryptingTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/kernel/crypto/PdfDecryptingTest/certs/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/crypto/PdfDecryptingTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/crypto/PdfDecryptingTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/crypto/PdfDecryptingTest/";
     private static final String PROVIDER_NAME = BouncyCastleFactoryCreator.getFactory().getProviderName();
 

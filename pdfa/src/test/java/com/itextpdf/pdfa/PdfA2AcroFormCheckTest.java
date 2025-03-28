@@ -35,22 +35,21 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
 public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA2AcroFormCheckTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2AcroFormCheckTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2AcroFormCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

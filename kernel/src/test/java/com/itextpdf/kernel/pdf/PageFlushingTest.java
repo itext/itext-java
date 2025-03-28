@@ -45,6 +45,7 @@ import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.ValidationType;
 import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -58,7 +59,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PageFlushingTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PageFlushingTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PageFlushingTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PageFlushingTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -22,14 +22,14 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.actions.sequence.SequenceIdManager;
-import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -51,6 +51,7 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.testutil.TestConfigurationEvent;
 import com.itextpdf.layout.testutil.TestProductEvent;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -59,15 +60,15 @@ import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class CanvasTest extends ExtendedITextTest {
     private static final TestConfigurationEvent CONFIGURATION_ACCESS = new TestConfigurationEvent();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/CanvasTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/CanvasTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/CanvasTest/";
 
     @BeforeAll
     public static void beforeClass() {

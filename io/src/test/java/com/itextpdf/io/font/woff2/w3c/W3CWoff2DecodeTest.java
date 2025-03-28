@@ -23,15 +23,16 @@
 package com.itextpdf.io.font.woff2.w3c;
 
 import com.itextpdf.io.font.woff2.Woff2DecodeTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.itextpdf.test.TestUtil;
 
 import java.io.File;
 import java.io.IOException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class W3CWoff2DecodeTest extends Woff2DecodeTest{
     private static final String baseSourceFolder = "./src/test/resources/com/itextpdf/io/font/woff2/w3c/";
-    private static final String baseDestinationFolder = "./target/test/com/itextpdf/io/font/woff2/w3c/";
+    private static final String baseDestinationFolder = TestUtil.getOutputPath() + "/io/font/woff2/w3c/";
 
     protected abstract String getFontName();
 

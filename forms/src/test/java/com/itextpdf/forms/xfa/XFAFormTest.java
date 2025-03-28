@@ -31,19 +31,20 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Node;
 
 @Tag("IntegrationTest")
 public class XFAFormTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/xfa/XFAFormTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/forms/xfa/XFAFormTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/xfa/XFAFormTest/";
     public static final String XML = sourceFolder + "xfa.xml";
 
     @BeforeAll

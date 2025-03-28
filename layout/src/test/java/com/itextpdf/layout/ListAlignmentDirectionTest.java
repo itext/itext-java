@@ -36,6 +36,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.BaseDirection;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -52,7 +53,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class ListAlignmentDirectionTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/ListAlignmentDirectionTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/ListAlignmentDirectionTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/ListAlignmentDirectionTest/";
 
     private static final String PARAMETERS_NAME_PATTERN = "item-text-align: {0}; item-direction: {1}, "
             + "list-text-align: {2}; list-direction: {3}";

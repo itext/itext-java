@@ -25,6 +25,7 @@ package com.itextpdf.svg.css;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class CssVariableTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/CssVariableTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/CssVariableTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/CssVariableTest/";
 
     @BeforeAll
     public static void beforeClass() {

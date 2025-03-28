@@ -24,18 +24,19 @@ package com.itextpdf.svg.jfreesvg;
 
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 
 @Tag("IntegrationTest")
 public class JFreeSvgTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/JFreeSvgTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/JFreeSvgTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/JFreeSvgTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -25,6 +25,7 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -36,7 +37,7 @@ import org.junit.jupiter.api.Test;
 public class TextSvgBranchRendererIntegrationTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/TextSvgBranchRendererIntegrationTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/TextSvgBranchRendererIntegrationTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/TextSvgBranchRendererIntegrationTest/";
 
     @BeforeAll
     public static void beforeClass() {

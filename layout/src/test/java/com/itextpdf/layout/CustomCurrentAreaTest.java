@@ -34,16 +34,17 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class CustomCurrentAreaTest extends ExtendedITextTest {
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/CustomCurrentAreaTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/CustomCurrentAreaTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/CustomCurrentAreaTest/";
 
     @BeforeAll

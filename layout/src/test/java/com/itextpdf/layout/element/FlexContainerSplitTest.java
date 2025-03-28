@@ -31,22 +31,30 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
-import com.itextpdf.layout.properties.*;
+import com.itextpdf.layout.properties.AlignmentPropertyValue;
+import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.FlexDirectionPropertyValue;
+import com.itextpdf.layout.properties.FlexWrapPropertyValue;
+import com.itextpdf.layout.properties.JustifyContent;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FlexContainerSplitTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FlexContainerSplitTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/FlexContainerSplitTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/FlexContainerSplitTest/";
 
     private static final String VERY_LONG_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do "
             + "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud "

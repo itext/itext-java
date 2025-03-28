@@ -38,19 +38,20 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldMultilineTextTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldMultilineTextTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldMultilineTextTest/";
 
     @BeforeAll

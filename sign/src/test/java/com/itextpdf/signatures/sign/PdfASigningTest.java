@@ -50,7 +50,8 @@ import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator;  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -74,7 +75,7 @@ public class PdfASigningTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfASigningTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfASigningTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PdfASigningTest/";
     public static final String keystorePath = "./src/test/resources/com/itextpdf/signatures/certs/signCertRsa01.pem";
     public static final char[] password = "testpassphrase".toCharArray();
     public static final String FONT = "./src/test/resources/com/itextpdf/signatures/font/FreeSans.ttf";

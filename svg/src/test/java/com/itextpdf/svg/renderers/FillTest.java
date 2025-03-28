@@ -26,21 +26,21 @@ import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FillTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/FillTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/FillTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/FillTest/";
 
     @BeforeAll
     public static void beforeClass() {

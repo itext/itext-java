@@ -22,20 +22,17 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
@@ -49,34 +46,32 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import java.io.IOException;
-import java.util.Set;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
 
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/parser/PdfCanvasProcessorTest/";
 
     @BeforeAll
     public static void setUp() {

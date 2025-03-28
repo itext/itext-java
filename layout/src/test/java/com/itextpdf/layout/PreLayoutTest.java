@@ -37,20 +37,21 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.layout.renderer.TextRenderer;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PreLayoutTest extends ExtendedITextTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/PreLayoutTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/PreLayoutTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/PreLayoutTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -41,6 +41,7 @@ import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.xobject.SvgImageXObject;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -53,7 +54,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class SvgImageRendererTest extends SvgIntegrationTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/SvgImageRendererTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/SvgImageRendererTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/SvgImageRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

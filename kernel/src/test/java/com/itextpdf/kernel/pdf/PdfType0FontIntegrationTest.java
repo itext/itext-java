@@ -27,17 +27,18 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfType0FontIntegrationTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfType0FontIntegrationTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfType0FontIntegrationTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfType0FontIntegrationTest/";
 

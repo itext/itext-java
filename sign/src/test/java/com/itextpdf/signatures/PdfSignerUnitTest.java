@@ -61,6 +61,7 @@ import com.itextpdf.signatures.PdfSigner.ISignatureEvent;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -87,7 +88,7 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
     private static final byte[] USER = "user".getBytes();
 
     private static final String PDFA_RESOURCES = "./src/test/resources/com/itextpdf/signatures/pdfa/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/PdfSignerUnitTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/PdfSignerUnitTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();

@@ -43,6 +43,7 @@ import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -66,7 +67,7 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/AnnotationsSigningTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/AnnotationsSigningTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/AnnotationsSigningTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();

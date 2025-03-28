@@ -31,18 +31,19 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 import com.itextpdf.test.utils.FileUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfUAXfaTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAXfaTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAXfaTest/";
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUAXfaTest/";
 

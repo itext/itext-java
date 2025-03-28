@@ -29,18 +29,19 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfFreeTextAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PageSizeTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/geom/PageSizeTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/geom/PageSizeTest/";
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/geom/PageSizeTest/";
 

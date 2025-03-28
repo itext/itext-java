@@ -36,24 +36,41 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.properties.*;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.InlineVerticalAlignment;
+import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
+import com.itextpdf.layout.properties.LineHeight;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class AlignmentTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/AlignmentTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/AlignmentTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/AlignmentTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

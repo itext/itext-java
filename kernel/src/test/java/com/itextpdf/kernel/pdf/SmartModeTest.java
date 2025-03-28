@@ -30,17 +30,19 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
+
 import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class SmartModeTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/SmartModeTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/SmartModeTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/SmartModeTest/";
 
     @BeforeAll

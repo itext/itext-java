@@ -22,7 +22,7 @@
  */
 package com.itextpdf.test;
 
-import com.itextpdf.test.pdfa.VeraPdfValidator;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 import com.itextpdf.test.utils.FileUtil;
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Tag;
 public class VeraPdfLoggerValidationTest extends ExtendedITextTest {
 
     static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdftest/cmp/VeraPdfLoggerValidationTest/";
-    static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdftest/VeraPdfLoggerValidationTest/";
+    static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdftest/VeraPdfLoggerValidationTest/";
 
     @BeforeAll
     public static void beforeClass() {

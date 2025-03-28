@@ -24,6 +24,7 @@ package com.itextpdf.svg.css;
 
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,7 +35,7 @@ import org.junit.jupiter.api.Test;
 // TODO DEVSIX-2263 SVG: Update cmp files
 public class MediaTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/MediaTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/MediaTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/MediaTest/";
 
     @BeforeAll
     public static void beforeClass() {

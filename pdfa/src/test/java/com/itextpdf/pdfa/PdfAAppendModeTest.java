@@ -35,21 +35,21 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfAAppendModeTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String testDirName = "PdfAAppendModeTest/";
     public static final String cmpFolder = sourceFolder + "cmp/" + testDirName;
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/" + testDirName;
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/" + testDirName;
 
     @BeforeAll
     public static void beforeClass() {

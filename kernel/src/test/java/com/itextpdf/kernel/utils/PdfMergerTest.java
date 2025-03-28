@@ -30,6 +30,7 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -41,15 +42,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 @Tag("IntegrationTest")
 public class PdfMergerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfMergerTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfMergerTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/utils/PdfMergerTest/";
 
     @BeforeAll
     public static void beforeClass() {

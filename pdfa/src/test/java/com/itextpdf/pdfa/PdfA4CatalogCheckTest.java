@@ -50,7 +50,8 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -66,7 +67,7 @@ import org.junit.jupiter.api.Test;
 public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA4CatalogCheckTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA4CatalogCheckTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA4CatalogCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

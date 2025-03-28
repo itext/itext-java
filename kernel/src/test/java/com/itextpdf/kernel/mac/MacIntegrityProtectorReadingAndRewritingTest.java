@@ -30,7 +30,6 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.mac.MacProperties.MacDigestAlgorithm;
-import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -42,6 +41,7 @@ import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -59,7 +59,7 @@ import org.junit.jupiter.api.Test;
 @Tag("BouncyCastleIntegrationTest")
 public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/mac/MacIntegrityProtectorReadingAndRewritingTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/mac/MacIntegrityProtectorReadingAndRewritingTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/mac/MacIntegrityProtectorReadingAndRewritingTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/kernel/mac/MacIntegrityProtectorReadingAndRewritingTest/certs/";
     private static final byte[] PASSWORD = "123".getBytes();
     private static final String PROVIDER_NAME = BouncyCastleFactoryCreator.getFactory().getProviderName();

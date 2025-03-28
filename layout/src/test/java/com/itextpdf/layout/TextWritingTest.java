@@ -43,9 +43,9 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -55,7 +55,7 @@ import org.junit.jupiter.api.Test;
 public class TextWritingTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TextWritingTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TextWritingTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/TextWritingTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

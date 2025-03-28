@@ -25,25 +25,24 @@ package com.itextpdf.kernel.pdf.copy;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfDestinationCopyingTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfDestinationCopyingTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfDestinationCopyingTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf"
             + "/PdfDestinationCopyingTest/";
     public static final String TARGET_DOC = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDestinationCopyingTest"

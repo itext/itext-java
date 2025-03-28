@@ -32,9 +32,9 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.xml.parsers.ParserConfigurationException;
@@ -48,7 +48,7 @@ import org.xml.sax.SAXException;
 public class TaggedPdfReaderToolTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/utils/TaggedPdfReaderToolTest/";
 
     @BeforeAll
     public static void beforeClass() {

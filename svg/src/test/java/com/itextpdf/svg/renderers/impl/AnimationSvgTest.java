@@ -27,21 +27,22 @@ import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 
 @Tag("IntegrationTest")
 public class AnimationSvgTest extends SvgIntegrationTest {
 
   private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/AnimationSvgTest/";
-  private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/AnimationSvgTest/";
+  private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/AnimationSvgTest/";
 
   private ISvgConverterProperties properties;
 

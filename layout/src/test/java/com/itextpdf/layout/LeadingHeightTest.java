@@ -42,20 +42,21 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class LeadingHeightTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/LeadingHeightTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/LeadingHeightTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/LeadingHeightTest/";
 
     private static final int HEIGHT_LESS_THAN_REQUIRED = -2;
     private static final int HEIGHT_IS_NOT_SET = -1;

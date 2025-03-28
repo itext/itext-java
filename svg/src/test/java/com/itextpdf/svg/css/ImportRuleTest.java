@@ -30,6 +30,7 @@ import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -41,7 +42,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ImportRuleTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/ImportRuleTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/ImportRuleTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/ImportRuleTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -40,21 +40,22 @@ import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleIntegrationTest")
 public class PdfEncryptionTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfEncryptionTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfEncryptionTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfEncryptionTest/";
 
     /**
      * User password.

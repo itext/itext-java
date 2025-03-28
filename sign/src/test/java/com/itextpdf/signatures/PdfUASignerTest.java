@@ -45,7 +45,8 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -67,7 +68,7 @@ import org.slf4j.LoggerFactory;
 public class PdfUASignerTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/PdfUASignerTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/PdfUASignerTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/signatures/font/FreeSans.ttf";
     private static final Logger logger = LoggerFactory.getLogger(PdfUASignerTest.class);
 

@@ -30,19 +30,20 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class
 PdfFormCopyWithGotoTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/PdfFormCopyWithGotoTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/PdfFormCopyWithGotoTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/PdfFormCopyWithGotoTest/";
     public static final String TARGET_DOC = SOURCE_FOLDER + "Target.pdf";
 
     public static final String SOURCE_WIDGET_ACTION_WITH_DESTINATION_EXPLICIT =

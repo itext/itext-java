@@ -46,6 +46,7 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -67,7 +68,7 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesSignerTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesSignerTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PdfPadesSignerTest/";
     private static final char[] password = "testpassphrase".toCharArray();
 
     private static final boolean FIPS_MODE = "BCFIPS".equals(FACTORY.getProviderName());

@@ -39,20 +39,21 @@ import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ContinuousContainerTest extends ExtendedITextTest {
 
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/ContinuousContainerTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/ContinuousContainerTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/ContinuousContainerTest/";
 
     private static final float DEFAULT_PADDING = 40F;
     private static final float DEFAULT_MARGIN = 100F;

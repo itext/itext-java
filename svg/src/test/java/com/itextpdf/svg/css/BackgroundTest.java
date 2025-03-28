@@ -23,11 +23,11 @@
 package com.itextpdf.svg.css;
 
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 //TODO DEVSIX-8832: Update cmp files
 public class BackgroundTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/BackgroundTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/BackgroundTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/BackgroundTest/";
 
     private ISvgConverterProperties properties;
 

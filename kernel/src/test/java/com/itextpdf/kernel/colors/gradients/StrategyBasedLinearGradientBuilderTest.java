@@ -27,18 +27,17 @@ import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
-import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test class focuses on different types of linear gradient coordinates vector strategies.
@@ -49,7 +48,7 @@ import org.junit.jupiter.api.Tag;
 public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -83,7 +82,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("noStrategyProvidedTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("noStrategyProvided.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -94,7 +93,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderToRightTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderToRight.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -105,7 +104,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderToLeftTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderToLeft.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -116,7 +115,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderToBottomTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderToBottom.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -127,7 +126,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderToBottomRightTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderToBottomRight.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -138,7 +137,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderToBottomLeftTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderToBottomLeft.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -149,7 +148,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderToTopTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderToTop.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -160,7 +159,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderToTopRightTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderToTopRight.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -171,7 +170,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderToTopLeftTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderToTopLeft.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -182,7 +181,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderZeroAngleTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderZeroAngle.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -193,7 +192,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderPositiveAngleTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderPositiveAngle.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -204,7 +203,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderNegativeAngleTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("builderNegativeAngle.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -219,7 +218,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
         AffineTransform canvasTransform = AffineTransform.getTranslateInstance(50, -50);
         canvasTransform.scale(0.8, 1.1);
         canvasTransform.rotate(Math.PI/3, 400f, 550f);
-        generateAndComparePdfs("builderWithNoneSpreadingAndCanvasTransformTest.pdf", canvasTransform, gradientBuilder);
+        generateAndComparePdfs("noneSpreadingCanvasTransform.pdf", canvasTransform, gradientBuilder);
     }
 
     @Test
@@ -231,7 +230,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderWithToCornerAndInnerStopsAndNoneSpreadingTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("toCornerInnerStopsNoneSpreading.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -243,7 +242,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderWithToCornerAndInnerStopsAndPadSpreadingTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("toCornerInnerStopsPadSpreading.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -255,7 +254,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderWithToCornerAndInnerStopsAndReflectSpreadingTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("toCornerInnerStopsReflectSpreading.pdf", null, gradientBuilder);
     }
 
     @Test
@@ -267,7 +266,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
                 .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
                 .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
 
-        generateAndComparePdfs("builderWithToCornerAndInnerStopsAndRepeatSpreadingTest.pdf", null, gradientBuilder);
+        generateAndComparePdfs("toCornerInnerStopsRepeatSpreading.pdf", null, gradientBuilder);
     }
 
     private void generateAndComparePdfs(String fileName, AffineTransform transform,

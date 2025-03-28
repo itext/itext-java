@@ -24,6 +24,7 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public class LinkTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/LinkTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/LinkTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/LinkTest/";
 
     @BeforeAll
     public static void beforeClass() {

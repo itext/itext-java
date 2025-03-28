@@ -30,6 +30,7 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.X509MockCertificate;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -44,8 +45,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class CrlClientOnlineTest extends ExtendedITextTest {
@@ -54,7 +55,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     private static final String certWithMalformedUrl = certSrc + "certWithMalformedUrl.crt";
     private static final String certWithCorrectUrl = certSrc + "certWithCorrectUrl.crt";
     private static final String chainWithSeveralUrls = certSrc + "chainWithSeveralUrls.pem";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/";
 
     @Test
     public void crlClientOnlineURLConstructorTest() throws MalformedURLException {

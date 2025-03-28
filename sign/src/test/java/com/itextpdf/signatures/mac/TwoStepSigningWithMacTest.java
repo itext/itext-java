@@ -25,11 +25,9 @@ package com.itextpdf.signatures.mac;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.kernel.mac.IMacContainerLocator;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
@@ -43,6 +41,7 @@ import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,7 +50,6 @@ import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -62,7 +60,7 @@ public class TwoStepSigningWithMacTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/mac/TwoStepSigningWithMacTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/mac/TwoStepSigningWithMacTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/mac/TwoStepSigningWithMacTest/";
     private static final byte[] ENCRYPTION_PASSWORD = "123".getBytes();
     private static final char[] PRIVATE_KEY_PASSWORD = "testpassphrase".toCharArray();
 

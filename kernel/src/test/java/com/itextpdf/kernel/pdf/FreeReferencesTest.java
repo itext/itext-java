@@ -25,6 +25,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import java.io.IOException;
@@ -41,7 +42,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class FreeReferencesTest extends ExtendedITextTest {
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/FreeReferencesTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/FreeReferencesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/FreeReferencesTest/";
 
     @BeforeAll

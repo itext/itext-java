@@ -54,24 +54,24 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfFontTest extends ExtendedITextTest {
     public static final int PageCount = 1;
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfFontTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfFontTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfFontTest/";
 
     static final String author = "Alexander Chingarev";
     static final String creator = "iText";

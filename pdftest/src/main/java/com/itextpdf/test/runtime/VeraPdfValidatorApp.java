@@ -22,7 +22,7 @@
  */
 package com.itextpdf.test.runtime;
 
-import com.itextpdf.test.pdfa.VeraPdfValidator;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 import com.itextpdf.test.utils.UriUtil;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

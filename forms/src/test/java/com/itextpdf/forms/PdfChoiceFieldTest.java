@@ -42,6 +42,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -54,7 +55,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfChoiceFieldTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfChoiceFieldTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfChoiceFieldTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfChoiceFieldTest/";
 
     @BeforeAll

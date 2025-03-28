@@ -27,26 +27,25 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfSplitterTest extends ExtendedITextTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfSplitterTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfSplitterTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/utils/PdfSplitterTest/";
 
     @BeforeAll
     public static void beforeClass() {

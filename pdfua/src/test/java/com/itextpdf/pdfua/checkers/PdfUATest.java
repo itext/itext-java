@@ -70,9 +70,16 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,16 +88,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Arrays;
-
 @Tag("IntegrationTest")
 public class PdfUATest extends ExtendedITextTest {
 
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUATest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUATest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUATest/";
 
     private static final String DOG = "./src/test/resources/com/itextpdf/pdfua/img/DOG.bmp";

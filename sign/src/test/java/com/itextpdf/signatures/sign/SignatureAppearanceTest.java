@@ -74,6 +74,7 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -102,7 +103,7 @@ public class SignatureAppearanceTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/SignatureAppearanceTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/SignatureAppearanceTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/SignatureAppearanceTest/";
     public static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/sign/SignatureAppearanceTest/test.pem";
     public static final char[] PASSWORD = "testpassphrase".toCharArray();
 

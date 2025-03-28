@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.DeflaterOutputStream;
@@ -45,6 +44,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -53,7 +53,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -64,7 +63,7 @@ import org.junit.jupiter.api.Test;
 public class PdfDocumentTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfDocumentTest/";
 
     @BeforeAll
     public static void beforeClass() {

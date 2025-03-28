@@ -65,6 +65,7 @@ import com.itextpdf.signatures.TimestampConstants;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
@@ -80,7 +81,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,7 +95,7 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/SignedAppearanceTextTest/";
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/signatures/font/";
     private static final String PDFA_FOLDER = "./src/test/resources/com/itextpdf/signatures/pdfa/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/SignedAppearanceTextTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/SignedAppearanceTextTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();

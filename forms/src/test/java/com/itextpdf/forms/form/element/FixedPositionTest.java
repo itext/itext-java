@@ -43,6 +43,7 @@ import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -53,8 +54,8 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FixedPositionTest extends ExtendedITextTest {
@@ -62,7 +63,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/FixedPositionTest/";
     public static final String DESTINATION_FOLDER =
-            "./target/test/com/itextpdf/forms/form/element/FixedPositionTest/";
+            TestUtil.getOutputPath() + "/forms/form/element/FixedPositionTest/";
     public static final String IMG_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/SignatureFieldAppearanceTest/";
 

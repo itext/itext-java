@@ -26,6 +26,7 @@ import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,7 +36,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class SymbolTest extends SvgIntegrationTest {
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/SymbolTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/SymbolTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/SymbolTest/";
 
     private ISvgConverterProperties properties;

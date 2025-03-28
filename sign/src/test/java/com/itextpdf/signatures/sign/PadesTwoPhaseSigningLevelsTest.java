@@ -41,6 +41,7 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -63,7 +64,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
 
     private String signAlgorithm;
     private String signCertName;

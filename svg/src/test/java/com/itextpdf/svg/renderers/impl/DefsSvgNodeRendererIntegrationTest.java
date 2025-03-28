@@ -24,18 +24,18 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class DefsSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/DefsSvgNodeRendererTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/DefsSvgNodeRendererTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/DefsSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

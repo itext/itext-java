@@ -22,22 +22,19 @@
  */
 package com.itextpdf.svg.css;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontRelativeUnitTest extends SvgIntegrationTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/FontRelativeUnitTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/FontRelativeUnitTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/FontRelativeUnitTest/";
 
     @BeforeAll
     public static void beforeClass() {

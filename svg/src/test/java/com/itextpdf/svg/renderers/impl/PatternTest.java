@@ -26,6 +26,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -36,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PatternTest extends SvgIntegrationTest {
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/PatternTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/PatternTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/PatternTest/";
 
     @BeforeAll

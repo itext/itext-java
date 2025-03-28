@@ -50,23 +50,24 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
 public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA2AnnotationCheckTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2AnnotationCheckTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2AnnotationCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

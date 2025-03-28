@@ -46,8 +46,13 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,13 +60,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
 @Tag("IntegrationTest")
 public class PdfUANotesTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUANotesTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUANotesTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
     private UaValidationTestFramework framework;

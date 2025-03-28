@@ -25,15 +25,17 @@ package com.itextpdf.svg.googlecharts;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
+
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PieChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/PieChartsTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/PieChartsTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/PieChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

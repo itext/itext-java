@@ -49,21 +49,21 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class BorderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BorderTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/BorderTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/BorderTest/";
     public static final String cmpPrefix = "cmp_";
 
     String fileName;

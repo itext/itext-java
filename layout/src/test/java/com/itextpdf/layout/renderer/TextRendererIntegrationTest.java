@@ -59,6 +59,7 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -73,7 +74,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TextRendererIntegrationTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TextRendererIntegrationTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TextRendererIntegrationTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/TextRendererIntegrationTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

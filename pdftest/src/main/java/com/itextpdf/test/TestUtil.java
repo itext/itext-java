@@ -20,30 +20,22 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.svg.renderers.impl;
+package com.itextpdf.test;
 
-import com.itextpdf.svg.renderers.SvgIntegrationTest;
-import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.TestUtil;
+/**
+ * Utility class to customize test environment.
+ */
+public final class TestUtil {
+    private TestUtil() {
+        // Empty constructor
+    }
 
-import java.io.IOException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-@Tag("IntegrationTest")
-public class SystemLanguageTest extends SvgIntegrationTest {
-
-  private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/SystemLanguageTest/";
-  private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/SystemLanguageTest/";
-
-  @BeforeAll
-  public static void beforeClass() {
-    ITextTest.createDestinationFolder(DESTINATION_FOLDER);
-  }
-
-  @Test
-  public void differentSystemLanguageTest() throws IOException, InterruptedException {
-    convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "system-language");
-  }
+    /**
+     * Retrieves a path used to output test data.
+     *
+     * @return output path
+     */
+    public static String getOutputPath() {
+        return "./target/test/com/itextpdf";
+    }
 }

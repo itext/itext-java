@@ -29,9 +29,9 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -39,12 +39,12 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfCanvasGlyphlineShowTextTest extends ExtendedITextTest {
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
 

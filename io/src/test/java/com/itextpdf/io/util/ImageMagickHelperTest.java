@@ -26,20 +26,21 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 // Android-Conversion-Skip-File (imagemagick isn't available on Android)
 public class ImageMagickHelperTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/ImageMagickHelperTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/ImageMagickHelperTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/io/ImageMagickHelperTest/";
 
     // In some of the test we will check whether ImageMagick has printed something to the console.
     // For this reason the standard output stream will be customized. In .NET, however,

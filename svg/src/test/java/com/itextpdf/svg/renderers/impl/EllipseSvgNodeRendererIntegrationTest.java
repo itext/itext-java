@@ -27,25 +27,22 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.svg.SvgConstants;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.nio.charset.StandardCharsets;
-
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class EllipseSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/EllipseSvgNodeRendererIntegrationTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -48,6 +48,7 @@ import com.itextpdf.layout.properties.grid.PointValue;
 import com.itextpdf.layout.properties.grid.TemplateValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -55,14 +56,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class GridContainerLayoutTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/GridContainerTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/GridContainerTest/";
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/GridContainerTest/";
 

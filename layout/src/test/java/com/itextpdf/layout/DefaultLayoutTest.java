@@ -24,9 +24,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
-import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
-import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -35,6 +32,9 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -45,20 +45,19 @@ import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class DefaultLayoutTest extends ExtendedITextTest {
@@ -66,7 +65,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     public static float EPS = 0.001f;
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/DefaultLayoutTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/DefaultLayoutTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/DefaultLayoutTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -50,6 +50,7 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -76,7 +77,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/Pdf20SigningTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/Pdf20SigningTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/Pdf20SigningTest/";
     private static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/certs/signCertRsa01.pem";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();

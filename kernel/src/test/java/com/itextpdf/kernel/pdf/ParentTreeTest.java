@@ -44,6 +44,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -61,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("IntegrationTest")
 public class ParentTreeTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/ParentTreeTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/ParentTreeTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/ParentTreeTest/";
 
     @BeforeAll
     public static void beforeClass() {

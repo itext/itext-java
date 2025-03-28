@@ -53,6 +53,7 @@ import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -72,7 +73,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class CheckBoxTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/form/element/CheckBoxTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/form/element/CheckBoxTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/form/element/CheckBoxTest/";
     private int counter = 0;
 
     @BeforeAll

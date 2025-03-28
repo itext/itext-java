@@ -36,6 +36,7 @@ import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -47,7 +48,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ParagraphTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/ParagraphTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/ParagraphTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/ParagraphTest/";
 
     @BeforeAll
