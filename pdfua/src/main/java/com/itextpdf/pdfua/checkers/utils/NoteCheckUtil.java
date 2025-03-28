@@ -38,7 +38,10 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 public class NoteCheckUtil {
     /**
      * Handler for checking Note elements in the TagTree.
+     *
+     * @deprecated in favor of {@link com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1NotesChecker.PdfUA1NotesTagHandler}
      */
+    @Deprecated
     public static class NoteTagHandler extends ContextAwareTagTreeIteratorHandler {
 
         /**

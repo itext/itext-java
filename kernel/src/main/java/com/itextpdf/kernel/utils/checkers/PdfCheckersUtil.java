@@ -25,9 +25,11 @@ package com.itextpdf.kernel.utils.checkers;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -109,6 +111,25 @@ public final class PdfCheckersUtil {
         } catch (XMPException e) {
             throw exceptionSupplier.apply(KernelExceptionMessageConstant.INVALID_METADATA_VALUE);
         }
+    }
+
+    /**
+     * Gets all the descending kids including widgets for a given {@link PdfArray} representing array of form fields.
+     *
+     * @param array the {@link PdfArray} of form fields {@link PdfDictionary} objects
+     *
+     * @return the {@link PdfArray} of all form fields
+     */
+    public static PdfArray getFormFields(PdfArray array) {
+        PdfArray fields = new PdfArray();
+        for (PdfObject field : array) {
+            PdfArray kids = ((PdfDictionary) field).getAsArray(PdfName.Kids);
+            fields.add(field);
+            if (kids != null) {
+                fields.addAll(getFormFields(kids));
+            }
+        }
+        return fields;
     }
 
     /**

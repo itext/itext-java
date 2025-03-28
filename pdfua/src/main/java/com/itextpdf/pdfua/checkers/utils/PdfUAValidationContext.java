@@ -22,11 +22,13 @@
  */
 package com.itextpdf.pdfua.checkers.utils;
 
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 
@@ -122,6 +124,18 @@ public class PdfUAValidationContext {
             return (PdfStructElem) structureNode;
         }
         return null;
+    }
+
+    /**
+     * Retrieves object reference instance by provided structure parent index.
+     *
+     * @param i index of the structure parent
+     * @param pageDict {@link PdfDictionary} of the page that {@link PdfObjRef} belong to
+     *
+     * @return {@link PdfObjRef} instance
+     */
+    public PdfObjRef findObjRefByStructParentIndex(int i, PdfDictionary pageDict) {
+        return pdfDocument.getStructTreeRoot().findObjRefByStructParentIndex(pageDict, i);
     }
 
     /**

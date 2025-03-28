@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
@@ -583,7 +584,7 @@ public class PdfA2Checker extends PdfA1Checker {
 
             PdfArray fields = form.getAsArray(PdfName.Fields);
             if (fields != null) {
-                fields = getFormFields(fields);
+                fields = PdfCheckersUtil.getFormFields(fields);
                 for (PdfObject field : fields) {
                     PdfDictionary fieldDic = (PdfDictionary) field;
                     checkResources(fieldDic.getAsDictionary(PdfName.DR), fieldDic);

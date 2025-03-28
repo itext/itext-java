@@ -53,9 +53,12 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,8 +67,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * PdfA1Checker defines the requirements of the PDF/A-1 standard and contains
@@ -704,7 +705,7 @@ public class PdfA1Checker extends PdfAChecker {
 
         PdfArray fields = form.getAsArray(PdfName.Fields);
         if (fields != null) {
-            fields = getFormFields(fields);
+            fields = PdfCheckersUtil.getFormFields(fields);
             for (PdfObject field : fields) {
                 PdfDictionary fieldDic = (PdfDictionary) field;
                 if (fieldDic.containsKey(PdfName.A) || fieldDic.containsKey(PdfName.AA)) {
@@ -785,7 +786,10 @@ public class PdfA1Checker extends PdfAChecker {
      * @param array the {@link PdfArray} of form fields {@link PdfDictionary} objects
      *
      * @return the {@link PdfArray} of form fields
+     *
+     * @deprecated in favour of {@link PdfCheckersUtil#getFormFields(PdfArray)}
      */
+    @Deprecated
     protected PdfArray getFormFields(PdfArray array) {
         PdfArray fields = new PdfArray();
         for (PdfObject field : array) {

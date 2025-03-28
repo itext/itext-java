@@ -334,6 +334,27 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
+     * Retrieves string value from {@link PdfObject} representing text string or text stream.
+     *
+     * @param value {@link PdfObject} representing text string or text stream
+     *
+     * @return {@link String} value
+     */
+    public static String getStringValue(PdfObject value) {
+        if (value == null) {
+            return "";
+        } else if (value instanceof PdfStream) {
+            return new String(((PdfStream) value).getBytes(), StandardCharsets.UTF_8);
+        } else if (value instanceof PdfName) {
+            return ((PdfName) value).getValue();
+        } else if (value instanceof PdfString) {
+            return ((PdfString) value).toUnicodeString();
+        } else {
+            return "";
+        }
+    }
+
+    /**
      * Returns the type of the parent form field, or of the wrapped
      * &lt;PdfDictionary&gt; object.
      *
@@ -775,17 +796,7 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public String getValueAsString() {
         PdfObject value = getValue();
-        if (value == null) {
-            return "";
-        } else if (value instanceof PdfStream) {
-            return new String(((PdfStream) value).getBytes(), StandardCharsets.UTF_8);
-        } else if (value instanceof PdfName) {
-            return ((PdfName) value).getValue();
-        } else if (value instanceof PdfString) {
-            return ((PdfString) value).toUnicodeString();
-        } else {
-            return "";
-        }
+        return getStringValue(value);
     }
 
     /**
@@ -1044,10 +1055,11 @@ public class PdfFormField extends AbstractPdfFormField {
 
     /**
      * Sets a rich text string, as described in "Rich Text Strings" section of Pdf spec.
-     * May be either {@link PdfStream} or {@link PdfString}.
+     * It may be either {@link PdfStream} or {@link PdfString}.
      *
-     * @param richText a new rich text value.
-     * @return the edited {@link PdfFormField}.
+     * @param richText a new rich text value
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setRichText(PdfObject richText) {
         put(PdfName.RV, richText);

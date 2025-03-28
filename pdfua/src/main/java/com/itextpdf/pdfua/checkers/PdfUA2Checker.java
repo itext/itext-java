@@ -47,6 +47,7 @@ import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormulaChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2ListChecker;
@@ -158,6 +159,9 @@ public class PdfUA2Checker extends PdfUAChecker {
         checkMetadata(catalog);
         checkViewerPreferences(catalog);
         checkOCProperties(catalog.getPdfObject().getAsDictionary(PdfName.OCProperties));
+        PdfUA2FormChecker formChecker = new PdfUA2FormChecker(context);
+        formChecker.checkFormFields(catalog.getPdfObject().getAsDictionary(PdfName.AcroForm));
+        formChecker.checkWidgetAnnotations(this.pdfDocument);
     }
 
     /**
@@ -209,6 +213,7 @@ public class PdfUA2Checker extends PdfUAChecker {
         tagTreeIterator.addHandler(new PdfUA2HeadingsChecker.PdfUA2HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
         // TODO DEVSIX-9016 Support PDF/UA-2 rules for annotation types
+        tagTreeIterator.addHandler(new PdfUA2FormChecker.PdfUA2FormTagHandler(context));
         tagTreeIterator.addHandler(new PdfUA2ListChecker.PdfUA2ListHandler(context));
         tagTreeIterator.addHandler(new PdfUA2NotesChecker.PdfUA2NotesHandler(context));
         tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(context));

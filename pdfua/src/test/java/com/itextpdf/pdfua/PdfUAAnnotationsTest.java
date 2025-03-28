@@ -159,16 +159,12 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                     .createCheckBox();
 
             checkBox.setAlternativeName("widget");
+            checkBox.getFirstFormAnnotation().setAlternativeDescription("widget");
 
             acroForm.addField(checkBox);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("widgetAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 PDF/UA-2 checks
-            framework.assertOnlyVeraPdfFail("widgetAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
-        }
+        framework.assertBothValid("widgetAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -182,16 +178,12 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                     .createCheckBox();
 
             checkBox.setAlternativeName("widget");
+            checkBox.getFirstFormAnnotation().setAlternativeDescription("widget");
 
             acroForm.addField(checkBox);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("widgetAnnotNoDirectChildAutoConformanceLvl", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 PDF/UA-2 checks
-            framework.assertOnlyVeraPdfFail("widgetAnnotNoDirectChildAutoConformanceLvl", pdfUAConformance);
-        }
+        framework.assertBothValid("widgetAnnotNoDirectChildAutoConformanceLvl", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -483,15 +475,11 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                     .createPushButton();
 
             button.setAlternativeName("widget");
+            button.getFirstFormAnnotation().setAlternativeDescription("widget");
             acroForm.addField(button);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("pushBtnNestedWithinFormTest", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 PDF/UA-2 checks
-            framework.assertOnlyVeraPdfFail("pushBtnNestedWithinFormTest", pdfUAConformance);
-        }
+        framework.assertBothValid("pushBtnNestedWithinFormTest", pdfUAConformance);
     }
 
     @ParameterizedTest

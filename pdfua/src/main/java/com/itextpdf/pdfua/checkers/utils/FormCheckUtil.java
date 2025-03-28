@@ -26,12 +26,16 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1FormChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 /**
  * Class that provides methods for checking PDF/UA compliance of interactive form fields.
+ *
+ * @deprecated in favour of {@link PdfUA1FormChecker}
  */
+@Deprecated
 public class FormCheckUtil {
 
     /**
@@ -43,11 +47,14 @@ public class FormCheckUtil {
 
     /**
      * Handler for checking form field elements in the tag tree.
+     *
+     * @deprecated in favour of {@link PdfUA1FormChecker.PdfUA1FormTagHandler}
      */
+    @Deprecated
     public static class FormTagHandler extends ContextAwareTagTreeIteratorHandler {
 
         /**
-         * Creates a new {@link  FormulaCheckUtil.FormulaTagHandler} instance.
+         * Creates a new {@link FormCheckUtil.FormTagHandler} instance.
          *
          * @param context The validation context.
          */

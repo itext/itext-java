@@ -28,6 +28,7 @@ import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
@@ -45,21 +46,31 @@ import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.form.element.TextArea;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
@@ -68,14 +79,16 @@ import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-
-import java.io.IOException;
-import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAFormFieldsTest extends ExtendedITextTest {
@@ -91,7 +104,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     }
 
     public static List<PdfUAConformance> data() {
-        return UaValidationTestFramework.getConformanceList();
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
     }
 
     @BeforeEach
@@ -1438,8 +1451,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertBothFail("interactiveCheckBoxNoAlternativeDescription",
-                    MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "ZapfDingbats"),
-                    pdfUAConformance);
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1459,9 +1471,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveRadioButtonNoAltDescr",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("interactiveRadioButtonNoAltDescr", pdfUAConformance);
+            framework.assertBothFail("interactiveRadioButtonNoAltDescr",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1481,9 +1493,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveButtonNoAlternativeDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("interactiveButtonNoAlternativeDescription", pdfUAConformance);
+            framework.assertBothFail("interactiveButtonNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1504,9 +1516,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveInputFieldNoAltDescr",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("interactiveInputFieldNoAltDescr", pdfUAConformance);
+            framework.assertBothFail("interactiveInputFieldNoAltDescr",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1526,9 +1538,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveTextAreaNoAlternativeDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("interactiveTextAreaNoAlternativeDescription", pdfUAConformance);
+            framework.assertBothFail("interactiveTextAreaNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1548,9 +1560,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveListBoxNoAlternativeDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("interactiveListBoxNoAlternativeDescription", pdfUAConformance);
+            framework.assertBothFail("interactiveListBoxNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1570,9 +1582,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveComboBoxNoAlternativeDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("interactiveComboBoxNoAlternativeDescription", pdfUAConformance);
+            framework.assertBothFail("interactiveComboBoxNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1593,9 +1605,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("interactiveSignAppearanceNoAltDescription",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("interactiveSignAppearanceNoAltDescription", pdfUAConformance);
+            framework.assertBothFail("interactiveSignAppearanceNoAltDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1631,7 +1643,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             framework.assertBothValid("testCheckBoxArtifactRoleua1", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             //TODO DEVSIX-8974 Tagging formfield as artifact will put the inner content into bad places in tagstructure
-            framework.assertBothFail("testCheckBoxArtifactRoleua2", pdfUAConformance);
+            String message = MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "Document", "CONTENT");
+            framework.assertBothFail("testCheckBoxArtifactRoleua2", message, pdfUAConformance);
         }
     }
 
@@ -1867,9 +1881,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testTextBuilderWithTu", pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testTextBuilderWithTu", pdfUAConformance);
+            framework.assertBothFail("testTextBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1891,9 +1905,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             framework.assertBothFail("testTextBuilderNoTu",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION,
                     pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testTextBuilderNoTu", pdfUAConformance);
+            framework.assertBothFail("testTextBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1912,9 +1926,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testChoiceBuilderWithTu", pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testChoiceBuilderWithTu", pdfUAConformance);
+            framework.assertBothFail("testChoiceBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1932,11 +1946,10 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("tesChoicetBuilderNoTu",
-                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION,
-                    pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("tesChoicetBuilderNoTu", pdfUAConformance);
+            framework.assertBothFail("tesChoicetBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1955,9 +1968,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testButtonBuilderWithTu", pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testButtonBuilderWithTu", pdfUAConformance);
+            framework.assertBothFail("testButtonBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1977,9 +1990,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             framework.assertBothFail("testButtonBuilderNoTu",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION,
                     pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testButtonBuilderNoTu", pdfUAConformance);
+            framework.assertBothFail("testButtonBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -1999,9 +2012,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testButtonBuilderNoTuNotVisible", pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testButtonBuilderNoTuNotVisible", pdfUAConformance);
+            framework.assertBothFail("testButtonBuilderNoTuNotVisible",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -2027,9 +2040,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("testRadioButtonBuilderNoTu",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testRadioButtonBuilderNoTu", pdfUAConformance);
+            framework.assertBothFail("testRadioButtonBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -2056,9 +2069,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testRadioButtonBuilderWithTu", pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testRadioButtonBuilderWithTu", pdfUAConformance);
+            framework.assertBothFail("testRadioButtonBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -2078,9 +2091,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("testSignatureBuilderWithTu", pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testSignatureBuilderWithTu", pdfUAConformance);
+            framework.assertBothFail("testSignatureBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -2100,9 +2113,9 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("testSignatureBuilderNoTu",
                     PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("testSignatureBuilderNoTu", pdfUAConformance);
+            framework.assertBothFail("testSignatureBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
         }
     }
 
@@ -2124,15 +2137,271 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("FormFieldAltDescription", pdfUAConformance);
-            // TODO DEVSIX-8242 PDF/UA-2 checks
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyVeraPdfFail("FormFieldAltDescription", pdfUAConformance);
+            framework.assertBothFail("FormFieldAltDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testFormFieldWithContentsEntry(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setValue("Some value");
+            field.getFirstFormAnnotation().setAlternativeDescription("Some alt");
+            form.addField(field);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("formFieldContentsDescription",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("formFieldContentsDescription", pdfUAConformance);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
     public void testFormFieldAsStream(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfObject page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfStream streamObj = new PdfStream();
+            streamObj.put(PdfName.Subtype, PdfName.Widget);
+            streamObj.put(PdfName.T, new PdfString("hi"));
+            streamObj.put(PdfName.TU, new PdfString("some text"));
+            streamObj.put(PdfName.Contents, new PdfString("hello"));
+            streamObj.put(PdfName.P, page);
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, streamObj);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.Form);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+            PdfArray k = new PdfArray();
+            k.add(objRef);
+            parentDic.put(PdfName.K, k);
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(parentDic));
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(new PdfStructElem(parentDic));
+            }
+        });
+
+        framework.assertBothValid("FormFieldAsStream", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void severalWidgetKidsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfObject page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfStream streamObj = new PdfStream();
+            streamObj.put(PdfName.Subtype, PdfName.Widget);
+            streamObj.put(PdfName.T, new PdfString("hi"));
+            streamObj.put(PdfName.TU, new PdfString("some text"));
+            streamObj.put(PdfName.Contents, new PdfString("hello"));
+            streamObj.put(PdfName.P, page);
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, streamObj);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.Form);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+
+            PdfStructElem elem = new PdfStructElem(parentDic);
+            elem.addKid(new PdfStructElem(objRef));
+            elem.addKid(new PdfStructElem(objRef));
+            elem.addKid(new PdfStructElem(objRef));
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(elem);
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(elem);
+            }
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("severalWidgetKids", PdfUAExceptionMessageConstants
+                    .FORM_STRUCT_ELEM_WITHOUT_ROLE_SHALL_CONTAIN_ONE_WIDGET, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("severalWidgetKids",
+                    PdfUAExceptionMessageConstants.FORM_STRUCT_ELEM_SHALL_CONTAIN_AT_MOST_ONE_WIDGET, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void severalWidgetKidsWithRoleTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfObject page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfStream streamObj = new PdfStream();
+            streamObj.put(PdfName.Subtype, PdfName.Widget);
+            streamObj.put(PdfName.T, new PdfString("hi"));
+            streamObj.put(PdfName.TU, new PdfString("some text"));
+            streamObj.put(PdfName.Contents, new PdfString("hello"));
+            streamObj.put(PdfName.P, page);
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, streamObj);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.Form);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+
+            PdfStructElem elem = new PdfStructElem(parentDic);
+            elem.addKid(new PdfStructElem(objRef));
+            elem.addKid(new PdfStructElem(objRef));
+            elem.addKid(new PdfStructElem(objRef));
+
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName("PrintField"));
+            attributes.put(PdfStructTreeRoot.convertRoleToPdfName("Role"), new PdfName("pb"));
+            elem.setAttributes(attributes);
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(elem);
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(elem);
+            }
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("severalWidgetKidsWithRole", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("severalWidgetKidsWithRole",
+                    PdfUAExceptionMessageConstants.FORM_STRUCT_ELEM_SHALL_CONTAIN_AT_MOST_ONE_WIDGET, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void widgetNeitherFormNorArtifactTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.Contents, new PdfString("hello"));
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.P, page);
+            widget.put(PdfName.StructParent, new PdfNumber(0));
+
+            page.put(PdfName.Annots, new PdfArray(widget));
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, widget);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.P);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+            parentDic.put(PdfName.K, objRef);
+
+            ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(new PdfStructElem(parentDic));
+        });
+
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothFail("widgetNeitherFormNorArtifact",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);
+        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            framework.assertITextFail("widgetNeitherFormNorArtifact",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);
+            // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
+            //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
+            framework.assertVeraPdfValid("widgetNeitherFormNorArtifact", pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void widgetNeitherFormNorArtifactInAcroformTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello").setFont(getFont()).createText();
+            field.setValue("Some value");
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.Contents, new PdfString("hello"));
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.P, page);
+            widget.put(PdfName.StructParent, new PdfNumber(0));
+            widget.makeIndirect(pdfDoc);
+            field.addKid(PdfFormCreator.createFormAnnotation(widget));
+            form.addField(field);
+
+            PdfObjRef objRef = pdfDoc.getStructTreeRoot().findObjRefByStructParentIndex(page, 0);
+            TagTreePointer p = pdfDoc.getTagStructureContext()
+                    .createPointerForStructElem((PdfStructElem) objRef.getParent());
+            p.setRole(StandardRoles.P);
+        });
+
+        framework.assertBothFail("widgetNeitherFormNorArtifactInAcroform",
+                PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void widgetIsArtifactInAcroformTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello").setFont(getFont()).createText();
+            field.setValue("Some value");
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.Contents, new PdfString("hello"));
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.P, page);
+            widget.put(PdfName.StructParent, new PdfNumber(0));
+            widget.makeIndirect(pdfDoc);
+            field.addKid(PdfFormCreator.createFormAnnotation(widget));
+            form.addField(field);
+
+            PdfObjRef objRef = pdfDoc.getStructTreeRoot().findObjRefByStructParentIndex(page, 0);
+            TagTreePointer p = pdfDoc.getTagStructureContext()
+                    .createPointerForStructElem((PdfStructElem) objRef.getParent());
+            p.setRole(StandardRoles.ARTIFACT);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("widgetIsArtifactInAcroform",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("widgetIsArtifactInAcroform", pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void widgetLabelNoContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfObject page = pdfDoc.addNewPage().getPdfObject();
 
@@ -2153,15 +2422,316 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             parentDic.put(PdfName.Pg, page);
             parentDic.put(PdfName.K, objRef);
 
-            pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(parentDic));
+            PdfStructElem elem = new PdfStructElem(parentDic);
+            elem.addKid(new PdfStructElem(pdfDoc, PdfName.Lbl));
+
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName("PrintField"));
+            attributes.put(PdfStructTreeRoot.convertRoleToPdfName("Role"), new PdfName("pb"));
+            elem.setAttributes(attributes);
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(elem);
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(elem);
+            }
+        });
+
+        framework.assertBothValid("widgetLabelNoContentsTest", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void additionalActionAndContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfObject page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.T, new PdfString("hi"));
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.Contents, new PdfString("hello"));
+            widget.put(PdfName.AA, new PdfDictionary());
+            widget.put(PdfName.P, page);
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, widget);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.Form);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+            parentDic.put(PdfName.K, objRef);
+
+            PdfStructElem elem = new PdfStructElem(parentDic);
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(elem);
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(elem);
+            }
+        });
+
+        framework.assertBothValid("additionalActionAndContents", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void additionalActionNoContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfPage page = pdfDoc.addNewPage();
+
+            TagTreePointer p = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            p.addTag(StandardRoles.FORM);
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.T, new PdfString("hi"));
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.AA, new PdfDictionary());
+            widget.put(PdfName.P, page.getPdfObject());
+
+            page.addAnnotation(PdfAnnotation.makeAnnotation(widget));
+
+            PdfObjRef objRef = pdfDoc.getStructTreeRoot().findObjRefByStructParentIndex(page.getPdfObject(), 0);
+            p = pdfDoc.getTagStructureContext().createPointerForStructElem((PdfStructElem) objRef.getParent());
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName("PrintField"));
+            attributes.put(PdfStructTreeRoot.convertRoleToPdfName("Role"), new PdfName("pb"));
+            p.getProperties().addAttributes(new PdfStructureAttributes(attributes));
+            p.addTag(StandardRoles.LBL);
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("FormFieldAsStream", pdfUAConformance);
+            framework.assertBothValid("additionalActionNoContents", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            String message = MessageFormatUtil.format(
-                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "StructTreeRoot", "Form");
-            framework.assertBothFail("FormFieldAsStream", message, pdfUAConformance);
+            framework.assertBothFail("additionalActionNoContents",
+                    PdfUAExceptionMessageConstants.WIDGET_WITH_AA_SHALL_PROVIDE_CONTENTS, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void additionalActionNoContentsAcroformTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello").setFont(getFont()).createText();
+            field.setValue("Some value");
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.AA, new PdfDictionary());
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.P, page);
+            widget.put(PdfName.StructParent, new PdfNumber(0));
+            widget.makeIndirect(pdfDoc);
+            field.addKid(PdfFormCreator.createFormAnnotation(widget));
+            field.setAlternativeName("Alt");
+            form.addField(field);
+
+            PdfObjRef objRef = pdfDoc.getStructTreeRoot().findObjRefByStructParentIndex(page, 0);
+            TagTreePointer p = pdfDoc.getTagStructureContext()
+                    .createPointerForStructElem((PdfStructElem) objRef.getParent());
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName("PrintField"));
+            attributes.put(PdfStructTreeRoot.convertRoleToPdfName("Role"), new PdfName("pb"));
+            p.getProperties().addAttributes(new PdfStructureAttributes(attributes));
+            p.addTag(StandardRoles.LBL);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("additionalActionNoContentsAcroform", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("additionalActionNoContentsAcroform",
+                    PdfUAExceptionMessageConstants.WIDGET_WITH_AA_SHALL_PROVIDE_CONTENTS, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void noContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfPage page = pdfDoc.addNewPage();
+
+            TagTreePointer p = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            p.addTag(StandardRoles.FORM);
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.T, new PdfString("hi"));
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.P, page.getPdfObject());
+
+            page.addAnnotation(PdfAnnotation.makeAnnotation(widget));
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("noContents", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("noContents",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVPositiveTest1(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+
+            String value = "Red\rBlue\r";
+            field.setValue(value);
+
+            String richText = "<body xmlns=\"http://www.w3.org/1999/xhtml\"><p style=\"color:#FF0000;\">Red&#13;</p>" +
+                    "<p style=\"color:#1E487C;\">Blue&#13;</p></body>";
+            field.setRichText(new PdfString(richText, PdfEncodings.PDF_DOC_ENCODING));
+
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        framework.assertBothValid("textFieldRVAndVPositiveTest1", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVPositiveTest2(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setValue("Some value");
+            field.setRichText(new PdfStream("<p>Some value</p>".getBytes(), CompressionConstants.NO_COMPRESSION));
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        framework.assertBothValid("textFieldRVAndVPositiveTest2", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVPositiveTest3(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+
+            String value = "\n\nThe following word\nis in bold.\n\n";
+            field.setValue(value);
+
+            String richText = "<field1>\n" +
+                    "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+                    "<p>The following <span style=\"font-weight:bold\">word</span>\n" +
+                    "is in bold.</p>\n" +
+                    "</body>\n" +
+                    "</field1>";
+            field.setRichText(new PdfString(richText.getBytes(StandardCharsets.UTF_8)).setHexWriting(true));
+
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        framework.assertBothValid("textFieldRVAndVPositiveTest3", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVNegativeTest1(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setRichText(new PdfString("<p>Some value</p>", PdfEncodings.UTF8));
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("textFieldRVAndVNegativeTest1", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("textFieldRVAndVNegativeTest1",
+                    PdfUAExceptionMessageConstants.TEXT_FIELD_V_AND_RV_SHALL_BE_TEXTUALLY_EQUIVALENT, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVNegativeTest2(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setValue("Some value");
+            field.setRichText(new PdfStream("<p>Some different value</p>".getBytes(StandardCharsets.UTF_8),
+                    CompressionConstants.NO_COMPRESSION));
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("textFieldRVAndVNegativeTest2", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("textFieldRVAndVNegativeTest2",
+                    PdfUAExceptionMessageConstants.TEXT_FIELD_V_AND_RV_SHALL_BE_TEXTUALLY_EQUIVALENT, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVNegativeTest3(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setValue("Some value");
+            field.setRichText(new PdfString("<p>Some different value</p>"));
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("textFieldRVAndVNegativeTest3", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("textFieldRVAndVNegativeTest3",
+                    PdfUAExceptionMessageConstants.TEXT_FIELD_V_AND_RV_SHALL_BE_TEXTUALLY_EQUIVALENT, pdfUAConformance);
         }
     }
 
