@@ -44,9 +44,39 @@ public class VeraPdfValidatorAppTest extends ExtendedITextTest {
 
     private static final boolean isNative = System.getProperty("org.graalvm.nativeimage.imagecode") != null;
 
+    private static String sendGetRequest(String urlString) {
+        final int amountOfRetries = 3;
+        for (int i = 0; i < amountOfRetries; i++) {
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+                    return response.toString();
+                } else {
+                    return "GET request failed with response code: " + responseCode;
+                }
+
+            } catch (Exception e) {
+                //ignored
+            }
+        }
+        throw new RuntimeException("Retried " + amountOfRetries + " but failed");
+    }
+
     @Test
     public void cliValidPdf() throws IOException {
-        if (isNative){
+        if (isNative) {
             return;
         }
         String path = SOURCE_FOLDER + "testf001.pdf";
@@ -64,7 +94,7 @@ public class VeraPdfValidatorAppTest extends ExtendedITextTest {
 
     @Test
     public void cliInvalidPdf() throws IOException {
-        if (isNative){
+        if (isNative) {
             return;
         }
         String path = SOURCE_FOLDER + "testfail.pdf";
@@ -79,10 +109,9 @@ public class VeraPdfValidatorAppTest extends ExtendedITextTest {
         assertEquals(result1, result2);
     }
 
-
     @Test
     public void serverValidPdf() throws IOException, InterruptedException {
-        if (isNative){
+        if (isNative) {
             return;
         }
         String path = SOURCE_FOLDER + "testf001.pdf";
@@ -116,7 +145,7 @@ public class VeraPdfValidatorAppTest extends ExtendedITextTest {
 
     @Test
     public void serverInValidPdf() throws IOException, InterruptedException {
-        if (isNative){
+        if (isNative) {
             return;
         }
         String path = SOURCE_FOLDER + "testfail.pdf";
@@ -144,28 +173,6 @@ public class VeraPdfValidatorAppTest extends ExtendedITextTest {
         String result2 = new String(Base64.getDecoder().decode(response));
         assertEquals(result1, result2);
 
-    }
-
-
-    public static String sendGetRequest(String urlString) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-
-        int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-            return response.toString();
-        } else {
-            return "GET request failed with response code: " + responseCode;
-        }
     }
 
     private static class ToStringConsoleWriter implements VeraPdfValidatorApp.ConsoleWriter {
