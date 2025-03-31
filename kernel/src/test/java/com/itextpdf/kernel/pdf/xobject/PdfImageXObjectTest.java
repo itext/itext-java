@@ -201,6 +201,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void decodingIndexedCsWithRgbTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb.pdf"))) {
             PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
@@ -212,6 +213,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void decodingIndexedCsWithRgbStringTableTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb_string_table.pdf"))) {
             PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
@@ -223,6 +225,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void decodingIndexedCsWithRgbWrongLookupTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb_wrong_lookup.pdf"))) {
             PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
