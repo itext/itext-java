@@ -410,11 +410,13 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
         switch (destinationWrapType) {
             case "GoTo":
                 PdfLinkAnnotation goToLinkAnnotation = new PdfLinkAnnotation(RECTANGLE);
+                goToLinkAnnotation.setContents("GoTo");
                 goToLinkAnnotation.setAction(PdfAction.createGoTo(destination));
                 document.getPage(1).addAnnotation(goToLinkAnnotation);
                 break;
             case "Destination":
                 PdfLinkAnnotation destinationLinkAnnotation = new PdfLinkAnnotation(RECTANGLE);
+                destinationLinkAnnotation.setContents("Destination");
                 destinationLinkAnnotation.setDestination(destination);
                 document.getPage(1).addAnnotation(destinationLinkAnnotation);
                 break;
@@ -428,11 +430,13 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 break;
             case "GoToR":
                 PdfLinkAnnotation goToRLinkAnnotation = new PdfLinkAnnotation(RECTANGLE);
+                goToRLinkAnnotation.setContents("GoToR");
                 goToRLinkAnnotation.setAction(PdfAction.createGoToR("filename", 1));
                 document.getPage(1).addAnnotation(goToRLinkAnnotation);
                 break;
             case "Manual":
                 PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(RECTANGLE);
+                linkAnnotation.setContents("Manual");
                 linkAnnotation.setDestination(destination);
 
                 PdfPage page = document.getPage(1);

@@ -26,6 +26,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1AnnotationChecker;
 import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1FormChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
@@ -80,7 +81,7 @@ public class FormCheckUtil {
             }
 
             // Check is not applicable for hidden annotations
-            if (!AnnotationCheckUtil.isAnnotationVisible(formField)) {
+            if (!PdfUA1AnnotationChecker.isAnnotationVisible(formField)) {
                 return;
             }
 

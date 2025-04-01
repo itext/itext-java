@@ -82,16 +82,16 @@ import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAAnnotationsTest extends ExtendedITextTest {
@@ -106,13 +106,21 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    public static List<PdfUAConformance> data() {
+        return UaValidationTestFramework.getConformanceList();
+    }
+
+    private static PdfFont loadFont() {
+        try {
+            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     @BeforeEach
     public void initializeFramework() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-    }
-
-    public static List<PdfUAConformance> data() {
-        return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
@@ -122,7 +130,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 Rectangle rect = new Rectangle(100, 650, 400, 100);
-                PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+                PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
+                        PdfAction.createURI("https://itextpdf.com/"));
                 annot.setContents("link annot");
                 Link link = new Link("Link to iText", annot);
 
@@ -141,7 +150,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     public void linkAnnotNotDirectChildOfAnnotKernelTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook(pdfDoc -> {
             Rectangle rect = new Rectangle(100, 650, 400, 100);
-            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
+                    PdfAction.createURI("https://itextpdf.com/"));
             annot.setContents("link annot");
             pdfDoc.addNewPage();
             pdfDoc.getPage(1).addAnnotation(annot);
@@ -203,22 +213,29 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             canvas.release();
 
             PdfPrinterMarkAnnotation annot = new PdfPrinterMarkAnnotation(PageSize.A4, form);
-            // mark annotation as hidden, because in the scope of the test we check only that PrinterMark isn't enclosed by Annot tag
+            // mark annotation as hidden, because in the scope of the test we check only that PrinterMark isn't
+            // enclosed by Annot tag
             annot.setFlag(PdfAnnotation.HIDDEN);
 
             pdfPage.addAnnotation(annot);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("printerMAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
-            String layoutPdf = "layout_printerMAnnotNoDirectChildOfAnnotTest" + "_UA_" + pdfUAConformance.getPart() + ".pdf";
-            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(DESTINATION_FOLDER + layoutPdf))) {
-                final IStructureNode docNode = pdfDoc.getStructTreeRoot().getKids().get(0);
-                Assertions.assertEquals(PdfName.Document, docNode.getRole());
-                Assertions.assertEquals(PdfName.PrinterMark, ((PdfObjRef) docNode.getKids().get(0)).getReferencedObject().get(PdfName.Subtype));
+        framework.assertBothValid("printerMAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
+        String layoutPdf =
+                "layout_printerMAnnotNoDirectChildOfAnnotTest" + "_UA_" + pdfUAConformance.getPart() + ".pdf";
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(DESTINATION_FOLDER + layoutPdf))) {
+            final IStructureNode docNode = pdfDoc.getStructTreeRoot().getKids().get(0);
+            Assertions.assertEquals(PdfName.Document, docNode.getRole());
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                Assertions.assertEquals(PdfName.PrinterMark,
+                        ((PdfObjRef) docNode.getKids().get(0)).getReferencedObject().get(PdfName.Subtype));
+            } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                final IStructureNode artifactNode = docNode.getKids().get(0);
+                Assertions.assertEquals(PdfName.Artifact, artifactNode.getRole());
+                Assertions.assertEquals(PdfName.PrinterMark,
+                        ((PdfObjRef) artifactNode.getKids().get(0)).getReferencedObject().get(PdfName.Subtype));
             }
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothFail("printerMAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
         }
     }
 
@@ -276,11 +293,12 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("screenAnnotWithoutContentsAndAltTest", MessageFormatUtil.format(
-                            PdfUAExceptionMessageConstants.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_OR_ALT_KEY, "Screen"),
+                            PdfUAExceptionMessageConstants.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_OR_ALT_KEY,
+                            "Screen"),
                     pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertOnlyVeraPdfFail("screenAnnotWithoutContentsAndAltTest", pdfUAConformance);
+            framework.assertBothFail("screenAnnotWithoutContentsAndAltTest",
+                    PdfUAExceptionMessageConstants.ANNOT_CONTENTS_IS_NULL_OR_EMPTY, pdfUAConformance);
         }
     }
 
@@ -296,8 +314,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("popupWithoutContentOrAltTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertOnlyVeraPdfFail("popupWithoutContentOrAltTest", pdfUAConformance);
+            framework.assertBothFail("popupWithoutContentOrAltTest",
+                    PdfUAExceptionMessageConstants.POPUP_ANNOTATIONS_ARE_NOT_ALLOWED, pdfUAConformance);
         }
     }
 
@@ -333,8 +351,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("screenAnnotWithAltTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertOnlyVeraPdfFail("screenAnnotWithAltTest", pdfUAConformance);
+            framework.assertBothFail("screenAnnotWithAltTest", PdfUAExceptionMessageConstants.ANNOT_CONTENTS_IS_NULL_OR_EMPTY,
+                    pdfUAConformance);
         }
     }
 
@@ -406,12 +424,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(annot);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
             framework.assertBothFail("trapNetAnnotNotPermittedTest",
                     PdfUAExceptionMessageConstants.ANNOT_TRAP_NET_IS_NOT_PERMITTED, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertOnlyVeraPdfFail("trapNetAnnotNotPermittedTest", pdfUAConformance);
+        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            framework.assertBothFail("trapNetAnnotNotPermittedTest", MessageFormatUtil.format(
+                            PdfUAExceptionMessageConstants.DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED, PdfName.TrapNet.getValue()),
+                    pdfUAConformance);
         }
     }
 
@@ -439,8 +458,9 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("invisibleTrapNetAnnotTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertOnlyVeraPdfFail("invisibleTrapNetAnnotTest", pdfUAConformance);
+            framework.assertBothFail("invisibleTrapNetAnnotTest", MessageFormatUtil.format(
+                            PdfUAExceptionMessageConstants.DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED, PdfName.TrapNet.getValue()),
+                    pdfUAConformance);
         }
     }
 
@@ -458,8 +478,9 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("soundAnnotDirectChildOfAnnotTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertOnlyVeraPdfFail("soundAnnotDirectChildOfAnnotTest", pdfUAConformance);
+            framework.assertBothFail("soundAnnotDirectChildOfAnnotTest", MessageFormatUtil.format(
+                            PdfUAExceptionMessageConstants.DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED, PdfName.Sound.getValue()),
+                    pdfUAConformance);
         }
     }
 
@@ -478,7 +499,6 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             button.getFirstFormAnnotation().setAlternativeDescription("widget");
             acroForm.addField(button);
         });
-
         framework.assertBothValid("pushBtnNestedWithinFormTest", pdfUAConformance);
     }
 
@@ -487,7 +507,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     public void linkAnnotNotDirectChildOfLinkTest2(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook(pdfDoc -> {
             Rectangle rect = new Rectangle(100, 650, 400, 100);
-            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
+                    PdfAction.createURI("https://itextpdf.com/"));
             annot.setContents("link annot");
 
             Document doc = new Document(pdfDoc);
@@ -512,7 +533,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     public void linkAnnotNestedWithinLinkTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook(pdfDoc -> {
             Rectangle rect = new Rectangle(100, 650, 400, 100);
-            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
+                    PdfAction.createURI("https://itextpdf.com/"));
             annot.setContents("link annot");
 
             Document doc = new Document(pdfDoc);
@@ -531,7 +553,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
     public void linkAnnotWithoutContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook(pdfDoc -> {
             Rectangle rect = new Rectangle(100, 650, 400, 100);
-            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
+                    PdfAction.createURI("https://itextpdf.com/"));
 
             Document doc = new Document(pdfDoc);
             Paragraph p2 = new Paragraph("Text");
@@ -557,7 +580,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             PdfPage page = pdfDoc.addNewPage();
 
             Rectangle rect = new Rectangle(100, 650, 400, 100);
-            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
+                    PdfAction.createURI("https://itextpdf.com/"));
             annot.setContents("link annot");
             annot.setFlag(PdfAnnotation.HIDDEN);
             page.addAnnotation(annot);
@@ -572,7 +596,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             PdfPage page = pdfDoc.addNewPage();
 
             Rectangle rect = new Rectangle(10000, 65000, 400, 100);
-            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
+                    PdfAction.createURI("https://itextpdf.com/"));
             annot.setContents("link annot");
             page.addAnnotation(annot);
         });
@@ -587,7 +612,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             page.setCropBox(new Rectangle(1000, 1000, 500, 500));
 
             Rectangle rect = new Rectangle(100, 650, 400, 100);
-            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(PdfAction.createURI("https://itextpdf.com/"));
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
+                    PdfAction.createURI("https://itextpdf.com/"));
             annot.setContents("link annot");
             page.addAnnotation(annot);
         });
@@ -605,7 +631,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                     spec, "audio/x-wav", screen);
             screen.setAction(action);
             screen.setContents("screen annotation");
-            action.getPdfObject().getAsDictionary(PdfName.R).getAsDictionary(PdfName.C).put(PdfName.Alt, new PdfArray());
+            action.getPdfObject().getAsDictionary(PdfName.R).getAsDictionary(PdfName.C)
+                    .put(PdfName.Alt, new PdfArray());
             page.addAnnotation(screen);
         });
         framework.assertBothValid("screenAnnotationWithValidMediaDataTest", pdfUAConformance);
@@ -622,7 +649,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                     spec, "audio/x-wav", screen);
             screen.setAdditionalAction(PdfName.E, action);
             screen.setContents("screen annotation");
-            action.getPdfObject().getAsDictionary(PdfName.R).getAsDictionary(PdfName.C).put(PdfName.Alt, new PdfArray());
+            action.getPdfObject().getAsDictionary(PdfName.R).getAsDictionary(PdfName.C)
+                    .put(PdfName.Alt, new PdfArray());
             page.addAnnotation(screen);
         });
         framework.assertBothValid("screenAnnotationWithValidMediaDataTest", pdfUAConformance);
@@ -782,7 +810,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                     spec, "audio/x-wav", screen);
             screen.setAction(action);
             screen.setContents("screen annotation");
-            action.getPdfObject().getAsDictionary(PdfName.R).getAsDictionary(PdfName.C).put(PdfName.Alt, new PdfArray());
+            action.getPdfObject().getAsDictionary(PdfName.R).getAsDictionary(PdfName.C)
+                    .put(PdfName.Alt, new PdfArray());
             action.getPdfObject().getAsDictionary(PdfName.R).getAsDictionary(PdfName.C).remove(PdfName.CT);
             page.addAnnotation(screen);
         });
@@ -822,8 +851,9 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             framework.assertBothFail("tabsEntryAbsentInPageTest",
                     PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertOnlyVeraPdfFail("tabsEntryAbsentInPageTest", pdfUAConformance);
+            framework.assertBothFail("tabsEntryAbsentInPageTest",
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT,
+                    pdfUAConformance);
         }
     }
 
@@ -838,10 +868,12 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("tabsEntryNotSInPageTest", PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
+            framework.assertBothFail("tabsEntryNotSInPageTest",
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertOnlyVeraPdfFail("tabsEntryNotSInPageTest", pdfUAConformance);
+            framework.assertBothFail("tabsEntryNotSInPageTest",
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT,
+                    pdfUAConformance);
         }
     }
 
@@ -860,8 +892,9 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             framework.assertBothFail("invalidTabsEntryButAnnotInvisibleTest",
                     PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 The layout level doesn’t throw an error
-            framework.assertOnlyVeraPdfFail("invalidTabsEntryButAnnotInvisibleTest", pdfUAConformance);
+            framework.assertBothFail("invalidTabsEntryButAnnotInvisibleTest",
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT,
+                    pdfUAConformance);
         }
     }
 
@@ -883,14 +916,19 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
             PdfPrinterMarkAnnotation annot = new PdfPrinterMarkAnnotation(PageSize.A4, form);
             annot.setContents("link annot");
-            pdfPage.addAnnotation(annot);
+            TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            tagPointer.addTag(StandardRoles.ANNOT);
+            tagPointer.setPageForTagging(pdfPage).addAnnotationTag(annot);
+            tagPointer.moveToParent();
+            pdfPage.getPdfObject().put(PdfName.Annots, new PdfArray(annot.setPage(pdfPage).getPdfObject()));
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("printerMAnnotIsInLogicalStructureTest",
                     PdfUAExceptionMessageConstants.PRINTER_MARK_IS_NOT_PERMITTED, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothFail("printerMAnnotIsInLogicalStructureTest", pdfUAConformance);
+            framework.assertBothFail("printerMAnnotIsInLogicalStructureTest",
+                    PdfUAExceptionMessageConstants.PRINTER_MARK_SHALL_BE_AN_ARTIFACT, pdfUAConformance);
         }
     }
 
@@ -973,7 +1011,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         dict3D.put(new PdfName("IN"), new PdfString("Unnamed"));
         dict3D.put(new PdfName("MS"), PdfName.M);
         dict3D.put(new PdfName("C2W"),
-                new PdfArray(new float[] {1, 0, 0, 0, 0, -1, 0, 1, 0, 3, -235, 28}));
+                new PdfArray(new float[]{1, 0, 0, 0, 0, -1, 0, 1, 0, 3, -235, 28}));
         dict3D.put(PdfName.CO, new PdfNumber(235));
 
         annot.setDefaultInitialView(dict3D);
@@ -993,14 +1031,6 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         redact.setContents("redact annotation");
         return redact;
-    }
-
-    private static PdfFont loadFont() {
-        try {
-            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
     private static class PdfCustomAnnot extends PdfAnnotation {

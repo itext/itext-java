@@ -31,7 +31,6 @@ import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.pdfua.checkers.utils.AnnotationCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ContextAwareTagTreeIteratorHandler;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -60,7 +59,7 @@ public final class PdfUA1FormChecker {
      */
     public static void checkFormStructElement(PdfStructElem form) {
         PdfDictionary widget = getInteractiveKidForm(form);
-        if (widget == null || !AnnotationCheckUtil.isAnnotationVisible(widget)) {
+        if (widget == null || !PdfUA1AnnotationChecker.isAnnotationVisible(widget)) {
             // Check is also not applicable for hidden annotations.
             return;
         }

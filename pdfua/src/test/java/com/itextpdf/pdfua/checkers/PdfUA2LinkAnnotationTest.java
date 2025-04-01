@@ -29,6 +29,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -105,6 +106,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
 
             PdfStructureDestination destination = PdfStructureDestination.createFit(structElem);
             PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+            linkAnnotation.setContents("Some text");
             addDestination(destLocation, linkAnnotation, destination);
 
             pdfDoc.getPage(1).addAnnotation(-1, linkAnnotation, false);
@@ -124,6 +126,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
 
             PdfStructureDestination destination = PdfStructureDestination.createFit(structElem);
             PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+            linkAnnotation.setContents("Some text");
             addDestination(destLocation, linkAnnotation, destination);
 
             pdfDoc.getPage(1).addAnnotation(-1, linkAnnotation, false);
@@ -180,12 +183,14 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
             PdfStructElem structElem = context.getPointerStructElem(tagPointer);
 
             PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+            linkAnnotation.setContents("Some text");
             PdfStructureDestination dest = PdfStructureDestination.createFit(structElem);
             addDestination(destLocation, linkAnnotation, dest);
 
             PdfLinkAnnotation linkAnnotation2 = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
             PdfStructureDestination dest2 = PdfStructureDestination.createFit(structElem);
             addDestination(destLocation, linkAnnotation2, dest2);
+            linkAnnotation2.setContents("Some text 2");
 
             document.add(new AreaBreak());
 
@@ -281,7 +286,6 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
             destDictionary.put(PdfName.D, dest.getPdfObject());
             pdfDoc.addNamedDestination("dest", destDictionary);
             PdfStringDestination namedDestination = new PdfStringDestination("dest");
-
             addLinkAnnotations(destLocation, pdfDoc, namedDestination);
         });
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
@@ -373,9 +377,11 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
 
     private static void addLinkAnnotations(PdfName destLocation, PdfDocument pdfDoc, PdfDestination destination) {
         PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        linkAnnotation.setContents("Some text");
         addDestination(destLocation, linkAnnotation, destination);
 
         PdfLinkAnnotation linkAnnotation2 = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        linkAnnotation2.setContents("Some text2");
         addDestination(destLocation, linkAnnotation2, destination);
 
         pdfDoc.getPage(1).addAnnotation(linkAnnotation).addAnnotation(linkAnnotation2);
@@ -389,9 +395,11 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     private static void addLinkAnnotations(PdfName destLocation, PdfDocument pdfDoc, PdfDestination destination1,
                                            PdfDestination destination2, boolean isSeparateAnnots) {
         PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        linkAnnotation.setContents("Some text");
         addDestination(destLocation, linkAnnotation, destination1);
 
         PdfLinkAnnotation linkAnnotation2 = new PdfLinkAnnotation(new Rectangle(35, 785, 160, 15));
+        linkAnnotation2.setContents("Some text2");
         addDestination(destLocation, linkAnnotation2, destination2);
 
         if (isSeparateAnnots) {

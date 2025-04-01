@@ -24,8 +24,7 @@ package com.itextpdf.pdfua.checkers.utils.ua2;
 
 import com.itextpdf.forms.fields.PdfFormAnnotationUtil;
 import com.itextpdf.forms.fields.PdfFormField;
-import com.itextpdf.io.util.XmlUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -42,11 +41,7 @@ import com.itextpdf.pdfua.checkers.utils.ContextAwareTagTreeIteratorHandler;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -123,6 +118,17 @@ public final class PdfUA2FormChecker {
                 throw new PdfUAConformanceException(
                         PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT);
             }
+            if (StandardRoles.FORM.equals(role)) {
+                PdfDictionary widget = ((PdfObjRef) elem).getReferencedObject();
+                PdfArray rect = widget.getAsArray(PdfName.Rect);
+                if (rect != null && rect.size() == 4) {
+                    Rectangle rectangle = rect.toRectangle();
+                    if (rectangle.getWidth() == 0 && rectangle.getHeight() == 0) {
+                        throw new PdfUAConformanceException(
+                                PdfUAExceptionMessageConstants.WIDGET_WITH_ZERO_HEIGHT_SHALL_BE_AN_ARTIFACT);
+                    }
+                }
+            }
             return;
         }
 
@@ -171,19 +177,9 @@ public final class PdfUA2FormChecker {
         return fieldValue;
     }
 
-    private static String parseRichText(Node node) {
-        StringBuilder richText = new StringBuilder();
-        NodeList allChildren = node.getChildNodes();
-        for (int k = 0; k < allChildren.getLength(); ++k) {
-            Node child = allChildren.item(k);
-            richText.append(child.getNodeValue() == null ? parseRichText(child) : child.getNodeValue());
-        }
-        return richText.toString();
-    }
-
     private static void checkTextField(PdfDictionary fieldDic) {
         if (PdfName.Tx.equals(PdfFormField.getFormType(fieldDic)) && fieldDic.containsKey(PdfName.RV)) {
-            String richText = getRichTextStringValue(fieldDic.get(PdfName.RV));
+            String richText = PdfUA2AnnotationChecker.getRichTextStringValue(fieldDic.get(PdfName.RV));
             if (richText.isEmpty()) {
                 return;
             }
@@ -196,19 +192,6 @@ public final class PdfUA2FormChecker {
                 throw new PdfUAConformanceException(
                         PdfUAExceptionMessageConstants.TEXT_FIELD_V_AND_RV_SHALL_BE_TEXTUALLY_EQUIVALENT);
             }
-        }
-    }
-
-    private static String getRichTextStringValue(PdfObject rv) {
-        String richText = PdfFormField.getStringValue(rv);
-        if (richText.isEmpty()) {
-            return richText;
-        }
-        try {
-            return parseRichText(XmlUtil.initXmlDocument(new ByteArrayInputStream(
-                    richText.getBytes(StandardCharsets.UTF_8))));
-        } catch (Exception e) {
-            throw new PdfException(e.getMessage(), e);
         }
     }
 

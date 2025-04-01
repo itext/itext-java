@@ -142,7 +142,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
                 cb.setBackgroundColor(ColorConstants.YELLOW);
                 return cb;
@@ -158,7 +158,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.setChecked(true);
                 return cb;
             }
@@ -173,7 +173,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.getAccessibilityProperties().setAlternateDescription("Yello");
                 cb.setChecked(true);
                 return cb;
@@ -189,7 +189,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.setChecked(true);
                 cb.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 cb.setBackgroundColor(ColorConstants.GREEN);
@@ -208,7 +208,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
+                checkBox.setPdfConformance(new PdfConformance(pdfUAConformance));
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 return checkBox;
             }
@@ -223,7 +223,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
+                checkBox.setPdfConformance(new PdfConformance(pdfUAConformance));
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 checkBox.setBackgroundColor(ColorConstants.GREEN);
@@ -242,7 +242,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
+                checkBox.setPdfConformance(new PdfConformance(pdfUAConformance));
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 checkBox.setBackgroundColor(ColorConstants.GREEN);
@@ -1629,7 +1629,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
                 cb.getAccessibilityProperties().setAlternateDescription("Hello");
                 return cb;
@@ -1645,7 +1645,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
                 return cb;
             }
@@ -2768,10 +2768,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        // TODO DEVSIX-9067 PdfUA: PdfUAConformanceException when SignatureFieldAppearance contains Image
-        framework.assertITextFail("signatureAppearanceWithImage", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT,
-                pdfUAConformance);
-        framework.assertVeraPdfValid("signatureAppearanceWithImage", pdfUAConformance);
+        framework.assertBothValid("signatureAppearanceWithImage", pdfUAConformance);
     }
 
     @ParameterizedTest

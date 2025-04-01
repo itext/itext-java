@@ -22,22 +22,16 @@
  */
 package com.itextpdf.pdfua.checkers.utils;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfObject;
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
-import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
-import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
+import com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1AnnotationChecker;
 
 /**
  * Class that provides methods for checking PDF/UA compliance of annotations.
+ *
+ * @deprecated in favor of {@link PdfUA1AnnotationChecker}
  */
+@Deprecated
 public final class AnnotationCheckUtil {
     private AnnotationCheckUtil() {
         // Empty constructor.
@@ -48,36 +42,18 @@ public final class AnnotationCheckUtil {
      * set and annotation intersects CropBox (default value is MediaBox).
      *
      * @param annotDict annotation to check
-     *
      * @return {@code true} if annotation should be checked, otherwise {@code false}
      */
     public static boolean isAnnotationVisible(PdfDictionary annotDict) {
-        if (annotDict.getAsNumber(PdfName.F) != null) {
-            int flags = annotDict.getAsNumber(PdfName.F).intValue();
-            if ((flags & PdfAnnotation.HIDDEN) != 0) {
-                return false;
-            }
-        }
-        if (annotDict.getAsDictionary(PdfName.P) != null) {
-            PdfDictionary page = annotDict.getAsDictionary(PdfName.P);
-            PdfArray pageBox = page.getAsArray(PdfName.CropBox) == null ? page.getAsArray(PdfName.MediaBox) : page.getAsArray(PdfName.CropBox);
-            if (pageBox != null && annotDict.getAsArray(PdfName.Rect) != null) {
-                PdfArray annotBox = annotDict.getAsArray(PdfName.Rect);
-                try {
-                    if (pageBox.toRectangle().getIntersection(annotBox.toRectangle()) == null) {
-                        return false;
-                    }
-                } catch (PdfException ignore) {
-                    // ignore
-                }
-            }
-        }
-        return true;
+        return PdfUA1AnnotationChecker.isAnnotationVisible(annotDict);
     }
 
     /**
      * Helper class that checks the conformance of annotations while iterating the tag tree structure.
+     *
+     * @deprecated in favor of {@link PdfUA1AnnotationChecker.PdfUA1AnnotationHandler}
      */
+    @Deprecated
     public static class AnnotationHandler extends ContextAwareTagTreeIteratorHandler {
 
         /**
@@ -96,70 +72,7 @@ public final class AnnotationCheckUtil {
 
         @Override
         public void processElement(IStructureNode elem) {
-            if (!(elem instanceof PdfObjRef)) {
-                return;
-            }
-            PdfObjRef objRef = (PdfObjRef) elem;
-            PdfDictionary annotObj = objRef.getReferencedObject();
-            if (annotObj == null) {
-                return;
-            }
-
-            if (annotObj.getAsDictionary(PdfName.P) != null) {
-                PdfDictionary pageDict = annotObj.getAsDictionary(PdfName.P);
-                if (!PdfName.S.equals(pageDict.getAsName(PdfName.Tabs))) {
-                    throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S);
-                }
-            }
-
-            PdfName subtype = annotObj.getAsName(PdfName.Subtype);
-
-            if (!isAnnotationVisible(annotObj) || PdfName.Popup.equals(subtype)) {
-                return;
-            }
-
-            if (PdfName.PrinterMark.equals(subtype)) {
-                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.PRINTER_MARK_IS_NOT_PERMITTED);
-            }
-
-            if (PdfName.TrapNet.equals(subtype)) {
-                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ANNOT_TRAP_NET_IS_NOT_PERMITTED);
-            }
-
-            PdfStructElem parent = (PdfStructElem) objRef.getParent();
-            if (!PdfName.Widget.equals(subtype) &&
-                    !(annotObj.containsKey(PdfName.Contents) || (parent != null && parent.getAlt() != null))) {
-                throw new PdfUAConformanceException(MessageFormatUtil.format(
-                        PdfUAExceptionMessageConstants.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_OR_ALT_KEY, subtype.getValue()));
-            }
-
-            if (PdfName.Link.equals(subtype)) {
-                PdfStructElem parentLink = context.getElementIfRoleMatches(PdfName.Link, objRef.getParent());
-                if (parentLink == null) {
-                    throw new PdfUAConformanceException(
-                            PdfUAExceptionMessageConstants.LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK);
-                }
-                if (!annotObj.containsKey(PdfName.Contents)) {
-                    throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.LINK_ANNOTATION_SHOULD_HAVE_CONTENTS_KEY);
-                }
-            }
-
-            if (PdfName.Screen.equals(subtype)) {
-                PdfDictionary action = annotObj.getAsDictionary(PdfName.A);
-                PdfDictionary additionalActions = annotObj.getAsDictionary(PdfName.AA);
-                ActionCheckUtil.checkAction(action);
-                checkAAEntry(additionalActions);
-            }
-        }
-
-        private static void checkAAEntry(PdfDictionary additionalActions) {
-            if (additionalActions != null) {
-                for (PdfObject val : additionalActions.values()) {
-                    if (val instanceof PdfDictionary) {
-                        ActionCheckUtil.checkAction((PdfDictionary) val);
-                    }
-                }
-            }
+            PdfUA1AnnotationChecker.checkElement(this.context, elem);
         }
     }
 }

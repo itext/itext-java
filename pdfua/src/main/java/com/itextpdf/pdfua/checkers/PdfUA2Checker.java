@@ -48,6 +48,7 @@ import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2AnnotationChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2DestinationsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2EmbeddedFilesChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormChecker;
@@ -165,11 +166,21 @@ public class PdfUA2Checker extends PdfUAChecker {
         checkMetadata(catalog);
         checkViewerPreferences(catalog);
         checkOCProperties(catalog.getPdfObject().getAsDictionary(PdfName.OCProperties));
+        checkFormFieldsAndAnnotations(catalog);
+        PdfUA2EmbeddedFilesChecker.checkEmbeddedFiles(catalog);
+    }
+
+    /**
+     * Validates all annotations and form fields present in the document against PDF/UA-2 standard.
+     *
+     * @param catalog {@link PdfCatalog} to check form fields present in the acroform
+     */
+    private void checkFormFieldsAndAnnotations(PdfCatalog catalog) {
         PdfUA2FormChecker formChecker = new PdfUA2FormChecker(context);
         formChecker.checkFormFields(catalog.getPdfObject().getAsDictionary(PdfName.AcroForm));
         formChecker.checkWidgetAnnotations(this.pdfDocument);
         PdfUA2LinkChecker.checkLinkAnnotations(this.pdfDocument);
-        PdfUA2EmbeddedFilesChecker.checkEmbeddedFiles(catalog);
+        PdfUA2AnnotationChecker.checkAnnotations(this.pdfDocument);
     }
 
     /**
@@ -217,8 +228,8 @@ public class PdfUA2Checker extends PdfUAChecker {
         tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
         tagTreeIterator.addHandler(new PdfUA2HeadingsChecker.PdfUA2HeadingHandler(context));
         tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
-        // TODO DEVSIX-9016 Support PDF/UA-2 rules for annotation types
         tagTreeIterator.addHandler(new PdfUA2FormChecker.PdfUA2FormTagHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2AnnotationChecker.PdfUA2AnnotationHandler(context));
         tagTreeIterator.addHandler(new PdfUA2ListChecker.PdfUA2ListHandler(context));
         tagTreeIterator.addHandler(new PdfUA2NotesChecker.PdfUA2NotesHandler(context));
         tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(context));

@@ -24,7 +24,6 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
@@ -34,6 +33,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -50,6 +50,8 @@ import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,9 +60,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
@@ -950,6 +949,13 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                         tagPointer.addTag(StandardRoles.ANNOT);
                         return true;
                     }
+                }
+            }
+            if (annotation instanceof PdfPrinterMarkAnnotation &&
+                    PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
+                if (!StandardRoles.ARTIFACT.equals(tagPointer.getRole())) {
+                    tagPointer.addTag(StandardRoles.ARTIFACT);
+                    return true;
                 }
             }
         }

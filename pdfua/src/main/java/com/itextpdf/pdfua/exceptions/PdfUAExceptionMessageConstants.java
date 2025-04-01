@@ -28,6 +28,8 @@ package com.itextpdf.pdfua.exceptions;
 public final class PdfUAExceptionMessageConstants {
     public static final String ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_OR_ALT_KEY = "Annotation of type {0} shall " +
             "have contents or alternate description (in the form of an Alt entry in the enclosing structure element).";
+    public static final String ANNOT_CONTENTS_IS_NULL_OR_EMPTY = "Annotation shall specify an alternate " +
+            "description or author's intent via its Contents key.";
     public static final String ANNOT_TRAP_NET_IS_NOT_PERMITTED =
             "Annotations of subtype TrapNet shall not be permitted.";
     public static final String ARTIFACT_CANT_BE_INSIDE_REAL_CONTENT =
@@ -38,6 +40,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String CELL_CANT_BE_DETERMINED_ALGORITHMICALLY = "TD cell row:{0} col:{1} in table {2} does"
             + " not contain a valid Headers attribute, and Headers for this cell cannot be determined algorithmically.";
     public static final String CELL_HAS_INVALID_ROLE = "Cell: row {0} ({1}) col {2} has invalid role.";
+    public static final String CONTENTS_AND_ALT_SHALL_BE_IDENTICAL = "If annotation has Contents entry and " +
+            "enclosing structure element has Alt entry, the values shall be identical.";
     public static final String CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT =
             "Content is neither marked as Artifact nor tagged as real content.";
     public static final String CONTENT_NOT_REFERENCING_FE_NOTE = "Real content that refers to footnotes or endnotes "
@@ -46,6 +50,8 @@ public final class PdfUAExceptionMessageConstants {
             "Content with MCID, but MCID wasn't found in StructTreeRoot.";
     public static final String CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP = "CT or Alt entry is missing from the media " +
             "clip data dictionary.";
+    public static final String DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED = "{0} annotations are deprecated in PDF 2.0 " +
+            "and therefore shall not be present.";
     public static final String DESC_IS_REQUIRED_ON_ALL_FILE_SPEC_FROM_THE_EMBEDDED_FILES = "The Desc entry " +
             "shall be present on all file specification dictionaries present in the EmbeddedFiles name tree " +
             "of a conforming file.";
@@ -66,6 +72,8 @@ public final class PdfUAExceptionMessageConstants {
             + "to identify all citations that reference it.";
     public static final String FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY =
             "File specification dictionary shall contain f key and uf key.";
+    public static final String FILE_SPEC_SHALL_CONTAIN_AFRELATIONSHIP = "When a file attachment annotation references" +
+            "file specification dictionary, that file specification dictionary shall include an AFRelationship entry.";
     public static final String FONT_SHOULD_BE_EMBEDDED = "Following font(s) are not embedded: {0}";
     public static final String FORMULA_SHALL_HAVE_ALT = "Formula tags shall include an alternative representation or "
             + "replacement text.";
@@ -97,6 +105,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String LIST_NUMBERING_IS_NOT_SPECIFIED = "If Lbl structure elements are present, the " +
             "ListNumbering attribute shall be specified for the respective L structure element; " +
             "the value None shall not be used.";
+    public static final String MARKUP_ANNOT_IS_NOT_TAGGED_AS_ANNOT = "Markup annotation shall be enclosed by " +
+            "Annot tag in the tag tree structure.";
     public static final String MATH_NOT_CHILD_OF_FORMULA =
             "The math structure type shall occur only as a child of a Formula structure element.";
     public static final String METADATA_SHALL_BE_PRESENT_IN_THE_CATALOG_DICTIONARY =
@@ -124,10 +134,17 @@ public final class PdfUAExceptionMessageConstants {
             "One or more standard types are remapped.";
     public static final String PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S = "A page with annotation(s) doesn't " +
             "contain Tabs key with S value.";
+    public static final String PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT = "Page that includes an " +
+            "annotation shall contain a Tabs entry in its page dictionary, and its value shall be A, W or S.";
+    public static final String POPUP_ANNOTATIONS_ARE_NOT_ALLOWED = "Popup annotations shall not be present in the " +
+            "tag structure tree.";
     public static final String PRINTER_MARK_IS_NOT_PERMITTED = "Annotations of subtype PrinterMark shall not be" +
             " included in logical structure.";
+    public static final String PRINTER_MARK_SHALL_BE_AN_ARTIFACT = "PrinterMark annotation shall be an artifact.";
     public static final String P_VALUE_IS_ABSENT_IN_ENCRYPTION_DICTIONARY = "Permissions are absent " +
             "in pdf encryption dictionary.";
+    public static final String RC_DIFFERENT_FROM_CONTENTS = "If markup annotation contains both RC and Contents " +
+            "entries, they shall be textually equivalent.";
     public static final String REAL_CONTENT_CANT_BE_INSIDE_ARTIFACT =
             "Content marked as content may not reside in Artifact content.";
     public static final String REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA =
@@ -136,6 +153,8 @@ public final class PdfUAExceptionMessageConstants {
             "Table rows {0} and {1} span different number of columns.";
     public static final String SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS = "Multiple link annotations targeting the same " +
             "location shall be included in a single Link or Reference structure element instead of separate ones.";
+    public static final String STAMP_ANNOT_SHALL_SPECIFY_NAME_OR_CONTENTS = "Stamp annotation shall contain either " +
+            "Name or Contents entry in order to describe the author’s intent.";
     public static final String STRUCTURE_TYPE_IS_ROLE_MAPPED_TO_OTHER_STRUCTURE_TYPE_IN_THE_SAME_NAMESPACE =
             "Structure type {0}:{1} is role mapped to other structure type in the same namespace.";
     public static final String SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE =
@@ -169,7 +188,9 @@ public final class PdfUAExceptionMessageConstants {
             "for PdfAnnotation use PdfAnnotation#setContents(\"Your contents description\");\n" +
             "for the layout engine use Element#getAccesibilityProperties().setAlternateDescription or " +
             "FormField#setAlternativeDescription(\"Your contents description\").";
-    public static final String XFA_FORMS_SHALL_NOT_BE_PRESENT = "XFA forms shall not be present.";
+    public static final String WIDGET_WITH_ZERO_HEIGHT_SHALL_BE_AN_ARTIFACT = "Widget annotation of zero height " +
+            "and width shall be an artifact.";
+    public static final String XFA_FORMS_SHALL_NOT_BE_PRESENT = "XFA forms shall not be present in PDF/UA-2 document.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor.
