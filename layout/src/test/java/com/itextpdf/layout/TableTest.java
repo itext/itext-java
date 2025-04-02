@@ -3483,9 +3483,8 @@ public class TableTest extends AbstractTableTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
-    public void preciseFittingBoldSimulatedTextInCellsTest() throws IOException, InterruptedException {
-        String fileName = "preciseFittingBoldSimulatedTextInCells.pdf";
+    public void preciseFittingItalicBoldSimulatedTextInCellsTest() throws IOException, InterruptedException {
+        String fileName = "preciseFittingItalicBoldSimulatedTextInCells.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + fileName));
             Document doc = new Document(pdfDocument)) {
@@ -3496,7 +3495,13 @@ public class TableTest extends AbstractTableTest {
             table.setFixedLayout();
 
             for (int i = 0; i < numberOfColumns; i++) {
-                table.addCell(new Cell().add(new Paragraph("Description").simulateBold()));
+                Paragraph p = new Paragraph("Description");
+                if (i % 2 == 0) {
+                    p.simulateBold();
+                } else {
+                    p.simulateItalic();
+                }
+                table.addCell(new Cell().add(p));
             }
 
             doc.add(table);
