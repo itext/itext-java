@@ -38,6 +38,7 @@ import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
 import com.itextpdf.kernel.validation.context.FontValidationContext;
+import com.itextpdf.kernel.validation.context.PdfDestinationAdditionContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -48,6 +49,7 @@ import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormChecker;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2DestinationsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormulaChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2ListChecker;
@@ -94,6 +96,7 @@ public class PdfUA2Checker extends PdfUAChecker {
                 checkCatalog(pdfDocContext.getPdfDocument().getCatalog());
                 checkStructureTreeRoot(pdfDocContext.getPdfDocument().getStructTreeRoot());
                 checkFonts(pdfDocContext.getDocumentFonts());
+                new PdfUA2DestinationsChecker(pdfDocument).checkDestinations();
                 PdfUA2XfaCheckUtil.check(pdfDocContext.getPdfDocument());
                 break;
             case FONT:
@@ -113,6 +116,10 @@ public class PdfUA2Checker extends PdfUAChecker {
                 LayoutValidationContext layoutContext = (LayoutValidationContext) context;
                 new LayoutCheckUtil(this.context).checkRenderer(layoutContext.getRenderer());
                 new PdfUA2HeadingsChecker(this.context).checkLayoutElement(layoutContext.getRenderer());
+                break;
+            case DESTINATION_ADDITION:
+                PdfDestinationAdditionContext destinationAdditionContext = (PdfDestinationAdditionContext) context;
+                new PdfUA2DestinationsChecker(destinationAdditionContext, pdfDocument).checkDestinationsOnCreation();
                 break;
         }
     }

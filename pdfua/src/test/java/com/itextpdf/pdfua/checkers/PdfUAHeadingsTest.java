@@ -860,10 +860,11 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
             doc.add(div);
         });
 
-        // VeraPdf here throw exception that "A node contains more than one H tag", because
-        // it seems that VeraPdf consider div as a not grouping element. See usualHTest2 test
-        // with the same code, but div role is replaced by section role
-        framework.assertVeraPdfFail("usualHTest", pdfUAConformance);
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertOnlyVeraPdfFail("usualHTest", pdfUAConformance);
+        } else {
+            framework.assertBothFail("usualHTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, pdfUAConformance);
+        }
     }
 
     @ParameterizedTest

@@ -98,10 +98,25 @@ public class UaValidationTestFramework {
         }
     }
 
+    public void assertITextValid(String fileName, PdfUAConformance pdfUAConformance) {
+        Exception e = checkErrorLayout("layout_" + fileName + getUAConformance(pdfUAConformance) + ".pdf",
+                pdfUAConformance);
+        if (e == null) {
+            return;
+        }
+        String sb = "No exception expected but was: "
+                + e.getClass().getName() + " \n"
+                + "Message: \n"
+                + e.getMessage() + '\n'
+                + "StackTrace:\n" + printStackTrace(e)
+                + '\n';
+        Assertions.fail(sb);
+    }
+
     public void assertBothValid(String fileName, PdfUAConformance pdfUAConformance) throws IOException {
         Exception e = checkErrorLayout("layout_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
         String veraPdf = veraPdfResult("vera_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", false, pdfUAConformance);
-        Exception eClosing =  checkErrorOnClosing("vera_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
+        Exception eClosing = checkErrorOnClosing("vera_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
         if (e == null && veraPdf == null && eClosing == null) {
             return;
         }

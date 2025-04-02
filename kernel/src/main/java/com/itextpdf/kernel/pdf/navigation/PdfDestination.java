@@ -41,15 +41,38 @@ public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
     public abstract PdfObject getDestinationPage(IPdfNameTreeAccess names);
 
 
+    /**
+     * Creates {@link PdfDestination} implementation based on provided {@link PdfObject}.
+     *
+     * @param pdfObject {@link PdfObject} from which {@link PdfDestination} shall be created
+     *
+     * @return created {@link PdfDestination} implementation
+     */
     public static PdfDestination makeDestination(PdfObject pdfObject) {
+        return makeDestination(pdfObject, true);
+    }
+
+    /**
+     * Creates {@link PdfDestination} implementation based on provided {@link PdfObject}.
+     *
+     * @param pdfObject {@link PdfObject} from which {@link PdfDestination} shall be created
+     * @param throwException if {@code true}, throws exception in case of invalid parameter
+     *
+     * @return created {@link PdfDestination} implementation
+     */
+    public static PdfDestination makeDestination(PdfObject pdfObject, boolean throwException) {
         if (pdfObject.getType() == PdfObject.STRING) {
             return new PdfStringDestination((PdfString) pdfObject);
         } else if (pdfObject.getType() == PdfObject.NAME) {
             return new PdfNamedDestination((PdfName) pdfObject);
         } else if (pdfObject.getType() == PdfObject.ARRAY) {
             PdfArray destArray = (PdfArray) pdfObject;
-            if (destArray.size() == 0) {
-                throw new IllegalArgumentException();
+            if (destArray.isEmpty()) {
+                if (throwException) {
+                    throw new IllegalArgumentException();
+                } else {
+                    return null;
+                }
             } else {
                 PdfObject firstObj = destArray.get(0);
                 // In case of explicit destination for remote go-to action this is a page number
@@ -63,8 +86,10 @@ public abstract class PdfDestination extends PdfObjectWrapper<PdfObject> {
                 // In case of structure destination this is a struct element dictionary or a string ID. Type is not required for structure elements
                 return new PdfStructureDestination(destArray);
             }
-        } else {
+        } else if (throwException) {
             throw new UnsupportedOperationException();
+        } else {
+            return null;
         }
     }
 }

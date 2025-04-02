@@ -32,7 +32,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfMarkupAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfPrinterMarkAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
@@ -45,6 +44,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
+import com.itextpdf.kernel.validation.context.PdfDestinationAdditionContext;
 import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -914,8 +914,22 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             //Annots are indirect so need to be marked as modified
             annots.setModified();
         }
+        checkIsoConformanceForDestinations(annotation);
 
         return this;
+    }
+
+    private void checkIsoConformanceForDestinations(PdfAnnotation annotation) {
+        if (annotation instanceof PdfLinkAnnotation) {
+            PdfLinkAnnotation linkAnnotation = (PdfLinkAnnotation) annotation;
+            getDocument().checkIsoConformance(new PdfDestinationAdditionContext(linkAnnotation.getDestinationObject()));
+            if (linkAnnotation.getAction() != null && PdfName.GoTo.equals(linkAnnotation.getAction().get(PdfName.S))) {
+                // We only care about destinations, whose target lies within this document.
+                // That's why GoToR and GoToE are ignored.
+                getDocument().checkIsoConformance(
+                        new PdfDestinationAdditionContext(new PdfAction(linkAnnotation.getAction())));
+            }
+        }
     }
 
     private boolean addAnnotationTag(TagTreePointer tagPointer, PdfAnnotation annotation) {

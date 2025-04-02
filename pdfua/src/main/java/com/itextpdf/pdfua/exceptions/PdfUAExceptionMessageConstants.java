@@ -46,6 +46,8 @@ public final class PdfUAExceptionMessageConstants {
             "Content with MCID, but MCID wasn't found in StructTreeRoot.";
     public static final String CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP = "CT or Alt entry is missing from the media " +
             "clip data dictionary.";
+    public static final String DESTINATION_NOT_STRUCTURE_DESTINATION =
+            "All destinations whose target lies within the same document shall be structure destinations.";
     public static final String DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY = "Document does not contain valid lang entry.";
     public static final String DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM
             = "Document shall contain a XMP metadata stream.";
