@@ -48,10 +48,11 @@ import com.itextpdf.pdfua.checkers.utils.GraphicsCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
-import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2DestinationsChecker;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormulaChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2LinkChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2ListChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2NotesChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2TableOfContentsChecker;
@@ -169,6 +170,7 @@ public class PdfUA2Checker extends PdfUAChecker {
         PdfUA2FormChecker formChecker = new PdfUA2FormChecker(context);
         formChecker.checkFormFields(catalog.getPdfObject().getAsDictionary(PdfName.AcroForm));
         formChecker.checkWidgetAnnotations(this.pdfDocument);
+        PdfUA2LinkChecker.checkLinkAnnotations(this.pdfDocument);
     }
 
     /**
@@ -225,6 +227,7 @@ public class PdfUA2Checker extends PdfUAChecker {
         tagTreeIterator.addHandler(new PdfUA2NotesChecker.PdfUA2NotesHandler(context));
         tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(context));
         tagTreeIterator.addHandler(new PdfUA2FormulaChecker.PdfUA2FormulaTagHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2LinkChecker.PdfUA2LinkAnnotationHandler(context, pdfDocument));
         tagTreeIterator.traverse();
     }
 }

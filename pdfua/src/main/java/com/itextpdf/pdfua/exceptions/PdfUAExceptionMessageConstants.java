@@ -48,6 +48,8 @@ public final class PdfUAExceptionMessageConstants {
             "clip data dictionary.";
     public static final String DESTINATION_NOT_STRUCTURE_DESTINATION =
             "All destinations whose target lies within the same document shall be structure destinations.";
+    public static final String DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM = "Link annotations that target different " +
+            "locations shall be in separate Link or Reference structure elements instead of a single one.";
     public static final String DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY = "Document does not contain valid lang entry.";
     public static final String DOCUMENT_SHALL_CONTAIN_XMP_METADATA_STREAM
             = "Document shall contain a XMP metadata stream.";
@@ -85,6 +87,8 @@ public final class PdfUAExceptionMessageConstants {
             "shall contain an alternate description via their Contents key.";
     public static final String LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK =
             "A link annotation is not nested within a <Link> tag.";
+    public static final String LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK_OR_REFERENCE =
+            "A link annotation is either not tagged or not nested within a <Link> or <Reference> tag.";
     public static final String LIST_ITEM_CONTENT_HAS_INVALID_TAG = "Any real content within an LI structure element " +
             "that is not enclosed in a Lbl structure element shall be enclosed in an LBody structure element.";
     public static final String LIST_NUMBERING_IS_NOT_SPECIFIED = "If Lbl structure elements are present, the " +
@@ -125,6 +129,8 @@ public final class PdfUAExceptionMessageConstants {
             "Content marked as content may not reside in Artifact content.";
     public static final String REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA =
             "Tagged content is present inside content marked as Artifact or vice versa.";
+    public static final String SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS = "Multiple link annotations targeting the same " +
+            "location shall be included in a single Link or Reference structure element instead of separate ones.";
     public static final String STRUCTURE_TYPE_IS_ROLE_MAPPED_TO_OTHER_STRUCTURE_TYPE_IN_THE_SAME_NAMESPACE =
             "Structure type {0}:{1} is role mapped to other structure type in the same namespace.";
     public static final String SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE =
