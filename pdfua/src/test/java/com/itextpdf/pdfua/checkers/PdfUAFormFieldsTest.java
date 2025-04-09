@@ -47,6 +47,7 @@ import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
@@ -64,6 +65,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -71,14 +73,21 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.BackgroundImage;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+
+import java.net.MalformedURLException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -95,6 +104,8 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUATest/PdfUAFormFieldTest/";
+
+    private static final String DOG = "./src/test/resources/com/itextpdf/pdfua/img/DOG.bmp";
 
     private UaValidationTestFramework framework;
 
@@ -2733,6 +2744,83 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             framework.assertBothFail("textFieldRVAndVNegativeTest3",
                     PdfUAExceptionMessageConstants.TEXT_FIELD_V_AND_RV_SHALL_BE_TEXTUALLY_EQUIVALENT, pdfUAConformance);
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
+    public void signatureAppearanceWithImage(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                Div div = new Div();
+                Image img;
+                try {
+                    img = new Image(ImageDataFactory.create(DOG));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                div.add(img);
+                appearance.setContent(div);
+                appearance.setInteractive(true);
+                appearance.setAlternativeDescription("Alternative Description");
+                return appearance;
+            }
+        });
+        // TODO DEVSIX-9067 PdfUA: PdfUAConformanceException when SignatureFieldAppearance contains Image
+        framework.assertITextFail("signatureAppearanceWithImage", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT,
+                pdfUAConformance);
+        framework.assertVeraPdfValid("signatureAppearanceWithImage", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
+    public void signatureAppearanceWithLineSeparator(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                Div div = new Div();
+                LineSeparator line = new LineSeparator(new SolidLine(3));
+                div.add(line);
+                appearance.setContent(div);
+                appearance.setInteractive(true);
+                appearance.setAlternativeDescription("Alternative Description");
+                return appearance;
+            }
+        });
+        framework.assertBothValid("signatureAppearanceLineSep", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
+    public void signatureAppearanceBackgroundImage(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                try {
+                    appearance.setFont(getFont());
+                    PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(DOG));
+                    BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+                    backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPointValue(100), UnitValue.createPointValue(100));
+                    Div div = new Div();
+                    div.add(new Paragraph("Some text"));
+                    appearance.setContent(div).setFontSize(50)
+                            .setBorder(new SolidBorder(ColorConstants.YELLOW, 10)).setHeight(200).setWidth(300);
+                    appearance.setBackgroundImage(backgroundImage);
+                    appearance.setAlternativeDescription("Alternative Description");
+                    appearance.setInteractive(true);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                return appearance;
+            }
+        });
+        framework.assertBothValid("signatureAppearanceBackgroundImage", pdfUAConformance);
     }
 
     private PdfFont getFont() {

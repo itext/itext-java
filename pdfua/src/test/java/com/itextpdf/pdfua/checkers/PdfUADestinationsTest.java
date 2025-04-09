@@ -135,7 +135,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithStructureDestination_" + destinationWrapType;
+        String filename = "namedDestWithStructureDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createNamedDestination(document, "destination",
@@ -147,7 +147,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithDictionaryWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithDictionaryWithStructureDestination_" + destinationWrapType;
+        String filename = "namedDestWithDictWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createNamedDestinationWithDictionary(document, createStructureDestination(document)));
@@ -172,7 +172,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithDictionaryAndSDWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithDictionaryAndSDWithStructureDestination_" + destinationWrapType;
+        String filename = "namedDestWithDictAndSDWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType,
@@ -184,7 +184,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithExplicitDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithExplicitDestination_" + destinationWrapType;
+        String filename = "namedDestWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createNamedDestination(document, "destination",
@@ -214,7 +214,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithDictionaryAndSDWithExplicitDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithDictionaryAndSDWithExplicitDestination_" + destinationWrapType;
+        String filename = "namedDestWithDictAndSDWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType,
@@ -244,7 +244,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithNamedDestinationWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithNamedDestinationWithStructureDestination_" + destinationWrapType;
+        String filename = "namedDestWithNamedDestWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createNamedDestination(document, "destination1",
@@ -269,7 +269,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithCyclicReferenceTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithCyclicReference_" + destinationWrapType;
+        String filename = "namedDestWithCyclicReference_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createNamedDestination(document, "destination",
@@ -300,7 +300,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "stringDestinationWithStructureDestination_" + destinationWrapType;
+        String filename = "stringDestWithStructureDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createStringDestination(document,
@@ -312,7 +312,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithDictionaryWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithDictionaryWithStructureDestination_" + destinationWrapType;
+        String filename = "stringDestWithDictWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createStringDestinationWithDictionary(document, createStructureDestination(document)));
@@ -337,7 +337,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithDictionaryAndSDWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithDictionaryAndSDWithStructureDestination_" + destinationWrapType;
+        String filename = "stringDestWithDictAndSDWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType,
@@ -349,7 +349,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithExplicitDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithExplicitDestination_" + destinationWrapType;
+        String filename = "stringDestWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createStringDestination(document,
@@ -379,7 +379,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithDictionaryAndSDWithExplicitDestinationTest(String destinationWrapType) throws IOException {
-        String filename = "namedDestinationWithDictionaryAndSDWithExplicitDestination_" + destinationWrapType;
+        String filename = "stringDestWithDictAndSDWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType,
