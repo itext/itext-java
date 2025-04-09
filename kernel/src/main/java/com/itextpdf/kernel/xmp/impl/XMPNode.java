@@ -917,7 +917,7 @@ class XMPNode implements Comparable
 	 */
 	private void assertChildNotExisting(String childName) throws XMPException
 	{
-		if (!XMPConst.ARRAY_ITEM_NAME.equals(childName)  &&
+		if (!getOptions().isArray() &&
 			findChildByName(childName) != null)
 		{
 			throw new XMPException("Duplicate property or field node '" + childName + "'",
