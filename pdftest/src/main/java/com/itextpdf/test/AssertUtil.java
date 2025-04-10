@@ -22,7 +22,10 @@
  */
 package com.itextpdf.test;
 
+import java.time.Duration;
+import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 
 /**
  * Utilities class for assertion operation.
@@ -61,5 +64,55 @@ public class AssertUtil {
         } catch (Exception ex) {
             Assertions.fail(message);
         }
+    }
+
+
+    /**
+     * Assert that the assertion passed within the timeout.
+     *
+     * @param assertion Callback to the actuals asserts to be safeguarded.
+     * @param timeout The maximum tilme it can take before passing the assertions.
+     * @throws Exception Any exception thrown by the assertion callback.
+     */
+    public static void assertPassedWithinTimeout(ThrowingRunnable assertion, Duration timeout) throws Exception {
+        assertPassedWithinTimeout(assertion, timeout, Duration.ZERO);
+    }
+
+    /**
+     * Assert that the assertion passed within the timeout.
+     *
+     * @param assertion Callback to the actuals asserts to be safeguarded.
+     * @param timeout The maximum tilme it can take before passing the assertions.
+     * @param sleepTime The time to sleep between polls.
+     * @throws Exception Any exception thrown by the assertion callback.
+     */
+    public static void assertPassedWithinTimeout(ThrowingRunnable assertion, Duration timeout, Duration sleepTime) throws Exception {
+        long sleepTimeInMillis = sleepTime.toMillis();
+        Instant start = Instant.now();
+        boolean passed = false;
+        while (!passed) {
+            try {
+                assertion.run();
+                passed = true;
+            }
+            catch (AssertionFailedError| Exception e) {
+                if (timeout.compareTo(Duration.between(start, Instant.now())) < 0) {
+                    throw e;
+                }
+                // If sleepTimeInMillis is 0 then the thread will attempt to yield
+                Thread.sleep(sleepTimeInMillis);
+                //ignore assertion failure if timeout not spent.
+            }
+        }
+    }
+
+    @FunctionalInterface
+    public interface ThrowingRunnable {
+        /**
+         * Runs this operation.
+         *
+         * @throws Exception any exception thrown by the runnable
+         */
+        void run() throws Exception;
     }
 }

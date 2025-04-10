@@ -605,6 +605,14 @@
                 <file path="com/itextpdf/test/runtime/VeraPdfValidatorAppTest.java"/>
                 <file path="com/itextpdf/test/utils/UriUtilTest.java"/>
             </fileset>
+            <fileset reason="AssertUtil relies on java.time.Instant which is not portable.">
+                <file path="com/itextpdf/test/AssertUtil.java" />
+            </fileset>
+            <fileset reason="AssertUtilTest has to use AtomicInteger for access from a lambda function. This is not portable.">
+                <file path="com/itextpdf/test/AssertUtilTest.java" />
+            </fileset>
+
+
         </java>
     </ignored>
      <resource>

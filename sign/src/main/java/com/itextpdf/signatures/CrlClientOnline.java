@@ -57,6 +57,7 @@ public class CrlClientOnline implements ICrlClient {
      * The URLs of the CRLs.
      */
     protected List<URL> urls = new ArrayList<>();
+    private int connectionTimeout = -1;
 
     /**
      * Creates a CrlClientOnline instance that will try to find
@@ -166,6 +167,14 @@ public class CrlClientOnline implements ICrlClient {
     }
 
     /**
+     * Sets the connection timeout for the http client
+     * @param i the timeout in milliseconds, a negative number means using the system connection timeout
+     */
+    public void setConnectionTimeout(int i) {
+        connectionTimeout = i;
+    }
+
+    /**
      * Get CRL response represented as {@link InputStream}.
      * 
      * @param cert {@link X509Certificate} certificate to get CRL response for
@@ -176,7 +185,7 @@ public class CrlClientOnline implements ICrlClient {
      * @throws IOException if an I/O error occurs
      */
     protected InputStream getCrlResponse(X509Certificate cert, URL urlt) throws IOException {
-        return SignUtils.getHttpResponse(urlt);
+        return SignUtils.getHttpResponse(urlt, connectionTimeout);
     }
 
     /**

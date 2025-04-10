@@ -332,8 +332,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void exponentialXObjectLoopTest() throws IOException {
         String fileName = SOURCE_FOLDER + "exponentialXObjectLoop.pdf";
         MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
-        //setting the limit to 256mb for xobjects
-        memoryLimitsAwareHandler.setMaxXObjectsSizePerPage(1024L*1024L*256L);
+        //setting the limit to 25mb for xobjects
+        memoryLimitsAwareHandler.setMaxXObjectsSizePerPage(10*1024L*256L);
         PdfReader pdfReader = new PdfReader(fileName, new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler));
         PdfDocument document = new PdfDocument(pdfReader);
         Exception exception = Assertions.assertThrows(MemoryLimitsAwareException.class,

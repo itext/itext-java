@@ -189,6 +189,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     })
     public void unreachableCrlDistributionPointFromCertChainTest() throws CertificateEncodingException {
         CrlClientOnline crlClientOnline = new CrlClientOnline();
+        crlClientOnline.setConnectionTimeout(2000);
         X509Certificate checkCert = new X509MockCertificate();
         Collection<byte[]> bytes = crlClientOnline.getEncoded(checkCert, "http://www.example.com/crl/test.crl");
         Assertions.assertTrue(bytes.isEmpty());
