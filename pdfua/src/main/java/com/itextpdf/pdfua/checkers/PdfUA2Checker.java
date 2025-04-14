@@ -49,6 +49,7 @@ import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2DestinationsChecker;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2EmbeddedFilesChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormulaChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
@@ -56,7 +57,7 @@ import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2LinkChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2ListChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2NotesChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2TableOfContentsChecker;
-import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2XfaCheckUtil;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2XfaChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
@@ -98,7 +99,7 @@ public class PdfUA2Checker extends PdfUAChecker {
                 checkStructureTreeRoot(pdfDocContext.getPdfDocument().getStructTreeRoot());
                 checkFonts(pdfDocContext.getDocumentFonts());
                 new PdfUA2DestinationsChecker(pdfDocument).checkDestinations();
-                PdfUA2XfaCheckUtil.check(pdfDocContext.getPdfDocument());
+                PdfUA2XfaChecker.check(pdfDocContext.getPdfDocument());
                 break;
             case FONT:
                 FontValidationContext fontContext = (FontValidationContext) context;
@@ -157,9 +158,6 @@ public class PdfUA2Checker extends PdfUAChecker {
     /**
      * Validates document catalog dictionary against PDF/UA-2 standard.
      *
-     * <p>
-     * For now, only {@code Metadata} and {@code ViewerPreferences} are checked.
-     *
      * @param catalog {@link PdfCatalog} document catalog dictionary to check
      */
     private void checkCatalog(PdfCatalog catalog) {
@@ -171,18 +169,16 @@ public class PdfUA2Checker extends PdfUAChecker {
         formChecker.checkFormFields(catalog.getPdfObject().getAsDictionary(PdfName.AcroForm));
         formChecker.checkWidgetAnnotations(this.pdfDocument);
         PdfUA2LinkChecker.checkLinkAnnotations(this.pdfDocument);
+        PdfUA2EmbeddedFilesChecker.checkEmbeddedFiles(catalog);
     }
 
     /**
      * Validates structure tree root dictionary against PDF/UA-2 standard.
      *
      * <p>
-     * Checks that within a given explicitly provided namespace, structure types are not role mapped to other structure
-     * types in the same namespace. In the StructTreeRoot RoleMap there is no explicitly provided namespace, that's why
-     * it is not checked.
-     *
-     * <p>
-     * Besides this, only headings check is performed for now.
+     * Additionally, checks that within a given explicitly provided namespace, structure types are not role mapped to
+     * other structure types in the same namespace. In the StructTreeRoot RoleMap there is no explicitly provided
+     * namespace, that's why it is not checked.
      *
      * @param structTreeRoot {@link PdfStructTreeRoot} structure tree root dictionary to check
      */

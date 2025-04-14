@@ -46,6 +46,9 @@ public final class PdfUAExceptionMessageConstants {
             "Content with MCID, but MCID wasn't found in StructTreeRoot.";
     public static final String CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP = "CT or Alt entry is missing from the media " +
             "clip data dictionary.";
+    public static final String DESC_IS_REQUIRED_ON_ALL_FILE_SPEC_FROM_THE_EMBEDDED_FILES = "The Desc entry " +
+            "shall be present on all file specification dictionaries present in the EmbeddedFiles name tree " +
+            "of a conforming file.";
     public static final String DESTINATION_NOT_STRUCTURE_DESTINATION =
             "All destinations whose target lies within the same document shall be structure destinations.";
     public static final String DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM = "Link annotations that target different " +
@@ -129,6 +132,8 @@ public final class PdfUAExceptionMessageConstants {
             "Content marked as content may not reside in Artifact content.";
     public static final String REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA =
             "Tagged content is present inside content marked as Artifact or vice versa.";
+    public static final String ROWS_SPAN_DIFFERENT_NUMBER_OF_COLUMNS =
+            "Table rows {0} and {1} span different number of columns.";
     public static final String SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS = "Multiple link annotations targeting the same " +
             "location shall be included in a single Link or Reference structure element instead of separate ones.";
     public static final String STRUCTURE_TYPE_IS_ROLE_MAPPED_TO_OTHER_STRUCTURE_TYPE_IN_THE_SAME_NAMESPACE =

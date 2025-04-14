@@ -26,6 +26,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
@@ -37,23 +38,22 @@ import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-
-import java.io.IOException;
-import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
+import java.util.List;
+
 @Tag("IntegrationTest")
-public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
+public class PdfUAEmbeddedFilesCheckTest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAFormulaTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
     private UaValidationTestFramework framework;
-
 
     @BeforeAll
     public static void before() {
@@ -69,7 +69,6 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
         return UaValidationTestFramework.getConformanceList();
     }
 
-
     @ParameterizedTest
     @MethodSource("data")
     public void pdfuaWithEmbeddedFilesWithoutFTest(PdfUAConformance pdfUAConformance) throws IOException {
@@ -81,12 +80,11 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
             pdfDocument.addFileAttachment("file.txt", fs);
         });
 
-
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("pdfuaWithEmbeddedFilesWithoutF",
                     PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfValid("pdfuaWithEmbeddedFilesWithoutF", pdfUAConformance);
+            framework.assertBothValid("pdfuaWithEmbeddedFilesWithoutF", pdfUAConformance);
         }
     }
 
@@ -106,7 +104,7 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
             framework.assertBothFail("pdfuaWithEmbeddedFilesWithoutUF",
                     PdfUAExceptionMessageConstants.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertVeraPdfValid("pdfuaWithEmbeddedFilesWithoutUF", pdfUAConformance);
+            framework.assertBothValid("pdfuaWithEmbeddedFilesWithoutUF", pdfUAConformance);
         }
     }
 
@@ -114,36 +112,53 @@ public class PdfUAEmbeddedFilesCheckTest  extends ExtendedITextTest {
     @MethodSource("data")
     public void pdfuaWithValidEmbeddedFileTest(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook((pdfDocument -> {
-            PdfFont font;
-            try {
-                font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
-            } catch (IOException e) {
-                //rethrow as unchecked to fail the test
-                throw new RuntimeException();
-            }
-            PdfPage page1 = pdfDocument.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page1);
-
-            TagTreePointer tagPointer = new TagTreePointer(pdfDocument)
-                    .setPageForTagging(page1)
-                    .addTag(StandardRoles.P);
-
-            canvas.openTag(tagPointer.getTagReference())
-                    .saveState()
-                    .beginText()
-                    .setFontAndSize(font, 12)
-                    .moveText(100, 100)
-                    .showText("Test text.")
-                    .endText()
-                    .restoreState()
-                    .closeTag();
-
-            byte[] somePdf = new byte[35];
-            pdfDocument.addAssociatedFile("some test pdf file",
-                    PdfFileSpec.createEmbeddedFileSpec(pdfDocument, somePdf, "some test pdf file", "foo.pdf",
-                            PdfName.ApplicationPdf, null, new PdfName("Data")));
+            addEmbeddedFile(pdfDocument, "some test pdf file");
         }));
         framework.assertBothValid("pdfuaWithValidEmbeddedFile", pdfUAConformance);
     }
 
+    @ParameterizedTest
+    @MethodSource("data")
+    public void embeddedFilesWithFileSpecWithoutDescTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook((pdfDocument -> {
+            addEmbeddedFile(pdfDocument, null);
+        }));
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("embeddedFilesWithFileSpecWithoutDesc", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("embeddedFilesWithFileSpecWithoutDesc", PdfUAExceptionMessageConstants.
+                    DESC_IS_REQUIRED_ON_ALL_FILE_SPEC_FROM_THE_EMBEDDED_FILES, pdfUAConformance);
+        }
+    }
+
+    private static void addEmbeddedFile(PdfDocument pdfDocument, String description) {
+        PdfFont font;
+        try {
+            font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
+        } catch (IOException e) {
+            // Rethrow as unchecked to fail the test.
+            throw new RuntimeException();
+        }
+        PdfPage page = pdfDocument.addNewPage();
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        TagTreePointer tagPointer = new TagTreePointer(pdfDocument)
+                .setPageForTagging(page)
+                .addTag(StandardRoles.P);
+
+        canvas.openTag(tagPointer.getTagReference())
+                .saveState()
+                .beginText()
+                .setFontAndSize(font, 12)
+                .moveText(100, 100)
+                .showText("Test text.")
+                .endText()
+                .restoreState()
+                .closeTag();
+
+        byte[] somePdf = new byte[35];
+        pdfDocument.addAssociatedFile("some test pdf file",
+                PdfFileSpec.createEmbeddedFileSpec(pdfDocument, somePdf, description, "foo.pdf", PdfName.ApplicationPdf,
+                        null, new PdfName("Data")));
+    }
 }

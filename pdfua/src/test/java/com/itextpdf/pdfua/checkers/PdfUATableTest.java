@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -40,6 +41,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
+import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -180,7 +182,7 @@ public class PdfUATableTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 4)
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 8)
     })
     public void notRegularRowGroupingsInTableTest(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
@@ -194,7 +196,8 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addFooterCell(new DataCellSupplier("Footer 1", 3, 1, null));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertVeraPdfFail("tableWithHeaderScopeColumn04", pdfUAConformance);
+        framework.assertBothFail("tableWithHeaderScopeColumn04", MessageFormatUtil.format(
+                PdfUAExceptionMessageConstants.ROWS_SPAN_DIFFERENT_NUMBER_OF_COLUMNS, 1, 2), false, pdfUAConformance);
     }
 
     @ParameterizedTest

@@ -93,7 +93,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
 
             document.add(gridContainer1);
         });
-        framework.assertVeraPdfValid("border", pdfUAConformance);
+        framework.assertBothValid("border", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -112,7 +112,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
             gridContainer0.setMarginRight(10);
             document.add(gridContainer0);
         });
-        framework.assertVeraPdfValid("margin", pdfUAConformance);
+        framework.assertBothValid("margin", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -131,7 +131,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
             gridContainer0.setPaddingRight(10);
             document.add(gridContainer0);
         });
-        framework.assertVeraPdfValid("padding", pdfUAConformance);
+        framework.assertBothValid("padding", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -147,7 +147,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
             gridContainer0.setBackgroundColor(ColorConstants.RED);
             document.add(gridContainer0);
         });
-        framework.assertVeraPdfValid("background", pdfUAConformance);
+        framework.assertBothValid("background", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -167,7 +167,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
             gridContainer0.setProperty(Property.COLUMN_GAP, 12.0f);
             document.add(gridContainer0);
         });
-        framework.assertVeraPdfValid("emptyGridContainer", pdfUAConformance);
+        framework.assertBothValid("emptyGridContainer", pdfUAConformance);
     }
 
 

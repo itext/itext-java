@@ -30,9 +30,9 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 /**
  * Utility class which performs XFA forms check according to PDF/UA-2 specification.
  */
-public final class PdfUA2XfaCheckUtil {
+public final class PdfUA2XfaChecker {
 
-    private PdfUA2XfaCheckUtil() {
+    private PdfUA2XfaChecker() {
         // Private constructor will prevent the instantiation of this class directly.
     }
 
