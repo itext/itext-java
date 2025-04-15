@@ -23,12 +23,14 @@
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
@@ -40,6 +42,7 @@ import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationCont
 import com.itextpdf.kernel.validation.context.FontValidationContext;
 import com.itextpdf.kernel.validation.context.PdfDestinationAdditionContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
+import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -57,6 +60,7 @@ import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2HeadingsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2LinkChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2ListChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2NotesChecker;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2StringChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2TableOfContentsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2XfaChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -124,6 +128,10 @@ public class PdfUA2Checker extends PdfUAChecker {
                 PdfDestinationAdditionContext destinationAdditionContext = (PdfDestinationAdditionContext) context;
                 new PdfUA2DestinationsChecker(destinationAdditionContext, pdfDocument).checkDestinationsOnCreation();
                 break;
+            case PDF_OBJECT:
+                PdfObjectValidationContext validationContext = (PdfObjectValidationContext) context;
+                checkPdfObject(validationContext.getObject());
+                break;
         }
     }
 
@@ -153,6 +161,39 @@ public class PdfUA2Checker extends PdfUAChecker {
             }
         } catch (XMPException e) {
             throw new PdfUAConformanceException(e.getMessage());
+        }
+    }
+
+    private void checkPdfObject(PdfObject obj) {
+        switch (obj.getType()) {
+            case PdfObject.STRING:
+                PdfUA2StringChecker.checkPdfString((PdfString) obj);
+                break;
+            case PdfObject.ARRAY:
+                checkArrayRecursively((PdfArray) obj);
+                break;
+            case PdfObject.DICTIONARY:
+            case PdfObject.STREAM:
+                checkDictionaryRecursively((PdfDictionary) obj);
+                break;
+        }
+    }
+
+    private void checkArrayRecursively(PdfArray array) {
+        for (int i = 0; i < array.size(); i++) {
+            PdfObject object = array.get(i, false);
+            if (object != null && !object.isIndirect()) {
+                checkPdfObject(object);
+            }
+        }
+    }
+
+    private void checkDictionaryRecursively(PdfDictionary dictionary) {
+        for (PdfName name : dictionary.keySet()) {
+            PdfObject object = dictionary.get(name, false);
+            if (object != null && !object.isIndirect()) {
+                checkPdfObject(object);
+            }
         }
     }
 

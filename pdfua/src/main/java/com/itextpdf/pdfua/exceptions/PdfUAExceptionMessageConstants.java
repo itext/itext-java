@@ -169,6 +169,8 @@ public final class PdfUAExceptionMessageConstants {
             "Encryption dictionary should be 1 if the document is tagged.";
     public static final String TEXT_FIELD_V_AND_RV_SHALL_BE_TEXTUALLY_EQUIVALENT = "For text fields, when RV entry " +
             "is present, a V entry shall also be present, and they shall be textually equivalent.";
+    public static final String TEXT_STRING_USES_UNICODE_PUA =
+            "Text strings intended to be human readable shall not use the Unicode PUA.";
     public static final String TOCI_SHALL_IDENTIFY_REF =
             "Each TOCI structure element shall contain the Ref entry, either directly on the TOCI structure element" +
                     " itself or on at least one of its descendant structure elements.";
