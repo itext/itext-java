@@ -74,33 +74,35 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
         }
         List<AbstractProductProcessITextEvent> events = getEvents(pdfDocument.getDocumentIdWrapper());
 
+        final String oldProducer = pdfDocument.getDocumentInfo().getProducer();
+        String newProducer;
         if (events == null || events.isEmpty()) {
             final ProductData productData = ITextCoreProductData.getInstance();
-            final String noEventProducer = "iText\u00ae \u00a9" + productData.getSinceCopyrightYear() + "-"
-                    + productData.getToCopyrightYear() + " Apryse Group NV (no registered products)";
-            pdfDocument.getDocumentInfo().setProducer(noEventProducer);
-            return;
-        }
-
-        final Set<String> products = new HashSet<>();
-        for (final AbstractProductProcessITextEvent event : events) {
-            pdfDocument.getFingerPrint().registerProduct(event.getProductData());
-            if (event.getConfirmationType() == EventConfirmationType.ON_CLOSE) {
-                EventManager.getInstance().onEvent(new ConfirmEvent(pdfDocument.getDocumentIdWrapper(), event));
+            final String noEventProducer = "iText\u00ae " + productData.getPublicProductName() + " " +
+                    productData.getVersion() + " \u00a9" + productData.getSinceCopyrightYear() + "-"
+                    + productData.getToCopyrightYear() + " Apryse Group NV";
+            newProducer = ProducerBuilder.mergeProducerLines(oldProducer, noEventProducer);
+        } else {
+            final Set<String> products = new HashSet<>();
+            for (final AbstractProductProcessITextEvent event : events) {
+                pdfDocument.getFingerPrint().registerProduct(event.getProductData());
+                if (event.getConfirmationType() == EventConfirmationType.ON_CLOSE) {
+                    EventManager.getInstance().onEvent(new ConfirmEvent(pdfDocument.getDocumentIdWrapper(), event));
+                }
+                products.add(event.getProductName());
             }
-            products.add(event.getProductName());
-        }
 
-        for (final String product : products) {
-            final ITextProductEventProcessor processor = getActiveProcessor(product);
-            if (processor == null && LOGGER.isWarnEnabled()) {
-                LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, product));
+            for (final String product : products) {
+                final ITextProductEventProcessor processor = getActiveProcessor(product);
+                if (processor == null && LOGGER.isWarnEnabled()) {
+                    LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, product));
+                }
             }
+
+            newProducer = ProducerBuilder.modifyProducer(getConfirmedEvents(pdfDocument.getDocumentIdWrapper()),
+                    oldProducer);
         }
 
-        final String oldProducer = pdfDocument.getDocumentInfo().getProducer();
-        final String newProducer =
-                ProducerBuilder.modifyProducer(getConfirmedEvents(pdfDocument.getDocumentIdWrapper()), oldProducer);
         pdfDocument.getDocumentInfo().setProducer(newProducer);
     }
 
