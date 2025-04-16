@@ -42,9 +42,11 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -185,6 +187,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         });
 
         // TODO DEVSIX-9017 Support PDF/UA rules for fonts.
+        // TODO DEVSIX-9004 Support Character encodings related rules in UA-2
         framework.assertOnlyVeraPdfFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
     }
 
@@ -229,5 +232,99 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             document.add(paragraph);
         });
         framework.assertBothValid("type1EmbeddedFontTest", pdfUAConformance);
+    }
+
+    @Test
+    // TODO DEVSIX-9076 NPE when cmap of True Type Font doesn't contain Microsoft Unicode or Macintosh Roman encodings
+    public void nonSymbolicTtfWithChangedCmapTest() {
+        Assertions.assertThrows(NullPointerException.class,
+                () -> PdfFontFactory.createFont(FONT_FOLDER + "FreeSans_changed_cmap.ttf", PdfEncodings.MACROMAN,
+                        EmbeddingStrategy.FORCE_EMBEDDED));
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void nonSymbolicTtfWithValidEncodingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font;
+            try {
+                font = PdfFontFactory.createFont(FONT, PdfEncodings.MACROMAN, EmbeddingStrategy.FORCE_EMBEDDED);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            document.setFont(font);
+
+            Paragraph paragraph = new Paragraph("ABC");
+            document.add(paragraph);
+        });
+        framework.assertBothValid("nonSymbolicTtfWithIncompatibleEncoding", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void nonSymbolicTtfWithIncompatibleEncodingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font;
+            try {
+                font = PdfFontFactory.createFont(FONT, PdfEncodings.UTF8, EmbeddingStrategy.FORCE_EMBEDDED);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            document.setFont(font);
+
+            Paragraph paragraph = new Paragraph("ABC");
+            document.add(paragraph);
+        });
+        // TODO DEVSIX-9004 Support Character encodings related rules in UA-2
+        framework.assertOnlyVeraPdfFail("nonSymbolicTtfWithIncompatibleEncoding", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void symbolicTtfTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font;
+            try {
+                font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf");
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            document.setFont(font);
+
+            Paragraph paragraph = new Paragraph("ABC");
+            document.add(paragraph);
+        });
+        framework.assertBothValid("symbolicTtf", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void symbolicTtfWithEncodingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font;
+            try {
+                // if we specify encoding, symbolic font is treated as non-symbolic
+                font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf", PdfEncodings.MACROMAN, EmbeddingStrategy.FORCE_EMBEDDED);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            document.setFont(font);
+
+            Paragraph paragraph = new Paragraph("ABC");
+            document.add(paragraph);
+        });
+        framework.assertBothValid("symbolicTtfWithEncoding", pdfUAConformance);
+    }
+
+    @Test
+    // TODO DEVSIX-9076 NPE when cmap of True Type Font doesn't contain Microsoft Unicode or Macintosh Roman encodings
+    public void symbolicTtfWithChangedCmapTest() {
+        Assertions.assertThrows(NullPointerException.class,
+                () -> PdfFontFactory.createFont(FONT_FOLDER + "Symbols1_changed_cmap.ttf",
+                        EmbeddingStrategy.FORCE_EMBEDDED));
     }
 }
