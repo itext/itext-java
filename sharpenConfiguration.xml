@@ -39,6 +39,9 @@
                 <file path="com/itextpdf/commons/utils/ZipFileReader.java"/>
                 <file path="com/itextpdf/commons/utils/ZipFileWriter.java"/>
             </fileset>
+            <fileset reason="On .NET there are System.Text.Json specific tests (JsonSerializerContext using)">
+                <file path="com/itextpdf/commons/utils/JsonUtilTest.java"/>
+            </fileset>
             <fileset reason="DEVSIX-3221 - Ignored because built-in Convert class functionality is used in .NET
         and the Java test is specific to the Java implementation.">
                 <file path="com/itextpdf/commons/utils/Base64Test.java"/>
