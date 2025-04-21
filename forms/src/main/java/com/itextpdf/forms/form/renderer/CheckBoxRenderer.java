@@ -39,6 +39,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -56,9 +57,9 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.Map;
-
 
 /**
  * The {@link AbstractFormFieldRenderer} implementation for checkboxes.
@@ -69,7 +70,6 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
     public static final float DEFAULT_BORDER_WIDTH = 0.75F;
     // 11px
     private static final float DEFAULT_SIZE = 8.25F;
-
 
     /**
      * Creates a new {@link CheckBoxRenderer} instance.
@@ -88,7 +88,6 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
     public IRenderer getNextRenderer() {
         return new CheckBoxRenderer((CheckBox) modelElement);
     }
-
 
     /**
      * Gets the rendering mode of the checkbox.
@@ -182,6 +181,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
     /**
      * Applies given paddings to the given rectangle.
      *
+     * <p>
      * Checkboxes don't support setting of paddings as they are always centered.
      * So that this method returns the rectangle as is.
      *
@@ -310,18 +310,20 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
             PdfCanvas canvas = drawContext.getCanvas();
             boolean isTaggingEnabled = drawContext.isTaggingEnabled();
             if (isTaggingEnabled) {
-                TagTreePointer tp = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
-                canvas.openTag(tp.getTagReference());
+                LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+                boolean isArtifact = taggingHelper != null && taggingHelper.isArtifact(this);
+                if (!isArtifact) {
+                    TagTreePointer tp = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
+                    canvas.openTag(tp.getTagReference());
+                } else {
+                    canvas.openTag(new CanvasArtifact());
+                }
             }
             createCheckBoxRenderStrategy().drawCheckBoxContent(drawContext, CheckBoxRenderer.this, rectangle);
             if (isTaggingEnabled) {
                 canvas.closeTag();
             }
-
         }
     }
 
 }
-
-
-

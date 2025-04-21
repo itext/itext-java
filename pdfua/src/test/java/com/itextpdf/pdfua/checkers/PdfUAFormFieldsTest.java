@@ -1640,7 +1640,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testCheckBoxArtifactDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
+    public void testCheckBoxArtifactRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1650,14 +1650,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return cb;
             }
         });
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("testCheckBoxArtifactRoleua1", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            //TODO DEVSIX-8974 Tagging formfield as artifact will put the inner content into bad places in tagstructure
-            String message = MessageFormatUtil.format(
-                    KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "Document", "CONTENT");
-            framework.assertBothFail("testCheckBoxArtifactRoleua2", message, pdfUAConformance);
-        }
+        framework.assertBothValid("testCheckBoxArtifactRole", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1666,7 +1659,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
-                Radio radio = new Radio("name", "group");
+                Radio radio = new Radio("name1", "group");
                 radio.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
                 radio.getAccessibilityProperties()
                         .setAlternateDescription("Radio " + "that " + "was " + "not " + "checked");
@@ -1676,7 +1669,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
-                Radio radio = new Radio("name", "group");
+                Radio radio = new Radio("name2", "group");
                 radio.setChecked(true);
                 radio.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
                 radio.getAccessibilityProperties().setAlternateDescription("Radio that was not checked");
@@ -1686,12 +1679,46 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
-                Radio radio = new Radio("name", "group");
+                Radio radio = new Radio("name3", "group");
                 radio.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
                 return radio;
             }
         });
         framework.assertBothValid("testRadioButtonDifferentRole", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonArtifactRole(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name1", "group");
+                radio.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                radio.getAccessibilityProperties()
+                        .setAlternateDescription("Radio that was not checked");
+                return radio;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name2", "group");
+                radio.setChecked(true);
+                radio.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                radio.getAccessibilityProperties().setAlternateDescription("Radio that was not checked");
+                return radio;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name3", "group");
+                radio.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                return radio;
+            }
+        });
+        framework.assertBothValid("testRadioButtonArtifactRole", pdfUAConformance);
     }
 
     @ParameterizedTest

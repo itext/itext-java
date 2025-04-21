@@ -56,6 +56,7 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.Map;
 
@@ -249,8 +250,14 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
             PdfCanvas canvas = drawContext.getCanvas();
             boolean isTaggingEnabled = drawContext.isTaggingEnabled();
             if (isTaggingEnabled) {
-                TagTreePointer tp = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
-                canvas.openTag(tp.getTagReference());
+                LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+                boolean isArtifact = taggingHelper != null && taggingHelper.isArtifact(this);
+                if (isArtifact) {
+                    canvas.openTag(new CanvasArtifact());
+                } else {
+                    TagTreePointer tp = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
+                    canvas.openTag(tp.getTagReference());
+                }
             }
             Rectangle rectangle = getOccupiedArea().getBBox().clone();
             Border borderTop = this.<Border>getProperty(Property.BORDER_TOP);
