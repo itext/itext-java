@@ -44,6 +44,8 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
+import com.itextpdf.kernel.validation.context.PdfAnnotationContext;
 import com.itextpdf.kernel.validation.context.PdfDestinationAdditionContext;
 import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -883,16 +885,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     public PdfPage addAnnotation(int index, PdfAnnotation annotation, boolean tagAnnotation) {
         if (getDocument().isTagged()) {
             if (tagAnnotation) {
-                TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
-                boolean tagAdded = addAnnotationTag(tagPointer, annotation);
-                PdfPage prevPage = tagPointer.getCurrentPage();
-                tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
-                if (prevPage != null) {
-                    tagPointer.setPageForTagging(prevPage);
-                }
-                if (tagAdded) {
-                    tagPointer.moveToParent();
-                }
+                tagAnnotation(annotation);
             }
             if (getTabOrder() == null) {
                 setTabOrder(PdfName.S);
@@ -913,53 +906,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             //Annots are indirect so need to be marked as modified
             annots.setModified();
         }
-        checkIsoConformanceForDestinations(annotation);
+        checkIsoConformanceForAnnotation(annotation);
 
         return this;
-    }
-
-    private void checkIsoConformanceForDestinations(PdfAnnotation annotation) {
-        if (annotation instanceof PdfLinkAnnotation) {
-            PdfLinkAnnotation linkAnnotation = (PdfLinkAnnotation) annotation;
-            getDocument().checkIsoConformance(new PdfDestinationAdditionContext(linkAnnotation.getDestinationObject()));
-            if (linkAnnotation.getAction() != null && PdfName.GoTo.equals(linkAnnotation.getAction().get(PdfName.S))) {
-                // We only care about destinations, whose target lies within this document.
-                // That's why GoToR and GoToE are ignored.
-                getDocument().checkIsoConformance(
-                        new PdfDestinationAdditionContext(new PdfAction(linkAnnotation.getAction())));
-            }
-        }
-    }
-
-    private boolean addAnnotationTag(TagTreePointer tagPointer, PdfAnnotation annotation) {
-        if (annotation instanceof PdfLinkAnnotation) {
-            // "Link" tag was added starting from PDF 1.4
-            if (PdfVersion.PDF_1_3.compareTo(getDocument().getPdfVersion()) < 0) {
-                if (!StandardRoles.LINK.equals(tagPointer.getRole())) {
-                    tagPointer.addTag(StandardRoles.LINK);
-                    return true;
-                }
-            }
-        } else {
-            if (!(annotation instanceof PdfWidgetAnnotation)
-                    && !(annotation instanceof PdfPrinterMarkAnnotation)) {
-                // "Annot" tag was added starting from PDF 1.5
-                if (PdfVersion.PDF_1_4.compareTo(getDocument().getPdfVersion()) < 0) {
-                    if (!StandardRoles.ANNOT.equals(tagPointer.getRole())) {
-                        tagPointer.addTag(StandardRoles.ANNOT);
-                        return true;
-                    }
-                }
-            }
-            if (annotation instanceof PdfPrinterMarkAnnotation &&
-                    PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
-                if (!StandardRoles.ARTIFACT.equals(tagPointer.getRole())) {
-                    tagPointer.addTag(StandardRoles.ARTIFACT);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -1327,6 +1276,103 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
+    private static boolean isAnnotInvisible(PdfAnnotation annotation) {
+        PdfNumber f = annotation.getPdfObject().getAsNumber(PdfName.F);
+        if (f == null) {
+            return false;
+        }
+        int flags = f.intValue();
+        return PdfCheckersUtil.checkFlag(flags, PdfAnnotation.INVISIBLE) ||
+                (PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_VIEW) &&
+                        !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.TOGGLE_NO_VIEW));
+    }
+
+    private void tagAnnotation(PdfAnnotation annotation) {
+        boolean tagAdded = false;
+        boolean presentInTagStructure = true;
+        boolean isUA2 = isPdfUA2Document();
+        TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
+        if (isUA2 && isAnnotInvisible(annotation)) {
+            if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
+                if (!StandardRoles.ARTIFACT.equals(tagPointer.getRole())) {
+                    tagPointer.addTag(StandardRoles.ARTIFACT);
+                    tagAdded = true;
+                }
+            } else {
+                presentInTagStructure = false;
+            }
+        } else {
+            tagAdded = addAnnotationTag(tagPointer, annotation);
+        }
+        if (presentInTagStructure) {
+            PdfPage prevPage = tagPointer.getCurrentPage();
+            tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
+            if (prevPage != null) {
+                tagPointer.setPageForTagging(prevPage);
+            }
+        }
+        if (tagAdded) {
+            tagPointer.moveToParent();
+        }
+    }
+
+    private boolean isPdfUA2Document() {
+        PdfUAConformance uaConformance = getDocument().getConformance().getUAConformance();
+        if (uaConformance == null) {
+            try {
+                uaConformance = PdfConformance.getConformance(getDocument().getXmpMetadata()).getUAConformance();
+            } catch (XMPException e) {
+                return false;
+            }
+        }
+        return PdfUAConformance.PDF_UA_2 == uaConformance;
+    }
+
+    private void checkIsoConformanceForAnnotation(PdfAnnotation annotation) {
+        getDocument().checkIsoConformance(new PdfAnnotationContext(annotation.getPdfObject()));
+        if (annotation instanceof PdfLinkAnnotation) {
+            PdfLinkAnnotation linkAnnotation = (PdfLinkAnnotation) annotation;
+            getDocument().checkIsoConformance(new PdfDestinationAdditionContext(linkAnnotation.getDestinationObject()));
+            if (linkAnnotation.getAction() != null && PdfName.GoTo.equals(linkAnnotation.getAction().get(PdfName.S))) {
+                // We only care about destinations, whose target lies within this document.
+                // That's why GoToR and GoToE are ignored.
+                getDocument().checkIsoConformance(
+                        new PdfDestinationAdditionContext(new PdfAction(linkAnnotation.getAction())));
+            }
+        }
+    }
+
+    private boolean addAnnotationTag(TagTreePointer tagPointer, PdfAnnotation annotation) {
+        if (annotation instanceof PdfLinkAnnotation) {
+            // "Link" tag was added starting from PDF 1.4
+            if (PdfVersion.PDF_1_3.compareTo(getDocument().getPdfVersion()) < 0) {
+                if (!StandardRoles.LINK.equals(tagPointer.getRole())) {
+                    tagPointer.addTag(StandardRoles.LINK);
+                    return true;
+                }
+            }
+        } else {
+            if (!(annotation instanceof PdfWidgetAnnotation)
+                    && !(annotation instanceof PdfPrinterMarkAnnotation)) {
+                // "Annot" tag was added starting from PDF 1.5
+                if (PdfVersion.PDF_1_4.compareTo(getDocument().getPdfVersion()) < 0) {
+                    if (!StandardRoles.ANNOT.equals(tagPointer.getRole())) {
+                        tagPointer.addTag(StandardRoles.ANNOT);
+                        return true;
+                    }
+                }
+            }
+            if (annotation instanceof PdfPrinterMarkAnnotation &&
+                    PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
+                if (!StandardRoles.ARTIFACT.equals(tagPointer.getRole())) {
+                    tagPointer.addTag(StandardRoles.ARTIFACT);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private PdfPage copyTo(PdfPage page, PdfDocument toDocument, IPdfPageExtraCopier copier) {
         final ICopyFilter copyFilter = new DestinationResolverCopyFilter(this.getDocument(), toDocument);
         copyInheritedProperties(page, toDocument, NullCopyFilter.getInstance());
@@ -1540,6 +1586,4 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             newField.put(PdfName.Parent, newParent);
         }
     }
-
-
 }

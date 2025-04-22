@@ -469,16 +469,14 @@ public class PdfA2Checker extends PdfA1Checker {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.AN_ANNOTATION_DICTIONARY_SHALL_CONTAIN_THE_F_KEY);
             }
             int flags = f.intValue();
-            if (!checkFlag(flags, PdfAnnotation.PRINT)
-                    || checkFlag(flags, PdfAnnotation.HIDDEN)
-                    || checkFlag(flags, PdfAnnotation.INVISIBLE)
-                    || checkFlag(flags, PdfAnnotation.NO_VIEW)
-                    || checkFlag(flags, PdfAnnotation.TOGGLE_NO_VIEW)) {
+            if (isAnnotationInvisible(flags)) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_NOVIEW_AND_TOGGLENOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
             }
             if (subtype.equals(PdfName.Text)) {
-                if (!checkFlag(flags, PdfAnnotation.NO_ZOOM) || !checkFlag(flags, PdfAnnotation.NO_ROTATE)) {
-                    throw new PdfAConformanceException(PdfAConformanceLogMessageConstant.TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1);
+                if (!PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_ZOOM) ||
+                        !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_ROTATE)) {
+                    throw new PdfAConformanceException(PdfAConformanceLogMessageConstant.
+                            TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1);
                 }
             }
         }
@@ -1101,6 +1099,21 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
+    void checkResourcesForTransparency(PdfDictionary resources, Set<PdfObject> checkedObjects) {
+        if (resources != null) {
+            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.XObject), checkedObjects);
+            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.Pattern), checkedObjects);
+        }
+    }
+
+    private static boolean isAnnotationInvisible(int flags) {
+        return !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.PRINT)
+                || PdfCheckersUtil.checkFlag(flags, PdfAnnotation.HIDDEN)
+                || PdfCheckersUtil.checkFlag(flags, PdfAnnotation.INVISIBLE)
+                || PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_VIEW)
+                || PdfCheckersUtil.checkFlag(flags, PdfAnnotation.TOGGLE_NO_VIEW);
+    }
+
     private void checkAppearanceStreamForTransparency(PdfDictionary ap, Set<PdfObject> checkedObjects) {
         if (checkedObjects.contains(ap)) {
             return;
@@ -1131,13 +1144,6 @@ public class PdfA2Checker extends PdfA1Checker {
         }
         if (objectWithResources instanceof PdfDictionary) {
             checkResourcesForTransparency(((PdfDictionary) objectWithResources).getAsDictionary(PdfName.Resources), checkedObjects);
-        }
-    }
-
-    void checkResourcesForTransparency(PdfDictionary resources, Set<PdfObject> checkedObjects) {
-        if (resources != null) {
-            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.XObject), checkedObjects);
-            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.Pattern), checkedObjects);
         }
     }
 

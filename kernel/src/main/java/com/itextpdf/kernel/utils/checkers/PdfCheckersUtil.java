@@ -150,4 +150,16 @@ public final class PdfCheckersUtil {
         }
         return true;
     }
+
+    /**
+     * Checks if the specified flag is set.
+     *
+     * @param flags a set of flags specifying various characteristics of the PDF object
+     * @param flag  to be checked
+     *
+     * @return {@code true} if the specified flag is set, {@code false} otherwise
+     */
+    public static boolean checkFlag(int flags, int flag) {
+        return (flags & flag) != 0;
+    }
 }

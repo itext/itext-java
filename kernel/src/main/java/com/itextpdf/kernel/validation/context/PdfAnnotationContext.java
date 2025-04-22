@@ -20,34 +20,43 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.kernel.validation;
+package com.itextpdf.kernel.validation.context;
+
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.validation.IValidationContext;
+import com.itextpdf.kernel.validation.ValidationType;
 
 /**
- * Type of object to validate.
+ * Class which contains context in which annotation was added.
  */
-public enum ValidationType {
-    PDF_DOCUMENT,
-    // PDF/A Enums
-    CANVAS_STACK,
-    FILL_COLOR,
-    EXTENDED_GRAPHICS_STATE,
-    INLINE_IMAGE,
-    PDF_PAGE,
-    PDF_OBJECT,
-    RENDERING_INTENT,
-    STROKE_COLOR,
-    TAG_STRUCTURE_ELEMENT,
-    FONT_GLYPHS,
-    XREF_TABLE,
-    SIGNATURE,
-    SIGNATURE_TYPE,
-    CRYPTO,
-    FONT,
-    // PDF/UA Enums
-    CANVAS_BEGIN_MARKED_CONTENT,
-    CANVAS_WRITING_CONTENT,
-    LAYOUT,
-    DUPLICATE_ID_ENTRY,
-    DESTINATION_ADDITION,
-    ANNOTATION
+public class PdfAnnotationContext implements IValidationContext {
+    private final PdfDictionary annotation;
+
+    /**
+     * Creates new {@link PdfAnnotationContext} instance.
+     *
+     * @param annotation {@link PdfDictionary} annotation which was added
+     */
+    public PdfAnnotationContext(PdfDictionary annotation) {
+        this.annotation = annotation;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public ValidationType getType() {
+        return ValidationType.ANNOTATION;
+    }
+
+    /**
+     * Gets {@link PdfDictionary} annotation instance.
+     *
+     * @return annotation dictionary
+     */
+    public PdfDictionary getAnnotation() {
+        return annotation;
+    }
 }

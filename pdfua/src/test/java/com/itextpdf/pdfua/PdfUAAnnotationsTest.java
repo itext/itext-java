@@ -64,6 +64,7 @@ import com.itextpdf.kernel.pdf.annot.PdfSoundAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTrapNetworkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfWatermarkAnnotation;
 import com.itextpdf.kernel.pdf.annot.da.AnnotationDefaultAppearance;
 import com.itextpdf.kernel.pdf.annot.da.StandardAnnotationFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -966,6 +967,97 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(stamp);
         });
         framework.assertBothValid("printerMAnnotNotInTagStructureTest", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void invisibleAnnotationArtifactTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfWatermarkAnnotation annotation = new PdfWatermarkAnnotation(new Rectangle(100, 100));
+            annotation.setContents("Contents");
+            annotation.setFlag(PdfAnnotation.INVISIBLE);
+            pdfPage.addAnnotation(annotation);
+        });
+        framework.assertBothValid("invisibleAnnotationArtifact", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void invisibleAnnotationTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(100, 100));
+            stamp.setContents("Contents");
+            stamp.setStampName(PdfName.Approved);
+            stamp.setFlag(PdfAnnotation.INVISIBLE);
+            pdfPage.getPdfObject().put(PdfName.Annots, new PdfArray(stamp.getPdfObject()));
+            TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            tagPointer.addTag(StandardRoles.ANNOT);
+            tagPointer.setPageForTagging(pdfPage).addAnnotationTag(stamp);
+        });
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothValid("invisibleAnnotation", pdfUAConformance);
+        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            framework.assertBothFail("invisibleAnnotation", PdfUAExceptionMessageConstants.
+                    INVISIBLE_ANNOT_SHALL_BE_AN_ARTIFACT, false, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void noViewAnnotationArtifactTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfWatermarkAnnotation annotation = new PdfWatermarkAnnotation(new Rectangle(100, 100));
+            annotation.setContents("Contents");
+            annotation.setFlag(PdfAnnotation.NO_VIEW);
+            pdfPage.addAnnotation(annotation);
+        });
+        framework.assertBothValid("noViewAnnotationArtifact", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void noViewAnnotationTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(100, 100));
+            stamp.setContents("Contents");
+            stamp.setStampName(PdfName.Approved);
+            stamp.setFlag(PdfAnnotation.NO_VIEW);
+            pdfPage.getPdfObject().put(PdfName.Annots, new PdfArray(stamp.getPdfObject()));
+            TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            tagPointer.addTag(StandardRoles.ANNOT);
+            tagPointer.setPageForTagging(pdfPage).addAnnotationTag(stamp);
+        });
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothValid("noViewAnnotation", pdfUAConformance);
+        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            framework.assertBothFail("noViewAnnotation", PdfUAExceptionMessageConstants.
+                    NO_VIEW_ANNOT_SHALL_BE_AN_ARTIFACT, false, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void toggleNoViewAnnotationTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfPage pdfPage = pdfDoc.addNewPage();
+            PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(100, 100));
+            stamp.setContents("Contents");
+            stamp.setStampName(PdfName.Approved);
+            stamp.setFlag(PdfAnnotation.NO_VIEW);
+            stamp.setFlag(PdfAnnotation.TOGGLE_NO_VIEW);
+            pdfPage.addAnnotation(stamp);
+        });
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothValid("noViewAnnotation", pdfUAConformance);
+        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            // TODO DEVSIX-9036. VeraPDF claims the document to be invalid, although it is valid.
+            //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
+            framework.assertOnlyVeraPdfFail("toggleNoViewAnnotation", pdfUAConformance);
+        }
     }
 
     private PdfTextAnnotation createRichTextAnnotation() {

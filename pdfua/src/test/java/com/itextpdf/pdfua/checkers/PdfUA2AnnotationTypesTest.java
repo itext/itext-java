@@ -451,12 +451,10 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
             PdfWatermarkAnnotation annot = new PdfWatermarkAnnotation(new Rectangle(100, 100));
             annot.setContents("Contents");
             annot.put(PdfName.RC, new PdfString("<p>Rich text</p>"));
-            pdfPage.addAnnotation(annot);
-
-            PdfObjRef objRef = pdfDoc.getStructTreeRoot().findObjRefByStructParentIndex(pdfPage.getPdfObject(), 0);
-            TagTreePointer p = pdfDoc.getTagStructureContext()
-                    .createPointerForStructElem((PdfStructElem) objRef.getParent());
-            p.setRole(StandardRoles.ARTIFACT);
+            pdfPage.getPdfObject().put(PdfName.Annots, new PdfArray(annot.getPdfObject()));
+            TagTreePointer tagPointer = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            tagPointer.addTag(StandardRoles.ARTIFACT);
+            tagPointer.setPageForTagging(pdfPage).addAnnotationTag(annot);
         });
         framework.assertBothValid("watermarkAnnotationAsArtifact", PdfUAConformance.PDF_UA_2);
     }

@@ -81,6 +81,11 @@ public class PdfDestinationAdditionContext implements IValidationContext {
         return destination;
     }
 
+    /**
+     * Gets {@link PdfAction} instance.
+     *
+     * @return {@link PdfAction} instance
+     */
     public PdfAction getAction() {
         return action;
     }

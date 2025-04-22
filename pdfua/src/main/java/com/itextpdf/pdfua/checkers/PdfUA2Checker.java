@@ -40,6 +40,7 @@ import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
 import com.itextpdf.kernel.validation.context.FontValidationContext;
+import com.itextpdf.kernel.validation.context.PdfAnnotationContext;
 import com.itextpdf.kernel.validation.context.PdfDestinationAdditionContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
 import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
@@ -131,6 +132,10 @@ public class PdfUA2Checker extends PdfUAChecker {
             case PDF_OBJECT:
                 PdfObjectValidationContext validationContext = (PdfObjectValidationContext) context;
                 checkPdfObject(validationContext.getObject());
+                break;
+            case ANNOTATION:
+                PdfAnnotationContext annotationContext = (PdfAnnotationContext) context;
+                PdfUA2AnnotationChecker.checkAnnotation(annotationContext.getAnnotation(), this.context);
                 break;
         }
     }

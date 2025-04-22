@@ -73,7 +73,7 @@ public final class PdfUAExceptionMessageConstants {
     public static final String FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY =
             "File specification dictionary shall contain f key and uf key.";
     public static final String FILE_SPEC_SHALL_CONTAIN_AFRELATIONSHIP = "When a file attachment annotation references" +
-            "file specification dictionary, that file specification dictionary shall include an AFRelationship entry.";
+            " file specification dictionary, that file specification dictionary shall include an AFRelationship entry.";
     public static final String FONT_SHOULD_BE_EMBEDDED = "Following font(s) are not embedded: {0}";
     public static final String FORMULA_SHALL_HAVE_ALT = "Formula tags shall include an alternative representation or "
             + "replacement text.";
@@ -94,6 +94,8 @@ public final class PdfUAExceptionMessageConstants {
             = "The value of the NoteType attribute shall be either \"Footnote\", \"Endnote\" or \"None\".";
     public static final String INVALID_PDF_VERSION
             = "Specified document pdf version isn't supported in pdf/ua.";
+    public static final String INVISIBLE_ANNOT_SHALL_BE_AN_ARTIFACT = "Annotations with the Invisible flag set " +
+            "shall be artifacts.";
     public static final String LINK_ANNOTATION_SHOULD_HAVE_CONTENTS_KEY = "Annotation of type Link " +
             "shall contain an alternate description via their Contents key.";
     public static final String LINK_ANNOT_IS_NOT_NESTED_WITHIN_LINK =
@@ -127,6 +129,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT =
             "ID entry '{0}' shall be unique among all elements in the document’s structure hierarchy";
     public static final String NOTE_TAG_SHALL_HAVE_ID_ENTRY = "Note tags shall include a unique ID entry.";
+    public static final String NO_VIEW_ANNOT_SHALL_BE_AN_ARTIFACT = "Annotations with the NoView flag set and " +
+            "the ToggleNoView flag not set shall be artifacts.";
     public static final String OCG_PROPERTIES_CONFIG_SHALL_BE_AN_ARRAY = "Optional Content properties " +
             "configs shall be an array.";
     public static final String OCG_SHALL_NOT_CONTAIN_AS_ENTRY = "An AS entry appears in an Optional Content.";

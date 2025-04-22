@@ -635,11 +635,11 @@ public class PdfA1Checker extends PdfAChecker {
         }
 
         int flags = (int) annotDic.getAsInt(PdfName.F);
-        if (!checkFlag(flags, PdfAnnotation.PRINT) || checkFlag(flags, PdfAnnotation.HIDDEN) || checkFlag(flags, PdfAnnotation.INVISIBLE) ||
-                checkFlag(flags, PdfAnnotation.NO_VIEW)) {
+        if (isAnnotationInvisible(flags)) {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
         }
-        if (subtype.equals(PdfName.Text) && (!checkFlag(flags, PdfAnnotation.NO_ZOOM) || !checkFlag(flags, PdfAnnotation.NO_ROTATE))) {
+        if (subtype.equals(PdfName.Text) && (!PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_ZOOM) ||
+                !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_ROTATE))) {
             throw new PdfAConformanceException(PdfAConformanceLogMessageConstant.TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1);
         }
         if (annotDic.containsKey(PdfName.C) || annotDic.containsKey(PdfName.IC)) {
@@ -791,15 +791,14 @@ public class PdfA1Checker extends PdfAChecker {
      */
     @Deprecated
     protected PdfArray getFormFields(PdfArray array) {
-        PdfArray fields = new PdfArray();
-        for (PdfObject field : array) {
-            PdfArray kids = ((PdfDictionary) field).getAsArray(PdfName.Kids);
-            fields.add(field);
-            if (kids != null) {
-                fields.addAll(getFormFields(kids));
-            }
-        }
-        return fields;
+        return PdfCheckersUtil.getFormFields(array);
+    }
+
+    private static boolean isAnnotationInvisible(int flags) {
+        return !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.PRINT) ||
+                PdfCheckersUtil.checkFlag(flags, PdfAnnotation.HIDDEN) ||
+                PdfCheckersUtil.checkFlag(flags, PdfAnnotation.INVISIBLE) ||
+                PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_VIEW);
     }
 
     private int getMaxArrayCapacity() {

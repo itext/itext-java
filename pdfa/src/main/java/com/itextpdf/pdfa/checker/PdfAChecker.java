@@ -42,6 +42,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.IValidationChecker;
 import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationType;
@@ -820,10 +821,14 @@ public abstract class PdfAChecker implements IValidationChecker {
      *
      * @param flags a set of flags specifying various characteristics of the PDF object
      * @param flag to be checked
+     *
      * @return true if the specified flag is set
+     *
+     * @deprecated in favour of {@link PdfCheckersUtil#checkFlag(int, int)}
      */
+    @Deprecated
     protected static boolean checkFlag(int flags, int flag) {
-        return (flags & flag) != 0;
+        return PdfCheckersUtil.checkFlag(flags, flag);
     }
 
     /**

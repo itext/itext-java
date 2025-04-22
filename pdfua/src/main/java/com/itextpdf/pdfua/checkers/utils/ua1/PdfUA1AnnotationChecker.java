@@ -32,6 +32,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.pdfua.checkers.utils.ActionCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ContextAwareTagTreeIteratorHandler;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
@@ -57,7 +58,7 @@ public final class PdfUA1AnnotationChecker {
     public static boolean isAnnotationVisible(PdfDictionary annotDict) {
         if (annotDict.getAsNumber(PdfName.F) != null) {
             int flags = annotDict.getAsNumber(PdfName.F).intValue();
-            if ((flags & PdfAnnotation.HIDDEN) != 0) {
+            if (PdfCheckersUtil.checkFlag(flags, PdfAnnotation.HIDDEN)) {
                 return false;
             }
         }

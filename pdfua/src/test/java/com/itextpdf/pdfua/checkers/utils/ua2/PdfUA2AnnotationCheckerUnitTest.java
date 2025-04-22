@@ -25,8 +25,10 @@ package com.itextpdf.pdfua.checkers.utils.ua2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -43,6 +45,8 @@ import com.itextpdf.kernel.pdf.annot.PdfSquareAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWatermarkAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.pdfua.PdfUAConfig;
 import com.itextpdf.pdfua.PdfUADocument;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
@@ -316,7 +320,29 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
         fsDict.remove(PdfName.AFRelationship);
 
         PdfFileAttachmentAnnotation annotation = new PdfFileAttachmentAnnotation(new Rectangle(2, 2, 100, 100), fs);
-        doc.getPage(1).addAnnotation(annotation);
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class,
+                () -> doc.getPage(1).addAnnotation(annotation));
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.FILE_SPEC_SHALL_CONTAIN_AFRELATIONSHIP, e.getMessage());
+    }
+
+    @Test
+    public void pdfUAWithEmbeddedFilesWithoutAFROnClosingTest() {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfUADocument doc = new PdfUADocument(writer, new PdfUAConfig(PdfUAConformance.PDF_UA_2, "hello", "en-US"));
+        doc.addNewPage();
+
+        PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
+                doc, "file".getBytes(), "description", "file.txt", null, null, null);
+        PdfDictionary fsDict = (PdfDictionary) fs.getPdfObject();
+        fsDict.remove(PdfName.AFRelationship);
+
+        PdfFileAttachmentAnnotation annotation = new PdfFileAttachmentAnnotation(new Rectangle(2, 2, 100, 100), fs);
+        PdfPage page = doc.getPage(1);
+        page.getPdfObject().put(PdfName.Annots, new PdfArray(annotation.getPdfObject()));
+        TagTreePointer tagPointer = doc.getTagStructureContext().getAutoTaggingPointer();
+        tagPointer.addTag(StandardRoles.ANNOT);
+        tagPointer.setPageForTagging(page).addAnnotationTag(annotation);
 
         Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> doc.close());
         Assertions.assertEquals(PdfUAExceptionMessageConstants.FILE_SPEC_SHALL_CONTAIN_AFRELATIONSHIP, e.getMessage());
