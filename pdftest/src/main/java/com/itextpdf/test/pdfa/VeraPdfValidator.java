@@ -109,65 +109,68 @@ public class VeraPdfValidator {
      * @param filePath file to validate
      * @return error message if validation fails, null is validation succeeds
      */
-    public synchronized String validate(String filePath) {
+    public String validate(String filePath) {
         // VeraPdf doesn't work in native mode so skip VeraPdf validation
         if (isNative) {
             return null;
         }
 
-        String errorMessage = null;
-        try {
-            File xmlReport = new File(filePath.substring(0, filePath.length() - ".pdf".length()) + ".xml");
-            VeraGreenfieldFoundryProvider.initialise();
+        synchronized(VeraPdfValidator.class) {
+            String errorMessage = null;
+            try {
+                File xmlReport = new File(filePath.substring(0, filePath.length() - ".pdf".length()) + ".xml");
+                VeraGreenfieldFoundryProvider.initialise();
 
-            // Initializes default VeraPDF configurations
-            ProcessorConfig customProfile = ProcessorFactory.defaultConfig();
-            FeatureExtractorConfig featuresConfig = customProfile.getFeatureConfig();
-            ValidatorConfig valConfig = ValidatorFactory.createConfig(getSpecification(), false, -1, false, true,
-                    Level.WARNING, "", false);
-            PluginsCollectionConfig plugConfig = customProfile.getPluginsCollectionConfig();
-            MetadataFixerConfig metaConfig = customProfile.getFixerConfig();
-            ProcessorConfig resultConfig = ProcessorFactory.fromValues(valConfig, featuresConfig,
-                    plugConfig, metaConfig, EnumSet.of(TaskType.VALIDATE));
+                // Initializes default VeraPDF configurations
+                ProcessorConfig customProfile = ProcessorFactory.defaultConfig();
+                FeatureExtractorConfig featuresConfig = customProfile.getFeatureConfig();
+                ValidatorConfig valConfig = ValidatorFactory.createConfig(getSpecification(), false, -1, false, true,
+                        Level.WARNING, "", false);
+                PluginsCollectionConfig plugConfig = customProfile.getPluginsCollectionConfig();
+                MetadataFixerConfig metaConfig = customProfile.getFixerConfig();
+                ProcessorConfig resultConfig = ProcessorFactory.fromValues(valConfig, featuresConfig,
+                        plugConfig, metaConfig, EnumSet.of(TaskType.VALIDATE));
 
-            // Creates validation processor
-            BatchProcessor processor = ProcessorFactory.fileBatchProcessor(resultConfig);
+                // Creates validation processor
+                BatchProcessor processor = ProcessorFactory.fileBatchProcessor(resultConfig);
 
-            BatchSummary summary = processor.process(Collections.singletonList(new File(filePath)),
-                    ProcessorFactory.getHandler(FormatOption.XML, true,
-                            Files.newOutputStream(Paths.get(String.valueOf(xmlReport))), false));
+                BatchSummary summary = processor.process(Collections.singletonList(new File(filePath)),
+                        ProcessorFactory.getHandler(FormatOption.XML, true,
+                                Files.newOutputStream(Paths.get(String.valueOf(xmlReport))), false));
 
-            LogsSummary logsSummary = LogsSummaryImpl.getSummary();
-            String xmlReportPath = "file://" + xmlReport.toURI().normalize().getPath();
+                LogsSummary logsSummary = LogsSummaryImpl.getSummary();
+                String xmlReportPath = "file://" + xmlReport.toURI().normalize().getPath();
 
-            if (summary.getFailedParsingJobs() != 0) {
-                errorMessage = "An error occurred while parsing current file. See report: " + xmlReportPath;
-            } else if (summary.getFailedEncryptedJobs() != 0) {
-                errorMessage = "VeraPDF execution failed - specified file is encrypted. See report: " + xmlReportPath;
-            } else if (summary.getValidationSummary().getNonCompliantPdfaCount() != 0) {
-                errorMessage = "VeraPDF verification failed. See verification results: " + xmlReportPath;
-            } else {
+                if (summary.getFailedParsingJobs() != 0) {
+                    errorMessage = "An error occurred while parsing current file. See report: " + xmlReportPath;
+                } else if (summary.getFailedEncryptedJobs() != 0) {
+                    errorMessage =
+                            "VeraPDF execution failed - specified file is encrypted. See report: " + xmlReportPath;
+                } else if (summary.getValidationSummary().getNonCompliantPdfaCount() != 0) {
+                    errorMessage = "VeraPDF verification failed. See verification results: " + xmlReportPath;
+                } else {
+                    if (logToConsole) {
+                        System.out.println("VeraPDF verification finished. See verification report: " + xmlReportPath);
+                    }
+
+                    if (logsSummary.getLogsCount() != 0) {
+                        errorMessage = "The following warnings and errors were logged during validation:";
+                        errorMessage += logsSummary.getLogs().stream()
+                                .map(log -> "\n" + log.getLevel() + ": " + log.getMessage())
+                                .sorted()
+                                .collect(Collectors.joining());
+                    }
+                }
+            } catch (IOException | VeraPDFException exc) {
+                errorMessage = "VeraPDF execution failed:\n" + exc.getMessage();
+            }
+
+            if (errorMessage != null) {
                 if (logToConsole) {
-                    System.out.println("VeraPDF verification finished. See verification report: " + xmlReportPath);
-                }
-
-                if (logsSummary.getLogsCount() != 0) {
-                    errorMessage = "The following warnings and errors were logged during validation:";
-                    errorMessage += logsSummary.getLogs().stream()
-                            .map(log -> "\n" + log.getLevel() + ": " + log.getMessage())
-                            .sorted()
-                            .collect(Collectors.joining());
+                    System.out.println(errorMessage);
                 }
             }
-        } catch (IOException | VeraPDFException exc) {
-            errorMessage = "VeraPDF execution failed:\n" + exc.getMessage();
+            return errorMessage;
         }
-
-        if (errorMessage != null) {
-            if (logToConsole) {
-                System.out.println(errorMessage);
-            }
-        }
-        return errorMessage;
     }
 }

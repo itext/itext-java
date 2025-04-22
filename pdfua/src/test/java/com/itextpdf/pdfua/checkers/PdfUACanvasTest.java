@@ -481,7 +481,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.rectangle(new Rectangle(200, 200, 100, 100));
             canvas.clip();
         });
-        framework.assertBothValid("checkPoint_01_005_RectangleNoContent", pdfUAConformance);
+        framework.assertBothValid("checkPoint_01_005_RectangleClip", pdfUAConformance);
     }
 
     @ParameterizedTest

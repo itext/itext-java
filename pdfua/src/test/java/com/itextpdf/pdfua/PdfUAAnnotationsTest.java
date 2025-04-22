@@ -222,7 +222,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         framework.assertBothValid("printerMAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
         String layoutPdf =
-                "layout_printerMAnnotNoDirectChildOfAnnotTest" + "_UA_" + pdfUAConformance.getPart() + ".pdf";
+                "itext_printerMAnnotNoDirectChildOfAnnotTest" + "_UA_" + pdfUAConformance.getPart() + ".pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(DESTINATION_FOLDER + layoutPdf))) {
             final IStructureNode docNode = pdfDoc.getStructTreeRoot().getKids().get(0);
             Assertions.assertEquals(PdfName.Document, docNode.getRole());

@@ -87,7 +87,7 @@ public class UaValidationTestFramework {
 
     public void assertBothFail(String filename, String expectedMsg, boolean checkDocClosing, PdfUAConformance pdfUAConformance)
             throws IOException {
-        checkError(checkErrorLayout("layout_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance), expectedMsg);
+        checkError(checkErrorLayout("itext_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance), expectedMsg);
 
         final String createdFileName = "vera_" + filename + getUAConformance(pdfUAConformance) + ".pdf";
         veraPdfResult(createdFileName, true, pdfUAConformance);
@@ -99,7 +99,7 @@ public class UaValidationTestFramework {
     }
 
     public void assertITextValid(String fileName, PdfUAConformance pdfUAConformance) {
-        Exception e = checkErrorLayout("layout_" + fileName + getUAConformance(pdfUAConformance) + ".pdf",
+        Exception e = checkErrorLayout("itext_" + fileName + getUAConformance(pdfUAConformance) + ".pdf",
                 pdfUAConformance);
         if (e == null) {
             return;
@@ -114,7 +114,7 @@ public class UaValidationTestFramework {
     }
 
     public void assertBothValid(String fileName, PdfUAConformance pdfUAConformance) throws IOException {
-        Exception e = checkErrorLayout("layout_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
+        Exception e = checkErrorLayout("itext_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
         String veraPdf = veraPdfResult("vera_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", false, pdfUAConformance);
         Exception eClosing = checkErrorOnClosing("vera_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
         if (e == null && veraPdf == null && eClosing == null) {
@@ -154,17 +154,17 @@ public class UaValidationTestFramework {
     }
 
     public void assertVeraPdfFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
-        veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
+        veraPdfResult("vera_" + filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
     }
 
     public void assertOnlyVeraPdfFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
-        veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
-        Exception e = checkErrorLayout("layout_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
+        veraPdfResult("vera_" + filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
+        Exception e = checkErrorLayout("itext_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
         Assertions.assertNull(e);
     }
 
     public void assertVeraPdfValid(String filename, PdfUAConformance pdfUAConformance) throws IOException {
-        String veraPdf = veraPdfResult(filename + getUAConformance(pdfUAConformance) + ".pdf", false, pdfUAConformance);
+        String veraPdf = veraPdfResult("vera_" + filename + getUAConformance(pdfUAConformance) + ".pdf", false, pdfUAConformance);
         if (veraPdf == null) {
             return;
         }
@@ -172,7 +172,7 @@ public class UaValidationTestFramework {
     }
 
     public void assertITextFail(String filename, String expectedMsg, PdfUAConformance pdfUAConformance) {
-        checkError(checkErrorLayout("layout_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance), expectedMsg);
+        checkError(checkErrorLayout("itext_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance), expectedMsg);
     }
 
     private String veraPdfResult(String filename, boolean failureExpected, PdfUAConformance pdfUAConformance)

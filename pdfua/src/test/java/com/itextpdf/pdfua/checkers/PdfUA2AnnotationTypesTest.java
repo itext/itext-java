@@ -69,7 +69,7 @@ import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUA2LinkAnnotationTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUA2AnnotationTypesTest/";
 
     private UaValidationTestFramework framework;
 

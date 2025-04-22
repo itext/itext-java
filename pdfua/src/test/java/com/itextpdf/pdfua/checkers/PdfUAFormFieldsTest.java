@@ -22,7 +22,6 @@
  */
 package com.itextpdf.pdfua.checkers;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
@@ -49,7 +48,6 @@ import com.itextpdf.forms.form.element.TextArea;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -87,17 +85,16 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAFormFieldsTest extends ExtendedITextTest {
@@ -604,7 +601,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonSingleLine", pdfUAConformance);
+        framework.assertBothValid("testButtonCustomContent", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -695,7 +692,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonSingleLineInteractive", pdfUAConformance);
+        framework.assertBothValid("testButtonCustomContentInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -716,7 +713,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonSingleLineInteractive", pdfUAConformance);
+        framework.assertBothValid("testButtonCustomContentIsAlsoFormInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
