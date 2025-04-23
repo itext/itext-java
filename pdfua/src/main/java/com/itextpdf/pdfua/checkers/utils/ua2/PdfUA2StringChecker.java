@@ -46,15 +46,24 @@ public final class PdfUA2StringChecker {
         if (PdfEncodings.PDF_DOC_ENCODING.equals(string.getEncoding()) ||
                 PdfEncodings.UTF8.equals(string.getEncoding()) ||
                 PdfEncodings.UNICODE_BIG.equals(string.getEncoding())) {
-            for (int i = 0; i < string.getValue().length(); ++i) {
-                int code = string.getValue().codePointAt(i);
+            if (stringContainsPua(string.getValue())) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.TEXT_STRING_USES_UNICODE_PUA);
+            }
+        }
+    }
+
+    static boolean stringContainsPua(String string) {
+        if (string != null) {
+            for (int i = 0; i < string.length(); ++i) {
+                int code = string.codePointAt(i);
                 boolean isPrivateArea = code >= 0xE000 && code <= 0xF8FF;
                 boolean isSupplementaryPrivateAreaA = code >= 0xF0000 && code <= 0xFFFFD;
                 boolean isSupplementaryPrivateAreaB = code >= 0x100000 && code <= 0x10FFFD;
                 if (isPrivateArea || isSupplementaryPrivateAreaA || isSupplementaryPrivateAreaB) {
-                    throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.TEXT_STRING_USES_UNICODE_PUA);
+                    return true;
                 }
             }
         }
+        return false;
     }
 }

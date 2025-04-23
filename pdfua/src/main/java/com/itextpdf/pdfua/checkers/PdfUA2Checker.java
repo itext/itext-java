@@ -39,6 +39,7 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
+import com.itextpdf.kernel.validation.context.CanvasTextAdditionContext;
 import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
 import com.itextpdf.kernel.validation.context.FontValidationContext;
 import com.itextpdf.kernel.validation.context.PdfAnnotationContext;
@@ -54,6 +55,7 @@ import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2AnnotationChecker;
+import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2CanvasTextChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2DestinationsChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2EmbeddedFilesChecker;
 import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2FormChecker;
@@ -85,6 +87,7 @@ public class PdfUA2Checker extends PdfUAChecker {
 
     private final PdfDocument pdfDocument;
     private final PdfUAValidationContext context;
+    private final PdfUA2CanvasTextChecker textChecker = new PdfUA2CanvasTextChecker();
 
     /**
      * Creates {@link PdfUA2Checker} instance with PDF document which will be validated against PDF/UA-2 standard.
@@ -105,8 +108,9 @@ public class PdfUA2Checker extends PdfUAChecker {
                 checkCatalog(pdfDocContext.getPdfDocument().getCatalog());
                 checkStructureTreeRoot(pdfDocContext.getPdfDocument().getStructTreeRoot());
                 checkFonts(pdfDocContext.getDocumentFonts());
-                new PdfUA2DestinationsChecker(pdfDocument).checkDestinations();
+                new PdfUA2DestinationsChecker(pdfDocContext.getPdfDocument()).checkDestinations();
                 PdfUA2XfaChecker.check(pdfDocContext.getPdfDocument());
+                textChecker.checkCollectedContexts(pdfDocContext.getPdfDocument());
                 break;
             case FONT:
                 FontValidationContext fontContext = (FontValidationContext) context;
@@ -137,6 +141,10 @@ public class PdfUA2Checker extends PdfUAChecker {
             case ANNOTATION:
                 PdfAnnotationContext annotationContext = (PdfAnnotationContext) context;
                 PdfUA2AnnotationChecker.checkAnnotation(annotationContext.getAnnotation(), this.context);
+                break;
+            case CANVAS_TEXT_ADDITION:
+                CanvasTextAdditionContext canvasTextAdditionContext = (CanvasTextAdditionContext) context;
+                textChecker.collectTextAdditionContext(canvasTextAdditionContext);
                 break;
         }
     }

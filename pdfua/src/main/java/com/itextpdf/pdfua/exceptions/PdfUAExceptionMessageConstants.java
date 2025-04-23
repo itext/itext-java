@@ -160,6 +160,8 @@ public final class PdfUAExceptionMessageConstants {
     public static final String PRINTER_MARK_IS_NOT_PERMITTED = "Annotations of subtype PrinterMark shall not be" +
             " included in logical structure.";
     public static final String PRINTER_MARK_SHALL_BE_AN_ARTIFACT = "PrinterMark annotation shall be an artifact.";
+    public static final String PUA_CONTENT_WITHOUT_ALT =
+            "In all cases, where real content maps to Unicode PUA values, an ActualText or Alt entry shall be present.";
     public static final String P_VALUE_IS_ABSENT_IN_ENCRYPTION_DICTIONARY = "Permissions are absent " +
             "in pdf encryption dictionary.";
     public static final String RC_DIFFERENT_FROM_CONTENTS = "If markup annotation contains both RC and Contents " +

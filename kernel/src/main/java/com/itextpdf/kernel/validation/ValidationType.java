@@ -49,5 +49,6 @@ public enum ValidationType {
     LAYOUT,
     DUPLICATE_ID_ENTRY,
     DESTINATION_ADDITION,
-    ANNOTATION
+    ANNOTATION,
+    CANVAS_TEXT_ADDITION
 }

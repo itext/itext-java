@@ -72,6 +72,7 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.kernel.validation.context.CanvasBmcValidationContext;
 import com.itextpdf.kernel.validation.context.CanvasStackValidationContext;
+import com.itextpdf.kernel.validation.context.CanvasTextAdditionContext;
 import com.itextpdf.kernel.validation.context.CanvasWritingContentValidationContext;
 import com.itextpdf.kernel.validation.context.ExtendedGStateValidationContext;
 import com.itextpdf.kernel.validation.context.FillColorValidationContext;
@@ -743,6 +744,7 @@ public class PdfCanvas {
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
 
+        checkTextOnAddition(text);
         document.checkIsoConformance(new FontValidationContext(text.toString(), currentGs.getFont()));
 
         final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
@@ -930,13 +932,14 @@ public class PdfCanvas {
         }
 
         // Take text part to process
-        StringBuilder text = new StringBuilder();
+        StringBuilder decodedText = new StringBuilder();
         for (PdfObject obj : textArray) {
             if (obj instanceof PdfString) {
-                text.append(obj);
+                decodedText.append(currentGs.getFont().decode((PdfString) obj));
             }
         }
-        document.checkIsoConformance(new FontValidationContext(text.toString(), currentGs.getFont()));
+        checkTextOnAddition(decodedText.toString());
+        document.checkIsoConformance(new FontValidationContext(decodedText.toString(), currentGs.getFont()));
 
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
@@ -2508,6 +2511,7 @@ public class PdfCanvas {
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
         this.checkIsoConformanceWritingOnContent();
+        checkTextOnAddition(text);
         document.checkIsoConformance(new FontValidationContext(text, currentGs.getFont()));
 
         currentGs.getFont().writeText(text, contentStream.getOutputStream());
@@ -2695,6 +2699,18 @@ public class PdfCanvas {
                 pt3[2], pt3[3], pt3[4], pt3[5], pt3[6], pt3[7],
                 x, y + ry,
                 pt4[2], pt4[3], pt4[4], pt4[5], pt4[6], pt4[7]};
+    }
+
+    private void checkTextOnAddition(GlyphLine text) {
+        checkTextOnAddition(text.toString());
+    }
+
+    private void checkTextOnAddition(String text) {
+        PdfDictionary attributes = null;
+        if (!tagStructureStack.isEmpty()) {
+            attributes = tagStructureStack.peek().getSecond();
+        }
+        document.checkIsoConformance(new CanvasTextAdditionContext(text, attributes, contentStream));
     }
 
     /**
