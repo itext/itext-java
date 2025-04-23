@@ -53,6 +53,12 @@
           <include>**/*.json</include>
         </includes>
       </resource>
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
+          <include>NOTICE.txt</include>
+        </includes>
+      </resource>
     </resources>
   </build>
 

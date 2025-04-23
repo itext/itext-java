@@ -41,7 +41,7 @@
   <build>
     <resources>
       <resource>
-        <directory>${project.basedir}/..</directory>
+        <directory>${project.basedir}</directory>
         <includes>
           <include>NOTICE.txt</include>
         </includes>
