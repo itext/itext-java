@@ -171,8 +171,9 @@ public class UaValidationTestFramework {
         Assertions.fail("Expected no vera pdf message but was: \n" + veraPdf + "\n");
     }
 
-    public void assertITextFail(String filename, String expectedMsg, PdfUAConformance pdfUAConformance) {
+    public void assertOnlyITextFail(String filename, String expectedMsg, PdfUAConformance pdfUAConformance) throws IOException {
         checkError(checkErrorLayout("itext_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance), expectedMsg);
+        assertVeraPdfValid(filename, pdfUAConformance);
     }
 
     private String veraPdfResult(String filename, boolean failureExpected, PdfUAConformance pdfUAConformance)

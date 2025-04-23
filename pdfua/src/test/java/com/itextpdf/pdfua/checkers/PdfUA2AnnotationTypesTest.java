@@ -150,10 +150,8 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
             pdfPage.getPdfObject().put(PdfName.Annots, new PdfArray(annotation));
         });
         if (PdfName.Redaction.equals(annotType) || PdfName.Projection.equals(annotType)) {
-            framework.assertITextFail("markupAnnotationIsNotTagged_" + annotType.getValue(),
+            framework.assertOnlyITextFail("markupAnnotationIsNotTagged_" + annotType.getValue(),
                     PdfUAExceptionMessageConstants.MARKUP_ANNOT_IS_NOT_TAGGED_AS_ANNOT, PdfUAConformance.PDF_UA_2);
-            framework.assertVeraPdfValid("markupAnnotationIsNotTagged_" + annotType.getValue(),
-                    PdfUAConformance.PDF_UA_2);
         } else {
             framework.assertBothFail("markupAnnotationIsNotTagged_" + annotType.getValue(),
                     PdfUAExceptionMessageConstants.MARKUP_ANNOT_IS_NOT_TAGGED_AS_ANNOT, false,
@@ -180,10 +178,8 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
             p.setRole(StandardRoles.ARTIFACT);
         });
         if (PdfName.Redaction.equals(annotType) || PdfName.Projection.equals(annotType)) {
-            framework.assertITextFail("markupAnnotationIsNotTaggedAsAnnot_" + annotType.getValue(),
+            framework.assertOnlyITextFail("markupAnnotationIsNotTaggedAsAnnot_" + annotType.getValue(),
                     PdfUAExceptionMessageConstants.MARKUP_ANNOT_IS_NOT_TAGGED_AS_ANNOT, PdfUAConformance.PDF_UA_2);
-            framework.assertVeraPdfValid("markupAnnotationIsNotTaggedAsAnnot_" + annotType.getValue(),
-                    PdfUAConformance.PDF_UA_2);
         } else {
             framework.assertBothFail("markupAnnotationIsNotTaggedAsAnnot_" + annotType.getValue(),
                     PdfUAExceptionMessageConstants.MARKUP_ANNOT_IS_NOT_TAGGED_AS_ANNOT, false,
@@ -208,10 +204,8 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
             pdfPage.addAnnotation(annotation);
         });
         if (PdfName.Redaction.equals(annotType) || PdfName.Projection.equals(annotType)) {
-            framework.assertITextFail("markupAnnotationRCAndContents_" + annotType.getValue(),
+            framework.assertOnlyITextFail("markupAnnotationRCAndContents_" + annotType.getValue(),
                     PdfUAExceptionMessageConstants.RC_DIFFERENT_FROM_CONTENTS, PdfUAConformance.PDF_UA_2);
-            framework.assertVeraPdfValid("markupAnnotationRCAndContents_" + annotType.getValue(),
-                    PdfUAConformance.PDF_UA_2);
         } else {
             framework.assertBothFail("markupAnnotationRCAndContents_" + annotType.getValue(),
                     PdfUAExceptionMessageConstants.RC_DIFFERENT_FROM_CONTENTS, false,
@@ -279,9 +273,8 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
             annotation.setContents("");
             pdfPage.addAnnotation(annotation);
         });
-        framework.assertITextFail("annotationEmptyContents_" + annotType.getValue(),
+        framework.assertOnlyITextFail("annotationEmptyContents_" + annotType.getValue(),
                 PdfUAExceptionMessageConstants.ANNOT_CONTENTS_IS_NULL_OR_EMPTY, PdfUAConformance.PDF_UA_2);
-        framework.assertVeraPdfValid("annotationEmptyContents_" + annotType.getValue(), PdfUAConformance.PDF_UA_2);
     }
 
     @Test
@@ -447,9 +440,8 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
             annot.put(PdfName.RC, new PdfString("<p>Rich text</p>"));
             pdfPage.addAnnotation(annot);
         });
-        framework.assertITextFail("watermarkAnnotationAsRealContent",
+        framework.assertOnlyITextFail("watermarkAnnotationAsRealContent",
                 PdfUAExceptionMessageConstants.RC_DIFFERENT_FROM_CONTENTS, PdfUAConformance.PDF_UA_2);
-        framework.assertVeraPdfValid("watermarkAnnotationAsRealContent", PdfUAConformance.PDF_UA_2);
     }
 
     @Test

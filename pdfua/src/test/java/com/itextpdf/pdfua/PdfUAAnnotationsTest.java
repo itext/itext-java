@@ -748,7 +748,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             // Verapdf doesn't fail here but it should
-            framework.assertITextFail("screenAnnotationWithInvalidMHMediaDataTest",
+            framework.assertOnlyITextFail("screenAnnotationWithInvalidMHMediaDataTest",
                     PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             framework.assertBothValid("screenAnnotationWithInvalidMHMediaDataTest", pdfUAConformance);

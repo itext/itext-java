@@ -123,11 +123,10 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
                 break;
             case "GoToInRandomPlace":
-                framework.assertVeraPdfValid(filename, PdfUAConformance.PDF_UA_2);
                 // iText fails because of the way we search for goto actions.
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
                 // That's why in this particular example we fail, however in reality GoTo action cannot be added directly to catalog.
-                framework.assertITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
                 break;
         }
     }
@@ -202,11 +201,10 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
                 break;
             case "GoToInRandomPlace":
-                framework.assertVeraPdfValid(filename, PdfUAConformance.PDF_UA_2);
                 // iText fails because of the way we search for goto actions.
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
                 // That's why in this particular example we fail, however in reality GoTo action cannot be added directly to catalog.
-                framework.assertITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
                 break;
         }
     }
@@ -231,8 +229,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // SD is specifically reserved for structure destinations,
                 // that's why placing not structure destination in there is wrong in the first place.
                 // However, if one is placed there, UA-2 exception is expected.
-                framework.assertVeraPdfValid(filename, PdfUAConformance.PDF_UA_2);
-                framework.assertITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION,
+                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION,
                         PdfUAConformance.PDF_UA_2);
                 break;
             case "GoToR":
@@ -288,11 +285,10 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
                 break;
             case "GoToInRandomPlace":
-                framework.assertVeraPdfValid(filename, PdfUAConformance.PDF_UA_2);
                 // iText fails because of the way we search for goto actions.
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
                 // That's why in this particular example we fail, however in reality GoTo action cannot be added directly to catalog.
-                framework.assertITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
                 break;
         }
     }
@@ -367,11 +363,10 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
                 break;
             case "GoToInRandomPlace":
-                framework.assertVeraPdfValid(filename, PdfUAConformance.PDF_UA_2);
                 // iText fails because of the way we search for goto actions.
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
                 // That's why in this particular example we fail, however in reality GoTo action cannot be added directly to catalog.
-                framework.assertITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
                 break;
         }
     }
@@ -396,8 +391,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // SD is specifically reserved for structure destinations,
                 // that's why placing not structure destination in there is wrong in the first place.
                 // However, if one is placed there, UA-2 exception is expected.
-                framework.assertVeraPdfValid(filename, PdfUAConformance.PDF_UA_2);
-                framework.assertITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION,
+                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION,
                         PdfUAConformance.PDF_UA_2);
                 break;
             case "GoToR":

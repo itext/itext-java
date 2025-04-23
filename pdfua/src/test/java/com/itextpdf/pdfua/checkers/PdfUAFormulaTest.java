@@ -293,24 +293,23 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canvasTest03(PdfUAConformance pdfUAConformance) {
+    public void canvasTest03(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook(pdfDoc -> {
-            PdfDocument document = new PdfUATestPdfDocument(
-                    new PdfWriter(new ByteArrayOutputStream()));
-            PdfPage page = document.addNewPage();
+            PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
             PdfFont font = loadFont(FONT);
 
-            TagTreePointer tagPointer = new TagTreePointer(document);
-            tagPointer.setPageForTagging(document.getFirstPage());
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
+            tagPointer.setPageForTagging(pdfDoc.getFirstPage());
             tagPointer.addTag(StandardRoles.FORMULA);
+            tagPointer.getProperties().setAlternateDescription("Alt descr");
             canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12);
             canvas.showText("⫊");
         });
-        framework.assertITextFail("canvasTest03",
+        framework.assertBothFail("canvasTest03",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
-                pdfUAConformance);
+                false, pdfUAConformance);
     }
 
     @Test
@@ -327,8 +326,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertVeraPdfValid("mathStructureElementInvalidUA2Test", PdfUAConformance.PDF_UA_2);
-        framework.assertITextFail("mathStructureElementInvalidUA2Test",
+        framework.assertOnlyITextFail("mathStructureElementInvalidUA2Test",
                 PdfUAExceptionMessageConstants.MATH_NOT_CHILD_OF_FORMULA, PdfUAConformance.PDF_UA_2);
     }
 

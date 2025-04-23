@@ -113,7 +113,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             framework.assertBothFail("imageWithEmptyAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             // TODO DEVSIX-8242 PDF/UA-2 checks
-            framework.assertITextFail("imageWithEmptyAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+            framework.assertOnlyITextFail("imageWithEmptyAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
         }
     }
 
@@ -300,14 +300,14 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageWithoutActualText_ThrowsInLayout(PdfUAConformance pdfUAConformance) {
+    public void imageWithoutActualText_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             Image img = loadImage();
             img.getAccessibilityProperties().setActualText(null);
             document.add(img);
         });
-        framework.assertITextFail("imageWithoutActualText", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+        framework.assertBothFail("imageWithoutActualText", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
     }
 
     @ParameterizedTest

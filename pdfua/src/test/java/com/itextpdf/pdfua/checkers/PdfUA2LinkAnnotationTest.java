@@ -229,11 +229,10 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
             PdfNamedDestination namedDestination = getNamedDestination(pdfDoc, structElem, "dest");
             addLinkAnnotations(destLocation, pdfDoc, namedDestination);
         });
-        framework.assertITextFail("sameNamedDestinations_" + destLocation.getValue(),
-                PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS, PdfUAConformance.PDF_UA_2);
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertVeraPdfValid("sameNamedDestinations_" + destLocation.getValue(), PdfUAConformance.PDF_UA_2);
+        framework.assertOnlyITextFail("sameNamedDestinations_" + destLocation.getValue(),
+                PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS, PdfUAConformance.PDF_UA_2);
     }
 
     @ParameterizedTest
@@ -244,11 +243,10 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
             PdfStringDestination namedDestination = getStringDestination(pdfDoc, structElem, "dest");
             addLinkAnnotations(destLocation, pdfDoc, namedDestination);
         });
-        framework.assertITextFail("sameStringDestinations_" + destLocation.getValue(),
-                PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS, PdfUAConformance.PDF_UA_2);
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertVeraPdfValid("sameStringDestinations_" + destLocation.getValue(), PdfUAConformance.PDF_UA_2);
+        framework.assertOnlyITextFail("sameStringDestinations_" + destLocation.getValue(),
+                PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS, PdfUAConformance.PDF_UA_2);
     }
 
     @ParameterizedTest
@@ -267,11 +265,11 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
 
             addLinkAnnotations(destLocation, pdfDoc, namedDestination);
         });
-        framework.assertITextFail("sameStringDestinationsSD_" + destLocation.getValue(),
-                PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS, PdfUAConformance.PDF_UA_2);
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertVeraPdfValid("sameStringDestinationsSD_" + destLocation.getValue(), PdfUAConformance.PDF_UA_2);
+        framework.assertOnlyITextFail("sameStringDestinationsSD_" + destLocation.getValue(),
+                PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS, PdfUAConformance.PDF_UA_2);
+
     }
 
     @ParameterizedTest
@@ -290,17 +288,15 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
         });
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertITextFail("sameStringDestinationsD_" + destLocation.getValue(),
-                PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS, PdfUAConformance.PDF_UA_2);
         if (PdfName.SD.equals(destLocation)) {
-            framework.assertVeraPdfValid("sameStringDestinationsD_" + destLocation.getValue(),
-                    PdfUAConformance.PDF_UA_2);
+            framework.assertOnlyITextFail("sameStringDestinationsD_" + destLocation.getValue(),
+                    PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS, PdfUAConformance.PDF_UA_2);
         } else {
             // In case PdfName.D or Dest equals destLocation, VeraPDF doesn't allow actions with structure destination being
             // placed in D entry. Instead, it requires structure destination to be added into special SD entry. There is
             // no such requirement in released PDF 2.0 spec. Although it is already mentioned in errata version.
-            framework.assertVeraPdfFail("sameStringDestinationsD_" + destLocation.getValue(),
-                    PdfUAConformance.PDF_UA_2);
+            framework.assertBothFail("sameStringDestinationsD_" + destLocation.getValue(),
+                    PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS, PdfUAConformance.PDF_UA_2);
         }
     }
 
@@ -333,12 +329,10 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
 
             addLinkAnnotations(destLocation, pdfDoc, namedDestination1, namedDestination2, false);
         });
-        framework.assertITextFail("differentNamedDestinations_" + destLocation.getValue(),
-                PdfUAExceptionMessageConstants.DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM, PdfUAConformance.PDF_UA_2);
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertVeraPdfValid("differentNamedDestinations_" + destLocation.getValue(),
-                PdfUAConformance.PDF_UA_2);
+        framework.assertOnlyITextFail("differentNamedDestinations_" + destLocation.getValue(),
+                PdfUAExceptionMessageConstants.DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM, PdfUAConformance.PDF_UA_2);
     }
 
     @ParameterizedTest
@@ -353,12 +347,10 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
 
             addLinkAnnotations(destLocation, pdfDoc, namedDestination1, namedDestination2, false);
         });
-        framework.assertITextFail("differentStringDestinations_" + destLocation.getValue(),
-                PdfUAExceptionMessageConstants.DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM, PdfUAConformance.PDF_UA_2);
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertVeraPdfValid("differentStringDestinations_" + destLocation.getValue(),
-                PdfUAConformance.PDF_UA_2);
+        framework.assertOnlyITextFail("differentStringDestinations_" + destLocation.getValue(),
+                PdfUAExceptionMessageConstants.DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM, PdfUAConformance.PDF_UA_2);
     }
 
     @ParameterizedTest
@@ -465,14 +457,13 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     private void validate(String filename, String expectedMessage, PdfName destLocation) throws IOException {
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertITextFail(filename + destLocation.getValue(), expectedMessage, PdfUAConformance.PDF_UA_2);
         if (PdfName.D.equals(destLocation)) {
             // In case PdfName.D equals destLocation, VeraPDF doesn't allow actions with structure destination being
             // placed in D entry. Instead, it requires structure destination to be added into special SD entry. There is
             // no such requirement in released PDF 2.0 spec. Although it is already mentioned in errata version.
-            framework.assertVeraPdfFail(filename + destLocation.getValue(), PdfUAConformance.PDF_UA_2);
+            framework.assertBothFail(filename + destLocation.getValue(), PdfUAConformance.PDF_UA_2);
         } else {
-            framework.assertVeraPdfValid(filename + destLocation.getValue(), PdfUAConformance.PDF_UA_2);
+            framework.assertOnlyITextFail(filename + destLocation.getValue(), expectedMessage, PdfUAConformance.PDF_UA_2);
         }
     }
 }

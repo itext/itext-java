@@ -529,7 +529,7 @@ public class PdfUATest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertITextFail("documentWithDuplicatingIdInStructTree", MessageFormatUtil.format(
+            framework.assertOnlyITextFail("documentWithDuplicatingIdInStructTree", MessageFormatUtil.format(
                             PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "hello-element"),
                     pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
