@@ -24,9 +24,18 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
+import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +49,13 @@ public class CertificateInfoTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String EXPECTED_EXCEPTION_MESSAGE = FACTORY.getBouncyCastleFactoryTestUtil().getCertificateInfoTestConst();
+
+    private static final String ENCODED_DN =
+            "MD0xCzAJBgNVBAYMAkJFMQ4wDAYDVQQKDAVpVGV4dDEeMBwGA1UEAwwVaVRleHRUZXN0SW50ZXJtZWRpYXRl";
+    private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures"
+            + "/CertificateInfoTest/";
+
 
     @Test
     public void X500InvalidDirectoryConstructorTest() {
@@ -94,5 +110,31 @@ public class CertificateInfoTest extends ExtendedITextTest {
         Exception exception =
                 Assertions.assertThrows(PdfException.class, () -> CertificateInfo.getSubject(new byte[] {4, 8, 15, 16, 23, 42}));
         Assertions.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getCause().getMessage());
+    }
+
+
+    @Test
+    public void distinguishedNameEncodingAndComparisonTest() throws CertificateException, IOException {
+
+        X509Certificate cert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "intermediate.pem")[0];
+        IX500Name name = FACTORY.createX500Name(cert);
+        IX500Name differentlyEncodedName = FACTORY.createX500Name(
+                FACTORY.createASN1Sequence(Base64.decode(ENCODED_DN)));
+
+        Assertions.assertTrue(differentlyEncodedName.equals(name));
+        Assertions.assertTrue(name.equals(differentlyEncodedName));
+    }
+
+    @Test
+    public void distinguishedNameEncodingAndComparisonIntegrationTest() {
+        AssertUtil.doesNotThrow(() ->
+        {
+            PdfDocument doc = new PdfDocument(
+                    new PdfReader(SOURCE_FOLDER + "signatureWithNameEncodingDifferences.pdf"));
+            SignatureUtil signUtil = new SignatureUtil(doc);
+            List<String> signNames = signUtil.getSignatureNames();
+            PdfPKCS7 pkcs7 = signUtil.readSignatureData(signNames.get(0));
+            Assertions.assertNotNull(pkcs7);
+        });
     }
 }
