@@ -117,8 +117,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("java.util.AbstractSet.hashCode", "iText.Commons.Utils.JavaUtil.SetHashCode", false);
         configurator.mapMethodParametersOrder("com.itextpdf.commons.utils.JsonUtil.deserializeFromString", "1");
         configurator.mapMethodParametersOrder("com.itextpdf.commons.utils.JsonUtil.deserializeFromStream", "1");
-        configurator.mapMethod("com.itextpdf.commons.utils.Base64.decode", "System.Convert.FromBase64String", false);
-        configurator.mapMethod("com.itextpdf.commons.utils.Base64.encodeBytes", "System.Convert.ToBase64String", false);
+        configurator.mapMethod("com.itextpdf.commons.utils.EncodingUtil.fromBase64", "System.Convert.FromBase64String", false);
+        configurator.mapMethod("com.itextpdf.commons.utils.EncodingUtil.toBase64", "System.Convert.ToBase64String", false);
         configurator.mapType("com.itextpdf.commons.utils.ThrowingSupplier<>", "System.Func");
         configurator.mapType("com.itextpdf.commons.utils.Action", "System.Action");
         configurator.mapType("com.itextpdf.commons.utils.ThrowingAction", "System.Action");

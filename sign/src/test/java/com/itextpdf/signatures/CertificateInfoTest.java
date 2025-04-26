@@ -25,7 +25,7 @@ package com.itextpdf.signatures;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -41,8 +41,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class CertificateInfoTest extends ExtendedITextTest {
@@ -119,7 +119,7 @@ public class CertificateInfoTest extends ExtendedITextTest {
         X509Certificate cert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "intermediate.pem")[0];
         IX500Name name = FACTORY.createX500Name(cert);
         IX500Name differentlyEncodedName = FACTORY.createX500Name(
-                FACTORY.createASN1Sequence(Base64.decode(ENCODED_DN)));
+                FACTORY.createASN1Sequence(EncodingUtil.fromBase64(ENCODED_DN)));
 
         Assertions.assertTrue(differentlyEncodedName.equals(name));
         Assertions.assertTrue(name.equals(differentlyEncodedName));

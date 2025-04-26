@@ -23,7 +23,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.datastructures.NullableContainer;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
@@ -1393,7 +1393,7 @@ public class PdfFormField extends AbstractPdfFormField {
         if (PdfName.Btn.equals(formType)) {
             if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
                 try {
-                    img = ImageDataFactory.create(Base64.decode(value));
+                    img = ImageDataFactory.create(EncodingUtil.fromBase64(value));
                 } catch (Exception e) {
                     if (generateAppearance) {
                         // Display value.

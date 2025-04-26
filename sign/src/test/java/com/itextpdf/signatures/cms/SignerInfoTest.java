@@ -32,7 +32,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IDERSequence;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -72,11 +72,11 @@ public class SignerInfoTest extends ExtendedITextTest {
 
     private static final byte[] MESSAGE_DIGEST =
             CMSTestHelper.MESSAGE_DIGEST_STRING.getBytes(StandardCharsets.UTF_8);
-    private static final byte[] EXPECTEDRESULT_1 = Base64.decode(CMSTestHelper.EXPECTEDRESULT_1);
-    private static final byte[] EXPECTEDRESULT_2 = Base64.decode(CMSTestHelper.EXPECTEDRESULT_2);
-    private static final byte[] EXPECTEDRESULT_3 = Base64.decode(CMSTestHelper.EXPECTEDRESULT_3);
-    private static final byte[] EXPECTEDRESULT_4 = Base64.decode(CMSTestHelper.EXPECTEDRESULT_4);
-    private static final byte[] EXPECTEDRESULT_5 = Base64.decode(CMSTestHelper.EXPECTEDRESULT_5);
+    private static final byte[] EXPECTEDRESULT_1 = EncodingUtil.fromBase64(CMSTestHelper.EXPECTEDRESULT_1);
+    private static final byte[] EXPECTEDRESULT_2 = EncodingUtil.fromBase64(CMSTestHelper.EXPECTEDRESULT_2);
+    private static final byte[] EXPECTEDRESULT_3 = EncodingUtil.fromBase64(CMSTestHelper.EXPECTEDRESULT_3);
+    private static final byte[] EXPECTEDRESULT_4 = EncodingUtil.fromBase64(CMSTestHelper.EXPECTEDRESULT_4);
+    private static final byte[] EXPECTEDRESULT_5 = EncodingUtil.fromBase64(CMSTestHelper.EXPECTEDRESULT_5);
 
     private static final List<X509Certificate> chain = new ArrayList<>();
 
@@ -116,7 +116,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSA));
         si.setSigningCertificate(signCert);
         ArrayList<byte[]> fakeOcspREsponses = new ArrayList<>();
-        fakeOcspREsponses.add(Base64.decode(CMSTestHelper.BASE64_OCSP_RESPONSE));
+        fakeOcspREsponses.add(EncodingUtil.fromBase64(CMSTestHelper.BASE64_OCSP_RESPONSE));
         si.setMessageDigest(new byte[1024]);
         si.setOcspResponses(fakeOcspREsponses);
         si.setCrlResponses(testCrlResponse);
@@ -153,7 +153,7 @@ public class SignerInfoTest extends ExtendedITextTest {
         si.setSignatureAlgorithm(new AlgorithmIdentifier(OID.RSASSA_PSS));
         si.setSigningCertificate(signCert);
         ArrayList<byte[]> fakeOcspREsponses = new ArrayList<>();
-        fakeOcspREsponses.add(Base64.decode(CMSTestHelper.BASE64_OCSP_RESPONSE));
+        fakeOcspREsponses.add(EncodingUtil.fromBase64(CMSTestHelper.BASE64_OCSP_RESPONSE));
         si.setOcspResponses(fakeOcspREsponses);
         si.setCrlResponses(testCrlResponse);
         si.setMessageDigest(new byte[1024]);
@@ -336,7 +336,7 @@ public class SignerInfoTest extends ExtendedITextTest {
     @Test
     public void testDeserializationMissingSignedAttributes() throws IOException {
         IASN1Encodable testData = FACTORY.createASN1Primitive(
-                Base64.decode(CMSTestHelper.B64_ENCODED_NO_SIGNED_ATTRIBS));
+                EncodingUtil.fromBase64(CMSTestHelper.B64_ENCODED_NO_SIGNED_ATTRIBS));
         SignerInfo si = new SignerInfo(testData, chain);
         Assertions.assertEquals(0, si.getSignedAttributes().size());
     }
@@ -344,7 +344,7 @@ public class SignerInfoTest extends ExtendedITextTest {
     @Test
     public void testMissingSignerCertificate() throws IOException {
         IASN1Encodable testData = FACTORY.createASN1Primitive(
-                Base64.decode(CMSTestHelper.B64_ENCODED_NO_SIGNED_ATTRIBS));
+                EncodingUtil.fromBase64(CMSTestHelper.B64_ENCODED_NO_SIGNED_ATTRIBS));
         Exception e = Assertions.assertThrows(PdfException.class, () ->
                 new SignerInfo(testData, chain.subList(1, chain.size() - 1)));
         Assertions.assertEquals(SignExceptionMessageConstant.CMS_CERTIFICATE_NOT_FOUND, e.getMessage());
@@ -353,7 +353,7 @@ public class SignerInfoTest extends ExtendedITextTest {
     @Test
     public void testSidWithSubjectKeyIdentifier() throws IOException {
         IASN1Encodable testData = FACTORY.createASN1Primitive(
-                Base64.decode(CMSTestHelper.B64_ENCODED_SUBJECTKEY_IDENTIFIER));
+                EncodingUtil.fromBase64(CMSTestHelper.B64_ENCODED_SUBJECTKEY_IDENTIFIER));
         SignerInfo si = new SignerInfo(testData, chain);
         Assertions.assertEquals(signCert.getSerialNumber(), si.getSigningCertificate().getSerialNumber());
     }
@@ -361,7 +361,7 @@ public class SignerInfoTest extends ExtendedITextTest {
     @Test
     public void testMissingCertificateWithSubjectKeyIdentifier() throws IOException {
         IASN1Encodable testData = FACTORY.createASN1Primitive(
-                Base64.decode(CMSTestHelper.B64_ENCODED_SUBJECTKEY_IDENTIFIER));
+                EncodingUtil.fromBase64(CMSTestHelper.B64_ENCODED_SUBJECTKEY_IDENTIFIER));
         Exception e = Assertions.assertThrows(PdfException.class, () ->
                 new SignerInfo(testData, chain.subList(1, chain.size() - 1)));
         Assertions.assertEquals(SignExceptionMessageConstant.CMS_CERTIFICATE_NOT_FOUND, e.getMessage());

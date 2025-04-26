@@ -23,7 +23,7 @@
 package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -298,7 +298,7 @@ public class PdfDecryptingTest extends ExtendedITextTest {
             int startPos = pemContent.indexOf(start);
             int endPos = pemContent.indexOf(end);
             pemContent = pemContent.substring(startPos + start.length(), endPos);
-            byte[] encoded = Base64.decode(pemContent);
+            byte[] encoded = EncodingUtil.fromBase64(pemContent);
 
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
             return KeyFactory.getInstance(algorithm, BouncyCastleFactoryCreator.getFactory().getProviderName())

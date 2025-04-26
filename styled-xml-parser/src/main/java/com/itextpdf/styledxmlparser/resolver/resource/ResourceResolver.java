@@ -22,7 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -259,7 +259,7 @@ public class ResourceResolver {
             fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64_IDENTIFIER) + BASE64_IDENTIFIER.length() + 1);
             PdfXObject imageXObject = imageCache.getImage(fixedSrc);
             if (imageXObject == null) {
-                imageXObject = new PdfImageXObject(ImageDataFactory.create(Base64.decode(fixedSrc)));
+                imageXObject = new PdfImageXObject(ImageDataFactory.create(EncodingUtil.fromBase64(fixedSrc)));
                 imageCache.putImage(fixedSrc, imageXObject);
             }
             return imageXObject;
@@ -312,7 +312,7 @@ public class ResourceResolver {
             try {
                 String fixedSrc = src.replaceAll("\\s", "");
                 fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64_IDENTIFIER) + BASE64_IDENTIFIER.length() + 1);
-                return Base64.decode(fixedSrc);
+                return EncodingUtil.fromBase64(fixedSrc);
             } catch (Exception ignored) {
             }
         }

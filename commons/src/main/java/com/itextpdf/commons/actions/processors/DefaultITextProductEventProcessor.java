@@ -24,7 +24,7 @@ package com.itextpdf.commons.actions.processors;
 
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicLong;
@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultITextProductEventProcessor extends AbstractITextProductEventProcessor {
 
-    static final byte[] MESSAGE_FOR_LOGGING = Base64
-            .decode("WW91IGFyZSB1c2luZyBpVGV4dCB1bmRlciB0aGUgQUdQTC4KCklmIHRoaXMgaXMgeW9" +
+    static final byte[] MESSAGE_FOR_LOGGING = EncodingUtil.fromBase64(
+            "WW91IGFyZSB1c2luZyBpVGV4dCB1bmRlciB0aGUgQUdQTC4KCklmIHRoaXMgaXMgeW9" +
                        "1ciBpbnRlbnRpb24sIHlvdSBoYXZlIHB1Ymxpc2hlZCB5b3VyIG93biBzb3VyY2UgY2" +
                        "9kZSBhcyBBR1BMIHNvZnR3YXJlIHRvby4KUGxlYXNlIGxldCB1cyBrbm93IHdoZXJlI" +
                        "HRvIGZpbmQgeW91ciBzb3VyY2UgY29kZSBieSBzZW5kaW5nIGEgbWFpbCB0byBhZ3Bs" +

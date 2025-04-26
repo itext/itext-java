@@ -28,7 +28,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -93,8 +93,7 @@ public class BouncyCastleContractTest extends  ExtendedITextTest {
 
     @Test
     public void ocspResponseWithMissingExtensionIsParsedProperlyTest() throws IOException {
-
-        byte[] encodedResponse = Base64.decode(OCSP_RESPONSE_NO_EXTENSIONS);
+        byte[] encodedResponse = EncodingUtil.fromBase64(OCSP_RESPONSE_NO_EXTENSIONS);
         IASN1Primitive asn1Primitive = FACTORY.createASN1Primitive(encodedResponse);
         IBasicOCSPResponse basicReponse = FACTORY.createBasicOCSPResponse(asn1Primitive);
         IBasicOCSPResp ocspResponse = FACTORY.createBasicOCSPResp(basicReponse);

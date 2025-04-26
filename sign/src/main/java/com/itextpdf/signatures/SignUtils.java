@@ -41,7 +41,7 @@ import com.itextpdf.commons.bouncycastle.cms.ISignerInformationVerifier;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfEncryption;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -285,7 +285,7 @@ final class SignUtils {
         if ((tsaUsername != null) && !tsaUsername.equals("")) {
             String userPassword = tsaUsername + ":" + tsaPassword;
             tsaConnection.setRequestProperty("Authorization", "Basic " +
-                    Base64.encodeBytes(userPassword.getBytes(StandardCharsets.UTF_8), Base64.DONT_BREAK_LINES));
+                    EncodingUtil.toBase64(userPassword.getBytes(StandardCharsets.UTF_8)));
         }
         OutputStream out = tsaConnection.getOutputStream();
         out.write(requestBytes);

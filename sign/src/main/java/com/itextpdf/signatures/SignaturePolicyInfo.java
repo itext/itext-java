@@ -29,7 +29,7 @@ import com.itextpdf.commons.bouncycastle.asn1.esf.IOtherHashAlgAndValue;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 
 /**
@@ -87,7 +87,7 @@ public class SignaturePolicyInfo {
      */
     public SignaturePolicyInfo(String policyIdentifier, String policyHashBase64, String policyDigestAlgorithm,
             String policyUri) {
-        this(policyIdentifier, policyHashBase64 != null ? Base64.decode(policyHashBase64) : null,
+        this(policyIdentifier, policyHashBase64 != null ? EncodingUtil.fromBase64(policyHashBase64) : null,
                 policyDigestAlgorithm, policyUri);
     }
 
