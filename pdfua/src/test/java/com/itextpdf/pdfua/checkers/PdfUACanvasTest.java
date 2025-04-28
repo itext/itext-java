@@ -54,7 +54,6 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -67,16 +66,9 @@ public class PdfUACanvasTest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUACanvasTest/";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfUAConformance> data() {
@@ -86,6 +78,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_TextContentIsNotTagged(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.saveState()
@@ -102,6 +95,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_TextNoContentIsNotTagged(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.saveState()
@@ -117,6 +111,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_TextContentIsCorrectlyTaggedAsContent(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page1 = pdfDoc.addNewPage();
             PdfFont font = getPdfFont();
@@ -143,20 +138,21 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_TextContentIsNotInTagTree(PdfUAConformance pdfUAConformance) throws IOException {
-       framework.addBeforeGenerationHook(pdfDoc -> {
-           PdfFont font = getPdfFont();
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = getPdfFont();
 
-           PdfPage page1 = pdfDoc.addNewPage();
-           PdfCanvas canvas = new PdfCanvas(page1);
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
 
-           canvas
-                   .openTag(new CanvasTag(PdfName.P))
-                   .saveState()
-                   .beginText()
-                   .setFontAndSize(font, 12)
-                   .moveText(200, 200);
-           canvas.showText("Hello World!");
-       });
+            canvas
+                    .openTag(new CanvasTag(PdfName.P))
+                    .saveState()
+                    .beginText()
+                    .setFontAndSize(font, 12)
+                    .moveText(200, 200);
+            canvas.showText("Hello World!");
+        });
         framework.assertBothFail("01_005_TextArtifactIsNotInTagTree",
                 PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
     }
@@ -164,6 +160,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_TextArtifactIsNotInTagTree(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page1 = pdfDoc.addNewPage();
             PdfFont font = getPdfFont();
@@ -187,6 +184,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_TextContentWithMCIDButNotInTagTree(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
 
@@ -211,6 +209,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_TextGlyphLineContentIsTaggedButNotInTagTree(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
@@ -230,6 +229,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_TextGlyphLineInBadStructure(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage()) {
@@ -261,12 +261,14 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.setColor(ColorConstants.RED, true);
             canvas.showText(glyphLine);
         });
-        framework.assertBothFail("textGlyphLineInBadStructure", PdfUAExceptionMessageConstants.REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA, false, pdfUAConformance);
+        framework.assertBothFail("textGlyphLineInBadStructure",
+                PdfUAExceptionMessageConstants.REAL_CONTENT_INSIDE_ARTIFACT_OR_VICE_VERSA, false, pdfUAConformance);
     }
 
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_TextGlyphLineContentIsArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
@@ -289,6 +291,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_TextGlyphLineContentIsContentCorrect(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
@@ -315,6 +318,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_allowPureBmcInArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
@@ -338,6 +342,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_allowNestedPureBmcInArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
@@ -364,6 +369,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_LineContentThatIsContentIsNotTagged(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -379,6 +385,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_LineContentThatIsContentIsNotTagged_noContent(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -392,6 +399,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
             canvas.openTag(new CanvasTag(PdfName.P))
@@ -409,6 +417,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     public void checkPoint_01_005_LineContentThatIsContentIsTaggedButIsNotAnArtifact_no_drawing(
             PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
             canvas.openTag(new CanvasTag(PdfName.P))
@@ -425,6 +434,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_LineContentThatIsMarkedAsArtifact(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
@@ -447,6 +457,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_RectangleNotMarked(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -462,6 +473,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_RectangleNoContent(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -474,6 +486,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_RectangleClip(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -487,6 +500,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_RectangleClosePathStroke(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -502,6 +516,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_Rectangle_EOFIllStroke(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -517,6 +532,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_Rectangle_FillStroke(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -532,6 +548,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_Rectangle_eoFill(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -547,6 +564,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_Rectangle_eoFillStroke(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
@@ -562,6 +580,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_RectangleMarkedArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -580,6 +599,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_RectangleMarkedContentWithoutMcid(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -597,6 +617,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_RectangleMarkedContentWithoutMcid_NoContent(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -612,6 +633,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_005_RectangleMarkedContent(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
@@ -634,6 +656,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_004_bezierMarkedAsContent(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
@@ -664,6 +687,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_004_bezierMarkedAsArtifact(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
@@ -684,6 +708,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_01_004_bezierCurveInvalidMCID(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -705,6 +730,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_004_bezierCurveInvalidMCID_NoContent(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas
@@ -723,6 +749,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_005_RandomOperationsWithoutActuallyAddingContent(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
@@ -740,6 +767,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_003_ContentMarkedAsArtifactsPresentInsideTaggedContent(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
 
@@ -768,6 +796,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_validRoleAddedInsideMarkedContent(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
 
@@ -803,6 +832,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_validRoleAddedInsideMarkedContentMultiple(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
 
@@ -843,6 +873,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_validRoleAddedInsideMarkedContentMCR_IN_MCR(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
 
@@ -890,6 +921,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @MethodSource("data")
     public void checkPoint_01_004_TaggedContentShouldNotBeInsideArtifact(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
 
@@ -917,6 +949,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_31_009_FontIsNotEmbedded(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             PdfFont font = null;
@@ -943,6 +976,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_19_003_iDEntryInNoteTagIsNotPresent(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = getPdfFont();
 
@@ -970,13 +1004,15 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY,
                     pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.DOCUMENT_USES_NOTE_TAG, pdfUAConformance);
+            framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.DOCUMENT_USES_NOTE_TAG,
+                    pdfUAConformance);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint_19_003_validNoteTagIsPresent(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfFont font = getPdfFont();
             PdfPage page1 = pdfDocument.addNewPage();
@@ -1008,13 +1044,15 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("validNoteTagPresent", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.DOCUMENT_USES_NOTE_TAG, pdfUAConformance);
+            framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.DOCUMENT_USES_NOTE_TAG,
+                    pdfUAConformance);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
     public void usingCharacterWithoutUnicodeMappingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font;
             try {

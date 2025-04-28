@@ -99,6 +99,7 @@ public class XmlProcessorCreatorSecurityTest extends ExtendedITextTest {
 
     @Test
     public void xmlWithoutDtd() throws ParserConfigurationException, IOException, SAXException {
+        XmlProcessorCreator.setXmlParserFactory(null);
         Document document;
         DocumentBuilder documentBuilder = XmlProcessorCreator.createSafeDocumentBuilder(false, false);
         try (InputStream inputStream = new ByteArrayInputStream(XML_WITHOUT_DTD.getBytes(StandardCharsets.UTF_8))) {

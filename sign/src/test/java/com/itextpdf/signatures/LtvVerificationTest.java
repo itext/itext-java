@@ -71,13 +71,10 @@ public class LtvVerificationTest extends ExtendedITextTest {
     private static final String CERT_FOLDER_PATH = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
-    private static LtvVerification TEST_VERIFICATION;
-
-    @BeforeAll
-    public static void before() throws IOException {
+    public static LtvVerification setup() throws IOException {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC_PDF));
-        TEST_VERIFICATION = new LtvVerification(pdfDoc);
+        return new LtvVerification(pdfDoc);
     }
 
     @Test
@@ -148,7 +145,8 @@ public class LtvVerificationTest extends ExtendedITextTest {
         List<byte[]> certs = new ArrayList<>();
         certs.add(new byte[0]);
 
-        Assertions.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
+        LtvVerification testVerification = setup();
+        Assertions.assertTrue(testVerification.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
     }
     
     @Test
@@ -180,22 +178,25 @@ public class LtvVerificationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void validateSigNameWithNullCrlOcspCertTest() throws GeneralSecurityException, IOException {
-        Assertions.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, null, null, null));
+    public void validateSigNameWithNullCrlOcspCertTest() throws IOException, GeneralSecurityException {
+        LtvVerification testVerification = setup();
+        Assertions.assertTrue(testVerification.addVerification(SIG_FIELD_NAME, null, null, null));
     }
 
     @Test
     //TODO DEVSIX-5696 Sign: NPE is thrown because no such a signature
-    public void exceptionWhenValidateNonExistentSigNameTest() {
+    public void exceptionWhenValidateNonExistentSigNameTest() throws IOException {
+        LtvVerification testVerification = setup();
         Assertions.assertThrows(NullPointerException.class,
-                () -> TEST_VERIFICATION.addVerification("nonExistentSigName", null, null, null));
+                () -> testVerification.addVerification("nonExistentSigName", null, null, null));
     }
 
     @Test
     //TODO DEVSIX-5696 Sign: NPE is thrown because no such a signature
-    public void exceptionWhenValidateParticularNonExistentSigNameTest() {
+    public void exceptionWhenValidateParticularNonExistentSigNameTest() throws IOException {
+        LtvVerification testVerification = setup();
         Assertions.assertThrows(NullPointerException.class,
-                () -> TEST_VERIFICATION.addVerification("nonExistentSigName", null, null,
+                () -> testVerification.addVerification("nonExistentSigName", null, null,
                         CertificateOption.SIGNING_CERTIFICATE, Level.OCSP_CRL, CertificateInclusion.YES));
     }
 
@@ -575,7 +576,8 @@ public class LtvVerificationTest extends ExtendedITextTest {
         } else {
             crl = new CrlClientOnline(crlUrl);
         }
+        LtvVerification testVerification = setup();
         Assertions.assertEquals(expectedResult,
-                TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, ocsp, crl, certificateOption, level, inclusion));
+                testVerification.addVerification(SIG_FIELD_NAME, ocsp, crl, certificateOption, level, inclusion));
     }
 }

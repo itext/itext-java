@@ -55,7 +55,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -78,25 +77,16 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
-    private SignatureValidationProperties parameters;
-    private MockIssuingCertificateRetriever mockCertificateRetriever;
-
-    private ValidatorChainBuilder builder;
-    private MockChainValidator mockCertificateChainValidator;
-    private MockDocumentRevisionsValidator mockDocumentRevisionsValidator;
 
     @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
     }
 
-    @BeforeEach
-    public void setUp() {
-        mockCertificateChainValidator = new MockChainValidator();
-        parameters = new SignatureValidationProperties();
-        mockCertificateRetriever = new MockIssuingCertificateRetriever();
-        mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
-        builder = new ValidatorChainBuilder()
+    private ValidatorChainBuilder createValidatorChainBuilder(MockIssuingCertificateRetriever mockCertificateRetriever,
+            SignatureValidationProperties parameters, MockChainValidator mockCertificateChainValidator,
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator){
+        return new ValidatorChainBuilder()
                 .withIssuingCertificateRetrieverFactory(() -> mockCertificateRetriever)
                 .withSignatureValidationProperties(parameters)
                 .withCertificateChainValidatorFactory(() -> mockCertificateChainValidator)
@@ -109,6 +99,13 @@ public class SignatureValidatorTest extends ExtendedITextTest {
             AbstractOperatorCreationException, AbstractPKCSException {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         String privateKeyName = CERTS_SRC + "rootCertKey.pem";
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
+
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
         PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(privateKeyName, PASSWORD);
@@ -155,6 +152,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
         PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(privateKeyName, PASSWORD);
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDocTimestampDate.pdf"))) {
@@ -198,6 +201,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
         PrivateKey rootPrivateKey = PemFileHelper.readFirstKey(privateKeyName, PASSWORD);
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureWithModifiedTimestampDate.pdf"))) {
@@ -238,6 +247,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithBrokenTimestamp.pdf"))) {
@@ -261,6 +276,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "modifiedDoc.pdf"))) {
@@ -286,6 +307,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
 
         ValidationReport report;
 
@@ -319,6 +346,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
         X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
         X509Certificate signCert = (X509Certificate) certificateChain[0];
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithDss.pdf"))) {
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
@@ -343,6 +376,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         String chainName = CERTS_SRC + "validCertsChain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
 
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithBrokenDss.pdf"))) {
@@ -362,6 +401,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
     @Test
     public void indeterminateChainValidationLeadsToIndeterminateResultTest() throws IOException {
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
         mockCertificateChainValidator.onCallDo(c -> c.report.addReportItem(
                 new ReportItem("test", "test", ReportItem.ReportItemStatus.INDETERMINATE)));
 
@@ -384,6 +429,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
     @Test
     public void invalidChainValidationLeadsToInvalidResultTest() throws IOException {
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
         mockCertificateChainValidator.onCallDo(c -> c.report.addReportItem(
                 new ReportItem("test", "test", ReportItem.ReportItemStatus.INVALID)));
 
@@ -405,6 +456,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
 
     @Test
     public void invalidRevisionsValidationLeadsToInvalidResultTest() throws IOException {
+        MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+        MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+        ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                mockCertificateChainValidator, mockDocumentRevisionsValidator);
         mockDocumentRevisionsValidator.setReportItemStatus(ReportItemStatus.INVALID);
 
         ValidationReport report;
@@ -426,6 +483,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
     @Test
     public void validateMultipleSignatures() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             ValidationReport report = signatureValidator.validateSignatures();
 
@@ -486,6 +549,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             mockCertificateChainValidator.onCallDo(c -> {
                 throw new RuntimeException("Test chain validation failure");
@@ -506,6 +575,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             mockCertificateChainValidator.onCallDo(c -> {
                 throw new RuntimeException("Test chain validation failure");
@@ -525,6 +600,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithDss.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
 
             mockCertificateRetriever.onAddKnownCertificatesDo(c -> {
@@ -546,6 +627,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             mockCertificateRetriever.onAddKnownCertificatesDo(c -> {
                 throw new RuntimeException("Test add know certificates failure");
@@ -566,6 +653,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             mockCertificateRetriever.onAddKnownCertificatesDo(c -> {
                 throw new RuntimeException("Test add know certificates failure");
@@ -586,6 +679,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validDoc.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
             mockCertificateRetriever.setTrustedCertificates(Collections.singletonList(rootCert));
             mockDocumentRevisionsValidator.onCallDo(c -> {
                 throw new RuntimeException("Test add know certificates failure");
@@ -602,6 +701,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
     @Test
     public void throwExceptionOnTheSecondValidationAttempt() throws IOException {
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             signatureValidator.validateSignatures();
             Exception exception = Assertions.assertThrows(PdfException.class,
@@ -617,6 +722,12 @@ public class SignatureValidatorTest extends ExtendedITextTest {
     public void signatureWithSpecifiedNameNotFound() throws IOException {
         ValidationReport report;
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "timestampSignatureDoc.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
             SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
             report = signatureValidator.validateSignature("Invalid signature name");
         }

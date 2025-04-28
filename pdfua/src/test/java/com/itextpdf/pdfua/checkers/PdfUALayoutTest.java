@@ -57,9 +57,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PdfUALayoutTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUALayoutTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-
-    private UaValidationTestFramework framework;
-
+    
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -79,15 +77,11 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         };
     }
 
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-    }
-
     @ParameterizedTest
     @MethodSource("data")
     public void simpleParagraphTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = loadFont();
             Document doc = new Document(pdfDoc);
             doc.add(new Paragraph("Simple layout PDF UA test").setFont(font));
@@ -98,7 +92,8 @@ public class PdfUALayoutTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void simpleParagraphWithUnderlineTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = loadFont();
             Document doc = new Document(pdfDoc);
             doc.add(new Paragraph("Simple layout PDF UA with underline test").setFont(font).setUnderline());
@@ -113,6 +108,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
             throws IOException {
         //expectException should take into account repair mechanism
         // in example P:P will be replaced as P:Span so no exceptions should be thrown
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -137,7 +133,8 @@ public class PdfUALayoutTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void simpleBorderTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDocument -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDocument -> {
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
@@ -151,7 +148,8 @@ public class PdfUALayoutTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void simpleTableTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDocument -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDocument -> {
             Document doc = new Document(pdfDocument);
 
             PdfFont font = loadFont();

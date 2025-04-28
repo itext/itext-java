@@ -45,7 +45,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -55,16 +54,9 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUATaggedGridContainerTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void setup() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfUAConformance> data() {
@@ -74,6 +66,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void simpleBorderBoxSizingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font = loadFont();
@@ -99,6 +92,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void simpleMarginTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font = loadFont();
@@ -118,6 +112,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void simplePaddingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font = loadFont();
@@ -137,6 +132,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void simpleBackgroundTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font = loadFont();
@@ -153,6 +149,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void emptyGridContainerTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             GridContainer gridContainer0 = new GridContainer();

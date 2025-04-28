@@ -66,10 +66,6 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
     private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
 
-    private String signAlgorithm;
-    private String signCertName;
-    private String rootCertName;
-
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     @BeforeAll
@@ -78,25 +74,42 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
-    public void setUp(String signAlgorithm) {
-        this.signAlgorithm = signAlgorithm;
-        switch (this.signAlgorithm) {
+    public String getSignCertName(String signAlgorithm) {
+        String signCertName = "";
+        switch (signAlgorithm) {
             case "RSA":
                 signCertName = "signCertRsa01.pem";
-                rootCertName = "rootRsa.pem";
                 break;
             case "RSASSA":
                 signCertName = "signRSASSA.pem";
-                rootCertName = "rootRSASSA.pem";
                 break;
             case "ED448":
                 signCertName = "signEd448.pem";
+                break;
+        }
+        if ("ED448".equals(signAlgorithm)) {
+            Assumptions.assumeFalse(FACTORY.isInApprovedOnlyMode());
+        }
+        return signCertName;
+    }
+
+    public String getRootCertName(String signAlgorithm) {
+        String rootCertName = "";
+        switch (signAlgorithm) {
+            case "RSA":
+                rootCertName = "rootRsa.pem";
+                break;
+            case "RSASSA":
+                rootCertName = "rootRSASSA.pem";
+                break;
+            case "ED448":
                 rootCertName = "rootEd448.pem";
                 break;
         }
         if ("ED448".equals(signAlgorithm)) {
             Assumptions.assumeFalse(FACTORY.isInApprovedOnlyMode());
         }
+        return rootCertName;
     }
 
     public static Iterable<Object[]> createParameters() {
@@ -112,13 +125,12 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineBTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
-        setUp(signAlgorithm);
         String fileName = "twoStepSigningBaselineBTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
-        String signCertFileName = certsSrc + signCertName;
-        String rootCertFileName = certsSrc + rootCertName;
+        String signCertFileName = certsSrc + getSignCertName(signAlgorithm);
+        String rootCertFileName = certsSrc + getRootCertName(signAlgorithm);
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
@@ -155,14 +167,13 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
-        setUp(signAlgorithm);
         String fileName = "twoStepSigningBaselineTTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
-        String signCertFileName = certsSrc + signCertName;
+        String signCertFileName = certsSrc + getSignCertName(signAlgorithm);
         String tsaCertFileName = certsSrc + "tsCertRsa.pem";
-        String rootCertFileName = certsSrc + rootCertName;
+        String rootCertFileName = certsSrc + getRootCertName(signAlgorithm);
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
@@ -203,16 +214,15 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineLTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
-        setUp(signAlgorithm);
         String fileName = "twoStepSigningBaselineLTTest" + comparisonPdfId +
                 (FIPS_MODE && ("RSASSA".equals(signAlgorithm) || "ED448".equals(signAlgorithm)) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
-        String signCertFileName = certsSrc + signCertName;
+        String signCertFileName = certsSrc + getSignCertName(signAlgorithm);
         String tsaCertFileName = certsSrc + "tsCertRsa.pem";
         String caCertFileName = certsSrc + "rootRsa.pem";
-        String rootCertFileName = certsSrc + rootCertName;
+        String rootCertFileName = certsSrc + getRootCertName(signAlgorithm);
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
@@ -260,16 +270,15 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineLTATest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
-        setUp(signAlgorithm);
         String fileName = "twoStepSigningBaselineLTATest" + comparisonPdfId +
                 (FIPS_MODE && ("RSASSA".equals(signAlgorithm) || "ED448".equals(signAlgorithm)) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
-        String signCertFileName = certsSrc + signCertName;
+        String signCertFileName = certsSrc + getSignCertName(signAlgorithm);
         String tsaCertFileName = certsSrc + "tsCertRsa.pem";
         String caCertFileName = certsSrc + "rootRsa.pem";;
-        String rootCertFileName = certsSrc + rootCertName;
+        String rootCertFileName = certsSrc + getRootCertName(signAlgorithm);
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];

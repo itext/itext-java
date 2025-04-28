@@ -59,16 +59,9 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUACanvasTextTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/iTextFreeSansWithE001Glyph.ttf";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void setUp() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
     }
 
     public static List<String> textRepresentation() {
@@ -78,6 +71,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     @Test
     public void puaValueInLayoutTest() throws IOException {
         String filename = "puaValueInLayoutTest";
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -93,6 +87,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     @MethodSource("textRepresentation")
     public void puaValueWithoutAttributesTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithoutAttributesTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -113,6 +108,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     @MethodSource("textRepresentation")
     public void puaValueWithAltOnTagTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithAltOnTagTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -135,6 +131,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     @MethodSource("textRepresentation")
     public void puaValueWithActualTextOnTagTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithActualTextOnTagTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -157,6 +154,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     @MethodSource("textRepresentation")
     public void puaValueWithAltOnCanvasTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithAltOnCanvasTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -179,6 +177,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     @MethodSource("textRepresentation")
     public void puaValueWithActualTextOnCanvasTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithActualTextOnCanvasTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -201,6 +200,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     @MethodSource("textRepresentation")
     public void puaValueOnTwoPagesTest(String textRepresentation) throws IOException {
         String filename = "puaValueOnTwoPagesTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             // Text on page 1 contains PUA and alt, which is valid.
             PdfCanvas canvasOnPageOne = new PdfCanvas(document.addNewPage());

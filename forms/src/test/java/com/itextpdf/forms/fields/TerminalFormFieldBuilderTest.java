@@ -35,22 +35,22 @@ import java.io.ByteArrayOutputStream;
 
 @Tag("UnitTest")
 public class TerminalFormFieldBuilderTest extends ExtendedITextTest {
-
-    private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
     private static final Rectangle DUMMY_RECTANGLE = new Rectangle(7, 11, 13, 17);
 
     @Test
     public void constructorTest() {
-        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        TestBuilder builder = new TestBuilder(pdfDoc, DUMMY_NAME);
 
-        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(pdfDoc, builder.getDocument());
         Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
     public void getSetWidgetTest() {
-        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        TestBuilder builder = new TestBuilder(pdfDoc, DUMMY_NAME);
         builder.setWidgetRectangle(DUMMY_RECTANGLE);
 
         Assertions.assertSame(DUMMY_RECTANGLE, builder.getWidgetRectangle());
@@ -58,8 +58,9 @@ public class TerminalFormFieldBuilderTest extends ExtendedITextTest {
 
     @Test
     public void getSetPageTest() {
-        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
-        PdfPage page = DUMMY_DOCUMENT.addNewPage();
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        TestBuilder builder = new TestBuilder(pdfDoc, DUMMY_NAME);
+        PdfPage page = pdfDoc.addNewPage();
         builder.setPage(page);
 
         Assertions.assertEquals(1, builder.getPage());
@@ -71,17 +72,18 @@ public class TerminalFormFieldBuilderTest extends ExtendedITextTest {
 
     @Test
     public void setPageToFieldTest() {
-        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        TestBuilder builder = new TestBuilder(pdfDoc, DUMMY_NAME);
         builder.setPage(5);
 
-        PdfFormAnnotation formFieldAnnot = new PdfFormAnnotation((PdfDictionary)new PdfDictionary().makeIndirect(DUMMY_DOCUMENT)) {
+        PdfFormAnnotation formFieldAnnot = new PdfFormAnnotation((PdfDictionary)new PdfDictionary().makeIndirect(pdfDoc)) {
             @Override
             public PdfFormAnnotation setPage(int pageNum) {
                 Assertions.assertEquals(5, pageNum);
                 return this;
             }
         };
-        PdfFormField formField = PdfFormCreator.createFormField(DUMMY_DOCUMENT).addKid(formFieldAnnot);
+        PdfFormField formField = PdfFormCreator.createFormField(pdfDoc).addKid(formFieldAnnot);
         builder.setPageToField(formField);
     }
 

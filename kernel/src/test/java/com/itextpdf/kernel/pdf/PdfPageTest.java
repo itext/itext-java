@@ -33,26 +33,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class PdfPageTest extends ExtendedITextTest {
-    private PdfDocument dummyDoc;
-
-    @BeforeEach
-    public void before() {
-        dummyDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        dummyDoc.addNewPage();
-    }
-
-    @AfterEach
-    public void after() {
-        dummyDoc.close();
-    }
 
     @Test
     public void pageConstructorModifiedStateTest() {
@@ -201,6 +187,9 @@ public class PdfPageTest extends ExtendedITextTest {
      * @param obj object to which indirect state simulation is applied
      */
     private void simulateIndirectState(PdfObject obj) {
-        obj.setIndirectReference(new PdfIndirectReference(dummyDoc, 0));
+        try (PdfDocument dummyDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            dummyDoc.addNewPage();
+            obj.setIndirectReference(new PdfIndirectReference(dummyDoc, 0));
+        }
     }
 }

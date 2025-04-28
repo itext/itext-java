@@ -22,7 +22,6 @@
  */
 package com.itextpdf.kernel.pdf.statistics;
 
-import com.itextpdf.commons.actions.AbstractStatisticsAggregator;
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;

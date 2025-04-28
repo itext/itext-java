@@ -43,9 +43,7 @@ import java.io.IOException;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -53,8 +51,6 @@ import org.junit.jupiter.api.Tag;
 @Tag("IntegrationTest")
 public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/ValidationMetaInfoEventsTest/";
-
-    private static StoreEventsHandler handler;
     private final ValidatorChainBuilder builder = new ValidatorChainBuilder();
     private final ValidationContext validationContext = new ValidationContext(
             ValidatorContext.DOCUMENT_REVISIONS_VALIDATOR, CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
@@ -64,19 +60,10 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
     }
 
-    @BeforeEach
-    public void setUpHandler() {
-        handler = new StoreEventsHandler(UnknownContext.PERMISSIVE);
-        EventManager.getInstance().register(handler);
-    }
-
-    @AfterEach
-    public void resetHandler() {
-        EventManager.getInstance().unregister(handler);
-    }
-
     @Test
     public void documentRevisionsValidatorSingleEventTest() throws Exception {
+        StoreEventsHandler handler = new StoreEventsHandler(UnknownContext.PERMISSIVE);
+        EventManager.getInstance().register(handler);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument.pdf"))) {
             DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
             validator.validateAllDocumentRevisions(validationContext, document);
@@ -91,10 +78,13 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
         Assertions.assertTrue(events.get(1) instanceof ConfirmEvent);
         ConfirmEvent confirmEvent = (ConfirmEvent) events.get(1);
         Assertions.assertEquals(iTextCoreProductEvent, confirmEvent.getConfirmedEvent());
+        EventManager.getInstance().unregister(handler);
     }
 
     @Test
     public void documentRevisionsValidatorZeroEventsTest() throws Exception {
+        StoreEventsHandler handler = new StoreEventsHandler(UnknownContext.PERMISSIVE);
+        EventManager.getInstance().register(handler);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument.pdf"),
                 new DocumentProperties().setEventCountingMetaInfo(new ValidationMetaInfo()))) {
             DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
@@ -104,10 +94,13 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
 
         List<AbstractContextBasedITextEvent> events = handler.getEvents();
         Assertions.assertEquals(0, events.size());
+        EventManager.getInstance().unregister(handler);
     }
 
     @Test
     public void signatureValidatorSingleEventTest() throws IOException {
+        StoreEventsHandler handler = new StoreEventsHandler(UnknownContext.PERMISSIVE);
+        EventManager.getInstance().register(handler);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument.pdf"))) {
             SignatureValidator validator = builder.buildSignatureValidator(document);
             validator.validateSignatures();
@@ -126,6 +119,8 @@ public class ValidationMetaInfoEventsTest extends ExtendedITextTest {
 
     @Test
     public void signatureValidatorZeroEventsTest() throws IOException {
+        StoreEventsHandler handler = new StoreEventsHandler(UnknownContext.PERMISSIVE);
+        EventManager.getInstance().register(handler);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocument.pdf"),
                 new DocumentProperties().setEventCountingMetaInfo(new ValidationMetaInfo()))) {
             SignatureValidator validator = builder.buildSignatureValidator(document);

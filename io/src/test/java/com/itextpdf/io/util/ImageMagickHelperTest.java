@@ -74,7 +74,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     public void imageMagickEnvVarIsNull() throws IOException, InterruptedException {
         String inputImage = SOURCE_FOLDER + "image.png";
         String cmpImage = SOURCE_FOLDER + "cmp_image.png";
-        String diff = DESTINATION_FOLDER + "diff.png";
+        String diff = DESTINATION_FOLDER + "imageMagickEnvVarIsNull_diff.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper(null);
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff);
@@ -95,7 +95,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     public void runImageMagickForEqualImages() throws IOException, InterruptedException {
         String inputImage = SOURCE_FOLDER + "image.png";
         String cmpImage = SOURCE_FOLDER + "cmp_image.png";
-        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+        String diff = DESTINATION_FOLDER + "runImageMagickForEqualImages_diff.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         boolean result = imageMagickHelper.runImageMagickImageCompare(inputImage, cmpImage, diff);
@@ -159,7 +159,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     @Test
     public void outImageCallsHelpTest() {
         String cmpImage = SOURCE_FOLDER + "cmp_Im1_1.jpg";
-        String diff = DESTINATION_FOLDER + "diff.png";
+        String diff = DESTINATION_FOLDER + "outImageCallsHelpTest_diff.png";
 
         String outImage = SOURCE_FOLDER + "Im1_1.jpg' -help '" + cmpImage + "' '" + diff;
 
@@ -187,7 +187,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     @Test
     public void cmpImageCallsHelpTest() {
         String outImage = SOURCE_FOLDER + "Im1_1.jpg";
-        String diff = DESTINATION_FOLDER + "diff.png";
+        String diff = DESTINATION_FOLDER + "imageCallsHelpTest_diff.png";
         String cmpImage = SOURCE_FOLDER + "cmp_Im1_1.jpg' -help '" + diff;
 
         Object storedPrintStream = System.out;
@@ -214,7 +214,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     @Test
     public void fuzzinessCallsHelpTest() {
         String outImage = SOURCE_FOLDER + "Im1_1.jpg";
-        String diff = DESTINATION_FOLDER + "diff.png";
+        String diff = DESTINATION_FOLDER + "fuzzinessCallsHelpTest_diff.png";
         String cmpImage = SOURCE_FOLDER + "cmp_Im1_1.jpg";
 
         String fuzziness = "1% -help ";
@@ -247,7 +247,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         String image = SOURCE_FOLDER + "image.png";
         String differentImage = SOURCE_FOLDER + "Im1_1.jpg";
 
-        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+        String diff = DESTINATION_FOLDER + "passOutAndCmpAndDiffAsOutTest_diff.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         Assertions.assertThrows(Exception.class,
@@ -263,8 +263,8 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     public void passCmpAndDiffAsDiffTest() throws IOException, InterruptedException {
         String image = SOURCE_FOLDER + "image.png";
 
-        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
-        String secondDiff = DESTINATION_FOLDER + "diff_secondEqualImages.png";
+        String diff = DESTINATION_FOLDER + "passCmpAndDiffAsDiffTest_diff.png";
+        String secondDiff = DESTINATION_FOLDER + "passCmpAndDiffAsDiffTest_diff2.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         Assertions.assertThrows(Exception.class,
@@ -297,7 +297,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     // Since we compare equal images, we expect this number to be zero.
     public void compareEqualsImagesAndCheckFuzzinessTest() {
         String image = SOURCE_FOLDER + "image.png";
-        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+        String diff = DESTINATION_FOLDER + "compEqualsImagesFuzziness_diff.png";
 
         ImageMagickHelper imageMagickHelper = new ImageMagickHelper();
         Object storedPrintStream = System.out;
@@ -345,7 +345,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     public void compareDifferentImagesAndGetResult() throws InterruptedException, IOException {
         String image = SOURCE_FOLDER + "image.png";
         String image2 = SOURCE_FOLDER + "Im1_1.jpg";
-        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+        String diff = DESTINATION_FOLDER + "compDiffImagesAndGetResult_diff.png";
 
         ImageMagickCompareResult result = new ImageMagickHelper().runImageMagickImageCompareAndGetResult(
                 image,
@@ -359,7 +359,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     public void runImageMagickImageCompareEqualWithThreshold() throws IOException, InterruptedException {
         String image = SOURCE_FOLDER + "image.png";
         String image2 = SOURCE_FOLDER + "image.png";
-        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+        String diff = DESTINATION_FOLDER + "imgCompEqualWithThreshold_diff.png";
 
         boolean result = new ImageMagickHelper().runImageMagickImageCompareWithThreshold(
                 image,
@@ -375,7 +375,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     public void runImageMagickImageCompareWithEnoughThreshold() throws IOException, InterruptedException {
         String image = SOURCE_FOLDER + "image.png";
         String image2 = SOURCE_FOLDER + "Im1_1.jpg";
-        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+        String diff = DESTINATION_FOLDER + "imgCompEnoughThreshold_diff.png";
 
         boolean result = new ImageMagickHelper().runImageMagickImageCompareWithThreshold(
                 image,
@@ -391,7 +391,7 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
     public void runImageMagickImageCompareWithNotEnoughThreshold() throws IOException, InterruptedException {
         String image = SOURCE_FOLDER + "image.png";
         String image2 = SOURCE_FOLDER + "Im1_1.jpg";
-        String diff = DESTINATION_FOLDER + "diff_equalImages.png";
+        String diff = DESTINATION_FOLDER + "imgCompNotEnoughThreshold_diff.png";
 
         boolean result = new ImageMagickHelper().runImageMagickImageCompareWithThreshold(
                 image,

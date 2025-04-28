@@ -37,148 +37,167 @@ import java.util.HashMap;
 import java.util.Map;
 
 import java.util.NoSuchElementException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class SvgDrawContextTest extends ExtendedITextTest {
-
-    private PdfDocument tokenDoc;
-    private PdfCanvas page1, page2;
-    private SvgDrawContext context;
-
-    @BeforeEach
-    public void setUp() {
-        tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        page1 = new PdfCanvas(tokenDoc.addNewPage());
-        page2 = new PdfCanvas(tokenDoc.addNewPage());
-        context = new SvgDrawContext(null, null);
-    }
-
-    @AfterEach
-    public void tearDown() {
-        // release all resources
-        tokenDoc.close();
-    }
-
     @Test
     public void drawContextEmptyDequeGetFirstTest() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
         Assertions.assertThrows(NoSuchElementException.class, () -> context.getCurrentCanvas());
     }
 
     @Test
     public void drawContextEmptyDequePopTest() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
         Assertions.assertThrows(NoSuchElementException.class, () -> context.popCanvas());
     }
     
     @Test
     public void drawContextEmptyStackCountTest() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
         Assertions.assertEquals(0, context.size());
     }
     
     @Test
     public void drawContextPushCountTest() {
-        context.pushCanvas(page1);
-        Assertions.assertEquals(1, context.size());
+        try (PdfDocument tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfCanvas page1 = new PdfCanvas(tokenDoc.addNewPage());
+            SvgDrawContext context = new SvgDrawContext(null, null);
+            context.pushCanvas(page1);
+            Assertions.assertEquals(1, context.size());
+        }
     }
     
     @Test
     public void drawContextPushPeekTest() {
-        context.pushCanvas(page1);
-        Assertions.assertEquals(page1, context.getCurrentCanvas());
+        try (PdfDocument tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfCanvas page1 = new PdfCanvas(tokenDoc.addNewPage());
+            SvgDrawContext context = new SvgDrawContext(null, null);
+            context.pushCanvas(page1);
+            Assertions.assertEquals(page1, context.getCurrentCanvas());
+        }
     }
     
     @Test
     public void drawContextPushPopCountTest() {
-        context.pushCanvas(page1);
-        context.popCanvas();
-        Assertions.assertEquals(0, context.size());
+        try(PdfDocument tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfCanvas page1 = new PdfCanvas(tokenDoc.addNewPage());
+            SvgDrawContext context = new SvgDrawContext(null, null);
+            context.pushCanvas(page1);
+            context.popCanvas();
+            Assertions.assertEquals(0, context.size());
+        }
     }
     
     @Test
     public void drawContextPushPopTest() {
-        context.pushCanvas(page1);
-        Assertions.assertEquals(page1, context.popCanvas());
+        try (PdfDocument tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfCanvas page1 = new PdfCanvas(tokenDoc.addNewPage());
+            SvgDrawContext context = new SvgDrawContext(null, null);
+            context.pushCanvas(page1);
+            Assertions.assertEquals(page1, context.popCanvas());
+        }
     }
     
     @Test
     public void drawContextPushTwiceCountTest() {
-        context.pushCanvas(page1);
-        context.pushCanvas(page2);
-        Assertions.assertEquals(2, context.size());
+        try (PdfDocument tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfCanvas page1 = new PdfCanvas(tokenDoc.addNewPage());
+            PdfCanvas page2 = new PdfCanvas(tokenDoc.addNewPage());
+            SvgDrawContext context = new SvgDrawContext(null, null);
+            context.pushCanvas(page1);
+            context.pushCanvas(page2);
+            Assertions.assertEquals(2, context.size());
+        }
     }
     
     @Test
     public void drawContextPushTwicePeekTest() {
-        context.pushCanvas(page1);
-        context.pushCanvas(page2);
-        Assertions.assertEquals(page2, context.getCurrentCanvas());
-        Assertions.assertEquals(2, context.size());
+        try (PdfDocument tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfCanvas page1 = new PdfCanvas(tokenDoc.addNewPage());
+            PdfCanvas page2 = new PdfCanvas(tokenDoc.addNewPage());
+            SvgDrawContext context = new SvgDrawContext(null, null);
+            context.pushCanvas(page1);
+            context.pushCanvas(page2);
+            Assertions.assertEquals(page2, context.getCurrentCanvas());
+            Assertions.assertEquals(2, context.size());
+        }
     }
     
     @Test
     public void drawContextPushTwicePopTest() {
-        context.pushCanvas(page1);
-        context.pushCanvas(page2);
-        Assertions.assertEquals(page2, context.popCanvas());
-        Assertions.assertEquals(1, context.size());
-        Assertions.assertEquals(page1, context.popCanvas());
+        try (PdfDocument tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            PdfCanvas page1 = new PdfCanvas(tokenDoc.addNewPage());
+            PdfCanvas page2 = new PdfCanvas(tokenDoc.addNewPage());
+            SvgDrawContext context = new SvgDrawContext(null, null);
+            context.pushCanvas(page1);
+            context.pushCanvas(page2);
+            Assertions.assertEquals(page2, context.popCanvas());
+            Assertions.assertEquals(1, context.size());
+            Assertions.assertEquals(page1, context.popCanvas());
+        }
     }
 
     @Test
     public void addISvgNodeRender() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
         String name = "expected";
         ISvgNodeRenderer expected = new GroupSvgNodeRenderer();
-        this.context.addNamedObject(name, expected);
-        Object actual = this.context.getNamedObject(name);
+        context.addNamedObject(name, expected);
+        Object actual = context.getNamedObject(name);
 
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void addNullToNamedObjects() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
         String name = "expected";
 
         Exception e = Assertions.assertThrows(SvgProcessingException.class,
-                () -> this.context.addNamedObject(name, null)
+                () -> context.addNamedObject(name, null)
         );
         Assertions.assertEquals(SvgExceptionMessageConstant.NAMED_OBJECT_NULL, e.getMessage());
     }
 
     @Test
     public void addNamedObjectWithNullName() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
         ISvgNodeRenderer expected = new DummySvgNodeRenderer();
 
         Exception e = Assertions.assertThrows(SvgProcessingException.class,
-                () -> this.context.addNamedObject(null, expected)
+                () -> context.addNamedObject(null, expected)
         );
         Assertions.assertEquals(SvgExceptionMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY, e.getMessage());
     }
 
     @Test
     public void addNamedObjectWithEmptyName() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
         ISvgNodeRenderer expected = new DummySvgNodeRenderer();
 
         Exception e = Assertions.assertThrows(SvgProcessingException.class,
-                () -> this.context.addNamedObject("", expected)
+                () -> context.addNamedObject("", expected)
         );
         Assertions.assertEquals(SvgExceptionMessageConstant.NAMED_OBJECT_NAME_NULL_OR_EMPTY, e.getMessage());
     }
 
     @Test
     public void addNamedRenderer() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
         ISvgNodeRenderer expected = new DummySvgNodeRenderer();
         String dummyName = "dummy";
-        this.context.addNamedObject(dummyName, expected);
-        Object actual = this.context.getNamedObject(dummyName);
+        context.addNamedObject(dummyName, expected);
+        Object actual = context.getNamedObject(dummyName);
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void addNamedObjects(){
+        SvgDrawContext context = new SvgDrawContext(null, null);
         ISvgNodeRenderer expectedOne = new DummySvgNodeRenderer();
         ISvgNodeRenderer expectedTwo = new DummySvgNodeRenderer();
         ISvgNodeRenderer expectedThree = new DummySvgNodeRenderer();
@@ -189,10 +208,10 @@ public class SvgDrawContextTest extends ExtendedITextTest {
         toAdd.put(dummyNameOne,expectedOne);
         toAdd.put(dummyNameTwo,expectedTwo);
         toAdd.put(dummyNameThree,expectedThree);
-        this.context.addNamedObjects(toAdd);
-        Object actualThree = this.context.getNamedObject(dummyNameThree);
-        Object actualTwo = this.context.getNamedObject(dummyNameTwo);
-        Object actualOne = this.context.getNamedObject(dummyNameOne);
+        context.addNamedObjects(toAdd);
+        Object actualThree = context.getNamedObject(dummyNameThree);
+        Object actualTwo = context.getNamedObject(dummyNameTwo);
+        Object actualOne = context.getNamedObject(dummyNameOne);
         Assertions.assertEquals(expectedOne, actualOne);
         Assertions.assertEquals(expectedTwo, actualTwo);
         Assertions.assertEquals(expectedThree, actualThree);
@@ -200,6 +219,7 @@ public class SvgDrawContextTest extends ExtendedITextTest {
 
     @Test
     public void addNamedObjectAndTryToAddDuplicate(){
+        SvgDrawContext context = new SvgDrawContext(null, null);
         ISvgNodeRenderer expectedOne = new DummySvgNodeRenderer();
         ISvgNodeRenderer expectedTwo = new DummySvgNodeRenderer();
         String dummyName = "Ed";
@@ -213,6 +233,7 @@ public class SvgDrawContextTest extends ExtendedITextTest {
 
     @Test
     public void rootTransformText(){
+        SvgDrawContext context = new SvgDrawContext(null, null);
         AffineTransform at = new AffineTransform();
         Assertions.assertEquals(at, context.getRootTransform());
 

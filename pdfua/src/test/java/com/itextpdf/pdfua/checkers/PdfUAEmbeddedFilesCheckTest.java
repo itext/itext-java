@@ -39,7 +39,6 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -53,16 +52,9 @@ public class PdfUAEmbeddedFilesCheckTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAFormulaTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfUAConformance> data() {
@@ -72,6 +64,7 @@ public class PdfUAEmbeddedFilesCheckTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void pdfuaWithEmbeddedFilesWithoutFTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
                     pdfDocument, "file".getBytes(), "description", "file.txt", null, null, null);
@@ -91,6 +84,7 @@ public class PdfUAEmbeddedFilesCheckTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void pdfuaWithEmbeddedFilesWithoutUFTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             pdfDocument.addNewPage();
             PdfFileSpec fs = PdfFileSpec.createEmbeddedFileSpec(
@@ -111,6 +105,7 @@ public class PdfUAEmbeddedFilesCheckTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void pdfuaWithValidEmbeddedFileTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook((pdfDocument -> {
             addEmbeddedFile(pdfDocument, "some test pdf file");
         }));
@@ -120,6 +115,7 @@ public class PdfUAEmbeddedFilesCheckTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void embeddedFilesWithFileSpecWithoutDescTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook((pdfDocument -> {
             addEmbeddedFile(pdfDocument, null);
         }));

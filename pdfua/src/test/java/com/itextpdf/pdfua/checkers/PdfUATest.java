@@ -78,7 +78,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -94,16 +93,9 @@ public class PdfUATest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
     private static final String FOX = "./src/test/resources/com/itextpdf/pdfua/img/FOX.bmp";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static java.util.List<PdfUAConformance> data() {
@@ -112,6 +104,7 @@ public class PdfUATest extends ExtendedITextTest {
 
     @Test
     public void checkPoint01_007_suspectsHasEntryTrue() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfDictionary markInfo = (PdfDictionary) pdfDoc.getCatalog().getPdfObject().get(PdfName.MarkInfo);
             Assertions.assertNotNull(markInfo);
@@ -126,6 +119,7 @@ public class PdfUATest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint01_007_suspectsHasEntryFalse(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfDictionary markInfo = (PdfDictionary) pdfDoc.getCatalog().getPdfObject().get(PdfName.MarkInfo);
             markInfo.put(PdfName.Suspects, new PdfBoolean(false));
@@ -136,6 +130,7 @@ public class PdfUATest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkPoint01_007_suspectsHasNoEntry(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         // suspects entry is optional so it is ok to not have it according to the spec
         framework.assertBothValid("suspectsHasNoEntry", pdfUAConformance);
     }
@@ -144,6 +139,7 @@ public class PdfUATest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void emptyPageDocument(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             pdfDocument.addNewPage();
         });
@@ -153,6 +149,7 @@ public class PdfUATest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED, count = 2)})
     public void invalidUA1DocumentWithFlushedPageTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfPage page = pdfDocument.addNewPage();
             PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDocument, "sample.wav");
@@ -376,6 +373,7 @@ public class PdfUATest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkNameEntryShouldPresentInAllOCGDictionariesTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             pdfDocument.addNewPage();
             PdfDictionary ocProperties = new PdfDictionary();
@@ -396,6 +394,7 @@ public class PdfUATest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void checkAsKeyInContentConfigDictTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             pdfDocument.addNewPage();
             PdfDictionary ocProperties = new PdfDictionary();
@@ -415,6 +414,7 @@ public class PdfUATest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void nameEntryIsEmptyTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -436,6 +436,7 @@ public class PdfUATest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void configsEntryIsNotAnArrayTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -458,6 +459,7 @@ public class PdfUATest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void nameEntryShouldBeUniqueBetweenDefaultAndAdditionalConfigsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -477,6 +479,7 @@ public class PdfUATest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void validOCGsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfDictionary ocProperties = new PdfDictionary();
             PdfDictionary d = new PdfDictionary();
@@ -502,6 +505,7 @@ public class PdfUATest extends ExtendedITextTest {
     @MethodSource("data")
     @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, count = 1, ignore = true)})
     public void documentWithDuplicatingIdInStructTree(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfPage page1 = pdfDocument.addNewPage();
             TagTreePointer tagPointer = new TagTreePointer(pdfDocument);

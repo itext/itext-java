@@ -204,7 +204,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
 
     @Test
     public void invalidInfoTest() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "pdfA4_catalogCheck05.pdf";
+        String outPdf = destinationFolder + "pdfA4_catalogCheck05Invalid.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
@@ -452,7 +452,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
 
     @Test
     public void documentWithInvalidLangEntryTest() throws IOException {
-        final String outPdf = destinationFolder + "documentWithEmptyStringLangEntry.pdf";
+        final String outPdf = destinationFolder + "documentWithInvalidLangEntry.pdf";
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "",

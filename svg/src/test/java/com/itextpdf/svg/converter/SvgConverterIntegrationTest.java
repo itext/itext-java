@@ -247,11 +247,13 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void twoArgTest() throws IOException, InterruptedException {
-        String name = "hello_world";
-        InputStream fis = FileUtil.getInputStreamForFile(sourceFolder + name + ".svg");
-        OutputStream fos = FileUtil.getFileOutputStream(destinationFolder + name + ".pdf");
+        String svgName = "hello_world";
+        String pdfName = "twoArg";
+        InputStream fis = FileUtil.getInputStreamForFile(sourceFolder + svgName + ".svg");
+        OutputStream fos = FileUtil.getFileOutputStream(destinationFolder + pdfName + ".pdf");
         SvgConverter.createPdf(fis, fos);
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + name + ".pdf", sourceFolder + "cmp_" + name + ".pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + pdfName + ".pdf",
+                sourceFolder + "cmp_" + pdfName + ".pdf", destinationFolder, "diff_"));
     }
 
     @Test

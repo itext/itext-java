@@ -36,77 +36,83 @@ import org.junit.jupiter.api.Tag;
 @Tag("IntegrationTest")
 public class IndirectPathItemTest extends ExtendedITextTest {
 
-    private PdfDocument testCmp;
-    private PdfDocument testOut;
-
-    @BeforeEach
-    public void setUpPdfDocuments() {
-        testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        testCmp.addNewPage();
-        testCmp.addNewPage();
-
-        testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        testOut.addNewPage();
-        testOut.addNewPage();
-    }
-
-    @AfterEach
-    public void closePdfDocuments() {
-        testCmp.close();
-        testOut.close();
+    private void init(PdfDocument pdfDocument) {
+        pdfDocument.addNewPage();
+        pdfDocument.addNewPage();
     }
 
     @Test
     public void getIndirectObjectsTest() {
-        PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
 
-        IndirectPathItem indirectPathItem = new IndirectPathItem(cmpIndirect, outIndirect);
+            PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
 
-        Assertions.assertEquals(cmpIndirect, indirectPathItem.getCmpObject());
-        Assertions.assertEquals(outIndirect, indirectPathItem.getOutObject());
+            IndirectPathItem indirectPathItem = new IndirectPathItem(cmpIndirect, outIndirect);
+
+            Assertions.assertEquals(cmpIndirect, indirectPathItem.getCmpObject());
+            Assertions.assertEquals(outIndirect, indirectPathItem.getOutObject());
+        }
     }
 
     @Test
     public void equalsAndHashCodeTest() {
-        PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
+            PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
 
-        IndirectPathItem indirectPathItem1 = new IndirectPathItem(cmpIndirect, outIndirect);
-        IndirectPathItem indirectPathItem2 = new IndirectPathItem(cmpIndirect, outIndirect);
+            IndirectPathItem indirectPathItem1 = new IndirectPathItem(cmpIndirect, outIndirect);
+            IndirectPathItem indirectPathItem2 = new IndirectPathItem(cmpIndirect, outIndirect);
 
-        boolean result = indirectPathItem1.equals(indirectPathItem2);
-        Assertions.assertTrue(result);
-        Assertions.assertEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
+            boolean result = indirectPathItem1.equals(indirectPathItem2);
+            Assertions.assertTrue(result);
+            Assertions.assertEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
+        }
     }
 
     @Test
     public void notEqualsCmpObjAndHashCodeTest() {
-        PdfIndirectReference cmpIndirect1 = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect1 = testOut.getFirstPage().getPdfObject().getIndirectReference();
-        IndirectPathItem indirectPathItem1 = new IndirectPathItem(cmpIndirect1, outIndirect1);
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
+            PdfIndirectReference cmpIndirect1 = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect1 = testOut.getFirstPage().getPdfObject().getIndirectReference();
+            IndirectPathItem indirectPathItem1 = new IndirectPathItem(cmpIndirect1, outIndirect1);
 
-        PdfIndirectReference cmpIndirect2 = testCmp.getPage(2).getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect2 = testOut.getFirstPage().getPdfObject().getIndirectReference();
-        IndirectPathItem indirectPathItem2 = new IndirectPathItem(cmpIndirect2, outIndirect2);
+            PdfIndirectReference cmpIndirect2 = testCmp.getPage(2).getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect2 = testOut.getFirstPage().getPdfObject().getIndirectReference();
+            IndirectPathItem indirectPathItem2 = new IndirectPathItem(cmpIndirect2, outIndirect2);
 
-        boolean result = indirectPathItem1.equals(indirectPathItem2);
-        Assertions.assertFalse(result);
-        Assertions.assertNotEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
+            boolean result = indirectPathItem1.equals(indirectPathItem2);
+            Assertions.assertFalse(result);
+            Assertions.assertNotEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
+        }
     }
 
     @Test
     public void notEqualsOutObjAndHashCodeTest() {
-        PdfIndirectReference cmpIndirect1 = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect1 = testOut.getFirstPage().getPdfObject().getIndirectReference();
-        IndirectPathItem indirectPathItem1 = new IndirectPathItem(cmpIndirect1, outIndirect1);
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
+            PdfIndirectReference cmpIndirect1 = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect1 = testOut.getFirstPage().getPdfObject().getIndirectReference();
+            IndirectPathItem indirectPathItem1 = new IndirectPathItem(cmpIndirect1, outIndirect1);
 
-        PdfIndirectReference cmpIndirect2 = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect2 = testOut.getPage(2).getPdfObject().getIndirectReference();
-        IndirectPathItem indirectPathItem2 = new IndirectPathItem(cmpIndirect2, outIndirect2);
+            PdfIndirectReference cmpIndirect2 = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect2 = testOut.getPage(2).getPdfObject().getIndirectReference();
+            IndirectPathItem indirectPathItem2 = new IndirectPathItem(cmpIndirect2, outIndirect2);
 
-        boolean result = indirectPathItem1.equals(indirectPathItem2);
-        Assertions.assertFalse(result);
-        Assertions.assertNotEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
+            boolean result = indirectPathItem1.equals(indirectPathItem2);
+            Assertions.assertFalse(result);
+            Assertions.assertNotEquals(indirectPathItem1.hashCode(), indirectPathItem2.hashCode());
+        }
     }
 }

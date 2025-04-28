@@ -51,7 +51,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -66,16 +65,9 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfUAConformance> data() {
@@ -85,6 +77,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageWithoutAlternativeDescription_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             Image img = loadImage();
@@ -101,6 +94,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageWithEmptyAlternativeDescription_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
 
@@ -120,6 +114,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageCustomRole_Ok(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
@@ -145,6 +140,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageCustomDoubleMapping_Ok(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
@@ -172,6 +168,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageCustomRoleNoAlternateDescription_Throws(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
@@ -197,6 +194,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageCustomDoubleMapping_Throws(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
@@ -224,6 +222,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageWithValidAlternativeDescription_OK(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             Image img = loadImage();
@@ -236,6 +235,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageWithValidActualText_OK(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             Image img = loadImage();
@@ -248,6 +248,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageWithCaption_OK(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
 
@@ -275,6 +276,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void imageWithCaptionWithoutAlternateDescription_Throws(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
 
@@ -301,6 +303,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageWithoutActualText_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             Image img = loadImage();
@@ -313,6 +316,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageWithEmptyActualText_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
 
@@ -327,6 +331,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void imageDirectlyOnCanvas_OK(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             try {
                 Document document = new Document(pdfDoc);
@@ -365,6 +370,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void imageDirectlyOnCanvasWithoutAlternateDescription_ThrowsOnClose(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
             PdfPage page = pdfDoc.addNewPage();
@@ -386,6 +392,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void imageDirectlyOnCanvasWithEmptyActualText_OK(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
             PdfPage page = pdfDoc.addNewPage();
@@ -408,6 +415,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testOverflowImage(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Image img = loadImage();
             Document document = new Document(pdfDoc);
@@ -420,6 +428,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testEmbeddedImageInTable(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Image img = loadImage();
             Document document = new Document(pdfDoc);
@@ -436,6 +445,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testEmbeddedImageInDiv(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Image img = loadImage();
             Document document = new Document(pdfDoc);
@@ -449,6 +459,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testEmbeddedImageInParagraph(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Image img = loadImage();
             Document document = new Document(pdfDoc);

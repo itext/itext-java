@@ -45,7 +45,6 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -54,17 +53,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PdfUAListTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAListTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-
-    private UaValidationTestFramework framework;
-
+    
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfUAConformance> testSources() {
@@ -74,7 +66,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void validListTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
@@ -92,7 +85,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void lblAndLBodyInListItemTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Div list = new Div();
@@ -121,7 +115,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void invalidListItemRoleTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
@@ -142,7 +137,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void artifactInListItemTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
@@ -162,7 +158,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void noListNumberingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
             PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
@@ -183,7 +180,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void noneListNumberingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
             PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
@@ -210,7 +208,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void noListNumberingNoLblTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
             PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
@@ -226,7 +225,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void invalidNestedListTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Div list = new Div();
@@ -257,7 +257,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void severalListNumberingsFirstValidTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
@@ -283,7 +284,8 @@ public class PdfUAListTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void severalListNumberingsFirstInvalidTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
             PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :

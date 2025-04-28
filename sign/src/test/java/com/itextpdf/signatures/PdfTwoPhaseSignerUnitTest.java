@@ -49,16 +49,7 @@ import org.junit.jupiter.api.Test;
 @Tag("BouncyCastleUnitTest")
 public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-
-    private static final byte[] OWNER = "owner".getBytes(StandardCharsets.UTF_8);
-    private static final byte[] USER = "user".getBytes(StandardCharsets.UTF_8);
-
-    private static final String PDFA_RESOURCES = "./src/test/resources/com/itextpdf/signatures/pdfa/";
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/Pdf2PhaseSignerUnitTest/";
-    private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
-
-    private static final char[] PASSWORD = "testpassphrase".toCharArray();
-
 
     @BeforeAll
     public static void before() {

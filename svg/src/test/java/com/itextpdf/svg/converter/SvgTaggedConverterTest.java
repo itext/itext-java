@@ -260,8 +260,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
     @Test
     public void drawOnPageWithUaCompliant() throws Exception {
         String source = SOURCE_FOLDER + "simple.svg";
-        String destination = DEST_FOLDER + "drawOnPage01.pdf";
-
+        String destination = DEST_FOLDER + "drawOnPageUa.pdf";
 
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
