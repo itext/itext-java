@@ -667,7 +667,7 @@ final class FlexUtil {
             info.hypotheticalCrossSize = ((FlexContainerRenderer) info.renderer)
                     .getHypotheticalCrossSize(info.mainSize).floatValue();
         } else if (isColumnDirection) {
-            MinMaxWidth minMaxWidth = info.renderer.getMinMaxWidth();
+            MinMaxWidth minMaxWidth = info.renderer.getMinMaxWidth(crossSize);
             info.hypotheticalCrossSize = info.getInnerCrossSize(
                     Math.max(Math.min(minMaxWidth.getMaxWidth(), crossSize), minMaxWidth.getMinWidth()));
             // Cache hypotheticalCrossSize for FlexContainerRenderer

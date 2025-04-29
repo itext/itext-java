@@ -1076,10 +1076,31 @@ public abstract class BlockRenderer extends AbstractRenderer {
      */
     @Override
     public MinMaxWidth getMinMaxWidth() {
+        return getMinMaxWidth(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MinMaxWidth getMinMaxWidth(Float parentBoxWidth) {
         MinMaxWidth minMaxWidth = new MinMaxWidth(calculateAdditionalWidth(this));
         if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
-            Float minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
-            Float maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
+            Float minWidth;
+            Float maxWidth;
+            if (parentBoxWidth == null) {
+                minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
+                maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
+            } else {
+                minWidth = retrieveMinWidth(parentBoxWidth);
+                if (minWidth == null) {
+                    minWidth = retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+                }
+                maxWidth = retrieveMaxWidth(parentBoxWidth);
+                if (maxWidth == null) {
+                    maxWidth = retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+                }
+            }
             if (minWidth == null || maxWidth == null) {
                 AbstractWidthHandler handler = new MaxMaxWidthHandler(minMaxWidth);
                 int epsilonNum = 0;

@@ -25,6 +25,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -107,6 +108,27 @@ public class FlexUtilTest extends ExtendedITextTest {
                 Assertions.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
+    }
+
+    @Test
+    public void simpleColumnDirectionTest() {
+        Rectangle bBox = new Rectangle(545, 842);
+        DocumentRenderer documentRenderer = new DocumentRenderer(
+                new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        Div div = new Div();
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+        div.addStyle(COLUMN_STYLE);
+        Div childDiv = new Div().setBackgroundColor(ColorConstants.RED).setWidth(UnitValue.createPercentValue(75));
+        div.add(childDiv);
+        flexContainerRenderer.addChild(childDiv.createRendererSubTree().setParent(flexContainerRenderer));
+
+        List<List<FlexItemInfo>> rectangleTable =
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
+
+        Assertions.assertEquals(75.0F, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
     }
 
     @Test

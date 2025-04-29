@@ -38,6 +38,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -56,6 +57,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class BlockRendererTest extends ExtendedITextTest {
 
+    private static final float EPS = 0.001f;
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BlockRendererTest/";
     public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/BlockRendererTest/";
 
@@ -81,6 +83,34 @@ public class BlockRendererTest extends ExtendedITextTest {
         AbstractRenderer renderer = blockRenderer.applyMinHeight(OverflowPropertyValue.FIT,
                 new Rectangle(0, 243.40012f, 0, leftHeight));
         Assertions.assertNull(renderer);
+    }
+
+    @Test
+    public void relativeWidthInMinMaxWidthCalculationsTest() {
+        Div div = new Div();
+        div.setWidth(UnitValue.createPercentValue(42.5F));
+        BlockRenderer divRenderer = (BlockRenderer) div.getRenderer();
+        MinMaxWidth minMaxWidth = divRenderer.getMinMaxWidth(200.0F);
+        Assertions.assertEquals(85.0F, minMaxWidth.getMaxWidth(), EPS);
+    }
+
+    @Test
+    public void relativeMaxWidthInMinMaxWidthCalculationsTest() {
+        Div div = new Div();
+        div.setProperty(Property.MAX_WIDTH, UnitValue.createPercentValue(42.5F));
+        BlockRenderer divRenderer = (BlockRenderer) div.getRenderer();
+        MinMaxWidth minMaxWidth = divRenderer.getMinMaxWidth(200.0F);
+        Assertions.assertEquals(85.0F, minMaxWidth.getMaxWidth(), EPS);
+    }
+
+    @Test
+    public void relativeMinWidthInMinMaxWidthCalculationsTest() {
+        Div div = new Div();
+        div.setProperty(Property.MIN_WIDTH, UnitValue.createPercentValue(42.5F));
+        BlockRenderer divRenderer = (BlockRenderer) div.getRenderer();
+        MinMaxWidth minMaxWidth = divRenderer.getMinMaxWidth(200.0F);
+        Assertions.assertEquals(85.0F, minMaxWidth.getMinWidth(), EPS);
+        Assertions.assertEquals(85.0F, minMaxWidth.getMaxWidth(), EPS);
     }
 
     @Test

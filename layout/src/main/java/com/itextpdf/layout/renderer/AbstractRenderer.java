@@ -2174,6 +2174,17 @@ public abstract class AbstractRenderer implements IRenderer {
         return MinMaxWidthUtils.countDefaultMinMaxWidth(this);
     }
 
+    /**
+     * Calculates min and max width values for current renderer.
+     *
+     * @param areaMaxWidth max width of the area on which current renderer will be laid out
+     *
+     * @return instance of {@link MinMaxWidth}
+     */
+    public MinMaxWidth getMinMaxWidth(Float areaMaxWidth) {
+        return areaMaxWidth == null ? getMinMaxWidth() : MinMaxWidthUtils.countDefaultMinMaxWidth(this, areaMaxWidth);
+    }
+
     protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
         // retrieve returns max width, if there is no width.
         if (hasAbsoluteUnitValue(Property.WIDTH)) {
