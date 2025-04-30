@@ -124,6 +124,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.commons.utils.ThrowingAction", "System.Action");
         configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.commons.utils.Action");
         configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.commons.utils.ThrowingAction");
+        configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.commons.utils.IOThrowingAction");
         configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.commons.utils.ThrowingSupplier");
         configurator.keepInternalProtected("com.itextpdf.commons.ecosystem.TestConfigurationEvent.doAction");
         configurator.addCustomUsingDeclaration("com.itextpdf.kernel.colors.DeviceRgb", Arrays.asList("iText.Commons.Utils"));

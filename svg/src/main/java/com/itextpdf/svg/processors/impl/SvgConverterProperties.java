@@ -23,6 +23,8 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
@@ -34,11 +36,14 @@ import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 
 import java.nio.charset.StandardCharsets;
 
+import static com.itextpdf.svg.converter.SvgConverter.SVG_DEFAULT_ROLE;
+
 /**
  * Default and fallback implementation of {@link ISvgConverterProperties} for
  * {@link DefaultSvgProcessor}.
  */
 public class SvgConverterProperties implements ISvgConverterProperties {
+
     /** The media device description. */
     private MediaDeviceDescription mediaDeviceDescription;
 
@@ -59,6 +64,9 @@ public class SvgConverterProperties implements ISvgConverterProperties {
 
     private Rectangle customViewport = null;
 
+    private final AccessibilityProperties accessibilityProperties = new DefaultAccessibilityProperties(
+            SVG_DEFAULT_ROLE);
+
     /**
      * Creates a new {@link SvgConverterProperties} instance.
      * Instantiates its members, IResourceRetriever and ISvgNodeRendererFactory, to its default implementations.
@@ -78,6 +86,16 @@ public class SvgConverterProperties implements ISvgConverterProperties {
     public Rectangle getCustomViewport() {
         // TODO DEVSIX-8808 add this getter to the interface ISvgConverterProperties and remove class casting where getCustomViewport is called
         return customViewport;
+    }
+
+
+    /**
+     * Gets the accessibility properties.
+     *
+     * @return the accessibility properties.
+     */
+    public AccessibilityProperties getAccessibilityProperties() {
+        return this.accessibilityProperties;
     }
 
     /**
