@@ -24,6 +24,7 @@ package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -216,6 +217,38 @@ public class PdfUA1Checker extends PdfUAChecker {
                                     Tuple2<PdfName, PdfDictionary> currentBmc, PdfDocument document) {
         checkStandardRoleMapping(currentBmc);
         super.checkLogicalStructureInBMC(stack, currentBmc, document);
+    }
+
+    /**
+     * For all non-symbolic TrueType fonts used for rendering, the embedded TrueType font program shall contain one or
+     * several non-symbolic cmap entries such that all necessary glyph lookups can be carried out.
+     *
+     * @param fontProgram the embedded TrueType font program to check
+     */
+    @Override
+    void checkNonSymbolicCmapSubtable(TrueTypeFont fontProgram) {
+        if ((fontProgram.isCmapPresent(3, 0) && fontProgram.getNumberOfCmaps() == 1) ||
+                fontProgram.getNumberOfCmaps() == 0) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.NON_SYMBOLIC_TTF_SHALL_CONTAIN_NON_SYMBOLIC_CMAP);
+        }
+    }
+
+    /**
+     * Checks cmap entries present in the embedded TrueType font program of the symbolic TrueType font.
+     *
+     * <p>
+     * The “cmap” table in the embedded font program shall either contain exactly one encoding or it shall contain,
+     * at least, the Microsoft Symbol (3,0 – Platform ID = 3, Encoding ID = 0) encoding.
+     *
+     * @param fontProgram the embedded TrueType font program to check
+     */
+    @Override
+    void checkSymbolicCmapSubtable(TrueTypeFont fontProgram) {
+        if (!fontProgram.isCmapPresent(3, 0) && fontProgram.getNumberOfCmaps() != 1) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.
+                    SYMBOLIC_TTF_SHALL_CONTAIN_EXACTLY_ONE_OR_AT_LEAST_MICROSOFT_SYMBOL_CMAP);
+        }
     }
 
     private void checkStandardRoleMapping(Tuple2<PdfName, PdfDictionary> tag) {

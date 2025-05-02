@@ -24,8 +24,12 @@ package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.TrueTypeFont;
+import com.itextpdf.io.font.constants.FontDescriptorFlags;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfCatalog;
@@ -37,6 +41,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.IValidationChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
@@ -207,6 +212,9 @@ public abstract class PdfUAChecker implements IValidationChecker {
      * least one of its glyphs is referenced from one or more content streams, are embedded within that file, as defined
      * in ISO 32000-2:2020, 9.9 and ISO 32000-1:2008, 9.9.
      *
+     * <p>
+     * Checks character encodings rules as defined in ISO 14289-2, 8.4.5.7 and ISO 14289-1, 7.21.6.
+     *
      * @param fontsInDocument collection of fonts used in the document
      */
     void checkFonts(Collection<PdfFont> fontsInDocument) {
@@ -214,6 +222,18 @@ public abstract class PdfUAChecker implements IValidationChecker {
         for (PdfFont font : fontsInDocument) {
             if (!font.isEmbedded()) {
                 fontNamesThatAreNotEmbedded.add(font.getFontProgram().getFontNames().getFontName());
+                continue;
+            }
+            if (font instanceof PdfTrueTypeFont) {
+                PdfTrueTypeFont trueTypeFont = (PdfTrueTypeFont) font;
+                int flags = trueTypeFont.getFontProgram().getPdfFontFlags();
+                boolean symbolic = PdfCheckersUtil.checkFlag(flags, FontDescriptorFlags.SYMBOLIC) &&
+                        !PdfCheckersUtil.checkFlag(flags, FontDescriptorFlags.NONSYMBOLIC);
+                if (symbolic) {
+                    checkSymbolicTrueTypeFont(trueTypeFont);
+                } else {
+                    checkNonSymbolicTrueTypeFont(trueTypeFont);
+                }
             }
         }
         if (!fontNamesThatAreNotEmbedded.isEmpty()) {
@@ -224,6 +244,20 @@ public abstract class PdfUAChecker implements IValidationChecker {
                     ));
         }
     }
+
+    /**
+     * Checks cmap entries present in the embedded TrueType font program of the non-symbolic TrueType font.
+     *
+     * @param fontProgram the embedded TrueType font program to check
+     */
+    abstract void checkNonSymbolicCmapSubtable(TrueTypeFont fontProgram);
+
+    /**
+     * Checks cmap entries present in the embedded TrueType font program of the symbolic TrueType font.
+     *
+     * @param fontProgram the embedded TrueType font program to check
+     */
+    abstract void checkSymbolicCmapSubtable(TrueTypeFont fontProgram);
 
     /**
      * Checks that embedded fonts define all glyphs referenced for rendering within the conforming file.
@@ -297,6 +331,34 @@ public abstract class PdfUAChecker implements IValidationChecker {
             }
         }
         return null;
+    }
+
+    private void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        TrueTypeFont fontProgram = (TrueTypeFont) trueTypeFont.getFontProgram();
+        checkNonSymbolicCmapSubtable(fontProgram);
+
+        String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
+        // Non-symbolic TTF will always have the dictionary value in the Encoding key of the Font dictionary in itext.
+        if (!PdfEncodings.WINANSI.equals(encoding) && !PdfEncodings.MACROMAN.equals(encoding)) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.NON_SYMBOLIC_TTF_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING);
+        }
+
+        if (trueTypeFont.getFontEncoding().hasDifferences() && !fontProgram.isCmapPresent(3, 1)) {
+            // If font has differences array, itext ensures that all the glyph names in the Differences array are listed
+            // in the Adobe Glyph List.
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.NON_SYMBOLIC_TTF_SHALL_NOT_DEFINE_DIFFERENCES);
+        }
+    }
+
+    private void checkSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
+        if (trueTypeFont.getPdfObject().containsKey(PdfName.Encoding)) {
+            throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.SYMBOLIC_TTF_SHALL_NOT_CONTAIN_ENCODING);
+        }
+
+        TrueTypeFont fontProgram = (TrueTypeFont) trueTypeFont.getFontProgram();
+        checkSymbolicCmapSubtable(fontProgram);
     }
 
     private static final class UaCharacterChecker implements FontCheckUtil.CharacterChecker {

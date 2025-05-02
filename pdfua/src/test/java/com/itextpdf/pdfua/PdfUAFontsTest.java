@@ -26,10 +26,12 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -39,9 +41,6 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-
-import java.io.IOException;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +49,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAFontsTest extends ExtendedITextTest {
@@ -186,9 +187,8 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     restoreState().closeTag();
         });
 
-        // TODO DEVSIX-9017 Support PDF/UA rules for fonts.
-        // TODO DEVSIX-9004 Support Character encodings related rules in UA-2
-        framework.assertOnlyVeraPdfFail("trueTypeFontWithDifferencesTest", pdfUAConformance);
+        framework.assertBothFail("trueTypeFontWithDifferencesTest", PdfUAExceptionMessageConstants.
+                NON_SYMBOLIC_TTF_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING, false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -258,7 +258,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph("ABC");
             document.add(paragraph);
         });
-        framework.assertBothValid("nonSymbolicTtfWithIncompatibleEncoding", pdfUAConformance);
+        framework.assertBothValid("nonSymbolicTtfWithValidEncodingTest", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -277,8 +277,8 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph("ABC");
             document.add(paragraph);
         });
-        // TODO DEVSIX-9004 Support Character encodings related rules in UA-2
-        framework.assertOnlyVeraPdfFail("nonSymbolicTtfWithIncompatibleEncoding", pdfUAConformance);
+        framework.assertBothFail("nonSymbolicTtfWithIncompatibleEncoding", PdfUAExceptionMessageConstants.
+                NON_SYMBOLIC_TTF_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING, false, pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -288,7 +288,8 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
-                font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf");
+                font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf", PdfEncodings.MACROMAN,
+                        EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
                 throw new RuntimeException();
             }
@@ -307,8 +308,31 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
-                // if we specify encoding, symbolic font is treated as non-symbolic
-                font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf", PdfEncodings.MACROMAN, EmbeddingStrategy.FORCE_EMBEDDED);
+                font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf", PdfEncodings.MACROMAN,
+                        EmbeddingStrategy.FORCE_EMBEDDED);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            font.getPdfObject().put(PdfName.Encoding, PdfName.MacRomanEncoding);
+            document.setFont(font);
+
+            Paragraph paragraph = new Paragraph("ABC");
+            document.add(paragraph);
+        });
+        // VeraPDF is valid since iText fixes symbolic flag to non-symbolic on closing.
+        framework.assertOnlyITextFail("symbolicTtfWithEncoding",
+                PdfUAExceptionMessageConstants.SYMBOLIC_TTF_SHALL_NOT_CONTAIN_ENCODING, pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void symbolicTtfWithInvalidCmapTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font;
+            try {
+                TrueTypeFont fontProgram = new CustomSymbolicTrueTypeFont(FONT);
+                font = PdfFontFactory.createFont(fontProgram, PdfEncodings.MACROMAN, EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
                 throw new RuntimeException();
             }
@@ -317,7 +341,41 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph("ABC");
             document.add(paragraph);
         });
-        framework.assertBothValid("symbolicTtfWithEncoding", pdfUAConformance);
+        // VeraPDF is valid since iText fixes symbolic flag to non-symbolic on closing.
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertOnlyITextFail("symbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
+                    SYMBOLIC_TTF_SHALL_CONTAIN_EXACTLY_ONE_OR_AT_LEAST_MICROSOFT_SYMBOL_CMAP, pdfUAConformance);
+        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            framework.assertOnlyITextFail("symbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
+                    SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_SYMBOL_CMAP, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void nonSymbolicTtfWithInvalidCmapTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            Document document = new Document(pdfDoc);
+            PdfFont font;
+            try {
+                TrueTypeFont fontProgram = new CustomNonSymbolicTrueTypeFont(FONT);
+                font = PdfFontFactory.createFont(fontProgram, PdfEncodings.MACROMAN, EmbeddingStrategy.FORCE_EMBEDDED);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            document.setFont(font);
+
+            Paragraph paragraph = new Paragraph("ABC");
+            document.add(paragraph);
+        });
+        // VeraPDF is valid since the file itself is valid, but itext code is modified for testing.
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertOnlyITextFail("nonSymbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
+                    NON_SYMBOLIC_TTF_SHALL_CONTAIN_NON_SYMBOLIC_CMAP, pdfUAConformance);
+        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            framework.assertOnlyITextFail("nonSymbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
+                    NON_SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_UNI_CMAP, pdfUAConformance);
+        }
     }
 
     @Test
@@ -326,5 +384,48 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         Assertions.assertThrows(NullPointerException.class,
                 () -> PdfFontFactory.createFont(FONT_FOLDER + "Symbols1_changed_cmap.ttf",
                         EmbeddingStrategy.FORCE_EMBEDDED));
+    }
+
+    private static class CustomSymbolicTrueTypeFont extends TrueTypeFont {
+        public CustomSymbolicTrueTypeFont(String path) throws IOException {
+            super(path);
+        }
+
+        @Override
+        public int getPdfFontFlags() {
+            return 4;
+        }
+
+        @Override
+        public boolean isCmapPresent(int platformID, int encodingID) {
+            if (platformID == 1) {
+                return false;
+            }
+            return super.isCmapPresent(platformID, encodingID);
+        }
+    }
+
+    private static class CustomNonSymbolicTrueTypeFont extends TrueTypeFont {
+        public CustomNonSymbolicTrueTypeFont(String path) throws IOException {
+            super(path);
+        }
+
+        @Override
+        public int getPdfFontFlags() {
+            return 32;
+        }
+
+        @Override
+        public boolean isCmapPresent(int platformID, int encodingID) {
+            if (platformID == 1 || encodingID == 1) {
+                return false;
+            }
+            return super.isCmapPresent(platformID, encodingID);
+        }
+
+        @Override
+        public int getNumberOfCmaps() {
+            return 0;
+        }
     }
 }

@@ -117,6 +117,14 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         Assertions.assertEquals(536, xHeight);
     }
 
+    @Test
+    public void containsCmapTest() throws IOException {
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(SOURCE_FOLDER + "glyphs-fmt-6.ttf");
+        Assertions.assertEquals(1, fontProgram.getNumberOfCmaps());
+        Assertions.assertTrue(fontProgram.isCmapPresent(0, 3));
+        Assertions.assertFalse(fontProgram.isCmapPresent(1, 0));
+    }
+
     private void checkCmapTableEntry(FontProgram fontProgram, char uniChar, int expectedGlyphId) {
 
         Glyph glyph = fontProgram.getGlyph(uniChar);

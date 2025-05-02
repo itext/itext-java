@@ -23,6 +23,7 @@
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfConformance;
@@ -166,6 +167,38 @@ public class PdfUA2Checker extends PdfUAChecker {
             }
         } catch (XMPException e) {
             throw new PdfUAConformanceException(e.getMessage());
+        }
+    }
+
+    /**
+     * For all non-symbolic TrueType fonts used for rendering, the embedded TrueType font program shall contain
+     * at least the Microsoft Unicode (3, 1 – Platform ID = 3, Encoding ID = 1),
+     * or the Macintosh Roman (1, 0 – Platform ID = 1, Encoding ID = 0) “cmap” subtable.
+     *
+     * @param fontProgram the embedded TrueType font program to check
+     */
+    @Override
+    void checkNonSymbolicCmapSubtable(TrueTypeFont fontProgram) {
+        if (!fontProgram.isCmapPresent(3, 1) && !fontProgram.isCmapPresent(1, 0)) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.NON_SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_UNI_CMAP);
+        }
+    }
+
+    /**
+     * Checks cmap entries present in the embedded TrueType font program of the symbolic TrueType font.
+     *
+     * <p>
+     * The “cmap” subtable in the embedded font program shall either contain the Microsoft Symbol
+     * (3, 0 – Platform ID = 3, Encoding ID = 0) or the Mac Roman (1, 0 – Platform ID = 1, Encoding ID = 1) encoding.
+     *
+     * @param fontProgram the embedded TrueType font program to check
+     */
+    @Override
+    void checkSymbolicCmapSubtable(TrueTypeFont fontProgram) {
+        if (!fontProgram.isCmapPresent(3, 0) && !fontProgram.isCmapPresent(1, 0)) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_SYMBOL_CMAP);
         }
     }
 

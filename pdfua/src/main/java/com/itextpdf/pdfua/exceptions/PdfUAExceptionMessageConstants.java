@@ -126,6 +126,21 @@ public final class PdfUAExceptionMessageConstants {
     public static final String MORE_THAN_ONE_H_TAG = "A node contains more than one H tag.";
     public static final String NAME_ENTRY_IS_MISSING_OR_EMPTY_IN_OCG = "Name entry is missing or has " +
             "an empty string as its value in an Optional Content Configuration Dictionary.";
+    public static final String NON_SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_UNI_CMAP =
+            "For all non-symbolic TrueType fonts used for rendering, the embedded TrueType font program shall " +
+                    "contain at least the Microsoft Unicode (3, 1 – Platform ID = 3, Encoding ID = 1), or the " +
+                    "Macintosh Roman (1, 0 – Platform ID = 1, Encoding ID = 0) “cmap” subtable.";
+    public static final String NON_SYMBOLIC_TTF_SHALL_CONTAIN_NON_SYMBOLIC_CMAP = "For all non-symbolic TrueType " +
+            "fonts used for rendering, the embedded TrueType font program shall contain one or several non-symbolic " +
+            "cmap entries such that all necessary glyph lookups can be carried out.";
+    public static final String NON_SYMBOLIC_TTF_SHALL_NOT_DEFINE_DIFFERENCES = "All non-symbolic TrueType fonts " +
+            "shall not define a Differences array unless all the glyph names in the Differences array are listed " +
+            "in the Adobe Glyph List and the embedded font program contains at least the Microsoft Unicode " +
+            "(3, 1 – Platform ID = 3, Encoding ID = 1) encoding in the “cmap” subtable.";
+    public static final String NON_SYMBOLIC_TTF_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING = "All non-symbolic " +
+            "TrueType fonts shall have either MacRomanEncoding or WinAnsiEncoding as the value for the Encoding key " +
+            "in the Font dictionary, or as the value for the BaseEncoding key in the dictionary that is the value of " +
+            "the Encoding key in the Font dictionary";
     public static final String NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT =
             "ID entry '{0}' shall be unique among all elements in the document’s structure hierarchy";
     public static final String NOTE_TAG_SHALL_HAVE_ID_ENTRY = "Note tags shall include a unique ID entry.";
@@ -163,6 +178,14 @@ public final class PdfUAExceptionMessageConstants {
             "Structure type {0}:{1} is role mapped to other structure type in the same namespace.";
     public static final String SUSPECTS_ENTRY_IN_MARK_INFO_DICTIONARY_SHALL_NOT_HAVE_A_VALUE_OF_TRUE =
             "Suspects entry in mark info dictionary shall not have a value of true.";
+    public static final String SYMBOLIC_TTF_SHALL_CONTAIN_EXACTLY_ONE_OR_AT_LEAST_MICROSOFT_SYMBOL_CMAP = "For " +
+            "symbolic TrueType fonts the “cmap” table in the embedded font program shall either contain exactly one " +
+            "encoding or it shall contain, at least, the Microsoft Symbol (Platform ID = 3, Encoding ID = 0) encoding.";
+    public static final String SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_SYMBOL_CMAP = "For symbolic TrueType" +
+            " fonts the 'cmap' subtable in the embedded font program shall either contain the Microsoft Symbol (3,0 –" +
+            " Platform ID=3, Encoding ID=0) or the Mac Roman (1,0 – Platform ID=1, Encoding ID=0) encoding.";
+    public static final String SYMBOLIC_TTF_SHALL_NOT_CONTAIN_ENCODING = "Symbolic TrueType fonts shall not contain " +
+            "an Encoding entry in the font dictionary.";
     public static final String TABLE_CONTAINS_EMPTY_CELLS = "Cell: row {0} ({1}) col {2} is empty, each row should "
             + "have the same amount of columns when taking into account spanning.";
     public static final String TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING =
