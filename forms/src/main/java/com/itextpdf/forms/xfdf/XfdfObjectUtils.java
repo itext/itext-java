@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -258,7 +259,7 @@ final class XfdfObjectUtils {
         StringTokenizer st = new StringTokenizer(flagsString, delims);
         List<String> flagsList = new ArrayList<>();
         while (st.hasMoreTokens()) {
-            flagsList.add(st.nextToken().toLowerCase());
+            flagsList.add(StringNormalizer.toLowerCase(st.nextToken()));
         }
 
         Map<String, Integer> flagMap = new HashMap<>();
@@ -349,7 +350,7 @@ final class XfdfObjectUtils {
      * Converts float representation of the rgb color into a hex string representing the rgb color.
      */
     private static String convertColorFloatToHex(float colorFloat) {
-        String result = "0" + Integer.toHexString(((int) (colorFloat * 255 + 0.5))).toUpperCase();
+        String result = "0" + StringNormalizer.toUpperCase(Integer.toHexString(((int) (colorFloat * 255 + 0.5))));
         return result.substring(result.length() - 2);
     }
 
@@ -360,7 +361,7 @@ final class XfdfObjectUtils {
         StringBuilder stb = new StringBuilder();
         char[] stringSymbols = idString.toCharArray();
         for (char ch : stringSymbols) {
-            stb.append(Integer.toHexString((int) ch).toUpperCase());
+            stb.append(StringNormalizer.toUpperCase(Integer.toHexString((int) ch)));
         }
         return stb.toString();
     }

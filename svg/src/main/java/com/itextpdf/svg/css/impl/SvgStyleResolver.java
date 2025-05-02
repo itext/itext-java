@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.css.impl;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
@@ -91,7 +92,7 @@ public class SvgStyleResolver implements ICssResolver {
 
     // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
     private static final String[] ELEMENTS_INHERITING_PARENT_STYLES = new String[]{
-            Tags.MARKER, Tags.LINEAR_GRADIENT, Tags.LINEAR_GRADIENT.toLowerCase(), Tags.PATTERN
+            Tags.MARKER, Tags.LINEAR_GRADIENT, StringNormalizer.toLowerCase(Tags.LINEAR_GRADIENT), Tags.PATTERN
     };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgStyleResolver.class);

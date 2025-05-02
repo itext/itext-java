@@ -22,6 +22,8 @@
  */
 package com.itextpdf.io.font.constants;
 
+import com.itextpdf.commons.utils.StringNormalizer;
+
 /**
  * Font weight values and utility methods
  */
@@ -66,7 +68,7 @@ public final class FontWeights {
      */
     public static int fromType1FontWeight(String weight) {
         int fontWeight = NORMAL;
-        switch (weight.toLowerCase()) {
+        switch (StringNormalizer.toLowerCase(weight)) {
             case "ultralight":
                 fontWeight = THIN;
                 break;
@@ -100,8 +102,6 @@ public final class FontWeights {
             case "black":
             case "ultra":
             case "ultrablack":
-                fontWeight = BLACK;
-                break;
             case "fat":
             case "extrablack":
                 fontWeight = BLACK;

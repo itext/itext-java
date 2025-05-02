@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -233,7 +234,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
     private boolean isObjectBoundingBoxInPatternUnits() {
         String patternUnits = getAttribute(Attributes.PATTERN_UNITS);
         if (patternUnits == null) {
-            patternUnits = getAttribute(Attributes.PATTERN_UNITS.toLowerCase());
+            patternUnits = getAttribute(StringNormalizer.toLowerCase(Attributes.PATTERN_UNITS));
         }
         if (Values.USER_SPACE_ON_USE.equals(patternUnits)) {
             return false;
@@ -247,7 +248,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
     private boolean isObjectBoundingBoxInPatternContentUnits() {
         String patternContentUnits = getAttribute(Attributes.PATTERN_CONTENT_UNITS);
         if (patternContentUnits == null) {
-            patternContentUnits = getAttribute(Attributes.PATTERN_CONTENT_UNITS.toLowerCase());
+            patternContentUnits = getAttribute(StringNormalizer.toLowerCase(Attributes.PATTERN_CONTENT_UNITS));
         }
         if (Values.OBJECT_BOUNDING_BOX.equals(patternContentUnits)) {
             return true;
@@ -317,7 +318,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
     private AffineTransform getPatternTransform() {
         String patternTransform = getAttribute(SvgConstants.Attributes.PATTERN_TRANSFORM);
         if (patternTransform == null) {
-            patternTransform = getAttribute(SvgConstants.Attributes.PATTERN_TRANSFORM.toLowerCase());
+            patternTransform = getAttribute(StringNormalizer.toLowerCase(SvgConstants.Attributes.PATTERN_TRANSFORM));
         }
         if (patternTransform != null && !patternTransform.isEmpty()) {
             return TransformUtils.parseTransform(patternTransform);

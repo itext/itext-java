@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.FontStretches;
@@ -456,7 +457,7 @@ class OpenTypeParser implements Closeable {
         if (name == null) {
             return null;
         }
-        int idx = name.toLowerCase().indexOf(".ttc,");
+        int idx = StringNormalizer.toLowerCase(name).indexOf(".ttc,");
         if (idx < 0)
             return name;
         else

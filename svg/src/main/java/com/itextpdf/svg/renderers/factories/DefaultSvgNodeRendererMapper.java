@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.factories;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
@@ -58,9 +59,9 @@ import java.util.Map;
  */
 class DefaultSvgNodeRendererMapper {
 
-    private static final String CLIP_PATH_LC = SvgConstants.Tags.CLIP_PATH.toLowerCase();
-    private static final String LINEAR_GRADIENT_LC = SvgConstants.Tags.LINEAR_GRADIENT.toLowerCase();
-    private static final String TEXT_LEAF_LC = SvgConstants.Tags.TEXT_LEAF.toLowerCase();
+    private static final String CLIP_PATH_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.CLIP_PATH);
+    private static final String LINEAR_GRADIENT_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.LINEAR_GRADIENT);
+    private static final String TEXT_LEAF_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.TEXT_LEAF);
 
     /**
      * Creates a new {@link DefaultSvgNodeRendererMapper} instance.

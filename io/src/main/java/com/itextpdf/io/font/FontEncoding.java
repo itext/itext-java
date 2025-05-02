@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
@@ -347,7 +348,7 @@ public class FontEncoding {
      * @return the normalized encoding
      */
     protected static String normalizeEncoding(String enc) {
-        String tmp = enc == null ? "" : enc.toLowerCase();
+        String tmp = enc == null ? "" : StringNormalizer.toLowerCase(enc);
         switch (tmp) {
             case "":
             case "winansi":

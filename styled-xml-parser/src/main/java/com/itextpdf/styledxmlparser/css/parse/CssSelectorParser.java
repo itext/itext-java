@@ -23,6 +23,7 @@
 package com.itextpdf.styledxmlparser.css.parse;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.exceptions.StyledXmlParserExceptionMessage;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.selector.item.CssAttributeSelectorItem;
@@ -156,7 +157,7 @@ public final class CssSelectorParser {
      */
     private static void appendPseudoSelector(List<ICssSelectorItem> selectorItems, String pseudoSelector,
             Matcher match, String source) {
-        pseudoSelector = pseudoSelector.toLowerCase();
+        pseudoSelector = StringNormalizer.toLowerCase(pseudoSelector);
         pseudoSelector = handleBracketsOfPseudoSelector(pseudoSelector, match, source);
 
         /*

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -509,7 +510,7 @@ public class XfdfObjectFactory {
     }
 
     private static void addCommonAnnotationAttributes(AnnotObject annot, PdfAnnotation pdfAnnotation) {
-        annot.setName(pdfAnnotation.getSubtype().getValue().toLowerCase());
+        annot.setName(StringNormalizer.toLowerCase(pdfAnnotation.getSubtype().getValue()));
 
         if (pdfAnnotation.getColorObject() != null) {
             annot.addAttribute(new AttributeObject(XfdfConstants.COLOR, XfdfObjectUtils.convertColorToString(pdfAnnotation.getColorObject().toFloatArray())));

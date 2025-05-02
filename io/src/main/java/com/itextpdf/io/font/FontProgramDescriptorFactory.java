@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.woff2.Woff2Converter;
@@ -48,7 +49,7 @@ public final class FontProgramDescriptorFactory {
         }
 
         try {
-            String fontNameLowerCase = baseName.toLowerCase();
+            String fontNameLowerCase = StringNormalizer.toLowerCase(baseName);
             if (isBuiltinFonts14 || fontNameLowerCase.endsWith(".afm") || fontNameLowerCase.endsWith(".pfm")) {
                 fontDescriptor = fetchType1FontDescriptor(fontName, null);
             } else if (isCidFont) {
@@ -116,7 +117,7 @@ public final class FontProgramDescriptorFactory {
     }
 
     private static FontProgramDescriptor fetchTTCDescriptor(String baseName) throws java.io.IOException {
-        int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
+        int ttcSplit = StringNormalizer.toLowerCase(baseName).indexOf(".ttc,");
         if (ttcSplit > 0) {
             String ttcName;
             int ttcIndex;

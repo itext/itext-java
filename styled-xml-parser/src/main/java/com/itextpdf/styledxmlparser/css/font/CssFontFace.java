@@ -23,6 +23,7 @@
 package com.itextpdf.styledxmlparser.css.font;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
@@ -283,7 +284,7 @@ public class CssFontFace {
          */
         public static FontFormat parseFormat(String formatStr) {
             if (formatStr != null && formatStr.length() > 0) {
-                switch (unquote(formatStr).toLowerCase()) {
+                switch (StringNormalizer.toLowerCase(unquote(formatStr))) {
                     case "truetype":
                         return FontFormat.TrueType;
                     case "opentype":

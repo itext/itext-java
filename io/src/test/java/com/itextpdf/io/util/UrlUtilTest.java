@@ -23,6 +23,7 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -139,7 +140,7 @@ public class UrlUtilTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(java.net.SocketTimeoutException.class,
                 () -> UrlUtil.getInputStreamOfFinalConnection(url, 0, 500)
         );
-        Assertions.assertEquals("read timed out", e.getMessage().toLowerCase());
+        Assertions.assertEquals("read timed out", StringNormalizer.toLowerCase(e.getMessage()));
     }
 
     @Test
@@ -150,7 +151,7 @@ public class UrlUtilTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(java.net.SocketTimeoutException.class,
                 () -> UrlUtil.getInputStreamOfFinalConnection(url, 500, 0)
         );
-        Assertions.assertEquals("connect timed out", e.getMessage().toLowerCase());
+        Assertions.assertEquals("connect timed out", StringNormalizer.toLowerCase(e.getMessage()));
     }
 
     private static class TestResource extends Thread {

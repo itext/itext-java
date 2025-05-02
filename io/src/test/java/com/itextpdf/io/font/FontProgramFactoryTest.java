@@ -22,31 +22,33 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.commons.utils.StringNormalizer;
+import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
-public class FontProgramDescriptorFactoryTest extends ExtendedITextTest {
+public class FontProgramFactoryTest extends ExtendedITextTest {
 
     @Test
-    public void kozminNamesTest() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
-        Assertions.assertEquals("KozMinPro-Regular", descriptor.getFontName());
-        Assertions.assertEquals(StringNormalizer.toLowerCase("KozMinPro-Regular"), descriptor.getFullNameLowerCase());
-        Assertions.assertEquals(400, descriptor.getFontWeight());
+    public void createRegisteredFontTest() throws IOException {
+        Assertions.assertNull(FontProgramFactory.createRegisteredFont(null, FontStyles.NORMAL));
+        Assertions.assertNotNull(FontProgramFactory.createRegisteredFont("helvetica", FontStyles.UNDEFINED));
+        Assertions.assertNotNull(FontProgramFactory.createRegisteredFont("helvetica", FontStyles.BOLD));
+        Assertions.assertNotNull(FontProgramFactory.createRegisteredFont("helvetica", FontStyles.ITALIC));
     }
 
     @Test
-    public void helveticaNamesTest() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("Helvetica");
-        Assertions.assertEquals("Helvetica", descriptor.getFontName());
-        Assertions.assertEquals("helvetica", descriptor.getFullNameLowerCase());
-        Assertions.assertEquals("helvetica", descriptor.getFullNameLowerCase());
-        Assertions.assertEquals(500, descriptor.getFontWeight());
+    public void registerFontFamilyTest() throws IOException {
+        FontProgramFactory.registerFontFamily("somefont", "somefont", null);
+        Assertions.assertNull(FontProgramFactory.createRegisteredFont("somefont", FontStyles.UNDEFINED));
+
+        FontProgramFactory.registerFontFamily("somefont", "somefont regular", null);
+        Assertions.assertNull(FontProgramFactory.createRegisteredFont("somefont", FontStyles.UNDEFINED));
+
     }
+
 }

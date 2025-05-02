@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.constants.FontWeights;
 
 final class FontCharacteristicsUtils {
@@ -37,7 +38,7 @@ final class FontCharacteristicsUtils {
         if (fw == null || fw.length() == 0) {
             return -1;
         }
-        fw = fw.trim().toLowerCase();
+        fw = StringNormalizer.normalize(fw);
         switch (fw) {
             case "bold":
                 return FontWeights.BOLD;

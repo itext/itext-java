@@ -23,6 +23,7 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.PortUtil;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,7 @@ class CssPropertyNormalizer {
                     i = appendQuotedString(sb, str, i);
                 } else if ((str.charAt(i) == 'u' || str.charAt(i) == 'U')
                         && URL_PATTERN.matcher(str.substring(i)).find()) {
-                    sb.append(str.substring(i, i + 4).toLowerCase());
+                    sb.append(StringNormalizer.toLowerCase(str.substring(i, i + 4)));
                     i = appendUrlContent(sb, str, i + 4);
                 } else {
                     sb.append(Character.toLowerCase(str.charAt(i)));

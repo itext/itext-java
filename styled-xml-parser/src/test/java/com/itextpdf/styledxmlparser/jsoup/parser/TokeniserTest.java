@@ -4,6 +4,7 @@
 */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
 import com.itextpdf.styledxmlparser.jsoup.nodes.CDataNode;
@@ -85,7 +86,7 @@ public class TokeniserTest extends ExtendedITextTest {
         Assertions.assertNotNull(el);
         Assertions.assertEquals("One", el.text());
         Attribute attribute = el.attributes().asList().get(0);
-        Assertions.assertEquals(attrName.toLowerCase(), attribute.getKey());
+        Assertions.assertEquals(StringNormalizer.toLowerCase(attrName), attribute.getKey());
         Assertions.assertEquals("foo", attribute.getValue());
     }
 

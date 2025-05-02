@@ -23,6 +23,7 @@
 package com.itextpdf.commons.actions.contexts;
 
 import com.itextpdf.commons.actions.NamespaceConstant;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.Arrays;
@@ -37,8 +38,8 @@ public class ContextManagerTest extends ExtendedITextTest {
 
     @Test
     public void getRecognisedNamespaceForSpecificNamespaceTest() {
-        String outerNamespaces = NamespaceConstant.ITEXT.toLowerCase();
-        String innerNamespaces = NamespaceConstant.PDF_HTML.toLowerCase();
+        String outerNamespaces = StringNormalizer.toLowerCase(NamespaceConstant.ITEXT);
+        String innerNamespaces = StringNormalizer.toLowerCase(NamespaceConstant.PDF_HTML);
 
         Assertions.assertTrue(innerNamespaces.startsWith(outerNamespaces));
 
@@ -89,7 +90,7 @@ public class ContextManagerTest extends ExtendedITextTest {
 
         Assertions.assertEquals(testNamespace,
                 manager.getRecognisedNamespace(testNamespace + ".MyClass"));
-        Assertions.assertEquals(testNamespaceWithCapitals.toLowerCase(),
+        Assertions.assertEquals(StringNormalizer.toLowerCase(testNamespaceWithCapitals),
                 manager.getRecognisedNamespace(testNamespaceWithCapitals + ".MyClass"));
 
         manager.unregisterContext(testNamespaces);
@@ -102,7 +103,7 @@ public class ContextManagerTest extends ExtendedITextTest {
     public void registeredNamespaceTest() {
         String registeredNamespace = NamespaceConstant.CORE_LAYOUT + "custompackage";
 
-        Assertions.assertEquals(NamespaceConstant.CORE_LAYOUT.toLowerCase(),
+        Assertions.assertEquals(StringNormalizer.toLowerCase(NamespaceConstant.CORE_LAYOUT),
                 ContextManager.getInstance().getRecognisedNamespace(registeredNamespace));
     }
 }

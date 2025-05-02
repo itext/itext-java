@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.FontProgramDescriptor;
 
 import java.util.ArrayList;
@@ -94,7 +95,7 @@ public class FontSelector {
             this.fontStyles = new ArrayList<>();
             if (fontFamilies != null && fontFamilies.size() > 0) {
                 for (String fontFamily : fontFamilies) {
-                    String lowercaseFontFamily = fontFamily.toLowerCase();
+                    String lowercaseFontFamily = StringNormalizer.toLowerCase(fontFamily);
                     this.fontFamilies.add(lowercaseFontFamily);
                     this.fontStyles.add(parseFontStyle(lowercaseFontFamily, fc));
                 }
@@ -191,7 +192,7 @@ public class FontSelector {
                         && (null == fontInfo.getAlias()
                                 && null != fontDescriptor.getFamilyNameLowerCase()
                                 && fontDescriptor.getFamilyNameLowerCase().equals(fontFamily)
-                        || (null != fontInfo.getAlias() && fontInfo.getAlias().toLowerCase().equals(fontFamily)))) {
+                        || (null != fontInfo.getAlias() && StringNormalizer.toLowerCase(fontInfo.getAlias()).equals(fontFamily)))) {
                     score += FONT_FAMILY_EQUALS_AWARD;
                 } else {
                     if (!isLastFontFamilyToBeProcessed) {

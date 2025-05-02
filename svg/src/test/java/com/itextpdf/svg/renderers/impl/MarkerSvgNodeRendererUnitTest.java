@@ -22,11 +22,15 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class MarkerSvgNodeRendererUnitTest extends ExtendedITextTest {
@@ -35,5 +39,19 @@ public class MarkerSvgNodeRendererUnitTest extends ExtendedITextTest {
     public void noObjectBoundingBoxTest() {
         MarkerSvgNodeRenderer renderer = new MarkerSvgNodeRenderer();
         Assertions.assertNull(renderer.getObjectBoundingBox(null));
+    }
+
+    @Test
+    public void nullViewportTest() {
+        MarkerSvgNodeRenderer renderer = new MarkerSvgNodeRenderer();
+
+        Map<String, String> styles = new HashMap<String, String>();
+        styles.put("markerwidth", "300pt");
+        styles.put("markerheight", "300pt");
+        renderer.setAttributesAndStyles(styles);
+
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class,
+                () -> renderer.applyViewBox(new SvgDrawContext(null, null)));
+        Assertions.assertEquals(SvgExceptionMessageConstant.CURRENT_VIEWPORT_IS_NULL, e.getMessage());
     }
 }

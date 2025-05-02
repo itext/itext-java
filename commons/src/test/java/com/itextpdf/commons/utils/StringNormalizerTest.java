@@ -20,33 +20,33 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.io.font;
-
-import com.itextpdf.commons.utils.StringNormalizer;
-import com.itextpdf.test.ExtendedITextTest;
+package com.itextpdf.commons.utils;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
-public class FontProgramDescriptorFactoryTest extends ExtendedITextTest {
+public class StringNormalizerTest {
 
     @Test
-    public void kozminNamesTest() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
-        Assertions.assertEquals("KozMinPro-Regular", descriptor.getFontName());
-        Assertions.assertEquals(StringNormalizer.toLowerCase("KozMinPro-Regular"), descriptor.getFullNameLowerCase());
-        Assertions.assertEquals(400, descriptor.getFontWeight());
+    public void toLowerCaseTest() {
+        Assertions.assertNull(StringNormalizer.toLowerCase(null));
+        Assertions.assertEquals("some string", StringNormalizer.toLowerCase("SoMe StRiNg"));
+        Assertions.assertEquals("some string", StringNormalizer.toLowerCase("SOME STRING"));
     }
 
     @Test
-    public void helveticaNamesTest() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("Helvetica");
-        Assertions.assertEquals("Helvetica", descriptor.getFontName());
-        Assertions.assertEquals("helvetica", descriptor.getFullNameLowerCase());
-        Assertions.assertEquals("helvetica", descriptor.getFullNameLowerCase());
-        Assertions.assertEquals(500, descriptor.getFontWeight());
+    public void toUpperCaseTest() {
+        Assertions.assertNull(StringNormalizer.toUpperCase(null));
+        Assertions.assertEquals("SOME STRING", StringNormalizer.toUpperCase("SoMe StRiNg"));
+        Assertions.assertEquals("SOME STRING", StringNormalizer.toUpperCase("some string"));
+    }
+
+    @Test
+    public void normalizeTest() {
+        Assertions.assertNull(StringNormalizer.normalize(null));
+        Assertions.assertEquals("some   string", StringNormalizer.normalize(" \t\nSoMe   StRiNg  "));
+        Assertions.assertEquals("some   string", StringNormalizer.normalize(" \t\nSOME   STRING  "));
     }
 }

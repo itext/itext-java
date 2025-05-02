@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.layout.properties.UnitValue;
@@ -210,7 +211,7 @@ public class SvgCoordinateUtils {
         double xOffset;
         double yOffset;
 
-        switch (align.toLowerCase()) {
+        switch (StringNormalizer.toLowerCase(align)) {
             case SvgConstants.Values.NONE:
             case SvgConstants.Values.XMIN_YMIN:
                 xOffset = minXOffset;

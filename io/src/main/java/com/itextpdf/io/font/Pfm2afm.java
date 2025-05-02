@@ -117,6 +117,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.io.OutputStream;
@@ -269,18 +270,19 @@ public final class Pfm2afm {
         }
 
         output.print("\nWeight ");
-        if (weight > 475 || fname.toLowerCase().contains("bold")) {
+        String fnameLc = StringNormalizer.toLowerCase(fname);
+        if (weight > 475 || fnameLc.contains("bold")) {
             output.print("Bold");
-        } else if ((weight < 325 && weight != 0) || fname.toLowerCase().contains("light")) {
+        } else if ((weight < 325 && weight != 0) || fnameLc.contains("light")) {
             output.print("Light");
-        } else if (fname.toLowerCase().contains("black")) {
+        } else if (fnameLc.contains("black")) {
             output.print("Black");
         } else {
             output.print("Medium");
         }
 
         output.print("\nItalicAngle ");
-        if (italic != 0 || fname.toLowerCase().contains("italic")) {
+        if (italic != 0 || fnameLc.contains("italic")) {
             output.print("-12.00");
             /* this is a typical value; something else may work better for a
                specific font */

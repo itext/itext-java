@@ -23,6 +23,7 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
@@ -166,7 +167,7 @@ public final class TransformUtils {
      * @return the mapped AffineTransform object
      */
     private static AffineTransform transformationStringToMatrix(String transformation) {
-        String name = getNameFromString(transformation).toUpperCase();
+        String name = StringNormalizer.toUpperCase(getNameFromString(transformation));
 
         if (name.isEmpty()) {
             throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_TRANSFORM_DECLARATION);

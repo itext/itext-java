@@ -25,6 +25,7 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.commons.exceptions.ITextException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.CidFont;
 import com.itextpdf.io.font.FontEncoding;
@@ -1961,8 +1962,8 @@ public class PdfFontTest extends ExtendedITextTest {
     public void otfByStringNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "Puritan2.otf");
         Assertions.assertEquals(descriptor.getFontName(), "Puritan2");
-        Assertions.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
-        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
+        Assertions.assertEquals(descriptor.getFullNameLowerCase(), StringNormalizer.toLowerCase("Puritan 2.0 Regular"));
+        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), StringNormalizer.toLowerCase("Puritan 2.0"));
         Assertions.assertEquals(descriptor.getStyle(), "Normal");
         Assertions.assertEquals(descriptor.getFontWeight(), 400);
 
@@ -1972,8 +1973,8 @@ public class PdfFontTest extends ExtendedITextTest {
     public void otfByStreamNames() throws Exception {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "Puritan2.otf")));
         Assertions.assertEquals(descriptor.getFontName(), "Puritan2");
-        Assertions.assertEquals(descriptor.getFullNameLowerCase(), "Puritan 2.0 Regular".toLowerCase());
-        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), "Puritan 2.0".toLowerCase());
+        Assertions.assertEquals(descriptor.getFullNameLowerCase(), StringNormalizer.toLowerCase("Puritan 2.0 Regular"));
+        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), StringNormalizer.toLowerCase("Puritan 2.0"));
         Assertions.assertEquals(descriptor.getStyle(), "Normal");
         Assertions.assertEquals(descriptor.getFontWeight(), 400);
     }
@@ -1982,8 +1983,8 @@ public class PdfFontTest extends ExtendedITextTest {
     public void ttfByStringNames() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "abserif4_5.ttf");
         Assertions.assertEquals(descriptor.getFontName(), "AboriginalSerif");
-        Assertions.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
-        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assertions.assertEquals(descriptor.getFullNameLowerCase(), StringNormalizer.toLowerCase("Aboriginal Serif"));
+        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), StringNormalizer.toLowerCase("Aboriginal Serif"));
         Assertions.assertEquals(descriptor.getStyle(), "Regular");
         Assertions.assertEquals(descriptor.getFontWeight(), 400);
     }
@@ -1992,8 +1993,8 @@ public class PdfFontTest extends ExtendedITextTest {
     public void ttfByStreamNames() throws Exception {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "abserif4_5.ttf")));
         Assertions.assertEquals(descriptor.getFontName(), "AboriginalSerif");
-        Assertions.assertEquals(descriptor.getFullNameLowerCase(), "Aboriginal Serif".toLowerCase());
-        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), "Aboriginal Serif".toLowerCase());
+        Assertions.assertEquals(descriptor.getFullNameLowerCase(), StringNormalizer.toLowerCase("Aboriginal Serif"));
+        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), StringNormalizer.toLowerCase("Aboriginal Serif"));
         Assertions.assertEquals(descriptor.getStyle(), "Regular");
         Assertions.assertEquals(descriptor.getFontWeight(), 400);
     }

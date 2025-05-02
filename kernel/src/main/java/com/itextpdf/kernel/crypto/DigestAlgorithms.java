@@ -24,6 +24,7 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
@@ -334,11 +335,11 @@ public class DigestAlgorithms {
             throw new IllegalArgumentException(
                     KernelExceptionMessageConstant.THE_NAME_OF_THE_DIGEST_ALGORITHM_IS_NULL);
         }
-        String allowedDigest = allowedDigests.get(name.toUpperCase());
+        String allowedDigest = allowedDigests.get(StringNormalizer.toUpperCase(name));
         if (allowedDigest != null) {
             return allowedDigest;
         }
-        allowedDigest = BOUNCY_CASTLE_FACTORY.getDigestAlgorithmOid(name.toUpperCase());
+        allowedDigest = BOUNCY_CASTLE_FACTORY.getDigestAlgorithmOid(StringNormalizer.toUpperCase(name));
         if (allowedDigest != null) {
             LOGGER.warn(KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
         }

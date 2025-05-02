@@ -23,6 +23,7 @@
 package com.itextpdf.styledxmlparser.css.util;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop;
@@ -64,7 +65,7 @@ public final class CssGradientUtil {
         if (cssValue == null) {
             return false;
         }
-        String normalizedValue = cssValue.toLowerCase().trim();
+        String normalizedValue = StringNormalizer.normalize(cssValue);
         return normalizedValue.endsWith(")") && (
                 normalizedValue.startsWith(LINEAR_GRADIENT_FUNCTION_SUFFIX)
                         || normalizedValue.startsWith(REPEATING_LINEAR_GRADIENT_FUNCTION_SUFFIX)
@@ -85,7 +86,7 @@ public final class CssGradientUtil {
     public static StrategyBasedLinearGradientBuilder parseCssLinearGradient(String cssGradientValue,
             float emValue, float remValue) {
         if (isCssLinearGradientValue(cssGradientValue)) {
-            cssGradientValue = cssGradientValue.toLowerCase().trim();
+            cssGradientValue = StringNormalizer.normalize(cssGradientValue);
             boolean isRepeating = false;
             String argumentsPart = null;
             if (cssGradientValue.startsWith(LINEAR_GRADIENT_FUNCTION_SUFFIX)) {

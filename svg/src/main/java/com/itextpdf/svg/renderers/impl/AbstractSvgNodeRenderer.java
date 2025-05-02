@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -287,16 +288,16 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         if (preserveAspectRatioValue == null) {
             preserveAspectRatioValue =
-                    this.attributesAndStyles.get(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase());
+                    this.attributesAndStyles.get(StringNormalizer.toLowerCase(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO));
         }
 
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO) ||
-                this.attributesAndStyles.containsKey(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO.toLowerCase())) {
+                this.attributesAndStyles.containsKey(StringNormalizer.toLowerCase(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO))) {
             List<String> aspectRatioValuesSplitValues = SvgCssUtils.splitValueList(preserveAspectRatioValue);
 
-            align = aspectRatioValuesSplitValues.get(0).toLowerCase();
+            align = StringNormalizer.toLowerCase(aspectRatioValuesSplitValues.get(0));
             if (aspectRatioValuesSplitValues.size() > 1) {
-                meetOrSlice = aspectRatioValuesSplitValues.get(1).toLowerCase();
+                meetOrSlice = StringNormalizer.toLowerCase(aspectRatioValuesSplitValues.get(1));
             }
         }
 
@@ -547,7 +548,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (rawColorValue == null) {
             return null;
         }
-        if (CommonCssConstants.CURRENTCOLOR.equals(rawColorValue.toLowerCase())) {
+        if (CommonCssConstants.CURRENTCOLOR.equals(StringNormalizer.toLowerCase(rawColorValue))) {
             rawColorValue = getAttributeOrDefault(CommonCssConstants.COLOR, "black");
         }
         CssDeclarationValueTokenizer tokenizer = new CssDeclarationValueTokenizer(rawColorValue);

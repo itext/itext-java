@@ -476,7 +476,7 @@ abstract class TokeniserState {
         // from < or </ in data, will have start or end tag pending
         void read(Tokeniser t, CharacterReader r) {
             // previous TagOpen state did NOT consume, will have a letter char in current
-            //String tagName = r.consumeToAnySorted(tagCharsSorted).toLowerCase();
+            //String tagName = StringNormalizer.toLowerCase(r.consumeToAnySorted(tagCharsSorted));
             String tagName = r.consumeTagName();
             t.tagPending.appendTagName(tagName);
 

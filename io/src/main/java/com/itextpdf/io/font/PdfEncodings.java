@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.commons.utils.EncodingUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
@@ -168,7 +169,7 @@ public class PdfEncodings {
             }
             return b;
         }
-        IExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
+        IExtraEncoding extra = extraEncodings.get(StringNormalizer.toLowerCase(encoding));
         if (extra != null) {
             byte[] b = extra.charToByte(text, encoding);
             if (b != null)
@@ -266,7 +267,7 @@ public class PdfEncodings {
             }
             return new String(c);
         }
-        IExtraEncoding extra = extraEncodings.get(encoding.toLowerCase());
+        IExtraEncoding extra = extraEncodings.get(StringNormalizer.toLowerCase(encoding));
         if (extra != null) {
             String text = extra.byteToChar(bytes, encoding);
             if (text != null) {
@@ -321,7 +322,7 @@ public class PdfEncodings {
     @SuppressWarnings("unchecked")
     public static void addExtraEncoding(String name, IExtraEncoding enc) {
         synchronized (extraEncodings) {
-            extraEncodings.put(name.toLowerCase(), enc);
+            extraEncodings.put(StringNormalizer.toLowerCase(name), enc);
         }
     }
 

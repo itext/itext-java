@@ -4,6 +4,7 @@
 */
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.jsoup.helper.Validate;
 import com.itextpdf.styledxmlparser.jsoup.internal.StringUtil;
 
@@ -193,7 +194,7 @@ public class TokenQueue {
     public String consumeToIgnoreCase(String seq) {
         int start = pos;
         String first = seq.substring(0, 1);
-        boolean canScan = first.toLowerCase().equals(first.toUpperCase()); // if first is not cased, use index of
+        boolean canScan = StringNormalizer.toLowerCase(first).equals(StringNormalizer.toUpperCase(first)); // if first is not cased, use index of
         while (!isEmpty()) {
             if (matches(seq))
                 break;

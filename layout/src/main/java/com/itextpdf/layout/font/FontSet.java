@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.commons.utils.FileUtil;
@@ -80,7 +81,8 @@ public final class FontSet {
             return 0;
         for (String file : files) {
             try {
-                String suffix = file.length() < 4 ? null : file.substring(file.length() - 4).toLowerCase();
+                String suffix = file.length() < 4 ? null :
+                        StringNormalizer.toLowerCase(file.substring(file.length() - 4));
                 if (".afm".equals(suffix) || ".pfm".equals(suffix)) {
                     // Add only Type 1 fonts with matching .pfb files.
                     String pfb = file.substring(0, file.length() - 4) + ".pfb";
@@ -354,7 +356,7 @@ public final class FontSet {
         if (fontName == null || fontName.length() == 0) {
             return false;
         }
-        fontName = fontName.toLowerCase();
+        fontName = StringNormalizer.toLowerCase(fontName);
 
         for (FontInfo fi : getFonts()) {
             if (fontName.equals(fi.getDescriptor().getFullNameLowerCase())
@@ -377,7 +379,7 @@ public final class FontSet {
         if (fontName == null || fontName.length() == 0) {
             return Collections.<FontInfo>emptyList();
         }
-        fontName = fontName.toLowerCase();
+        fontName = StringNormalizer.toLowerCase(fontName);
         List<FontInfo> list = new ArrayList<>();
         for (FontInfo fi : getFonts()) {
             if (fontName.equals(fi.getDescriptor().getFullNameLowerCase())

@@ -24,6 +24,7 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 
 import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -216,7 +217,7 @@ public class ResourceResolver {
      * @return true if source is under data URI scheme
      */
     public static boolean isDataSrc(String src) {
-        return src != null && src.toLowerCase().startsWith(DATA_SCHEMA_PREFIX) && src.contains(",");
+        return src != null && StringNormalizer.toLowerCase(src).startsWith(DATA_SCHEMA_PREFIX) && src.contains(",");
     }
 
     /**

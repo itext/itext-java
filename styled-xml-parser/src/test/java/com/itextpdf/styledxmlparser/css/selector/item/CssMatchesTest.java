@@ -24,6 +24,8 @@ package com.itextpdf.styledxmlparser.css.selector.item;
 
 
 import com.itextpdf.styledxmlparser.IXmlParser;
+import com.itextpdf.styledxmlparser.css.page.PageContextNode;
+import com.itextpdf.styledxmlparser.css.pseudo.CssPseudoElementNode;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.JsoupHtmlParser;
@@ -426,5 +428,16 @@ public class CssMatchesTest extends ExtendedITextTest {
                 .childNodes().get(0);
 
         Assertions.assertFalse(item.matches(divNode));
+    }
+
+    @Test
+    public void cssPageTypeSelectorItemMatchesTest() {
+        CssPageTypeSelectorItem item = new CssPageTypeSelectorItem("customPageName");
+
+        Assertions.assertFalse(item.matches(new CssPseudoElementNode(null, "after")));
+        Assertions.assertTrue(item.matches(new PageContextNode().setPageTypeName("customPageName")));
+
+        Assertions.assertFalse(new CssPageTypeSelectorItem("AUTO")
+                .matches(new PageContextNode().setPageTypeName("AUTO")));
     }
 }

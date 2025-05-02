@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.testutil;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -148,7 +149,7 @@ public class OrphansWidowsTestUtil {
             paraOnCanvas.setWidowsControl(new ParagraphWidowsControl(minOrphansOrWidows, 1, false));
         }
 
-        String description = "The paragraph beneath has property " + orphansOrWidows.toUpperCase() + "_CONTROL,"
+        String description = "The paragraph beneath has property " + StringNormalizer.toUpperCase(orphansOrWidows) + "_CONTROL,"
                 + " limiting the number of allowed " + orphansOrWidows + " to 3. "
                 + "The size of canvas is limited so that the lines that" + (orphans ? " " : " don't ")
                 + "fit in the canvas cause " + orphansOrWidows + " violation. "
@@ -156,7 +157,7 @@ public class OrphansWidowsTestUtil {
         singleLimitedCanvasSizeCase(document, paraOnCanvas, description, linesHeight, 1);
         document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
         paraOnCanvas.deleteOwnProperty(orphans ? Property.ORPHANS_CONTROL : Property.WIDOWS_CONTROL);
-        description = "The paragraph beneath has no " + orphansOrWidows.toUpperCase() + "_CONTROL, property.";
+        description = "The paragraph beneath has no " + StringNormalizer.toUpperCase(orphansOrWidows) + "_CONTROL, property.";
         singleLimitedCanvasSizeCase(document, paraOnCanvas, description, linesHeight, 2);
         document.close();
     }
@@ -166,7 +167,7 @@ public class OrphansWidowsTestUtil {
         Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
         String orphansOrWidows = orphans ? "orphans" : "widows";
         Paragraph testDescription = new Paragraph().setBorder(new SolidBorder(ColorConstants.RED, 1));
-        testDescription.add("The paragraph beneath has property " + orphansOrWidows.toUpperCase() + "_CONTROL,"
+        testDescription.add("The paragraph beneath has property " + StringNormalizer.toUpperCase(orphansOrWidows) + "_CONTROL,"
                 + " limiting the number of allowed " + orphansOrWidows + " to 3. "
                 + "The size of div-wrapper of the paragraph is limited so that the lines that"
                 + (orphans ? " " : " don't ") + "fit in the canvas cause " + orphansOrWidows + " violation. ");
@@ -216,7 +217,7 @@ public class OrphansWidowsTestUtil {
         Paragraph testDescription = new Paragraph().setMargin(0)
                 .setBorder(new SolidBorder(ColorConstants.RED, 1))
                 .setHeight(effectiveArea.getHeight() - linesHeight - LINES_SPACE_EPS);
-        testDescription.add("The paragraph beneath has property " + orphansOrWidows.toUpperCase() + "_CONTROL,"
+        testDescription.add("The paragraph beneath has property " + StringNormalizer.toUpperCase(orphansOrWidows) + "_CONTROL,"
                 + " limiting the number of allowed " + orphansOrWidows + " to 3. "
                 + "The paragraph has also KEEP_TOGETHER property. The size of this description-paragraph is defined so"
                 + " that " + orphansOrWidows + " violation " + (large ? "occurs."
@@ -227,10 +228,10 @@ public class OrphansWidowsTestUtil {
         String referencePagesDescription;
         if (large) {
             referencePagesDescription = "The paragraph beneath has KEEP_TOGETHER property "
-                    + "and no " + orphansOrWidows.toUpperCase() + "_CONTROL property.";
+                    + "and no " + StringNormalizer.toUpperCase(orphansOrWidows) + "_CONTROL property.";
         } else {
             referencePagesDescription = "The paragraph beneath has neither KEEP_TOGETHER property nor "
-                    + orphansOrWidows.toUpperCase() + "_CONTROL property.";
+                    + StringNormalizer.toUpperCase(orphansOrWidows) + "_CONTROL property.";
         }
         document.add(new Paragraph(referencePagesDescription)
                 .setMargin(0)
@@ -277,7 +278,7 @@ public class OrphansWidowsTestUtil {
         }
 
         String orphansOrWidows = orphans ? "orphans" : "widows";
-        Paragraph testDescription = new Paragraph("The paragraph beneath has " + orphansOrWidows.toUpperCase()
+        Paragraph testDescription = new Paragraph("The paragraph beneath has " + StringNormalizer.toUpperCase(orphansOrWidows)
                 + "_CONTROL property, limiting the number of allowed " + orphansOrWidows
                 + " to 3. Huge image is part of the paragraph.")
                 .setMargin(0)
@@ -287,7 +288,7 @@ public class OrphansWidowsTestUtil {
         document.add(paragraph);
 
         document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-        testDescription = new Paragraph("The paragraph beneath has no " + orphansOrWidows.toUpperCase()
+        testDescription = new Paragraph("The paragraph beneath has no " + StringNormalizer.toUpperCase(orphansOrWidows)
                 + "_CONTROL property. Huge image is part of the paragraph.")
                 .setMargin(0)
                 .setBorder(new SolidBorder(ColorConstants.RED, 1))
@@ -664,7 +665,7 @@ public class OrphansWidowsTestUtil {
     private static void singleMaxHeightCase(Document document, boolean orphans, boolean overflowVisible) {
         String orphansOrWidows = orphans ? "orphans" : "widows";
         Paragraph testDescription = new Paragraph().setBorder(new SolidBorder(ColorConstants.RED, 1));
-        testDescription.add("The paragraph beneath has property " + orphansOrWidows.toUpperCase()
+        testDescription.add("The paragraph beneath has property " + StringNormalizer.toUpperCase(orphansOrWidows)
                 + "_CONTROL, limiting the number of allowed " + orphansOrWidows + " to 3. "
                 + "The paragraph also has property MAX_HEIGHT, whose value is defined so that the lines that" + (
                 orphans ? " " : " don't ") + "fit in the area limited by MAX_HEIGHT value cause " + orphansOrWidows
@@ -715,7 +716,7 @@ public class OrphansWidowsTestUtil {
                 .setBorder(new SolidBorder(ColorConstants.RED, 1))
                 .setHeight(effectiveArea.getHeight() - linesHeight - LINES_SPACE_EPS);
         testDescription.add("The paragraph beneath has" + (orphansWidowsEnabled ? " " : " no ")
-                + orphansOrWidows.toUpperCase() + "_CONTROL property"
+                + StringNormalizer.toUpperCase(orphansOrWidows) + "_CONTROL property"
                 + (orphansWidowsEnabled ? ", limiting the number of allowed " + orphansOrWidows + " to 3. " : ".")
                 + "The size of this description-paragraph is defined so that " + orphansOrWidows
                 + " violation occurs.");

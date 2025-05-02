@@ -36,4 +36,13 @@ public class AdobeGlyphListTest extends ExtendedITextTest {
         Assertions.assertEquals(4200, AdobeGlyphList.getNameToUnicodeLength());
         Assertions.assertEquals(3680, AdobeGlyphList.getUnicodeToNameLength());
     }
+
+    @Test
+    public void nameToUnicodeTest() {
+        Assertions.assertEquals(496, AdobeGlyphList.nameToUnicode("jcaron"));
+        Assertions.assertEquals(0x1234, AdobeGlyphList.nameToUnicode("uni1234"));
+        Assertions.assertEquals(0xaaaa, AdobeGlyphList.nameToUnicode("uniaaaa"));
+        Assertions.assertEquals(-1, AdobeGlyphList.nameToUnicode("unixxxx"));
+        Assertions.assertEquals(-1, AdobeGlyphList.nameToUnicode("00x1234"));
+    }
 }

@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.svg.SvgConstants.Attributes;
@@ -60,7 +61,7 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
         String gradientUnits = getAttribute(Attributes.GRADIENT_UNITS);
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         if (gradientUnits == null) {
-            getAttribute(Attributes.GRADIENT_UNITS.toLowerCase());
+            getAttribute(StringNormalizer.toLowerCase(Attributes.GRADIENT_UNITS));
         }
         if (Values.USER_SPACE_ON_USE.equals(gradientUnits)) {
             return false;
@@ -79,7 +80,7 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
         String gradientTransform = getAttribute(Attributes.GRADIENT_TRANSFORM);
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         if (gradientTransform == null) {
-            gradientTransform = getAttribute(Attributes.GRADIENT_TRANSFORM.toLowerCase());
+            gradientTransform = getAttribute(StringNormalizer.toLowerCase(Attributes.GRADIENT_TRANSFORM));
         }
         if (gradientTransform != null && !gradientTransform.isEmpty()) {
             return TransformUtils.parseTransform(gradientTransform);
@@ -108,7 +109,7 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
     protected GradientSpreadMethod parseSpreadMethod() {
         String spreadMethodValue = getAttribute(Attributes.SPREAD_METHOD);
         if (spreadMethodValue == null) {
-            spreadMethodValue = getAttribute(Attributes.SPREAD_METHOD.toLowerCase());
+            spreadMethodValue = getAttribute(StringNormalizer.toLowerCase(Attributes.SPREAD_METHOD));
         }
         if (spreadMethodValue == null) {
             // returning svg default spread method

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -250,7 +251,7 @@ public class PdfConformance {
      * @return the {@link PdfAConformance} instance or {@code null} if there is no PDF/A conformance for passed parameters
      */
     public static PdfAConformance getAConformance(String part, String level) {
-        String lowLetter = level == null ? null : level.toUpperCase();
+        String lowLetter = StringNormalizer.toUpperCase(level);
         boolean aLevel = "A".equals(lowLetter);
         boolean bLevel = "B".equals(lowLetter);
         boolean uLevel = "U".equals(lowLetter);

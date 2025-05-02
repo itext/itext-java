@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Tag;
 @Tag("UnitTest")
 public class Type1FontTest extends ExtendedITextTest {
 
+    public static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/type1/testPackage/";
+
     @Test
     public void fillUsingEncodingTest() throws IOException {
         FontEncoding fontEncoding = FontEncoding.createFontEncoding("WinAnsiEncoding");
@@ -41,5 +43,13 @@ public class Type1FontTest extends ExtendedITextTest {
         Assertions.assertEquals(217, type1StdFont.codeToGlyph.size());
         Assertions.assertEquals(0x2013, type1StdFont.codeToGlyph.get(150).getUnicode());
         Assertions.assertArrayEquals(new char[]{(char)0x2013}, type1StdFont.codeToGlyph.get(150).getChars());
+    }
+
+    @Test
+    public void getFontStreamBytesTest() throws IOException {
+        FontProgram fp = FontProgramFactory.createType1Font(
+                FONTS_FOLDER + "cmr10.afm", FONTS_FOLDER + "cmr10.pfb");
+
+        Assertions.assertEquals(26864, ((Type1Font) fp).getFontStreamBytes().length);
     }
 }

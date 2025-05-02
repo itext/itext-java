@@ -23,6 +23,7 @@
 package com.itextpdf.styledxmlparser.css.selector.item;
 
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.node.ICustomElementNode;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
 import com.itextpdf.styledxmlparser.node.IElementNode;
@@ -45,7 +46,7 @@ public class CssTagSelectorItem implements ICssSelectorItem {
      * @param tagName the tag name
      */
     public CssTagSelectorItem(String tagName) {
-        this.tagName = tagName.toLowerCase();
+        this.tagName = StringNormalizer.toLowerCase(tagName);
         this.isUniversal = "*".equals(tagName);
     }
 

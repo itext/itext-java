@@ -20,33 +20,23 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.io.font;
+package com.itextpdf.layout.font;
 
-import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
-public class FontProgramDescriptorFactoryTest extends ExtendedITextTest {
+public class FontSetTest extends ExtendedITextTest {
+
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @Test
-    public void kozminNamesTest() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
-        Assertions.assertEquals("KozMinPro-Regular", descriptor.getFontName());
-        Assertions.assertEquals(StringNormalizer.toLowerCase("KozMinPro-Regular"), descriptor.getFullNameLowerCase());
-        Assertions.assertEquals(400, descriptor.getFontWeight());
-    }
-
-    @Test
-    public void helveticaNamesTest() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("Helvetica");
-        Assertions.assertEquals("Helvetica", descriptor.getFontName());
-        Assertions.assertEquals("helvetica", descriptor.getFullNameLowerCase());
-        Assertions.assertEquals("helvetica", descriptor.getFullNameLowerCase());
-        Assertions.assertEquals(500, descriptor.getFontWeight());
+    public void addDirectoryTest() {
+        FontSet fs = new FontSet();
+        fs.addDirectory(FONTS_FOLDER, true);
+        Assertions.assertTrue(fs.getFonts().size() >= 30);
     }
 }

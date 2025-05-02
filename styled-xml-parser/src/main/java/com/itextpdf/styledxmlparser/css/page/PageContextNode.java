@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.page;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.css.CssContextNode;
 import com.itextpdf.styledxmlparser.node.INode;
 
@@ -64,7 +65,7 @@ public class PageContextNode extends CssContextNode {
      * @return the page context node
      */
     public PageContextNode addPageClass(String pageClass) {
-        this.pageClasses.add(pageClass.toLowerCase());
+        this.pageClasses.add(StringNormalizer.toLowerCase(pageClass));
         return this;
     }
 

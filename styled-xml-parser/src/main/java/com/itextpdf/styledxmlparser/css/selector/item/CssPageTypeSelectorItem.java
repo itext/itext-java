@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.selector.item;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.page.PageContextNode;
 import com.itextpdf.styledxmlparser.node.INode;
@@ -59,6 +60,7 @@ public class CssPageTypeSelectorItem implements ICssSelectorItem {
         if (!(node instanceof PageContextNode)) {
             return false;
         }
-        return !CommonCssConstants.AUTO.equals(pageTypeName.toLowerCase()) && pageTypeName.equals(((PageContextNode) node).getPageTypeName());
+        return !CommonCssConstants.AUTO.equals(StringNormalizer.toLowerCase(pageTypeName)) &&
+                pageTypeName.equals(((PageContextNode) node).getPageTypeName());
     }
 }

@@ -24,6 +24,7 @@ package com.itextpdf.styledxmlparser.css;
 
 import com.itextpdf.styledxmlparser.css.font.CssFontFace;
 import com.itextpdf.styledxmlparser.css.font.CssFontFace.CssFontFaceSrc;
+import com.itextpdf.styledxmlparser.css.font.CssFontFace.FontFormat;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.ArrayList;
@@ -73,4 +74,25 @@ public class CssFontFaceTest extends ExtendedITextTest {
         Assertions.assertNull(fontFace);
     }
 
+    @Test
+    public void parseFormatTest() {
+        Assertions.assertEquals(FontFormat.None, CssFontFaceSrc.parseFormat(null));
+        Assertions.assertEquals(FontFormat.TrueType, CssFontFaceSrc.parseFormat("Truetype"));
+        Assertions.assertEquals(FontFormat.OpenType, CssFontFaceSrc.parseFormat("Opentype"));
+        Assertions.assertEquals(FontFormat.WOFF, CssFontFaceSrc.parseFormat("Woff"));
+        Assertions.assertEquals(FontFormat.WOFF2, CssFontFaceSrc.parseFormat("Woff2"));
+        Assertions.assertEquals(FontFormat.EOT, CssFontFaceSrc.parseFormat("Embedded-opentype"));
+        Assertions.assertEquals(FontFormat.SVG, CssFontFaceSrc.parseFormat("Svg"));
+    }
+
+    @Test
+    public void isSupportedFontFormatTest() {
+        Assertions.assertTrue(CssFontFace.isSupportedFontFormat(FontFormat.None));
+        Assertions.assertTrue(CssFontFace.isSupportedFontFormat(FontFormat.TrueType));
+        Assertions.assertTrue(CssFontFace.isSupportedFontFormat(FontFormat.OpenType));
+        Assertions.assertTrue(CssFontFace.isSupportedFontFormat(FontFormat.WOFF));
+        Assertions.assertTrue(CssFontFace.isSupportedFontFormat(FontFormat.WOFF2));
+        Assertions.assertFalse(CssFontFace.isSupportedFontFormat(FontFormat.EOT));
+        Assertions.assertFalse(CssFontFace.isSupportedFontFormat(FontFormat.SVG));
+    }
 }
