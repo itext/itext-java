@@ -1092,13 +1092,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 minWidth = hasAbsoluteUnitValue(Property.MIN_WIDTH) ? retrieveMinWidth(0) : null;
                 maxWidth = hasAbsoluteUnitValue(Property.MAX_WIDTH) ? retrieveMaxWidth(0) : null;
             } else {
-                minWidth = retrieveMinWidth(parentBoxWidth);
+                minWidth = retrieveMinWidth(parentBoxWidth.floatValue());
                 if (minWidth == null) {
-                    minWidth = retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+                    minWidth = retrieveUnitValue(parentBoxWidth.floatValue(), Property.WIDTH);
                 }
-                maxWidth = retrieveMaxWidth(parentBoxWidth);
+                maxWidth = retrieveMaxWidth(parentBoxWidth.floatValue());
                 if (maxWidth == null) {
-                    maxWidth = retrieveUnitValue(parentBoxWidth, Property.WIDTH);
+                    maxWidth = retrieveUnitValue(parentBoxWidth.floatValue(), Property.WIDTH);
                 }
             }
             if (minWidth == null || maxWidth == null) {

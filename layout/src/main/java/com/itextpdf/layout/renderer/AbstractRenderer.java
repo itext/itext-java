@@ -2182,7 +2182,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @return instance of {@link MinMaxWidth}
      */
     public MinMaxWidth getMinMaxWidth(Float areaMaxWidth) {
-        return areaMaxWidth == null ? getMinMaxWidth() : MinMaxWidthUtils.countDefaultMinMaxWidth(this, areaMaxWidth);
+        return areaMaxWidth == null ? getMinMaxWidth() : MinMaxWidthUtils.countDefaultMinMaxWidth(this, areaMaxWidth.floatValue());
     }
 
     protected boolean setMinMaxWidthBasedOnFixedWidth(MinMaxWidth minMaxWidth) {
