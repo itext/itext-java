@@ -54,8 +54,12 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.tagging.IAccessibleElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,8 +73,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -351,6 +353,30 @@ public class PdfFormField extends AbstractPdfFormField {
             return ((PdfString) value).toUnicodeString();
         } else {
             return "";
+        }
+    }
+
+    /**
+     * Applies {@link AccessibilityProperties} for provided form field and its annotation children.
+     *
+     * @param formField    {@link PdfFormField} the form field to which the accessibility properties should be applied
+     * @param modelElement {@link IAccessibleElement} the form field layout element with accessibility properties
+     * @param pdfDocument  {@link PdfDocument} the document to which the form field belongs
+     */
+    public static void applyAccessibilityProperties(PdfFormField formField, IAccessibleElement modelElement,
+                                                    PdfDocument pdfDocument) {
+        if (!pdfDocument.isTagged()) {
+            return;
+        }
+        final AccessibilityProperties properties = modelElement.getAccessibilityProperties();
+        final String alternativeDescription = properties.getAlternateDescription();
+        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
+            formField.setAlternativeName(alternativeDescription);
+            for (PdfFormAnnotation annotation : formField.getChildFormAnnotations()) {
+                if (annotation.getAlternativeDescription() == null) {
+                    annotation.setAlternativeDescription(alternativeDescription);
+                }
+            }
         }
     }
 

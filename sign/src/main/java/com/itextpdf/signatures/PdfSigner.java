@@ -1370,6 +1370,18 @@ public class PdfSigner {
         return pageNumber;
     }
 
+    /**
+     * Applies {@link AccessibilityProperties} for provided signature field.
+     *
+     * @param formField    {@link PdfFormField} the form field to which the accessibility properties should be applied
+     * @param modelElement {@link IAccessibleElement} the form field layout element with accessibility properties
+     * @param pdfDocument  {@link PdfDocument} the document to which the form field belongs
+     */
+    protected void applyAccessibilityProperties(PdfFormField formField, IAccessibleElement modelElement,
+                                                PdfDocument pdfDocument) {
+        PdfFormField.applyAccessibilityProperties(formField, modelElement, pdfDocument);
+    }
+
     PdfSignature createSignatureDictionary(boolean includeDate) {
         PdfSignature dic = new PdfSignature();
         dic.setReason(this.signerProperties.getReason());
@@ -1472,18 +1484,6 @@ public class PdfSigner {
 
     private boolean isDocumentPdf2() {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
-    }
-
-    protected void applyAccessibilityProperties(PdfFormField formField, IAccessibleElement modelElement,
-                                                PdfDocument pdfDocument) {
-        if (!pdfDocument.isTagged()) {
-            return;
-        }
-        final AccessibilityProperties properties = modelElement.getAccessibilityProperties();
-        final String alternativeDescription = properties.getAlternateDescription();
-        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
-            formField.setAlternativeName(alternativeDescription);
-        }
     }
 
     private void applyDefaultPropertiesForTheNewField(PdfSignatureFormField sigField) {

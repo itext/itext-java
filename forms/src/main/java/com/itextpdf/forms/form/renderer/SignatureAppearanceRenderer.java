@@ -55,6 +55,7 @@ import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,7 +194,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
                     bBox.moveDown(bBox.getBottom() - getOccupiedArea().getBBox().getBottom() - additionalHeight / 2);
                 }
                 descriptionRect = bBox.setHeight(getOccupiedArea().getBBox().getHeight() * (1 - TOP_SECTION)
-                - additionalHeight);
+                        - additionalHeight);
                 break;
             default:
                 return;
@@ -239,7 +240,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         PdfDocument doc = drawContext.getDocument();
         Rectangle area = getOccupiedArea().getBBox().clone();
         applyMargins(area, false);
-        Map<Integer,Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
+        Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
         PdfPage page = doc.getPage(occupiedArea.getPageNumber());
 
         Background background = this.<Background>getProperty(Property.BACKGROUND);
@@ -265,7 +266,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         sigField.setFontSize(fontSizeValue);
         sigField.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(sigField);
-        applyAccessibilityProperties(sigField,doc);
+        applyAccessibilityProperties(sigField, doc);
         sigField.getFirstFormAnnotation().setFormFieldElement((SignatureFieldAppearance) modelElement);
         sigField.enableFieldRegeneration();
         PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);

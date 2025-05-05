@@ -299,8 +299,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
                     .setPageRect(new Rectangle(36, 648, 200, 200))
                     .setSignatureAppearance(appearance);
         });
-        // TODO DEVSIX-9057 setAlternativeDescription doesn't set Contents entry for PdfSigner
-        new VeraPdfValidator().validateFailure(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validate(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -327,9 +326,8 @@ public class PdfUASignerTest extends ExtendedITextTest {
                     .setPageRect(new Rectangle(36, 648, 200, 200))
                     .setSignatureAppearance(appearance);
         });
-        // TODO DEVSIX-9057 setAlternativeDescription doesn't set Contents entry for PdfSigner
         // TODO DEVSIX-9060 Image that is in Div element is not rendered in signature
-        new VeraPdfValidator().validateFailure(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validate(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -351,8 +349,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
                     .setPageRect(new Rectangle(36, 648, 200, 50))
                     .setSignatureAppearance(appearance);
         });
-        // TODO DEVSIX-9057 setAlternativeDescription doesn't set Contents entry for PdfSigner
-        new VeraPdfValidator().validateFailure(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validate(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
 

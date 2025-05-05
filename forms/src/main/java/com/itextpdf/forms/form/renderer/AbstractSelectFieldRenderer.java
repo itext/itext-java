@@ -23,7 +23,6 @@
 package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
-import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.AbstractSelectField;
@@ -33,7 +32,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -194,24 +192,11 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
     /**
      * Applies the accessibility properties to the form field.
      *
-     * @param formField   The form field to which the accessibility properties should be applied.
-     * @param pdfDocument The document to which the form field belongs.
+     * @param formField the form field to which the accessibility properties should be applied
+     * @param pdfDocument the document to which the form field belongs
      */
     protected void applyAccessibilityProperties(PdfFormField formField, PdfDocument pdfDocument) {
-        if (!pdfDocument.isTagged()) {
-            return;
-        }
-        final AccessibilityProperties properties = ((IAccessibleElement) this.modelElement)
-                .getAccessibilityProperties();
-        final String alternativeDescription = properties.getAlternateDescription();
-        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
-            formField.setAlternativeName(alternativeDescription);
-            for (PdfFormAnnotation annotation : formField.getChildFormAnnotations()) {
-                if (annotation.getAlternativeDescription() == null) {
-                    annotation.setAlternativeDescription(alternativeDescription);
-                }
-            }
-        }
+        PdfFormField.applyAccessibilityProperties(formField, ((IAccessibleElement) this.modelElement), pdfDocument);
     }
 
     /**

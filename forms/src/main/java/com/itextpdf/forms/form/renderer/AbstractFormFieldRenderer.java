@@ -22,7 +22,6 @@
  */
 package com.itextpdf.forms.form.renderer;
 
-import com.itextpdf.forms.fields.PdfFormAnnotation;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.IFormField;
@@ -46,12 +45,11 @@ import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
-
-import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract {@link BlockRenderer} for form fields.
@@ -223,26 +221,12 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Applies the accessibility properties to the form field.
      *
-     * @param formField The form field to which the accessibility properties should be applied.
-     * @param pdfDocument The document to which the form field belongs.
+     * @param formField the form field to which the accessibility properties should be applied
+     * @param pdfDocument the document to which the form field belongs
      */
     protected void applyAccessibilityProperties(PdfFormField formField, PdfDocument pdfDocument) {
-        if (!pdfDocument.isTagged()) {
-            return;
-        }
-        final AccessibilityProperties properties = ((IAccessibleElement) this.modelElement)
-                .getAccessibilityProperties();
-        final String alternativeDescription = properties.getAlternateDescription();
-        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
-            formField.setAlternativeName(alternativeDescription);
-            for (PdfFormAnnotation annotation : formField.getChildFormAnnotations()) {
-                if (annotation.getAlternativeDescription() == null) {
-                    annotation.setAlternativeDescription(alternativeDescription);
-                }
-            }
-        }
+        PdfFormField.applyAccessibilityProperties(formField, ((IAccessibleElement) this.modelElement), pdfDocument);
     }
-
 
     /**
      * Adjusts the field layout.
