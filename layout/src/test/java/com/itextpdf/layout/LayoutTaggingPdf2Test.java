@@ -31,6 +31,7 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
@@ -212,14 +213,15 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
         html4Ns.addNamespaceRoleMapping(HtmlRoles.center, HtmlRoles.center, xhtmlNs);
 
         // test some tricky mapping cases
-        pdfDocument.getStructTreeRoot().addRoleMapping(h9, h1);
-        pdfDocument.getStructTreeRoot().addRoleMapping(h1, h1);
-        pdfDocument.getStructTreeRoot().addRoleMapping("Center", StandardRoles.P);
-        pdfDocument.getStructTreeRoot().addRoleMapping("I", StandardRoles.SPAN);
+        PdfStructTreeRoot structTreeRoot = pdfDocument.getStructTreeRoot();
+        structTreeRoot.addRoleMapping(h9, h1);
+        structTreeRoot.addRoleMapping(h1, h1);
+        structTreeRoot.addRoleMapping("Center", StandardRoles.P);
+        structTreeRoot.addRoleMapping("I", StandardRoles.SPAN);
 
-
-        pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(null);
-        pdfDocument.getTagStructureContext().getAutoTaggingPointer().setNamespaceForNewTags(xhtmlNs);
+        TagStructureContext tagStructureContext = pdfDocument.getTagStructureContext();
+        tagStructureContext.setDocumentDefaultNamespace(null);
+        tagStructureContext.getAutoTaggingPointer().setNamespaceForNewTags(xhtmlNs);
 
         Document document = new Document(pdfDocument);
 

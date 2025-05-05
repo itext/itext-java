@@ -137,9 +137,10 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         font.setSubset(false);
-        PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
-        form.getField("description").setFont(font);
-        form.getField("description").setValue(TEXT);
+        PdfFormField formField = PdfFormCreator.getAcroForm(pdfDoc, false)
+                .getField("description");
+        formField.setFont(font);
+        formField.setValue(TEXT);
 
         pdfDoc.close();
 

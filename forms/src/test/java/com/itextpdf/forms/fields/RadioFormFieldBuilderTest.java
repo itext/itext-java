@@ -273,24 +273,25 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
         PdfDictionary expectedDictionary = new PdfDictionary();
 
         List<PdfWidgetAnnotation> widgets = new ArrayList<>();
-        if (radioButtonFormField.getWidget() != null) {
-            widgets.add(radioButtonFormField.getWidget());
-        }
+        PdfWidgetAnnotation buttonWidget = radioButtonFormField.getWidget();
+        if (buttonWidget != null) {
+            widgets.add(buttonWidget);
+            // if a rectangle is assigned in the builder than we should check it
+            PdfArray buttonWidgetRectangle = buttonWidget.getRectangle();
+            if (buttonWidgetRectangle != null && buttonWidgetRectangle.toRectangle() != null) {
+                Assertions.assertEquals(1, widgets.size());
+                PdfWidgetAnnotation annotation = widgets.get(0);
+                Assertions.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
+                putIfAbsent(expectedDictionary, PdfName.Rect, new PdfArray(DUMMY_RECTANGLE));
 
-        // if a rectangle is assigned in the builder than we should check it
-        if (radioButtonFormField.getWidget().getRectangle() != null
-                && radioButtonFormField.getWidget().getRectangle().toRectangle() != null) {
-            Assertions.assertEquals(1, widgets.size());
-            PdfWidgetAnnotation annotation = widgets.get(0);
-            Assertions.assertTrue(DUMMY_RECTANGLE.equalsWithEpsilon(annotation.getRectangle().toRectangle()));
-            putIfAbsent(expectedDictionary, PdfName.Rect, new PdfArray(DUMMY_RECTANGLE));
-
-            // if the radiobutton has been added to the radiogroup we expect the AP to be generated
-            if (isAddedToRadioGroup) {
-                putIfAbsent(expectedDictionary, PdfName.AP,
-                        radioButtonFormField.getPdfObject().getAsDictionary(PdfName.AP));
+                // if the radiobutton has been added to the radiogroup we expect the AP to be generated
+                if (isAddedToRadioGroup) {
+                    putIfAbsent(expectedDictionary, PdfName.AP,
+                            radioButtonFormField.getPdfObject().getAsDictionary(PdfName.AP));
+                }
             }
         }
+
         if (radioButtonFormField.pdfConformance != null && radioButtonFormField.pdfConformance.isPdfAOrUa()) {
             putIfAbsent(expectedDictionary, PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
         }

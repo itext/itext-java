@@ -33,6 +33,7 @@ import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -145,9 +146,10 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
 
         canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
-        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        PageSize defaultSize = doc.getDefaultPageSize();
+        canvas.moveTo(defaultSize.getLeft(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getTop());
         canvas.fill();
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -160,7 +162,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void colorCheckTest4() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "pdfA2b_colorCheckTest4.pdf";
-        String cmpPdf = cmpFolder + "cmp_pdfA2b_colorCheckTest4.pdf";
+
         PdfWriter writer = new PdfWriter(outPdf);
         InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
@@ -170,15 +172,16 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
         canvas.setFillColor(ColorConstants.BLUE);
         canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
-        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        PageSize defaultSize = doc.getDefaultPageSize();
+        canvas.moveTo(defaultSize.getLeft(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getTop());
         canvas.fill();
 
         canvas.setFillColor(DeviceGray.BLACK);
-        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        canvas.moveTo(defaultSize.getLeft(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getTop());
         canvas.fill();
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());

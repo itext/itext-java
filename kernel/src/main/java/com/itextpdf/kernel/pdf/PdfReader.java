@@ -62,6 +62,11 @@ import org.slf4j.LoggerFactory;
 public class PdfReader implements Closeable {
 
     /**
+     * The Logger instance.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfReader.class);
+
+    /**
      * The default {@link StrictnessLevel} to be used.
      */
     public static final StrictnessLevel DEFAULT_STRICTNESS_LEVEL = StrictnessLevel.LENIENT;
@@ -856,15 +861,13 @@ public class PdfReader implements Closeable {
         PdfIndirectReference reference = table.get(num);
         if (reference != null) {
             if (reference.isFree()) {
-                Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
                         tokens.getGenNr()));
                 return createPdfNullInstance(readAsDirect);
             }
             if (reference.getGenNumber() != tokens.getGenNr()) {
                 if (fixedXref) {
-                    Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                    logger.warn(
+                    LOGGER.warn(
                             MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
                                     tokens.getGenNr()));
                     return createPdfNullInstance(readAsDirect);
@@ -876,8 +879,7 @@ public class PdfReader implements Closeable {
             }
         } else {
             if (table.isReadingCompleted()) {
-                Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
                         tokens.getGenNr()));
                 return createPdfNullInstance(readAsDirect);
             } else {
@@ -1430,8 +1432,7 @@ public class PdfReader implements Closeable {
         final String error = MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN,
                 new String(tokens.getByteContent(), StandardCharsets.UTF_8));
         if (StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
-            final Logger logger = LoggerFactory.getLogger(PdfReader.class);
-            logger.error(error);
+            LOGGER.error(error);
         } else {
             tokens.throwError(error);
         }
@@ -1618,17 +1619,16 @@ public class PdfReader implements Closeable {
     }
 
     private static void logXrefException(RuntimeException ex) {
-        Logger logger = LoggerFactory.getLogger(PdfReader.class);
         if (ex.getCause() != null) {
-            logger.error(MessageFormatUtil.format(
+            LOGGER.error(MessageFormatUtil.format(
                     IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
                     , ex.getCause().getMessage()));
         } else if (ex.getMessage() !=null) {
-            logger.error(MessageFormatUtil.format(
+            LOGGER.error(MessageFormatUtil.format(
                     IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
                     , ex.getMessage()));
         } else {
-            logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT);
+            LOGGER.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT);
         }
     }
 

@@ -484,13 +484,14 @@ public class SelectorTest extends ExtendedITextTest {
         Assertions.assertEquals("1", divs3.get(1).id());
         Assertions.assertEquals("2", divs3.get(2).id());
 
-        Elements els1 = doc.body().select(":has(p)");
+        Element body = doc.body();
+        Elements els1 = body.select(":has(p)");
         Assertions.assertEquals(3, els1.size()); // body, div, dib
         Assertions.assertEquals("body", els1.first().tagName());
         Assertions.assertEquals("0", els1.get(1).id());
         Assertions.assertEquals("2", els1.get(2).id());
 
-        Elements els2 = doc.body().select(":has(> span)");
+        Elements els2 = body.select(":has(> span)");
         Assertions.assertEquals(2,els2.size()); // p, div
         Assertions.assertEquals("p",els2.first().tagName());
         Assertions.assertEquals("1", els2.get(1).id());

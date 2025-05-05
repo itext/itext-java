@@ -328,8 +328,9 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
             int lastFormIndex = kidsRoles.lastIndexOf(StandardRoles.FORM);
             TagTreePointer formPointer = formParentPointer.moveToKid(lastFormIndex);
 
-            if (getLang() != null) {
-                formPointer.getProperties().setLanguage(getLang());
+            String lang = getLang();
+            if (lang != null) {
+                formPointer.getProperties().setLanguage(lang);
             }
             formParentPointer.moveToParent();
         }

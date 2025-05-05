@@ -411,8 +411,9 @@ public class DocumentTest extends ExtendedITextTest {
 
     private Document createHtmlDocument(String charset) {
         final Document doc = Document.createShell("");
-        doc.head().appendElement("meta").attr("charset", charset);
-        doc.head().appendElement("meta").attr("name", "charset").attr("content", charset);
+        Element docHead = doc.head();
+        docHead.appendElement("meta").attr("charset", charset);
+        docHead.appendElement("meta").attr("name", "charset").attr("content", charset);
 
         return doc;
     }
