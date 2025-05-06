@@ -23,6 +23,7 @@
 package com.itextpdf.pdfua.checkers.utils.tables;
 
 import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -31,6 +32,8 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
+import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
+import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -204,6 +207,10 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
                         break;
                     }
                 }
+                if (firstOpenColIndex == -1) {
+                    throw new PdfUAConformanceException(MessageFormatUtil.format(
+                            PdfUAExceptionMessageConstants.ROWS_SPAN_DIFFERENT_NUMBER_OF_COLUMNS, rowIdx, rowIdx + 1));
+                }
                 // Set the colspan and rowspan of each cell with a placeholder
                 for (int i = rowIdx; i < rowIdx + rowSpan; i++) {
                     for (int j = firstOpenColIndex; j < firstOpenColIndex + colSpan; j++) {
@@ -240,9 +247,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     private List<PdfStructElem> extractCells(PdfStructElem row) {
         final List<PdfStructElem> elems = new ArrayList<>();
         for (final IStructureNode kid : row.getKids()) {
-            if (kid instanceof PdfStructElem ) {
+            if (kid instanceof PdfStructElem) {
                 final PdfName kidRole = this.getRole(kid);
-                if ((PdfName.TH.equals(kidRole) || PdfName.TD.equals(kidRole))){
+                if ((PdfName.TH.equals(kidRole) || PdfName.TD.equals(kidRole))) {
                     elems.add((PdfStructElem) kid);
                 }
             }

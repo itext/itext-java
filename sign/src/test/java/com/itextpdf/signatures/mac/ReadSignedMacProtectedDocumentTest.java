@@ -23,7 +23,6 @@
 package com.itextpdf.signatures.mac;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
-import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -35,6 +34,7 @@ import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 @Tag("BouncyCastleIntegrationTest")
 public class ReadSignedMacProtectedDocumentTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/mac/ReadSignedMacProtectedDocumentTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/mac/ReadSignedMacProtectedDocumentTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/mac/ReadSignedMacProtectedDocumentTest/";
     private static final byte[] ENCRYPTION_PASSWORD = "123".getBytes();
 
     @BeforeAll

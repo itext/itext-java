@@ -9,6 +9,7 @@
 
 package com.itextpdf.kernel.xmp;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.xmp.impl.Base64;
 import com.itextpdf.kernel.xmp.impl.ISO8601Converter;
 import com.itextpdf.kernel.xmp.impl.XMPUtilsImpl;
@@ -265,7 +266,7 @@ public final class XMPUtils
 		{
 			throw new XMPException("Empty convert-string", XMPError.BADVALUE);
 		}
-		value = value.toLowerCase();
+		value = StringNormalizer.toLowerCase(value);
 
 		try
 		{

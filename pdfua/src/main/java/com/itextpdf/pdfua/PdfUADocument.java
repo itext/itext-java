@@ -34,12 +34,20 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.validation.IValidationChecker;
+import com.itextpdf.kernel.validation.Pdf20Checker;
 import com.itextpdf.kernel.validation.ValidationContainer;
+import com.itextpdf.layout.tagging.ProhibitedTagRelationsResolver;
 import com.itextpdf.pdfua.checkers.PdfUA1Checker;
+import com.itextpdf.pdfua.checkers.PdfUA2Checker;
+import com.itextpdf.pdfua.checkers.PdfUAChecker;
+import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates a Pdf/UA document.
@@ -67,15 +75,18 @@ public class PdfUADocument extends PdfDocument {
      * @param config     The configuration for the PDF/UA document.
      */
     public PdfUADocument(PdfWriter writer, DocumentProperties properties, PdfUAConfig config) {
-        super(configureWriterProperties(writer), properties);
+        super(configureWriterProperties(writer, config.getConformance()), properties);
         this.pdfConformance = new PdfConformance(config.getConformance());
 
         setupUAConfiguration(config);
         final ValidationContainer validationContainer = new ValidationContainer();
-        final PdfUA1Checker checker = new PdfUA1Checker(this);
-        validationContainer.addChecker(checker);
+        final List<IValidationChecker> checkers = getCorrectCheckerFromConformance(config.getConformance());
+        for (IValidationChecker checker : checkers) {
+            validationContainer.addChecker(checker);
+        }
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
-        this.pdfPageFactory = new PdfUAPageFactory(checker);
+        this.pdfPageFactory = new PdfUAPageFactory(getUaChecker(checkers));
+        getDiContainer().register(ProhibitedTagRelationsResolver.class, new ProhibitedTagRelationsResolver(this));
     }
 
     /**
@@ -106,28 +117,69 @@ public class PdfUADocument extends PdfDocument {
         setupUAConfiguration(config);
 
         final ValidationContainer validationContainer = new ValidationContainer();
-        final PdfUA1Checker checker = new PdfUA1Checker(this);
-        validationContainer.addChecker(checker);
+        final List<IValidationChecker> checkers = getCorrectCheckerFromConformance(config.getConformance());
+        for (IValidationChecker checker : checkers) {
+            validationContainer.addChecker(checker);
+        }
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
-        this.pdfPageFactory = new PdfUAPageFactory(checker);
+        this.pdfPageFactory = new PdfUAPageFactory(getUaChecker(checkers));
     }
 
-    private static PdfWriter configureWriterProperties(PdfWriter writer) {
-        writer.getProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1);
-        if (writer.getPdfVersion() != null && !writer.getPdfVersion().equals(PdfVersion.PDF_1_7)) {
-            LoggerFactory.getLogger(PdfUADocument.class).warn(MessageFormatUtil.format(
-                    PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_1_7));
-            writer.getProperties().setPdfVersion(PdfVersion.PDF_1_7);
+    private static PdfWriter configureWriterProperties(PdfWriter writer, PdfUAConformance uaConformance) {
+        writer.getProperties().addPdfUaXmpMetadata(uaConformance);
+        if (writer.getPdfVersion() != null) {
+            if (uaConformance == PdfUAConformance.PDF_UA_1 && !writer.getPdfVersion().equals(PdfVersion.PDF_1_7)) {
+                LOGGER.warn(MessageFormatUtil.format(
+                        PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_1_7));
+                writer.getProperties().setPdfVersion(PdfVersion.PDF_1_7);
+            }
+            if (uaConformance == PdfUAConformance.PDF_UA_2 && !writer.getPdfVersion().equals(PdfVersion.PDF_2_0)) {
+                LOGGER.warn(MessageFormatUtil.format(
+                        PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_2_0));
+                writer.getProperties().setPdfVersion(PdfVersion.PDF_2_0);
+            }
         }
         return writer;
     }
 
+    private static PdfUAChecker getUaChecker(List<IValidationChecker> checkers) {
+        for (IValidationChecker checker : checkers) {
+            if (checker instanceof PdfUAChecker) {
+                return (PdfUAChecker) checker;
+            }
+        }
+        return null;
+    }
+
     private void setupUAConfiguration(PdfUAConfig config) {
-        //basic configuration
+        // Basic configuration.
         this.setTagged();
         this.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
         this.getCatalog().setLang(new PdfString(config.getLanguage()));
         final PdfDocumentInfo info = this.getDocumentInfo();
         info.setTitle(config.getTitle());
+    }
+
+    /**
+     * Gets correct {@link PdfUAChecker} for specified PDF/UA conformance.
+     *
+     * @param uaConformance the conformance for which checker is needed
+     * @return the correct PDF/UA checker
+     */
+    private List<IValidationChecker> getCorrectCheckerFromConformance(PdfUAConformance uaConformance) {
+        List<IValidationChecker> checkers = new ArrayList<>();
+        switch (uaConformance.getPart()) {
+            case "1":
+                checkers.add(new PdfUA1Checker(this));
+                break;
+            case "2":
+                checkers.add(new PdfUA2Checker(this));
+                checkers.add(new Pdf20Checker(this));
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        PdfUAExceptionMessageConstants.CANNOT_FIND_PDF_UA_CHECKER_FOR_SPECIFIED_CONFORMANCE);
+        }
+        return checkers;
     }
 }

@@ -22,6 +22,8 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
+
 public final class FontCharacteristics {
 
     private boolean isItalic = false;
@@ -85,7 +87,7 @@ public final class FontCharacteristics {
      */
     public FontCharacteristics setFontStyle(String fs) {
         if (fs != null && fs.length() > 0) {
-            fs = fs.trim().toLowerCase();
+            fs = StringNormalizer.normalize(fs);
             if ("normal".equals(fs)) {
                 isItalic = false;
             } else if ("italic".equals(fs) || "oblique".equals(fs)) {

@@ -22,30 +22,30 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ImageMasksTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/ImageMasksTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/ImageMasksTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/canvas/ImageMasksTest/";
 
     @BeforeAll
     public static void beforeClass() {

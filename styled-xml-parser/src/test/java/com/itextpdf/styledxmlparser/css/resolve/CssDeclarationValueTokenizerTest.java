@@ -23,35 +23,39 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
+import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer.TokenType;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class CssDeclarationValueTokenizerTest extends ExtendedITextTest {
     @Test
     public void functionTest01() {
-        runTest("func(param)", Arrays.asList("func(param)"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION));
+        runTest("func(param)", Collections.singletonList("func(param)"), Collections.singletonList(TokenType.FUNCTION));
     }
 
     @Test
     public void functionTest02() {
-        runTest("func(param1, param2)", Arrays.asList("func(param1, param2)"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION));
+        runTest("func(param1, param2)", Collections.singletonList("func(param1, param2)"),
+                Collections.singletonList(TokenType.FUNCTION));
     }
 
     @Test
     public void functionTest03() {
-        runTest("func(param,'param)',\"param))\")", Arrays.asList("func(param,'param)',\"param))\")"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION));
+        runTest("func(param,'param)',\"param))\")", Collections.singletonList("func(param,'param)',\"param))\")"),
+                Collections.singletonList(TokenType.FUNCTION));
     }
 
     @Test
     public void functionTest04() {
-        runTest("func(param, innerFunc())", Arrays.asList("func(param, innerFunc())"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION));
+        runTest("func(param, innerFunc())", Collections.singletonList("func(param, innerFunc())"),
+                Collections.singletonList(TokenType.FUNCTION));
     }
 
     @Test
@@ -66,18 +70,18 @@ public class CssDeclarationValueTokenizerTest extends ExtendedITextTest {
 
     @Test
     public void stringTest01() {
-        runTest("'a b c'", Arrays.asList("a b c"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING));
+        runTest("'a b c'", Collections.singletonList("a b c"), Collections.singletonList(TokenType.STRING));
     }
 
     @Test
     public void stringTest02() {
-        runTest("\"a b c\"", Arrays.asList("a b c"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING));
+        runTest("\"a b c\"", Collections.singletonList("a b c"), Collections.singletonList(TokenType.STRING));
     }
 
     @Test
     public void stringTest03() {
-        runTest("[ aa  bb  cc ]", Arrays.asList("[ aa  bb  cc ]"),
-                Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING));
+        runTest("[ aa  bb  cc ]", Collections.singletonList("[ aa  bb  cc ]"),
+                Collections.singletonList(TokenType.STRING));
     }
 
     @Test
@@ -95,6 +99,43 @@ public class CssDeclarationValueTokenizerTest extends ExtendedITextTest {
                 Arrays.asList(CssDeclarationValueTokenizer.TokenType.STRING,
                         CssDeclarationValueTokenizer.TokenType.FUNCTION,
                         CssDeclarationValueTokenizer.TokenType.STRING));
+    }
+
+    @Test
+    public void closingQuoteInsideStringTest() {
+        runTest("a(\"a12x\")\"", Collections.singletonList("a(\"a12x\")"),
+                Collections.singletonList(TokenType.FUNCTION));
+    }
+
+    @Test
+    public void spaceAfterFunctionTest() {
+        runTest("a(\"a12x\") ,", Arrays.asList("a(\"a12x\")", ","), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.COMMA));
+    }
+
+    @Test
+    public void spaceAfterFunction123Test() {
+        runTest("a(\"a12x\") bold", Arrays.asList("a(\"a12x\")", "bold"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.FUNCTION));
+    }
+
+    @Test
+    public void closingSquareBracketOutsideStringTest() {
+        runTest("a[\"a12x\"] ,", Arrays.asList("a[","a12x", "]", ","), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.STRING, CssDeclarationValueTokenizer.TokenType.STRING, CssDeclarationValueTokenizer.TokenType.COMMA));
+    }
+
+    @Test
+    public void whitespaceTest() {
+        runTest("a[\"a12x\"]    ", Arrays.asList("a[","a12x", "]"), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.STRING, CssDeclarationValueTokenizer.TokenType.STRING));
+    }
+
+    @Test
+    public void quoteInsideFunctionTest() {
+        runTest("a(\"a12x\"),", Arrays.asList("a(\"a12x\")", ","), Arrays.asList(CssDeclarationValueTokenizer.TokenType.FUNCTION, CssDeclarationValueTokenizer.TokenType.COMMA));
+    }
+
+    @Test
+    public void triplingQuotesFunctionTest() {
+        runTest("p:not([class*=\"\"])", Collections.singletonList("p:not([class*=\"\"])"),
+                Collections.singletonList(TokenType.FUNCTION));
     }
 
     private void runTest(String src, List<String> tokenValues, List<CssDeclarationValueTokenizer.TokenType> tokenTypes) {

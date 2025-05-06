@@ -67,7 +67,8 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -87,7 +88,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA4GraphicsCheckTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4GraphicsCheckTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4GraphicsCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -1102,7 +1103,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
     @Test
     public void imageJpeg20002ColorChannelsTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "pdfA4_jpeg2000.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA4_jpeg2000ColorChannels.pdf";
 
         PdfDocument pdfDoc = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),

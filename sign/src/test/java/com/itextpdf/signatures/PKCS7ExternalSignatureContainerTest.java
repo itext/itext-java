@@ -26,8 +26,8 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
-import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
@@ -45,6 +45,7 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -67,14 +68,14 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
     private static final boolean FIPS_MODE = "BCFIPS".equals(FACTORY.getProviderName());
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/PKCS7ExternalSignatureContainerTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     private final static String POLICY_IDENTIFIER = "2.16.724.1.3.1.1.2.1.9";
     private final static String POLICY_HASH_BASE64 = "G7roucf600+f03r/o0bAOQ6WAs0=";
-    private final static byte[] POLICY_HASH = Base64.decode(POLICY_HASH_BASE64);
+    private final static byte[] POLICY_HASH = EncodingUtil.fromBase64(POLICY_HASH_BASE64);
     private final static String POLICY_DIGEST_ALGORITHM = "SHA-256";
     private final static String POLICY_URI = "https://sede.060.gob.es/politica_de_firma_anexo_1.pdf";
 

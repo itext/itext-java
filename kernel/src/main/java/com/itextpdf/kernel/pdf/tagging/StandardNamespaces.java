@@ -38,8 +38,10 @@ public final class StandardNamespaces {
     private static final Set<String> STD_STRUCT_NAMESPACE_1_7_TYPES;
     private static final Set<String> STD_STRUCT_NAMESPACE_2_0_TYPES;
 
-    // other namespaces
-    private static final String MATH_ML = "http://www.w3.org/1998/Math/MathML";
+    /**
+     * Specifies the name of MathML namespace. MathML is domain-specific namespace defined in PDF 2.0.
+     */
+    public static final String MATH_ML = "http://www.w3.org/1998/Math/MathML";
 
     /**
      * Specifies the name of the standard structure namespace for PDF 1.7
@@ -164,9 +166,12 @@ public final class StandardNamespaces {
 
     /**
      * Checks if the given namespace is identified as the one that is common within broad ranges of documents types
-     * and doesn't require a role mapping for it's roles.
-     * @param namespace a namespace to be checked, whether it defines a namespace of the known domain specific language.
-     * @return true, if the given {@link PdfNamespace} belongs to the domain-specific namespace, false otherwise.
+     * and doesn't require a role mapping for its roles.
+     *
+     * @param namespace a namespace to be checked, whether it defines a namespace of the known domain specific language
+     *
+     * @return {@code true}, if the given {@link PdfNamespace} belongs to the domain-specific namespace,
+     *         {@code false} otherwise
      */
     public static boolean isKnownDomainSpecificNamespace(PdfNamespace namespace) {
         return MATH_ML.equals(namespace.getNamespaceName());

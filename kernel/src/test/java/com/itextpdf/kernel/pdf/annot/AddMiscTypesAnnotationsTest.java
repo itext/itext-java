@@ -59,6 +59,7 @@ import com.itextpdf.kernel.pdf.navigation.PdfNamedDestination;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -78,7 +79,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/kernel/pdf/annot/AddMiscTypesAnnotationsTest/";
     public static final String DESTINATION_FOLDER =
-            "./target/test/com/itextpdf/kernel/pdf/annot/AddMiscTypesAnnotationsTest/";
+            TestUtil.getOutputPath() + "/kernel/pdf/annot/AddMiscTypesAnnotationsTest/";
 
     @BeforeAll
     public static void beforeClass() {

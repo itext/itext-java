@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>9.1.0</version>
+    <version>9.2.0</version>
   </parent>
 
   <artifactId>kernel</artifactId>
@@ -51,6 +51,12 @@
         <directory>src/main/resources</directory>
         <includes>
           <include>**/*.json</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
+          <include>NOTICE.txt</include>
         </includes>
       </resource>
     </resources>

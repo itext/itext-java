@@ -22,9 +22,13 @@
  */
 package com.itextpdf.pdfua.checkers.utils;
 
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
+import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 
@@ -39,7 +43,7 @@ public class PdfUAValidationContext {
     /**
      * Creates a new instance of {@link PdfUAValidationContext}.
      *
-     * @param pdfDocument The pdfDocument where the validation is happening.
+     * @param pdfDocument the {@link PdfDocument} instance that is being validated
      */
     public PdfUAValidationContext(PdfDocument pdfDocument) {
         this.pdfDocument = pdfDocument;
@@ -60,23 +64,36 @@ public class PdfUAValidationContext {
         if (originalRole == null) {
             return null;
         }
+        PdfNamespace namespace = node instanceof PdfStructElem ? ((PdfStructElem) node).getNamespace() : null;
 
-        return resolveToStandardRole(originalRole.getValue());
+        return resolveToStandardRole(originalRole.getValue(), namespace);
     }
 
     /**
-     * Resolves the  role to a standard role
+     * Resolves the role to a standard role.
      *
-     * @param role The role you want to resolve the standard role for.
+     * @param role the role you want to resolve the standard role for
      *
-     * @return The role.
+     * @return resolved role
      */
     public String resolveToStandardRole(String role) {
+        return resolveToStandardRole(role, null);
+    }
+
+    /**
+     * Resolves the role to a standard role.
+     *
+     * @param role the role you want to resolve the standard role for
+     * @param namespace namespace where role is defined
+     *
+     * @return resolved role
+     */
+    public String resolveToStandardRole(String role, PdfNamespace namespace) {
         if (role == null) {
             return null;
         }
         IRoleMappingResolver resolver = pdfDocument.getTagStructureContext()
-                .resolveMappingToStandardOrDomainSpecificRole(role, null);
+                .resolveMappingToStandardOrDomainSpecificRole(role, namespace);
         if (resolver == null) {
             return role;
         }
@@ -101,11 +118,32 @@ public class PdfUAValidationContext {
         if (!(structureNode instanceof PdfStructElem)) {
             return null;
         }
-        //We can get away with the short code without resolving it. Because we have checks in place
-        //that would catch remapped standard roles and cyclic roles.
+        // We can get away with the short code without resolving it. Because we have checks in place
+        // that would catch remapped standard roles and cyclic roles.
         if (role.equals(structureNode.getRole()) || role.getValue().equals(resolveToStandardRole(structureNode))) {
             return (PdfStructElem) structureNode;
         }
         return null;
+    }
+
+    /**
+     * Retrieves object reference instance by provided structure parent index.
+     *
+     * @param i index of the structure parent
+     * @param pageDict {@link PdfDictionary} of the page that {@link PdfObjRef} belong to
+     *
+     * @return {@link PdfObjRef} instance
+     */
+    public PdfObjRef findObjRefByStructParentIndex(int i, PdfDictionary pageDict) {
+        return pdfDocument.getStructTreeRoot().findObjRefByStructParentIndex(pageDict, i);
+    }
+
+    /**
+     * Retrieves the PDF/UA conformance of the {@link PdfDocument}.
+     *
+     * @return {@link PdfUAConformance} value
+     */
+    public PdfUAConformance getUAConformance() {
+        return this.pdfDocument.getConformance().getUAConformance();
     }
 }

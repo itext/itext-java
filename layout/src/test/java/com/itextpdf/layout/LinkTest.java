@@ -51,21 +51,21 @@ import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class LinkTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LinkTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/LinkTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/LinkTest/";
 
     private static final String LONG_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam nec condimentum odio. Duis sed ipsum semper, imperdiet risus sit amet, pellentesque leo. Proin eget libero quis orci sagittis efficitur et a justo. Phasellus ac ipsum id lacus fermentum malesuada. Morbi vulputate ultricies ligula a pretium. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam eget leo maximus velit placerat condimentum. Nulla in fermentum ex, in fermentum risus. Phasellus gravida ante sit amet magna porta fermentum. Nunc nec urna quis enim facilisis scelerisque. Praesent risus est, efficitur eget quam nec, dignissim mollis nunc. Mauris in sodales nulla.\n"
             + "Sed sodales pharetra sapien, eget tristique magna fringilla at. Quisque ligula eros, auctor sit amet varius a, tincidunt non mauris. Sed diam mi, dignissim id magna accumsan, viverra scelerisque risus. Etiam blandit condimentum quam non bibendum. Sed vehicula justo quis lectus consequat, sit amet tempor sem mollis. Sed turpis nibh, luctus in arcu mattis, consequat laoreet est. Integer tempor, ante a gravida efficitur, velit libero dapibus nibh, et scelerisque diam nulla a orci. Vestibulum eleifend rutrum elit, sed pellentesque arcu lacinia nec. Nam semper, velit eget rhoncus efficitur, odio libero molestie mi, ut eleifend libero purus ut ex. Quisque hendrerit vehicula hendrerit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam quis elit eu dolor pellentesque viverra non eget purus. Nam nisi erat, efficitur sed malesuada ut, ornare sit amet risus. Nunc eu vestibulum turpis.\n"

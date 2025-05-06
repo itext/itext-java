@@ -257,7 +257,7 @@ public class CompareTool {
         compareResult = new CompareResult(compareByContentErrorsLimit);
         ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
                 outDocument.getCatalog().getPdfObject().getIndirectReference());
-        Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Arrays.asList(PdfName.Metadata));
+        Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Collections.singletonList(PdfName.Metadata));
         compareDictionariesExtended(outDocument.getCatalog().getPdfObject(), cmpDocument.getCatalog().getPdfObject(),
                 catalogPath, compareResult, ignoredCatalogEntries);
 
@@ -1399,7 +1399,8 @@ public class CompareTool {
                 mergedKeys.addAll(cmpCfDict.keySet());
                 for (PdfName key : mergedKeys) {
                     objectPath.pushDictItemToPath(key);
-                    LinkedHashSet<PdfName> excludedKeys = new LinkedHashSet<>(Arrays.asList(PdfName.Recipients));
+                    LinkedHashSet<PdfName> excludedKeys = new LinkedHashSet<>(
+                            Collections.singletonList(PdfName.Recipients));
                     compareDictionariesExtended(outCfDict.getAsDictionary(key), cmpCfDict.getAsDictionary(key), objectPath, compareResult, excludedKeys);
                     objectPath.pop();
                 }

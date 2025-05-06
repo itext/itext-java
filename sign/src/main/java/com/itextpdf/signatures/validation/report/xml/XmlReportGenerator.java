@@ -22,7 +22,7 @@
  */
 package com.itextpdf.signatures.validation.report.xml;
 
-import com.itextpdf.commons.utils.Pair;
+import com.itextpdf.commons.datastructures.Tuple2;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -137,20 +137,20 @@ public class XmlReportGenerator {
             subIndicationNode.setTextContent(subIndication);
             status.appendChild(subIndicationNode);
         }
-        Collection<Pair<String, String>> messages = signatureValidation.getSignatureValidationStatus().getMessages();
+        Collection<Tuple2<String, String>> messages = signatureValidation.getSignatureValidationStatus().getMessages();
         if (!messages.isEmpty()) {
             Node associatedValidationReportData = doc.createElement("AssociatedValidationReportData");
             status.appendChild(associatedValidationReportData);
             Node additionalValidationReportData = doc.createElement("AdditionalValidationReportData");
             associatedValidationReportData.appendChild(additionalValidationReportData);
-            for (Pair<String, String> message : messages) {
+            for (Tuple2<String, String> message : messages) {
                 Node reportData = doc.createElement("ReportData");
                 Node type = doc.createElement("Type");
-                type.setTextContent(message.getValue());
+                type.setTextContent(message.getSecond());
                 reportData.appendChild(type);
                 Element value = doc.createElement("Value");
                 value.setAttribute("xsi:type", "xs:string");
-                value.setTextContent(message.getKey());
+                value.setTextContent(message.getFirst());
                 reportData.appendChild(value);
                 additionalValidationReportData.appendChild(reportData);
             }

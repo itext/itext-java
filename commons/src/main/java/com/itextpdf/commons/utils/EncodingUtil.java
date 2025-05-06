@@ -29,6 +29,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
+import java.util.Base64;
 
 /**
  * This file is a helper class for internal usage only.
@@ -84,5 +85,25 @@ public final class EncodingUtil {
             return new String(bytes, 3, bytes.length - 3, EncodingUtil.UTF8);
         }
         return new String(bytes, encoding);
+    }
+
+    /**
+     * Decodes base64 string into byte array with tolerance to new lines and spaces.
+     *
+     * @param base64 base64 string to decode
+     * @return decode string as byte array
+     */
+    public static byte[] fromBase64(String base64) {
+        return Base64.getDecoder().decode(base64.replaceAll("\\s", ""));
+    }
+
+    /**
+     * Encodes byte array to base64 string.
+     *
+     * @param bytes the byte array to encode
+     * @return encoded base64 string
+     */
+    public static String toBase64(byte[] bytes) {
+        return Base64.getEncoder().encodeToString(bytes);
     }
 }

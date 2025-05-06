@@ -38,6 +38,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfMarkupAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfPopupAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
@@ -50,23 +51,25 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
 public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA2AnnotationCheckTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2AnnotationCheckTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2AnnotationCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -281,7 +284,7 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
         Rectangle formRect = new Rectangle(400, 100);
         PdfAnnotation annot = new PdfTextAnnotation(rect);
         annot.setContents(new PdfString(""));
-        annot.setFlags(PdfAnnotation.PRINT |PdfAnnotation.NO_ZOOM | PdfAnnotation.NO_ROTATE);
+        annot.setFlags(PdfAnnotation.PRINT | PdfAnnotation.NO_ZOOM | PdfAnnotation.NO_ROTATE);
 
         annot.setNormalAppearance(createAppearance(doc, formRect));
 
@@ -360,6 +363,44 @@ public class PdfA2AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
         doc.close();
         compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void annotationCheckTest15() throws IOException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        Rectangle rect = new Rectangle(100, 100, 100, 100);
+        PdfMarkupAnnotation annot = new PdfTextAnnotation(rect);
+        annot.setFlags(PdfAnnotation.PRINT | PdfAnnotation.NO_ROTATE);
+
+        page.addAnnotation(annot);
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfAConformanceLogMessageConstant.
+                        TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1,
+                e.getMessage());
+    }
+
+    @Test
+    public void annotationCheckTest16() throws IOException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        Rectangle rect = new Rectangle(100, 100, 100, 100);
+        PdfMarkupAnnotation annot = new PdfTextAnnotation(rect);
+        annot.setFlags(PdfAnnotation.PRINT | PdfAnnotation.NO_ZOOM);
+
+        page.addAnnotation(annot);
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfAConformanceLogMessageConstant.
+                        TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1,
+                e.getMessage());
     }
 
     private PdfStream createAppearance(PdfADocument doc, Rectangle formRect) throws IOException {

@@ -45,7 +45,6 @@ public final class FormsMetaInfoStaticContainer {
      * @param metaInfoContainer instance to be set.
      * @param action action which will be executed while meta info is set to static context.
      */
-    // TODO DEVSIX-6368 We want to prevent customer code being run while meta info is in the static context
     public static void useMetaInfoDuringTheAction(MetaInfoContainer metaInfoContainer, Action action) {
         try {
             metaInfoForLayout.set(metaInfoContainer);

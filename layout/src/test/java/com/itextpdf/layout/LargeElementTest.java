@@ -22,11 +22,11 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -46,22 +46,22 @@ import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class LargeElementTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LargeElementTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/LargeElementTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/LargeElementTest/";
 
     @BeforeAll
     public static void beforeClass() {

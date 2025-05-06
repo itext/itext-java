@@ -29,6 +29,8 @@ import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.font.PdfFont;
@@ -37,20 +39,31 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.LineSeparator;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.pdfua.PdfUAConfig;
 import com.itextpdf.pdfua.PdfUADocument;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -67,7 +80,10 @@ import org.slf4j.LoggerFactory;
 public class PdfUASignerTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/PdfUASignerTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/PdfUASignerTest/";
+
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/PdfUASignerTest/";
+
     private static final String FONT = "./src/test/resources/com/itextpdf/signatures/font/FreeSans.ttf";
     private static final Logger logger = LoggerFactory.getLogger(PdfUASignerTest.class);
 
@@ -262,10 +278,93 @@ public class PdfUASignerTest extends ExtendedITextTest {
         });
     }
 
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
+    public void signatureAppearanceWithImageUA2() throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
+        ByteArrayInputStream inPdf = generateSimplePdfUA2Document();
+        String outPdf = generateSignatureNormal(inPdf, "signatureAppearanceWithImageUA2", signer -> {
+            signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
+            SignatureFieldAppearance appearance = null;
+            try {
+                appearance = new SignatureFieldAppearance(
+                        SignerProperties.IGNORED_ID).setContent(ImageDataFactory.create(SOURCE_FOLDER + "/sign.jpg"));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+            appearance.setAlternativeDescription("Alternative Description");
+
+            signer.getSignerProperties()
+                    .setPageNumber(1)
+                    .setPageRect(new Rectangle(36, 648, 200, 200))
+                    .setSignatureAppearance(appearance);
+        });
+        new VeraPdfValidator().validate(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
+    // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
+    public void signatureAppearanceImageInDivUA2() throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
+        ByteArrayInputStream inPdf = generateSimplePdfUA2Document();
+        String outPdf = generateSignatureNormal(inPdf, "signatureAppearanceImageInDivUA2", signer -> {
+            signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
+            SignatureFieldAppearance appearance = new SignatureFieldAppearance( SignerProperties.IGNORED_ID);
+            Div div = new Div();
+            Image img = null;
+            try {
+                img = new Image(ImageDataFactory.create(SOURCE_FOLDER + "/sign.jpg"));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+            div.add(img);
+            appearance.setContent(div);
+            appearance.setAlternativeDescription("Alternative Description");
+
+            signer.getSignerProperties()
+                    .setPageNumber(1)
+                    .setPageRect(new Rectangle(36, 648, 200, 200))
+                    .setSignatureAppearance(appearance);
+        });
+        // TODO DEVSIX-9060 Image that is in Div element is not rendered in signature
+        new VeraPdfValidator().validate(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
+    public void signatureAppearanceWithLineSeparatorUA2() throws GeneralSecurityException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
+        ByteArrayInputStream inPdf = generateSimplePdfUA2Document();
+        String outPdf = generateSignatureNormal(inPdf, "signatureAppearanceWithLineSeparatorUA2", signer -> {
+            signer.setSignerProperties(new SignerProperties().setFieldName("Signature12"));
+            SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
+
+            Div div = new Div();
+            LineSeparator line = new LineSeparator(new SolidLine(3));
+            div.add(line);
+            appearance.setContent(div);
+            appearance.setAlternativeDescription("Alternative Description");
+
+            signer.getSignerProperties()
+                    .setPageNumber(1)
+                    .setPageRect(new Rectangle(36, 648, 200, 50))
+                    .setSignatureAppearance(appearance);
+        });
+        new VeraPdfValidator().validate(outPdf); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
 
     private ByteArrayInputStream generateSimplePdfUA1Document() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PdfUADocument pdfUADocument = new PdfUADocument(new PdfWriter(out), new PdfUAConfig(PdfUAConformance.PDF_UA_1, "Title", "en-US"));
+        pdfUADocument.addNewPage();
+        pdfUADocument.close();
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    private ByteArrayInputStream generateSimplePdfUA2Document() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfUADocument pdfUADocument = new PdfUADocument(new PdfWriter(out, new WriterProperties().setPdfVersion(
+                PdfVersion.PDF_2_0)), new PdfUAConfig(PdfUAConformance.PDF_UA_2, "Title", "en-US"));
         pdfUADocument.addNewPage();
         pdfUADocument.close();
         return new ByteArrayInputStream(out.toByteArray());

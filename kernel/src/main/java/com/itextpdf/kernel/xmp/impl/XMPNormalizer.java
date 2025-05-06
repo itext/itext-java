@@ -30,6 +30,7 @@
 
 package com.itextpdf.kernel.xmp.impl;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPDateTime;
 import com.itextpdf.kernel.xmp.XMPError;
@@ -110,7 +111,7 @@ public class XMPNormalizer
 	{
 		if (tree.getName() != null  &&  tree.getName().length() >= Utils.UUID_LENGTH)
 		{
-			String nameStr = tree.getName().toLowerCase();
+			String nameStr = StringNormalizer.toLowerCase(tree.getName());
 			if (nameStr.startsWith("uuid:"))
 			{
 				nameStr = nameStr.substring(5);

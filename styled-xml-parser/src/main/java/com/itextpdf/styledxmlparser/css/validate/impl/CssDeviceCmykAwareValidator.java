@@ -33,6 +33,10 @@ import com.itextpdf.styledxmlparser.css.validate.impl.declaration.MultiTypeDecla
  * It extends the default {@link CssDefaultValidator} to also support device-cmyk color structure.
  */
 public class CssDeviceCmykAwareValidator extends CssDefaultValidator {
+    /**
+     * Instantiates a new {@link CssDeviceCmykAwareValidator} instance which extends the
+     * default {@link CssDefaultValidator} to also support device-cmyk color structure.
+     */
     public CssDeviceCmykAwareValidator() {
         super();
         ICssDeclarationValidator colorCmykValidator = new MultiTypeDeclarationValidator(

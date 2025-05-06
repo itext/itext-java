@@ -26,18 +26,17 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 
 @Tag("IntegrationTest")
@@ -45,7 +44,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/annot"
             + "/CopyAnnotationsTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/annot/CopyAnnotationsTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/annot/CopyAnnotationsTest/";
 
     @BeforeAll
     public static void beforeClass() {

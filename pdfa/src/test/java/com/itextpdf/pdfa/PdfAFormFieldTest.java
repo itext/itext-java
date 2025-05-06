@@ -82,9 +82,10 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -102,7 +103,7 @@ import org.junit.jupiter.api.Test;
 public class PdfAFormFieldTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfAFormFieldTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfAFormFieldTest/";
 
     @BeforeAll
     public static void beforeClass() {

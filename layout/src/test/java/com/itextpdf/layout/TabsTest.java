@@ -44,21 +44,21 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TabAlignment;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import com.itextpdf.test.TestUtil;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TabsTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TabsTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TabsTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/TabsTest/";
 
     private static final String text0 = "The Po\u017Eega Valley is a geographic microregion\tof Croatia, located in central" +
             " Slavonia, enveloped by the Slavonian mountains. It consists of\tsouthern slopes of 984-metre (3,228 ft)" +

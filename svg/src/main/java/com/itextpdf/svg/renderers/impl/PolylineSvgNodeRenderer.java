@@ -49,15 +49,20 @@ import java.util.List;
 public class PolylineSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMarkerCapable {
 
     /**
-     * orientation vector which is used for marker angle calculation.
+     * Orientation vector which is used for marker angle calculation.
      */
     private Vector previousOrientationVector = new Vector(1, 0, 0);
 
     /**
-     * A List of {@link Point} objects representing the path to be drawn by the polyline tag
+     * A List of {@link Point} objects representing the path to be drawn by the polyline tag.
      */
     protected List<Point> points = new ArrayList<>();
 
+    /**
+     * Returns a list of {@link Point} objects representing the path to be drawn by the polyline tag.
+     *
+     * @return a list of {@link Point} objects
+     */
     protected List<Point> getPoints() {
         return this.points;
     }

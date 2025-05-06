@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf.xobject;
 
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -34,20 +35,19 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfImageXObjectTest extends ExtendedITextTest {
-
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/xobject/PdfImageXObjectTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -199,6 +199,52 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(destFilename, cmpFilename, DESTINATION_FOLDER));
+    }
+
+    @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void decodingIndexedCsWithRgbTest() throws IOException {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb.pdf"))) {
+            PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
+            byte[] imageBytes = imageXObject.getImageBytes();
+            Assertions.assertNotNull(imageBytes);
+            Assertions.assertEquals(552, imageBytes.length);
+            Assertions.assertEquals(ImageType.PNG, imageXObject.identifyImageType());
+        }
+    }
+
+    @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void decodingIndexedCsWithRgbStringTableTest() throws IOException {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb_string_table.pdf"))) {
+            PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
+            byte[] imageBytes = imageXObject.getImageBytes();
+            Assertions.assertNotNull(imageBytes);
+            Assertions.assertEquals(552, imageBytes.length);
+            Assertions.assertEquals(ImageType.PNG, imageXObject.identifyImageType());
+        }
+    }
+
+    @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void decodingIndexedCsWithRgbWrongLookupTest() throws IOException {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb_wrong_lookup.pdf"))) {
+            PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
+            byte[] imageBytes = imageXObject.getImageBytes();
+            Assertions.assertNotNull(imageBytes);
+            // iText doesn't fail if there is no lookup table, it's just ignored and not added to result bytes
+            Assertions.assertEquals(531, imageBytes.length);
+            Assertions.assertNotEquals(552, imageBytes.length);
+            Assertions.assertEquals(ImageType.PNG, imageXObject.identifyImageType());
+        }
+    }
+
+    @Test
+    public void decodingIndexedCsWithRgbNoHivalTest() throws IOException {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb_null_hival.pdf"))) {
+            PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
+            Assertions.assertThrows(RuntimeException.class, () -> imageXObject.getImageBytes());
+        }
     }
 
     private void convertAndCompare(String outFilename, String cmpFilename, String imageFilename)

@@ -42,10 +42,10 @@ import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -56,12 +56,8 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TableBorderTest extends AbstractTableTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableBorderTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableBorderTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/TableBorderTest/";
     public static final String cmpPrefix = "cmp_";
-
-    String fileName;
-    String outFileName;
-    String cmpFileName;
 
     @BeforeAll
     public static void beforeClass() {
@@ -70,8 +66,8 @@ public class TableBorderTest extends AbstractTableTest {
 
     @Test
     public void cellWithBigRowspanOnThreePagesTest() throws IOException, InterruptedException {
-        fileName = "cellWithBigRowspanOnThreePagesTest.pdf";
-        Document doc = createDocument();
+        String fileName = "cellWithBigRowspanOnThreePagesTest.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth()
                 .setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
@@ -81,7 +77,7 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
@@ -89,8 +85,8 @@ public class TableBorderTest extends AbstractTableTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)
     })
     public void incompleteTableTest01() throws IOException, InterruptedException {
-        fileName = "incompleteTableTest01.pdf";
-        Document doc = createDocument();
+        String fileName = "incompleteTableTest01.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 5));
@@ -113,13 +109,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void incompleteTableTest02() throws IOException, InterruptedException {
-        fileName = "incompleteTableTest02.pdf";
-        Document doc = createDocument();
+        String fileName = "incompleteTableTest02.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 5));
@@ -141,7 +137,7 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
 
@@ -150,8 +146,8 @@ public class TableBorderTest extends AbstractTableTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE)
     })
     public void incompleteTableTest03() throws IOException, InterruptedException {
-        fileName = "incompleteTableTest03.pdf";
-        Document doc = createDocument();
+        String fileName = "incompleteTableTest03.pdf";
+        Document doc = createDocument(fileName);
 
         Table innerTable = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         Cell cell = new Cell().add(new Paragraph("Inner"));
@@ -163,7 +159,7 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(outerTable);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
@@ -171,8 +167,8 @@ public class TableBorderTest extends AbstractTableTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)
     })
     public void incompleteTableTest04() throws IOException, InterruptedException {
-        fileName = "incompleteTableTest04.pdf";
-        Document doc = createDocument();
+        String fileName = "incompleteTableTest04.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addCell(new Cell().add(new Paragraph("Liberte")).setBorderBottom(new SolidBorder(ColorConstants.BLUE, 10)).setHeight(40));
@@ -187,13 +183,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void simpleBorderTest02() throws IOException, InterruptedException {
-        fileName = "simpleBorderTest02.pdf";
-        Document doc = createDocument();
+        String fileName = "simpleBorderTest02.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         Cell cell;
@@ -214,13 +210,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void simpleBorderTest03() throws IOException, InterruptedException {
-        fileName = "simpleBorderTest03.pdf";
-        Document doc = createDocument();
+        String fileName = "simpleBorderTest03.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.addCell(new Cell().add(new Paragraph("1")));
@@ -233,13 +229,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void simpleBorderTest04() throws IOException, InterruptedException {
-        fileName = "simpleBorderTest04.pdf";
-        Document doc = createDocument();
+        String fileName = "simpleBorderTest04.pdf";
+        Document doc = createDocument(fileName);
         String textByron =
                 "When a man hath no freedom to fight for at home,\n" +
                         "    Let him combat for that of his neighbours;\n" +
@@ -270,13 +266,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void noVerticalBorderTest() throws IOException, InterruptedException {
-        fileName = "noVerticalBorderTest.pdf";
-        Document doc = createDocument();
+        String fileName = "noVerticalBorderTest.pdf";
+        Document doc = createDocument(fileName);
 
         Table mainTable = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         Cell cell = new Cell()
@@ -290,13 +286,13 @@ public class TableBorderTest extends AbstractTableTest {
         mainTable.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(mainTable);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void wideBorderTest01() throws IOException, InterruptedException {
-        fileName = "wideBorderTest01.pdf";
-        Document doc = createDocument();
+        String fileName = "wideBorderTest01.pdf";
+        Document doc = createDocument(fileName);
 
         doc.add(new Paragraph("ROWS SHOULD BE THE SAME"));
 
@@ -324,14 +320,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void wideBorderTest02() throws IOException, InterruptedException {
-        fileName = "wideBorderTest02.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "wideBorderTest02.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
@@ -440,14 +435,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void wideBorderTest03() throws IOException, InterruptedException {
-        fileName = "wideBorderTest03.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "wideBorderTest03.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
@@ -481,14 +475,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void wideBorderTest04() throws IOException, InterruptedException {
-        fileName = "wideBorderTest04.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "wideBorderTest04.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument, new PageSize(200, 150));
@@ -510,14 +503,13 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
 
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void borderCollapseTest01() throws IOException, InterruptedException {
-        fileName = "borderCollapseTest01.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "borderCollapseTest01.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
@@ -534,14 +526,13 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void borderCollapseTest02() throws IOException, InterruptedException {
-        fileName = "borderCollapseTest02.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "borderCollapseTest02.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
@@ -570,14 +561,13 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void borderCollapseTest02A() throws IOException, InterruptedException {
-        fileName = "borderCollapseTest02A.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "borderCollapseTest02A.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
@@ -604,14 +594,13 @@ public class TableBorderTest extends AbstractTableTest {
         }
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void borderCollapseTest03() throws IOException, InterruptedException {
-        fileName = "borderCollapseTest03.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "borderCollapseTest03.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
@@ -641,14 +630,13 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void separatedBorderTest01A() throws IOException, InterruptedException {
-        fileName = "separatedBorderTest01A.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "separatedBorderTest01A.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
@@ -664,14 +652,13 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void separatedBorderTest01B() throws IOException, InterruptedException {
-        fileName = "separatedBorderTest01B.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "separatedBorderTest01B.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
@@ -687,14 +674,13 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void separatedBorderTest01C() throws IOException, InterruptedException {
-        fileName = "separatedBorderTest01C.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "separatedBorderTest01C.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
@@ -708,7 +694,7 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
@@ -716,8 +702,8 @@ public class TableBorderTest extends AbstractTableTest {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void infiniteLoopTest01() throws IOException, InterruptedException {
-        fileName = "infiniteLoopTest01.pdf";
-        Document doc = createDocument();
+        String fileName = "infiniteLoopTest01.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{1, 3}));
         table.setWidth(UnitValue.createPercentValue(50)).setProperty(Property.TABLE_LAYOUT, "fixed");
@@ -748,13 +734,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest01() throws IOException, InterruptedException {
-        fileName = "splitCellsTest01.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest01.pdf";
+        Document doc = createDocument(fileName);
 
         String longText = "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
                 "Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text.Very very very very very very very very very very very very very very very very very very long text." +
@@ -816,13 +802,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest02() throws IOException, InterruptedException {
-        fileName = "splitCellsTest02.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest02.pdf";
+        Document doc = createDocument(fileName);
 
         String text = "When a man hath no freedom to fight for at home,\n" +
                 "    Let him combat for that of his neighbours;\n" +
@@ -860,14 +846,14 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void splitCellsTest03() throws IOException, InterruptedException {
-        fileName = "splitCellsTest03.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest03.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(100, 160));
 
         String textAlphabet = "ABCDEFGHIJKLMNOPQRSTUWXYZ";
@@ -887,14 +873,14 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     // TODO (DEVSIX-1734 Run commented snippet to produce a bug.)
     public void splitCellsTest04() throws IOException, InterruptedException {
-        fileName = "splitCellsTest04.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest04.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 100 + 72));
 
         String text = "When a man hath no freedom to fight for at home,\n" +
@@ -918,18 +904,14 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-//        doc.add(new AreaBreak());
-//        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
-//        doc.add(table);
-
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     @Disabled("DEVSIX-1734")
     public void splitCellsTest04A() throws IOException, InterruptedException {
-        fileName = "splitCellsTest04A.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest04A.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 80 + 72));
 
         String text = "When a man hath no freedom to fight for at home,\n" +
@@ -952,13 +934,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.addFooterCell(new Cell().add(new Paragraph("Footer")).setBorderTop(new SolidBorder(ColorConstants.YELLOW, 20)));
 
         doc.add(table);
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest05() throws IOException, InterruptedException {
-        fileName = "splitCellsTest05.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest05.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 150));
 
         String text = "Cell";
@@ -981,13 +963,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest06() throws IOException, InterruptedException {
-        fileName = "splitCellsTest06.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest06.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 150));
 
         doc.add(new Paragraph("No more"));
@@ -1022,13 +1004,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest07() throws IOException, InterruptedException {
-        fileName = "splitCellsTest07.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest07.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(133, 180));
 
         String text = "Cell";
@@ -1053,13 +1035,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest08() throws IOException, InterruptedException {
-        fileName = "splitCellsTest08.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest08.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(134, 140));
 
         String text = "Cell";
@@ -1082,13 +1064,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest09() throws IOException, InterruptedException {
-        fileName = "splitCellsTest09.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest09.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 160));
 
         String text = "Cell";
@@ -1108,13 +1090,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest10() throws IOException, InterruptedException {
-        fileName = "splitCellsTest10.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest10.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(136, 142));
 
         String text = "Cell";
@@ -1137,13 +1119,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest10A() throws IOException, InterruptedException {
-        fileName = "splitCellsTest10A.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest10A.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 140));
 
         String textAlphabet = "Cell";
@@ -1159,14 +1141,14 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     @Disabled("DEVSIX-1736")
     public void splitCellsTest10B() throws IOException, InterruptedException {
-        fileName = "splitCellsTest10B.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest10B.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(130, 110));
 
         String textAlphabet = "Cell";
@@ -1188,13 +1170,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void splitCellsTest10C() throws IOException, InterruptedException {
-        fileName = "splitCellsTest10C.pdf";
-        Document doc = createDocument();
+        String fileName = "splitCellsTest10C.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(136, 142));
 
         String text = "Cell";
@@ -1220,15 +1202,15 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     // TODO DEVSIX-5834 Consider this test when deciding on the strategy:
     //  left-bottom corner could be magenta as in Chrome
     public void tableAndCellBordersCollapseTest01() throws IOException, InterruptedException {
-        fileName = "tableAndCellBordersCollapseTest01.pdf";
-        Document doc = createDocument();
+        String fileName = "tableAndCellBordersCollapseTest01.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 100));
@@ -1239,13 +1221,13 @@ public class TableBorderTest extends AbstractTableTest {
         );
 
         doc.add(table);
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest01() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest01.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest01.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(1000, 1000));
         String text = "Cell";
 
@@ -1272,14 +1254,14 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell(new Cell().add(new Paragraph("Hello"))).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     // TODO DEVSIX-5864 footer's top border / body's bottom border should be drawn by footer
     public void tableWithHeaderFooterTest02() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest02.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest02.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 1500));
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
 
@@ -1308,14 +1290,14 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 2)));
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     // TODO DEVSIX-5864 footer's top border / body's bottom border should be drawn by footer
     public void tableWithHeaderFooterTest02A() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest02A.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest02A.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(595, 1500));
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
 
@@ -1331,13 +1313,13 @@ public class TableBorderTest extends AbstractTableTest {
                 .setBorderTop(new SolidBorder(ColorConstants.RED, 200)));
 
         doc.add(table);
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest03() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest03.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest03.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addHeaderCell(new Cell().add(new Paragraph("Header")).setHeight(400).setBorder(new SolidBorder(ColorConstants.BLUE, 40)));
@@ -1366,13 +1348,13 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest04() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest04.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest04.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addHeaderCell(new Cell().add(new Paragraph("Header")).setBorder(new SolidBorder(ColorConstants.BLUE, 40)));
@@ -1388,13 +1370,13 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.MAGENTA, 5)));
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest05() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest05.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest05.pdf";
+        Document doc = createDocument(fileName);
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addCell(new Cell().add(new Paragraph("Cell")).setBorder(new SolidBorder(ColorConstants.MAGENTA, 30)).setHeight(30));
         table.addFooterCell(new Cell().add(new Paragraph("Footer")).setBorder(new SolidBorder(ColorConstants.BLUE, 50)).setHeight(30));
@@ -1426,14 +1408,14 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth().addCell("Hello").setBorder(new SolidBorder(ColorConstants.ORANGE, 5)));
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest06.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest06.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(PageSize.A6.rotate());
         Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
         Cell cell = new Cell(1, 5).add(new Paragraph("Table XYZ (Continued)")).setHeight(30).setBorderBottom(new SolidBorder(ColorConstants.RED, 20));
@@ -1453,15 +1435,14 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06A() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest06A.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "tableWithHeaderFooterTest06A.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument, PageSize.A6.rotate());
@@ -1484,14 +1465,13 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void verticalBordersInfluenceHorizontalTopAndBottomBordersTest() throws IOException, InterruptedException {
-        fileName = "verticalBordersInfluenceHorizontalTopAndbottomBordersTest.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "verticalBordersInfluenceHorizontalTopAndbottomBordersTest.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument, PageSize.A6.rotate());
@@ -1513,15 +1493,14 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 10)})
     public void tableWithHeaderFooterTest06B() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest06B.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String fileName = "tableWithHeaderFooterTest06B.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument, PageSize.A6.rotate());
@@ -1545,14 +1524,13 @@ public class TableBorderTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest07() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest07.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + "cmp_" + fileName;
+        String fileName = "tableWithHeaderFooterTest07.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
@@ -1572,14 +1550,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest08() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest08.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + "cmp_" + fileName;
+        String fileName = "tableWithHeaderFooterTest08.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
@@ -1601,14 +1578,13 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest09() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest09.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + "cmp_" + fileName;
+        String fileName = "tableWithHeaderFooterTest09.pdf";
+        String outFileName = destinationFolder + fileName;
 
         Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)), PageSize.A3.rotate());
         Cell headerCell1 = new Cell().add(new Paragraph("I am header"))
@@ -1684,14 +1660,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest10() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest10.pdf";
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + "cmp_" + fileName;
+        String fileName = "tableWithHeaderFooterTest10.pdf";
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(380, 300));
@@ -1719,13 +1694,13 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest11() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest11.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest11.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(90));
@@ -1751,14 +1726,14 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest11A() throws IOException, InterruptedException {
         String testName = "tableWithHeaderFooterTest11A.pdf";
         String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String cmpFileName = sourceFolder + cmpPrefix + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1792,8 +1767,8 @@ public class TableBorderTest extends AbstractTableTest {
 
     @Test
     public void tableWithHeaderFooterTest12() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest12.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest12.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.addHeaderCell(new Cell().setHeight(30).add(new Paragraph("Header")).setBorder(new SolidBorder(ColorConstants.BLUE, 5)));
@@ -1812,14 +1787,14 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Disabled("DEVSIX-1219")
     @Test
     public void tableWithHeaderFooterTest13() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest13.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest13.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addHeaderCell(new Cell().setHeight(30).add(new Paragraph("Header")).setBorder(new SolidBorder(ColorConstants.BLUE, 5)));
@@ -1847,13 +1822,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest14() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest14.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest14.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(new float[3]);
         for (int r = 0; r < 1; r++) {
@@ -1889,13 +1864,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest15() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest15.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest15.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addHeaderCell(new Cell().setHeight(30).add(new Paragraph("Header")).setBorder(new DottedBorder(ColorConstants.RED, 20)));
@@ -1913,13 +1888,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest16() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest16.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest16.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
 
@@ -1946,13 +1921,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest17() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest17.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest17.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 300));
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
@@ -1973,13 +1948,13 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest18() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest18.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest18.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 400));
 
         // only footer
@@ -2019,13 +1994,13 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableWithHeaderFooterTest19() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest19.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest19.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 400));
 
         // footer and body
@@ -2063,14 +2038,14 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void tableWithHeaderFooterTest20() throws IOException, InterruptedException {
-        fileName = "tableWithHeaderFooterTest20.pdf";
-        Document doc = createDocument();
+        String fileName = "tableWithHeaderFooterTest20.pdf";
+        Document doc = createDocument(fileName);
         doc.getPdfDocument().setDefaultPageSize(new PageSize(300, 115 + 72));
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
@@ -2085,13 +2060,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void cellBorderPriorityTest() throws IOException, InterruptedException {
-        fileName = "cellBorderPriorityTest.pdf";
-        Document doc = createDocument();
+        String fileName = "cellBorderPriorityTest.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
 
@@ -2107,13 +2082,13 @@ public class TableBorderTest extends AbstractTableTest {
         }
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void cellBorderPriorityTest02() throws IOException, InterruptedException {
-        fileName = "cellBorderPriorityTest02.pdf";
-        Document doc = createDocument();
+        String fileName = "cellBorderPriorityTest02.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
 
@@ -2135,13 +2110,13 @@ public class TableBorderTest extends AbstractTableTest {
         }
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void cellsBorderPriorityTest() throws IOException, InterruptedException {
-        fileName = "cellsBorderPriorityTest.pdf";
-        Document doc = createDocument();
+        String fileName = "cellsBorderPriorityTest.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(2));
 
@@ -2163,13 +2138,13 @@ public class TableBorderTest extends AbstractTableTest {
 
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void tableBorderPriorityTest() throws IOException, InterruptedException {
-        fileName = "tableBorderPriorityTest.pdf";
-        Document doc = createDocument();
+        String fileName = "tableBorderPriorityTest.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.setBorderTop(new SolidBorder(ColorConstants.RED, 20));
@@ -2181,7 +2156,7 @@ public class TableBorderTest extends AbstractTableTest {
         table.addCell(cell);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
@@ -2189,8 +2164,8 @@ public class TableBorderTest extends AbstractTableTest {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     public void splitRowspanKeepTogetherTest() throws IOException, InterruptedException {
-        fileName = "splitRowspanKeepTogetherTest.pdf";
-        Document doc = createDocument();
+        String fileName = "splitRowspanKeepTogetherTest.pdf";
+        Document doc = createDocument(fileName);
 
         String textByron =
                 "When a man hath no freedom to fight for at home,\n" +
@@ -2223,7 +2198,7 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
@@ -2233,8 +2208,8 @@ public class TableBorderTest extends AbstractTableTest {
 
     })
     public void forcedPlacementTest01() throws IOException, InterruptedException {
-        fileName = "forcedPlacementTest01.pdf";
-        Document doc = createDocument();
+        String fileName = "forcedPlacementTest01.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.setWidth(10).setProperty(Property.TABLE_LAYOUT, "fixed");
@@ -2255,13 +2230,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void noHorizontalBorderTest() throws IOException, InterruptedException {
-        fileName = "noHorizontalBorderTest.pdf";
-        Document doc = createDocument();
+        String fileName = "noHorizontalBorderTest.pdf";
+        Document doc = createDocument(fileName);
 
         Table mainTable = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         Cell cell = new Cell()
@@ -2277,13 +2252,13 @@ public class TableBorderTest extends AbstractTableTest {
         mainTable.setVerticalBorderSpacing(20);
         doc.add(mainTable);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void bordersWithSpansTest01() throws IOException, InterruptedException {
-        fileName = "bordersWithSpansTest01.pdf";
-        Document doc = createDocument();
+        String fileName = "bordersWithSpansTest01.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(10)).useAllAvailableWidth();
         table.setWidth(UnitValue.createPercentValue(100));
@@ -2299,13 +2274,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setHorizontalBorderSpacing(20);
         table.setVerticalBorderSpacing(20);
         doc.add(table);
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void bordersWithSpansTest02() throws IOException, InterruptedException {
-        fileName = "bordersWithSpansTest02.pdf";
-        Document doc = createDocument();
+        String fileName = "bordersWithSpansTest02.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.addCell(new Cell().add(new Paragraph("Liberte")).setBorder(new SolidBorder(ColorConstants.MAGENTA, 1)));
@@ -2322,13 +2297,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void bordersWithSpansTest03() throws IOException, InterruptedException {
-        fileName = "bordersWithSpansTest03.pdf";
-        Document doc = createDocument();
+        String fileName = "bordersWithSpansTest03.pdf";
+        Document doc = createDocument(fileName);
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
         table.addCell(new Cell(6, 1).add(new Paragraph("Fra")).setBorder(new SolidBorder(ColorConstants.ORANGE, 10)));
@@ -2346,13 +2321,13 @@ public class TableBorderTest extends AbstractTableTest {
         table.setVerticalBorderSpacing(20);
         doc.add(table);
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void headerTopBorderTest01() throws IOException, InterruptedException {
-        fileName = "headerTopBorderTest01.pdf";
-        Document doc = createDocument();
+        String fileName = "headerTopBorderTest01.pdf";
+        Document doc = createDocument(fileName);
 
         for (int i = 0; i < 29; ++i) {
             doc.add(new Paragraph("aaaaaaaaaaaa"));
@@ -2368,13 +2343,13 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(table);
         doc.add(new Paragraph("Correct result:"));
         doc.add(table);
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void equalBordersSameInstancesTest() throws IOException, InterruptedException {
-        fileName = "equalBordersSameInstancesTest.pdf";
-        Document doc = createDocument();
+        String fileName = "equalBordersSameInstancesTest.pdf";
+        Document doc = createDocument(fileName);
 
         Border border = new SolidBorder(ColorConstants.RED, 20);
 
@@ -2392,14 +2367,14 @@ public class TableBorderTest extends AbstractTableTest {
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
                 .addCell(new Cell().add(new Paragraph("Hello"))).setBorder(new SolidBorder(ColorConstants.BLACK, 10)));
 
-        closeDocumentAndCompareOutputs(doc);
+        closeDocumentAndCompareOutputs(doc, fileName);
     }
 
     @Test
     public void verticalMiddleBorderTest() throws IOException, InterruptedException {
         String testName = "verticalMiddleBorderTest.pdf";
         String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String cmpFileName = sourceFolder + cmpPrefix + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2422,16 +2397,17 @@ public class TableBorderTest extends AbstractTableTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
     }
 
-    private Document createDocument() throws IOException {
-        outFileName = destinationFolder + fileName;
-        cmpFileName = sourceFolder + cmpPrefix + fileName;
+    private static Document createDocument(String fileName) throws IOException {
+        String outFileName = destinationFolder + fileName;
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         return new Document(pdfDocument);
     }
 
-    private void closeDocumentAndCompareOutputs(Document document) throws IOException, InterruptedException {
+    private static void closeDocumentAndCompareOutputs(Document document, String fileName) throws IOException, InterruptedException {
+        String cmpFileName = sourceFolder + cmpPrefix + fileName;
+        String outFileName = destinationFolder + fileName;
         document.close();
         String compareResult = new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff");
         if (compareResult != null) {

@@ -25,7 +25,6 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.layout.properties.JustifyContent;
 import com.itextpdf.layout.renderer.FlexUtil.FlexItemCalculationInfo;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

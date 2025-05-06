@@ -31,8 +31,17 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
-import com.itextpdf.layout.properties.*;
+import com.itextpdf.layout.properties.AlignmentPropertyValue;
+import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.BoxSizingPropertyValue;
+import com.itextpdf.layout.properties.FlexDirectionPropertyValue;
+import com.itextpdf.layout.properties.FlexWrapPropertyValue;
+import com.itextpdf.layout.properties.JustifyContent;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -47,7 +56,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class FlexContainerColumnTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FlexContainerColumnTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/FlexContainerColumnTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/FlexContainerColumnTest/";
 
     @BeforeAll
     public static void beforeClass() {

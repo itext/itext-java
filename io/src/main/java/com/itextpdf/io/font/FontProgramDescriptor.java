@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.constants.FontMacStyleFlags;
 
 import java.util.HashSet;
@@ -62,16 +63,16 @@ public class FontProgramDescriptor {
 
     FontProgramDescriptor(FontNames fontNames, float italicAngle, boolean isMonospace) {
         this.fontName = fontNames.getFontName();
-        this.fontNameLowerCase = this.fontName.toLowerCase();
-        this.fullNameLowerCase = fontNames.getFullName()[0][3].toLowerCase();
+        this.fontNameLowerCase = StringNormalizer.toLowerCase(this.fontName);
+        this.fullNameLowerCase = StringNormalizer.toLowerCase(fontNames.getFullName()[0][3]);
         this.familyNameLowerCase = fontNames.getFamilyName() != null && fontNames.getFamilyName()[0][3] != null ?
-                fontNames.getFamilyName()[0][3].toLowerCase() : null;
+                StringNormalizer.toLowerCase(fontNames.getFamilyName()[0][3]) : null;
         // For font family2 let's take the last element in array. The family in the 1st element has high chance
         // to be the same as returned by getFamilyName. Ideally we should take different families based on OS
         // but it breaks the compatibility, produces different results on different OSs etc.
         String[][] familyName2 = fontNames.getFamilyName2();
         this.familyName2LowerCase = familyName2 != null && familyName2[familyName2.length - 1][3] != null ?
-                familyName2[familyName2.length - 1][3].toLowerCase() : null;
+                StringNormalizer.toLowerCase(familyName2[familyName2.length - 1][3]) : null;
         this.style = fontNames.getStyle();
         this.weight = fontNames.getFontWeight();
         this.macStyle = fontNames.getMacStyle();
@@ -144,7 +145,7 @@ public class FontProgramDescriptor {
     private Set<String> extractFullFontNames(FontNames fontNames) {
         Set<String> uniqueFullNames = new HashSet<>();
         for (String[] fullName : fontNames.getFullName())
-            uniqueFullNames.add(fullName[3].toLowerCase());
+            uniqueFullNames.add(StringNormalizer.toLowerCase(fullName[3]));
         return uniqueFullNames;
     }
 
@@ -153,7 +154,7 @@ public class FontProgramDescriptor {
             for (int k = 0; k < TT_FAMILY_ORDER.length; k += 3) {
                 for (String[] name : fontNames.getFamilyName()) {
                     if (TT_FAMILY_ORDER[k].equals(name[0]) && TT_FAMILY_ORDER[k + 1].equals(name[1]) && TT_FAMILY_ORDER[k + 2].equals(name[2])) {
-                        return name[3].toLowerCase();
+                        return StringNormalizer.toLowerCase(name[3]);
                     }
                 }
             }

@@ -54,6 +54,7 @@ import com.itextpdf.kernel.utils.annotationsflattening.PdfAnnotationFlattenFacto
 import com.itextpdf.kernel.utils.annotationsflattening.RemoveWithoutDrawingFlattener;
 import com.itextpdf.kernel.utils.annotationsflattening.WarnFormfieldFlattener;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -64,14 +65,14 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/utils/flatteningTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/utils/flatteningTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/utils/flatteningTest/";
 
     @BeforeAll
     public static void beforeClass() {

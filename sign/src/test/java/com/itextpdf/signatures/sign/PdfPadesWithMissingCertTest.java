@@ -38,6 +38,7 @@ import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -64,7 +65,7 @@ public class PdfPadesWithMissingCertTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PdfPadesWithMissingCertTest/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 

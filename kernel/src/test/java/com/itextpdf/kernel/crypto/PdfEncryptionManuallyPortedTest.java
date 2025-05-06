@@ -48,6 +48,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -82,7 +83,7 @@ import org.junit.jupiter.api.Tag;
 public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/PdfEncryptionManuallyPortedTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/crypto/PdfEncryptionManuallyPortedTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/PdfEncryptionManuallyPortedTest/";
 
     public static final char[] PRIVATE_KEY_PASS = "testpassphrase".toCharArray();

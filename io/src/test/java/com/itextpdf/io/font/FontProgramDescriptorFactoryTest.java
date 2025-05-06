@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
@@ -36,7 +37,7 @@ public class FontProgramDescriptorFactoryTest extends ExtendedITextTest {
     public void kozminNamesTest() {
         FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor("KozMinPro-Regular");
         Assertions.assertEquals("KozMinPro-Regular", descriptor.getFontName());
-        Assertions.assertEquals("KozMinPro-Regular".toLowerCase(), descriptor.getFullNameLowerCase());
+        Assertions.assertEquals(StringNormalizer.toLowerCase("KozMinPro-Regular"), descriptor.getFullNameLowerCase());
         Assertions.assertEquals(400, descriptor.getFontWeight());
     }
 

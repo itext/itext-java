@@ -24,15 +24,32 @@ package com.itextpdf.io.exceptions;
 
 import com.itextpdf.commons.exceptions.ITextException;
 
+/**
+ * General compressed font parsing exception.
+ */
 public class FontCompressionException extends ITextException {
 
+    /**
+     * Creates a new {@link FontCompressionException}.
+     */
     public FontCompressionException() {
     }
 
+    /**
+     * Creates a new {@link FontCompressionException}.
+     *
+     * @param message the detail message
+     */
     public FontCompressionException(String message) {
         super(message);
     }
 
+    /**
+     * Creates a new {@link FontCompressionException}.
+     *
+     * @param message the detail message
+     * @param cause the cause (which is saved for later retrieval by {@link #getCause()} method)
+     */
     public FontCompressionException(String message, Throwable cause) {
         super(message, cause);
     }

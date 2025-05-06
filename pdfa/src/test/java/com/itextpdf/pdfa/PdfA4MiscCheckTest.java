@@ -34,19 +34,20 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfA4MiscCheckTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA4MiscCheckTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4MiscCheckTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4MiscCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -24,6 +24,8 @@ package com.itextpdf.kernel.pdf.navigation;
 
 import com.itextpdf.kernel.pdf.IPdfNameTreeAccess;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 
@@ -40,9 +42,14 @@ public class PdfStringDestination extends PdfDestination {
 
     @Override
     public PdfObject getDestinationPage(IPdfNameTreeAccess names) {
-        PdfArray array = (PdfArray) names.getEntry((PdfString) getPdfObject());
-
-        return array != null ? array.get(0) : null;
+        PdfObject destination = names.getEntry((PdfString) getPdfObject());
+        if (destination instanceof PdfArray) {
+            return ((PdfArray) destination).get(0);
+        } else if (destination instanceof PdfDictionary) {
+            PdfArray destinationArray = ((PdfDictionary) destination).getAsArray(PdfName.D);
+            return destinationArray != null ? destinationArray.get(0) : null;
+        }
+        return null;
     }
 
     @Override

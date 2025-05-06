@@ -49,24 +49,26 @@ import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
 public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA1AnnotationCheckTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA1AnnotationCheckTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA1AnnotationCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -253,6 +255,44 @@ public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
         page.addAnnotation(annot);
         doc.close();
         compareResult(outPdf, cmpPdf);
+    }
+
+    @Test
+    public void annotationCheckTest10() throws IOException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1B,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        Rectangle rect = new Rectangle(100, 100, 100, 100);
+        PdfMarkupAnnotation annot = new PdfTextAnnotation(rect);
+        annot.setFlags(PdfAnnotation.PRINT | PdfAnnotation.NO_ROTATE);
+
+        page.addAnnotation(annot);
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfAConformanceLogMessageConstant.
+                        TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1,
+                e.getMessage());
+    }
+
+    @Test
+    public void annotationCheckTest11() throws IOException {
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1B,
+                new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
+        PdfPage page = doc.addNewPage();
+
+        Rectangle rect = new Rectangle(100, 100, 100, 100);
+        PdfMarkupAnnotation annot = new PdfTextAnnotation(rect);
+        annot.setFlags(PdfAnnotation.PRINT | PdfAnnotation.NO_ZOOM);
+
+        page.addAnnotation(annot);
+        Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(PdfAConformanceLogMessageConstant.
+                        TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1,
+                e.getMessage());
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {

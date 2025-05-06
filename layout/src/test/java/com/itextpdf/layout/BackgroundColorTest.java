@@ -28,23 +28,22 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
+
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 
 @Tag("IntegrationTest")
 public class BackgroundColorTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BackgroundColorTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/BackgroundColorTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/BackgroundColorTest/";
     public static final String cmpPrefix = "cmp_";
 
     String fileName;

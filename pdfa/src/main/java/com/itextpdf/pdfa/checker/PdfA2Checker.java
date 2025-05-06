@@ -53,6 +53,7 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
@@ -405,6 +406,11 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
+    /**
+     * Checks the number of components in DeviceN color space.
+     *
+     * @param deviceN the color space to check
+     */
     protected void checkNumberOfDeviceNComponents(PdfSpecialCs.DeviceN deviceN) {
         if (deviceN.getNumberOfComponents() > MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS) {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.
@@ -416,7 +422,7 @@ public class PdfA2Checker extends PdfA1Checker {
     @Override
     protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
         String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
-        // non-symbolic true type font will always has an encoding entry in font dictionary in itext
+        // non-symbolic true type font will always have an encoding entry in font dictionary in itext
         if (!PdfEncodings.WINANSI.equals(encoding) && !PdfEncodings.MACROMAN.equals(encoding)) {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_ENCODING_OR_WIN_ANSI_ENCODING, trueTypeFont);
         }
@@ -463,16 +469,14 @@ public class PdfA2Checker extends PdfA1Checker {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.AN_ANNOTATION_DICTIONARY_SHALL_CONTAIN_THE_F_KEY);
             }
             int flags = f.intValue();
-            if (!checkFlag(flags, PdfAnnotation.PRINT)
-                    || checkFlag(flags, PdfAnnotation.HIDDEN)
-                    || checkFlag(flags, PdfAnnotation.INVISIBLE)
-                    || checkFlag(flags, PdfAnnotation.NO_VIEW)
-                    || checkFlag(flags, PdfAnnotation.TOGGLE_NO_VIEW)) {
+            if (isAnnotationInvisible(flags)) {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_NOVIEW_AND_TOGGLENOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
             }
             if (subtype.equals(PdfName.Text)) {
-                if (!checkFlag(flags, PdfAnnotation.NO_ZOOM) || !checkFlag(flags, PdfAnnotation.NO_ROTATE)) {
-                    throw new PdfAConformanceException(PdfAConformanceLogMessageConstant.TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1);
+                if (!PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_ZOOM) ||
+                        !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_ROTATE)) {
+                    throw new PdfAConformanceException(PdfAConformanceLogMessageConstant.
+                            TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1);
                 }
             }
         }
@@ -578,7 +582,7 @@ public class PdfA2Checker extends PdfA1Checker {
 
             PdfArray fields = form.getAsArray(PdfName.Fields);
             if (fields != null) {
-                fields = getFormFields(fields);
+                fields = PdfCheckersUtil.getFormFields(fields);
                 for (PdfObject field : fields) {
                     PdfDictionary fieldDic = (PdfDictionary) field;
                     checkResources(fieldDic.getAsDictionary(PdfName.DR), fieldDic);
@@ -1095,6 +1099,21 @@ public class PdfA2Checker extends PdfA1Checker {
         }
     }
 
+    void checkResourcesForTransparency(PdfDictionary resources, Set<PdfObject> checkedObjects) {
+        if (resources != null) {
+            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.XObject), checkedObjects);
+            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.Pattern), checkedObjects);
+        }
+    }
+
+    private static boolean isAnnotationInvisible(int flags) {
+        return !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.PRINT)
+                || PdfCheckersUtil.checkFlag(flags, PdfAnnotation.HIDDEN)
+                || PdfCheckersUtil.checkFlag(flags, PdfAnnotation.INVISIBLE)
+                || PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_VIEW)
+                || PdfCheckersUtil.checkFlag(flags, PdfAnnotation.TOGGLE_NO_VIEW);
+    }
+
     private void checkAppearanceStreamForTransparency(PdfDictionary ap, Set<PdfObject> checkedObjects) {
         if (checkedObjects.contains(ap)) {
             return;
@@ -1125,13 +1144,6 @@ public class PdfA2Checker extends PdfA1Checker {
         }
         if (objectWithResources instanceof PdfDictionary) {
             checkResourcesForTransparency(((PdfDictionary) objectWithResources).getAsDictionary(PdfName.Resources), checkedObjects);
-        }
-    }
-
-    void checkResourcesForTransparency(PdfDictionary resources, Set<PdfObject> checkedObjects) {
-        if (resources != null) {
-            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.XObject), checkedObjects);
-            checkSingleResourceTypeForTransparency(resources.getAsDictionary(PdfName.Pattern), checkedObjects);
         }
     }
 

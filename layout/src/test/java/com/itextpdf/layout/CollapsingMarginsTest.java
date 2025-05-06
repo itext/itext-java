@@ -40,19 +40,20 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class CollapsingMarginsTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/CollapsingMarginsTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/layout/CollapsingMarginsTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/layout/CollapsingMarginsTest/";
 
     private static final String TEXT_BYRON = "When a man hath no freedom to fight for at home,\n" +
             "    Let him combat for that of his neighbours;\n" +

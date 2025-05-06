@@ -38,6 +38,7 @@ import com.itextpdf.layout.properties.ListSymbolAlignment;
 import com.itextpdf.layout.properties.ListSymbolPosition;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -55,7 +56,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 
 	public static final String SOURCE_FOLDER  = "./src/test/resources/com/itextpdf/layout/ListItemPositionAlignmentTest/";
-	public static final String DESTINATION_FOLDER  = "./target/test/com/itextpdf/layout/ListItemPositionAlignmentTest/";
+	public static final String DESTINATION_FOLDER  = TestUtil.getOutputPath() + "/layout/ListItemPositionAlignmentTest/";
 
 	private static final String PARAMETERS_NAME_PATTERN = "{index}: list-base-direction: {0}; list-item-base-direction: {1};" +
 	                                                      " list-symbol-alignment: {2}; list-symbol-position: {3};";

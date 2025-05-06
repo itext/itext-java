@@ -34,17 +34,18 @@ import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfA4EmbeddedFilesCheckTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4EmbeddedFilesCheckTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4EmbeddedFilesCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

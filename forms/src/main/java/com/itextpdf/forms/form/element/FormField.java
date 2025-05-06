@@ -150,4 +150,16 @@ public abstract class FormField<T extends IFormField> extends AbstractElement<T>
         setProperty(FormProperty.FORM_FIELD_FLATTEN, !interactive);
         return this;
     }
+
+    /**
+     * Sets the form field's alternative description.
+     *
+     * @param alternativeDescription form field's alternative description.
+     *
+     * @return this same {@link FormField} element.
+     */
+    public IFormField setAlternativeDescription(String alternativeDescription) {
+        getAccessibilityProperties().setAlternateDescription(alternativeDescription);
+        return this;
+    }
 }

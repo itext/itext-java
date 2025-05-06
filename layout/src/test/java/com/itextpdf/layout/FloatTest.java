@@ -23,9 +23,9 @@
 package com.itextpdf.layout;
 
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -51,21 +51,21 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FloatTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FloatTest/";
 
     private static final String shortText =
             "Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document. ";

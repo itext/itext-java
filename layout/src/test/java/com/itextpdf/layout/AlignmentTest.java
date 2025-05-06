@@ -36,25 +36,41 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.properties.*;
+import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.Background;
+import com.itextpdf.layout.properties.FloatPropertyValue;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.InlineVerticalAlignment;
+import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
+import com.itextpdf.layout.properties.LineHeight;
+import com.itextpdf.layout.properties.ListNumberingType;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class AlignmentTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/AlignmentTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/AlignmentTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/AlignmentTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll
@@ -634,6 +650,72 @@ public class AlignmentTest extends ExtendedITextTest {
                     .setWidth(60)
                     .setTextAlignment(TextAlignment.JUSTIFIED);
 
+            document.add(p);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void middleAlignmentWithTtfOS2Version3Test() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "middleAlignmentWithTtfOS2Version3Test.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_middleAlignmentWithTtfOS2Version3Test.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDoc);
+
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "Open_Sans/OpenSans-Bold.ttf");
+            document.setFont(font);
+
+            Paragraph p = new Paragraph();
+            p.setBackgroundColor(new DeviceRgb(189, 239, 73));
+            p.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            p.setFontSize(30);
+
+            Text heightDefiner = new Text(" Xj ");
+
+            p.add(heightDefiner).setMarginTop(30);
+            Text text1 = new Text(" mAlign Middle Alignment ");
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, new InlineVerticalAlignment(InlineVerticalAlignmentType.MIDDLE));
+
+            text1.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            text1.setFontSize(12);
+
+            p.add(text1);
+            p.add(heightDefiner);
+            document.add(p);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void middleAlignmentWithTtfOS2Version1Test() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "middleAlignmentWithTtfOS2Version1Test.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_middleAlignmentWithTtfOS2Version1Test.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+            Document document = new Document(pdfDoc);
+
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf");
+            document.setFont(font);
+
+            Paragraph p = new Paragraph();
+            p.setBackgroundColor(new DeviceRgb(189, 239, 73));
+            p.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            p.setFontSize(30);
+
+            Text heightDefiner = new Text(" Xj ");
+
+            p.add(heightDefiner).setMarginTop(30);
+            Text text1 = new Text(" mAlign Middle Alignment ");
+            text1.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, new InlineVerticalAlignment(InlineVerticalAlignmentType.MIDDLE));
+
+            text1.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            text1.setFontSize(12);
+
+            p.add(text1);
+            p.add(heightDefiner);
             document.add(p);
         }
 

@@ -142,21 +142,22 @@ class CollapsedTableBorders extends TableBorders {
 
     @Override
     public List<Border> getVerticalBorder(int index) {
-        if (index == 0 || index == numberOfColumns) {
-            if (verticalBorderComputationResult.containsKey(index)) {
-                return verticalBorderComputationResult.get(index);
-            }
-            final int tableBoundingBordersIndex = index == 0 ? 3 : 1;
-            List<Border> borderList = TableBorderUtil.createAndFillBorderList(
-                    null,
-                    tableBoundingBorders[tableBoundingBordersIndex],
-                    verticalBorders.get(index).size());
-            List<Border> result = getCollapsedList(verticalBorders.get(index), borderList);
-            verticalBorderComputationResult.put(index, result);
-            return result;
-        } else {
+        //If not outermost we don't need to calculate collapsed borders
+        if (index != 0 && index != numberOfColumns) {
             return verticalBorders.get(index);
         }
+        if (verticalBorderComputationResult.containsKey(index)) {
+            return verticalBorderComputationResult.get(index);
+        }
+        final int tableBoundingBordersIndex = index == 0 ? 3 : 1;
+        final Border boundingBorder = tableBoundingBorders[tableBoundingBordersIndex];
+        final List<Border> verticalBorder = verticalBorders.get(index) ;
+
+        final List<Border> borderList = TableBorderUtil
+                .createAndFillBorderList(null, boundingBorder, verticalBorder.size());
+        final List<Border> result = getCollapsedList(verticalBorder, borderList);
+        verticalBorderComputationResult.put(index, result);
+        return result;
     }
 
 

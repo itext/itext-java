@@ -29,16 +29,24 @@ import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import java.util.Arrays;
 
 /***
- * Implements lineTo(L) attribute of SVG's path element
+ * Implements lineTo(L) attribute of SVG's path element.
  * */
 public class LineTo extends AbstractPathShape {
 
     static final int ARGUMENT_SIZE = 2;
 
+    /**
+     * Creates new {@link LineTo} instance.
+     */
     public LineTo() {
         this(false);
     }
 
+    /**
+     * Creates new {@link LineTo} instance.
+     *
+     * @param relative {@code true} in case it is a relative operator, {@code false} if it is an absolute operator
+     */
     public LineTo(boolean relative) {
         super(relative);
     }

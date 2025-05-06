@@ -90,4 +90,22 @@ public class FontEncodingTest extends ExtendedITextTest {
         FontEncoding encoding = FontEncoding.createFontSpecificEncoding();
         Assertions.assertTrue(encoding.isFontSpecific());
     }
+
+    @Test
+    public void createFontEncodingTest() {
+        FontEncoding encoding = FontEncoding.createFontEncoding("# full 'A' Aring 0041 'E' Egrave 0045 32 space 0020");
+        Assertions.assertEquals(3, encoding.unicodeToCode.size());
+    }
+
+    @Test
+    public void normalizeEncodingTest() {
+        Assertions.assertEquals(PdfEncodings.WINANSI, FontEncoding.normalizeEncoding(null));
+        Assertions.assertEquals(PdfEncodings.WINANSI, FontEncoding.normalizeEncoding(""));
+        Assertions.assertEquals(PdfEncodings.WINANSI, FontEncoding.normalizeEncoding("winansi"));
+        Assertions.assertEquals(PdfEncodings.WINANSI, FontEncoding.normalizeEncoding("winansiencoding"));
+        Assertions.assertEquals(PdfEncodings.MACROMAN, FontEncoding.normalizeEncoding("macroman"));
+        Assertions.assertEquals(PdfEncodings.MACROMAN, FontEncoding.normalizeEncoding("macromanencoding"));
+        Assertions.assertEquals(PdfEncodings.ZAPFDINGBATS, FontEncoding.normalizeEncoding("zapfdingbatsencoding"));
+        Assertions.assertEquals("notknown", FontEncoding.normalizeEncoding("notknown"));
+    }
 }

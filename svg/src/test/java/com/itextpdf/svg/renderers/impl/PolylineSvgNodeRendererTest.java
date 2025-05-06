@@ -34,6 +34,7 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,16 +42,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/PolylineSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

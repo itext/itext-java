@@ -26,23 +26,23 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfPrimitivesTest extends ExtendedITextTest{
 
-    static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPrimitivesTest/";
+    static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfPrimitivesTest/";
     static final PdfName TestArray = new PdfName("TestArray");
     static final int DefaultArraySize = 64;
     static final int PageCount = 1000;

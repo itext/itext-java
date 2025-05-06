@@ -22,7 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.util.StreamUtil;
@@ -210,7 +210,7 @@ public class PdfButtonFormField extends PdfFormField {
      */
     public PdfButtonFormField setImage(String image) throws IOException {
         InputStream is = FileUtil.getInputStreamForFile(image);
-        String str = Base64.encodeBytes(StreamUtil.inputStreamToArray(is));
+        String str = EncodingUtil.toBase64(StreamUtil.inputStreamToArray(is));
         return (PdfButtonFormField) setValue(str);
     }
 

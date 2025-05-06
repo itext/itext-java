@@ -25,9 +25,9 @@ package com.itextpdf.svg.css;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class DirectionTest extends SvgIntegrationTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/DirectionTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/DirectionTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/DirectionTest/";
 
     @BeforeAll
     public static void beforeClass() {

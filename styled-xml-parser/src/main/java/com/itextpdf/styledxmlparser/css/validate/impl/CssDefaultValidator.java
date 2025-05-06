@@ -38,6 +38,7 @@ import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssQuotesValidato
 import com.itextpdf.styledxmlparser.css.validate.impl.datatype.CssTransformValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.declaration.MultiTypeDeclarationValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.declaration.SingleTypeDeclarationValidator;
+import com.itextpdf.styledxmlparser.util.CssVariableUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -59,6 +60,9 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
                     CommonCssConstants.INHERIT, CommonCssConstants.CURRENTCOLOR),
             new CssColorValidator());
 
+    /**
+     * Instantiates a new {@link CssDefaultValidator} instance with the default validators map.
+     */
     public CssDefaultValidator() {
         final CssEnumValidator normalValidator = new CssEnumValidator(CommonCssConstants.NORMAL);
         final CssEnumValidator relativeSizeValidator =
@@ -215,7 +219,10 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
     @Override
     public boolean isValid(CssDeclaration declaration) {
         ICssDeclarationValidator validator = defaultValidators.get(declaration.getProperty());
-        return validator == null || validator.isValid(declaration);
+        // In case of var() expression presence in declaration expression we can't validate it.
+        // It should be expanded first by calling com.itextpdf.styledxmlparser.util.StyleUtil#resolveCssVariables
+        boolean isVarExpression = CssVariableUtil.containsVarExpression(declaration.getExpression());
+        return isVarExpression || validator == null || validator.isValid(declaration);
     }
 
     private static void addColumnRuleValidation(Map<String, ICssDeclarationValidator> container) {

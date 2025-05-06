@@ -26,6 +26,7 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,14 +34,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 // Android-Conversion-Skip-File (ghostscript isn't available on Android)
 public class GhostscriptHelperTest extends ExtendedITextTest {
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/GhostscriptHelperTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/GhostscriptHelperTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/io/GhostscriptHelperTest/";
 
     // In some of the test we will check whether Ghostscript has printed its help message to the console.
     // The value of this threshold should be definitely less than the length of the help message.

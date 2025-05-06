@@ -101,7 +101,6 @@ public class TextRenderInfoTest extends ExtendedITextTest {
     @Test
     public void testDoubleMappedCharacterExtraction() throws IOException {
         String inFile = "double_cmap_mapping.pdf";
-        // TODO after fixing DEVSIX-6089 first hyphen should be 002D instead of 2011. The similar for the second line
         String expectedResult = "Regular hyphen [\u002D] and non-breaking hyphen [\u002D] (both CID 14)\n"
                 + "Turtle kyuujitai [\u9f9c] and turtle radical [\u9f9c] (both CID 7472)";
 

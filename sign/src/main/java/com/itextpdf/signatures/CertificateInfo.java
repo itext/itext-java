@@ -29,6 +29,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Set;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.exceptions.PdfException;
 
 import java.io.ByteArrayInputStream;
@@ -220,7 +221,7 @@ public class CertificateInfo {
                     .directory.string")*/);
                 }
 
-                String id = token.substring(0, index).toUpperCase();
+                String id = StringNormalizer.toUpperCase(token.substring(0, index));
                 String value = token.substring(index + 1);
                 List<String> vs = values.get(id);
                 if (vs == null) {

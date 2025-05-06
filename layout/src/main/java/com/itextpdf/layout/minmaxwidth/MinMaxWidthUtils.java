@@ -55,12 +55,40 @@ public final class MinMaxWidthUtils {
         return Math.abs(x - y) < eps;
     }
 
+    /**
+     * Default implementation for min max width calculation.
+     *
+     * @param renderer renderer to calculate min max width for
+     *
+     * @return {@link MinMaxWidth} instance
+     */
     public static MinMaxWidth countDefaultMinMaxWidth(IRenderer renderer) {
         LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(getInfWidth(), getInfHeight()))));
         return result.getStatus() == LayoutResult.NOTHING ? new MinMaxWidth() :
                 new MinMaxWidth(0, result.getOccupiedArea().getBBox().getWidth(), 0);
     }
-    
+
+    /**
+     * Default implementation for min max width calculation.
+     *
+     * @param renderer renderer to calculate min max width for
+     * @param areaMaxWidth max available area for layout
+     *
+     * @return {@link MinMaxWidth} instance
+     */
+    public static MinMaxWidth countDefaultMinMaxWidth(IRenderer renderer, float areaMaxWidth) {
+        LayoutResult result = renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(areaMaxWidth, getInfHeight()))));
+        return result.getStatus() == LayoutResult.NOTHING ? new MinMaxWidth() :
+                new MinMaxWidth(0, result.getOccupiedArea().getBBox().getWidth(), 0);
+    }
+
+    /**
+     * Get sum of left and right borders for the element.
+     *
+     * @param element element to calculate borders width for
+     *
+     * @return sum of left and right borders as {@code float}
+     */
     public static float getBorderWidth(IPropertyContainer element) {
         Border rightBorder = element.<Border>getProperty(Property.BORDER_RIGHT);
         Border leftBorder = element.<Border>getProperty(Property.BORDER_LEFT);
@@ -69,7 +97,14 @@ public final class MinMaxWidthUtils {
         float leftBorderWidth = leftBorder != null ? leftBorder.getWidth() : 0;
         return rightBorderWidth + leftBorderWidth;
     }
-    
+
+    /**
+     * Get sum of left and right margins for the element.
+     *
+     * @param element element to calculate margins width for
+     *
+     * @return sum of left and right margins as {@code float}
+     */
     public static float getMarginsWidth(IPropertyContainer element) {
         UnitValue rightMargin = element.<UnitValue>getProperty(Property.MARGIN_RIGHT);
         if (null != rightMargin && !rightMargin.isPointValue()) {
@@ -89,7 +124,14 @@ public final class MinMaxWidthUtils {
         
         return  rightMarginWidth + leftMarginWidth;
     }
-    
+
+    /**
+     * Get sum of left and right paddings for the element.
+     *
+     * @param element element to calculate paddings width for
+     *
+     * @return sum of left and right paddings as {@code float}
+     */
     public static float getPaddingWidth(IPropertyContainer element) {
         UnitValue rightPadding = element.<UnitValue>getProperty(Property.PADDING_RIGHT);
         if (null != rightPadding && !rightPadding.isPointValue()) {

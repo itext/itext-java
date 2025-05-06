@@ -36,17 +36,19 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/PdfAcroFormIntegrationTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/PdfAcroFormIntegrationTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/PdfAcroFormIntegrationTest/";
 
     @BeforeAll

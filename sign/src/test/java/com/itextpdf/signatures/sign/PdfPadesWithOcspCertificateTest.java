@@ -40,6 +40,7 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.client.AdvancedTestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -56,8 +57,8 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleIntegrationTest")
 public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
@@ -65,7 +66,7 @@ public class PdfPadesWithOcspCertificateTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithOcspCertificateTest/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithOcspCertificateTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesWithOcspCertificateTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PdfPadesWithOcspCertificateTest/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 

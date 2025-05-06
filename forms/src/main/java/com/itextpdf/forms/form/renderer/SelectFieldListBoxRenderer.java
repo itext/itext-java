@@ -39,8 +39,10 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -59,6 +61,8 @@ import com.itextpdf.layout.renderer.IRenderer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.itextpdf.layout.tagging.IAccessibleElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,6 +137,12 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         for (SelectFieldItem option : visibleOptions) {
             optionsContainer.add(option.getElement());
         }
+        for (IElement child : optionsContainer.getChildren()) {
+            if (child instanceof IAccessibleElement){
+                ((IAccessibleElement) child).getAccessibilityProperties().setRole(StandardRoles.LBL);
+            }
+        }
+
         String lang = getLang();
         if (lang != null) {
             AccessibilityProperties properties = optionsContainer.getAccessibilityProperties();
@@ -144,6 +154,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         IRenderer rendererSubTree;
         if (optionsContainer.getChildren().isEmpty()) {
             Paragraph pStub = new Paragraph("\u00A0").setMargin(0);
+            pStub.getAccessibilityProperties().setRole(StandardRoles.LBL);
             pStub.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
             pStub.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
             // applying this property for the sake of finding this element as option

@@ -24,6 +24,7 @@ package com.itextpdf.commons.utils;
 
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,7 +43,7 @@ import org.junit.jupiter.api.Tag;
 public class ZipFileWriterTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/commons/utils/ZipFileWriter/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/commons/utils/ZipFileWriter/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/commons/utils/ZipFileWriter/";
 
     @BeforeAll
     public static void beforeClass() {

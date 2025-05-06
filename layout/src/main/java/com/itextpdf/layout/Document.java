@@ -83,6 +83,7 @@ public class Document extends RootElement<Document> {
         this.pdfDocument = pdfDoc;
         this.pdfDocument.setDefaultPageSize(pageSize);
         this.immediateFlush = immediateFlush;
+        this.ensureRootTagIsCreated();
     }
 
     /**

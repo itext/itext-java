@@ -22,27 +22,26 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/ImageSvgNodeRendererTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/ImageSvgNodeRendererTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/ImageSvgNodeRendererTest/";
 
     private ISvgConverterProperties properties;
 
@@ -194,7 +193,6 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-8769: adapt after supporting
     @LogMessages(messages = {
             @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG)
     })

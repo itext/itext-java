@@ -22,18 +22,25 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
-
 /***
- * Implements shorthand/smooth quadraticCurveTo (T) attribute of SVG's path element
+ * Implements shorthand/smooth quadraticCurveTo (T) attribute of SVG's path element.
  * */
 public class QuadraticSmoothCurveTo extends QuadraticCurveTo {
 
     static final int ARGUMENT_SIZE = 2;
 
+    /**
+     * Creates new {@link QuadraticSmoothCurveTo} instance.
+     */
     public QuadraticSmoothCurveTo() {
         this(false);
     }
 
+    /**
+     * Creates new {@link QuadraticSmoothCurveTo} instance.
+     *
+     * @param relative {@code true} in case it is a relative operator, {@code false} if it is an absolute operator
+     */
     public QuadraticSmoothCurveTo(boolean relative) {
         super(relative, new SmoothOperatorConverter());
     }

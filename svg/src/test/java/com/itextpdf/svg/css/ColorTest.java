@@ -25,9 +25,9 @@ package com.itextpdf.svg.css;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ColorTest extends SvgIntegrationTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/ColorTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/ColorTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/ColorTest/";
 
     @BeforeAll
     public static void beforeClass() {

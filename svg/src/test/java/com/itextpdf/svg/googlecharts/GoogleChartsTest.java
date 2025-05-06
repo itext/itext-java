@@ -28,17 +28,18 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.utils.TestUtils;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class GoogleChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/GoogleChartsTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/GoogleChartsTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/GoogleChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

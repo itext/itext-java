@@ -43,6 +43,7 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -66,7 +67,7 @@ public class PdfPadesSignerLevelsTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PdfPadesSignerLevelsTest/";
     private static final char[] password = "testpassphrase".toCharArray();
 
     @BeforeAll

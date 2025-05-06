@@ -23,6 +23,7 @@
 package com.itextpdf.barcodes;
 
 import com.itextpdf.barcodes.exceptions.BarcodesExceptionMessageConstant;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -150,7 +151,7 @@ public class BarcodeCodabar extends Barcode1D {
      * @return the bars
      */
     public static byte[] getBarsCodabar(String text) {
-        text = text.toUpperCase();
+        text = StringNormalizer.toUpperCase(text);
         int len = text.length();
         if (len < 2) {
             throw new IllegalArgumentException(
@@ -186,7 +187,7 @@ public class BarcodeCodabar extends Barcode1D {
     public static String calculateChecksum(String code) {
         if (code.length() < 2)
             return code;
-        String text = code.toUpperCase();
+        String text = StringNormalizer.toUpperCase(code);
         int sum = 0;
         int len = text.length();
         for (int k = 0; k < len; ++k) {

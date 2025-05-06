@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.media;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
@@ -65,9 +66,9 @@ public class MediaExpression {
      * @param value   the value
      */
     MediaExpression(String feature, String value) {
-        this.feature = feature.trim().toLowerCase();
+        this.feature = StringNormalizer.normalize(feature);
         if (value != null) {
-            this.value = value.trim().toLowerCase();
+            this.value = StringNormalizer.normalize(value);
         }
 
         String minPref = MediaRuleConstants.MIN + "-";

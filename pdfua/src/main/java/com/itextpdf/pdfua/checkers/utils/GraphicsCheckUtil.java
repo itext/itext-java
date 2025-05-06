@@ -52,24 +52,24 @@ public final class GraphicsCheckUtil {
     /**
      * Checks if image has alternative description or actual text.
      *
-     * @param image The image to check
+     * @param image the image to check
      */
     public void checkLayoutElement(Image image) {
         if (image.getAccessibilityProperties() == null) {
             throw new IllegalStateException();
         }
         if (!StandardRoles.FIGURE.equals(context.resolveToStandardRole(image.getAccessibilityProperties().getRole()))) {
-            // image is not a figure tag, so we don't need to check it
+            // Image is not a figure tag, so we don't need to check it.
             return;
         }
         AccessibilityProperties props = image.getAccessibilityProperties();
-        boolean hasSomeValue = hasAtleastOneValidValue(props.getAlternateDescription(), props.getActualText());
+        boolean hasSomeValue = hasAtLeastOneValidValue(props.getAlternateDescription(), props.getActualText());
         if (!hasSomeValue) {
             throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
         }
     }
 
-    private static boolean hasAtleastOneValidValue(Object altText, Object actualText) {
+    private static boolean hasAtLeastOneValidValue(Object altText, Object actualText) {
         String altTextValue = null;
         if (altText instanceof PdfString) {
             altTextValue = ((PdfString) altText).getValue();
@@ -84,8 +84,8 @@ public final class GraphicsCheckUtil {
         if (actualText instanceof String) {
             actualTextValue = (String) actualText;
         }
-        // PDF spec is not super clear, but it seems actualText can be an empty string
-        return !(altTextValue == null || altTextValue.isEmpty()) || actualTextValue != null;
+        // PDF spec is not super clear, but it seems actualText can be an empty string.
+        return (altTextValue != null && !altTextValue.isEmpty()) || actualTextValue != null;
     }
 
     /**
@@ -96,7 +96,7 @@ public final class GraphicsCheckUtil {
         /**
          * Creates a new instance of the {@link GraphicsHandler}.
          *
-         * @param context The validation context.
+         * @param context the validation context
          */
         public GraphicsHandler(PdfUAValidationContext context) {
             super(context);
@@ -115,7 +115,7 @@ public final class GraphicsCheckUtil {
             }
             final PdfDictionary pdfObject = structElem.getPdfObject();
 
-            if (!hasAtleastOneValidValue(pdfObject.getAsString(PdfName.Alt),
+            if (!hasAtLeastOneValidValue(pdfObject.getAsString(PdfName.Alt),
                     pdfObject.getAsString(PdfName.ActualText))) {
                 throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
             }

@@ -35,7 +35,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +47,7 @@ public class PdfUADocumentTest extends ExtendedITextTest {
     @LogMessages(messages = {
             @LogMessage(messageTemplate = PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED, logLevel = LogLevelConstants.WARN)
     })
-    public void openNotUaDocumentTest() {
+    public void openNotUa1DocumentTest() {
         AssertUtil.doesNotThrow(() ->
                 new PdfUADocument(
                         new PdfReader(SOURCE_FOLDER + "usualPdf.pdf"),
@@ -57,11 +57,37 @@ public class PdfUADocumentTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
+            @LogMessage(messageTemplate = PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED, logLevel = LogLevelConstants.WARN)
+    })
+    public void openNotUa2DocumentTest() {
+        AssertUtil.doesNotThrow(() ->
+                new PdfUADocument(
+                        new PdfReader(SOURCE_FOLDER + "usualPdf.pdf"),
+                        new PdfWriter(new ByteArrayOutputStream()),
+                        new PdfUAConfig(PdfUAConformance.PDF_UA_2, "simple doc", "eng")));
+    }
+
+    @Test
+    @LogMessages(messages = {
             @LogMessage(messageTemplate = PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, logLevel = LogLevelConstants.WARN)
     })
-    public void settingWrongPdfVersionTest() throws IOException {
-        PdfUADocument doc = new PdfUADocument(new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_4)), new PdfUAConfig(PdfUAConformance.PDF_UA_1, "en-us", "title"));
-        doc.close();
+    public void settingWrongPdfVersionUA1Test() {
+        try (PdfUADocument doc = new PdfUADocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_4)),
+                new PdfUAConfig(PdfUAConformance.PDF_UA_1, "en-us", "title"))) {
+            Assertions.assertEquals(PdfVersion.PDF_1_7, doc.getPdfVersion());
+        }
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, logLevel = LogLevelConstants.WARN)
+    })
+    public void settingWrongPdfVersionUA2Test() {
+        try (PdfUADocument doc = new PdfUADocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_4)),
+                new PdfUAConfig(PdfUAConformance.PDF_UA_2, "en-us", "title"))) {
+            Assertions.assertEquals(PdfVersion.PDF_2_0, doc.getPdfVersion());
+        }
     }
 }

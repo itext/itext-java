@@ -46,6 +46,7 @@ import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -65,7 +66,7 @@ public class PadesSigTest extends ExtendedITextTest {
     
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PadesSigTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PadesSigTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PadesSigTest/";
 
     private static final char[] password = "testpassphrase".toCharArray();
 

@@ -35,6 +35,7 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.utils.NullCopyFilter;
+import com.itextpdf.kernel.validation.context.PdfDestinationAdditionContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -178,6 +179,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return destination
      */
     public PdfCatalog setOpenAction(PdfDestination destination) {
+        checkIsoConformanceForDestination(destination);
         return put(PdfName.OpenAction, destination.getPdfObject());
     }
 
@@ -190,6 +192,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return action
      */
     public PdfCatalog setOpenAction(PdfAction action) {
+        checkIsoConformanceForAction(action);
         return put(PdfName.OpenAction, action.getPdfObject());
     }
 
@@ -203,6 +206,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return additional action
      */
     public PdfCatalog setAdditionalAction(PdfName key, PdfAction action) {
+        checkIsoConformanceForAction(action);
         PdfAction.setAdditionalAction(this, key, action);
         return this;
     }
@@ -762,6 +766,16 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return getPdfObject().getAsDictionary(PdfName.OCProperties);
     }
 
+    private void checkIsoConformanceForDestination(PdfDestination destination) {
+        getDocument().checkIsoConformance(new PdfDestinationAdditionContext(destination));
+    }
+
+    private void checkIsoConformanceForAction(PdfAction action) {
+        if (action != null && action.getPdfObject() != null) {
+            getDocument().checkIsoConformance(new PdfDestinationAdditionContext(action));
+        }
+    }
+
     private PdfDestination createDestinationFromPageNum(PdfObject dest, PdfDocument toDocument) {
         return new PdfExplicitDestination((PdfArray) dest.copyTo(toDocument, false,
                 NullCopyFilter.getInstance()));
@@ -829,6 +843,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         PdfObject dest = item.get(PdfName.Dest);
         if (dest != null) {
             PdfDestination destination = PdfDestination.makeDestination(dest);
+            checkIsoConformanceForDestination(destination);
             outline.setDestination(destination);
             addOutlineToPage(outline, names);
         } else {
@@ -838,11 +853,15 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 PdfName actionType = action.getAsName(PdfName.S);
                 //Check if it is a go to action
                 if (PdfName.GoTo.equals(actionType)) {
-                    //Retrieve destination if it is.
-                    PdfObject destObject = action.get(PdfName.D);
-                    if (destObject != null) {
-                        //Page is always the first object
-                        PdfDestination destination = PdfDestination.makeDestination(destObject);
+                    checkIsoConformanceForAction(new PdfAction(action));
+                    //First check if structure destination is present.
+                    PdfObject structureDestinationObject = action.get(PdfName.SD);
+                    if (structureDestinationObject != null) {
+                        PdfDestination destination = PdfDestination.makeDestination(structureDestinationObject);
+                        outline.setDestination(destination);
+                        addOutlineToPage(outline, names);
+                    } else if (action.get(PdfName.D) != null) {
+                        PdfDestination destination = PdfDestination.makeDestination(action.get(PdfName.D));
                         outline.setDestination(destination);
                         addOutlineToPage(outline, names);
                     }

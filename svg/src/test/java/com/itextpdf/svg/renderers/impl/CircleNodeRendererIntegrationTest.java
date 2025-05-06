@@ -25,16 +25,17 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class CircleNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/CircleSvgNodeRendererTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/CircleSvgNodeRendererTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/CircleSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

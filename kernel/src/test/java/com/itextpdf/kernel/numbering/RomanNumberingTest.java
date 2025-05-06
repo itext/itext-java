@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.numbering;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
@@ -52,8 +53,8 @@ public class RomanNumberingTest extends ExtendedITextTest {
     @Test
     public void toRomanTest() {
         String expected = "dcclvi";
-        Assertions.assertEquals(expected.toUpperCase(), RomanNumbering.toRoman(756, true));
-        Assertions.assertEquals(expected.toLowerCase(), RomanNumbering.toRoman(756, false));
+        Assertions.assertEquals(StringNormalizer.toUpperCase(expected), RomanNumbering.toRoman(756, true));
+        Assertions.assertEquals(StringNormalizer.toLowerCase(expected), RomanNumbering.toRoman(756, false));
     }
 
     @Test

@@ -47,6 +47,7 @@ import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -87,7 +88,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTests/";
     private static final String DESTINATION_FOLDER =
-            "./target/test/com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTests/";
+            TestUtil.getOutputPath() + "/signatures/sign/IsoSignatureExtensionsRoundtripTests/";
     private static final char[] SAMPLE_KEY_PASSPHRASE = "secret".toCharArray();
     private static final String SOURCE_FILE = SOURCE_FOLDER + "helloWorldDoc.pdf";
     private static final String SIGNATURE_FIELD = "Signature";

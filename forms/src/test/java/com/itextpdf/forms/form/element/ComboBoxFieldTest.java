@@ -37,6 +37,7 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -45,15 +46,15 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ComboBoxFieldTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/ComboBoxFieldTest/";
     public static final String DESTINATION_FOLDER =
-            "./target/test/com/itextpdf/forms/form/element/ComboBoxFieldTest/";
+            TestUtil.getOutputPath() + "/forms/form/element/ComboBoxFieldTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -581,5 +582,21 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
+    @Test
+    public void comboBoxAlternativeDescriptionTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "comboBoxAlternativeDescription.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxAlternativeDescription.pdf";
 
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+            document.getPdfDocument().setTagged();
+            ComboBoxField formComboBoxField = new ComboBoxField("form combo box field");
+            formComboBoxField.setInteractive(true);
+            formComboBoxField.setAlternativeDescription("description");
+            formComboBoxField.addOption(new SelectFieldItem("option 1"));
+            formComboBoxField.addOption(new SelectFieldItem("option 2"));
+            document.add(formComboBoxField);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
 }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.FontStyles;
@@ -193,7 +194,7 @@ public final class FontProgramFactory {
             String fontFileExtension = null;
             int extensionBeginIndex = baseName.lastIndexOf('.');
             if (extensionBeginIndex > 0) {
-                fontFileExtension = baseName.substring(extensionBeginIndex).toLowerCase();
+                fontFileExtension = StringNormalizer.toLowerCase(baseName.substring(extensionBeginIndex));
             }
             if (isBuiltinFonts14 || ".afm".equals(fontFileExtension) || ".pfm".equals(fontFileExtension)) {
                 fontBuilt = new Type1Font(name, null, null, null);
@@ -226,7 +227,7 @@ public final class FontProgramFactory {
                 }
                 fontBuilt = new TrueTypeFont(fontProgram);
             } else {
-                int ttcSplit = baseName.toLowerCase().indexOf(".ttc,");
+                int ttcSplit = StringNormalizer.toLowerCase(baseName).indexOf(".ttc,");
                 if (ttcSplit > 0) {
                     try {
 

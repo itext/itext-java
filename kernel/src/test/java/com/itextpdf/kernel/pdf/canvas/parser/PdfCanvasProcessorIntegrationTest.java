@@ -24,13 +24,15 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfResources;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ClippingPathInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
@@ -39,34 +41,37 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import java.io.IOException;
-import java.util.Set;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
 
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/parser/PdfCanvasProcessorTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/parser/PdfCanvasProcessorTest/";
 
     @BeforeAll
     public static void setUp() {
@@ -229,6 +234,26 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         Assertions.assertTrue(imageRenderInfo.hasMcid(5));
         Assertions.assertFalse(imageRenderInfo.hasMcid(1));
         Assertions.assertEquals(5, imageRenderInfo.getMcid());
+    }
+
+    @Test
+    public void brokenStreamTest() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "splitTj.pdf")));
+        SimpleTextExtractionStrategy listener = new SimpleTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        byte[] streamBytes = ((PdfStream)document.getPdfObject(7)).getBytes();
+        PdfResources resources = document.getPage(1).getResources();
+        //Class cast exception is expected, using generic exception for autoport
+        Assertions.assertThrows(Exception.class, () -> parser.processContent(streamBytes, resources));
+    }
+
+    @Test
+    public void withPageResourcesStreamTest() throws IOException {
+        PdfDocument document = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "splitTj.pdf")));
+        SimpleTextExtractionStrategy listener = new SimpleTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        parser.processContent(document.getPage(1).getContentBytes(), document.getPage(1).getResources());
+        Assertions.assertEquals(listener.getResultantText(), "test 1\ntest 2");
     }
 
     private static class ColorParsingEventListener implements IEventListener {

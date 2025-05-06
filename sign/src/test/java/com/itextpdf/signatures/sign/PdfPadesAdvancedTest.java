@@ -47,6 +47,7 @@ import com.itextpdf.signatures.testutils.client.AdvancedTestCrlClient;
 import com.itextpdf.signatures.testutils.client.AdvancedTestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -74,7 +75,7 @@ public class PdfPadesAdvancedTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesAdvancedTest/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesAdvancedTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/PdfPadesAdvancedTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/PdfPadesAdvancedTest/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 

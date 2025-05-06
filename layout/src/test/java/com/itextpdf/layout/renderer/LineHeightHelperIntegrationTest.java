@@ -33,21 +33,20 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
 
     private static final String FONTS = "./src/test/resources/com/itextpdf/layout/fonts/";
     private static final String CMP = "./src/test/resources/com/itextpdf/layout/LineHeightHelperIntegrationTest/";
-    private static final String DESTINATION = "./target/test/com/itextpdf/layout/LineHeightHelperTest/";
+    private static final String DESTINATION = TestUtil.getOutputPath() + "/layout/LineHeightHelperTest/";
     private static final String TEXT_SAMPLE = "Effects present letters inquiry no an removed or friends. "
             + "Desire behind latter me though in. Supposing shameless am he engrossed up additions. "
             + "My possible peculiar together to. Desire so better am cannot he up before points. "

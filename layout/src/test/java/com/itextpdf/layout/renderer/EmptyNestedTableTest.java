@@ -29,12 +29,13 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 /**
  */
@@ -42,7 +43,7 @@ import java.io.IOException;
 public class EmptyNestedTableTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/EmptyNestedTableTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/EmptyNestedTableTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/EmptyNestedTableTest/";
 
     @BeforeAll
     public static void beforeClass() {

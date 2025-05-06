@@ -116,7 +116,8 @@ class TableTaggingRule implements ITaggingRule {
         return helper
                 .getPdfDocument()
                 .getTagStructureContext()
-                .resolveMappingToStandardOrDomainSpecificRole(kidKey.getAccessibilityProperties().getRole(),null)
+                .resolveMappingToStandardOrDomainSpecificRole(kidKey.getAccessibilityProperties().getRole(),
+                        kidKey.getAccessibilityProperties().getNamespace())
                 .getRole();
     }
 

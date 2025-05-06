@@ -32,6 +32,7 @@ import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -59,10 +60,13 @@ import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRe
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -792,6 +796,23 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     @Override
+    public void drawChildren(DrawContext drawContext) {
+        Set<IPropertyContainer> modelElements = new HashSet<>();
+        for (int i = childRenderers.size() - 1; i >= 0; --i) {
+            IRenderer childRenderer = childRenderers.get(i);
+            if (childRenderer instanceof AbstractRenderer) {
+                AbstractRenderer child = (AbstractRenderer) childRenderer;
+                if (modelElements.contains(child.getModelElement())) {
+                    child.isLastRendererForModelElement = false;
+                } else {
+                    modelElements.add(child.getModelElement());
+                }
+            }
+        }
+        super.drawChildren(drawContext);
+    }
+
+    @Override
     public IRenderer getNextRenderer() {
         return new LineRenderer();
     }
@@ -984,6 +1005,14 @@ public class LineRenderer extends AbstractRenderer {
         LineLayoutResult result = (LineLayoutResult) layout(new LayoutContext(
                 new LayoutArea(1, new Rectangle(MinMaxWidthUtils.getInfWidth(), AbstractRenderer.INF))));
         return result.getMinMaxWidth();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Float retrieveResolvedDeclaredHeight() {
+        return ((AbstractRenderer) parent).retrieveResolvedDeclaredHeight();
     }
 
     boolean hasChildRendererInHtmlMode() {

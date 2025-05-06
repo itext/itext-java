@@ -48,6 +48,7 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
+import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
@@ -73,7 +74,8 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -89,7 +91,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfUA2Test extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PdfUA2Test/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/PdfUA2Test/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/PdfUA2Test/";
     public static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll
@@ -983,10 +985,16 @@ public class PdfUA2Test extends ExtendedITextTest {
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(outFile))) {
             PdfOutline outline = pdfDocument.getOutlines(false);
-            Assertions.assertEquals("header1", outline.getAllChildren().get(0)
-                    .getDestination().getPdfObject().toString());
-            Assertions.assertEquals("header1.1", outline.getAllChildren().get(0).getAllChildren().get(0)
-                    .getDestination().getPdfObject().toString());
+
+            PdfDictionary firstAction = outline.getAllChildren().get(0).getContent().getAsDictionary(PdfName.A);
+            Assertions.assertEquals("header1", firstAction.getAsString(PdfName.D).toString());
+            Assertions.assertTrue(PdfDestination.makeDestination(firstAction.get(PdfName.SD)) instanceof PdfStructureDestination);
+            Assertions.assertTrue(outline.getAllChildren().get(0).getDestination() instanceof PdfStructureDestination);
+
+            PdfDictionary secondAction = outline.getAllChildren().get(0).getAllChildren().get(0).getContent().getAsDictionary(PdfName.A);
+            Assertions.assertEquals("header1.1", secondAction.getAsString(PdfName.D).toString());
+            Assertions.assertTrue(PdfDestination.makeDestination(secondAction.get(PdfName.SD)) instanceof PdfStructureDestination);
+            Assertions.assertTrue(outline.getAllChildren().get(0).getAllChildren().get(0).getDestination() instanceof PdfStructureDestination);
         }
     }
 

@@ -36,17 +36,19 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
+
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class Utf8FormsTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/Utf8FormsTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/forms/Utf8FormsTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/Utf8FormsTest/";
     public static final String FONT = "./src/test/resources/com/itextpdf/forms/Utf8FormsTest/NotoSansCJKsc-Regular.otf";
 
     @BeforeEach

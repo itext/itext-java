@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.constants.FontResources;
 import com.itextpdf.io.util.ResourceUtil;
 
@@ -99,7 +100,7 @@ public class AdobeGlyphList {
         if (names2unicode.containsKey(name)) {
             v = (int) names2unicode.get(name);
         }
-        if (v == -1 && name.length() == 7 && name.toLowerCase().startsWith("uni")) {
+        if (v == -1 && name.length() == 7 && StringNormalizer.toLowerCase(name).startsWith("uni")) {
             try {
                 return Integer.parseInt(name.substring(3), 16);
             } catch (Exception ignored) {

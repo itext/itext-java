@@ -26,10 +26,13 @@ package com.itextpdf.io.util;
 // Android-Conversion-Replace import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 // Android-Conversion-Replace import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * This file is a helper class for internal usage only.
@@ -68,6 +71,22 @@ public final class XmlUtil {
      */
     public static Document initNewXmlDocument() throws ParserConfigurationException {
         return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+    }
+
+    /**
+     * This method creates new Xml document from input stream.
+     *
+     * @param inputStream to parse
+     *
+     * @return parsed Xml document
+     *
+     * @throws ParserConfigurationException if an error occurs while creating the document
+     * @throws SAXException if any parse errors occur
+     * @throws IOException if any IO errors occur
+     */
+    public static Document initXmlDocument(InputStream inputStream)
+            throws ParserConfigurationException, IOException, SAXException {
+        return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
     }
 
 }

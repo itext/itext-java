@@ -24,6 +24,7 @@ package com.itextpdf.svg.css;
 
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,7 +35,7 @@ import org.junit.jupiter.api.Test;
 //TODO DEVSIX-8822: update cmp after supporting
 public class OpacityTest extends SvgIntegrationTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/OpacityTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/OpacityTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/OpacityTest/";
 
     @BeforeAll
     public static void beforeClass() {

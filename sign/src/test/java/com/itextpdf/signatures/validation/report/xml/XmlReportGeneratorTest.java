@@ -24,7 +24,7 @@ package com.itextpdf.signatures.validation.report.xml;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -34,17 +34,17 @@ import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.testutils.report.xml.XmlReportTestTool;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.StringWriter;
+import java.security.Security;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.NodeList;
-
-import java.io.StringWriter;
-import java.security.Security;
-import java.util.ArrayList;
-import java.util.List;
 
 @Tag("BouncyCastleIntegrationTest")
 class XmlReportGeneratorTest extends ExtendedITextTest {
@@ -93,7 +93,7 @@ class XmlReportGeneratorTest extends ExtendedITextTest {
                 PdfSignature signature = sigUtil.getSignature(sigName);
                 if (!PdfName.ETSI_RFC3161.equals(signature.getSubFilter())) {
                     CMSContainer cms = new CMSContainer(sigUtil.getSignature(sigName).getContents().getValueBytes());
-                    String b64signature = Base64.encodeBytes(cms.getSignerInfo().getSignatureData());
+                    String b64signature = EncodingUtil.toBase64(cms.getSignerInfo().getSignatureData());
                     Assertions.assertTrue(b64ReportedSignatures.contains(b64signature));
                 }
             }

@@ -43,8 +43,8 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,8 +55,8 @@ import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 
 @Tag("IntegrationTest")
@@ -64,7 +64,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject"
             + "/GetImageBytesTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/xobject/GetImageBytesTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -146,14 +146,11 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3538 (update test after fix)
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-7079 increase memory available for virtual machine while test running)
     public void testSeparationCSWithICCBasedAsAlternative() throws Exception {
         testFile("separationCSWithICCBasedAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
-    // TODO: DEVSIX-3538 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
         Assertions.assertThrows(UnsupportedOperationException.class, () ->
@@ -168,14 +165,12 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3538 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceRGBAsAlternative() throws Exception {
         testFile("separationCSWithDeviceRgbAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
-    // TODO: DEVSIX-3538 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceRGBAsAlternative2() throws Exception {
         testFile("spotColorImagesSmall.pdf", "Im1", "png");

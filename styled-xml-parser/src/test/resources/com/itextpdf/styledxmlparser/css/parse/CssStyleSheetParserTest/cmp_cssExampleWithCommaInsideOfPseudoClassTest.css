@@ -1,0 +1,12 @@
+p:not(.irrelevant) {
+    font-weight: bold
+}
+p > strong {
+    color: crimson
+}
+p > b.important {
+    color: crimson
+}
+p > :not(strong b.important) {
+    color: darkmagenta
+}

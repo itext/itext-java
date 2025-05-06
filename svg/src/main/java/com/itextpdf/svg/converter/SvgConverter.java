@@ -23,6 +23,8 @@
 package com.itextpdf.svg.converter;
 
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.IOThrowingAction;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -30,6 +32,8 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.styledxmlparser.IXmlParser;
@@ -48,13 +52,13 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgCssUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is the main container class for static methods that do high-level
@@ -64,11 +68,12 @@ import org.slf4j.LoggerFactory;
  */
 public final class SvgConverter {
 
-    private SvgConverter() {
-    }
-
+    public static final String SVG_DEFAULT_ROLE = StandardRoles.FIGURE;
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgConverter.class);
 
+    private SvgConverter() {
+        //empty constructor
+    }
 
     private static void checkNull(Object o) {
         if (o == null) {
@@ -212,7 +217,13 @@ public final class SvgConverter {
      */
     public static void drawOnPage(String content, PdfPage page, float x, float y) {
         checkNull(page);
-        drawOnCanvas(content, new PdfCanvas(page), x, y);
+        PdfCanvas canvas = new PdfCanvas(page);
+        try {
+            withTaggingIfNeeded(page.getDocument(), canvas, page, null, () -> drawOnCanvas(content, canvas, x, y));
+        } catch (IOException e) {
+            // This can't happen in normal circumstances.
+            throw new PdfException(e);
+        }
     }
 
 
@@ -238,7 +249,14 @@ public final class SvgConverter {
      */
     public static void drawOnPage(String content, PdfPage page, float x, float y, ISvgConverterProperties props) {
         checkNull(page);
-        drawOnCanvas(content, new PdfCanvas(page), x, y, props);
+        final PdfCanvas canvas = new PdfCanvas(page);
+        try {
+            withTaggingIfNeeded(page.getDocument(), canvas, page, props,
+                    () -> drawOnCanvas(content, canvas, x, y, props));
+        } catch (IOException e) {
+            // This can't happen in normal circumstances.
+            throw new PdfException(e);
+        }
     }
 
     /**
@@ -263,7 +281,8 @@ public final class SvgConverter {
      */
     public static void drawOnPage(InputStream stream, PdfPage page, float x, float y) throws IOException {
         checkNull(page);
-        drawOnCanvas(stream, new PdfCanvas(page), x, y);
+        PdfCanvas canvas = new PdfCanvas(page);
+        withTaggingIfNeeded(page.getDocument(), canvas, page, null, () -> drawOnCanvas(stream, canvas, x, y));
     }
 
     /**
@@ -288,12 +307,14 @@ public final class SvgConverter {
      * @param props  a container for extra properties that customize the behavior
      * @throws IOException when the Stream cannot be read correctly
      */
-    public static void drawOnPage(InputStream stream, PdfPage page, float x, float y, ISvgConverterProperties props) throws IOException {
+    public static void drawOnPage(InputStream stream, PdfPage page, float x, float y, ISvgConverterProperties props)
+            throws IOException {
         checkNull(page);
         if (props instanceof SvgConverterProperties && ((SvgConverterProperties) props).getCustomViewport() == null) {
             ((SvgConverterProperties) props).setCustomViewport(page.getMediaBox());
         }
-        drawOnCanvas(stream, new PdfCanvas(page), x, y, props);
+        PdfCanvas canvas = new PdfCanvas(page);
+        withTaggingIfNeeded(page.getDocument(), canvas, page, props, () -> drawOnCanvas(stream, canvas, x, y, props));
     }
 
     /**
@@ -723,8 +744,18 @@ public final class SvgConverter {
      * @return a {@link Image Image} containing the PDF instructions corresponding to the passed SVG content
      * @throws IOException when the Stream cannot be read correctly
      */
-    public static Image convertToImage(InputStream stream, PdfDocument document, ISvgConverterProperties props) throws IOException {
-        return new Image(convertToXObject(stream, document, props));
+    public static Image convertToImage(InputStream stream, PdfDocument document, ISvgConverterProperties props)
+            throws IOException {
+        Image image = new Image(convertToXObject(stream, document, props));
+        if (props instanceof SvgConverterProperties) {
+            SvgConverterProperties properties = (SvgConverterProperties) props;
+            if (properties.getAccessibilityProperties().getAlternateDescription() != null) {
+                image.getAccessibilityProperties()
+                        .setAlternateDescription(properties.getAccessibilityProperties().getAlternateDescription());
+            }
+            image.getAccessibilityProperties().setRole(properties.getAccessibilityProperties().getRole());
+        }
+        return image;
     }
 
     /*
@@ -937,4 +968,35 @@ public final class SvgConverter {
         }
         return new ResourceResolver(props.getBaseUri(), props.getResourceRetriever());
     }
+
+
+    private static void withTaggingIfNeeded(PdfDocument document, PdfCanvas canvas, PdfPage page,
+                                            ISvgConverterProperties props, IOThrowingAction function)
+            throws IOException {
+        final boolean isTagged = document.isTagged();
+        if (isTagged) {
+            SvgConverterProperties properties = null;
+            if (props instanceof SvgConverterProperties) {
+                properties = (SvgConverterProperties) props;
+            }
+            String role = SVG_DEFAULT_ROLE;
+            if (properties != null) {
+                role = properties.getAccessibilityProperties().getRole();
+            }
+
+            TagTreePointer tagTreePointer = new TagTreePointer(document);
+            tagTreePointer.addTag(role);
+            tagTreePointer.setPageForTagging(page);
+            if (properties != null && properties.getAccessibilityProperties().getAlternateDescription() != null) {
+                tagTreePointer.getProperties()
+                        .setAlternateDescription(properties.getAccessibilityProperties().getAlternateDescription());
+            }
+            canvas.openTag(tagTreePointer.getTagReference());
+        }
+        function.execute();
+        if (isTagged) {
+            canvas.closeTag();
+        }
+    }
+
 }

@@ -29,7 +29,10 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 /**
  * Utility class which performs XFA forms check according to PDF/UA specification.
+ *
+ * @deprecated in favour of {@link com.itextpdf.pdfua.checkers.utils.ua1.PdfUA1XfaCheckUtil}
  */
+@Deprecated
 public final class XfaCheckUtil {
     // Path defined according to XFA specification
     private static final String PATH_TO_DYNAMIC_RENDER = "xdp.config.acrobat.acrobat7.dynamicRender";

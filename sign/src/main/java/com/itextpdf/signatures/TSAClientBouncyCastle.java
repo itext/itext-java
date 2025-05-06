@@ -31,7 +31,8 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -273,8 +274,8 @@ public class TSAClientBouncyCastle implements ITSAClient {
         }
         byte[] respBytes = baos.toByteArray();
 
-        if (response.encoding != null && response.encoding.toLowerCase().equals("base64".toLowerCase())) {
-            respBytes = Base64.decode(new String(respBytes, "US-ASCII"));
+        if (response.encoding != null && StringNormalizer.toLowerCase(response.encoding).equals("base64")) {
+            respBytes = EncodingUtil.fromBase64(new String(respBytes, "US-ASCII"));
         }
         return respBytes;
     }

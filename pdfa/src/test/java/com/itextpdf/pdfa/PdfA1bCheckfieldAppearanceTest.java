@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +50,7 @@ public class PdfA1bCheckfieldAppearanceTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfA1bCheckfieldAppearanceTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA1bCheckfieldAppearanceTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA1bCheckfieldAppearanceTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -41,6 +41,9 @@ public class ConcurrentHashSet<V> implements Set<V> {
 
     private final Set<V> set = Collections.synchronizedSet(new HashSet<>());
 
+    /**
+     * Constructs a new, empty set.
+     */
     public ConcurrentHashSet() {
         //empty constructor
     }

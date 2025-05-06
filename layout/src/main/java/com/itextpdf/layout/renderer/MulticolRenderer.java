@@ -404,13 +404,10 @@ public class MulticolRenderer extends AbstractRenderer {
         return result;
     }
 
-
     /**
      * Interface which used for additional height calculation
      */
     public interface ColumnHeightCalculator {
-
-
         /**
          * Calculate height, by which current height of given {@code MulticolRenderer} should be increased so
          * {@code MulticolLayoutResult#getOverflowRenderer} could be lauded
@@ -422,6 +419,9 @@ public class MulticolRenderer extends AbstractRenderer {
          */
         Float getAdditionalHeightOfEachColumn(MulticolRenderer renderer, MulticolLayoutResult result);
 
+        /**
+         * @return maximum amount of relayouts which can be done by this height enhancer
+         */
         int maxAmountOfRelayouts();
     }
 
@@ -435,27 +435,56 @@ public class MulticolRenderer extends AbstractRenderer {
         private AbstractRenderer overflowRenderer;
         private IRenderer causeOfNothing;
 
+        /**
+         * Gets the split renderers.
+         *
+         * @return the split renderers (always not {@code null})
+         */
         public List<IRenderer> getSplitRenderers() {
             return splitRenderers;
         }
 
+        /**
+         * Gets the overflow renderer.
+         *
+         * @return the overflow renderer, can be {@code null} if there is no overflow
+         */
         public AbstractRenderer getOverflowRenderer() {
             return overflowRenderer;
         }
 
+        /**
+         * Sets the overflow renderer.
+         *
+         * @param overflowRenderer the overflow renderer to be set
+         */
         public void setOverflowRenderer(AbstractRenderer overflowRenderer) {
             this.overflowRenderer = overflowRenderer;
         }
 
+        /**
+         * Gets the cause of nothing renderer.
+         *
+         * @return the cause of nothing renderer, can be {@code null} if {@link #getSplitRenderers()} is not empty
+         */
         public IRenderer getCauseOfNothing() {
             return causeOfNothing;
         }
 
+        /**
+         * Sets the cause of nothing renderer.
+         *
+         * @param causeOfNothing cause of nothing renderer to be set
+         */
         public void setCauseOfNothing(IRenderer causeOfNothing) {
             this.causeOfNothing = causeOfNothing;
         }
     }
 
+    /**
+     * Default implementation of {@link ColumnHeightCalculator} which allows 4 relayouts and performs
+     * simple additional height calculation (split the elements which don't fit).
+     */
     public static class LayoutInInfiniteHeightCalculator implements ColumnHeightCalculator {
 
         protected int maxRelayoutCount = 4;

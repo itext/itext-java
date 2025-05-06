@@ -25,14 +25,11 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.font.otf.GlyphLine.GlyphLinePart;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.util.Arrays;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class ActualTextIteratorTest extends ExtendedITextTest {
@@ -40,7 +37,7 @@ public class ActualTextIteratorTest extends ExtendedITextTest {
     @Test
     public void testActualTestParts() {
         Glyph glyph = new Glyph(200, 200, '\u002d');
-        GlyphLine glyphLine = new GlyphLine(Arrays.asList(glyph));
+        GlyphLine glyphLine = new GlyphLine(Collections.singletonList(glyph));
         glyphLine.setActualText(0, 1, "\u002d");
         ActualTextIterator actualTextIterator = new ActualTextIterator(glyphLine);
         GlyphLine.GlyphLinePart part = actualTextIterator.next();

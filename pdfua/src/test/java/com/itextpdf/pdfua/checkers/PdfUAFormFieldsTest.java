@@ -27,6 +27,7 @@ import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
 import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
@@ -44,39 +45,64 @@ import com.itextpdf.forms.form.element.Radio;
 import com.itextpdf.forms.form.element.SelectFieldItem;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.forms.form.element.TextArea;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.CompressionConstants;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
+import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
+import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.BackgroundImage;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUATest/PdfUAFormFieldTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUATest/PdfUAFormFieldTest/";
+
+    private static final String DOG = "./src/test/resources/com/itextpdf/pdfua/img/DOG.bmp";
 
     private UaValidationTestFramework framework;
 
@@ -85,73 +111,82 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    public static List<PdfUAConformance> data() {
+        return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
+    }
+
     @BeforeEach
     public void setUp() {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
     }
 
-    @Test
-    public void testCheckBox() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBox(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 return new CheckBox("name");
             }
         });
-        framework.assertBothValid("testCheckBox.pdf");
+        framework.assertBothValid("testCheckBox", pdfUAConformance);
     }
 
-    @Test
-    public void testCheckBoxWithCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxWithCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.setBorder(new SolidBorder(ColorConstants.MAGENTA, 2));
                 cb.setBackgroundColor(ColorConstants.YELLOW);
                 return cb;
             }
         });
-        framework.assertBothValid("testCheckBoxWithCustomAppearance.pdf");
+        framework.assertBothValid("testCheckBoxWithCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testCheckBoxChecked() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxChecked(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.setChecked(true);
                 return cb;
             }
         });
-        framework.assertBothValid("testCheckBox");
+        framework.assertBothValid("testCheckBox", pdfUAConformance);
     }
 
-    @Test
-    public void testCheckBoxCheckedAlternativeDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxCheckedAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.getAccessibilityProperties().setAlternateDescription("Yello");
                 cb.setChecked(true);
                 return cb;
             }
         });
-        framework.assertBothValid("testCheckBoxCheckedAlternativeDescription");
+        framework.assertBothValid("testCheckBoxCheckedAlternativeDescription", pdfUAConformance);
     }
 
-    @Test
-    public void testCheckBoxCheckedCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxCheckedCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.setChecked(true);
                 cb.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 cb.setBackgroundColor(ColorConstants.GREEN);
@@ -160,30 +195,32 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return cb;
             }
         });
-        framework.assertBothValid("testCheckBoxCheckedCustomAppearance");
+        framework.assertBothValid("testCheckBoxCheckedCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testCheckBoxInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
+                checkBox.setPdfConformance(new PdfConformance(pdfUAConformance));
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 return checkBox;
             }
         });
-        framework.assertBothValid("testCheckBoxInteractive");
+        framework.assertBothValid("testCheckBoxInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testCheckBoxInteractiveCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxInteractiveCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
+                checkBox.setPdfConformance(new PdfConformance(pdfUAConformance));
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 checkBox.setBackgroundColor(ColorConstants.GREEN);
@@ -192,16 +229,17 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return checkBox;
             }
         });
-        framework.assertBothValid("testCheckBoxInteractiveCustomAppearance");
+        framework.assertBothValid("testCheckBoxInteractiveCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testCheckBoxInteractiveCustomAppearanceChecked() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxInteractiveCustomAppearanceChecked(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox checkBox = (CheckBox) new CheckBox("name").setInteractive(true);
-                checkBox.setPdfConformance(PdfConformance.PDF_UA_1);
+                checkBox.setPdfConformance(new PdfConformance(pdfUAConformance));
                 checkBox.getAccessibilityProperties().setAlternateDescription("Alternative description");
                 checkBox.setBorder(new SolidBorder(ColorConstants.CYAN, 2));
                 checkBox.setBackgroundColor(ColorConstants.GREEN);
@@ -211,22 +249,24 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return checkBox;
             }
         });
-        framework.assertBothValid("testCheckBoxInteractiveCustomAppearanceChecked");
+        framework.assertBothValid("checkBoxInteractiveCustomAppChecked", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButton() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButton(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 return new Radio("name");
             }
         });
-        framework.assertBothValid("testRadioButton");
+        framework.assertBothValid("testRadioButton", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonChecked() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonChecked(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -235,11 +275,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonChecked");
+        framework.assertBothValid("testRadioButtonChecked", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -250,11 +291,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonCustomAppearance");
+        framework.assertBothValid("testRadioButtonCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonCustomAppearanceChecked() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonCustomAppearanceChecked(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -266,11 +308,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonCustomAppearanceChecked");
+        framework.assertBothValid("testRadioButtonCustomAppearanceChecked", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonGroup() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonGroup(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -283,12 +326,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return new Radio("name2", "group");
             }
         });
-        framework.assertBothValid("testRadioButtonGroup");
+        framework.assertBothValid("testRadioButtonGroup", pdfUAConformance);
     }
 
 
-    @Test
-    public void testRadioButtonGroupCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonGroupCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -309,11 +353,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("testRadioButtonGroup");
+        framework.assertBothValid("testRadioButtonGroupCustom", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonGroupCustomAppearanceChecked() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonGroupCustomAppearanceChecked(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -335,12 +380,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("testRadioButtonGroupCustomAppearanceChecked");
+        framework.assertBothValid("testRadioButtonGroupCustomAppearanceChecked", pdfUAConformance);
     }
 
 
-    @Test
-    public void testRadioButtonInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -350,11 +396,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("testRadioButtonInteractive");
+        framework.assertBothValid("testRadioButtonInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonCheckedInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonCheckedInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -365,11 +412,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonChecked");
+        framework.assertBothValid("testRadioButtonChecked", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonCustomAppearanceInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -382,11 +430,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonCustomAppearance");
+        framework.assertBothValid("testRadioButtonCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonCustomAppearanceCheckedInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonCustomAppearanceCheckedInteractive(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -400,11 +450,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonCustomAppearanceCheckedInteractive");
+        framework.assertBothValid("radioBtnCustomAppCheckedInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonGroupInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonGroupInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -423,12 +474,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("testRadioButtonGroupInteractive");
+        framework.assertBothValid("testRadioButtonGroupInteractive", pdfUAConformance);
     }
 
 
-    @Test
-    public void testRadioButtonGroupCustomAppearanceInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonGroupCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -453,11 +505,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("testRadioButtonGroupInteractive");
+        framework.assertBothValid("testRadioButtonGroupInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonGroupCustomAppearanceCheckedInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonGroupCustomAppearanceCheckedInteractive(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -483,12 +537,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("testRadioButtonGroupCustomAppearanceCheckedInteractive");
+        framework.assertBothValid("radioBtnCustomAppCheckedInteractive", pdfUAConformance);
     }
 
 
-    @Test
-    public void testButton() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButton(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -498,11 +553,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButton");
+        framework.assertBothValid("testButton", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -514,11 +570,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonCustomAppearance");
+        framework.assertBothValid("testButtonCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonSingleLine() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonSingleLine(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -528,11 +585,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonSingleLine");
+        framework.assertBothValid("testButtonSingleLine", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonCustomContent() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonCustomContent(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -543,11 +601,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonSingleLine");
+        framework.assertBothValid("testButtonCustomContent", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonCustomContentIsAlsoForm() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonCustomContentIsAlsoForm(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -558,11 +617,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonSingleLine");
+        framework.assertBothValid("testButtonCustomContentIsAlsoForm", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -575,11 +635,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonInteractive");
+        framework.assertBothValid("testButtonInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonCustomAppearanceInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -594,11 +655,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonCustomAppearanceInteractive");
+        framework.assertBothValid("testButtonCustomAppearanceInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonSingleLineInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonSingleLineInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -611,11 +673,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonSingleLineInteractive");
+        framework.assertBothValid("testButtonSingleLineInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonCustomContentInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonCustomContentInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -629,11 +692,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonSingleLineInteractive");
+        framework.assertBothValid("testButtonCustomContentInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonCustomContentIsAlsoFormInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonCustomContentIsAlsoFormInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -649,11 +713,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonSingleLineInteractive");
+        framework.assertBothValid("testButtonCustomContentIsAlsoFormInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testInputField() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputField(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -662,11 +727,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputField");
+        framework.assertBothValid("testInputField", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldWithValue() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldWithValue(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -676,11 +742,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithValue");
+        framework.assertBothValid("testInputFieldWithValue", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldWithCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldWithCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -691,11 +758,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithCustomAppearance");
+        framework.assertBothValid("testInputFieldWithCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldWithCustomAppearanceAndValue() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldWithCustomAppearanceAndValue(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -707,11 +775,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue");
+        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldWithCustomAppearanceAndPlaceHolder() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldWithCustomAppearanceAndPlaceHolder(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -723,11 +792,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue");
+        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -738,11 +808,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldInteractive");
+        framework.assertBothValid("testInputFieldInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldWithValueInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldWithValueInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -754,11 +825,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithValueInteractive");
+        framework.assertBothValid("testInputFieldWithValueInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldWithCustomAppearanceInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldWithCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -771,11 +843,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithCustomAppearanceInteractive");
+        framework.assertBothValid("inputFieldCustomAppInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldWithCustomAppearanceAndValueInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldWithCustomAppearanceAndValueInteractive(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -789,11 +863,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValueInteractive");
+        framework.assertBothValid("inputFieldCustomAppValueInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldWithCustomAppearanceAndPlaceHolderInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldWithCustomAppearanceAndPlaceHolderInteractive(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -807,11 +883,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithCustomAppearanceAndPlaceHolderInteractive");
+        framework.assertBothValid("inpFieldCustomAppPlaceholderInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testTextArea() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextArea(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -820,11 +897,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextArea");
+        framework.assertBothValid("testTextArea", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaWithValue() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaWithValue(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -834,11 +912,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithValue");
+        framework.assertBothValid("testTextAreaWithValue", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaWithCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaWithCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -849,11 +928,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithCustomAppearance");
+        framework.assertBothValid("testTextAreaWithCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaWithCustomAppearanceAndValue() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaWithCustomAppearanceAndValue(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -865,11 +945,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue");
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaWithCustomAppearanceAndPlaceHolder() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaWithCustomAppearanceAndPlaceHolder(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -881,11 +962,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue");
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -896,11 +978,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaInteractive");
+        framework.assertBothValid("testTextAreaInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaWithValueInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaWithValueInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -912,11 +995,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithValueInteractive");
+        framework.assertBothValid("testTextAreaWithValueInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaWithCustomAppearanceInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaWithCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -929,11 +1013,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithCustomAppearanceInteractive");
+        framework.assertBothValid("textAreaWithCustomAppearanceInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaWithCustomAppearanceAndValueInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaWithCustomAppearanceAndValueInteractive(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -947,11 +1033,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValueInteractive");
+        framework.assertBothValid("textAreaCustomAppValueInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaWithCustomAppearanceAndPlaceHolderInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaWithCustomAppearanceAndPlaceHolderInteractive(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -965,11 +1053,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithCustomAppearanceAndPlaceHolderInteractive");
+        framework.assertBothValid("textAreaCustomAppPlaceHolderInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testListBox() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testListBox(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -980,11 +1069,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testListBox");
+        framework.assertBothValid("testListBox", pdfUAConformance);
     }
 
-    @Test
-    public void testListBoxCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testListBoxCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -998,11 +1088,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testListBoxCustomAppearance");
+        framework.assertBothValid("testListBoxCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testListBoxCustomAppearanceSelected() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testListBoxCustomAppearanceSelected(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1016,11 +1107,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testListBoxCustomAppearanceSelected");
+        framework.assertBothValid("testListBoxCustomAppearanceSelected", pdfUAConformance);
     }
 
-    @Test
-    public void testListBoxInteractive() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testListBoxInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1033,11 +1125,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testListBoxInteractive");
+        framework.assertBothValid("testListBoxInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testListBoxCustomAppearanceInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testListBoxCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1053,11 +1146,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testListBoxCustomAppearanceInteractive");
+        framework.assertBothValid("testListBoxCustomAppearanceInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testListBoxCustomAppearanceSelectedInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testListBoxCustomAppearanceSelectedInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1073,11 +1167,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testListBoxCustomAppearanceSelectedInteractive");
+        framework.assertBothValid("listBoxCustomAppSelectedInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testComboBox() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testComboBox(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1088,11 +1183,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testComboBox");
+        framework.assertBothValid("testComboBox", pdfUAConformance);
     }
 
-    @Test
-    public void testComboBoxCustomAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testComboBoxCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1106,11 +1202,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testComboBoxCustomAppearance");
+        framework.assertBothValid("testComboBoxCustomAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testComboBoxCustomAppearanceSelected() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testComboBoxCustomAppearanceSelected(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1124,11 +1221,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testListBoxCustomAppearanceSelected");
+        framework.assertBothValid("testListBoxCustomAppearanceSelected", pdfUAConformance);
     }
 
-    @Test
-    public void testComboBoxInteractive() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testComboBoxInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1141,11 +1239,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testComboBoxInteractive");
+        framework.assertBothValid("testComboBoxInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testComboBoxCustomAppearanceInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testComboBoxCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1161,11 +1260,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testComboBoxCustomAppearanceInteractive");
+        framework.assertBothValid("comboBoxCustomAppearanceInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testComboBoxCustomAppearanceSelectedInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testComboBoxCustomAppearanceSelectedInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1181,11 +1281,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testComboBoxCustomAppearanceSelectedInteractive");
+        framework.assertBothValid("comboBoxCustomAppInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testSignatureAppearance() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureAppearance(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1195,11 +1296,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("testSignatureAppearance");
+        framework.assertBothValid("testSignatureAppearance", pdfUAConformance);
     }
 
-    @Test
-    public void testSignatureAppearanceWithSignedAppearanceText() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureAppearanceWithSignedAppearanceText(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1213,11 +1315,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceText");
+        framework.assertBothValid("signatureAppearanceSignedAppearanceText", pdfUAConformance);
     }
 
-    @Test
-    public void testSignatureAppearanceWithCustomContent() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureAppearanceWithCustomContent(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1230,11 +1333,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceText");
+        framework.assertBothValid("signatureAppearanceSignedAppearanceText", pdfUAConformance);
     }
 
-    @Test
-    public void testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceText() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceText(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1250,11 +1355,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceText");
+        framework.assertBothValid("signAppSignedAppCustomAppText", pdfUAConformance);
     }
 
-    @Test
-    public void testSignatureAppearanceInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1266,11 +1372,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("testSignatureAppearanceInteractive");
+        framework.assertBothValid("testSignatureAppearanceInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testSignatureAppearanceWithSignedAppearanceTextInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureAppearanceWithSignedAppearanceTextInteractive(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1286,12 +1394,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-
-        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceTextInteractive");
+        framework.assertBothValid("signAppSignedTextInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testSignatureAppearanceWithCustomContentInteractive() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureAppearanceWithCustomContentInteractive(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1306,11 +1415,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("testSignatureAppearanceWithSignedAppearanceTextInteractive");
+        framework.assertBothValid("signedAppearanceTextInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testSignedAndCustomAppearanceTextInteractive()
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignedAndCustomAppearanceTextInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
@@ -1329,26 +1439,34 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("testSignedAndCustomAppearanceTextInteractive");
+        framework.assertBothValid("signedCustomAppTextInteractive", pdfUAConformance);
     }
 
-    @Test
-    public void testInteractiveCheckBoxNoAlternativeDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInteractiveCheckBoxNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
                 cb.setInteractive(true);
                 return cb;
             }
         });
-        framework.assertBothFail("testInteractiveCheckBoxNoAlternativeDescription",
-                PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("interactiveCheckBoxNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("interactiveCheckBoxNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testInteractiveRadioButtonNoAlternativeDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInteractiveRadioButtonNoAlternativeDescription(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1357,12 +1475,19 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothFail("testInteractiveRadioButtonNoAlternativeDescription",
-                PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("interactiveRadioButtonNoAltDescr",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("interactiveRadioButtonNoAltDescr",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testInteractiveButtonNoAlternativeDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInteractiveButtonNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1372,12 +1497,20 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothFail("testInteractiveButtonNoAlternativeDescription",
-                PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("interactiveButtonNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("interactiveButtonNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testInteractiveInputFieldNoAlternativeDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInteractiveInputFieldNoAlternativeDescription(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1387,12 +1520,19 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothFail("testInteractiveInputFieldNoAlternativeDescription",
-                PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("interactiveInputFieldNoAltDescr",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("interactiveInputFieldNoAltDescr",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testInteractiveTextAreaNoAlternativeDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInteractiveTextAreaNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1402,12 +1542,19 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothFail("testInteractiveTextAreaNoAlternativeDescription",
-                PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("interactiveTextAreaNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("interactiveTextAreaNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testInteractiveListBoxNoAlternativeDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInteractiveListBoxNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1417,12 +1564,19 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothFail("testInteractiveListBoxNoAlternativeDescription",
-                PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("interactiveListBoxNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("interactiveListBoxNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testInteractiveComboBoxNoAlternativeDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInteractiveComboBoxNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1432,12 +1586,20 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothFail("testInteractiveComboBoxNoAlternativeDescription",
-                PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("interactiveComboBoxNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("interactiveComboBoxNoAlternativeDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testInteractiveSignatureAppearanceNoAlternativeDescription() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInteractiveSignatureAppearanceNoAlternativeDescription(PdfUAConformance pdfUAConformance)
+            throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1447,40 +1609,54 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothFail("testInteractiveSignatureAppearanceNoAlternativeDescription",
-                PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("interactiveSignAppearanceNoAltDescription",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("interactiveSignAppearanceNoAltDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testCheckBoxDifferentRole() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
                 cb.getAccessibilityProperties().setAlternateDescription("Hello");
                 return cb;
             }
         });
+        framework.assertBothValid("testCheckBoxDifferentRole", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testCheckBoxArtifactRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 CheckBox cb = new CheckBox("name");
-                cb.setPdfConformance(PdfConformance.PDF_UA_1);
+                cb.setPdfConformance(new PdfConformance(pdfUAConformance));
                 cb.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
                 return cb;
             }
         });
-        framework.assertBothValid("testCheckBoxDifferentRole");
+        framework.assertBothValid("testCheckBoxArtifactRole", pdfUAConformance);
     }
 
-    @Test
-    public void testRadioButtonDifferentRole() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
-                Radio radio = new Radio("name", "group");
+                Radio radio = new Radio("name1", "group");
                 radio.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
                 radio.getAccessibilityProperties()
                         .setAlternateDescription("Radio " + "that " + "was " + "not " + "checked");
@@ -1490,7 +1666,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
-                Radio radio = new Radio("name", "group");
+                Radio radio = new Radio("name2", "group");
                 radio.setChecked(true);
                 radio.getAccessibilityProperties().setRole(StandardRoles.FIGURE);
                 radio.getAccessibilityProperties().setAlternateDescription("Radio that was not checked");
@@ -1500,16 +1676,51 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
-                Radio radio = new Radio("name", "group");
+                Radio radio = new Radio("name3", "group");
                 radio.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonDifferentRole");
+        framework.assertBothValid("testRadioButtonDifferentRole", pdfUAConformance);
     }
 
-    @Test
-    public void testButtonDifferentRole() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonArtifactRole(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name1", "group");
+                radio.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                radio.getAccessibilityProperties()
+                        .setAlternateDescription("Radio that was not checked");
+                return radio;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name2", "group");
+                radio.setChecked(true);
+                radio.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                radio.getAccessibilityProperties().setAlternateDescription("Radio that was not checked");
+                return radio;
+            }
+        });
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Radio radio = new Radio("name3", "group");
+                radio.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+                return radio;
+            }
+        });
+        framework.assertBothValid("testRadioButtonArtifactRole", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1531,11 +1742,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return b;
             }
         });
-        framework.assertBothValid("testButtonDifferentRole");
+        framework.assertBothValid("testButtonDifferentRole", pdfUAConformance);
     }
 
-    @Test
-    public void testInputFieldDifferentRole() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testInputFieldDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1568,11 +1780,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldDifferentRole");
+        framework.assertBothValid("testInputFieldDifferentRole", pdfUAConformance);
     }
 
-    @Test
-    public void testTextAreaDifferentRole() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextAreaDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1601,12 +1814,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaDifferentRole");
-
+        framework.assertBothValid("testTextAreaDifferentRole", pdfUAConformance);
     }
 
-    @Test
-    public void testListBoxDifferentRole() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testListBoxDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1627,12 +1840,13 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             }
         });
 
-        framework.assertBothValid("testListBoxDifferentRole");
+        framework.assertBothValid("testListBoxDifferentRole", pdfUAConformance);
 
     }
 
-    @Test
-    public void testComboBoxDifferentRole() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testComboBoxDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1655,11 +1869,12 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testComboBoxDifferentRole");
+        framework.assertBothValid("testComboBoxDifferentRole", pdfUAConformance);
     }
 
-    @Test
-    public void testSignatureAppearanceDifferentRole() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureAppearanceDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1682,117 +1897,166 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("testSignatureAppearanceDifferentRole");
+        framework.assertBothValid("testSignatureAppearanceDifferentRole", pdfUAConformance);
     }
 
-    @Test
-    public void testTextBuilderWithTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
         });
-        framework.assertBothValid("testTextBuilderWithTu");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("testTextBuilderWithTu", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testTextBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testTextBuilderNoTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testTextBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             form.addField(field);
         });
-        framework.assertBothFail("testTextBuilderNoTu", PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("testTextBuilderNoTu",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION,
+                    pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testTextBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testChoiceBuilderWithTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testChoiceBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
+            PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createComboBox();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
         });
-        framework.assertBothValid("testChoiceBuilderWithTu");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("testChoiceBuilderWithTu", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testChoiceBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testChoiceBuilderNoTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testChoiceBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc,"hello")
+            PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createComboBox();
             form.addField(field);
         });
-        framework.assertBothFail("tesChoicetBuilderNoTu", PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("tesChoicetBuilderNoTu",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("tesChoicetBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testButtonBuilderWithTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
+            PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
         });
-        framework.assertBothValid("testButtonBuilderWithTu");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("testButtonBuilderWithTu", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testButtonBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testButtonBuilderNoTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
+            PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             form.addField(field);
         });
-        framework.assertBothFail("testButtonBuilderNoTu", PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("testButtonBuilderNoTu",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION,
+                    pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testButtonBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testButtonBuilderNoTuNotVisible() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testButtonBuilderNoTuNotVisible(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc,"hello")
+            PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createPushButton();
             List<PdfFormAnnotation> annList = field.getChildFormAnnotations();
             annList.get(0).setVisibility(PdfFormAnnotation.HIDDEN);
             form.addField(field);
         });
-        framework.assertBothValid("testButtonBuilderNoTuNotVisible");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("testButtonBuilderNoTuNotVisible", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testButtonBuilderNoTuNotVisible",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testRadioButtonBuilderNoTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, "Radio");
             PdfButtonFormField radioGroup = builder.createRadioGroup();
@@ -1807,12 +2071,20 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
             form.addField(radioGroup);
         });
-        framework.assertBothFail("testRadioButtonBuilderNoTu", PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("testRadioButtonBuilderNoTu",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testRadioButtonBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testRadioButtonBuilderWithTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testRadioButtonBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, "Radio");
             PdfButtonFormField radioGroup = builder.createRadioGroup();
@@ -1829,48 +2101,67 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
             form.addField(radioGroup);
         });
-        framework.assertBothValid("testRadioButtonBuilderWithTu");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("testRadioButtonBuilderWithTu", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testRadioButtonBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testSignatureBuilderWithTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
+            PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createSignature();
             field.setValue("some value");
             field.setAlternativeName("Some tu entry value");
             form.addField(field);
         });
-        framework.assertBothValid("testSignatureBuilderWithTu");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("testSignatureBuilderWithTu", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testSignatureBuilderWithTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testSignatureBuilderNoTu() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) ->{
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testSignatureBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc,"hello")
+            PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createSignature();
             field.setValue("some value");
             form.addField(field);
         });
-        framework.assertBothFail("testSignatureBuilderNoTu", PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION);
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("testSignatureBuilderNoTu",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("testSignatureBuilderNoTu",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testFormFieldWithAltEntry() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testFormFieldWithAltEntry(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
-            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc,"hello")
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
                     .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
                     .setFont(getFont())
-                    .setConformance(PdfConformance.PDF_UA_1)
                     .createText();
             field.setValue("Some value");
             pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
@@ -1878,19 +2169,281 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                             .setAlternateDescription("alternate description"));
             form.addField(field);
         });
-        framework.assertBothValid("FormFieldAltDescription");
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("FormFieldAltDescription", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("FormFieldAltDescription",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
     }
 
-    @Test
-    public void testFormFieldAsStream() throws IOException {
-        framework.addBeforeGenerationHook((pdfDoc) -> {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testFormFieldWithContentsEntry(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setValue("Some value");
+            field.getFirstFormAnnotation().setAlternativeDescription("Some alt");
+            form.addField(field);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("formFieldContentsDescription",
+                    PdfUAExceptionMessageConstants.MISSING_FORM_FIELD_DESCRIPTION, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("formFieldContentsDescription", pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testFormFieldAsStream(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
             PdfObject page = pdfDoc.addNewPage().getPdfObject();
 
             PdfStream streamObj = new PdfStream();
             streamObj.put(PdfName.Subtype, PdfName.Widget);
             streamObj.put(PdfName.T, new PdfString("hi"));
             streamObj.put(PdfName.TU, new PdfString("some text"));
-            streamObj.put(PdfName.P,  page);
+            streamObj.put(PdfName.Contents, new PdfString("hello"));
+            streamObj.put(PdfName.P, page);
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, streamObj);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.Form);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+            PdfArray k = new PdfArray();
+            k.add(objRef);
+            parentDic.put(PdfName.K, k);
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(parentDic));
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(new PdfStructElem(parentDic));
+            }
+        });
+
+        framework.assertBothValid("FormFieldAsStream", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void severalWidgetKidsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfObject page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfStream streamObj = new PdfStream();
+            streamObj.put(PdfName.Subtype, PdfName.Widget);
+            streamObj.put(PdfName.T, new PdfString("hi"));
+            streamObj.put(PdfName.TU, new PdfString("some text"));
+            streamObj.put(PdfName.Contents, new PdfString("hello"));
+            streamObj.put(PdfName.P, page);
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, streamObj);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.Form);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+
+            PdfStructElem elem = new PdfStructElem(parentDic);
+            elem.addKid(new PdfStructElem(objRef));
+            elem.addKid(new PdfStructElem(objRef));
+            elem.addKid(new PdfStructElem(objRef));
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(elem);
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(elem);
+            }
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("severalWidgetKids", PdfUAExceptionMessageConstants
+                    .FORM_STRUCT_ELEM_WITHOUT_ROLE_SHALL_CONTAIN_ONE_WIDGET, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("severalWidgetKids",
+                    PdfUAExceptionMessageConstants.FORM_STRUCT_ELEM_SHALL_CONTAIN_AT_MOST_ONE_WIDGET, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void severalWidgetKidsWithRoleTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfObject page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfStream streamObj = new PdfStream();
+            streamObj.put(PdfName.Subtype, PdfName.Widget);
+            streamObj.put(PdfName.T, new PdfString("hi"));
+            streamObj.put(PdfName.TU, new PdfString("some text"));
+            streamObj.put(PdfName.Contents, new PdfString("hello"));
+            streamObj.put(PdfName.P, page);
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, streamObj);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.Form);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+
+            PdfStructElem elem = new PdfStructElem(parentDic);
+            elem.addKid(new PdfStructElem(objRef));
+            elem.addKid(new PdfStructElem(objRef));
+            elem.addKid(new PdfStructElem(objRef));
+
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName("PrintField"));
+            attributes.put(PdfStructTreeRoot.convertRoleToPdfName("Role"), new PdfName("pb"));
+            elem.setAttributes(attributes);
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(elem);
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(elem);
+            }
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("severalWidgetKidsWithRole", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("severalWidgetKidsWithRole",
+                    PdfUAExceptionMessageConstants.FORM_STRUCT_ELEM_SHALL_CONTAIN_AT_MOST_ONE_WIDGET, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void widgetNeitherFormNorArtifactTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.Contents, new PdfString("hello"));
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.P, page);
+            widget.put(PdfName.StructParent, new PdfNumber(0));
+
+            page.put(PdfName.Annots, new PdfArray(widget));
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, widget);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.P);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+            parentDic.put(PdfName.K, objRef);
+
+            ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(new PdfStructElem(parentDic));
+        });
+
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothFail("widgetNeitherFormNorArtifact",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);
+        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
+            //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
+            framework.assertOnlyITextFail("widgetNeitherFormNorArtifact",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void widgetNeitherFormNorArtifactInAcroformTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello").setFont(getFont()).createText();
+            field.setValue("Some value");
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.Contents, new PdfString("hello"));
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.P, page);
+            widget.put(PdfName.StructParent, new PdfNumber(0));
+            widget.makeIndirect(pdfDoc);
+            field.addKid(PdfFormCreator.createFormAnnotation(widget));
+            form.addField(field);
+
+            PdfObjRef objRef = pdfDoc.getStructTreeRoot().findObjRefByStructParentIndex(page, 0);
+            TagTreePointer p = pdfDoc.getTagStructureContext()
+                    .createPointerForStructElem((PdfStructElem) objRef.getParent());
+            p.setRole(StandardRoles.P);
+        });
+
+        framework.assertBothFail("widgetNeitherFormNorArtifactInAcroform",
+                PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void widgetIsArtifactInAcroformTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello").setFont(getFont()).createText();
+            field.setValue("Some value");
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.Contents, new PdfString("hello"));
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.P, page);
+            widget.put(PdfName.StructParent, new PdfNumber(0));
+            widget.makeIndirect(pdfDoc);
+            field.addKid(PdfFormCreator.createFormAnnotation(widget));
+            form.addField(field);
+
+            PdfObjRef objRef = pdfDoc.getStructTreeRoot().findObjRefByStructParentIndex(page, 0);
+            TagTreePointer p = pdfDoc.getTagStructureContext()
+                    .createPointerForStructElem((PdfStructElem) objRef.getParent());
+            p.setRole(StandardRoles.ARTIFACT);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("widgetIsArtifactInAcroform",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("widgetIsArtifactInAcroform", pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void widgetLabelNoContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfObject page = pdfDoc.addNewPage().getPdfObject();
+
+            PdfStream streamObj = new PdfStream();
+            streamObj.put(PdfName.Subtype, PdfName.Widget);
+            streamObj.put(PdfName.T, new PdfString("hi"));
+            streamObj.put(PdfName.TU, new PdfString("some text"));
+            streamObj.put(PdfName.P, page);
 
             PdfDictionary objRef = new PdfDictionary();
             objRef.put(PdfName.Obj, streamObj);
@@ -1903,12 +2456,392 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             parentDic.put(PdfName.Pg, page);
             parentDic.put(PdfName.K, objRef);
 
-            pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(parentDic));
+            PdfStructElem elem = new PdfStructElem(parentDic);
+            elem.addKid(new PdfStructElem(pdfDoc, PdfName.Lbl));
+
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName("PrintField"));
+            attributes.put(PdfStructTreeRoot.convertRoleToPdfName("Role"), new PdfName("pb"));
+            elem.setAttributes(attributes);
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(elem);
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(elem);
+            }
         });
-        framework.assertBothValid("FormFieldAsStream");
+
+        framework.assertBothValid("widgetLabelNoContentsTest", pdfUAConformance);
     }
 
+    @ParameterizedTest
+    @MethodSource("data")
+    public void additionalActionAndContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfObject page = pdfDoc.addNewPage().getPdfObject();
 
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.T, new PdfString("hi"));
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.Contents, new PdfString("hello"));
+            widget.put(PdfName.AA, new PdfDictionary());
+            widget.put(PdfName.P, page);
+
+            PdfDictionary objRef = new PdfDictionary();
+            objRef.put(PdfName.Obj, widget);
+            objRef.put(PdfName.Type, PdfName.OBJR);
+
+            PdfDictionary parentDic = new PdfDictionary();
+            parentDic.put(PdfName.P, pdfDoc.getStructTreeRoot().getPdfObject());
+            parentDic.put(PdfName.S, PdfName.Form);
+            parentDic.put(PdfName.Type, PdfName.StructElem);
+            parentDic.put(PdfName.Pg, page);
+            parentDic.put(PdfName.K, objRef);
+
+            PdfStructElem elem = new PdfStructElem(parentDic);
+
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+                pdfDoc.getStructTreeRoot().addKid(elem);
+            } else {
+                ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0)).addKid(elem);
+            }
+        });
+
+        framework.assertBothValid("additionalActionAndContents", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void additionalActionNoContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfPage page = pdfDoc.addNewPage();
+
+            TagTreePointer p = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            p.addTag(StandardRoles.FORM);
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.T, new PdfString("hi"));
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.AA, new PdfDictionary());
+            widget.put(PdfName.P, page.getPdfObject());
+
+            page.addAnnotation(PdfAnnotation.makeAnnotation(widget));
+
+            PdfObjRef objRef = pdfDoc.getStructTreeRoot().findObjRefByStructParentIndex(page.getPdfObject(), 0);
+            p = pdfDoc.getTagStructureContext().createPointerForStructElem((PdfStructElem) objRef.getParent());
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName("PrintField"));
+            attributes.put(PdfStructTreeRoot.convertRoleToPdfName("Role"), new PdfName("pb"));
+            p.getProperties().addAttributes(new PdfStructureAttributes(attributes));
+            p.addTag(StandardRoles.LBL);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("additionalActionNoContents", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("additionalActionNoContents",
+                    PdfUAExceptionMessageConstants.WIDGET_WITH_AA_SHALL_PROVIDE_CONTENTS, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void additionalActionNoContentsAcroformTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello").setFont(getFont()).createText();
+            field.setValue("Some value");
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.AA, new PdfDictionary());
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.P, page);
+            widget.put(PdfName.StructParent, new PdfNumber(0));
+            widget.makeIndirect(pdfDoc);
+            field.addKid(PdfFormCreator.createFormAnnotation(widget));
+            field.setAlternativeName("Alt");
+            form.addField(field);
+
+            PdfObjRef objRef = pdfDoc.getStructTreeRoot().findObjRefByStructParentIndex(page, 0);
+            TagTreePointer p = pdfDoc.getTagStructureContext()
+                    .createPointerForStructElem((PdfStructElem) objRef.getParent());
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfStructTreeRoot.convertRoleToPdfName("PrintField"));
+            attributes.put(PdfStructTreeRoot.convertRoleToPdfName("Role"), new PdfName("pb"));
+            p.getProperties().addAttributes(new PdfStructureAttributes(attributes));
+            p.addTag(StandardRoles.LBL);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("additionalActionNoContentsAcroform", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("additionalActionNoContentsAcroform",
+                    PdfUAExceptionMessageConstants.WIDGET_WITH_AA_SHALL_PROVIDE_CONTENTS, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void noContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addAfterGenerationHook(pdfDoc -> {
+            PdfPage page = pdfDoc.addNewPage();
+
+            TagTreePointer p = pdfDoc.getTagStructureContext().getAutoTaggingPointer();
+            p.addTag(StandardRoles.FORM);
+
+            PdfDictionary widget = new PdfDictionary();
+            widget.put(PdfName.Subtype, PdfName.Widget);
+            widget.put(PdfName.Rect, new PdfArray(new Rectangle(100, 100, 100, 100)));
+            widget.put(PdfName.T, new PdfString("hi"));
+            widget.put(PdfName.TU, new PdfString("some text"));
+            widget.put(PdfName.P, page.getPdfObject());
+
+            page.addAnnotation(PdfAnnotation.makeAnnotation(widget));
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("noContents", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("noContents",
+                    PdfUAExceptionMessageConstants.WIDGET_SHALL_PROVIDE_LABEL_OR_CONTENTS, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVPositiveTest1(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+
+            String value = "Red\rBlue\r";
+            field.setValue(value);
+
+            String richText = "<body xmlns=\"http://www.w3.org/1999/xhtml\"><p style=\"color:#FF0000;\">Red&#13;</p>" +
+                    "<p style=\"color:#1E487C;\">Blue&#13;</p></body>";
+            field.setRichText(new PdfString(richText, PdfEncodings.PDF_DOC_ENCODING));
+
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        framework.assertBothValid("textFieldRVAndVPositiveTest1", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVPositiveTest2(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setValue("Some value");
+            field.setRichText(new PdfStream("<p>Some value</p>".getBytes(), CompressionConstants.NO_COMPRESSION));
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        framework.assertBothValid("textFieldRVAndVPositiveTest2", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVPositiveTest3(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+
+            String value = "\n\nThe following word\nis in bold.\n\n";
+            field.setValue(value);
+
+            String richText = "<field1>\n" +
+                    "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+                    "<p>The following <span style=\"font-weight:bold\">word</span>\n" +
+                    "is in bold.</p>\n" +
+                    "</body>\n" +
+                    "</field1>";
+            field.setRichText(new PdfString(richText.getBytes(StandardCharsets.UTF_8)).setHexWriting(true));
+
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        framework.assertBothValid("textFieldRVAndVPositiveTest3", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVNegativeTest1(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setRichText(new PdfString("<p>Some value</p>", PdfEncodings.UTF8));
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("textFieldRVAndVNegativeTest1", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("textFieldRVAndVNegativeTest1",
+                    PdfUAExceptionMessageConstants.TEXT_FIELD_V_AND_RV_SHALL_BE_TEXTUALLY_EQUIVALENT, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVNegativeTest2(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setValue("Some value");
+            field.setRichText(new PdfStream("<p>Some different value</p>".getBytes(StandardCharsets.UTF_8),
+                    CompressionConstants.NO_COMPRESSION));
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("textFieldRVAndVNegativeTest2", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("textFieldRVAndVNegativeTest2",
+                    PdfUAExceptionMessageConstants.TEXT_FIELD_V_AND_RV_SHALL_BE_TEXTUALLY_EQUIVALENT, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void textFieldRVAndVNegativeTest3(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
+                    .setWidgetRectangle(new Rectangle(100, 100, 100, 100))
+                    .setFont(getFont())
+                    .createText();
+            field.setValue("Some value");
+            field.setRichText(new PdfString("<p>Some different value</p>"));
+            field.getFirstFormAnnotation().setAlternativeDescription("alternate description");
+            pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(
+                    new DefaultAccessibilityProperties(StandardRoles.FORM)
+                            .setAlternateDescription("alternate description"));
+            form.addField(field);
+        });
+
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("textFieldRVAndVNegativeTest3", pdfUAConformance);
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothFail("textFieldRVAndVNegativeTest3",
+                    PdfUAExceptionMessageConstants.TEXT_FIELD_V_AND_RV_SHALL_BE_TEXTUALLY_EQUIVALENT, pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
+    public void signatureAppearanceWithImage(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                Div div = new Div();
+                Image img;
+                try {
+                    img = new Image(ImageDataFactory.create(DOG));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                div.add(img);
+                appearance.setContent(div);
+                appearance.setInteractive(true);
+                appearance.setAlternativeDescription("Alternative Description");
+                return appearance;
+            }
+        });
+        framework.assertBothValid("signatureAppearanceWithImage", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
+    public void signatureAppearanceWithLineSeparator(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                Div div = new Div();
+                LineSeparator line = new LineSeparator(new SolidLine(3));
+                div.add(line);
+                appearance.setContent(div);
+                appearance.setInteractive(true);
+                appearance.setAlternativeDescription("Alternative Description");
+                return appearance;
+            }
+        });
+        framework.assertBothValid("signatureAppearanceLineSep", pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
+    public void signatureAppearanceBackgroundImage(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                SignatureFieldAppearance appearance = new SignatureFieldAppearance("name");
+                try {
+                    appearance.setFont(getFont());
+                    PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(DOG));
+                    BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(xObject).build();
+                    backgroundImage.getBackgroundSize().setBackgroundSizeToValues(UnitValue.createPointValue(100), UnitValue.createPointValue(100));
+                    Div div = new Div();
+                    div.add(new Paragraph("Some text"));
+                    appearance.setContent(div).setFontSize(50)
+                            .setBorder(new SolidBorder(ColorConstants.YELLOW, 10)).setHeight(200).setWidth(300);
+                    appearance.setBackgroundImage(backgroundImage);
+                    appearance.setAlternativeDescription("Alternative Description");
+                    appearance.setInteractive(true);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e.getMessage());
+                }
+                return appearance;
+            }
+        });
+        framework.assertBothValid("signatureAppearanceBackgroundImage", pdfUAConformance);
+    }
 
     private PdfFont getFont() {
         try {

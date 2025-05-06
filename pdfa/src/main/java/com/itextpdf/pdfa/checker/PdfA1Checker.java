@@ -53,9 +53,12 @@ import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.utils.checkers.FontCheckUtil;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,8 +67,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * PdfA1Checker defines the requirements of the PDF/A-1 standard and contains
@@ -383,7 +384,7 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     protected void checkNonSymbolicTrueTypeFont(PdfTrueTypeFont trueTypeFont) {
         String encoding = trueTypeFont.getFontEncoding().getBaseEncoding();
-        // non-symbolic true type font will always has an encoding entry in font dictionary in itext
+        // non-symbolic true type font will always have an encoding entry in font dictionary in itext
         if (!PdfEncodings.WINANSI.equals(encoding) && !PdfEncodings.MACROMAN.equals(encoding) || trueTypeFont.getFontEncoding().hasDifferences()) {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.ALL_NON_SYMBOLIC_TRUE_TYPE_FONT_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING_AS_THE_ENCODING_ENTRY, trueTypeFont);
         }
@@ -634,11 +635,11 @@ public class PdfA1Checker extends PdfAChecker {
         }
 
         int flags = (int) annotDic.getAsInt(PdfName.F);
-        if (!checkFlag(flags, PdfAnnotation.PRINT) || checkFlag(flags, PdfAnnotation.HIDDEN) || checkFlag(flags, PdfAnnotation.INVISIBLE) ||
-                checkFlag(flags, PdfAnnotation.NO_VIEW)) {
+        if (isAnnotationInvisible(flags)) {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.THE_F_KEYS_PRINT_FLAG_BIT_SHALL_BE_SET_TO_1_AND_ITS_HIDDEN_INVISIBLE_AND_NOVIEW_FLAG_BITS_SHALL_BE_SET_TO_0);
         }
-        if (subtype.equals(PdfName.Text) && (!checkFlag(flags, PdfAnnotation.NO_ZOOM) || !checkFlag(flags, PdfAnnotation.NO_ROTATE))) {
+        if (subtype.equals(PdfName.Text) && (!PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_ZOOM) ||
+                !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_ROTATE))) {
             throw new PdfAConformanceException(PdfAConformanceLogMessageConstant.TEXT_ANNOTATIONS_SHOULD_SET_THE_NOZOOM_AND_NOROTATE_FLAG_BITS_OF_THE_F_KEY_TO_1);
         }
         if (annotDic.containsKey(PdfName.C) || annotDic.containsKey(PdfName.IC)) {
@@ -704,7 +705,7 @@ public class PdfA1Checker extends PdfAChecker {
 
         PdfArray fields = form.getAsArray(PdfName.Fields);
         if (fields != null) {
-            fields = getFormFields(fields);
+            fields = PdfCheckersUtil.getFormFields(fields);
             for (PdfObject field : fields) {
                 PdfDictionary fieldDic = (PdfDictionary) field;
                 if (fieldDic.containsKey(PdfName.A) || fieldDic.containsKey(PdfName.AA)) {
@@ -785,17 +786,19 @@ public class PdfA1Checker extends PdfAChecker {
      * @param array the {@link PdfArray} of form fields {@link PdfDictionary} objects
      *
      * @return the {@link PdfArray} of form fields
+     *
+     * @deprecated in favour of {@link PdfCheckersUtil#getFormFields(PdfArray)}
      */
+    @Deprecated
     protected PdfArray getFormFields(PdfArray array) {
-        PdfArray fields = new PdfArray();
-        for (PdfObject field : array) {
-            PdfArray kids = ((PdfDictionary) field).getAsArray(PdfName.Kids);
-            fields.add(field);
-            if (kids != null) {
-                fields.addAll(getFormFields(kids));
-            }
-        }
-        return fields;
+        return PdfCheckersUtil.getFormFields(array);
+    }
+
+    private static boolean isAnnotationInvisible(int flags) {
+        return !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.PRINT) ||
+                PdfCheckersUtil.checkFlag(flags, PdfAnnotation.HIDDEN) ||
+                PdfCheckersUtil.checkFlag(flags, PdfAnnotation.INVISIBLE) ||
+                PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_VIEW);
     }
 
     private int getMaxArrayCapacity() {

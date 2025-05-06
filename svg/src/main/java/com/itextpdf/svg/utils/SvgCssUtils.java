@@ -23,6 +23,7 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
@@ -163,7 +164,7 @@ public final class SvgCssUtils {
         String vbString = svgRenderer.getAttribute(SvgConstants.Attributes.VIEWBOX);
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         if (vbString == null) {
-            vbString = svgRenderer.getAttribute(SvgConstants.Attributes.VIEWBOX.toLowerCase());
+            vbString = svgRenderer.getAttribute(StringNormalizer.toLowerCase(SvgConstants.Attributes.VIEWBOX));
         }
         float[] values = null;
         if (vbString != null) {

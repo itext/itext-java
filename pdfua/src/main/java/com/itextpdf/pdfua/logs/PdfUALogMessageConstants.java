@@ -27,6 +27,8 @@ package com.itextpdf.pdfua.logs;
  */
 public final class PdfUALogMessageConstants {
 
+    public static final String CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS =
+            "Cannot resolve \"{0}\" role in {1} namespace mapping, because of the too much transitive mappings.";
     public static final String PAGE_FLUSHING_DISABLED = "Page flushing is disabled in PDF/UA mode to allow UA checks "
             + "to be applied. Page will only be flushed on closing.";
     public static final String PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED = "PDF to PDF/UA conversion is not supported.";

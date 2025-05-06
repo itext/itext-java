@@ -41,19 +41,19 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class OpacityTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/OpacityTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/OpacityTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/OpacityTest/";
 
     @BeforeAll
     public static void beforeClass() {

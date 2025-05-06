@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.otf.Glyph;
@@ -40,7 +41,8 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         if ((encoding == null || encoding.length() == 0) && type1Font.isFontSpecific()) {
             encoding = FontEncoding.FONT_SPECIFIC;
         }
-        if (encoding != null && FontEncoding.FONT_SPECIFIC.toLowerCase().equals(encoding.toLowerCase())) {
+        if (encoding != null &&
+                StringNormalizer.toLowerCase(FontEncoding.FONT_SPECIFIC).equals(StringNormalizer.toLowerCase(encoding))) {
             fontEncoding = FontEncoding.createFontSpecificEncoding();
         } else {
             fontEncoding = FontEncoding.createFontEncoding(encoding);

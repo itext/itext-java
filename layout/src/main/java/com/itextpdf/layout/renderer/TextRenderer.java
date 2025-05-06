@@ -583,7 +583,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
                     boolean specialScriptWordSplit = textContainsSpecialScriptGlyphs(true)
                             && !isSplitForcedByNewLine && isOverflowFit(overflowX);
-                    if ((nonBreakablePartFullWidth > layoutBox.getWidth() && !anythingPlaced && !hyphenationApplied)
+                    // It's not clear why we need
+                    // nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()
+                    // condition. We are already in the branch where we could not fit a word. Removing this condition
+                    // does not change anything. Still leaving it here.
+                    if ((nonBreakablePartFullWidth + italicSkewAddition + boldSimulationAddition > layoutBox.getWidth()
+                            && !anythingPlaced && !hyphenationApplied)
                             || forcePartialSplitOnFirstChar
                             || -1 != nonBreakingHyphenRelatedChunkStart
                             || specialScriptWordSplit) {

@@ -26,7 +26,6 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.font.PdfFont;
@@ -40,6 +39,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
@@ -71,7 +71,9 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -88,7 +90,7 @@ import org.xml.sax.SAXException;
 @Tag("IntegrationTest")
 public class LayoutTaggingTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/layout/LayoutTaggingTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/LayoutTaggingTest/";
     public static final String imageName = "Desert.jpg";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LayoutTaggingTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
@@ -994,10 +996,6 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT)
-    })
-    //TODO update cmp-file after DEVSIX-3335 fixed
     public void notAsciiCharTest() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
         PdfWriter writer = new PdfWriter(destinationFolder + "notAsciiCharTest.pdf");
         PdfDocument pdf = new PdfDocument(writer);
@@ -1251,6 +1249,56 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         document.add(table);
         document.close();
         compareResult(outFile, "cmp_" + outFile);
+    }
+
+    @Test
+    public void emptyTaggedDocumentStillAddsDocumentTag()
+            throws IOException, ParserConfigurationException, InterruptedException, SAXException {
+        String outFile = "emptyTaggedDocumentStillAddsDocumentTag.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+        Document document = new Document(pdfDocument);
+
+        document.close();
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
+
+    @Test
+    public void emptyTaggedCanvasStillAddsDocumentTag1()
+            throws IOException, ParserConfigurationException, InterruptedException, SAXException {
+        String outFile = "emptyTaggedCanvasStillAddsDocumentTag1.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+        PdfPage page = pdfDocument.addNewPage();
+        Canvas canvas = new Canvas(page,page.getMediaBox());
+        canvas.close();
+        pdfDocument.close();
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
+
+    @Test
+    public void emptyTaggedCanvasStillAddsDocumentTag2()
+            throws IOException, ParserConfigurationException, InterruptedException, SAXException {
+        String outFile = "emptyTaggedCanvasStillAddsDocumentTag2.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        pdfDocument.setTagged();
+        PdfPage page = pdfDocument.addNewPage();
+        Canvas canvas = new Canvas(new PdfFormXObject(page),pdfDocument);
+        canvas.close();
+        pdfDocument.close();
+
+        compareResult(outFile, "cmp_" + outFile);
+    }
+
+    @Test
+    public void nullPdfDoesNotThrowNPE() {
+        Rectangle rect = new Rectangle(0, 0);
+        PdfCanvas pdfCanvas = new PdfCanvas(new PdfStream(), null, null);
+        AssertUtil.doesNotThrow(() -> {
+            new Canvas(pdfCanvas, rect);
+        });
     }
 
     private Paragraph createParagraph1() throws IOException {

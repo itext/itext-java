@@ -52,6 +52,7 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -87,7 +88,7 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/TwoPhaseSigningTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/TwoPhaseSigningTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/TwoPhaseSigningTest/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     private static final String SIMPLE_DOC_PATH = SOURCE_FOLDER + "SimpleDoc.pdf";

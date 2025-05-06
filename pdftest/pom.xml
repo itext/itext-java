@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>9.1.0</version>
+    <version>9.2.0</version>
   </parent>
 
   <artifactId>pdftest</artifactId>
@@ -54,6 +54,29 @@
         <configuration>
           <skip>true</skip>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <finalName>VeraPdfValidatorApp</finalName>
+          <archive>
+            <manifest>
+              <mainClass>com.itextpdf.test.runtime.VeraPdfValidatorApp</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly-verapdf-app</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

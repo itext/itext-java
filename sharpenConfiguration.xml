@@ -39,6 +39,9 @@
                 <file path="com/itextpdf/commons/utils/ZipFileReader.java"/>
                 <file path="com/itextpdf/commons/utils/ZipFileWriter.java"/>
             </fileset>
+            <fileset reason="On .NET there are System.Text.Json specific tests (JsonSerializerContext using)">
+                <file path="com/itextpdf/commons/utils/JsonUtilTest.java"/>
+            </fileset>
             <fileset reason="DEVSIX-3221 - Ignored because built-in Convert class functionality is used in .NET
         and the Java test is specific to the Java implementation.">
                 <file path="com/itextpdf/commons/utils/Base64Test.java"/>
@@ -89,6 +92,9 @@
                 <file path="com/itextpdf/io/source/PagedChannelRandomAccessSource.java"/>
                 <file path="com/itextpdf/io/source/FileChannelRandomAccessSource.java"/>
                 <file path="com/itextpdf/io/source/PagedChannelRandomAccessSourceTest.java"/>
+            </fileset>
+            <fileset reason="String#codePointAt needs manual implementation in .Net">
+                <file path="com/itextpdf/pdfua/checkers/utils/ua2/PdfUA2StringChecker.java"/>
             </fileset>
             <fileset reason="Read method with parameters is mapped to JRead which cannot be overriden (should be mapped to the Read with parameters).
         Read method without parameters cannot be overriden and not necessary in dotnet.
@@ -595,6 +601,10 @@
             <fileset reason="There's no serialization functionality in .Net, so there's no sense in this test class in .Net version">
                 <file path="com/itextpdf/kernel/pdf/DocumentSerializationTest.java"/>
             </fileset>
+            <fileset>
+                <file path="com/itextpdf/test/runtime/VeraPdfValidatorAppTest.java"/>
+                <file path="com/itextpdf/test/utils/UriUtilTest.java"/>
+            </fileset>
         </java>
     </ignored>
      <resource>
@@ -680,6 +690,10 @@
         </fileset>
         <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">
             <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/grayImages.png" />
+        </fileset>
+		<!--Junit parallel settings-->
+		<fileset reason="Juunit specific files">
+            <file path="junit-platform.properties"/>
         </fileset>
     </resource>
     <src>

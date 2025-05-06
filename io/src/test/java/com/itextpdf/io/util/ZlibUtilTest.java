@@ -26,19 +26,20 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.ZipFileReader;
 import com.itextpdf.io.source.DeflaterOutputStream;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import com.itextpdf.test.TestUtil;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ZlibUtilTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/util/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/io/util/";
 
     @BeforeEach
     public void setUp() {

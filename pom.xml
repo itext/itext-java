@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>9.1.0</version>
+  <version>9.2.0</version>
   <packaging>pom</packaging>
 
   <name>iText</name>
@@ -323,7 +323,7 @@
             <!-- svg -->
             <sourceFileExclude>com/itextpdf/svg/utils/SvgCoordinateUtils.java</sourceFileExclude>
             <!-- sharpen mapping -->
-            <sourceFileExclude>**/SharpenMapping.java</sourceFileExclude>
+            <sourceFileExclude>**/sharpenconfig/**</sourceFileExclude>
           </sourceFileExcludes>
           <groups>
             <group>
@@ -411,7 +411,6 @@
         <version>1.1.0</version>
         <executions>
           <execution>
-            <phase>verify</phase>
             <goals>
               <goal>pom</goal>
             </goals>
@@ -487,7 +486,7 @@
           <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
             <artifactId>japicmp-maven-plugin</artifactId>
-            <version>0.15.4</version>
+            <version>0.23.1</version>
             <executions>
               <execution>
                 <phase>verify</phase>
@@ -509,6 +508,7 @@
                   <excludeModule>bouncy-castle-adapter</excludeModule>
                   <excludeModule>bouncy-castle-connector</excludeModule>
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
+                  <excludeModule>pdftest</excludeModule>
                 </excludeModules>
               </parameter>
             </configuration>
@@ -846,7 +846,7 @@
                 <phase>package</phase>
                 <configuration>
                   <excludes>
-                    <exclude>**/SharpenMapping.class</exclude>
+                    <exclude>**/SharpenConfig*.class</exclude>
                     <exclude>**/sharpen.config.MappingConfiguration</exclude>
                   </excludes>
                 </configuration>
@@ -860,7 +860,7 @@
                 <configuration>
                   <classifier>sharpen-configuration</classifier>
                   <includes>
-                    <include>**/SharpenMapping.class</include>
+                    <include>**/SharpenConfig*.class</include>
                     <include>**/sharpen.config.MappingConfiguration</include>
                   </includes>
                 </configuration>

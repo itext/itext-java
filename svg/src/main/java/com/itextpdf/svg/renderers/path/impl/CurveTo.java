@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /***
- * Implements curveTo(C) attribute of SVG's path element
+ * Implements curveTo(C) attribute of SVG's path element.
  * */
 public class CurveTo extends AbstractPathShape implements IControlPointCurve {
 
@@ -41,14 +41,28 @@ public class CurveTo extends AbstractPathShape implements IControlPointCurve {
 
     private static final double ZERO_EPSILON = 1e-12;
 
+    /**
+     * Creates new {@link CurveTo} instance.
+     */
     public CurveTo() {
         this(false);
     }
 
+    /**
+     * Creates new {@link CurveTo} instance.
+     *
+     * @param relative {@code true} in case it is a relative operator, {@code false} if it is an absolute operator
+     */
     public CurveTo(boolean relative) {
         this(relative, new DefaultOperatorConverter());
     }
 
+    /**
+     * Creates new {@link CurveTo} instance.
+     *
+     * @param relative {@code true} in case it is a relative operator, {@code false} if it is an absolute operator
+     * @param copier {@link IOperatorConverter} copier for converting relative coordinates to absolute coordinates
+     */
     public CurveTo(boolean relative, IOperatorConverter copier) {
         super(relative, copier);
     }

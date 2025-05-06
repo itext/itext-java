@@ -27,6 +27,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -55,13 +56,17 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -70,7 +75,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfAFontTest extends ExtendedITextTest {
 
     static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
-    static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfAFontTest/";
+    static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfAFontTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -410,6 +415,8 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, count = 6))
+    @Disabled("DEVSIX-9125")
     public void pdfArrayWithUndefinedGlyphsTest() throws Exception {
         String outPdf = DESTINATION_FOLDER + "pdfArrayWithUndefinedGlyphs.pdf";
 

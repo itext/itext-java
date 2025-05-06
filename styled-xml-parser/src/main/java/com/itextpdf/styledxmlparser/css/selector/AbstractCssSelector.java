@@ -45,6 +45,11 @@ public abstract class AbstractCssSelector implements ICssSelector {
         this.selectorItems = selectorItems;
     }
 
+    /**
+     * Gets selector items.
+     *
+     * @return the selector items
+     */
     public List<ICssSelectorItem> getSelectorItems() {
         return Collections.unmodifiableList(selectorItems);
     }

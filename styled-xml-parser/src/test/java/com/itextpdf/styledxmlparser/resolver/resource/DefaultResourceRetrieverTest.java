@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -50,7 +51,7 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(java.net.SocketTimeoutException.class,
                 () -> resourceRetriever.getInputStreamByUrl(url)
         );
-        Assertions.assertEquals("read timed out", e.getMessage().toLowerCase());
+        Assertions.assertEquals("read timed out", StringNormalizer.toLowerCase(e.getMessage()));
     }
 
     @Test
@@ -64,7 +65,7 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(java.net.SocketTimeoutException.class,
                 () -> resourceRetriever.getInputStreamByUrl(url)
         );
-        Assertions.assertEquals("connect timed out", e.getMessage().toLowerCase());
+        Assertions.assertEquals("connect timed out", StringNormalizer.toLowerCase(e.getMessage()));
     }
 
     private static class TestResource extends Thread {

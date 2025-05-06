@@ -43,6 +43,7 @@ import com.itextpdf.kernel.pdf.function.PdfType3Function;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class CreateShadingTest extends ExtendedITextTest {
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/colorspace/CreateShadingTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/colorspace/CreateShadingTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/colorspace/CreateShadingTest/";
 
     @BeforeAll

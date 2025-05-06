@@ -135,7 +135,7 @@ public final class IoExceptionMessageConstant {
     public static final String MUST_HAVE_8_BITS_PER_COMPONENT = "{0} must have 8 bits per component.";
     public static final String NOT_AT_TRUE_TYPE_FILE = "{0} is not a true type file";
     public static final String NOT_FOUND_AS_FILE_OR_RESOURCE = "{0} not found as file or resource.";
-    public static final String N_VALUE_IS_NOT_SUPPORTED = "N value {1} is not supported.";
+    public static final String N_VALUE_IS_NOT_SUPPORTED = "N value {0} is not supported.";
     public static final String PADDING_OVERFLOW = "woff2 padding overflow exception";
     public static final String PAGE_NUMBER_MUST_BE_GT_EQ_1 = "Page number must be >= 1.";
     public static final String PDF_HEADER_NOT_FOUND = "PDF header not found.";

@@ -23,26 +23,27 @@
 package com.itextpdf.barcodes;
 
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class BarcodeDataMatrixTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodeDataMatrix/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/barcodes/BarcodeDataMatrix/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
 
     @BeforeAll

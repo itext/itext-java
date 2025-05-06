@@ -25,20 +25,21 @@ package com.itextpdf.forms;
 import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
+
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 @Tag("IntegrationTest")
 public class PdfPushButtonTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/PdfPushButtonTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/PdfPushButtonTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/PdfPushButtonTest/";
 
     @BeforeAll

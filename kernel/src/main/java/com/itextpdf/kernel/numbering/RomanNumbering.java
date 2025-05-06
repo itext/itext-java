@@ -22,6 +22,8 @@
  */
 package com.itextpdf.kernel.numbering;
 
+import com.itextpdf.commons.utils.StringNormalizer;
+
 /**
  * This class can produce String combinations representing a roman number.
  * The first roman numbers are: I, II, III, IV, V, VI, VII, VIII, IX, X
@@ -59,7 +61,7 @@ public class RomanNumbering {
      * @return an upper case roman representation of an integer
      */
     public static String toRomanUpperCase(int number) {
-        return convert(number).toUpperCase();
+        return StringNormalizer.toUpperCase(convert(number));
     }
 
     /**

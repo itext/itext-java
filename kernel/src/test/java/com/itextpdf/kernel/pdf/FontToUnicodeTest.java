@@ -31,6 +31,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -38,13 +39,13 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontToUnicodeTest extends ExtendedITextTest {
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/FontToUnicodeTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/FontToUnicodeTest/";
 
     @BeforeAll
     public static void beforeClass() {

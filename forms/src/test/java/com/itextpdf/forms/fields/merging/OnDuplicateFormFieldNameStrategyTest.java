@@ -43,6 +43,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -50,13 +51,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
 
-    private final static String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/merging/";
+    private final static String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/merging/";
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/merging/";
 
     @BeforeEach

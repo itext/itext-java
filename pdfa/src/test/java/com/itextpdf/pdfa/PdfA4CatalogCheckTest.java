@@ -25,6 +25,8 @@ package com.itextpdf.pdfa;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.Pdf20ConformanceException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -48,7 +50,8 @@ import com.itextpdf.layout.element.List;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -64,7 +67,7 @@ import org.junit.jupiter.api.Test;
 public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA4CatalogCheckTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA4CatalogCheckTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA4CatalogCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -432,6 +435,35 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         Assertions.assertEquals(
                 MessageFormatUtil.format(PdfaExceptionMessageConstant.THE_FILE_HEADER_SHALL_CONTAIN_RIGHT_PDF_VERSION,
                         "2"), e.getMessage());
+    }
+
+    @Test
+    public void documentWithEmptyStringLangEntryTest() throws IOException {
+        final String outPdf = destinationFolder + "documentWithEmptyStringLangEntry.pdf";
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "",
+                "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        doc.getCatalog().setLang(new PdfString(""));
+        doc.close();
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void documentWithInvalidLangEntryTest() throws IOException {
+        final String outPdf = destinationFolder + "documentWithEmptyStringLangEntry.pdf";
+        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "",
+                "http://www.color.org", "sRGB IEC61966-2.1", is));
+        doc.addNewPage();
+        doc.getCatalog().setLang(new PdfString("abc:def"));
+        // Note, that specified non-empty lang is not valid according to pdf 2.0,
+        // but veraPDF A-4 validation result is valid
+        Exception e = Assertions.assertThrows(Pdf20ConformanceException.class, () -> doc.close());
+        Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY,
+                e.getMessage());
     }
 
     private static class PdfDocumentCustomVersion extends PdfADocument {

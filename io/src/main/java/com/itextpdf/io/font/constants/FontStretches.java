@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.constants;
 
+/**
+ * Font stretch constants and ids
+ */
 public final class FontStretches {
 
     private FontStretches() {

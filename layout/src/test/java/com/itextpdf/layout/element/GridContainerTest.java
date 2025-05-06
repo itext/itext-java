@@ -44,6 +44,7 @@ import com.itextpdf.layout.properties.grid.PercentValue;
 import com.itextpdf.layout.properties.grid.PointValue;
 import com.itextpdf.layout.properties.grid.TemplateValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,13 +52,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class GridContainerTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/GridContainerTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/GridContainerTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/GridContainerTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -34,6 +34,7 @@ import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -49,7 +50,7 @@ import org.junit.jupiter.api.Test;
 public class FontFaceTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/processors/impl/font/FontFaceTest/";
-    public static final String destinationFolder = "./target/test/com/itextpdf/svg/processors/impl/font/FontFaceTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/processors/impl/font/FontFaceTest/";
 
     @BeforeAll
     public static void beforeClass() {

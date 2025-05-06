@@ -22,8 +22,6 @@
  */
 package com.itextpdf.signatures.validation.report.xml;
 
-import com.itextpdf.commons.utils.Base64;
-
 public class XmlReportTestHelper {
     public static final String SIGNATURE1_BASE64 =
             "MIIXFgYJKoZIhvcNAQcCoIIXBzCCFwMCAQExDTALBglghkgBZQMEAgMwCwYJKoZIhvcNAQcBoIIL" +

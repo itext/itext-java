@@ -23,6 +23,8 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
@@ -34,11 +36,14 @@ import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 
 import java.nio.charset.StandardCharsets;
 
+import static com.itextpdf.svg.converter.SvgConverter.SVG_DEFAULT_ROLE;
+
 /**
  * Default and fallback implementation of {@link ISvgConverterProperties} for
  * {@link DefaultSvgProcessor}.
  */
 public class SvgConverterProperties implements ISvgConverterProperties {
+
     /** The media device description. */
     private MediaDeviceDescription mediaDeviceDescription;
 
@@ -58,6 +63,9 @@ public class SvgConverterProperties implements ISvgConverterProperties {
     private CssStyleSheet cssStyleSheet = null;
 
     private Rectangle customViewport = null;
+
+    private final AccessibilityProperties accessibilityProperties = new DefaultAccessibilityProperties(
+            SVG_DEFAULT_ROLE);
 
     /**
      * Creates a new {@link SvgConverterProperties} instance.
@@ -80,6 +88,16 @@ public class SvgConverterProperties implements ISvgConverterProperties {
         return customViewport;
     }
 
+
+    /**
+     * Gets the accessibility properties.
+     *
+     * @return the accessibility properties.
+     */
+    public AccessibilityProperties getAccessibilityProperties() {
+        return this.accessibilityProperties;
+    }
+
     /**
      * Sets the custom viewport of SVG.
      * <p>
@@ -91,11 +109,25 @@ public class SvgConverterProperties implements ISvgConverterProperties {
         this.customViewport = customViewport;
     }
 
+    /**
+     * Sets renderer factory.
+     *
+     * @param rendererFactory {@link ISvgNodeRendererFactory} to set
+     *
+     * @return this {@link SvgConverterProperties} instance
+     */
     public SvgConverterProperties setRendererFactory(ISvgNodeRendererFactory rendererFactory) {
         this.rendererFactory = rendererFactory;
         return this;
     }
 
+    /**
+     * Sets font provider.
+     *
+     * @param fontProvider {@link FontProvider} to set
+     *
+     * @return this {@link SvgConverterProperties} instance
+     */
     public SvgConverterProperties setFontProvider(FontProvider fontProvider) {
         this.fontProvider = fontProvider;
         return this;
@@ -112,6 +144,13 @@ public class SvgConverterProperties implements ISvgConverterProperties {
         return charset;
     }
 
+    /**
+     * Sets the character set.
+     *
+     * @param charset the character set to set
+     *
+     * @return this {@link SvgConverterProperties} instance
+     */
     public SvgConverterProperties setCharset(String charset) {
         this.charset = charset;
         return this;

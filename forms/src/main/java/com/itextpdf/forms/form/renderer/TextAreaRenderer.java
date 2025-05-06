@@ -36,6 +36,8 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -47,11 +49,12 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+import com.itextpdf.layout.tagging.IAccessibleElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link AbstractTextFieldRenderer} implementation for text area fields.
@@ -241,12 +244,18 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
 
     @Override
     IRenderer createParagraphRenderer(String defaultValue) {
-        if (defaultValue.isEmpty() && null != ((TextArea) modelElement).getPlaceholder() && !((TextArea) modelElement)
-                .getPlaceholder().isEmpty()) {
-            return ((TextArea) modelElement).getPlaceholder().createRendererSubTree();
+        TextArea modelElementTextArea = (TextArea) getModelElement();
+        if (defaultValue.isEmpty() &&
+                modelElementTextArea.getPlaceholder() != null &&
+                !modelElementTextArea.getPlaceholder().isEmpty()) {
+            Paragraph placeholder = modelElementTextArea.getPlaceholder();
+            placeholder.getAccessibilityProperties().setRole(StandardRoles.LBL);
+            return placeholder.createRendererSubTree();
         }
 
         IRenderer flatRenderer = super.createParagraphRenderer(defaultValue);
+
+        ((IAccessibleElement) flatRenderer.getModelElement()).getAccessibilityProperties().setRole(StandardRoles.LBL);
         flatRenderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
         return flatRenderer;
     }

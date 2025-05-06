@@ -22,7 +22,7 @@
  */
 package com.itextpdf.signatures.validation.report.xml;
 
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -60,7 +60,7 @@ class CertificateWrapper extends AbstractCollectableObject {
 
     public String getBase64ASN1Structure() {
         try {
-            return Base64.encodeBytes(certificate.getEncoded());
+            return EncodingUtil.toBase64(certificate.getEncoded());
         } catch (CertificateEncodingException e) {
             throw new RuntimeException("Error encoding certificate.", e);
         }

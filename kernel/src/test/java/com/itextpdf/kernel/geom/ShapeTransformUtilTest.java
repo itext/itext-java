@@ -26,6 +26,7 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.Arrays;
 
+import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -61,7 +62,7 @@ public class ShapeTransformUtilTest extends ExtendedITextTest {
         Subpath inSubpath = new Subpath();
         inSubpath.addSegment(inLine);
         inSubpath.addSegment(inBezierCurve);
-        Path inPath = new Path(Arrays.asList(inSubpath));
+        Path inPath = new Path(Collections.singletonList(inSubpath));
         Matrix ctm = new Matrix(1, 0, 0, 1, 5, 5);
         Path outPath = ShapeTransformUtil.transformPath(inPath, ctm);
 
@@ -70,7 +71,7 @@ public class ShapeTransformUtilTest extends ExtendedITextTest {
         Subpath cmpSubpath = new Subpath();
         inSubpath.addSegment(cmpLine);
         inSubpath.addSegment(cmpBezierCurve);
-        Path cmpPath = new Path(Arrays.asList(cmpSubpath));
+        Path cmpPath = new Path(Collections.singletonList(cmpSubpath));
 
         for (int i = 0; i < cmpPath.getSubpaths().size(); i++) {
             Subpath subpath = cmpPath.getSubpaths().get(i);

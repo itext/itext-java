@@ -32,7 +32,7 @@ import com.itextpdf.commons.bouncycastle.asn1.esf.ISigPolicyQualifierInfo;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyId;
 import com.itextpdf.commons.bouncycastle.asn1.esf.ISignaturePolicyIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -45,7 +45,7 @@ public class SignaturePolicyInfoTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
     private final static String POLICY_IDENTIFIER = "2.16.724.1.3.1.1.2.1.9";
     private final static String POLICY_HASH_BASE64 = "G7roucf600+f03r/o0bAOQ6WAs0=";
-    private final static byte[] POLICY_HASH = Base64.decode(POLICY_HASH_BASE64);
+    private final static byte[] POLICY_HASH = EncodingUtil.fromBase64(POLICY_HASH_BASE64);
     private final static String POLICY_DIGEST_ALGORITHM = "SHA-256";
     private final static String POLICY_URI = "https://sede.060.gob.es/politica_de_firma_anexo_1.pdf";
 

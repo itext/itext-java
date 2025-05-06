@@ -47,6 +47,7 @@ import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -64,7 +65,7 @@ import org.junit.jupiter.api.Test;
 public class BackgroundImageTest extends ExtendedITextTest {
     private static final float DELTA = 0.0001f;
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BackgroundImageTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/BackgroundImageTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/BackgroundImageTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -105,7 +106,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         Assertions.assertEquals(BackgroundBox.BORDER_BOX, backgroundImage.getBackgroundClip());
         Assertions.assertEquals(BackgroundBox.PADDING_BOX, backgroundImage.getBackgroundOrigin());
 
-        backgroundImageGenericTest("backgroundImage", backgroundImage);
+        backgroundImageGenericTest("backgroundImageClipOriginDefaults", backgroundImage);
     }
 
     @Test
@@ -117,7 +118,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         Assertions.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundClip());
         Assertions.assertEquals(BackgroundBox.CONTENT_BOX, backgroundImage.getBackgroundOrigin());
 
-        backgroundImageGenericTest("backgroundImage", backgroundImage);
+        backgroundImageGenericTest("backgroundImageClipOrigin", backgroundImage);
     }
 
     @Test

@@ -22,6 +22,8 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.FontStretches;
@@ -125,9 +127,15 @@ class OpenTypeParser implements Closeable {
 
     static class CmapTable {
         /**
+         * Collection of the pairs representing Platform ID and Encoding ID of the “cmap” subtables
+         * present in the font program.
+         */
+        List<Tuple2<Integer, Integer>> cmapEncodings = new ArrayList<>();
+        /**
          * The map containing the code information for the table 'cmap', encoding 1.0.
          * The key is the code and the value is an {@code int[2]} where position 0
          * is the glyph number and position 1 is the glyph width normalized to 1000 units.
+         *
          * @see TrueTypeFont#UNITS_NORMALIZATION
          */
         Map<Integer, int[]> cmap10;
@@ -135,6 +143,7 @@ class OpenTypeParser implements Closeable {
          * The map containing the code information for the table 'cmap', encoding 3.1 in Unicode.
          * The key is the code and the value is an {@code int[2]} where position 0
          * is the glyph number and position 1 is the glyph width normalized to 1000 units.
+         *
          * @see TrueTypeFont#UNITS_NORMALIZATION
          */
         Map<Integer, int[]> cmap31;
@@ -142,7 +151,9 @@ class OpenTypeParser implements Closeable {
         boolean fontSpecific = false;
     }
 
-    /** The file name. */
+    /**
+     * The file name.
+     */
     protected String fileName;
     /**
      * The file in use.
@@ -418,7 +429,8 @@ class OpenTypeParser implements Closeable {
 
     /**
      * Reads the font data.
-     * @param all if true, all tables will be read, otherwise only 'head', 'name', and 'os/2'.
+     *
+     * @param all if {@code true}, all tables will be read, otherwise only 'head', 'name', and 'os/2'
      */
     protected void loadTables(boolean all) throws java.io.IOException {
         readNameTable();
@@ -445,7 +457,7 @@ class OpenTypeParser implements Closeable {
         if (name == null) {
             return null;
         }
-        int idx = name.toLowerCase().indexOf(".ttc,");
+        int idx = StringNormalizer.toLowerCase(name).indexOf(".ttc,");
         if (idx < 0)
             return name;
         else
@@ -537,8 +549,9 @@ class OpenTypeParser implements Closeable {
      * Read the glyf bboxes from 'glyf' table.
      *
      * @param unitsPerEm {@link HeaderTable#unitsPerEm}
+     *
      * @throws IOException the font is invalid
-     * @throws java.io.IOException  the font file could not be read
+     * @throws java.io.IOException the font file could not be read
      */
     protected int[][] readBbox(int unitsPerEm) throws java.io.IOException {
         int tableLocation[];
@@ -586,7 +599,7 @@ class OpenTypeParser implements Closeable {
             int start = locaTable[glyph];
             if (start != locaTable[glyph + 1]) {
                 raf.seek(tableGlyphOffset + start + 2);
-                bboxes[glyph] = new int[] {
+                bboxes[glyph] = new int[]{
                         FontProgram.convertGlyphSpaceToTextSpace(raf.readShort()) / unitsPerEm,
                         FontProgram.convertGlyphSpaceToTextSpace(raf.readShort()) / unitsPerEm,
                         FontProgram.convertGlyphSpaceToTextSpace(raf.readShort()) / unitsPerEm,
@@ -611,7 +624,7 @@ class OpenTypeParser implements Closeable {
      * Extracts the names of the font in all the languages available.
      *
      * @throws IOException on error
-     * @throws java.io.IOException  on error
+     * @throws java.io.IOException on error
      */
     private void readNameTable() throws java.io.IOException {
         int[] table_location = tables.get("name");
@@ -661,7 +674,7 @@ class OpenTypeParser implements Closeable {
      * Read horizontal header, table 'hhea'.
      *
      * @throws IOException the font is invalid.
-     * @throws java.io.IOException  the font file could not be read.
+     * @throws java.io.IOException the font file could not be read.
      */
     private void readHheaTable() throws java.io.IOException {
         int[] table_location = tables.get("hhea");
@@ -691,7 +704,7 @@ class OpenTypeParser implements Closeable {
      * Read font header, table 'head'.
      *
      * @throws IOException the font is invalid.
-     * @throws java.io.IOException  the font file could not be read.
+     * @throws java.io.IOException the font file could not be read.
      */
     private void readHeadTable() throws java.io.IOException {
         int[] table_location = tables.get("head");
@@ -719,7 +732,7 @@ class OpenTypeParser implements Closeable {
      * Depends on {@link HeaderTable#unitsPerEm} property.
      *
      * @throws IOException the font is invalid.
-     * @throws java.io.IOException  the font file could not be read.
+     * @throws java.io.IOException the font file could not be read.
      */
     private void readOs_2Table() throws java.io.IOException {
         int[] table_location = tables.get("OS/2");
@@ -772,10 +785,11 @@ class OpenTypeParser implements Closeable {
             os_2.ulCodePageRange2 = raf.readInt();
         }
         if (version > 1) {
-            raf.skipBytes(2);
+            os_2.sxHeight = raf.readShort();
             os_2.sCapHeight = raf.readShort();
         } else {
             os_2.sCapHeight = (int) (0.7 * head.unitsPerEm);
+            os_2.sxHeight = (int) (0.5 * head.unitsPerEm);
         }
     }
 
@@ -824,6 +838,7 @@ class OpenTypeParser implements Closeable {
         for (int k = 0; k < num_tables; ++k) {
             int platId = raf.readUnsignedShort();
             int platSpecId = raf.readUnsignedShort();
+            cmaps.cmapEncodings.add(new Tuple2<>(platId, platSpecId));
             int offset = raf.readInt();
             if (platId == 3 && platSpecId == 0) {
                 cmaps.fontSpecific = true;

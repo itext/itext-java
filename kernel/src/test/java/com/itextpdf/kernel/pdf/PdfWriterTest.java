@@ -29,6 +29,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.OutputStream;
 import org.junit.jupiter.api.AfterAll;
@@ -47,7 +48,7 @@ import java.util.TreeMap;
 @Tag("IntegrationTest")
 public class PdfWriterTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfWriterTest/";
+    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfWriterTest/";
 
     @BeforeAll
     public static void beforeClass() {

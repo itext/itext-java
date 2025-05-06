@@ -48,6 +48,7 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
@@ -55,14 +56,14 @@ import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfUARoleMappingTest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUARoleMappingTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUARoleMappingTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUARoleMappingTest/";
 
     @BeforeAll
@@ -214,7 +215,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDoc, PdfName.P));
         PdfStructElem chapter = paragraph.addKid(new PdfStructElem(pdfDoc, new PdfName("chapter"), page1));
 
-        // Napespaces are actual only for PDF-2.0, which is actual only for PDF/UA-2
+        // Namespaces are actual only for PDF-2.0, which is actual only for PDF/UA-2
         PdfNamespace namespace = new PdfNamespace("http://www.w3.org/1999/xhtml");
         chapter.setNamespace(namespace);
         namespace.addNamespaceRoleMapping("chapter", StandardRoles.SPAN);

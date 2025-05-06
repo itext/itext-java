@@ -36,4 +36,10 @@ public class SymbolSvgNodeRendererUnitTest extends ExtendedITextTest {
         SymbolSvgNodeRenderer renderer = new SymbolSvgNodeRenderer();
         Assertions.assertNull(renderer.getObjectBoundingBox(null));
     }
+
+    @Test
+    public void canConstructViewPortTest() {
+        SymbolSvgNodeRenderer renderer = new SymbolSvgNodeRenderer();
+        Assertions.assertTrue(renderer.canConstructViewPort());
+    }
 }

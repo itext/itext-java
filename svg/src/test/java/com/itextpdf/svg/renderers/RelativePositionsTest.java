@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers;
 
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.Test;
 public class RelativePositionsTest extends SvgIntegrationTest {
 
   private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/RelativePositionsTest/";
-  private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/RelativePositionsTest/";
+  private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/RelativePositionsTest/";
 
   @BeforeAll
   public static void beforeClass() {

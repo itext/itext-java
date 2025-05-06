@@ -23,8 +23,8 @@
 package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
@@ -39,6 +39,13 @@ import com.itextpdf.layout.renderer.IRenderer;
 public class Div extends BlockElement<Div> {
 
     protected DefaultAccessibilityProperties tagProperties;
+
+    /**
+     * Creates a new {@link Div} instance.
+     */
+    public Div() {
+        super();
+    }
 
     /**
      * Adds any block element to the div's contents.

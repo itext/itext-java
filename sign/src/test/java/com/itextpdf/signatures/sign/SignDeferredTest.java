@@ -55,6 +55,7 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -66,7 +67,6 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.HashMap;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -79,7 +79,7 @@ public class SignDeferredTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/SignDeferredTest/";
-    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/SignDeferredTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/SignDeferredTest/";
 
     private static final char[] password = "testpassphrase".toCharArray();
     private static final String HASH_ALGORITHM = DigestAlgorithms.SHA256;

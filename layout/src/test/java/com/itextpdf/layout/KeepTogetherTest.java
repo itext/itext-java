@@ -52,6 +52,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -60,14 +61,14 @@ import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class KeepTogetherTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/KeepTogetherTest/";
-    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/KeepTogetherTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/KeepTogetherTest/";
 
     private static final String BIG_TEXT = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,\n"
             + " sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\n"

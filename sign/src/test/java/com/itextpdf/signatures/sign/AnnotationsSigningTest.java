@@ -43,6 +43,7 @@ import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -50,7 +51,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/AnnotationsSigningTest/";
-    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/AnnotationsSigningTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/AnnotationsSigningTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
@@ -206,7 +207,7 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
 
     private static Map<Integer, List<Rectangle>> getTestMap(Rectangle ignoredArea) {
         Map<Integer, List<Rectangle>> result = new HashMap<Integer, List<Rectangle>>();
-        result.put(1, Arrays.asList(ignoredArea));
+        result.put(1, Collections.singletonList(ignoredArea));
         return result;
     }
 }

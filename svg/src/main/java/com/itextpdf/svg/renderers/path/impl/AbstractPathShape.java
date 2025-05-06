@@ -55,14 +55,28 @@ public abstract class AbstractPathShape implements IPathShape {
     protected String[] coordinates;
     protected SvgDrawContext context;
 
+    /**
+     * Creates new {@link AbstractPathShape} instance.
+     */
     public AbstractPathShape() {
         this(false);
     }
 
+    /**
+     * Creates new {@link AbstractPathShape} instance.
+     *
+     * @param relative boolean defining whether this is a relative operator
+     */
     public AbstractPathShape(boolean relative) {
         this(relative, new DefaultOperatorConverter());
     }
 
+    /**
+     * Creates new {@link AbstractPathShape} instance.
+     *
+     * @param relative boolean defining whether this is a relative operator
+     * @param copier {@link IOperatorConverter} copier for converting relative coordinates to absolute coordinates
+     */
     public AbstractPathShape(boolean relative, IOperatorConverter copier) {
         this.relative = relative;
         this.copier = copier;
@@ -73,6 +87,14 @@ public abstract class AbstractPathShape implements IPathShape {
         return this.relative;
     }
 
+    /**
+     * Creates {@link Point} based on provided {@code x} and {@code y} coordinates.
+     *
+     * @param coordX {@code x} coordinate of the point
+     * @param coordY {@code y} coordinate of the point
+     *
+     * @return created {@link Point} instance
+     */
     protected Point createPoint(String coordX, String coordY) {
         return new Point((double) CssDimensionParsingUtils.parseDouble(coordX), (double) CssDimensionParsingUtils.parseDouble(coordY));
     }
