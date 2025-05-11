@@ -931,16 +931,6 @@ public class PdfCanvas {
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
 
-        // Take text part to process
-        StringBuilder decodedText = new StringBuilder();
-        for (PdfObject obj : textArray) {
-            if (obj instanceof PdfString) {
-                decodedText.append(currentGs.getFont().decode((PdfString) obj));
-            }
-        }
-        checkTextOnAddition(decodedText.toString());
-        document.checkIsoConformance(new FontValidationContext(decodedText.toString(), currentGs.getFont()));
-
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {

@@ -27,7 +27,6 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -48,7 +47,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -101,7 +99,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT, PdfUAConformance.PDF_UA_2);
+        assertResult(false, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
@@ -124,7 +122,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        assertResult(true, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
@@ -147,7 +145,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        assertResult(true, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
@@ -170,7 +168,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        assertResult(true, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
@@ -193,7 +191,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        assertResult(true, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
@@ -230,7 +228,22 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvasOnPageTwo.closeTag();
             canvasOnPageTwo.endText();
         });
-        framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT, PdfUAConformance.PDF_UA_2);
+        assertResult(false, textRepresentation, filename, framework);
+    }
+
+    private void assertResult(boolean expectedValid, String textRepresentation, String filename,
+            UaValidationTestFramework framework) throws IOException {
+        if (expectedValid) {
+            framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        } else {
+            if ("array".equals(textRepresentation)) {
+                // In case of "array" PdfCanvas#showText(PdfArray) is used. In this method we don't have this check, because
+                // of the complications regarding not symbolic fonts.
+                framework.assertOnlyVeraPdfFail(filename, PdfUAConformance.PDF_UA_2);
+            } else {
+                framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT, PdfUAConformance.PDF_UA_2);
+            }
+        }
     }
 
     private void addPuaTextToCanvas(PdfCanvas canvas, String textRepresentation, PdfFont font) {

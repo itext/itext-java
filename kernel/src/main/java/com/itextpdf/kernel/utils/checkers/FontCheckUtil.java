@@ -62,7 +62,7 @@ public final class FontCheckUtil {
     /**
      * Character checker which performs check of passed symbol against the font.
      */
-    public static interface CharacterChecker {
+    public interface CharacterChecker {
         /**
          * Checks passed symbol against the font
          *
