@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
@@ -1287,6 +1288,12 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                         !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.TOGGLE_NO_VIEW));
     }
 
+    private static boolean isReferenceAllowed(String role) {
+        // For these roles, Link is an allowed child, but Reference is not.
+        return !StandardRoles.DOCUMENT.equals(role) && !StandardRoles.DOCUMENTFRAGMENT.equals(role) &&
+                !StandardRoles.ART.equals(role) && !StandardRoles.SECT.equals(role);
+    }
+
     private void tagAnnotation(PdfAnnotation annotation) {
         boolean tagAdded = false;
         boolean presentInTagStructure = true;
@@ -1344,12 +1351,24 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private boolean addAnnotationTag(TagTreePointer tagPointer, PdfAnnotation annotation) {
         if (annotation instanceof PdfLinkAnnotation) {
-            // "Link" tag was added starting from PDF 1.4
+            // "Link" and "Reference" tags were added starting from PDF 1.4
             if (PdfVersion.PDF_1_3.compareTo(getDocument().getPdfVersion()) < 0) {
-                if (!StandardRoles.LINK.equals(tagPointer.getRole())) {
-                    tagPointer.addTag(StandardRoles.LINK);
+                if (StandardRoles.REFERENCE.equals(tagPointer.getRole()) ||
+                        StandardRoles.LINK.equals(tagPointer.getRole())) {
+                    return false;
+                }
+                String linkRole = ((PdfLinkAnnotation) annotation).getRoleBasedOnDestination(getDocument());
+                if (StandardRoles.REFERENCE.equals(linkRole) && isReferenceAllowed(tagPointer.getRole())) {
+                    PdfNamespace currentNamespace = tagPointer.getNamespaceForNewTags();
+                    if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
+                        tagPointer.setNamespaceForNewTags(PdfNamespace.getDefault(getDocument()));
+                    }
+                    tagPointer.addTag(StandardRoles.REFERENCE);
+                    tagPointer.setNamespaceForNewTags(currentNamespace);
                     return true;
                 }
+                tagPointer.addTag(StandardRoles.LINK);
+                return true;
             }
         } else {
             if (!(annotation instanceof PdfWidgetAnnotation)

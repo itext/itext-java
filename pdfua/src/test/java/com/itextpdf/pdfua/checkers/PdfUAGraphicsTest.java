@@ -106,7 +106,6 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("imageWithEmptyAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            // TODO DEVSIX-8242 PDF/UA-2 checks
             framework.assertOnlyITextFail("imageWithEmptyAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
         }
     }

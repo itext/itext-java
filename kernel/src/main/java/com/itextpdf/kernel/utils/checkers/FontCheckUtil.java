@@ -64,12 +64,12 @@ public final class FontCheckUtil {
      */
     public interface CharacterChecker {
         /**
-         * Checks passed symbol against the font
+         * Checks passed symbol against the font.
          *
          * @param ch character to check
          * @param font font to check
          *
-         * @return {@code true} if check passes, otherwise {@code false}
+         * @return {@code true} if font doesn't contain passed symbol or this symbol is invalid, otherwise {@code false}
          */
         boolean check(int ch, PdfFont font);
     }

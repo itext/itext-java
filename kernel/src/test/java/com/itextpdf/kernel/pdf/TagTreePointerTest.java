@@ -1341,6 +1341,28 @@ public class TagTreePointerTest extends ExtendedITextTest {
         compareResult("accessibleAttributesInsertionTest05.pdf", "cmp_accessibleAttributesInsertionTest05.pdf", "diffAttributes05_");
     }
 
+    @Test
+    public void defaultNamespaceTest() {
+        try (PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            document.setTagged();
+            document.getStructTreeRoot().addNamespace(new PdfNamespace(StandardNamespaces.PDF_2_0));
+            TagTreePointer pointer = new TagTreePointer(document);
+            AccessibilityProperties properties = pointer.addTag(StandardRoles.DIV).getProperties();
+            PdfNamespace defaultNoDoc = PdfNamespace.getDefault(null);
+            properties.setNamespace(defaultNoDoc);
+            Assertions.assertEquals(StandardNamespaces.PDF_1_7, defaultNoDoc.getNamespaceName());
+            PdfNamespace defaultNew = PdfNamespace.getDefault(document);
+            properties.setNamespace(defaultNew);
+            Assertions.assertEquals(StandardNamespaces.PDF_1_7, defaultNew.getNamespaceName());
+            Assertions.assertNotEquals(defaultNoDoc.getPdfObject(), defaultNew.getPdfObject());
+            PdfNamespace defaultSame = PdfNamespace.getDefault(document);
+            properties.setNamespace(defaultSame);
+            Assertions.assertEquals(StandardNamespaces.PDF_1_7, defaultSame.getNamespaceName());
+            Assertions.assertEquals(defaultNew.getPdfObject(), defaultSame.getPdfObject());
+        }
+    }
+
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
