@@ -651,6 +651,7 @@ public class PdfReader implements Closeable {
                 }
                 pdfConformance = PdfConformance.getConformance(xmpMeta);
             } catch (XMPException ignored) {
+                pdfConformance = PdfConformance.PDF_NONE_CONFORMANCE;
             }
         }
 

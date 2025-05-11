@@ -23,8 +23,10 @@
 package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfAConformance;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -32,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPConst;
@@ -48,6 +51,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -133,6 +139,34 @@ public class PdfAXmpTest extends ExtendedITextTest {
             // Comparing angle brackets, since it's the main difference between canonical and compact format.
             Assertions.assertEquals(count(expectedRdf, (byte)'<'), count(rdf, (byte)'<'));
             Assertions.assertNull(new CompareTool().compareXmp(cmpFile, outFile, true));
+        }
+    }
+
+    @Test
+    public void readDocumentWithControlCharactersInXMPMetadata() throws IOException {
+        String src = sourceFolder + "pdfs/docWithControlCharactersInXmp.pdf";
+        try (PdfADocument document = new PdfADocument(new PdfReader(src),
+                new PdfWriter(new java.io.ByteArrayOutputStream()), new StampingProperties())) {
+            Assertions.assertEquals(PdfConformance.PDF_A_3A, document.getConformance());
+        }
+    }
+
+    @Test
+    public void readDocumentWithInvalidConformance() throws IOException {
+        String src = sourceFolder + "pdfs/docWithInvalidConformance.pdf";
+        try (PdfDocument document = new PdfDocument(new PdfReader(src),
+                new PdfWriter(new java.io.ByteArrayOutputStream()), new StampingProperties())) {
+            Assertions.assertEquals(PdfConformance.PDF_NONE_CONFORMANCE, document.getConformance());
+        }
+    }
+
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)})
+    @Test
+    public void readDocumentWithInvalidXMPMetadata() throws IOException {
+        String src = sourceFolder + "pdfs/docWithInvalidMetadata.pdf";
+        try (PdfDocument document = new PdfDocument(new PdfReader(src),
+                new PdfWriter(new java.io.ByteArrayOutputStream()), new StampingProperties())) {
+            Assertions.assertEquals(PdfConformance.PDF_NONE_CONFORMANCE, document.getConformance());
         }
     }
 

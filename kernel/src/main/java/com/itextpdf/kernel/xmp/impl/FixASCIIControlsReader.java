@@ -121,7 +121,7 @@ public class FixASCIIControlsReader extends PushbackReader
 		}
 		
 		
-		return read > 0  ||  available ? read : -1; 
+		return read > 0  ||  available ? read : XMPUtilsImpl.eofReadBytesValue();
 	}
 	
 	
