@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.FontCacheKey;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramDescriptor;
@@ -64,7 +65,7 @@ public final class FontInfo {
         this.encoding = encoding;
         this.descriptor = descriptor;
         this.range = unicodeRange != null ? unicodeRange : RangeBuilder.getFullRange();
-        this.alias = alias != null ? alias.toLowerCase() : null;
+        this.alias = StringNormalizer.toLowerCase(alias);
         this.hash = calculateHashCode(this.fontName, this.fontData, this.encoding, this.range);
     }
 

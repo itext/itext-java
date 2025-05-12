@@ -36,13 +36,13 @@ import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class KeepWithNextTest extends ExtendedITextTest {
@@ -297,4 +297,32 @@ public class KeepWithNextTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 
+    @Test
+    public void keepWithNextTest12() throws IOException, InterruptedException {
+        //if we have multiple objects with keepWithNext in a row only the last one seems to follow to the next page
+        String outFileName = destinationFolder + "keepWithNextTest12.pdf";
+        String cmpFileName = sourceFolder + "cmp_keepWithNextTest12.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf, PageSize.A4);
+
+        for (int i = 0; i < 27; i++) {
+            document.add(new Paragraph("dummy"));
+        }
+
+        Paragraph title1 = new Paragraph("THIS IS THE TITLE 1");
+        title1.setKeepWithNext(true);
+        document.add(title1);
+
+        Paragraph title2 = new Paragraph("THIS IS THE TITLE 2");
+        title2.setKeepWithNext(true);
+        document.add(title2);
+
+        for (int i = 0; i < 20; i++) {
+            document.add(new Paragraph("content of chapter " + i));
+        }
+
+        document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
 }

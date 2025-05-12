@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.path.impl;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.path.IPathShape;
@@ -46,7 +47,7 @@ public class PathShapeMapper implements IPathShapeMapper {
         result.put(SvgConstants.Attributes.PATH_DATA_LINE_TO_H, new HorizontalLineTo());
         result.put(SvgConstants.Attributes.PATH_DATA_REL_LINE_TO_H, new HorizontalLineTo(true));
         result.put(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH, new ClosePath());
-        result.put(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH.toLowerCase(), new ClosePath());
+        result.put(StringNormalizer.toLowerCase(SvgConstants.Attributes.PATH_DATA_CLOSE_PATH), new ClosePath());
         result.put(SvgConstants.Attributes.PATH_DATA_MOVE_TO, new MoveTo());
         result.put(SvgConstants.Attributes.PATH_DATA_REL_MOVE_TO, new MoveTo(true));
         result.put(SvgConstants.Attributes.PATH_DATA_CURVE_TO, new CurveTo());

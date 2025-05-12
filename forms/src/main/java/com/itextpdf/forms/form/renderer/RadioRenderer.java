@@ -41,6 +41,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
@@ -55,6 +56,7 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.Map;
 
@@ -149,6 +151,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
         paragraph.setProperty(Property.BACKGROUND, this.<Background>getProperty(Property.BACKGROUND));
         paragraph.setBorderRadius(new BorderRadius(UnitValue.createPercentValue(50)));
 
+        paragraph.getAccessibilityProperties().setRole(StandardRoles.LBL);
         return new FlatParagraphRenderer(paragraph);
     }
 
@@ -247,8 +250,14 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
             PdfCanvas canvas = drawContext.getCanvas();
             boolean isTaggingEnabled = drawContext.isTaggingEnabled();
             if (isTaggingEnabled) {
-                TagTreePointer tp = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
-                canvas.openTag(tp.getTagReference());
+                LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+                boolean isArtifact = taggingHelper != null && taggingHelper.isArtifact(this);
+                if (isArtifact) {
+                    canvas.openTag(new CanvasArtifact());
+                } else {
+                    TagTreePointer tp = drawContext.getDocument().getTagStructureContext().getAutoTaggingPointer();
+                    canvas.openTag(tp.getTagReference());
+                }
             }
             Rectangle rectangle = getOccupiedArea().getBBox().clone();
             Border borderTop = this.<Border>getProperty(Property.BORDER_TOP);

@@ -31,36 +31,35 @@ interface ITableIterator<T> {
     /**
      * Checks if there is a next element in the iteration.
      *
-     * @return {@code true} if there is a next element, {@code false} otherwise.
+     * @return {@code true} if there is a next element, {@code false} otherwise
      */
     boolean hasNext();
-
 
     /**
      * Gets the next element in the iteration.
      *
-     * @return The next element.
+     * @return the next element
      */
     T next();
 
     /**
      * Gets the number of rows in the body of the table.
      *
-     * @return The number of rows in the body of the table.
+     * @return the number of rows in the body of the table
      */
     int getAmountOfRowsBody();
 
     /**
      * Gets the number of rows in the header of the table.
      *
-     * @return The number of rows in the header of the table.
+     * @return the number of rows in the header of the table
      */
     int getAmountOfRowsHeader();
 
     /**
      * Gets the number of rows in the footer of the table.
      *
-     * @return The number of rows in the footer of the table.
+     * @return the number of rows in the footer of the table
      */
     int getAmountOfRowsFooter();
 
@@ -76,14 +75,14 @@ interface ITableIterator<T> {
     /**
      * Gets the row index of the current position.
      *
-     * @return The row index.
+     * @return the row index
      */
     int getRow();
 
     /**
      * Gets the column index of current position.
      *
-     * @return The column index.
+     * @return the column index
      */
     int getCol();
 
@@ -100,6 +99,4 @@ interface ITableIterator<T> {
      * @return the colspan of current position
      */
     int getColspan();
-
-
 }

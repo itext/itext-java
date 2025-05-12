@@ -144,7 +144,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         TextRenderer textRendererSecond = new TextRenderer(new Text(thai.substring(8)));
         textRendererSecond.setProperty(Property.FONT, pdfFont);
-        textRendererSecond.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+        textRendererSecond.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(5)));
 
         LayoutArea layoutArea = new LayoutArea(1,
                 new Rectangle(longestWordLength * 1.5f, AbstractRenderer.INF));
@@ -320,9 +320,9 @@ public class WordWrapUnitTest extends ExtendedITextTest {
             textRenderer.setProperty(Property.FONT, font);
             textRenderer.setText(new String(new char[]{twoWords.charAt(i)}));
             if (i == THAI_WORD.length() - 1 || i == twoWords.length() - 1) {
-                textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(1)));
+                textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(1)));
             } else {
-                textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(-1)));
+                textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(-1)));
             }
             lineRenderer.addChild(textRenderer);
 
@@ -363,7 +363,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer textRenderer = new TextRenderer(new Text(""));
         textRenderer.setProperty(Property.FONT, font);
         textRenderer.setText(THAI_WORD);
-        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(THAI_WORD.length())));
+        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(
+                Collections.singletonList(THAI_WORD.length())));
         lineRenderer.addChild(textRenderer);
         LayoutArea layoutArea = new LayoutArea(1, new Rectangle(0, 0, 0, 100));
         specialScriptLayoutResults.put(indexOfThaiRenderer,
@@ -392,10 +393,10 @@ public class WordWrapUnitTest extends ExtendedITextTest {
             textRenderer.setProperty(Property.FONT, font);
             if (i == THAI_WORD.length() - 1) {
                 textRenderer.setText(new String(new char[] {THAI_WORD.charAt(i), ' ', ' ', ' '}));
-                textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(4)));
+                textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(4)));
             } else {
                 textRenderer.setText(new String(new char[]{THAI_WORD.charAt(i)}));
-                textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(-1)));
+                textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(-1)));
             }
             lineRenderer.addChild(textRenderer);
 
@@ -485,7 +486,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         TextRenderer textRenderer = new TextRenderer(new Text(THAI_WORD));
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
-        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(5)));
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
@@ -847,7 +848,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer textRenderer = new TextRenderer(new Text(""));
         textRenderer.setProperty(Property.FONT, pdfFont);
         textRenderer.setText(thai);
-        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(1)));
+        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(1)));
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
@@ -868,7 +869,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer thaiTextRenderer = new TextRenderer(new Text(""));
         thaiTextRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
         thaiTextRenderer.setText(THAI_WORD);
-        thaiTextRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+        thaiTextRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(5)));
 
         TextRenderer nonThaiTextRenderer = new TextRenderer(new Text("."));
 
@@ -891,7 +892,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer thaiTextRenderer = new TextRenderer(new Text(""));
         thaiTextRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
         thaiTextRenderer.setText(THAI_WORD);
-        thaiTextRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+        thaiTextRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(5)));
 
         TableRenderer inlineBlock = new TableRenderer(new Table(3));
 
@@ -914,7 +915,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer thaiTextRenderer = new TextRenderer(new Text(""));
         thaiTextRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
         thaiTextRenderer.setText(THAI_WORD);
-        thaiTextRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+        thaiTextRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(5)));
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
@@ -933,7 +934,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer textRenderer = new TextRenderer(new Text(""));
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
         textRenderer.setText(THAI_WORD);
-        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+        textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(5)));
 
         LineRenderer lineRenderer = new LineRenderer();
         lineRenderer.setParent(document.getRenderer());
@@ -955,7 +956,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         TextRenderer textRendererForMinMaxWidth = new TextRenderer(new Text(THAI_WORD));
         textRendererForMinMaxWidth.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
-        textRendererForMinMaxWidth.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Arrays.asList(5)));
+        textRendererForMinMaxWidth.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>(Collections.singletonList(5)));
         textRendererForMinMaxWidth.setParent(document.getRenderer());
         float minWidth = textRendererForMinMaxWidth.getMinMaxWidth().getMinWidth();
 
@@ -968,7 +969,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
             textRenderers[i].setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
             textRenderers[i].setText(new String(new char[] {THAI_WORD.charAt(i)}));
             textRenderers[i].setSpecialScriptsWordBreakPoints(
-                    new ArrayList<Integer>(Arrays.asList(i + 1 != textRenderers.length ? -1 : 1)));
+                    new ArrayList<Integer>(Collections.singletonList(i + 1 != textRenderers.length ? -1 : 1)));
             lineRenderer.addChild(textRenderers[i]);
         }
 

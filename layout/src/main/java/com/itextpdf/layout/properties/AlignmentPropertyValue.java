@@ -36,5 +36,5 @@ public enum AlignmentPropertyValue {
     FLEX_END,
     BASELINE,
     STRETCH,
-    NORMAL,
+    NORMAL
 }

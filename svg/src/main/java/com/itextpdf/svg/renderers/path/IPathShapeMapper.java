@@ -33,10 +33,15 @@ public interface IPathShapeMapper {
     /**
      * Provides a mapping of Path-data instructions' names to path shape classes.
      *
-     * @return a {@link Map} with Strings as keys and {link @{@link IPathShape}
-     * implementations as values
+     * @return a {@link Map} with Strings as keys and {@link IPathShape} implementations as values
      */
     Map<String, IPathShape> getMapping();
 
+    /**
+     * Provides a mapping of SVG path element's path-data instruction name to the appropriate number of arguments
+     * for a path command, based on this passed SVG path data instruction tag.
+     *
+     * @return a {@link Map} with Strings as keys and Integers as values
+     */
     Map<String, Integer> getArgumentCount();
 }

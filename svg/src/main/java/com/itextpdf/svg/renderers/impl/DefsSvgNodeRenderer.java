@@ -28,6 +28,9 @@ import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
+/**
+ * {@link ISvgNodeRenderer} implementation for the &lt;defs&gt; tag.
+ */
 public class DefsSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements INoDrawSvgNodeRenderer {
     @Override
     protected void doDraw(SvgDrawContext context) {

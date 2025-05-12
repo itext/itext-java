@@ -33,20 +33,34 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Implements quadratic Bezier curveTo(Q) attribute of SVG's path element
+ * Implements quadratic Bezier curveTo(Q) attribute of SVG's path element.
  */
 public class QuadraticCurveTo extends AbstractPathShape implements IControlPointCurve {
 
     static final int ARGUMENT_SIZE = 4;
 
+    /**
+     * Creates new {@link QuadraticCurveTo} instance.
+     */
     public QuadraticCurveTo() {
         this(false);
     }
 
+    /**
+     * Creates new {@link QuadraticCurveTo} instance.
+     *
+     * @param relative {@code true} in case it is a relative operator, {@code false} if it is an absolute operator
+     */
     public QuadraticCurveTo(boolean relative) {
         this(relative, new DefaultOperatorConverter());
     }
 
+    /**
+     * Creates new {@link QuadraticCurveTo} instance.
+     *
+     * @param relative {@code true} in case it is a relative operator, {@code false} if it is an absolute operator
+     * @param copier {@link IOperatorConverter} copier for converting relative coordinates to absolute coordinates
+     */
     public QuadraticCurveTo(boolean relative, IOperatorConverter copier) {
         super(relative, copier);
     }

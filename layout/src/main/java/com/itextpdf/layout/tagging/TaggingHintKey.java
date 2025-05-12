@@ -86,7 +86,7 @@ public final class TaggingHintKey {
     }
 
     AccessibilityProperties getAccessibilityProperties() {
-        if (elem == null){
+        if (elem == null) {
             return null;
         }
         return elem.getAccessibilityProperties();

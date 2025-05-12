@@ -137,6 +137,9 @@ public final class CssBackgroundUtils {
         return BackgroundPropertyType.UNDEFINED;
     }
 
+    /**
+     * Enum for background related properties.
+     */
     public enum BackgroundPropertyType {
         BACKGROUND_COLOR,
         BACKGROUND_IMAGE,

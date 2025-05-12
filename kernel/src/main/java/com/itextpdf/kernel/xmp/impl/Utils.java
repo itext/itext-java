@@ -31,6 +31,7 @@
 package com.itextpdf.kernel.xmp.impl;
 
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.xmp.XMPConst;
 
 
@@ -435,7 +436,7 @@ public final class Utils implements XMPConst
 	            	// write control chars escaped,
 	            	// if there are others than tab, LF and CR the xml will become invalid.
 	            	buffer.append("&#x");
-	            	buffer.append(Integer.toHexString(c).toUpperCase());
+	            	buffer.append(StringNormalizer.toUpperCase(Integer.toHexString(c)));
 	            	buffer.append(';');
 	            }
 	        }

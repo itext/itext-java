@@ -24,6 +24,7 @@ package com.itextpdf.styledxmlparser.css.selector.item;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.parse.CssSelectorParser;
+import com.itextpdf.styledxmlparser.css.selector.CssSelector;
 import com.itextpdf.styledxmlparser.css.selector.ICssSelector;
 import com.itextpdf.styledxmlparser.node.ICustomElementNode;
 import com.itextpdf.styledxmlparser.node.IDocumentNode;
@@ -44,11 +45,16 @@ class CssPseudoClassNotSelectorItem extends CssPseudoClassSelectorItem {
         return CssSelectorParser.parseSelectorItems(arguments);
     }
 
+    // TODO DEVSIX-9069 Add notMatches to ICssSelector interface
     @Override
     public boolean matches(INode node) {
         if (!(node instanceof IElementNode) || node instanceof ICustomElementNode || node instanceof IDocumentNode) {
             return false;
         }
+        if (argumentsSelector instanceof CssSelector){
+            return ((CssSelector) argumentsSelector).notMatches(node);
+        }
+
         return !argumentsSelector.matches(node);
     }
 }

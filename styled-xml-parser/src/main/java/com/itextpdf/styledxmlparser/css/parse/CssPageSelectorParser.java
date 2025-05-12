@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.parse;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.css.selector.item.CssPagePseudoClassSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssPageTypeSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem;
@@ -55,7 +56,8 @@ public final class CssPageSelectorParser {
         while (itemMatcher.find()) {
             String selectorItem = itemMatcher.group(0);
             if (selectorItem.charAt(0) == ':') {
-                selectorItems.add(new CssPagePseudoClassSelectorItem(selectorItem.substring(1).toLowerCase()));
+                selectorItems.add(new CssPagePseudoClassSelectorItem(
+                        StringNormalizer.toLowerCase(selectorItem.substring(1))));
             } else {
                 selectorItems.add(new CssPageTypeSelectorItem(selectorItem));
             }

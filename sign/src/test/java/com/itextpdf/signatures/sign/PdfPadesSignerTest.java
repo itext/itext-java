@@ -23,16 +23,21 @@
 package com.itextpdf.signatures.sign;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPadesSigner;
@@ -46,7 +51,9 @@ import com.itextpdf.signatures.testutils.client.TestCrlClient;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
@@ -55,6 +62,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -295,6 +303,58 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
                 .setSignatureAppearance(appearance);
 
         return signerProperties;
+    }
+
+    @Test
+    public void producerLineWithMetaInfoUsedTest()
+            throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
+        String fileName = "producerLineWithMetaInfoUsed.pdf";
+        String outFileName = destinationFolder + fileName;
+        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
+        String signCertFileName = certsSrc + "signCertRsa01.pem";
+        String tsaCertFileName = certsSrc + "tsCertRsa.pem";
+        String caCertFileName = certsSrc + "rootRsa.pem";
+
+        Certificate[] signRsaChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signRsaPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
+        IExternalSignature pks =
+                new PrivateKeySignature(signRsaPrivateKey, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
+        PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, password);
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(caCertFileName)[0];
+        PrivateKey caPrivateKey = PemFileHelper.readFirstKey(caCertFileName, password);
+
+        SignerProperties signerProperties = new SignerProperties();
+
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
+
+        TestTsaClient testTsa = new TestTsaClient(Arrays.asList(tsaChain), tsaPrivateKey);
+        ICrlClient crlClient = new TestCrlClient().addBuilderForCertIssuer(caCert, caPrivateKey);
+        TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, caPrivateKey);
+
+        padesSigner.setOcspClient(ocspClient).setCrlClient(crlClient);
+
+        padesSigner.signWithBaselineLTAProfile(signerProperties, signRsaChain, pks, testTsa);
+
+        byte[] docBytes;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            new PdfDocument(new PdfReader(srcFileName) ,new PdfWriter(outputStream)).close();
+            docBytes = outputStream.toByteArray();
+        }
+
+        try (PdfDocument signedPdf = new PdfDocument(new PdfReader(outFileName))) {
+            try (PdfDocument regularPdf = new PdfDocument(new PdfReader(new ByteArrayInputStream(docBytes)))) {
+                ProductData productData = ITextCoreProductData.getInstance();
+                String newlyAddedProducer = "iText\u00ae " + productData.getPublicProductName() + " " +
+                        productData.getVersion() + " \u00a9" + productData.getSinceCopyrightYear() + "-"
+                        + productData.getToCopyrightYear() + " Apryse Group NV";
+                String actualProducerLine = signedPdf.getDocumentInfo().getProducer();
+                String regularProducerLine = regularPdf.getDocumentInfo().getProducer();
+
+                Assertions.assertTrue(actualProducerLine.contains(regularProducerLine));
+                Assertions.assertTrue(actualProducerLine.contains(newlyAddedProducer));
+            }
+        }
     }
 
     private PdfPadesSigner createPdfPadesSigner(String srcFileName, String outFileName) throws IOException {

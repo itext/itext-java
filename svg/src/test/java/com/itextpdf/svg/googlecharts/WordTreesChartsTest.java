@@ -26,9 +26,11 @@ import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
+
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class WordTreesChartsTest extends SvgIntegrationTest {

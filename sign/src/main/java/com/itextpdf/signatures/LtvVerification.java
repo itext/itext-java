@@ -32,6 +32,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.crypto.OID.X509Extensions;
@@ -336,7 +337,7 @@ public class LtvVerification {
         for (byte b : bytes) {
             buf.appendHex(b);
         }
-        return PdfEncodings.convertToString(buf.toByteArray(), null).toUpperCase();
+        return StringNormalizer.toUpperCase(PdfEncodings.convertToString(buf.toByteArray(), null));
     }
 
     /**

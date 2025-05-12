@@ -23,7 +23,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.datastructures.NullableContainer;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
@@ -54,8 +54,12 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.tagging.IAccessibleElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,8 +73,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single field or field group in an {@link com.itextpdf.forms.PdfAcroForm
@@ -331,6 +333,51 @@ public class PdfFormField extends AbstractPdfFormField {
             return getTypeFromParent(fieldDict);
         }
         return formType;
+    }
+
+    /**
+     * Retrieves string value from {@link PdfObject} representing text string or text stream.
+     *
+     * @param value {@link PdfObject} representing text string or text stream
+     *
+     * @return {@link String} value
+     */
+    public static String getStringValue(PdfObject value) {
+        if (value == null) {
+            return "";
+        } else if (value instanceof PdfStream) {
+            return new String(((PdfStream) value).getBytes(), StandardCharsets.UTF_8);
+        } else if (value instanceof PdfName) {
+            return ((PdfName) value).getValue();
+        } else if (value instanceof PdfString) {
+            return ((PdfString) value).toUnicodeString();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Applies {@link AccessibilityProperties} for provided form field and its annotation children.
+     *
+     * @param formField    {@link PdfFormField} the form field to which the accessibility properties should be applied
+     * @param modelElement {@link IAccessibleElement} the form field layout element with accessibility properties
+     * @param pdfDocument  {@link PdfDocument} the document to which the form field belongs
+     */
+    public static void applyAccessibilityProperties(PdfFormField formField, IAccessibleElement modelElement,
+                                                    PdfDocument pdfDocument) {
+        if (!pdfDocument.isTagged()) {
+            return;
+        }
+        final AccessibilityProperties properties = modelElement.getAccessibilityProperties();
+        final String alternativeDescription = properties.getAlternateDescription();
+        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
+            formField.setAlternativeName(alternativeDescription);
+            for (PdfFormAnnotation annotation : formField.getChildFormAnnotations()) {
+                if (annotation.getAlternativeDescription() == null) {
+                    annotation.setAlternativeDescription(alternativeDescription);
+                }
+            }
+        }
     }
 
     /**
@@ -775,17 +822,7 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public String getValueAsString() {
         PdfObject value = getValue();
-        if (value == null) {
-            return "";
-        } else if (value instanceof PdfStream) {
-            return new String(((PdfStream) value).getBytes(), StandardCharsets.UTF_8);
-        } else if (value instanceof PdfName) {
-            return ((PdfName) value).getValue();
-        } else if (value instanceof PdfString) {
-            return ((PdfString) value).toUnicodeString();
-        } else {
-            return "";
-        }
+        return getStringValue(value);
     }
 
     /**
@@ -1044,10 +1081,11 @@ public class PdfFormField extends AbstractPdfFormField {
 
     /**
      * Sets a rich text string, as described in "Rich Text Strings" section of Pdf spec.
-     * May be either {@link PdfStream} or {@link PdfString}.
+     * It may be either {@link PdfStream} or {@link PdfString}.
      *
-     * @param richText a new rich text value.
-     * @return the edited {@link PdfFormField}.
+     * @param richText a new rich text value
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setRichText(PdfObject richText) {
         put(PdfName.RV, richText);
@@ -1381,7 +1419,7 @@ public class PdfFormField extends AbstractPdfFormField {
         if (PdfName.Btn.equals(formType)) {
             if (getFieldFlag(PdfButtonFormField.FF_PUSH_BUTTON)) {
                 try {
-                    img = ImageDataFactory.create(Base64.decode(value));
+                    img = ImageDataFactory.create(EncodingUtil.fromBase64(value));
                 } catch (Exception e) {
                     if (generateAppearance) {
                         // Display value.

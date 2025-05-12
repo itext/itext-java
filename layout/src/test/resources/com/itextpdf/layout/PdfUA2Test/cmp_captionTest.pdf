@@ -214,11 +214,11 @@ endobj
 4 0 obj
 <</K[5 0 R]/Namespaces[76 0 R]/ParentTree 75 0 R/ParentTreeNextKey 1/RoleMap<<>>/Type/StructTreeRoot>>
 endobj
-3 0 obj
-<</CreationDate(D:20231216194047+01'00')/ModDate(D:20231216194047+01'00')>>
-endobj
 1 0 obj
 <</Lang(en-US)/MarkInfo<</Marked true>>/Metadata 73 0 R/Pages 2 0 R/StructTreeRoot 4 0 R/Type/Catalog/ViewerPreferences<</DisplayDocTitle true>>>>
+endobj
+3 0 obj
+<</CreationDate(D:20250309175026+03'00')/ModDate(D:20250309175026+03'00')>>
 endobj
 78 0 obj
 <</Filter/FlateDecode/Length 10997/Length1 34472>>stream
@@ -261,16 +261,16 @@ _ÿ¤øšÏ`‡%â,ï±ÉØó5Ô ¯°†D¢Í¹x„:¹ê>Ç~ëÑz”{ëz1êŒÂúQ‚÷w!/¼~#ïG ÎÕj æG;
 endstream
 endobj
 77 0 obj
-<</Ascent 800/CapHeight 700/Descent -200/Flags 32/FontBBox[-631 -462 1632 1230]/FontFamily(FreeSans)/FontFile2 78 0 R/FontName/WJXDMY+FreeSans/FontWeight 400/ItalicAngle 0/StemV 80/Type/FontDescriptor>>
+<</Ascent 800/CapHeight 700/Descent -200/Flags 32/FontBBox[-631 -462 1632 1230]/FontFamily(FreeSans)/FontFile2 78 0 R/FontName/VSKEFN+FreeSans/FontWeight 400/ItalicAngle 0/StemV 80/Type/FontDescriptor/XHeight 500>>
 endobj
 12 0 obj
-<</BaseFont/WJXDMY+FreeSans/Encoding/WinAnsiEncoding/FirstChar 32/FontDescriptor 77 0 R/LastChar 116/Subtype/TrueType/Type/Font/Widths[278 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 556 556 556 556 556 0 0 0 0 278 0 0 0 0 0 0 667 0 722 722 0 0 0 0 278 0 0 0 0 722 0 0 0 0 0 611 0 0 0 0 0 0 0 0 0 0 0 0 556 0 0 0 556 0 556 556 222 0 0 0 833 556 556 556 0 0 500 278]>>
+<</BaseFont/VSKEFN+FreeSans/Encoding/WinAnsiEncoding/FirstChar 32/FontDescriptor 77 0 R/LastChar 116/Subtype/TrueType/Type/Font/Widths[278 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 556 556 556 556 556 0 0 0 0 278 0 0 0 0 0 0 667 0 722 722 0 0 0 0 278 0 0 0 0 722 0 0 0 0 0 611 0 0 0 0 0 0 0 0 0 0 0 0 556 0 0 0 556 0 556 556 222 0 0 0 833 556 556 556 0 0 500 278]>>
 endobj
 2 0 obj
 <</Count 1/Kids[6 0 R]/Type/Pages>>
 endobj
 73 0 obj
-<</Length 2911/Subtype/XML/Type/Metadata>>stream
+<</Length 2959/Subtype/XML/Type/Metadata>>stream
 <?xpacket begin="ï»¿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.1.0-jc003">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -282,9 +282,9 @@ endobj
       dc:format="application/pdf"
       pdfuaid:part="2"
       pdfuaid:rev="2024"
-      xmp:CreateDate="2023-12-16T19:40:47+01:00"
-      xmp:ModifyDate="2023-12-16T19:40:47+01:00"
-      pdf:Producer="iTextÂ® Core 8.0.3-SNAPSHOT (AGPL version) Â©2000-2023 Apryse Group NV">
+      xmp:CreateDate="2025-03-09T17:50:26+03:00"
+      xmp:ModifyDate="2025-03-09T17:50:26+03:00"
+      pdf:Producer="iTextÂ® Core 9.2.0-SNAPSHOT (AGPL version) Â©2000-2025 Apryse Group NV">
       <dc:title>
         <rdf:Alt>
           <rdf:li xml:lang="x-default">PdfUA2 Title</rdf:li>
@@ -312,7 +312,8 @@ endobj
                                                                                                     
                                                                                                     
                                                                                                     
-                                                                                
+                                                                                                    
+                           
 <?xpacket end="w"?>
 endstream
 endobj
@@ -325,9 +326,9 @@ endobj
 xref
 0 79
 0000000000 65535 f 
-0000007935 00000 n 
-0000019769 00000 n 
 0000007844 00000 n 
+0000019781 00000 n 
+0000008006 00000 n 
 0000007726 00000 n 
 0000007653 00000 n 
 0000000629 00000 n 
@@ -336,7 +337,7 @@ xref
 0000001436 00000 n 
 0000001322 00000 n 
 0000001246 00000 n 
-0000019397 00000 n 
+0000019409 00000 n 
 0000001755 00000 n 
 0000001637 00000 n 
 0000001561 00000 n 
@@ -397,15 +398,15 @@ xref
 0000005319 00000 n 
 0000006357 00000 n 
 0000007401 00000 n 
-0000019820 00000 n 
+0000019832 00000 n 
 0000000786 00000 n 
-0000022807 00000 n 
-0000022843 00000 n 
+0000022867 00000 n 
+0000022903 00000 n 
 0000019178 00000 n 
 0000008097 00000 n 
 trailer
-<</ID [<eba03c3f77feb8d9ae0040ec668ab4637dd5ca4ee51d152d1a1ac1f31c3598f73f3e687a5a9e49f4c08ef412c2acee5846da88274aa2f8db951c3150c229d19c><eba03c3f77feb8d9ae0040ec668ab4637dd5ca4ee51d152d1a1ac1f31c3598f73f3e687a5a9e49f4c08ef412c2acee5846da88274aa2f8db951c3150c229d19c>]/Info 3 0 R/Root 1 0 R/Size 79>>
-%iText-Core-8.0.3-SNAPSHOT
+<</ID [<466ae41cb2687d4019804351ce9ef0236a2910362e064256d3ceb25d250c3a43c0b5a503a073f37af52b9458afd4a34f63dc180f14e3ec2d3e8152949f4555a3><466ae41cb2687d4019804351ce9ef0236a2910362e064256d3ceb25d250c3a43c0b5a503a073f37af52b9458afd4a34f63dc180f14e3ec2d3e8152949f4555a3>]/Info 3 0 R/Root 1 0 R/Size 79>>
+%iText-Core-9.2.0-SNAPSHOT
 startxref
-22907
+22967
 %%EOF

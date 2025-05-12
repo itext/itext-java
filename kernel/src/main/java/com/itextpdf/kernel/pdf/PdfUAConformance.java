@@ -28,7 +28,9 @@ package com.itextpdf.kernel.pdf;
  */
 public enum PdfUAConformance {
     /** PDF/UA-1 conformance **/
-    PDF_UA_1("1");
+    PDF_UA_1("1"),
+    /** PDF/UA-2 conformance **/
+    PDF_UA_2("2");
 
     private final String part;
 

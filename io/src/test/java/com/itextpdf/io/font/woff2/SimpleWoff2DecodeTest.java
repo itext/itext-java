@@ -22,10 +22,11 @@
  */
 package com.itextpdf.io.font.woff2;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class SimpleWoff2DecodeTest extends Woff2DecodeTest {
 

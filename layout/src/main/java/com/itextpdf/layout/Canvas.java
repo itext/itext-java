@@ -87,6 +87,7 @@ public class Canvas extends RootElement<Canvas> {
         this.pdfDocument = pdfCanvas.getDocument();
         this.pdfCanvas = pdfCanvas;
         this.rootArea = rootArea;
+        this.ensureRootTagIsCreated();
     }
 
     /**

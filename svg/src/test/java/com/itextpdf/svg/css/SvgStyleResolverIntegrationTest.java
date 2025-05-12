@@ -33,6 +33,7 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.LogLevelConstants;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -207,7 +208,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO: update cmp files when DEVSIX-4396 resolved
     // TODO: update cmp files when DEVSIX-6405 resolved
-    // TODO: update cmp files when DEVSIX-8821 resolved
     // TODO: update cmp files when DEVSIX-8822 resolved
     // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithExternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
@@ -217,7 +217,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO: update cmp files when DEVSIX-4396 resolved
     // TODO: update cmp files when DEVSIX-6405 resolved
-    // TODO: update cmp files when DEVSIX-8821 resolved
     // TODO: update cmp files when DEVSIX-8822 resolved
     // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithInternalCSStoSingleDefaultPage() throws IOException,InterruptedException {
@@ -235,7 +234,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO: update cmp files when DEVSIX-4396 resolved
     // TODO: update cmp files when DEVSIX-6405 resolved
-    // TODO: update cmp files when DEVSIX-8821 resolved
     // TODO: update cmp files when DEVSIX-8822 resolved
     // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithExternalCSStoCustomPage() throws IOException,InterruptedException {
@@ -246,7 +244,6 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     @Test
     // TODO: update cmp files when DEVSIX-4396 resolved
     // TODO: update cmp files when DEVSIX-6405 resolved
-    // TODO: update cmp files when DEVSIX-8821 resolved
     // TODO: update cmp files when DEVSIX-8822 resolved
     // TODO: update cmp files when DEVSIX-8832 resolved
     public void svgWithInternalCSStoCustomPage() throws IOException,InterruptedException {

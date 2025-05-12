@@ -25,6 +25,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -39,6 +40,7 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.properties.AlignContentPropertyValue;
 import com.itextpdf.layout.properties.AlignmentPropertyValue;
 import com.itextpdf.layout.properties.FlexDirectionPropertyValue;
 import com.itextpdf.layout.properties.FlexWrapPropertyValue;
@@ -51,6 +53,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -105,6 +108,27 @@ public class FlexUtilTest extends ExtendedITextTest {
                 Assertions.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
             }
         }
+    }
+
+    @Test
+    public void simpleColumnDirectionTest() {
+        Rectangle bBox = new Rectangle(545, 842);
+        DocumentRenderer documentRenderer = new DocumentRenderer(
+                new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))));
+
+        Div div = new Div();
+        FlexContainerRenderer flexContainerRenderer = new FlexContainerRenderer(div);
+        flexContainerRenderer.setParent(documentRenderer);
+        div.setNextRenderer(flexContainerRenderer);
+        div.addStyle(COLUMN_STYLE);
+        Div childDiv = new Div().setBackgroundColor(ColorConstants.RED).setWidth(UnitValue.createPercentValue(75));
+        div.add(childDiv);
+        flexContainerRenderer.addChild(childDiv.createRendererSubTree().setParent(flexContainerRenderer));
+
+        List<List<FlexItemInfo>> rectangleTable =
+                FlexUtil.calculateChildrenRectangles(bBox, (FlexContainerRenderer) div.getRenderer());
+
+        Assertions.assertEquals(75.0F, rectangleTable.get(0).get(0).getRectangle().getWidth(), EPS);
     }
 
     @Test
@@ -190,12 +214,12 @@ public class FlexUtilTest extends ExtendedITextTest {
     @Test
     public void simpleStretchTest01() {
         Style stretchStyle = new Style(WRAP_STYLE);
-        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignmentPropertyValue.STRETCH);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.STRETCH);
         List<List<FlexItemInfo>> rectangleTable = testFlex(
                 stretchStyle,
-                Arrays.<UnitValue>asList(UnitValue.createPointValue(100f)),
-                Arrays.asList(0f),
-                Arrays.asList(0f)
+                Collections.<UnitValue>singletonList(UnitValue.createPointValue(100f)),
+                Collections.singletonList(0f),
+                Collections.singletonList(0f)
         );
 
         // after checks
@@ -204,6 +228,262 @@ public class FlexUtilTest extends ExtendedITextTest {
             for (FlexItemInfo flexItemInfo : line) {
                 Assertions.assertEquals(100f, flexItemInfo.getRectangle().getWidth(), EPS);
                 Assertions.assertEquals(100.0f, flexItemInfo.getRectangle().getHeight(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void simpleCentralAlignmentTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.CENTER);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(24.0625f, flexItemInfo.getRectangle().getY(), EPS);
+                } else {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void simpleCentralAlignmentColumnDirectionTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignmentPropertyValue.CENTER);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_BETWEEN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+                } else {
+                    Assertions.assertEquals(48.125f, flexItemInfo.getRectangle().getY(), EPS);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void simpleCentralAlignmentLinesAreNullTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.CENTER);
+        stretchStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Collections.singletonList(UnitValue.createPointValue(0f)),
+                Collections.singletonList(0f),
+                Collections.singletonList(0f)
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> line : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : line) {
+                Assertions.assertEquals(400f, flexItemInfo.getRectangle().getWidth(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void simpleFlexEndAlignmentTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.FLEX_END);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(48.125f, flexItemInfo.getRectangle().getY(), EPS);
+                } else {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void simpleFlexEndAlignmentColumnDirectionTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.FLEX_END);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> flexItemInfos : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : flexItemInfos) {
+                Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void simpleFlexStartAlignmentTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.FLEX_START);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> flexItemInfos : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : flexItemInfos) {
+                Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void simpleSpaceEvenlyAlignmentTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_EVENLY);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> flexItemInfos : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : flexItemInfos) {
+                Assertions.assertEquals(16.041666f, flexItemInfo.getRectangle().getY(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void simpleSpaceEvenlyAlignmentColumnDirectionTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_EVENLY);
+        stretchStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> flexItemInfos : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : flexItemInfos) {
+                Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void simpleSpaceAroundAlignmentTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_AROUND);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(12.03125f, flexItemInfo.getRectangle().getY(), EPS);
+                } else {
+                    Assertions.assertEquals(24.0625f, flexItemInfo.getRectangle().getY(), EPS);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void simpleSpaceAroundAlignmentColumnDirectionTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_AROUND);
+        stretchStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> flexItemInfos : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : flexItemInfos) {
+                Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+            }
+        }
+    }
+
+
+    @Test
+    public void simpleSpaceBetweenAlignmentTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_BETWEEN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+                } else {
+                    Assertions.assertEquals(48.125f, flexItemInfo.getRectangle().getY(), EPS);
+                }
             }
         }
     }
@@ -786,9 +1066,9 @@ public class FlexUtilTest extends ExtendedITextTest {
     public void basisGtWidthGrow0Shrink0Test01() {
         List<List<FlexItemInfo>> rectangleTable = testFlex(
                 WRAP_STYLE,
-                Arrays.<UnitValue>asList(UnitValue.createPointValue(500f)),
-                Arrays.asList(0f),
-                Arrays.asList(0f)
+                Collections.<UnitValue>singletonList(UnitValue.createPointValue(500f)),
+                Collections.singletonList(0f),
+                Collections.singletonList(0f)
         );
 
         // after checks
@@ -805,9 +1085,9 @@ public class FlexUtilTest extends ExtendedITextTest {
     public void basisGtWidthGrow0Shrink1Test01() {
         List<List<FlexItemInfo>> rectangleTable = testFlex(
                 WRAP_STYLE,
-                Arrays.<UnitValue>asList(UnitValue.createPointValue(500f)),
-                Arrays.asList(0f),
-                Arrays.asList(1f)
+                Collections.<UnitValue>singletonList(UnitValue.createPointValue(500f)),
+                Collections.singletonList(0f),
+                Collections.singletonList(1f)
         );
 
         // after checks
@@ -2988,6 +3268,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         info = createFlexItemCalculationInfo((AbstractRenderer) imageRenderer);
         Assertions.assertEquals(50.0f, info.minContent, EPS);
     }
+    
 
     private static FlexUtil.FlexItemCalculationInfo createFlexItemCalculationInfo(AbstractRenderer renderer) {
         return new FlexUtil.FlexItemCalculationInfo(renderer, 0, 0, 0, 0, false, false, 0);

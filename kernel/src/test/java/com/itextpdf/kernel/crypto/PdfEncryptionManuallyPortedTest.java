@@ -48,6 +48,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 

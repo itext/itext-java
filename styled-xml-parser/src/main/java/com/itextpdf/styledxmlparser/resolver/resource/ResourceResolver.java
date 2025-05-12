@@ -22,8 +22,9 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -216,7 +217,7 @@ public class ResourceResolver {
      * @return true if source is under data URI scheme
      */
     public static boolean isDataSrc(String src) {
-        return src != null && src.toLowerCase().startsWith(DATA_SCHEMA_PREFIX) && src.contains(",");
+        return src != null && StringNormalizer.toLowerCase(src).startsWith(DATA_SCHEMA_PREFIX) && src.contains(",");
     }
 
     /**
@@ -246,13 +247,20 @@ public class ResourceResolver {
         imageCache.reset();
     }
 
+    /**
+     * Creates {@link PdfXObject} based on passed base64 encoded string.
+     *
+     * @param src the base64 encoded string
+     *
+     * @return the {@link PdfXObject} based on passed base64 encoded string or {@code null}
+     */
     protected PdfXObject tryResolveBase64ImageSource(String src) {
         try {
             String fixedSrc = src.replaceAll("\\s", "");
             fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64_IDENTIFIER) + BASE64_IDENTIFIER.length() + 1);
             PdfXObject imageXObject = imageCache.getImage(fixedSrc);
             if (imageXObject == null) {
-                imageXObject = new PdfImageXObject(ImageDataFactory.create(Base64.decode(fixedSrc)));
+                imageXObject = new PdfImageXObject(ImageDataFactory.create(EncodingUtil.fromBase64(fixedSrc)));
                 imageCache.putImage(fixedSrc, imageXObject);
             }
             return imageXObject;
@@ -261,6 +269,13 @@ public class ResourceResolver {
         return null;
     }
 
+    /**
+     * Creates {@link PdfXObject} based on the string which defines the path to local image.
+     *
+     * @param uri the path to the local image
+     *
+     * @return the {@link PdfXObject} based on local image or {@code null}
+     */
     protected PdfXObject tryResolveUrlImageSource(String uri) {
         try {
             URL url = uriResolver.resolveAgainstBaseUri(uri);
@@ -298,7 +313,7 @@ public class ResourceResolver {
             try {
                 String fixedSrc = src.replaceAll("\\s", "");
                 fixedSrc = fixedSrc.substring(fixedSrc.indexOf(BASE64_IDENTIFIER) + BASE64_IDENTIFIER.length() + 1);
-                return Base64.decode(fixedSrc);
+                return EncodingUtil.fromBase64(fixedSrc);
             } catch (Exception ignored) {
             }
         }

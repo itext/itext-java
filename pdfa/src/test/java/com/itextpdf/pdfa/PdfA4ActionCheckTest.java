@@ -49,6 +49,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

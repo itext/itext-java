@@ -27,7 +27,10 @@ package com.itextpdf.commons.utils;
  *
  * @param <K> key parameter type.
  * @param <V> value parameter type.
+ *
+ * @deprecated in favour of {@link com.itextpdf.commons.datastructures.Tuple2}
  */
+@Deprecated
 public class Pair<K, V> {
     private final K key;
     private final V value;

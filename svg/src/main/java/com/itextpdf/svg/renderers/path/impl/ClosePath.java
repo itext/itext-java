@@ -23,15 +23,23 @@
 package com.itextpdf.svg.renderers.path.impl;
 
 /***
- * Implements closePath(Z) attribute of SVG's path element
+ * Implements closePath(Z) attribute of SVG's path element.
  * */
 public class ClosePath extends LineTo {
     static final int ARGUMENT_SIZE = 0;
 
+    /**
+     * Creates new {@link ClosePath} instance.
+     */
     public ClosePath() {
         this(false);
     }
 
+    /**
+     * Creates new {@link ClosePath} instance.
+     *
+     * @param relative {@code true} in case it is a relative operator, {@code false} if it is an absolute operator
+     */
     public ClosePath(boolean relative) {
         super(relative);
     }

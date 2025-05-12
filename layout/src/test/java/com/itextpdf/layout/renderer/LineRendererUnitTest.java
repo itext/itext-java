@@ -493,4 +493,14 @@ public class LineRendererUnitTest extends RendererUnitTest {
         Assertions.assertEquals(5, renderer.getText().getEnd());
         Assertions.assertEquals(0, renderer.getText().getIdx());
     }
+
+    @Test
+    public void disableOtfFeaturesTest() {
+        Document dummyDocument = createDummyDocument();
+        Text text = new Text("Hello world!");
+        text.disableOtfFeatures();
+        TextRenderer renderer = (TextRenderer) new TextRenderer(text).setParent(dummyDocument.getRenderer());
+        renderer.layout(new LayoutContext(new LayoutArea(1, new Rectangle(1000, 1000))));
+        Assertions.assertEquals(Character.UnicodeScript.UNKNOWN, renderer.<Object>getProperty(Property.FONT_SCRIPT));
+    }
 }

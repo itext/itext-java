@@ -61,6 +61,7 @@ import com.itextpdf.kernel.pdf.annot.da.StandardAnnotationFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -69,16 +70,18 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
@@ -468,7 +471,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             pdfDocument.addNewPage().addAnnotation(screen);
 
             for (int i = 0; i < pdfDocument.getNumberOfPages(); i++) {
-                PdfDictionary pageObject = pdfDocument.getPage(i+1).getPdfObject();
+                PdfDictionary pageObject = pdfDocument.getPage(i + 1).getPdfObject();
                 Assertions.assertTrue(pageObject.containsKey(PdfName.Tabs));
                 PdfObject pageT = pageObject.get(PdfName.Tabs);
                 Assertions.assertEquals(PdfName.S, pageT);
@@ -487,7 +490,10 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfPage pdfPage = pdfDocument.addNewPage();
             PdfAnnotation annot = createRichTextAnnotation();
             annot.setFlags(PdfAnnotation.INVISIBLE);
-            pdfPage.addAnnotation(annot);
+            pdfPage.getPdfObject().put(PdfName.Annots, new PdfArray(annot.getPdfObject()));
+            TagTreePointer tagPointer = pdfDocument.getTagStructureContext().getAutoTaggingPointer();
+            tagPointer.addTag(StandardRoles.ANNOT);
+            tagPointer.setPageForTagging(pdfPage).addAnnotationTag(annot);
 
             pdfPage.flush();
         }
@@ -503,7 +509,10 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfPage pdfPage = pdfDocument.addNewPage();
             PdfAnnotation annot = createRichTextAnnotation();
             annot.setFlags(PdfAnnotation.NO_VIEW);
-            pdfPage.addAnnotation(annot);
+            pdfPage.getPdfObject().put(PdfName.Annots, new PdfArray(annot.getPdfObject()));
+            TagTreePointer tagPointer = pdfDocument.getTagStructureContext().getAutoTaggingPointer();
+            tagPointer.addTag(StandardRoles.ANNOT);
+            tagPointer.setPageForTagging(pdfPage).addAnnotationTag(annot);
 
             pdfPage.flush();
         }
@@ -560,7 +569,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
         dict3D.put(new PdfName("IN"), new PdfString("Unnamed"));
         dict3D.put(new PdfName("MS"), PdfName.M);
         dict3D.put(new PdfName("C2W"),
-                new PdfArray(new float[] {1, 0, 0, 0, 0, -1, 0, 1, 0, 3, -235, 28}));
+                new PdfArray(new float[]{1, 0, 0, 0, 0, -1, 0, 1, 0, 3, -235, 28}));
         dict3D.put(PdfName.CO, new PdfNumber(235));
 
         annot.setDefaultInitialView(dict3D);

@@ -25,18 +25,20 @@ package com.itextpdf.pdfua.checkers;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.pdfua.PdfUA2TestPdfDocument;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.utils.FileUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfUAXfaTest extends ExtendedITextTest {
@@ -76,5 +78,19 @@ public class PdfUAXfaTest extends ExtendedITextTest {
 
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
 
+    }
+
+    @Test
+    public void xfaFormInPdfUA2Test() throws IOException {
+        String input = SOURCE_FOLDER + "xfaInPdfUA2.pdf";
+        String output = DESTINATION_FOLDER + "xfaFormInPdfUA2_reopen.pdf";
+
+        PdfDocument pdfDoc = new PdfUA2TestPdfDocument(new PdfReader(input), new PdfWriter(output));
+
+        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> pdfDoc.close());
+        Assertions.assertEquals(PdfUAExceptionMessageConstants.XFA_FORMS_SHALL_NOT_BE_PRESENT, e.getMessage());
+
+        FileUtil.copy(input, output);
+        // VeraPdf also complains only about the presence of the XFA forms
     }
 }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.FontResources;
@@ -87,9 +88,9 @@ class Type1Parser {
             }
             return new RandomAccessFileOrArray(sourceFactory.createSource(buf));
         } else if (afmPath != null) {
-            if (afmPath.toLowerCase().endsWith(".afm")) {
+            if (StringNormalizer.toLowerCase(afmPath).endsWith(".afm")) {
                 return new RandomAccessFileOrArray(sourceFactory.createBestSource(afmPath));
-            } else if (afmPath.toLowerCase().endsWith(".pfm")) {
+            } else if (StringNormalizer.toLowerCase(afmPath).endsWith(".pfm")) {
                 ByteArrayOutputStream ba = new ByteArrayOutputStream();
                 RandomAccessFileOrArray rf = new RandomAccessFileOrArray(sourceFactory.createBestSource(afmPath));
                 Pfm2afm.convert(rf, ba);
@@ -121,7 +122,7 @@ class Type1Parser {
     public RandomAccessFileOrArray getPostscriptBinary() throws java.io.IOException {
         if (pfbData != null) {
             return new RandomAccessFileOrArray(sourceFactory.createSource(pfbData));
-        } else if (pfbPath != null && pfbPath.toLowerCase().endsWith(".pfb")) {
+        } else if (pfbPath != null && StringNormalizer.toLowerCase(pfbPath).endsWith(".pfb")) {
             return new RandomAccessFileOrArray(sourceFactory.createBestSource(pfbPath));
         } else {
             pfbPath = afmPath.substring(0, afmPath.length() - 3) + "pfb";

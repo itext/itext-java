@@ -220,6 +220,29 @@ public class ProducerBuilderTest extends ExtendedITextTest {
         Assertions.assertEquals("some Author", newProducerLine);
     }
 
+    @Test
+    public void mergeEquivalentProducersTest() {
+        String producerLine = "some producer";
+        String result = ProducerBuilder.mergeProducerLines(producerLine, producerLine);
+        Assertions.assertEquals(producerLine, result);
+    }
+
+    @Test
+    public void mergeDifferentProducersTest() {
+        String producerLine = "some producer";
+        String secondProducerLine = "another producer";
+        String result = ProducerBuilder.mergeProducerLines(producerLine, secondProducerLine);
+        Assertions.assertEquals(producerLine + "; modified using " + secondProducerLine, result);
+    }
+
+    @Test
+    public void mergeProducerEndsWithSecondProducerTest() {
+        String producerLine = "some producer; modified using another producer";
+        String secondProducerLine = "another producer";
+        String result = ProducerBuilder.mergeProducerLines(producerLine, secondProducerLine);
+        Assertions.assertEquals(producerLine, result);
+    }
+
     private List<ConfirmedEventWrapper> getEvents(String initialProducerLine, int ... indexes) {
         List<ConfirmedEventWrapper> events = new ArrayList<>();
 

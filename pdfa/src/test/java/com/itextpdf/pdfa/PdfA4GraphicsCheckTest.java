@@ -67,6 +67,7 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -1099,7 +1100,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
     @Test
     public void imageJpeg20002ColorChannelsTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "pdfA4_jpeg2000.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA4_jpeg2000ColorChannels.pdf";
 
         PdfDocument pdfDoc = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),

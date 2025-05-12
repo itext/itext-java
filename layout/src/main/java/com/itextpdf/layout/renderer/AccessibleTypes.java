@@ -131,6 +131,7 @@ class AccessibleTypes {
         illustrationRoles.add(StandardRoles.FIGURE);
         illustrationRoles.add(StandardRoles.FORMULA);
         illustrationRoles.add(StandardRoles.FORM);
+
     }
 
     /**

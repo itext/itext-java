@@ -23,8 +23,8 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -51,15 +51,16 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ListTest extends ExtendedITextTest {
@@ -750,7 +751,6 @@ public class ListTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
     }
 
-    // TODO DEVSIX-6877 wrapping list item content in a div causes the bullet to be misaligned
     @Test
     public void listItemWrappedDivSymbolInside() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listItemWrappedDivSymbolInside.pdf";
@@ -769,6 +769,30 @@ public class ListTest extends ExtendedITextTest {
         l.add(listItem);
         l.add("Regular item 2");
 
+        document.add(l);
+        document.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void listSymbolOnPageSplit() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "listSymbolOnPageSplit.pdf";
+        String cmpFileName = sourceFolder + "cmp_listSymbolOnPageSplit.pdf";
+        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        Document document = new Document(pdf);
+        Div div = new Div().setHeight(750);
+        List l = new List();
+        l.setMarginLeft(50);
+        l.setListSymbol("\u2022");
+
+        l.add("Item 1");
+
+        ListItem listItem2 = new ListItem();
+        listItem2.setProperty(Property.LIST_SYMBOL_POSITION, ListSymbolPosition.INSIDE);
+        l.add(listItem2);
+        l.add("Item 3");
+
+        document.add(div);
         document.add(l);
         document.close();
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));

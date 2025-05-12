@@ -23,8 +23,8 @@
 package com.itextpdf.signatures.validation;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.commons.utils.Pair;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormAnnotationUtil;
 import com.itextpdf.forms.fields.PdfFormCreator;
@@ -159,7 +159,7 @@ public class DocumentRevisionsValidator {
     private Set<PdfDictionary> newlyAddedFields;
     private Set<PdfDictionary> removedTaggedObjects;
     private Set<PdfDictionary> addedTaggedObjects;
-    private Pair<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects;
+    private Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects;
 
     /**
      * Creates new instance of {@link DocumentRevisionsValidator}.
@@ -350,7 +350,7 @@ public class DocumentRevisionsValidator {
 
     private boolean validateRevision(ValidationReport validationReport, ValidationContext context,
             PdfDocument documentWithoutRevision, PdfDocument documentWithRevision, DocumentRevision currentRevision) {
-        usuallyModifiedObjects = new Pair<>(createUsuallyModifiedObjectsSet(documentWithoutRevision),
+        usuallyModifiedObjects = new Tuple2<>(createUsuallyModifiedObjectsSet(documentWithoutRevision),
                 createUsuallyModifiedObjectsSet(documentWithRevision));
         if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport, context)) {
             return false;
@@ -1575,19 +1575,19 @@ public class DocumentRevisionsValidator {
     //
 
     private static boolean comparePdfObjects(PdfObject pdfObject1, PdfObject pdfObject2,
-            Pair<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
+            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
         return comparePdfObjects(pdfObject1, pdfObject2, new ArrayList<>(), usuallyModifiedObjects);
     }
 
     private static boolean comparePdfObjects(PdfObject pdfObject1, PdfObject pdfObject2,
-            List<Pair<PdfObject, PdfObject>> visitedObjects,
-            Pair<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
-        for (Pair<PdfObject, PdfObject> pair : visitedObjects) {
-            if (pair.getKey() == pdfObject1) {
-                return pair.getValue() == pdfObject2;
+            List<Tuple2<PdfObject, PdfObject>> visitedObjects,
+            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
+        for (Tuple2<PdfObject, PdfObject> pair : visitedObjects) {
+            if (pair.getFirst() == pdfObject1) {
+                return pair.getSecond() == pdfObject2;
             }
         }
-        visitedObjects.add(new Pair<>(pdfObject1, pdfObject2));
+        visitedObjects.add(new Tuple2<>(pdfObject1, pdfObject2));
         if (Objects.equals(pdfObject1, pdfObject2)) {
             return true;
         }
@@ -1598,10 +1598,10 @@ public class DocumentRevisionsValidator {
             return false;
         }
         if (pdfObject1.getIndirectReference() != null &&
-                usuallyModifiedObjects.getKey().stream().anyMatch(
+                usuallyModifiedObjects.getFirst().stream().anyMatch(
                         reference -> isSameReference(reference, pdfObject1.getIndirectReference())) &&
                 pdfObject2.getIndirectReference() != null &&
-                usuallyModifiedObjects.getValue().stream().anyMatch(
+                usuallyModifiedObjects.getSecond().stream().anyMatch(
                         reference -> isSameReference(reference, pdfObject2.getIndirectReference()))) {
             // These two objects are expected to not be completely equal, we check them independently.
             // However, we still need to make sure those are same instances.
@@ -1638,8 +1638,8 @@ public class DocumentRevisionsValidator {
     }
 
     private static boolean comparePdfArrays(PdfArray array1, PdfArray array2,
-            List<Pair<PdfObject, PdfObject>> visitedObjects,
-            Pair<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
+            List<Tuple2<PdfObject, PdfObject>> visitedObjects,
+            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
         if (array1.size() != array2.size()) {
             return false;
         }
@@ -1652,8 +1652,8 @@ public class DocumentRevisionsValidator {
     }
 
     private static boolean comparePdfDictionaries(PdfDictionary dictionary1, PdfDictionary dictionary2,
-            List<Pair<PdfObject, PdfObject>> visitedObjects,
-            Pair<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
+            List<Tuple2<PdfObject, PdfObject>> visitedObjects,
+            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
         Set<Map.Entry<PdfName, PdfObject>> entrySet1 = dictionary1.entrySet();
         Set<Map.Entry<PdfName, PdfObject>> entrySet2 = dictionary2.entrySet();
         if (entrySet1.size() != entrySet2.size()) {
@@ -1669,8 +1669,8 @@ public class DocumentRevisionsValidator {
     }
 
     private static boolean comparePdfStreams(PdfStream stream1, PdfStream stream2,
-            List<Pair<PdfObject, PdfObject>> visitedObjects,
-            Pair<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
+            List<Tuple2<PdfObject, PdfObject>> visitedObjects,
+            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
         return Arrays.equals(stream1.getBytes(), stream2.getBytes()) &&
                 comparePdfDictionaries(stream1, stream2, visitedObjects, usuallyModifiedObjects);
     }

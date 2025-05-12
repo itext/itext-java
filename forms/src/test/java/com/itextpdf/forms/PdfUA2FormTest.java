@@ -22,8 +22,10 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.InputField;
@@ -36,7 +38,6 @@ import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfDocumentInfo;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
@@ -53,6 +54,7 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,8 +62,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
@@ -91,7 +93,7 @@ public class PdfUA2FormTest extends ExtendedITextTest {
             Rectangle rect = new Rectangle(210, 490, 150, 22);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDocument, "fieldName")
                     .setWidgetRectangle(rect).createText();
-            field.put(PdfName.Contents, new PdfString("Description"));
+            field.getFirstFormAnnotation().setAlternativeDescription("Description");
             field.setValue("some value");
             field.setFont(font);
             form.addField(field);
@@ -146,10 +148,9 @@ public class PdfUA2FormTest extends ExtendedITextTest {
             formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             formInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "form input field");
             formInputField.setProperty(FormProperty.FORM_FIELD_LABEL, "label form field");
+            formInputField.setAlternativeDescription("Description");
 
             document.add(formInputField);
-            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDocument, true);
-            form.getField("form input field").getPdfObject().put(PdfName.Contents, new PdfString("Description"));
         }
         compareAndValidate(outFile, cmpFile);
     }
@@ -173,12 +174,34 @@ public class PdfUA2FormTest extends ExtendedITextTest {
             SignatureFieldAppearance formSigField = new SignatureFieldAppearance("form SigField");
             formSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             formSigField.setContent("form SigField");
+            formSigField.setAlternativeDescription("Description");
 
             formSigField.setBorder(new SolidBorder(ColorConstants.YELLOW, 1));
             formSigField.setFont(font);
             document.add(formSigField);
+        }
+        compareAndValidate(outFile, cmpFile);
+    }
+
+    @Test
+    public void setAlternativeDescriptionTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "setAlternativeDescription.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_setAlternativeDescription.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
+                PdfVersion.PDF_2_0)))){
+            Document document = new Document(pdfDocument);
+            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+                    "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
+            document.setFont(font);
+            createSimplePdfUA2Document(pdfDocument);
+
+            Rectangle rect = new Rectangle(200, 200, 200, 200);
+            PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDocument, "button name")
+                    .setWidgetRectangle(rect).createPushButton();
+            button.getFirstFormAnnotation().setAlternativeDescription("some description");
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDocument, true);
-            form.getField("form SigField").getPdfObject().put(PdfName.Contents, new PdfString("Description"));
+            form.addField(button);
         }
         compareAndValidate(outFile, cmpFile);
     }

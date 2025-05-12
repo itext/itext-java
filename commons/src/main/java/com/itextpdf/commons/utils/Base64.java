@@ -68,7 +68,11 @@ import org.slf4j.LoggerFactory;
  * @author Robert Harder
  * @author rob@iharder.net
  * @version 2.2.1
+ *
+ * @deprecated in favour of {@link EncodingUtil#toBase64(byte[])} and {@link EncodingUtil#fromBase64(String)}
  */
+@Deprecated
+// After removing the class, update commons/NOTICE.txt
 public class Base64 {
 
     /* ********  P U B L I C   F I E L D S  ******** */

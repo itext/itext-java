@@ -35,6 +35,7 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.font.FontProvider;
@@ -52,6 +53,8 @@ import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.util.List;
 import java.util.Map;
+
+import com.itextpdf.layout.tagging.IAccessibleElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,6 +154,12 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
             flatRenderer = new Paragraph(text).setMargin(0).createRendererSubTree();
         }
         flatRenderer.setProperty(Property.NO_SOFT_WRAP_INLINE, true);
+
+        if (flatRenderer.getModelElement() instanceof IAccessibleElement) {
+            ((IAccessibleElement) flatRenderer.getModelElement())
+                    .getAccessibilityProperties()
+                    .setRole(StandardRoles.LBL);
+        }
         return flatRenderer;
     }
 
@@ -186,7 +195,6 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
         if (flatten && password) {
             defaultValue = obfuscatePassword(defaultValue);
         }
-
         return createParagraphRenderer(defaultValue);
     }
 

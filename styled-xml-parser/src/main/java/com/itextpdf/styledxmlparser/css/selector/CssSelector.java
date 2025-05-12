@@ -64,6 +64,25 @@ public class CssSelector extends AbstractCssSelector {
     }
 
     /**
+     * Checks if the node not matches all the selectors.
+     *
+     * @param element the node
+     * @return true, if node doesn't match all the selectors
+     */
+    public boolean notMatches(INode element) {
+        int counter = 0;
+        while (counter != selectorItems.size()) {
+            boolean matches = matches(element, selectorItems.size() - counter - 1);
+            if (matches) {
+                return false;
+            } else {
+                counter++;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Checks if a node matches the selector.
      *
      * @param element the node

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -199,7 +200,7 @@ class XfdfReader {
             borderStyle.put(PdfName.D, XfdfObjectUtils.convertDashesFromString(dashes));
         }
         if (style != null && !"cloudy".equals(style)) {
-            borderStyle.put(PdfName.S, new PdfName(style.substring(0, 1).toUpperCase()));
+            borderStyle.put(PdfName.S, new PdfName(StringNormalizer.toUpperCase(style.substring(0, 1))));
         }
         if (borderStyle.size() > 0) {
             annotation.put(PdfName.BS, borderStyle);
@@ -224,7 +225,6 @@ class XfdfReader {
         String annotName = annotObject.getName();
         if (annotName != null) {
             switch (annotName) {
-                //TODO DEVSIX-4027 add all attributes properly one by one
                 case XfdfConstants.TEXT:
                     PdfTextAnnotation pdfTextAnnotation = new PdfTextAnnotation(XfdfObjectUtils.convertRectFromString(annotObject.getAttributeValue(XfdfConstants.RECT)));
                     addCommonAnnotationAttributes(pdfTextAnnotation, annotObject);

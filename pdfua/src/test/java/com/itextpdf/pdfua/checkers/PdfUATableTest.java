@@ -22,14 +22,18 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
+import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.IBlockElement;
@@ -37,8 +41,10 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
+import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -50,7 +56,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUATableTest extends ExtendedITextTest {
@@ -70,19 +77,25 @@ public class PdfUATableTest extends ExtendedITextTest {
         framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
-    @Test
-    public void tableWithoutHeaders01() throws IOException {
+    public static List<PdfUAConformance> data() {
+        return UaValidationTestFramework.getConformanceList();
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithoutHeaders01(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         for (int i = 0; i < 16; i++) {
             tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithoutHeaders01");
+        framework.assertBothValid("tableWithoutHeaders01", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithoutHeaders02() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithoutHeaders02(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         for (int i = 0; i < 4; i++) {
             tableBuilder.addHeaderCell(new DataCellSupplier("Data 1", 1, 1, null));
@@ -95,11 +108,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithoutHeaders02");
+        framework.assertBothValid("tableWithoutHeaders02", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn01() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn01(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -110,11 +124,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn01");
+        framework.assertBothValid("tableWithHeaderScopeColumn01", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn02() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn02(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -125,11 +140,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn02");
+        framework.assertBothValid("tableWithHeaderScopeColumn02", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn03() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn03(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addFooterCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addFooterCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -140,31 +156,53 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn03");
+        framework.assertBothValid("tableWithHeaderScopeColumn03", pdfUAConformance);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("data")
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)
     })
-    public void tableWithHeaderScopeColumn04() throws IOException {
+    public void tableWithHeaderScopeColumn04(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 3", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 4", 1, 1, "Column"));
-        //notice body table is not completly filled up
+        // Notice, that body table is not completely filled up
         for (int i = 0; i < 10; i++) {
             tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderScopeColumn04");
+        framework.assertBothFail("tableWithHeaderScopeColumn04", pdfUAConformance);
     }
 
+    @ParameterizedTest
+    @MethodSource("data")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 8)
+    })
+    public void notRegularRowGroupingsInTableTest(PdfUAConformance pdfUAConformance) throws IOException {
+        TableBuilder tableBuilder = new TableBuilder(4);
+        tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 1", 2, 1, "Column"));
+        tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 2", 1, 2, "Column"));
+        tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 3", 2, 1, "Column"));
+        // Table is not completely filled up
+        for (int i = 0; i < 11; i++) {
+            tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
+        }
+        tableBuilder.addFooterCell(new DataCellSupplier("Footer 1", 3, 1, null));
 
-    @Test
-    public void tableWithHeaderScopeColumn05() throws IOException {
+        framework.addSuppliers(tableBuilder);
+        framework.assertBothFail("tableWithHeaderScopeColumn04", MessageFormatUtil.format(
+                PdfUAExceptionMessageConstants.ROWS_SPAN_DIFFERENT_NUMBER_OF_COLUMNS, 1, 2), false, pdfUAConformance);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn05(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -175,11 +213,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn05");
+        framework.assertBothValid("tableWithHeaderScopeColumn05", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn06() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn06(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 2, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -190,11 +229,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn06");
+        framework.assertBothValid("tableWithHeaderScopeColumn06", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn07() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn07(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 4, 1, "Column"));
         for (int i = 0; i < 12; i++) {
@@ -202,11 +242,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn07");
+        framework.assertBothValid("tableWithHeaderScopeColumn07", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn08() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn08(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -220,11 +261,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn08");
+        framework.assertBothValid("tableWithHeaderScopeColumn08", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn09() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn09(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -237,11 +279,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn09");
+        framework.assertBothValid("tableWithHeaderScopeColumn09", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn10() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn10(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -253,11 +296,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn10");
+        framework.assertBothValid("tableWithHeaderScopeColumn10", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn11() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn11(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addFooterCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addFooterCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -269,12 +313,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn11");
+        framework.assertBothValid("tableWithHeaderScopeColumn11", pdfUAConformance);
     }
 
-
-    @Test
-    public void tableWithHeaderScopeColumn12() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn12(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(5);
         for (int i = 0; i < 10; i++) {
             tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
@@ -289,12 +333,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn12");
+        framework.assertBothValid("tableWithHeaderScopeColumn12", pdfUAConformance);
     }
 
-
-    @Test
-    public void tableWithHeaderScopeColumn13() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn13(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "Column"));
@@ -313,11 +357,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderScopeColumn13");
+        framework.assertBothFail("tableWithHeaderScopeColumn13", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn14() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn14(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 2", 1, 1, "None"));
@@ -328,12 +373,18 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderScopeColumn14");
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothFail("tableWithHeaderScopeColumn14", pdfUAConformance);
+        }
+        if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            // Rule 8.2.5.26-5 in VeraPDF passes since scope is resolved to default (see Table 384 in ISO 32000-2:2020)
+            framework.assertBothValid("tableWithHeaderScopeColumn14", pdfUAConformance);
+        }
     }
 
-
-    @Test
-    public void tableWithHeaderScopeColumn15() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn15(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Column"));
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
@@ -344,11 +395,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn15");
+        framework.assertBothValid("tableWithHeaderScopeColumn15", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderScopeColumn16() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderScopeColumn16(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
         for (int i = 0; i < 4; i++) {
             tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
@@ -359,13 +411,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 3", 1, 1, "Column"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 4", 1, 1, "Column"));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderScopeColumn16");
+        framework.assertBothValid("tableWithHeaderScopeColumn16", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderRowScope01() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderRowScope01(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
 
         tableBuilder.addHeaderCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
@@ -384,38 +436,36 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addFooterCell(new DataCellSupplier("Data 1", 1, 1, null));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope01");
-
+        framework.assertBothValid("tableWithHeaderRowScope01", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderRowScope02() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderRowScope02(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 3, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope02");
-
+        framework.assertBothValid("tableWithHeaderRowScope02", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderRowScope03() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderRowScope03(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 3, 1, null));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope03");
-
+        framework.assertBothValid("tableWithHeaderRowScope03", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderRowScope04() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderRowScope04(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(4);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 2, 1, null));
@@ -428,12 +478,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope04");
-
+        framework.assertBothValid("tableWithHeaderRowScope04", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderRowScope05() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderRowScope05(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 4, "Row"));
@@ -448,12 +498,12 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope05");
-
+        framework.assertBothValid("tableWithHeaderRowScope05", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderRowScope06() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderRowScope06(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 4, "Row"));
@@ -491,14 +541,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder2.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
         tableBuilder2.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder, tableBuilder1, tableBuilder2);
-        framework.assertBothValid("tableWithHeaderRowScope06");
-
+        framework.assertBothValid("tableWithHeaderRowScope06", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderRowScope07() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderRowScope07(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
@@ -515,14 +564,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderRowScope07");
-
+        framework.assertBothFail("tableWithHeaderRowScope07", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderRowScope08() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderRowScope08(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
@@ -533,14 +581,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderRowScope08");
-
+        framework.assertBothValid("tableWithHeaderRowScope08", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderRowScope09() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderRowScope09(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header 1", 1, 1, "Row"));
@@ -551,14 +598,19 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data 1", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderRowScope09");
-
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothFail("tableWithHeaderRowScope09", pdfUAConformance);
+        }
+        if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            // Rule 8.2.5.26-5 in VeraPDF passes since scope is resolved to default (see Table 384 in ISO 32000-2:2020)
+            framework.assertBothValid("tableWithHeaderRowScope09", pdfUAConformance);
+        }
     }
 
-    @Test
-    public void tableWithHeaderBothScope01() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderBothScope01(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
@@ -569,15 +621,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderBothScope01");
-
+        framework.assertBothValid("tableWithHeaderBothScope01", pdfUAConformance);
     }
 
-
-    @Test
-    public void tableWithHeaderBothScope02() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderBothScope02(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
@@ -591,14 +641,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderBothScope02");
-
+        framework.assertBothValid("tableWithHeaderBothScope02", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithHeaderBothScope03() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithHeaderBothScope03(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header", 3, 1, "Both"));
@@ -607,14 +656,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithHeaderBothScope03");
+        framework.assertBothValid("tableWithHeaderBothScope03", pdfUAConformance);
     }
 
-
-    @Test
-    public void tableWithId01() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId01(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -624,14 +672,19 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithId01");
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothFail("tableWithId01", pdfUAConformance);
+        }
+        if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            // Rule 8.2.5.26-5 in VeraPDF passes since scope is resolved to default (see Table 384 in ISO 32000-2:2020)
+            framework.assertBothValid("tableWithId01", pdfUAConformance);
+        }
     }
 
-
-    @Test
-    public void tableWithId02() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId02(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header", 1, 1, "None"));
@@ -641,14 +694,19 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithId02");
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothFail("tableWithId02", pdfUAConformance);
+        }
+        if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            // Rule 8.2.5.26-5 in VeraPDF passes since scope is resolved to default (see Table 384 in ISO 32000-2:2020)
+            framework.assertBothValid("tableWithId02", pdfUAConformance);
+        }
     }
 
-
-    @Test
-    public void tableWithId03() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId03(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -658,13 +716,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id2")));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id3")));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId03");
+        framework.assertBothValid("tableWithId03", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithId04() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId04(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -674,13 +732,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id2")));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id3")));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId04");
+        framework.assertBothValid("tableWithId04", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithId05() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId05(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -690,14 +748,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addHeaderCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id2")));
         tableBuilder.addHeaderCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id3")));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId05");
+        framework.assertBothValid("tableWithId05", pdfUAConformance);
     }
 
-
-    @Test
-    public void tableWithId06() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId06(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
@@ -711,14 +768,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addFooterCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id2")));
         tableBuilder.addFooterCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id3")));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId06");
+        framework.assertBothValid("tableWithId06", pdfUAConformance);
     }
 
-
-    @Test
-    public void tableWithId07() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId07(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -733,13 +789,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addFooterCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id2")));
         tableBuilder.addFooterCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id3")));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId07");
+        framework.assertBothValid("tableWithId07", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithId08() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId08(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -750,14 +806,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id3", "Header", 1, 1, "None"));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId08");
+        framework.assertBothValid("tableWithId08", pdfUAConformance);
     }
 
-
-    @Test
-    public void tableWithId09() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId09(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 3, 1, "None"));
@@ -766,13 +821,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId09");
+        framework.assertBothValid("tableWithId09", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithId10() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId10(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -781,14 +836,13 @@ public class PdfUATableTest extends ExtendedITextTest {
 
         tableBuilder.addFooterCell(new HeaderCellSupplier("id1", "Header", 3, 1, "None"));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId10");
+        framework.assertBothValid("tableWithId10", pdfUAConformance);
     }
 
-
-    @Test
-    public void tableWithId11() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId11(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 1, 3, "None"));
@@ -800,13 +854,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId11");
+        framework.assertBothValid("tableWithId11", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithId12() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId12(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -817,13 +871,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new HeaderCellSupplier("notexisting", "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id3", "Header", 1, 1, "None"));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithId12");
+        framework.assertBothFail("tableWithId12", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithId13() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId13(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
@@ -834,13 +888,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id3", "Header", 1, 1, "None"));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId13");
+        framework.assertBothValid("tableWithId13", pdfUAConformance);
     }
 
-    @Test
-    public void tableWithId14() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId14(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Arrays.asList("id1", "id2")));
@@ -851,13 +905,34 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new HeaderCellSupplier("id2", "Header", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id3", "Header", 1, 1, "None"));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableWithId14");
+        framework.assertBothValid("tableWithId14", pdfUAConformance);
     }
 
-    @Test
-    public void combination01() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void tableWithId15(PdfUAConformance pdfUAConformance) throws IOException {
+        TableBuilder tableBuilder = new TableBuilder(3);
+        tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header", 1, 1, "None"));
+        tableBuilder.addBodyCell(new HeaderCellSupplier("notexisting", "Header", 1, 1, "None"));
+        tableBuilder.addBodyCell(new HeaderCellSupplier("id3", "Header", 1, 1, "None"));
+
+        tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id1")));
+        tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id2")));
+        tableBuilder.addBodyCell(new DataCellSupplier("Data1", 1, 1, Collections.singletonList("id3")));
+
+        framework.addSuppliers(tableBuilder);
+        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+            framework.assertBothFail("tableWithId15", pdfUAConformance);
+        }
+        if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+            framework.assertBothValid("tableWithId15", pdfUAConformance);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void combination01(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -868,27 +943,27 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data2", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data3", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination01");
-
+        framework.assertBothFail("combination01", pdfUAConformance);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("data")
     @LogMessages(messages = {@LogMessage(messageTemplate = PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED, count = 2)})
-    public void combination02() throws IOException {
+    public void combination02(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         for (int i = 0; i < 201; i++) {
             tableBuilder.addBodyCell(new HeaderCellSupplier("id" + i, "Header1", 1, 1, "None"));
         }
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("combination02");
+        framework.assertBothValid("combination02", pdfUAConformance);
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("data")
     @LogMessages(messages = {@LogMessage(messageTemplate = PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED, count = 2)})
-    public void combination04() throws IOException {
+    public void combination04(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         for (int i = 0; i < 12; i++) {
@@ -905,14 +980,13 @@ public class PdfUATableTest extends ExtendedITextTest {
             tableBuilder.addFooterCell(new DataCellSupplier("Data1F", 1, 1, Collections.singletonList("id" + i)));
         }
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("combination04");
+        framework.assertBothValid("combination04", pdfUAConformance);
     }
 
-
-    @Test
-    public void combination05() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void combination05(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addBodyCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -923,14 +997,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data2", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data3", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination05");
-
+        framework.assertBothFail("combination05", pdfUAConformance);
     }
 
-    @Test
-    public void combination06() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void combination06(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -941,14 +1014,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data2", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data3", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination06");
-
+        framework.assertBothFail("combination06", pdfUAConformance);
     }
 
-    @Test
-    public void combination07() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void combination07(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addFooterCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -959,14 +1031,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data2", 1, 1, null));
         tableBuilder.addBodyCell(new DataCellSupplier("Data3", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination07");
-
+        framework.assertBothFail("combination07", pdfUAConformance);
     }
 
-    @Test
-    public void combination08() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void combination08(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
 
         tableBuilder.addHeaderCell(new HeaderCellSupplier("id1", "Header1", 1, 1, "None"));
@@ -977,14 +1048,13 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addFooterCell(new DataCellSupplier("Data2", 1, 1, null));
         tableBuilder.addFooterCell(new DataCellSupplier("Data3", 1, 1, null));
 
-
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("combination08");
-
+        framework.assertBothFail("combination08", pdfUAConformance);
     }
 
-    @Test
-    public void combination09() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void combination09(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(3);
         tableBuilder.addBodyCell(new HeaderCellSupplier(null, "Header1", 1, 1, "None"));
         tableBuilder.addBodyCell(new HeaderCellSupplier("id2", "Header2", 1, 1, "Column"));
@@ -994,16 +1064,24 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addBodyCell(new DataCellSupplier("Data3", 1, 1, null));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("combination09");
+        framework.assertBothValid("combination09", pdfUAConformance);
     }
 
-    @Test
-    public void roleMapping01() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void roleMapping01(PdfUAConformance pdfUAConformance) throws IOException {
         TableBuilder tableBuilder = new TableBuilder(2);
         framework.addBeforeGenerationHook((pdfDocument -> {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("FancyHeading", StandardRoles.TH);
             root.addRoleMapping("FancyTD", StandardRoles.TD);
+            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0)
+                        .addNamespaceRoleMapping("FancyHeading", StandardRoles.TH)
+                        .addNamespaceRoleMapping("FancyTD", StandardRoles.TD);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+            }
         }));
         tableBuilder.addBodyCell(new Generator<Cell>() {
             @Override
@@ -1026,9 +1104,8 @@ public class PdfUATableTest extends ExtendedITextTest {
         });
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothValid("tableCustomRoles");
+        framework.assertBothValid("tableCustomRoles", pdfUAConformance);
     }
-
 
     static class TableBuilder implements Generator<IBlockElement> {
         private final int amountOfColumns;
@@ -1122,8 +1199,6 @@ public class PdfUATableTest extends ExtendedITextTest {
             setModified();
             return this;
         }
-
-
     }
 
     static class HeaderCellSupplier implements Generator<Cell> {
@@ -1166,7 +1241,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
     }
 
-    private static PdfFont getFont(){
+    private static PdfFont getFont() {
         try {
             return PdfFontFactory.createFont(FONT);
         } catch (IOException e) {

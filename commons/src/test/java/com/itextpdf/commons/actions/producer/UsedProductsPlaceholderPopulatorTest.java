@@ -31,11 +31,11 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class UsedProductsPlaceholderPopulatorTest extends ExtendedITextTest {
@@ -128,7 +128,7 @@ public class UsedProductsPlaceholderPopulatorTest extends ExtendedITextTest {
         ConfirmedEventWrapper event = new ConfirmedEventWrapper(
                 new ITextTestEvent(new SequenceId(), productData, null, "testing"),
                 "nonproduction", "iText product");
-        String result = populator.populate(Arrays.asList(event), "'module:'P #V (T)");
+        String result = populator.populate(Collections.singletonList(event), "'module:'P #V (T)");
         Assertions.assertEquals("module:public-name #1.0.0 (non-production)", result);
     }
 

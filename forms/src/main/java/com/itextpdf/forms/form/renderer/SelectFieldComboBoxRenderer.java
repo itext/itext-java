@@ -37,6 +37,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.Div;
@@ -294,6 +295,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
 
     private Paragraph createComboBoxOptionFlatElement(String label, boolean simulateOptGroupMargin) {
         Paragraph paragraph = new Paragraph().setMargin(0);
+        paragraph.getAccessibilityProperties().setRole(StandardRoles.LBL);
         if (simulateOptGroupMargin) {
             paragraph.add("\u200d    ");
         }

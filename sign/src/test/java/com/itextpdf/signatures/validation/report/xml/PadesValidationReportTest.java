@@ -22,18 +22,18 @@
  */
 package com.itextpdf.signatures.validation.report.xml;
 
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class PadesValidationReportTest extends ExtendedITextTest {
@@ -42,7 +42,7 @@ public class PadesValidationReportTest extends ExtendedITextTest {
 
     @BeforeAll
     public static void setupFixture() throws CertificateException, IOException, CRLException {
-        signature = new CMSContainer(Base64.decode(XmlReportTestHelper.SIGNATURE1_BASE64));
+        signature = new CMSContainer(EncodingUtil.fromBase64(XmlReportTestHelper.SIGNATURE1_BASE64));
     }
 
     @Test

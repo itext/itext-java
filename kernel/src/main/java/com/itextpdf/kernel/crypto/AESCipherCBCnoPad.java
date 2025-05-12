@@ -34,7 +34,13 @@ import java.security.GeneralSecurityException;
 
 /**
  * Creates an AES Cipher with CBC and no padding.
+ * @deprecated the AES-CBC cipher is a low-level cryptographic primitive
+ * that requires careful understanding to use it safely.
+ * This class is only a thin wrapper and is not intended for general use.
+ * Instead, use API provided by cryptography libraries directly
+ * or rely on high-level PDF encryption functionality.
  */
+@Deprecated
 public class AESCipherCBCnoPad {
     
     private static final String CIPHER_WITHOUT_PADDING = "AES/CBC/NoPadding";

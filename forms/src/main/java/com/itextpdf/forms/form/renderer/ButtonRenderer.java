@@ -36,6 +36,7 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
@@ -56,6 +57,7 @@ import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,6 +167,7 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
     @Override
     protected IRenderer createFlatRenderer() {
         Div div = new Div();
+        div.getAccessibilityProperties().setRole(StandardRoles.NONSTRUCT);
         for (IElement child : ((Button) modelElement).getChildren()) {
             if (child instanceof Image) {
                 // Renderer for the image with fixed position will be added to positionedRenderers of the root renderer,

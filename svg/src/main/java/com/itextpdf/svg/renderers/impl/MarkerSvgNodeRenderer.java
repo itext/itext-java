@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -167,18 +168,18 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_WIDTH)) {
             String markerWidthRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_WIDTH);
             markerWidth = CssDimensionParsingUtils.parseAbsoluteLength(markerWidthRawValue);
-        } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_WIDTH.toLowerCase())) {
+        } else if (this.attributesAndStyles.containsKey(StringNormalizer.toLowerCase(SvgConstants.Attributes.MARKER_WIDTH))) {
             // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-            String markerWidthRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_WIDTH.toLowerCase());
+            String markerWidthRawValue = attributesAndStyles.get(StringNormalizer.toLowerCase(SvgConstants.Attributes.MARKER_WIDTH));
             markerWidth = CssDimensionParsingUtils.parseAbsoluteLength(markerWidthRawValue);
         }
         float markerHeight = DEFAULT_MARKER_HEIGHT;
         if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_HEIGHT)) {
             String markerHeightRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_HEIGHT);
             markerHeight = CssDimensionParsingUtils.parseAbsoluteLength(markerHeightRawValue);
-        } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_HEIGHT.toLowerCase())) {
+        } else if (this.attributesAndStyles.containsKey(StringNormalizer.toLowerCase(SvgConstants.Attributes.MARKER_HEIGHT))) {
             // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-            String markerHeightRawValue = attributesAndStyles.get(SvgConstants.Attributes.MARKER_HEIGHT.toLowerCase());
+            String markerHeightRawValue = attributesAndStyles.get(StringNormalizer.toLowerCase(SvgConstants.Attributes.MARKER_HEIGHT));
             markerHeight = CssDimensionParsingUtils.parseAbsoluteLength(markerHeightRawValue);
         }
         return new float[] {markerWidth, markerHeight};
@@ -189,12 +190,12 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         String markerWidth = namedObject.getAttribute(SvgConstants.Attributes.MARKER_WIDTH);
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         if (markerWidth == null) {
-            markerWidth = namedObject.getAttribute(SvgConstants.Attributes.MARKER_WIDTH.toLowerCase());
+            markerWidth = namedObject.getAttribute(StringNormalizer.toLowerCase(SvgConstants.Attributes.MARKER_WIDTH));
         }
         String markerHeight = namedObject.getAttribute(SvgConstants.Attributes.MARKER_HEIGHT);
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         if (markerHeight == null) {
-            markerHeight = namedObject.getAttribute(SvgConstants.Attributes.MARKER_HEIGHT.toLowerCase());
+            markerHeight = namedObject.getAttribute(StringNormalizer.toLowerCase(SvgConstants.Attributes.MARKER_HEIGHT));
         }
         boolean isCorrect = true;
         if (markerWidth != null) {
@@ -250,9 +251,9 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
                                 this.attributesAndStyles.get(SvgConstants.Attributes.MARKER_UNITS));
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         boolean markerUnitsLowerEqualsStrokeWidth =
-                !this.attributesAndStyles.containsKey(SvgConstants.Attributes.MARKER_UNITS.toLowerCase()) ||
+                !this.attributesAndStyles.containsKey(StringNormalizer.toLowerCase(SvgConstants.Attributes.MARKER_UNITS)) ||
                         SvgConstants.Values.STROKEWIDTH.equals(
-                                this.attributesAndStyles.get(SvgConstants.Attributes.MARKER_UNITS.toLowerCase()));
+                                this.attributesAndStyles.get(StringNormalizer.toLowerCase(SvgConstants.Attributes.MARKER_UNITS)));
         if (markerUnitsEqualsStrokeWidth && markerUnitsLowerEqualsStrokeWidth) {
             String parentValue = this.getParent().getAttribute(SvgConstants.Attributes.STROKE_WIDTH);
             if (parentValue != null) {
@@ -284,9 +285,9 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             moveX = SvgCssUtils.parseAbsoluteLength(this, refX, context.getRootViewPort().getWidth(), moveX, context);
             //Apply scale
             moveX *= -1 * xScale;
-        } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFX.toLowerCase())) {
+        } else if (this.attributesAndStyles.containsKey(StringNormalizer.toLowerCase(SvgConstants.Attributes.REFX))) {
             // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-            String refX = this.attributesAndStyles.get(SvgConstants.Attributes.REFX.toLowerCase());
+            String refX = this.attributesAndStyles.get(StringNormalizer.toLowerCase(SvgConstants.Attributes.REFX));
             moveX = SvgCssUtils.parseAbsoluteLength(this, refX, context.getRootViewPort().getWidth(), moveX, context);
             //Apply scale
             moveX *= -1 * xScale;
@@ -296,9 +297,9 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             String refY = this.attributesAndStyles.get(SvgConstants.Attributes.REFY);
             moveY = SvgCssUtils.parseAbsoluteLength(this, refY, context.getRootViewPort().getHeight(), moveY, context);
             moveY *= -1 * yScale;
-        } else if (this.attributesAndStyles.containsKey(SvgConstants.Attributes.REFY.toLowerCase())) {
+        } else if (this.attributesAndStyles.containsKey(StringNormalizer.toLowerCase(SvgConstants.Attributes.REFY))) {
             // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
-            String refY = this.attributesAndStyles.get(SvgConstants.Attributes.REFY.toLowerCase());
+            String refY = this.attributesAndStyles.get(StringNormalizer.toLowerCase(SvgConstants.Attributes.REFY));
             moveY = SvgCssUtils.parseAbsoluteLength(this, refY, context.getRootViewPort().getHeight(), moveY, context);
             moveY *= -1 * yScale;
         }

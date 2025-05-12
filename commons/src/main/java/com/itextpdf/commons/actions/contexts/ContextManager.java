@@ -24,6 +24,7 @@ package com.itextpdf.commons.actions.contexts;
 
 import com.itextpdf.commons.actions.NamespaceConstant;
 import com.itextpdf.commons.actions.ProductNameConstant;
+import com.itextpdf.commons.utils.StringNormalizer;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -131,7 +132,7 @@ public class ContextManager {
 
     private static String normalize(String namespace) {
         // Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
-        return namespace.toLowerCase();
+        return StringNormalizer.toLowerCase(namespace);
     }
 
     private static class LengthComparator implements Comparator<String> {

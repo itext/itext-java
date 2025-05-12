@@ -24,13 +24,22 @@ package com.itextpdf.io.exceptions;
 
 /**
  * This file is a helper class for internal usage only.
- * Be aware that its API and functionality may be changed in future.
+ * Be aware that its API and functionality may be changed in the future.
  */
 public final class ExceptionUtil {
 
     private ExceptionUtil() {
     }
 
+    /**
+     * Check if given exception is index out of bounds exception.
+     * <p>
+     * Note: For internal usage only (method exists for autoport functionality).
+     *
+     * @param e exception to check
+     *
+     * @return true if given exception represents index out of bounds exception, false otherwise
+     */
     public static boolean isOutOfRange(Exception e) {
         return e instanceof IndexOutOfBoundsException;
     }

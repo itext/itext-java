@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfua.checkers.utils;
 
+import com.itextpdf.forms.form.renderer.SignatureAppearanceRenderer;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Table;
@@ -38,7 +39,7 @@ public final class LayoutCheckUtil {
     /**
      * Creates a new {@link LayoutCheckUtil} instance.
      *
-     * @param context The validation context.
+     * @param context the validation context
      */
     public LayoutCheckUtil(PdfUAValidationContext context) {
         this.context = context;
@@ -47,10 +48,14 @@ public final class LayoutCheckUtil {
     /**
      * Checks renderer for PDF UA compliance.
      *
-     * @param renderer The renderer to check.
+     * @param renderer the renderer to check
      */
     public void checkRenderer(IRenderer renderer) {
         if (renderer == null) {
+            return;
+        }
+        if (isPartOfSignatureAppearance(renderer)) {
+            // Tagging of the current layout element will be skipped in that case.
             return;
         }
         IPropertyContainer layoutElement = renderer.getModelElement();
@@ -59,5 +64,16 @@ public final class LayoutCheckUtil {
         } else if (layoutElement instanceof Table) {
             new TableCheckUtil(context).checkTable((Table) layoutElement);
         }
+    }
+
+    private boolean isPartOfSignatureAppearance(IRenderer renderer) {
+        IRenderer parent = renderer.getParent();
+        while (parent != null) {
+            if (parent instanceof SignatureAppearanceRenderer) {
+                return true;
+            }
+            parent = parent.getParent();
+        }
+        return false;
     }
 }

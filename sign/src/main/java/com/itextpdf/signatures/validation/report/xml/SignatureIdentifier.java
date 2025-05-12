@@ -22,8 +22,8 @@
  */
 package com.itextpdf.signatures.validation.report.xml;
 
-import com.itextpdf.commons.utils.Base64;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.cms.CMSContainer;
@@ -66,7 +66,7 @@ class SignatureIdentifier extends AbstractIdentifiableObject {
             dos.flush();
             bos.flush();
             MessageDigest digest = new BouncyCastleDigest().getMessageDigest(DigestAlgorithms.SHA256);
-            return Base64.encodeBytes(digest.digest(bos.toByteArray()));
+            return EncodingUtil.toBase64(digest.digest(bos.toByteArray()));
         } catch (GeneralSecurityException e) {
             throw new RuntimeException("Error creating signature id digest.", e);
         } catch (IOException e) {
@@ -75,7 +75,7 @@ class SignatureIdentifier extends AbstractIdentifiableObject {
     }
 
     public String getBase64SignatureValue() {
-        return Base64.encodeBytes(signature.getSignerInfo().getSignatureData());
+        return EncodingUtil.toBase64(signature.getSignerInfo().getSignatureData());
     }
 
     public boolean isHashOnly() {

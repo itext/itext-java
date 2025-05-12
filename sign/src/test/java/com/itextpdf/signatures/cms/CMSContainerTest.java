@@ -28,7 +28,7 @@ import com.itextpdf.commons.bouncycastle.asn1.IASN1InputStream;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -115,7 +115,7 @@ public class CMSContainerTest extends ExtendedITextTest {
         sut.setSignerInfo(si);
 
         byte[] serRes = sut.serialize();
-        Assertions.assertEquals(serializedAsString(Base64.decode(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST)),
+        Assertions.assertEquals(serializedAsString(EncodingUtil.fromBase64(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST)),
                 serializedAsString(serRes));
     }
 
@@ -140,7 +140,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
         byte[] serRes = sut.serialize();
 
-        Assertions.assertEquals(serializedAsString(Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL)),
+        Assertions.assertEquals(serializedAsString(EncodingUtil.fromBase64(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL)),
                 serializedAsString(serRes));
     }
 
@@ -171,7 +171,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
     @Test
     public void testDeserialization() throws CertificateException, IOException, CRLException {
-        byte[] rawData = Base64.decode(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST);
+        byte[] rawData = EncodingUtil.fromBase64(CMSTestHelper.EXPECTED_RESULT_CMS_CONTAINER_TEST);
         CMSContainer sd = new CMSContainer(rawData);
         Assertions.assertEquals("2.16.840.1.101.3.4.2.3", sd.getDigestAlgorithm().getAlgorithmOid());
         Assertions.assertEquals("1.2.840.113549.1.7.1", sd.getEncapContentInfo().getContentType());
@@ -188,7 +188,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
     @Test
     public void testDeserializationWithRevocationData() throws CertificateException, IOException, CRLException {
-        byte[] rawData = Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL);
+        byte[] rawData = EncodingUtil.fromBase64(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL);
         CMSContainer sd = new CMSContainer(rawData);
         Assertions.assertEquals("2.16.840.1.101.3.4.2.3", sd.getDigestAlgorithm().getAlgorithmOid());
         Assertions.assertEquals("1.2.840.113549.1.7.1", sd.getEncapContentInfo().getContentType());
@@ -206,7 +206,7 @@ public class CMSContainerTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.UNABLE_TO_PARSE_REV_INFO))
     public void testDeserializationWithIncorrectRevocationData() throws CertificateException, IOException, CRLException {
-        byte[] rawData = Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_INCORRECT_REV_INFO);
+        byte[] rawData = EncodingUtil.fromBase64(CMSTestHelper.CMS_CONTAINER_WITH_INCORRECT_REV_INFO);
         CMSContainer sd = new CMSContainer(rawData);
         Assertions.assertEquals(1, sd.getCrls().size());
         Assertions.assertEquals(1, sd.getOcsps().size());
@@ -215,7 +215,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
     @Test
     public void createPkcs7WithRevocationInfoTest() {
-        PdfPKCS7 pkcs7 = new PdfPKCS7(Base64.decode(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL),
+        PdfPKCS7 pkcs7 = new PdfPKCS7(EncodingUtil.fromBase64(CMSTestHelper.CMS_CONTAINER_WITH_OCSP_AND_CRL),
                 PdfName.Adbe_pkcs7_detached, FACTORY.getProviderName());
         Assertions.assertEquals(1, pkcs7.getSignedDataCRLs().size());
         Assertions.assertEquals(1, pkcs7.getSignedDataOcsps().size());
@@ -223,7 +223,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
     @Test
     public void testMultipleDigestAlgorithms() {
-        byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_2DIGEST_ALGOS);
+        byte[] rawData = EncodingUtil.fromBase64(CMSTestHelper.SERIALIZED_B64_2DIGEST_ALGOS);
         Exception e = Assertions.assertThrows(PdfException.class, () -> {
             CMSContainer sd = new CMSContainer(rawData);
         });
@@ -233,7 +233,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
     @Test
     public void testMultipleSignerInfos() {
-        byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_2SIGNERS);
+        byte[] rawData = EncodingUtil.fromBase64(CMSTestHelper.SERIALIZED_B64_2SIGNERS);
         Exception e = Assertions.assertThrows(PdfException.class, () -> {
             CMSContainer sd = new CMSContainer(rawData);
         });
@@ -242,7 +242,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
     @Test
     public void testCertificatesMissing() {
-        byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_MISSING_CERTIFICATES);
+        byte[] rawData = EncodingUtil.fromBase64(CMSTestHelper.SERIALIZED_B64_MISSING_CERTIFICATES);
         Exception e = Assertions.assertThrows(PdfException.class, () -> {
             CMSContainer sd = new CMSContainer(rawData);
         });
@@ -251,7 +251,7 @@ public class CMSContainerTest extends ExtendedITextTest {
 
     @Test
     public void testCertificatesEmpty() {
-        byte[] rawData = Base64.decode(CMSTestHelper.SERIALIZED_B64_EMPTY_CERTIFICATES);
+        byte[] rawData = EncodingUtil.fromBase64(CMSTestHelper.SERIALIZED_B64_EMPTY_CERTIFICATES);
         Exception e = Assertions.assertThrows(PdfException.class, () -> {
             CMSContainer sd = new CMSContainer(rawData);
         });

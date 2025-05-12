@@ -142,10 +142,14 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
 
     @Test
     public void doActionNullEventMapTest() throws IOException {
+        final ProductData productData = ITextCoreProductData.getInstance();
+        final String expectedProducer = "iText\u00ae " + productData.getPublicProductName() + " " +
+                productData.getVersion() + " \u00a9" + productData.getSinceCopyrightYear() + "-"
+                + productData.getToCopyrightYear() + " Apryse Group NV";
         try (PdfDocument document = new DummyPdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
             AssertUtil.doesNotThrow(() -> new FlushPdfDocumentEvent(document).doAction());
             Assertions.assertTrue(document.getDocumentInfo().getProducer()
-                    .contains("Apryse Group NV (no registered products)"));
+                    .contains(expectedProducer));
         }
     }
 

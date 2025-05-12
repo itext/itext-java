@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.constants;
 
+/**
+ * Font resources paths.
+ */
 public final class FontResources {
 
     private FontResources() {

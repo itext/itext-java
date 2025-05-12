@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.path;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.svg.renderers.path.impl.PathShapeMapper;
 
 import java.util.Map;
@@ -52,8 +53,8 @@ public class SvgPathShapeFactory {
      */
     public static int getArgumentCount(String name) {
         Map<String, Integer> map = new PathShapeMapper().getArgumentCount();
-        if (map.containsKey(name.toUpperCase())) {
-            return (int) map.get(name.toUpperCase());
+        if (map.containsKey(StringNormalizer.toUpperCase(name))) {
+            return (int) map.get(StringNormalizer.toUpperCase(name));
         }
         return -1;
     }

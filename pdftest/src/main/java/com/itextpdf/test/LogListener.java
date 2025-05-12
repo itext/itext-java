@@ -30,65 +30,100 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
-import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.read.ListAppender;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.SubstituteLoggerFactory;
 
-public class LogListener implements BeforeEachCallback, AfterEachCallback {
+public class LogListener implements BeforeTestExecutionCallback, AfterTestExecutionCallback, BeforeAllCallback {
 
     private static final String ROOT_ITEXT_PACKAGE = "com.itextpdf";
     private static final String ITEXT_LICENCING_PACKAGE = "com.itextpdf.licensing";
     private static final String ITEXT_ACTIONS_PACKAGE = "com.itextpdf.commons.actions.processors";
     private static final String TOKEN_ITEXT_LOGLEVEL = "ITEXT_SILENT_MODE";
 
-    private final CustomListAppender<ILoggingEvent> listAppender;
-    private final ILoggerFactory lc = LoggerFactory.getILoggerFactory();
+    private static final String DEFAULT_THREAD_ID = "1";
+    private AtomicBoolean threadsAware;
 
-    private Map<Logger, Map<String, Appender<ILoggingEvent>>> appenders;
+    private static CustomListAppender<ILoggingEvent> listAppender;
+    private static ILoggerFactory lc;
 
     public LogListener() {
-       String logLevel = getPropertyOrEnvironmentVariable(TOKEN_ITEXT_LOGLEVEL);
-       listAppender = new CustomListAppender<>(parseSilentMode(logLevel));
+        synchronized(LogListener.class) {
+            if (listAppender == null) {
+                String logLevel = getPropertyOrEnvironmentVariable(TOKEN_ITEXT_LOGLEVEL);
+                listAppender = new CustomListAppender<>(parseSilentMode(logLevel));
+                if (lc == null) {
+                    lc = LoggerFactory.getILoggerFactory();
+                    resetLoggingContext();
+                }
+                addAppenderToPackage();
+                listAppender.start();
+            }
+        }
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) {
-        before(extensionContext);
+    public void beforeTestExecution(ExtensionContext extensionContext) {
+        LogMessages logMessages = LoggerHelper.getTestAnnotation(extensionContext, LogMessages.class);
+        if (logMessages != null) {
+            Map<String, Boolean> expectedTemplates = new HashMap<>();
+            LogMessage[] messages = logMessages.messages();
+            for (LogMessage logMessage : messages) {
+                expectedTemplates.put(logMessage.messageTemplate(), logMessage.quietMode());
+            }
+            listAppender.setExpectedTemplates(expectedTemplates);
+        }
     }
 
     @Override
-    public void afterEach(ExtensionContext context) {
+    public void afterTestExecution(ExtensionContext context) {
         checkLogMessages(context);
-        after();
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext extensionContext) {
+        if (threadsAware == null) {
+            ExecutionMode executionMode = extensionContext.getExecutionMode();
+            threadsAware = new AtomicBoolean(executionMode == ExecutionMode.CONCURRENT);
+        }
     }
 
     private boolean parseSilentMode(String logLevel) {
         if (logLevel == null){
             return  false;
         }
-       return logLevel.equalsIgnoreCase("TRUE");
+        return logLevel.equalsIgnoreCase("TRUE");
     }
 
     private int contains(LogMessage loggingStatement) {
-        List<ILoggingEvent> list = listAppender.list;
-        int index = 0;
-        for (ILoggingEvent event : list) {
-            if (isLevelCompatible(loggingStatement.logLevel(), event.getLevel())
-                    && LoggerHelper
-                    .equalsMessageByTemplate(event.getFormattedMessage(), loggingStatement.messageTemplate())) {
-                index++;
+        int count = 0;
+        synchronized(LogListener.class) {
+            List<ILoggingEvent> list = listAppender.list;
+            for (ILoggingEvent event : list) {
+                if (isLevelCompatible(loggingStatement.logLevel(), event.getLevel())
+                        && LoggerHelper
+                        .equalsMessageByTemplate(event.getFormattedMessage(), loggingStatement.messageTemplate())
+                        && (event.getThreadName().equals(getThreadId()))) {
+                    count++;
+                }
             }
         }
-        return index;
+
+        return count;
     }
 
     private boolean isLevelCompatible(int logMessageLevel, Level eventLevel) {
@@ -108,35 +143,17 @@ public class LogListener implements BeforeEachCallback, AfterEachCallback {
         }
     }
 
-    public int getSize() {
-        return listAppender.list.size();
-    }
-
-    private void before(ExtensionContext context) {
-        listAppender.clear();
-
-        LogMessages logMessages = LoggerHelper.getTestAnnotation(context, LogMessages.class);
-        if (logMessages != null) {
-            Map<String, Boolean> expectedTemplates = new HashMap<>();
-            LogMessage[] messages = logMessages.messages();
-            for (LogMessage logMessage : messages) {
-                expectedTemplates.put(logMessage.messageTemplate(), logMessage.quietMode());
+    private int getSizeBy(String threadId) {
+        int nOfEvents = 0;
+        synchronized(LogListener.class) {
+            for (ILoggingEvent iLoggingEvent : listAppender.list) {
+                if (Objects.equals(iLoggingEvent.getThreadName(), threadId)) {
+                    nOfEvents++;
+                }
             }
-            listAppender.setExpectedTemplates(expectedTemplates);
         }
 
-        // LoggerContext#reset method resets more parameters than appenders,
-        // like turbofilters, listeners, etc. But currently it is important to save only appenders.
-        appenders = LoggerHelper.getAllAppendersMap((LoggerContext) lc);
-        resetLoggingContext();
-        addAppenderToPackage();
-        listAppender.start();
-    }
-
-    private void after() {
-        listAppender.stop();
-        resetLoggingContext();
-        LoggerHelper.restoreAppenders(appenders);
+        return nOfEvents;
     }
 
     private void addAppenderToPackage() {
@@ -162,6 +179,7 @@ public class LogListener implements BeforeEachCallback, AfterEachCallback {
             for (LogMessage logMessage : messages) {
                 int foundCount = contains(logMessage);
                 if (foundCount != logMessage.count() && !logMessages.ignore() && !logMessage.ignore()) {
+                    listAppender.clear();
                     LoggerHelper.failWrongMessageCount(logMessage.count(), foundCount, logMessage.messageTemplate(),
                             context);
                 } else {
@@ -169,9 +187,13 @@ public class LogListener implements BeforeEachCallback, AfterEachCallback {
                 }
             }
         }
-        if (getSize() > checkedMessages) {
-            LoggerHelper.failWrongTotalCount(getSize(), checkedMessages, context);
+
+        final int size = getSizeBy(getThreadId());
+        if (size > checkedMessages) {
+            listAppender.clear();
+            LoggerHelper.failWrongTotalCount(size, checkedMessages, context);
         }
+        listAppender.clear();
     }
 
     private static String getPropertyOrEnvironmentVariable(String name) {
@@ -182,35 +204,57 @@ public class LogListener implements BeforeEachCallback, AfterEachCallback {
         return s;
     }
 
-    private class CustomListAppender<E> extends ListAppender<ILoggingEvent> {
+    private String getThreadId() {
+        if (threadsAware != null && threadsAware.get()) {
+            return String.valueOf(Thread.currentThread().getId());
+        } else {
+            return DEFAULT_THREAD_ID;
+        }
+    }
 
-        private Map<String, Boolean> expectedTemplates = new HashMap<>();
+    private class CustomListAppender<E> extends ListAppender<ILoggingEvent> {
+        // Thread id - templates
+        private Map<String, Map<String, Boolean>> expectedTemplates = new ConcurrentHashMap<>();
         private  final boolean runTestsInSilentMode;
 
         private CustomListAppender(boolean runTestsInSilentMode) {
             this.runTestsInSilentMode = runTestsInSilentMode;
         }
 
-
         public void setExpectedTemplates(Map<String, Boolean> expectedTemplates) {
-            this.expectedTemplates.clear();
-            this.expectedTemplates.putAll(expectedTemplates);
+            String threadId = getThreadId();
+            if (!this.expectedTemplates.containsKey(threadId)) {
+                this.expectedTemplates.put(threadId, new HashMap<>());
+            }
+            this.expectedTemplates.get(threadId).clear();
+            this.expectedTemplates.get(threadId).putAll(expectedTemplates);
         }
 
         public void clear() {
-            this.list.clear();
-            expectedTemplates.clear();
+            String threadId = getThreadId();
+            synchronized(LogListener.class) {
+                list.removeIf(next -> Objects.equals(next.getThreadName(), threadId));
+            }
+            if (expectedTemplates.containsKey(threadId)) {
+                expectedTemplates.get(threadId).clear();
+            }
         }
 
         protected void append(ILoggingEvent e) {
-            if(!isExpectedMessageQuiet(e.getMessage())){
+            String threadId = getThreadId();
+
+            if(!isExpectedMessageQuiet(e.getMessage(), threadId)){
                 if (shouldPrintMessage(e)){
                     System.out.println(e.getLoggerName() + " " + e.getLevel() + " " + e.getMessage());
                 }
             }
             printStackTraceIfAny(e);
-            if (e.getLevel().isGreaterOrEqual(Level.WARN) || isExpectedMessage(e.getMessage())) {
-                this.list.add(e);
+
+            if (e.getLevel().isGreaterOrEqual(Level.WARN) || isExpectedMessage(e.getMessage(), threadId)) {
+                ((LoggingEvent) e).setThreadName(threadId);
+                synchronized(LogListener.class) {
+                    this.list.add(e);
+                }
             }
         }
 
@@ -225,9 +269,9 @@ public class LogListener implements BeforeEachCallback, AfterEachCallback {
             return !runTestsInSilentMode;
         }
 
-        private boolean isExpectedMessage(String message) {
-            if (message != null) {
-                for (String template : expectedTemplates.keySet()) {
+        private boolean isExpectedMessage(String message, String threadId) {
+            if (message != null && expectedTemplates.containsKey(threadId)) {
+                for (String template : expectedTemplates.get(threadId).keySet()) {
                     if (LoggerHelper.equalsMessageByTemplate(message, template)) {
                         return true;
                     }
@@ -236,10 +280,10 @@ public class LogListener implements BeforeEachCallback, AfterEachCallback {
             return false;
         }
 
-        private boolean isExpectedMessageQuiet(String message) {
-            if (message != null) {
-                for (String template : expectedTemplates.keySet()) {
-                    if (LoggerHelper.equalsMessageByTemplate(message, template) && expectedTemplates.get(template)) {
+        private boolean isExpectedMessageQuiet(String message, String threadId) {
+            if (message != null && expectedTemplates.containsKey(threadId)) {
+                for (String template : expectedTemplates.get(threadId).keySet()) {
+                    if (LoggerHelper.equalsMessageByTemplate(message, template) && expectedTemplates.get(threadId).get(template)) {
                         return true;
                     }
                 }

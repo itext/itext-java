@@ -45,9 +45,11 @@ import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
-
-import java.util.List;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Abstract {@link BlockRenderer} for form fields.
@@ -121,7 +123,11 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
             renderer.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
         }
         addChild(renderer);
-
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        if (taggingHelper != null) {
+            taggingHelper.addKidsHint(this, Collections.singletonList(renderer));
+            LayoutTaggingHelper.addTreeHints(taggingHelper, renderer);
+        }
         Rectangle bBox = layoutContext.getArea().getBBox().clone().moveDown(INF - parentHeight).setHeight(INF);
         layoutContext.getArea().setBBox(bBox);
         // A workaround for the issue that super.layout clears Property.FORCED_PLACEMENT,
@@ -215,21 +221,12 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Applies the accessibility properties to the form field.
      *
-     * @param formField The form field to which the accessibility properties should be applied.
-     * @param pdfDocument The document to which the form field belongs.
+     * @param formField the form field to which the accessibility properties should be applied
+     * @param pdfDocument the document to which the form field belongs
      */
     protected void applyAccessibilityProperties(PdfFormField formField, PdfDocument pdfDocument) {
-        if (!pdfDocument.isTagged()) {
-            return;
-        }
-        final AccessibilityProperties properties = ((IAccessibleElement) this.modelElement)
-                .getAccessibilityProperties();
-        final String alternativeDescription = properties.getAlternateDescription();
-        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
-            formField.setAlternativeName(alternativeDescription);
-        }
+        PdfFormField.applyAccessibilityProperties(formField, ((IAccessibleElement) this.modelElement), pdfDocument);
     }
-
 
     /**
      * Adjusts the field layout.

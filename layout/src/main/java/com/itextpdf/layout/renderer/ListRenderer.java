@@ -224,10 +224,9 @@ public class ListRenderer extends BlockRenderer {
         LineRenderer lineRenderer = new LineRenderer();
         Text zeroWidthJoiner = new Text("\u200D");
         zeroWidthJoiner.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
-        TextRenderer zeroWidthJoinerRenderer = new TextRenderer(zeroWidthJoiner);
-        lineRenderer.addChild(zeroWidthJoinerRenderer);
+        lineRenderer.addChild(new TextRenderer(zeroWidthJoiner));
         lineRenderer.addChild(bulletRenderer);
-        lineRenderer.addChild(zeroWidthJoinerRenderer);
+        lineRenderer.addChild(new TextRenderer(zeroWidthJoiner));
         return lineRenderer;
     }
 

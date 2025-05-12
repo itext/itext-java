@@ -22,6 +22,8 @@
  */
 package com.itextpdf.commons.datastructures;
 
+import java.util.Objects;
+
 /**
  * Simple tuple container that holds two elements.
  *
@@ -59,6 +61,38 @@ public class Tuple2<T1, T2> {
      */
     public T2 getSecond() {
         return second;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Note, that in case current class is overridden, equals should also be overridden.
+     *
+     * @param obj {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Tuple2<T1, T2> that = (Tuple2<T1, T2>) obj;
+        return Objects.equals(this.first, that.first) && Objects.equals(this.second, that.second);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash((Object) first, (Object) second);
     }
 
     /**

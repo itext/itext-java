@@ -24,6 +24,7 @@ package com.itextpdf.pdfua.checkers.utils.tables;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
@@ -38,29 +39,31 @@ import java.util.Set;
  * Class that represents a matrix of cells in a table.
  * It is used to check if the table has valid headers and scopes for the cells.
  *
- * @param <T> The type of the cell.
+ * @param <T> the type of the cell
  */
 abstract class AbstractResultMatrix<T> {
 
     protected final ITableIterator<T> iterator;
-    //We can't use an array because it is not autoportable
+    // We can't use an array because it is not autoportable.
     private final List<T> cellMatrix;
     private final int rows;
     private final int cols;
+    private final PdfUAConformance conformance;
 
     /**
      * Creates a new {@link AbstractResultMatrix} instance.
      *
-     * @param iterator The iterator that will be used to iterate over the cells.
+     * @param iterator the iterator that will be used to iterate over the cells
+     * @param conformance {@link PdfUAConformance} of the document that is being checked
      */
-    protected AbstractResultMatrix(ITableIterator<T> iterator) {
+    protected AbstractResultMatrix(ITableIterator<T> iterator, PdfUAConformance conformance) {
+        this.conformance = conformance;
         this.rows = iterator.getAmountOfRowsHeader() + iterator.getAmountOfRowsBody() +
                 iterator.getAmountOfRowsFooter();
         this.cols = iterator.getNumberOfColumns();
         this.iterator = iterator;
-        cellMatrix = this.<T>createFixedSizedList(rows * cols, null);
+        this.cellMatrix = this.<T>createFixedSizedList(rows * cols, null);
     }
-
 
     /**
      * Runs the algorithm to check if the table has valid headers and scopes for the cells.
@@ -98,6 +101,7 @@ abstract class AbstractResultMatrix<T> {
                     this.setRowValue(rowIdx, rowspan, scopeMatrix, true);
                 } else {
                     hasUnknownHeaders = true;
+                    determineDefaultScope(rowIdx, rowspan, colIdx, colspan, scopeMatrix);
                 }
             } else if (!StandardRoles.TD.equals(role)) {
                 final String message = MessageFormatUtil.format(PdfUAExceptionMessageConstants.CELL_HAS_INVALID_ROLE,
@@ -109,11 +113,6 @@ abstract class AbstractResultMatrix<T> {
         validateTableCells(knownIds, scopeMatrix, hasUnknownHeaders);
     }
 
-    private void setRowValue(int row, int rowSpan, List<Boolean> arr, boolean value) {
-        setCell(row, rowSpan, 0, this.cols, arr, value);
-    }
-
-
     abstract List<byte[]> getHeaders(T cell);
 
     abstract String getScope(T cell);
@@ -121,6 +120,24 @@ abstract class AbstractResultMatrix<T> {
     abstract byte[] getElementId(T cell);
 
     abstract String getRole(T cell);
+
+    private void determineDefaultScope(int rowIdx, int rowspan, int colIdx, int colspan, List<Boolean> scopeMatrix) {
+        if (conformance == PdfUAConformance.PDF_UA_1) {
+            // Default values were introduced in PDF 2.0
+            return;
+        }
+        // Assumed value for the Scope shall be determined (see Table 384 in ISO 32000-2:2020). These
+        // assumptions are used by the algorithm for determining which headers are associated with a cell.
+        // LrTb writing mode is taken into account, so default scope is applied to right/bottom cells.
+        if ((rowIdx == 0 && colIdx == 0) || (rowIdx != 0 && colIdx != 0)) {
+            setRowAndColumnValue(rowIdx, this.rows - rowIdx, colIdx, colspan, scopeMatrix, true);
+            setRowAndColumnValue(rowIdx, rowspan, colIdx, this.cols - colIdx, scopeMatrix, true);
+        } else if (rowIdx == 0) {
+            setRowAndColumnValue(rowIdx, this.rows - rowIdx, colIdx, colspan, scopeMatrix, true);
+        } else {
+            setRowAndColumnValue(rowIdx, rowspan, colIdx, this.cols - colIdx, scopeMatrix, true);
+        }
+    }
 
     private void validateTableCells(Set<String> knownIds, List<Boolean> scopeMatrix, boolean hasUnknownHeaders) {
         final StringBuilder sb = new StringBuilder();
@@ -191,16 +208,21 @@ abstract class AbstractResultMatrix<T> {
         }
     }
 
+    private void setRowValue(int row, int rowSpan, List<Boolean> arr, boolean value) {
+        setCell(row, rowSpan, 0, this.cols, arr, value);
+    }
+
     private void setColumnValue(int col, int colSpan, List<Boolean> arr, boolean value) {
         setCell(0, this.rows, col, colSpan, arr, value);
     }
 
+    private void setRowAndColumnValue(int row, int rowSpan, int col, int colSpan, List<Boolean> arr, boolean value) {
+        setCell(row, rowSpan, col, colSpan, arr, value);
+    }
+
     private boolean hasValidHeaderIds(T cell, Set<String> knownIds) {
         final List<byte[]> headers = getHeaders(cell);
-        if (headers == null) {
-            return false;
-        }
-        if (headers.isEmpty()) {
+        if (headers == null || headers.isEmpty()) {
             return false;
         }
         for (byte[] knownId : headers) {

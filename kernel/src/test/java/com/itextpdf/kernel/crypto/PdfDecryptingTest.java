@@ -23,7 +23,7 @@
 package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -32,6 +32,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -47,8 +48,8 @@ import java.security.cert.CertificateException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleIntegrationTest")
 public class PdfDecryptingTest extends ExtendedITextTest {
@@ -297,7 +298,7 @@ public class PdfDecryptingTest extends ExtendedITextTest {
             int startPos = pemContent.indexOf(start);
             int endPos = pemContent.indexOf(end);
             pemContent = pemContent.substring(startPos + start.length(), endPos);
-            byte[] encoded = Base64.decode(pemContent);
+            byte[] encoded = EncodingUtil.fromBase64(pemContent);
 
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
             return KeyFactory.getInstance(algorithm, BouncyCastleFactoryCreator.getFactory().getProviderName())

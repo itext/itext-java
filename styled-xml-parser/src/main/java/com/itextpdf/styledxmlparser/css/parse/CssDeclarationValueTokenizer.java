@@ -28,19 +28,19 @@ package com.itextpdf.styledxmlparser.css.parse;
 public class CssDeclarationValueTokenizer {
     
     /** The source string. */
-    private final String src;
+    protected final String src;
     
     /** The current index. */
-    private int index = -1;
+    protected int index = -1;
     
     /** The quote string, either "'" or "\"". */
-    private char stringQuote;
+    protected char stringQuote;
     
     /** Indicates if we're inside a string. */
-    private boolean inString;
+    protected boolean inString;
     
     /** The depth. */
-    private int functionDepth = 0;
+    protected int functionDepth = 0;
 
     /**
      * Creates a new {@link CssDeclarationValueTokenizer} instance.
@@ -62,20 +62,40 @@ public class CssDeclarationValueTokenizer {
             token = getNextToken();
         }
         if (token != null && functionDepth > 0) {
-            StringBuilder functionBuffer = new StringBuilder();
-            while (token != null && functionDepth > 0) {
-                processFunctionToken(token, functionBuffer);
-                token = getNextToken();
-            }
-            functionDepth = 0;
-            if (functionBuffer.length() != 0) {
-                if (token != null) {
-                    processFunctionToken(token, functionBuffer);
-                }
-                return new Token(functionBuffer.toString(), TokenType.FUNCTION);
+            Token result = parseFunctionToken(token, 0);
+            if (result != null) {
+                return result;
             }
         }
         return token;
+    }
+
+    /**
+     * Parse internal function token to full function token, e.g.
+     *
+     * <p>
+     * {@code calc(calc(} to {@code calc(calc(50px + 5px) + 20px)}
+     *
+     * @param token function token to expand
+     * @param funcDepth function depth for resolving, e.g. if you want to resolve only nested function, not the whole
+     *                  declaration
+     *
+     * @return expanded function token
+     */
+    protected Token parseFunctionToken(Token token, int funcDepth) {
+        StringBuilder functionBuffer = new StringBuilder();
+        while (token != null && functionDepth > funcDepth) {
+            processFunctionToken(token, functionBuffer);
+            token = getNextToken();
+        }
+        functionDepth = 0;
+        if (functionBuffer.length() != 0) {
+            if (token != null) {
+                processFunctionToken(token, functionBuffer);
+            }
+            return new Token(functionBuffer.toString(), TokenType.FUNCTION);
+        }
+        return null;
     }
 
     /**
@@ -83,7 +103,7 @@ public class CssDeclarationValueTokenizer {
      *
      * @return the next token
      */
-    private Token getNextToken() {
+    protected Token getNextToken() {
         StringBuilder buff = new StringBuilder();
         char curChar;
         if (index >= src.length() - 1) {
@@ -135,7 +155,7 @@ public class CssDeclarationValueTokenizer {
                     --functionDepth;
                     buff.append(curChar);
                     if (functionDepth == 0) {
-                        return new Token(buff.toString(), TokenType.FUNCTION);
+                        return new Token(buff.toString(), TokenType.FUNCTION, (char) 0, isSpaceNext());
                     }
                 } else if (curChar == '"' || curChar == '\'') {
                     stringQuote = curChar;
@@ -148,7 +168,7 @@ public class CssDeclarationValueTokenizer {
                 } else if (curChar == ']') {
                     inString = false;
                     buff.append(curChar);
-                    return new Token(buff.toString(), TokenType.STRING, stringQuote);
+                    return new Token(buff.toString(), TokenType.STRING, (char) 0, isSpaceNext());
                 } else if (curChar == ',' && !inString && functionDepth == 0) {
                     if (buff.length() == 0) {
                         return new Token(",", TokenType.COMMA);
@@ -161,7 +181,7 @@ public class CssDeclarationValueTokenizer {
                         buff.append(curChar);
                     }
                     if (!inString) {
-                        return new Token(buff.toString(), functionDepth > 0 ? TokenType.FUNCTION : TokenType.UNKNOWN);
+                        return new Token(buff.toString(), functionDepth > 0 ? TokenType.FUNCTION : TokenType.UNKNOWN, (char) 0, true);
                     }
                 } else {
                     buff.append(curChar);
@@ -171,14 +191,8 @@ public class CssDeclarationValueTokenizer {
         return new Token(buff.toString(), TokenType.FUNCTION);
     }
 
-    /**
-     * Checks if a character is a hexadecimal digit.
-     *
-     * @param c the character
-     * @return true, if it's a hexadecimal digit
-     */
-    private boolean isHexDigit(char c) {
-        return (47 < c && c < 58) || (64 < c && c < 71) || (96 < c && c < 103);
+    private boolean isSpaceNext(){
+        return src.length() - 1 > index && src.charAt(index + 1) == ' ';
     }
 
     /**
@@ -189,16 +203,26 @@ public class CssDeclarationValueTokenizer {
      */
     private void processFunctionToken(Token token, StringBuilder functionBuffer) {
         if (token.isString()) {
-            if (stringQuote != 0) {
+            if (stringQuote != 0 && token.getStringQuote() != 0 ) {
                 functionBuffer.append(stringQuote);
             }
             functionBuffer.append(token.getValue());
-            if (stringQuote != 0) {
+            if (stringQuote != 0 && token.getStringQuote() != 0) {
                 functionBuffer.append(stringQuote);
             }
         } else {
             functionBuffer.append(token.getValue());
         }
+    }
+
+    /**
+     * Checks if a character is a hexadecimal digit.
+     *
+     * @param c the character
+     * @return true, if it's a hexadecimal digit
+     */
+    private static boolean isHexDigit(char c) {
+        return (47 < c && c < 58) || (64 < c && c < 71) || (96 < c && c < 103);
     }
 
     /**
@@ -214,6 +238,8 @@ public class CssDeclarationValueTokenizer {
 
         private final char stringQuote;
 
+        private final boolean hasSpace;
+
         /**
          * Creates a new {@link Token} instance.
          *
@@ -221,13 +247,18 @@ public class CssDeclarationValueTokenizer {
          * @param type the type
          */
         public Token(String value, TokenType type) {
-            this(value, type, (char) 0);
+            this(value, type, (char) 0, false);
         }
 
         Token(String value, TokenType type, char stringQuote) {
+            this(value, type, stringQuote, false);
+        }
+
+        Token(String value, TokenType type, char stringQuote, boolean hasSpace) {
             this.value = value;
             this.type = type;
             this.stringQuote = stringQuote;
+            this.hasSpace = hasSpace;
         }
 
         /**
@@ -255,6 +286,16 @@ public class CssDeclarationValueTokenizer {
          */
         public char getStringQuote() {
             return stringQuote;
+        }
+
+
+        /**
+         * Gets the flag if token contains whitespace.
+         *
+         * @return true, if containing whitespace
+         */
+        public boolean hasSpace() {
+            return hasSpace;
         }
 
         /**

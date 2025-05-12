@@ -43,8 +43,8 @@ import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,8 +55,8 @@ import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 
 @Tag("IntegrationTest")
@@ -146,14 +146,11 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3538 (update test after fix)
-    @org.junit.jupiter.api.Disabled
     public void testSeparationCSWithICCBasedAsAlternative() throws Exception {
         testFile("separationCSWithICCBasedAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
-    // TODO: DEVSIX-3538 (update test after fix)
     @org.junit.jupiter.api.Disabled
     public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
         Assertions.assertThrows(UnsupportedOperationException.class, () ->
@@ -168,14 +165,12 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO: DEVSIX-3538 (update test after fix)
     @org.junit.jupiter.api.Disabled
     public void testSeparationCSWithDeviceRGBAsAlternative() throws Exception {
         testFile("separationCSWithDeviceRgbAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
-    // TODO: DEVSIX-3538 (update test after fix)
     @org.junit.jupiter.api.Disabled
     public void testSeparationCSWithDeviceRGBAsAlternative2() throws Exception {
         testFile("spotColorImagesSmall.pdf", "Im1", "png");

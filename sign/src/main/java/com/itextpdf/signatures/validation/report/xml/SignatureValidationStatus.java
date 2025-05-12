@@ -22,7 +22,7 @@
  */
 package com.itextpdf.signatures.validation.report.xml;
 
-import com.itextpdf.commons.utils.Pair;
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.io.util.EnumUtil;
 
 import java.util.ArrayList;
@@ -31,13 +31,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class which represents signature validation status.
+ */
 class SignatureValidationStatus {
     private static final Map<MainIndication, String> MAIN_INDICATION_VALUE_MAP =
             new HashMap<MainIndication, String>(EnumUtil.getAllValuesOfEnum(MainIndication.class).size());
     private static final Map<MessageType, String> MESSAGE_TYPE_VALUE_MAP =
             new HashMap<MessageType, String>(EnumUtil.getAllValuesOfEnum(MessageType.class).size());
 
-    private final List<Pair<String, String>> messages = new ArrayList<>();
+    private final List<Tuple2<String, String>> messages = new ArrayList<>();
 
     private MainIndication mainIndication;
     private SubIndication subIndication;
@@ -55,31 +58,62 @@ class SignatureValidationStatus {
         MESSAGE_TYPE_VALUE_MAP.put(MessageType.ERROR, "urn:cef:dss:message:error");
     }
 
+    /**
+     * Creates an empty {@link SignatureValidationStatus} instance.
+     */
     public SignatureValidationStatus() {
         // Declaring default constructor explicitly to avoid removing it unintentionally.
     }
 
+    /**
+     * Sets the main status indication.
+     *
+     * @param mainIndication {@link MainIndication} value
+     */
     public void setMainIndication(MainIndication mainIndication) {
         this.mainIndication = mainIndication;
     }
 
+    /**
+     * Gets the main status indication.
+     */
     public MainIndication getMainIndication() {
         return mainIndication;
     }
 
+    /**
+     * Gets URI representation of the validation status (see ETSI TS 119 102 4.3.4.2).
+     *
+     * @return validation status as string
+     */
     public String getMainIndicationAsString() {
         return MAIN_INDICATION_VALUE_MAP.get(mainIndication);
     }
 
+    /**
+     * Sets sub-indication that shall clearly identify the reason for the main status indication.
+     *
+     * @param subIndication {@link SubIndication} value
+     */
     public void setSubIndication(SubIndication subIndication) {
         this.subIndication = subIndication;
         this.subIndicationSet = true;
     }
 
+    /**
+     * Gets sub-indication that shall clearly identify the reason for the main status indication.
+     *
+     * @return {@link SubIndication} value
+     */
     public SubIndication getSubIndication() {
         return subIndication;
     }
 
+    /**
+     * Gets sub-indication that shall clearly identify the reason for the main status indication.
+     *
+     * @return sub-indication value as string
+     */
     public String getSubIndicationAsString() {
         if (!subIndicationSet) {
             return null;
@@ -87,11 +121,22 @@ class SignatureValidationStatus {
         return subIndication.toString();
     }
 
+    /**
+     * Adds message for validation report data.
+     *
+     * @param reason message reason as string
+     * @param messageType {@link MessageType}
+     */
     public void addMessage(String reason, MessageType messageType) {
-        this.messages.add(new Pair<>(reason, MESSAGE_TYPE_VALUE_MAP.get(messageType)));
+        this.messages.add(new Tuple2<>(reason, MESSAGE_TYPE_VALUE_MAP.get(messageType)));
     }
 
-    public Collection<Pair<String, String>> getMessages() {
+    /**
+     * Gets all reported messages.
+     *
+     * @return Collection of reported messages
+     */
+    public Collection<Tuple2<String, String>> getMessages() {
         return messages;
     }
 

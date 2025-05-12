@@ -27,6 +27,7 @@ import com.itextpdf.layout.ElementPropertyContainer;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.IRenderer;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -170,7 +171,7 @@ public abstract class AbstractElement<T extends IElement>
     }
 
     /**
-     * Creates new renderer instance.
+     * Creates a new renderer instance.
      *
      * @return new {@link IRenderer}
      */

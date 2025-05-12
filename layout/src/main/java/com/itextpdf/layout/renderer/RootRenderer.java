@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,6 +219,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                     } else {
                         keepWithNextHangingRenderer = renderer;
                         keepWithNextHangingRendererLayoutResult = result;
+                        this.addAllChildRenderers(resultRenderers);
                     }
                 } else if (result.getStatus() != LayoutResult.NOTHING) {
                     shrinkCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
@@ -438,6 +440,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (!ableToProcessKeepWithNext) {
                 Logger logger = LoggerFactory.getLogger(RootRenderer.class);
                 logger.warn(IoLogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
+                keepWithNextHangingRendererLayoutResult = keepWithNextHangingRenderer.layout(new LayoutContext(currentArea.clone()));
                 shrinkCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
             }
             keepWithNextHangingRenderer = null;

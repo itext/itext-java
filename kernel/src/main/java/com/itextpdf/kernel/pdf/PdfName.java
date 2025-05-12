@@ -315,6 +315,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName EndIndent = createDirectName("EndIndent");
     public static final PdfName EndOfBlock = createDirectName("EndOfBlock");
     public static final PdfName EndOfLine = createDirectName("EndOfLine");
+    public static final PdfName Endnote = createDirectName("Endnote");
     public static final PdfName Enforce = createDirectName("Enforce");
     public static final PdfName EP = createDirectName("EP");
     public static final PdfName ESIC = createDirectName("ESIC");
@@ -383,6 +384,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName FontWeight = createDirectName("FontWeight");
     public static final PdfName FontStretch = createDirectName("FontStretch");
     public static final PdfName Footer = createDirectName("Footer");
+    public static final PdfName Footnote = createDirectName("Footnote");
     public static final PdfName ForComment = createDirectName("ForComment");
     public static final PdfName Form = createDirectName("Form");
     public static final PdfName FormData = createDirectName("FormData");
@@ -570,6 +572,8 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Not = createDirectName("Not");
     public static final PdfName NotApproved = createDirectName("NotApproved");
     public static final PdfName Note = createDirectName("Note");
+
+    public static final PdfName NoteType = createDirectName("NoteType");
     public static final PdfName NotForPublicRelease = createDirectName("NotForPublicRelease");
     public static final PdfName NS = createDirectName("NS");
     public static final PdfName NSO = createDirectName("NSO");

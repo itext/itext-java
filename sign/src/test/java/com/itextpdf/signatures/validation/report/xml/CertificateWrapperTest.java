@@ -25,16 +25,16 @@ package com.itextpdf.signatures.validation.report.xml;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.signatures.testutils.PemFileHelper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class CertificateWrapperTest extends AbstractCollectableObjectTest {
@@ -95,7 +95,7 @@ public class CertificateWrapperTest extends AbstractCollectableObjectTest {
     public void testGetBase64ASN1Structure() throws CertificateException, IOException {
         CertificateWrapper sut = new CertificateWrapper(cert1);
         IX509CertificateHolder sutCert = FACTORY.createX509CertificateHolder(
-                Base64.decode(sut.getBase64ASN1Structure()));
+                EncodingUtil.fromBase64(sut.getBase64ASN1Structure()));
         IX509CertificateHolder origCert = FACTORY.createX509CertificateHolder(cert1.getEncoded());
         Assertions.assertEquals(origCert, sutCert);
     }

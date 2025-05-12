@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.wmf;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
@@ -113,7 +114,7 @@ public class MetaFont extends MetaObject {
         } catch (UnsupportedEncodingException e) {
             faceName = new String(name, 0, k);
         }
-        faceName = faceName.toLowerCase();
+        faceName = StringNormalizer.toLowerCase(faceName);
     }
 
     /**

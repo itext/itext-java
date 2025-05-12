@@ -23,25 +23,27 @@
 package com.itextpdf.io.util;
 
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.Security;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class UrlUtilTest extends ExtendedITextTest {
@@ -135,7 +137,7 @@ public class UrlUtilTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(java.net.SocketTimeoutException.class,
                 () -> UrlUtil.getInputStreamOfFinalConnection(url, 0, 500)
         );
-        Assertions.assertEquals("read timed out", e.getMessage().toLowerCase());
+        Assertions.assertEquals("read timed out", StringNormalizer.toLowerCase(e.getMessage()));
     }
 
     @Test
@@ -146,7 +148,7 @@ public class UrlUtilTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(java.net.SocketTimeoutException.class,
                 () -> UrlUtil.getInputStreamOfFinalConnection(url, 500, 0)
         );
-        Assertions.assertEquals("connect timed out", e.getMessage().toLowerCase());
+        Assertions.assertEquals("connect timed out", StringNormalizer.toLowerCase(e.getMessage()));
     }
 
     private static class TestResource extends Thread {

@@ -27,6 +27,7 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
+import com.itextpdf.kernel.validation.context.PdfDestinationAdditionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -212,9 +213,12 @@ public class PdfOutline {
     public void addAction(PdfAction action) {
         PdfName actionType = action.getPdfObject().getAsName(PdfName.S);
         if (PdfName.GoTo.equals(actionType)) {
-            PdfObject destObject = action.getPdfObject().get(PdfName.D);
-            if (destObject != null) {
-                setDestination(PdfDestination.makeDestination(destObject));
+            pdfDoc.checkIsoConformance(new PdfDestinationAdditionContext(action));
+            PdfObject structureDestinationObject = action.getPdfObject().get(PdfName.SD);
+            if (structureDestinationObject != null) {
+                setDestination(PdfDestination.makeDestination(structureDestinationObject));
+            } else if(action.getPdfObject().get(PdfName.D) != null) {
+                setDestination(PdfDestination.makeDestination(action.getPdfObject().get(PdfName.D)));
             }
         }
 

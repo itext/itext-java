@@ -58,6 +58,7 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.properties.XMPProperty;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -584,6 +585,16 @@ public class PdfEncryptionTest extends ExtendedITextTest {
              PdfDocument document = new PdfDocument(reader)) {
             Assertions.assertFalse(document.getTrailer().getAsDictionary(PdfName.Encrypt).containsKey(PdfName.Length));
         }
+    }
+
+    @Test
+    public void checkPermissionsLongValue() throws IOException {
+        // The test checks
+        // that no IoLogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY is logged
+        PdfDocument doc = new PdfDocument(
+                new PdfReader(sourceFolder + "encryptedWithPasswordAes256_modifiedPermissions.pdf",
+                        new ReaderProperties().setPassword(PdfEncryptionTestUtils.OWNER)));
+        doc.close();
     }
 
     public void encryptWithPassword2(String filename, int encryptionType, int compression)

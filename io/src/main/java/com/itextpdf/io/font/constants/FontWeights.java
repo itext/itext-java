@@ -22,6 +22,11 @@
  */
 package com.itextpdf.io.font.constants;
 
+import com.itextpdf.commons.utils.StringNormalizer;
+
+/**
+ * Font weight values and utility methods
+ */
 public final class FontWeights {
 
     private FontWeights() {
@@ -54,9 +59,16 @@ public final class FontWeights {
     // Font weight Black (Heavy)
     public static final int BLACK = 900;
 
+    /**
+     * Parses font weight constant to corresponding value.
+     *
+     * @param weight weight constant
+     *
+     * @return corresponding weight int value
+     */
     public static int fromType1FontWeight(String weight) {
         int fontWeight = NORMAL;
-        switch (weight.toLowerCase()) {
+        switch (StringNormalizer.toLowerCase(weight)) {
             case "ultralight":
                 fontWeight = THIN;
                 break;
@@ -90,8 +102,6 @@ public final class FontWeights {
             case "black":
             case "ultra":
             case "ultrablack":
-                fontWeight = BLACK;
-                break;
             case "fat":
             case "extrablack":
                 fontWeight = BLACK;
@@ -100,6 +110,13 @@ public final class FontWeights {
         return fontWeight;
     }
 
+    /**
+     * Normalize font weight to either {@link FontWeights#THIN} or {@link FontWeights#BLACK}.
+     *
+     * @param fontWeight font weight int value
+     *
+     * @return either {@link FontWeights#THIN} or {@link FontWeights#BLACK} based on a given weight value
+     */
     public static int normalizeFontWeight(int fontWeight) {
         fontWeight = (fontWeight/100)*100;
         if (fontWeight < FontWeights.THIN) return FontWeights.THIN;

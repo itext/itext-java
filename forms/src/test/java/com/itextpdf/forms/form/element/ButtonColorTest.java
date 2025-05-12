@@ -34,12 +34,13 @@ import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
+
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ButtonColorTest extends ExtendedITextTest {

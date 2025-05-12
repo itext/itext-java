@@ -72,6 +72,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.utils.IdleOutputStream;
+import com.itextpdf.kernel.validation.Pdf20Checker;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
 import com.itextpdf.kernel.validation.context.SignatureValidationContext;
@@ -1369,6 +1370,18 @@ public class PdfSigner {
         return pageNumber;
     }
 
+    /**
+     * Applies {@link AccessibilityProperties} for provided signature field.
+     *
+     * @param formField    {@link PdfFormField} the form field to which the accessibility properties should be applied
+     * @param modelElement {@link IAccessibleElement} the form field layout element with accessibility properties
+     * @param pdfDocument  {@link PdfDocument} the document to which the form field belongs
+     */
+    protected void applyAccessibilityProperties(PdfFormField formField, IAccessibleElement modelElement,
+                                                PdfDocument pdfDocument) {
+        PdfFormField.applyAccessibilityProperties(formField, modelElement, pdfDocument);
+    }
+
     PdfSignature createSignatureDictionary(boolean includeDate) {
         PdfSignature dic = new PdfSignature();
         dic.setReason(this.signerProperties.getReason());
@@ -1471,18 +1484,6 @@ public class PdfSigner {
 
     private boolean isDocumentPdf2() {
         return document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
-    }
-
-    protected void applyAccessibilityProperties(PdfFormField formField, IAccessibleElement modelElement,
-                                                PdfDocument pdfDocument) {
-        if (!pdfDocument.isTagged()) {
-            return;
-        }
-        final AccessibilityProperties properties = modelElement.getAccessibilityProperties();
-        final String alternativeDescription = properties.getAlternateDescription();
-        if (alternativeDescription != null && !alternativeDescription.isEmpty()) {
-            formField.setAlternativeName(alternativeDescription);
-        }
     }
 
     private void applyDefaultPropertiesForTheNewField(PdfSignatureFormField sigField) {
@@ -1682,11 +1683,15 @@ public class PdfSigner {
         public PdfSignerDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
             super(reader, writer, properties);
             if (getConformance().isPdfA()) {
-                PdfAChecker checker = PdfADocument.getCorrectCheckerFromConformance(getConformance().getAConformance());
+                PdfAChecker pdfAChecker = PdfADocument
+                        .getCorrectCheckerFromConformance(getConformance().getAConformance());
                 ValidationContainer validationContainer = new ValidationContainer();
-                validationContainer.addChecker(checker);
+                validationContainer.addChecker(pdfAChecker);
+                if ("4".equals(getConformance().getAConformance().getPart())) {
+                    validationContainer.addChecker(new Pdf20Checker(this));
+                }
                 getDiContainer().register(ValidationContainer.class, validationContainer);
-                this.pdfPageFactory = new PdfAPageFactory(checker);
+                this.pdfPageFactory = new PdfAPageFactory(pdfAChecker);
                 this.documentInfoHelper = new PdfADocumentInfoHelper(this);
                 this.defaultFontStrategy = new PdfADefaultFontStrategy(this);
                 setFlushUnusedObjects(true);

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -49,6 +50,7 @@ public class PdfConformance {
     public static final PdfConformance PDF_A_4F = new PdfConformance(PdfAConformance.PDF_A_4F);
 
     public static final PdfConformance PDF_UA_1 = new PdfConformance(PdfUAConformance.PDF_UA_1);
+    public static final PdfConformance PDF_UA_2 = new PdfConformance(PdfUAConformance.PDF_UA_2);
 
     public static final PdfConformance PDF_NONE_CONFORMANCE = new PdfConformance();
 
@@ -212,8 +214,13 @@ public class PdfConformance {
         // But if e.g. for PDF/A-4 revision wasn't specified, we will fix it.
         if (conformance.isPdfUA()) {
             if (xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.PART) == null) {
-                xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART, 1,
+                xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART,
+                        Integer.parseInt(conformance.getUAConformance().getPart()),
                         new PropertyOptions(PropertyOptions.SEPARATE_NODE));
+            }
+            if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2 &&
+                    xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.REV) == null) {
+                xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.REV, 2024);
             }
         }
         if (conformance.isPdfA()) {
@@ -244,7 +251,7 @@ public class PdfConformance {
      * @return the {@link PdfAConformance} instance or {@code null} if there is no PDF/A conformance for passed parameters
      */
     public static PdfAConformance getAConformance(String part, String level) {
-        String lowLetter = level == null ? null : level.toUpperCase();
+        String lowLetter = StringNormalizer.toUpperCase(level);
         boolean aLevel = "A".equals(lowLetter);
         boolean bLevel = "B".equals(lowLetter);
         boolean uLevel = "U".equals(lowLetter);
@@ -297,6 +304,9 @@ public class PdfConformance {
     private static PdfUAConformance getUAConformance(String part) {
         if ("1".equals(part)) {
             return PdfUAConformance.PDF_UA_1;
+        }
+        if ("2".equals(part)) {
+            return PdfUAConformance.PDF_UA_2;
         }
         return null;
     }

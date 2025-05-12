@@ -22,6 +22,8 @@
  */
 package com.itextpdf.styledxmlparser.css.media;
 
+import com.itextpdf.commons.utils.StringNormalizer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +63,7 @@ public final class MediaQueryParser {
      * @return the resulting {@link MediaQuery} value
      */
     static MediaQuery parseMediaQuery(String mediaQueryStr) {
-        mediaQueryStr = mediaQueryStr.trim().toLowerCase();
+        mediaQueryStr = StringNormalizer.normalize(mediaQueryStr);
         boolean only = false;
         boolean not = false;
         if (mediaQueryStr.startsWith(MediaRuleConstants.ONLY)) {

@@ -16,6 +16,8 @@
 
 package com.itextpdf.kernel.xmp;
 
+import com.itextpdf.commons.utils.StringNormalizer;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
@@ -361,7 +363,7 @@ public class XmlDomWriter {
                         || (c >= 0x7F && c <= 0x9F) || c == 0x2028)
                         || isAttValue && (c == 0x09 || c == 0x0A)) {
                     fOut.print("&#x");
-                    fOut.print(Integer.toHexString(c).toUpperCase());
+                    fOut.print(StringNormalizer.toUpperCase(Integer.toHexString(c)));
                     fOut.print(";");
                 } else {
                     fOut.print(c);

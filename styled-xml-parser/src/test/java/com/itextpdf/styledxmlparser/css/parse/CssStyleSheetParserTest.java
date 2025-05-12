@@ -142,6 +142,22 @@ public class CssStyleSheetParserTest extends ExtendedITextTest {
     }
 
     @Test
+    public void cssExampleWithCommaInsideOfPseudoClassTest() throws IOException {
+        String cssFile = sourceFolder + "cssExampleWithCommaInsideOfPseudoClassTest.css";
+        String cmpFile = sourceFolder + "cmp_cssExampleWithCommaInsideOfPseudoClassTest.css";
+        CssStyleSheet styleSheet = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(cssFile));
+        Assertions.assertEquals(getCssFileContents(cmpFile), styleSheet.toString());
+    }
+
+    @Test
+    public void invalidCssExampleWithCommaInsideOfPseudoClassTest() throws IOException {
+        String cssFile = sourceFolder + "invalidCssExampleWithCommaInsideOfPseudoClassTest.css";
+        String cmpFile = sourceFolder + "cmp_invalidCssExampleWithCommaInsideOfPseudoClassTest.css";
+        CssStyleSheet styleSheet = CssStyleSheetParser.parse(FileUtil.getInputStreamForFile(cssFile));
+        Assertions.assertEquals(getCssFileContents(cmpFile), styleSheet.toString());
+    }
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.RULE_IS_NOT_SUPPORTED, logLevel = LogLevelConstants.ERROR)
     })

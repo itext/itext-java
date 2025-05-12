@@ -123,8 +123,12 @@ public class CssNestedAtRule extends CssAtRule {
         return sb.toString();
     }
 
+    /**
+     * Gets the rule parameters.
+     *
+     * @return the rule parameters
+     */
     public String getRuleParameters() {
         return ruleParameters;
     }
-
 }

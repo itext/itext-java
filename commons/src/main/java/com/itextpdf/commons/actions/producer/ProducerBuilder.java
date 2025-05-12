@@ -109,16 +109,31 @@ public final class ProducerBuilder extends AbstractITextConfigurationEvent {
         }
 
         final String newProducer = buildProducer(confirmedEvents);
-        if (oldProducer == null || oldProducer.isEmpty()) {
-            return newProducer;
+        //if the last time document was modified or created with the itext of the same version,
+        //then no changes occur.
+        return mergeProducerLines(oldProducer, newProducer);
+    }
+
+    /**
+     * Merges two producer lines. If first producer line <code>null</code> or empty, it will be replaced with the second one.
+     * Otherwise second producer line will be attached with <code>modified using</code> prefix. If first producer line
+     * already contains <code>modified using</code> substring with the second producer line at the end, first producer
+     * line will be returned unchanged.
+     *
+     * @param firstProducer first producer line
+     * @param secondProducer second producer line
+
+     * @return modified producer line
+     */
+    public static String mergeProducerLines(String firstProducer, String secondProducer) {
+        if (firstProducer == null || firstProducer.isEmpty()) {
+            return secondProducer;
         } else {
-            //if the last time document was modified or created with the itext of the same version,
-            //then no changes occur.
-            if (oldProducer.equals(newProducer)
-                    || oldProducer.endsWith(MODIFIED_USING + newProducer)) {
-                return oldProducer;
+            if (firstProducer.equals(secondProducer)
+                    || firstProducer.endsWith(MODIFIED_USING + secondProducer)) {
+                return firstProducer;
             } else {
-                return oldProducer + MODIFIED_USING + newProducer;
+                return firstProducer + MODIFIED_USING + secondProducer;
             }
         }
     }

@@ -44,8 +44,13 @@ import org.slf4j.LoggerFactory;
  */
 public class SvgFontProcessor {
 
-    private SvgProcessorContext context;
+    private final SvgProcessorContext context;
 
+    /**
+     * Creates new {@link SvgFontProcessor} instance.
+     *
+     * @param context {@link SvgProcessorContext} to add resolved fonts to
+     */
     public SvgFontProcessor(SvgProcessorContext context) {
         this.context = context;
     }

@@ -28,9 +28,13 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfScreenAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.PdfMcr;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
@@ -40,11 +44,13 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -533,6 +539,29 @@ public class ParentTreeTest extends ExtendedITextTest {
                 new PdfWriter(new ByteArrayOutputStream()));
 
         AssertUtil.doesNotThrow(() -> pdfDoc.getTagStructureContext().normalizeDocumentRootTag());
+    }
+
+    @Test
+    public void addSeveralAnnotationsWithDifferentTagsTest() throws IOException, InterruptedException {
+        String outName = destinationFolder + "addSeveralAnnotationsWithDifferentTagsTest.pdf";
+        String cmpName = sourceFolder + "cmp_addSeveralAnnotationsWithDifferentTagsTest.pdf";
+        try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outName))) {
+            document.setTagged();
+            Rectangle rect = new Rectangle(100, 650, 400, 100);
+            document.addNewPage();
+            PdfPage pdfPage = document.getPage(1);
+
+            PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
+            screen.setContents("screen annotation");
+            pdfPage.addAnnotation(screen);
+
+            PdfLinkAnnotation linkAnnotation =
+                    new PdfLinkAnnotation(rect.moveDown(200)).setAction(PdfAction.createURI("https://itextpdf.com/"));
+            linkAnnotation.setContents("link annot");
+            pdfPage.addAnnotation(linkAnnotation);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outName, cmpName, destinationFolder, "diff"));
     }
 
     private PdfObject getStructParentEntry(PdfObject obj){

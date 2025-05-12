@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.colors;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -238,7 +239,7 @@ public class WebColors extends HashMap<String, int[]> {
     public static float[] getCMYKArray(String name) {
         float[] color = null;
         try {
-            String colorName = name.toLowerCase();
+            String colorName = StringNormalizer.toLowerCase(name);
             if (colorName.startsWith("device-cmyk(")) {
                 final String delim = "device-cmyk()/, \t\r\n\f";
                 StringTokenizer tok = new StringTokenizer(colorName, delim);
@@ -265,7 +266,7 @@ public class WebColors extends HashMap<String, int[]> {
     public static float[] getRGBAColor(String name) {
         float[] color = null;
         try {
-            String colorName = name.toLowerCase();
+            String colorName = StringNormalizer.toLowerCase(name);
             boolean colorStrWithoutHash = missingHashColorFormat(colorName);
             if (colorName.startsWith("#") || colorStrWithoutHash) {
                 if (!colorStrWithoutHash) {

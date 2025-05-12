@@ -36,6 +36,13 @@ public final class FontFamilySplitterUtil {
     private static final Pattern FONT_FAMILY_PATTERN_QUOTED = Pattern.compile("^(('[\\w -]+')|(\"[\\w -]+\"))$");
     private static final Pattern FONT_FAMILY_PATTERN_QUOTED_SELECT = Pattern.compile("([\\w -]+)");
 
+    /**
+     * Splits passed `font-family` CSS string into list of font families or generic families.
+     *
+     * @param fontFamilies the CSS 'font-family' string
+     *
+     * @return list of font families or generic families
+     */
     public static List<String> splitFontFamily(String fontFamilies) {
         if (fontFamilies == null) {
             return null;
@@ -57,6 +64,13 @@ public final class FontFamilySplitterUtil {
         return result;
     }
 
+    /**
+     * Removes quotes from a passed `font-family` CSS string.
+     *
+     * @param fontFamily the CSS 'font-family' string
+     *
+     * @return the unquoted CSS 'font-family' string
+     */
     public static String removeQuotes(String fontFamily) {
         Matcher selectMatcher = FONT_FAMILY_PATTERN_QUOTED_SELECT.matcher(fontFamily);
         if (selectMatcher.find()) {

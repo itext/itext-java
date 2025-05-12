@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.ArrayUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -562,8 +563,8 @@ final class TableWidths {
     //region Common methods
 
     private void calculateTableWidth(float availableWidth, boolean calculateTableMaxWidth) {
-        fixedTableLayout = "fixed".equals(tableRenderer
-                .<String>getProperty(Property.TABLE_LAYOUT, "auto").toLowerCase());
+        fixedTableLayout = "fixed".equals(StringNormalizer.toLowerCase(tableRenderer
+                .<String>getProperty(Property.TABLE_LAYOUT, "auto")));
         UnitValue width = tableRenderer.<UnitValue>getProperty(Property.WIDTH);
         if (fixedTableLayout && width != null && width.getValue() >= 0) {
             if (0 != getTable().getLastRowBottomBorder().size()) {

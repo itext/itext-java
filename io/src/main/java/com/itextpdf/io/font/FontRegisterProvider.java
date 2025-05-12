@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
@@ -87,15 +88,16 @@ class FontRegisterProvider {
     FontProgram getFont(String fontName, int style, boolean cached) throws java.io.IOException {
         if (fontName == null)
             return null;
-        String lowerCaseFontName = fontName.toLowerCase();
+        String lowerCaseFontName = StringNormalizer.toLowerCase(fontName);
         List<String> family = !lowerCaseFontName.equalsIgnoreCase(StandardFonts.TIMES_ROMAN) ?
-                fontFamilies.get(lowerCaseFontName) : fontFamilies.get(StandardFontFamilies.TIMES.toLowerCase());
+                fontFamilies.get(lowerCaseFontName) :
+                fontFamilies.get(StringNormalizer.toLowerCase(StandardFontFamilies.TIMES));
         if (family != null) {
             synchronized (family) {
                 // some bugs were fixed here by Daniel Marczisovszky
                 int s = style == FontStyles.UNDEFINED ? FontStyles.NORMAL : style;
                 for (String f : family) {
-                    String lcf = f.toLowerCase();
+                    String lcf = StringNormalizer.toLowerCase(f);
                     int fs = FontStyles.NORMAL;
                     if (lcf.contains("bold")) fs |= FontStyles.BOLD;
                     if (lcf.contains("italic") || lcf.contains("oblique")) fs |= FontStyles.ITALIC;
@@ -110,20 +112,20 @@ class FontRegisterProvider {
     }
 
     protected void registerStandardFonts() {
-        fontNames.put(StandardFonts.COURIER.toLowerCase(), StandardFonts.COURIER);
-        fontNames.put(StandardFonts.COURIER_BOLD.toLowerCase(), StandardFonts.COURIER_BOLD);
-        fontNames.put(StandardFonts.COURIER_OBLIQUE.toLowerCase(), StandardFonts.COURIER_OBLIQUE);
-        fontNames.put(StandardFonts.COURIER_BOLDOBLIQUE.toLowerCase(), StandardFonts.COURIER_BOLDOBLIQUE);
-        fontNames.put(StandardFonts.HELVETICA.toLowerCase(), StandardFonts.HELVETICA);
-        fontNames.put(StandardFonts.HELVETICA_BOLD.toLowerCase(), StandardFonts.HELVETICA_BOLD);
-        fontNames.put(StandardFonts.HELVETICA_OBLIQUE.toLowerCase(), StandardFonts.HELVETICA_OBLIQUE);
-        fontNames.put(StandardFonts.HELVETICA_BOLDOBLIQUE.toLowerCase(), StandardFonts.HELVETICA_BOLDOBLIQUE);
-        fontNames.put(StandardFonts.SYMBOL.toLowerCase(), StandardFonts.SYMBOL);
-        fontNames.put(StandardFonts.TIMES_ROMAN.toLowerCase(), StandardFonts.TIMES_ROMAN);
-        fontNames.put(StandardFonts.TIMES_BOLD.toLowerCase(), StandardFonts.TIMES_BOLD);
-        fontNames.put(StandardFonts.TIMES_ITALIC.toLowerCase(), StandardFonts.TIMES_ITALIC);
-        fontNames.put(StandardFonts.TIMES_BOLDITALIC.toLowerCase(), StandardFonts.TIMES_BOLDITALIC);
-        fontNames.put(StandardFonts.ZAPFDINGBATS.toLowerCase(), StandardFonts.ZAPFDINGBATS);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.COURIER), StandardFonts.COURIER);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.COURIER_BOLD), StandardFonts.COURIER_BOLD);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.COURIER_OBLIQUE), StandardFonts.COURIER_OBLIQUE);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.COURIER_BOLDOBLIQUE), StandardFonts.COURIER_BOLDOBLIQUE);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.HELVETICA), StandardFonts.HELVETICA);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.HELVETICA_BOLD), StandardFonts.HELVETICA_BOLD);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.HELVETICA_OBLIQUE), StandardFonts.HELVETICA_OBLIQUE);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.HELVETICA_BOLDOBLIQUE), StandardFonts.HELVETICA_BOLDOBLIQUE);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.SYMBOL), StandardFonts.SYMBOL);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.TIMES_ROMAN), StandardFonts.TIMES_ROMAN);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.TIMES_BOLD), StandardFonts.TIMES_BOLD);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.TIMES_ITALIC), StandardFonts.TIMES_ITALIC);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.TIMES_BOLDITALIC), StandardFonts.TIMES_BOLDITALIC);
+        fontNames.put(StringNormalizer.toLowerCase(StandardFonts.ZAPFDINGBATS), StandardFonts.ZAPFDINGBATS);
     }
 
     protected void registerStandardFontFamilies() {
@@ -133,30 +135,30 @@ class FontRegisterProvider {
         family.add(StandardFonts.COURIER_BOLD);
         family.add(StandardFonts.COURIER_OBLIQUE);
         family.add(StandardFonts.COURIER_BOLDOBLIQUE);
-        fontFamilies.put(StandardFontFamilies.COURIER.toLowerCase(), family);
+        fontFamilies.put(StringNormalizer.toLowerCase(StandardFontFamilies.COURIER), family);
         family = new ArrayList<>();
         family.add(StandardFonts.HELVETICA);
         family.add(StandardFonts.HELVETICA_BOLD);
         family.add(StandardFonts.HELVETICA_OBLIQUE);
         family.add(StandardFonts.HELVETICA_BOLDOBLIQUE);
-        fontFamilies.put(StandardFontFamilies.HELVETICA.toLowerCase(), family);
+        fontFamilies.put(StringNormalizer.toLowerCase(StandardFontFamilies.HELVETICA), family);
         family = new ArrayList<>();
         family.add(StandardFonts.SYMBOL);
-        fontFamilies.put(StandardFontFamilies.SYMBOL.toLowerCase(), family);
+        fontFamilies.put(StringNormalizer.toLowerCase(StandardFontFamilies.SYMBOL), family);
         family = new ArrayList<>();
         family.add(StandardFonts.TIMES_ROMAN);
         family.add(StandardFonts.TIMES_BOLD);
         family.add(StandardFonts.TIMES_ITALIC);
         family.add(StandardFonts.TIMES_BOLDITALIC);
-        fontFamilies.put(StandardFontFamilies.TIMES.toLowerCase(), family);
+        fontFamilies.put(StringNormalizer.toLowerCase(StandardFontFamilies.TIMES), family);
         family = new ArrayList<>();
         family.add(StandardFonts.ZAPFDINGBATS);
-        fontFamilies.put(StandardFontFamilies.ZAPFDINGBATS.toLowerCase(), family);
+        fontFamilies.put(StringNormalizer.toLowerCase(StandardFontFamilies.ZAPFDINGBATS), family);
     }
 
     protected FontProgram getFontProgram(String fontName, boolean cached) throws java.io.IOException {
         FontProgram fontProgram = null;
-        fontName = fontNames.get(fontName.toLowerCase());
+        fontName = fontNames.get(StringNormalizer.toLowerCase(fontName));
         if (fontName != null) {
             fontProgram = FontProgramFactory.createFont(fontName, cached);
         }
@@ -194,7 +196,7 @@ class FontRegisterProvider {
                 }
                 if (!inserted) {
                     family.add(fullName);
-                    String newFullName = fullName.toLowerCase();
+                    String newFullName = StringNormalizer.toLowerCase(fullName);
                     if (newFullName.endsWith("regular")) {
                         //remove "regular" at the end of the font name
                         newFullName = newFullName.substring(0, newFullName.length() - 7).trim();
@@ -224,11 +226,12 @@ class FontRegisterProvider {
      */
     void registerFont(String path, String alias) {
         try {
-            if (path.toLowerCase().endsWith(".ttf") || path.toLowerCase().endsWith(".otf") || path.toLowerCase().indexOf(".ttc,") > 0) {
+            String pathLc = StringNormalizer.toLowerCase(path);
+            if (pathLc.endsWith(".ttf") || pathLc.endsWith(".otf") || pathLc.indexOf(".ttc,") > 0) {
                 FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(path);
                 fontNames.put(descriptor.getFontNameLowerCase(), path);
                 if (alias != null) {
-                    String lcAlias = alias.toLowerCase();
+                    String lcAlias = StringNormalizer.toLowerCase(alias);
                     fontNames.put(lcAlias, path);
                     if (lcAlias.endsWith("regular")) {
                         //do this job to give higher priority to regular fonts in comparison with light, narrow, etc
@@ -249,7 +252,7 @@ class FontRegisterProvider {
                          registerFontFamily(descriptor.getFamilyNameEnglishOpenType(), fullName, null);
 
                 }
-            } else if (path.toLowerCase().endsWith(".ttc")) {
+            } else if (pathLc.endsWith(".ttc")) {
                 TrueTypeCollection ttc = new TrueTypeCollection(path);
                 for (int i = 0; i < ttc.getTTCSize(); i++) {
                     String fullPath = path + "," + i;
@@ -259,7 +262,7 @@ class FontRegisterProvider {
                         registerFont(fullPath);
                     }
                 }
-            } else if (path.toLowerCase().endsWith(".afm") || path.toLowerCase().endsWith(".pfm")) {
+            } else if (pathLc.endsWith(".afm") || pathLc.endsWith(".pfm")) {
                 FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(path);
                 registerFontFamily(descriptor.getFamilyNameLowerCase(), descriptor.getFullNameLowerCase(), null);
                 fontNames.put(descriptor.getFontNameLowerCase(), path);
@@ -310,7 +313,8 @@ class FontRegisterProvider {
                 return 0;
             for (String file : files) {
                 try {
-                    String suffix = file.length() < 4 ? null : file.substring(file.length() - 4).toLowerCase();
+                    String suffix = file.length() < 4 ? null :
+                            StringNormalizer.toLowerCase(file.substring(file.length() - 4));
                     if (".afm".equals(suffix) || ".pfm".equals(suffix)) {
                         /* Only register Type 1 fonts with matching .pfb files */
                         String pfb = file.substring(0, file.length() - 4) + ".pfb";
@@ -388,7 +392,7 @@ class FontRegisterProvider {
      * @return true if the font is found
      */
     boolean isRegisteredFont(String fontname) {
-        return fontNames.containsKey(fontname.toLowerCase());
+        return fontNames.containsKey(StringNormalizer.toLowerCase(fontname));
     }
 
     public void clearRegisteredFonts() {

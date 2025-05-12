@@ -571,6 +571,27 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
     }
 
     /**
+     * Changes the alternative description of the annotation to the specified value.
+     *
+     * @param alternativeDescription string to be used as alternative description.
+     *
+     * @return The edited {@link PdfFormAnnotation}.
+     */
+    public PdfFormAnnotation setAlternativeDescription(String alternativeDescription) {
+        put(PdfName.Contents, new PdfString(alternativeDescription));
+        return this;
+    }
+
+    /**
+     * Gets the current alternative description.
+     *
+     * @return the current alternative description.
+     */
+    public PdfString getAlternativeDescription() {
+        return getPdfObject().getAsString(PdfName.Contents);
+    }
+
+    /**
      * Gets a {@link Rectangle} that matches the current size and position of this form field.
      *
      * @param field current form field.

@@ -28,6 +28,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -40,20 +41,22 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.xml.parsers.ParserConfigurationException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
-import org.xml.sax.SAXException;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -743,6 +746,40 @@ public class PdfStructElemTest extends ExtendedITextTest {
         document = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())));
         Assertions.assertTrue(document.isTagged());
         document.close();
+    }
+
+    @Test
+    public void addAnnotationTaggedAsArtifactTest() throws Exception {
+        try (PdfDocument document = new PdfDocument(
+                CompareTool.createTestPdfWriter(destinationFolder + "addAnnotationTaggedAsArtifact.pdf",
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)
+                                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_2)))) {
+            document.setTagged();
+
+            PdfPage page = document.addNewPage();
+            PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(80, 508, 40, 18));
+            linkAnnotation.setFlag(PdfAnnotation.INVISIBLE);
+            page.addAnnotation(linkAnnotation);
+        }
+
+        compareResult("addAnnotationTaggedAsArtifact.pdf", "cmp_addAnnotationTaggedAsArtifact.pdf");
+    }
+
+    @Test
+    public void addNotTaggedAnnotationTest() throws Exception {
+        try (PdfDocument document = new PdfDocument(
+                CompareTool.createTestPdfWriter(destinationFolder + "addNotTaggedAnnotation.pdf",
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_1_7)
+                                .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_2)))) {
+            document.setTagged();
+
+            PdfPage page = document.addNewPage();
+            PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(80, 508, 40, 18));
+            linkAnnotation.setFlag(PdfAnnotation.INVISIBLE);
+            page.addAnnotation(linkAnnotation);
+        }
+
+        compareResult("addNotTaggedAnnotation.pdf", "cmp_addNotTaggedAnnotation.pdf");
     }
 
     private void compareResult(String outFileName, String cmpFileName)

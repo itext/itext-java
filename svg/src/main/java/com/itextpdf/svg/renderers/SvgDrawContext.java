@@ -418,11 +418,25 @@ public class SvgDrawContext {
         this.patternIds.pop();
     }
 
+    /**
+     * Sets a previous element text move.
+     *
+     * @param previousElementTextMove previous element text move
+     *
+     * @deprecated was replaced by {@link #setSvgTextProperties(SvgTextProperties)}
+     */
     @Deprecated
     public void setPreviousElementTextMove(float[] previousElementTextMove) {
         // Do nothing.
     }
 
+    /**
+     * Gets a previous element text move.
+     *
+     * @return the previous element text move
+     *
+     * @deprecated was replaced by {@link #getSvgTextProperties()}
+     */
     @Deprecated
     public float[] getPreviousElementTextMove() {
         return new float[]{0.0f, 0.0f};

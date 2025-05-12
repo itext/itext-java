@@ -55,12 +55,13 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ButtonTest extends ExtendedITextTest {
@@ -355,5 +356,25 @@ public class ButtonTest extends ExtendedITextTest {
         buttonRenderer = (ButtonRenderer) button.createRendererSubTree();
         Assertions.assertTrue(((InputFieldRenderer)buttonRenderer.getChildRenderers().get(0)
                 .setParent(buttonRenderer)).isFlatten());
+    }
+
+    @Test
+    public void buttonAlternativeDescriptionTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "buttonAlternativeDescription.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_buttonAlternativeDescription.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf))) {
+            try (Document document = new Document(pdfDocument)) {
+                pdfDocument.setTagged();
+                Button formButton = new Button("form button");
+                formButton.setAlternativeDescription("alt description");
+                formButton.setValue("value");
+                formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
+                formButton.setProperty(Property.HEIGHT, UnitValue.createPointValue(100));
+                document.add(formButton);
+            }
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 }

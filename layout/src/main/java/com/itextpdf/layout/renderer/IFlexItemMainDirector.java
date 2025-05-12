@@ -34,6 +34,7 @@ interface IFlexItemMainDirector {
      * Apply the direction for placement the items in flex container.
      *
      * @param lines flex lines calculated by {@link FlexUtil}.
+     *
      * @return All child renderers in updated order.
      */
     List<IRenderer> applyDirection(List<List<FlexItemInfo>> lines);
@@ -48,10 +49,11 @@ interface IFlexItemMainDirector {
     /**
      * Apply alignment on main flex direction.
      *
-     * @param line flex line of items to apply alignment to.
+     * @param line           flex line of items to apply alignment to.
      * @param justifyContent alignment to apply.
-     * @param freeSpace precalculated free space to distribute between flex items in a line.
+     * @param freeSpace      precalculated free space to distribute between flex items in a line.
      */
     void applyJustifyContent(List<FlexUtil.FlexItemCalculationInfo> line, JustifyContent justifyContent,
             float freeSpace);
+
 }

@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf.android</groupId>
     <artifactId>root-android</artifactId>
-    <version>9.1.0</version>
+    <version>9.2.0</version>
   </parent>
   <artifactId>sign-android</artifactId>
   <name>iText - sign</name>
@@ -50,7 +50,7 @@
     <dependency>
       <groupId>com.itextpdf.android</groupId>
       <artifactId>styled-xml-parser-android</artifactId>
-      <version>9.1.0</version>
+      <version>9.2.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

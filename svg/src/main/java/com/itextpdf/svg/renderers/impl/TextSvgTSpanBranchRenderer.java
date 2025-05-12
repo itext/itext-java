@@ -25,8 +25,14 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
+/**
+ * {@link ISvgNodeRenderer} implementation for the &lt;tspan&gt; tag.
+ */
 public class TextSvgTSpanBranchRenderer extends TextSvgBranchRenderer {
 
+    /**
+     * Creates new {@link TextSvgTSpanBranchRenderer} instance.
+     */
     public TextSvgTSpanBranchRenderer() {
         this.performRootTransformations = false;
     }

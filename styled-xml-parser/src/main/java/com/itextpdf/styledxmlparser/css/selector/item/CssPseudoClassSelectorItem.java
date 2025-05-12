@@ -49,11 +49,25 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
         this(pseudoClass, "");
     }
 
+    /**
+     * Creates a new {@link CssPseudoClassSelectorItem} instance.
+     *
+     * @param pseudoClass the pseudo class name
+     * @param arguments the arguments of the selector
+     */
     protected CssPseudoClassSelectorItem(String pseudoClass, String arguments) {
         this.pseudoClass = pseudoClass;
         this.arguments = arguments;
     }
 
+    /**
+     * Creates a new instance of {@link CssPseudoClassSelectorItem} from
+     * passed string which contains selector name and its arguments.
+     *
+     * @param fullSelectorString the full selector string
+     *
+     * @return the {@link CssPseudoClassSelectorItem} or {@code null}
+     */
     public static CssPseudoClassSelectorItem create(String fullSelectorString) {
         int indexOfParentheses = fullSelectorString.indexOf('(');
         String pseudoClass;
@@ -68,6 +82,15 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
         return create(pseudoClass, arguments);
     }
 
+    /**
+     * Creates a new instance of {@link CssPseudoClassSelectorItem} from
+     * passed selector class name and its arguments.
+     *
+     * @param pseudoClass the pseudo class name
+     * @param arguments the arguments of the selector
+     *
+     * @return the {@link CssPseudoClassSelectorItem} or {@code null}
+     */
     public static CssPseudoClassSelectorItem create(String pseudoClass, String arguments) {
         switch (pseudoClass) {
             case CommonCssConstants.EMPTY:
@@ -151,6 +174,11 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
         return ":" + pseudoClass + (!arguments.isEmpty() ? "(" + arguments + ")" : "");
     }
 
+    /**
+     * Gets the selector pseudo class name.
+     *
+     * @return the pseudo class name
+     */
     public String getPseudoClass() {
         return pseudoClass;
     }

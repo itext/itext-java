@@ -24,6 +24,7 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.pdf.PdfAConformance;
@@ -41,6 +42,7 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfXrefTable;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.IValidationChecker;
 import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationType;
@@ -59,12 +61,15 @@ import com.itextpdf.kernel.validation.context.SignTypeValidationContext;
 import com.itextpdf.kernel.validation.context.SignatureValidationContext;
 import com.itextpdf.kernel.validation.context.TagStructElementValidationContext;
 import com.itextpdf.kernel.validation.context.XrefTableValidationContext;
+import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+
 import org.slf4j.LoggerFactory;
 
 /**
@@ -145,6 +150,8 @@ public abstract class PdfAChecker implements IValidationChecker {
      */
     protected Set<PdfObject> checkedObjects = new HashSet<>();
     protected Map<PdfObject, PdfColorSpace> checkedObjectsColorspace = new HashMap<>();
+
+    static final Function<String, PdfException> EXCEPTION_SUPPLIER = (msg) -> new PdfAConformanceException(msg);
 
     private boolean fullCheckMode = false;
     private boolean alreadyLoggedThatPageFlushingWasNotPerformed = false;
@@ -814,10 +821,14 @@ public abstract class PdfAChecker implements IValidationChecker {
      *
      * @param flags a set of flags specifying various characteristics of the PDF object
      * @param flag to be checked
+     *
      * @return true if the specified flag is set
+     *
+     * @deprecated in favour of {@link PdfCheckersUtil#checkFlag(int, int)}
      */
+    @Deprecated
     protected static boolean checkFlag(int flags, int flag) {
-        return (flags & flag) != 0;
+        return PdfCheckersUtil.checkFlag(flags, flag);
     }
 
     /**

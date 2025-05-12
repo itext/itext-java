@@ -22,253 +22,152 @@
  */
 package com.itextpdf.pdfua.checkers;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DottedBorder;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
-import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
+import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import org.junit.jupiter.api.Assertions;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUALayoutTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUALayoutTest/";
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUALayoutTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
     private UaValidationTestFramework framework;
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-    }
 
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    @Test
-    public void simpleParagraphTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "simpleParagraphTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_simpleParagraphTest.pdf";
-
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        Document doc = new Document(pdfDoc);
-        doc.add(new Paragraph("Simple layout PDF/UA-1 test").setFont(font));
-        doc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    public static List<PdfUAConformance> data() {
+        return UaValidationTestFramework.getConformanceList();
     }
 
-    @Test
-    public void simpleParagraphWithUnderlineTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "simpleParagraphUnderlinesTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_simpleParagraphWithUnderlineTest.pdf";
-
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        Document doc = new Document(pdfDoc);
-        doc.add(new Paragraph("Simple layout PDF/UA-1 with underline test").setFont(font).setUnderline());
-        doc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    public static Object[] roleData() {
+        return new Object[]{
+                // Parent role, child role, expected exception
+                new Object[]{StandardRoles.FORM, StandardRoles.FORM, false},
+                new Object[]{StandardRoles.H1, StandardRoles.H1, true},
+                new Object[]{StandardRoles.P, StandardRoles.P, false},
+                new Object[]{StandardRoles.DIV, StandardRoles.P, false},
+        };
     }
 
-    @Test
-    public void simpleBorderTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "simpleBorderTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_simpleBorderTest.pdf";
+    @BeforeEach
+    public void initializeFramework() {
+        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    }
 
-        try (PdfDocument pdfDocument = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf))) {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void simpleParagraphTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = loadFont();
+            Document doc = new Document(pdfDoc);
+            doc.add(new Paragraph("Simple layout PDF UA test").setFont(font));
+        });
+        framework.assertBothValid("simpleParagraph", pdfUAConformance);
+    }
 
+    @ParameterizedTest
+    @MethodSource("data")
+    public void simpleParagraphWithUnderlineTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = loadFont();
+            Document doc = new Document(pdfDoc);
+            doc.add(new Paragraph("Simple layout PDF UA with underline test").setFont(font).setUnderline());
+        });
+        framework.assertBothValid("simpleParagraphWithUnderline", pdfUAConformance);
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("roleData")
+    public void testOfIllegalRelations(String parentRole, String childRole, boolean expectException)
+            throws IOException {
+        //expectException should take into account repair mechanism
+        // in example P:P will be replaced as P:Span so no exceptions should be thrown
+        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+            @Override
+            public IBlockElement generate() {
+                Div div1 = new Div();
+                div1.getAccessibilityProperties().setRole(parentRole);
+                Div div2 = new Div();
+                div2.getAccessibilityProperties().setRole(childRole);
+
+                div1.add(div2);
+                return div1;
+            }
+        });
+        if (expectException) {
+            framework.assertBothFail("testOfIllegalRelation_" + parentRole + "_" + childRole, false,
+                    PdfUAConformance.PDF_UA_2);
+        } else {
+            framework.assertBothValid("testOfIllegalRelation_" + parentRole + "_" + childRole,
+                    PdfUAConformance.PDF_UA_2);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void simpleBorderTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDocument -> {
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
             canvas.openTag(new CanvasTag(PdfName.Artifact));
             new DottedBorder(DeviceRgb.GREEN, 5).draw(canvas, new Rectangle(350, 700, 100, 100));
             canvas.closeTag();
+        });
+        framework.assertBothValid("simpleBorder", pdfUAConformance);
+    }
 
+    @ParameterizedTest
+    @MethodSource("data")
+    public void simpleTableTest(PdfUAConformance pdfUAConformance) throws IOException {
+        framework.addBeforeGenerationHook(pdfDocument -> {
+            Document doc = new Document(pdfDocument);
+
+            PdfFont font = loadFont();
+            Table table = new Table(new float[]{50, 50})
+                    .addCell(new Cell().add(new Paragraph("cell 1, 1").setFont(font)))
+                    .addCell(new Cell().add(new Paragraph("cell 1, 2").setFont(font)));
+            doc.add(table);
+        });
+        framework.assertBothValid("simpleTable", pdfUAConformance);
+    }
+
+    private static PdfFont loadFont() {
+        try {
+            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
         }
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
     }
-
-    @Test
-    public void simpleTableTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "simpleTableTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_simpleTableTest.pdf";
-
-        PdfDocument pdfDoc = new PdfUATestPdfDocument(new PdfWriter(outPdf));
-        Document doc = new Document(pdfDoc);
-
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        Table table = new Table(new float[]{50, 50})
-                .addCell(new Cell().add(new Paragraph("cell 1, 1").setFont(font)))
-                .addCell(new Cell().add(new Paragraph("cell 1, 2").setFont(font)));
-        doc.add(table);
-        doc.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
-    }
-
-    @Test
-    public void addNoteWithoutIdTest() throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph note = new Paragraph("note");
-                PdfFont font = null;
-                try {
-                    font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                note.setFont(font);
-                note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                return note;
-            }
-        });
-        framework.assertBothFail("noteWithoutID",
-                PdfUAExceptionMessageConstants.NOTE_TAG_SHALL_HAVE_ID_ENTRY);
-    }
-
-    @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, count = 2)})
-    public void addTwoNotesWithSameIdTest() throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph note = new Paragraph("note 1");
-                PdfFont font = null;
-                try {
-                    font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                note.setFont(font);
-                note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                note.getAccessibilityProperties().setStructureElementIdString("123");
-                return note;
-            }
-        },
-        new UaValidationTestFramework.Generator<IBlockElement>() {
-             @Override
-             public IBlockElement generate() {
-                 Paragraph note = new Paragraph("note 2");
-                 PdfFont font = null;
-                 try {
-                      font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                 } catch (IOException e) {
-                     throw new RuntimeException(e.getMessage());
-                 }
-                 note.setFont(font);
-                 note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                 note.getAccessibilityProperties().setStructureElementIdString("123");
-                 return note;
-             }
-                });
-        framework.assertBothFail("twoNotesWithSameId",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT, "123"),
-                false);
-    }
-
-    @Test
-    public void addNoteWithValidIdTest() throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph note = new Paragraph("note");
-                PdfFont font = null;
-                try {
-                    font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                note.setFont(font);
-                note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                note.getAccessibilityProperties().setStructureElementIdString("123");
-                return note;
-            }
-        });
-        framework.assertBothValid("noteWithValidID");
-    }
-
-    @Test
-    public void addTwoNotesWithDifferentIdTest() throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-                                   @Override
-                                   public IBlockElement generate() {
-                                       Paragraph note = new Paragraph("note 1");
-                                       PdfFont font = null;
-                                       try {
-                                           font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                                       } catch (IOException e) {
-                                           throw new RuntimeException(e.getMessage());
-                                       }
-                                       note.setFont(font);
-                                       note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                                       note.getAccessibilityProperties().setStructureElementIdString("123");
-                                       return note;
-                                   }
-                               },
-                new UaValidationTestFramework.Generator<IBlockElement>() {
-                    @Override
-                    public IBlockElement generate() {
-                        Paragraph note = new Paragraph("note 2");
-                        PdfFont font = null;
-                        try {
-                            font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e.getMessage());
-                        }
-                        note.setFont(font);
-                        note.getAccessibilityProperties().setRole(StandardRoles.NOTE);
-                        note.getAccessibilityProperties().setStructureElementIdString("234");
-                        return note;
-                    }
-                });
-        framework.assertBothValid("twoNotesWithDifferentId");
-    }
-
 }

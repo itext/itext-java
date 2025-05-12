@@ -39,6 +39,7 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;

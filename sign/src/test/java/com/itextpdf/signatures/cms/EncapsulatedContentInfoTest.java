@@ -26,7 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
-import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -55,7 +55,7 @@ public class EncapsulatedContentInfoTest extends ExtendedITextTest {
 
     @Test
     public void testDeserializationWithContent() throws IOException {
-        IASN1Sequence testData = FACTORY.createASN1Sequence(Base64.decode(ENCODED_WITH_CONTENT_B64));
+        IASN1Sequence testData = FACTORY.createASN1Sequence(EncodingUtil.fromBase64(ENCODED_WITH_CONTENT_B64));
         EncapsulatedContentInfo sut = new EncapsulatedContentInfo(testData);
         Assertions.assertEquals("1.2.840.113549.1.9.16.1.4", sut.getContentType());
         Assertions.assertNotNull(sut.getContent());

@@ -23,6 +23,8 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.util.CssVariableUtil;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -116,11 +118,16 @@ public class CssInheritance implements IStyleInheritance {
     /**
      * Checks if a property is inheritable.
      *
+     * <p>
+     * If css custom property (--*) is encountered always returns true,
+     * since css variables are always inheritable
+     *
      * @param cssProperty the CSS property
      * @return true, if the property is inheritable
      */
     @Override
     public boolean isInheritable(String cssProperty) {
-        return INHERITABLE_PROPERTIES.contains(cssProperty);
+        return INHERITABLE_PROPERTIES.contains(cssProperty)
+                || CssVariableUtil.isCssVariable(cssProperty);
     }
 }

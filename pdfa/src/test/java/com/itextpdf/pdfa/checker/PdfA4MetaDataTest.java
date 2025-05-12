@@ -24,6 +24,7 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -46,6 +47,7 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -79,16 +81,15 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             new PdfA4Checker(PdfAConformance.PDF_A_4).checkMetaData(dictionary);
         });
-        Assertions.assertEquals(e.getMessage(), PdfaExceptionMessageConstant.A_CATALOG_DICTIONARY_SHALL_CONTAIN_METADATA_ENTRY);
+        Assertions.assertEquals(KernelExceptionMessageConstant.METADATA_SHALL_BE_PRESENT_IN_THE_CATALOG_DICTIONARY,
+                e.getMessage());
     }
 
 
     @Test
-    public void pdfA4DocumentMetaDataDocumentShallNotContainBytes() {
+    public void pdfA4DocumentMetaDataDocumentShallNotContainBytes() throws IOException {
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "xmp/xmpWithBytes.xmp"));
 
-        String startHeader = "<?xpacket begin=\"\" id=\"W5M0MpCehiHzreSzNTczkc9d\" bytes=\"1234567890\"?>\n";
-
-        byte[] bytes = startHeader.getBytes();
         PdfA4Checker checker = new PdfA4Checker(PdfAConformance.PDF_A_4);
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Metadata, new PdfStream(bytes));
@@ -101,10 +102,8 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4DocumentMetaDataDocumentShallNotContainEncoding() {
-        String startHeader = "<?xpacket begin=\"\" id=\"W5M0MpCehiHzreSzNTczkc9d\" encoding=\"UTF-8\"?>\n";
-
-        byte[] bytes = startHeader.getBytes();
+    public void pdfA4DocumentMetaDataDocumentShallNotContainEncoding() throws IOException {
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "xmp/xmpWithEncoding.xmp"));
 
         PdfA4Checker checker = new PdfA4Checker(PdfAConformance.PDF_A_4);
         PdfDictionary catalog = new PdfDictionary();
@@ -119,14 +118,15 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfA4DocumentMetaDataDocumentShallNotContainEncodingInAnyPacket() {
-        String startHeader = "<?xpacket begin=\"\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n";
-        startHeader += "<?xpacket begin=\"\" id=\"W5M0MpCehiHzreSzNTczkc9d\" encoding=\"UTF-8\"?>\n";
-        byte[] bytes = startHeader.getBytes();
+    public void pdfA4DocumentMetaDataDocumentShallNotContainEncodingInAnyPacket() throws IOException {
+        byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "xmp/xmpWithEncodingSeveralPackets.xmp"));
 
         PdfA4Checker checker = new PdfA4Checker(PdfAConformance.PDF_A_4);
         PdfDictionary catalog = new PdfDictionary();
-        catalog.put(PdfName.Metadata, new PdfStream(bytes));
+        PdfStream metadata = new PdfStream(bytes);
+        metadata.put(PdfName.Type, PdfName.Metadata);
+        metadata.put(PdfName.Subtype, PdfName.XML);
+        catalog.put(PdfName.Metadata, metadata);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> {
             checker.checkMetaData(catalog);
         });
@@ -172,7 +172,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         });
 
         Assertions.assertEquals(MessageFormatUtil.format(
-                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4"),
+                KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4", null),
                 e.getMessage());
     }
 
@@ -205,7 +205,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
             new PdfA4Checker(conformance).checkMetaData(catalog);
         });
         Assertions.assertEquals(MessageFormatUtil.format(
-                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4"),
+                KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4", null),
                 e.getMessage());
     }
 
@@ -227,7 +227,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
             new PdfA4Checker(conformance).checkMetaData(catalog);
         });
         Assertions.assertEquals(MessageFormatUtil.format(
-                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4"),
+                KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4", 1),
                 e.getMessage());
     }
 
@@ -249,7 +249,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
             new PdfA4Checker(conformance).checkMetaData(catalog);
         });
         Assertions.assertEquals(MessageFormatUtil.format(
-                        PdfaExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4"),
+                KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, "4", null),
                 e.getMessage());
     }
 

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
@@ -32,6 +33,8 @@ import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.io.font.otf.OpenTypeGdefTableReader;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -41,13 +44,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TrueTypeFont extends FontProgram {
 
 
-	private OpenTypeParser fontParser;
+    private OpenTypeParser fontParser;
 
     protected int[][] bBoxes;
 
@@ -104,6 +105,7 @@ public class TrueTypeFont extends FontProgram {
      *
      * @param first the first glyph
      * @param second the second glyph
+     *
      * @return the kerning to be applied
      */
     @Override
@@ -218,6 +220,37 @@ public class TrueTypeFont extends FontProgram {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Checks whether current {@link TrueTypeFont} program contains the “cmap” subtable
+     * with provided platform ID and encoding ID.
+     *
+     * @param platformID platform ID
+     * @param encodingID encoding ID
+     *
+     * @return {@code true} if “cmap” subtable with provided platform ID and encoding ID is present in the font program,
+     * {@code false} otherwise
+     */
+    public boolean isCmapPresent(int platformID, int encodingID) {
+        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
+        if (cmaps == null) {
+            return false;
+        }
+        return cmaps.cmapEncodings.contains(new Tuple2<>(platformID, encodingID));
+    }
+
+    /**
+     * Gets the number of the “cmap” subtables for the current {@link TrueTypeFont} program.
+     *
+     * @return the number of the “cmap” subtables
+     */
+    public int getNumberOfCmaps() {
+        OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
+        if (cmaps == null) {
+            return 0;
+        }
+        return cmaps.cmapEncodings.size();
+    }
+
     protected void readGdefTable() throws java.io.IOException {
         int[] gdef = fontParser.tables.get("GDEF");
         if (gdef != null) {
@@ -238,7 +271,8 @@ public class TrueTypeFont extends FontProgram {
     protected void readGposTable() throws java.io.IOException {
         int[] gpos = fontParser.tables.get("GPOS");
         if (gpos != null) {
-            gposTable = new GlyphPositioningTableReader(fontParser.raf, gpos[0], gdefTable, codeToGlyph,  fontMetrics.getUnitsPerEm());
+            gposTable = new GlyphPositioningTableReader(fontParser.raf, gpos[0], gdefTable, codeToGlyph,
+                    fontMetrics.getUnitsPerEm());
         }
     }
 
@@ -408,9 +442,9 @@ public class TrueTypeFont extends FontProgram {
         if (subsetRanges != null) {
             compactRange = toCompactRange(subsetRanges);
         } else if (!subset) {
-            compactRange = new int[] {0, 0xFFFF};
+            compactRange = new int[]{0, 0xFFFF};
         } else {
-            compactRange = new int[] {};
+            compactRange = new int[]{};
         }
 
         for (int k = 0; k < compactRange.length; k += 2) {
@@ -427,9 +461,11 @@ public class TrueTypeFont extends FontProgram {
     /**
      * Normalizes given ranges by making sure that first values in pairs are lower than second values and merges overlapping
      * ranges in one.
+     *
      * @param ranges a {@link List} of integer arrays, which are constituted by pairs of ints that denote
-     *               each range limits. Each integer array size shall be a multiple of two.
-     * @return single merged array consisting of pairs of integers, each of them denoting a range.
+     *               each range limits. Each integer array size shall be a multiple of two
+     *
+     * @return single merged array consisting of pairs of integers, each of them denoting a range
      */
     private static int[] toCompactRange(List<int[]> ranges) {
         List<int[]> simp = new ArrayList<>();

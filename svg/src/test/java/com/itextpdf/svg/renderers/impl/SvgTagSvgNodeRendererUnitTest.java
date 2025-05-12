@@ -76,4 +76,10 @@ public class SvgTagSvgNodeRendererUnitTest extends ExtendedITextTest {
         SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
         Assertions.assertNull(renderer.getObjectBoundingBox(null));
     }
+
+    @Test
+    public void canConstructViewPortTest() {
+        SvgTagSvgNodeRenderer renderer = new SvgTagSvgNodeRenderer();
+        Assertions.assertTrue(renderer.canConstructViewPort());
+    }
 }

@@ -28,13 +28,16 @@ import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * {@link IShorthandResolver} implementation for marker.
+ */
 public class MarkerShorthandResolver implements IShorthandResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MarkerShorthandResolver.class);

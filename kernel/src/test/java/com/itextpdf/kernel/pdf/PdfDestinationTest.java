@@ -35,22 +35,22 @@ import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Tag("IntegrationTest")
@@ -117,7 +117,7 @@ public class PdfDestinationTest extends ExtendedITextTest {
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFile));
 
         PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
-        srcDoc.copyPagesTo(Arrays.asList(1), destDoc);
+        srcDoc.copyPagesTo(Collections.singletonList(1), destDoc);
         destDoc.close();
         
         srcDoc.close();
