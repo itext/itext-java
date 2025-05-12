@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfALongStringTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfALongStringTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfALongStringTest/";
     private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis condimentum, tortor sit amet fermentum pharetra, sem felis finibus enim, vel consectetur nunc justo at nisi. In hac habitasse platea dictumst. Donec quis suscipit eros. Nam urna purus, scelerisque in placerat in, convallis vel sapien. Suspendisse sed lacus sit amet orci ornare vulputate. In hac habitasse platea dictumst. Ut eu aliquet felis, at consectetur neque.";
     private static final int STRING_LENGTH_LIMIT = 32767;
 

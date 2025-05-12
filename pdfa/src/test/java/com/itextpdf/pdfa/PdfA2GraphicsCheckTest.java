@@ -71,7 +71,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA2GraphicsCheckTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2GraphicsCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2GraphicsCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

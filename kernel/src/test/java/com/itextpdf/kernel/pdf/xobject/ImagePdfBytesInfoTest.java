@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 public class ImagePdfBytesInfoTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject"
             + "/ImagePdfBytesInfoTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/xobject"
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/xobject"
             + "/ImagePdfBytesInfoTest/";
 
     @BeforeAll

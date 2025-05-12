@@ -58,7 +58,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class FlexContainerTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FlexContainerTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FlexContainerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/FlexContainerTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -54,7 +54,7 @@ import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAFontsTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAFontsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAFontsTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/pdfua/font/";
 

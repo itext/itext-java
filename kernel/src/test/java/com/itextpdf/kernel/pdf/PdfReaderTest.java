@@ -77,7 +77,7 @@ import org.junit.jupiter.api.Timeout;
 public class PdfReaderTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfReaderTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfReaderTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfReaderTest/";
 
     static final String author = "Alexander Chingarev";
     static final String creator = "iText 6";

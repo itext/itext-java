@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ImportRuleTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/ImportRuleTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/ImportRuleTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/ImportRuleTest/";
 
     @BeforeAll
     public static void beforeClass() {

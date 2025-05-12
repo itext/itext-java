@@ -48,7 +48,7 @@ public class ButtonColorTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/ButtonColorTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/forms/form/element/ButtonColorTest/";
+            "./target/test/com/itextpdf/forms/form/element/ButtonColorTest/";
 
     @BeforeAll
     public static void beforeClass() {

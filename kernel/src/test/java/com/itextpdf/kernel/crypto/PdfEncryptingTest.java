@@ -63,7 +63,7 @@ import org.junit.jupiter.api.Test;
 @Tag("BouncyCastleIntegrationTest")
 public class PdfEncryptingTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/kernel/crypto/PdfEncryptingTest/certs/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/crypto/PdfEncryptingTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/crypto/PdfEncryptingTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/crypto/PdfEncryptingTest/";
 
     private static final byte[] USER_PASSWORD = "user".getBytes(StandardCharsets.UTF_8);

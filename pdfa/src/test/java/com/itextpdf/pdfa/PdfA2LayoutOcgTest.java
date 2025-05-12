@@ -37,7 +37,6 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +49,7 @@ import org.junit.jupiter.api.Test;
 public class PdfA2LayoutOcgTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2LayoutOcgTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2LayoutOcgTest/";
 
     @BeforeEach
     public void configure() {
@@ -85,7 +84,6 @@ public class PdfA2LayoutOcgTest extends ExtendedITextTest {
 
         pdfDoc.close();
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff01_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
 }

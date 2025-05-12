@@ -1,38 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>9.2.0</version>
   </parent>
-
-  <artifactId>io</artifactId>
-
+  <artifactId>io-android</artifactId>
   <name>iText - io</name>
   <url>https://itextpdf.com/</url>
-
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>commons</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>commons-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>font-asian</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>font-asian-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdftest-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.12.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15to18</artifactId>
+      <version>${bouncycastle.version}</version>
+      <scope>test</scope>
+      <optional>true</optional>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
@@ -62,7 +70,6 @@
       </testResource>
     </testResources>
   </build>
-
   <profiles>
     <profile>
       <id>with-sharpen</id>

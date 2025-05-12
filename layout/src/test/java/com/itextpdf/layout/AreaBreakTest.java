@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 public class AreaBreakTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/AreaBreakTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/AreaBreakTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/AreaBreakTest/";
 
     @BeforeAll
     public static void beforeClass() {

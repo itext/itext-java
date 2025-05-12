@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class ColumnChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/ColumnChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/ColumnChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/ColumnChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

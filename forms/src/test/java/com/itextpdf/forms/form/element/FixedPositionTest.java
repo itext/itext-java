@@ -63,7 +63,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/FixedPositionTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/forms/form/element/FixedPositionTest/";
+            "./target/test/com/itextpdf/forms/form/element/FixedPositionTest/";
     public static final String IMG_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/SignatureFieldAppearanceTest/";
 

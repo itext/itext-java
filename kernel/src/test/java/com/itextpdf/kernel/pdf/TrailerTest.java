@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Tag;
 public class TrailerTest extends ExtendedITextTest {
 
     private ProductData productData;
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/TrailerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/TrailerTest/";
     private static final byte[] USERPASS = "user".getBytes();
     private static final byte[] OWNERPASS = "owner".getBytes();
 

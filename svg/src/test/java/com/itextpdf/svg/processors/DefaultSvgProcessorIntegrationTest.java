@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/processors/impl/DefaultSvgProcessorIntegrationTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/processors/impl/DefaultSvgProcessorIntegrationTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/processors/impl/DefaultSvgProcessorIntegrationTest/";
 
     @Test
     public void DefaultBehaviourTest() throws IOException {

@@ -64,7 +64,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/";
 
     private String signAlgorithm;
     private String signCertName;
@@ -109,7 +109,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
     @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
     @MethodSource("createParameters")
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    @org.junit.jupiter.api.Disabled
     public void twoStepSigningBaselineBTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
         setUp(signAlgorithm);
@@ -152,7 +152,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
     @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
     @MethodSource("createParameters")
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    @org.junit.jupiter.api.Disabled
     public void twoStepSigningBaselineTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
         setUp(signAlgorithm);
@@ -200,7 +200,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
     @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
     @MethodSource("createParameters")
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    @org.junit.jupiter.api.Disabled
     public void twoStepSigningBaselineLTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
         setUp(signAlgorithm);
@@ -257,7 +257,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
     @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
     @MethodSource("createParameters")
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    @org.junit.jupiter.api.Disabled
     public void twoStepSigningBaselineLTATest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
         setUp(signAlgorithm);

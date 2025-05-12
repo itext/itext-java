@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
 public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/PathSvgNodeRendererTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
     private ISvgConverterProperties properties;
 
     @BeforeAll

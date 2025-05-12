@@ -57,7 +57,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
 
-    private final static String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/merging/";
+    private final static String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/merging/";
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/merging/";
 
     @BeforeEach

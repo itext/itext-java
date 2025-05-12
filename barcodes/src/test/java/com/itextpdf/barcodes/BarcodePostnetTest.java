@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 public class BarcodePostnetTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/barcodes/BarcodePostnet/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/BarcodePostnet/";
 
     @BeforeAll
     public static void beforeClass() {

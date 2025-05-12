@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
 public class XMPMetadataTest extends ExtendedITextTest{
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/XmpWriterTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/XmpWriterTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/XmpWriterTest/";
 
     @BeforeAll
     public static void beforeClass() {

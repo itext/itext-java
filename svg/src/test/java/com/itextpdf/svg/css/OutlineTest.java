@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 //TODO DEVSIX-4044: Update cmp files
 public class OutlineTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/OutlineTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/OutlineTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/OutlineTest/";
 
     @BeforeAll
     public static void beforeClass() {

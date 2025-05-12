@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 @Tag("UnitTest")
 public class FileUtilTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/commons/utils/FileUtilTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/commons/utils/FileUtilTest/";
 
     @BeforeAll
     public static void beforeClass() {

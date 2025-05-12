@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 public class SimpleWoff2DecodeTest extends Woff2DecodeTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/io/font/woff2/SimpleWoff2Decode/";
-    private static final String targetFolder = TestUtil.getOutputPath() + "/io/font/woff2/SimpleWoff2Decode/";
+    private static final String targetFolder = "./target/test/com/itextpdf/io/font/woff2/SimpleWoff2Decode/";
 
     @BeforeAll
     public static void setUp() {

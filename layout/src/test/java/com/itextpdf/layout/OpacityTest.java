@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
 public class OpacityTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/OpacityTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/OpacityTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/OpacityTest/";
 
     @BeforeAll
     public static void beforeClass() {

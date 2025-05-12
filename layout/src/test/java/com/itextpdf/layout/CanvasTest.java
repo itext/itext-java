@@ -68,7 +68,7 @@ public class CanvasTest extends ExtendedITextTest {
     private static final TestConfigurationEvent CONFIGURATION_ACCESS = new TestConfigurationEvent();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/CanvasTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/CanvasTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/CanvasTest/";
 
     @BeforeAll
     public static void beforeClass() {

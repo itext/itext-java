@@ -56,7 +56,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUACanvasTextTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUACanvasTextTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUACanvasTextTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/iTextFreeSansWithE001Glyph.ttf";
 
     private UaValidationTestFramework framework;

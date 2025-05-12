@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class EncodingTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncodingTest/";
-    public static final String outputFolder = TestUtil.getOutputPath() + "/kernel/pdf/EncodingTest/";
+    public static final String outputFolder = "./target/test/com/itextpdf/kernel/pdf/EncodingTest/";
 
     @BeforeAll
     public static void beforeClass() {

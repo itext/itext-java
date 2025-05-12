@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BaseInputOutPutConvertorsTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/function/BaseInputOutPutConvertorsTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/function/BaseInputOutPutConvertorsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/function/BaseInputOutPutConvertorsTest/";
 
 
     @Test

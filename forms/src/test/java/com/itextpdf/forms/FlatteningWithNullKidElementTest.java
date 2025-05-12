@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class FlatteningWithNullKidElementTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FlatteningWithNullKidElementTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/FlatteningWithNullKidElementTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/FlatteningWithNullKidElementTest/";
 
     @BeforeAll
     public static void beforeClass() {

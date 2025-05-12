@@ -60,7 +60,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class MulticolContainerTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/MulticolContainerTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/MulticolContainerTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/MulticolContainerTest/";
 
     private static final float DEFAULT_PADDING = 40F;
     private static final float DEFAULT_MARGIN = 100F;

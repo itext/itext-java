@@ -69,7 +69,7 @@ public class PadesSignatureLevelTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PadesSignatureLevelTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PadesSignatureLevelTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PadesSignatureLevelTest/";
 
     private static final char[] password = "testpassphrase".toCharArray();
 

@@ -56,7 +56,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class FlexContainerColumnTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FlexContainerColumnTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/FlexContainerColumnTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/FlexContainerColumnTest/";
 
     @BeforeAll
     public static void beforeClass() {

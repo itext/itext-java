@@ -59,7 +59,7 @@ public class BlockRendererTest extends ExtendedITextTest {
 
     private static final float EPS = 0.001f;
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BlockRendererTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/BlockRendererTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/BlockRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

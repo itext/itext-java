@@ -54,7 +54,7 @@ public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
     private static final byte[] USER = "user".getBytes(StandardCharsets.UTF_8);
 
     private static final String PDFA_RESOURCES = "./src/test/resources/com/itextpdf/signatures/pdfa/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/Pdf2PhaseSignerUnitTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/Pdf2PhaseSignerUnitTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();

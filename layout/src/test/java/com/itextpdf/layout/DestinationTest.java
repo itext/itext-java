@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 public class DestinationTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/DestinationTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/DestinationTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/DestinationTest/";
 
     @BeforeAll
     public static void beforeClass() {
