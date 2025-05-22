@@ -1127,62 +1127,7 @@ public class PdfCanvas {
      * @return a list of double[] with the bezier curves.
      */
     public static List<double[]> bezierArc(double x1, double y1, double x2, double y2, double startAng, double extent) {
-        double tmp;
-        if (x1 > x2) {
-            tmp = x1;
-            x1 = x2;
-            x2 = tmp;
-        }
-        if (y2 > y1) {
-            tmp = y1;
-            y1 = y2;
-            y2 = tmp;
-        }
-
-        double fragAngle;
-        int Nfrag;
-        if (Math.abs(extent) <= 90f) {
-            fragAngle = extent;
-            Nfrag = 1;
-        } else {
-            Nfrag = (int) Math.ceil(Math.abs(extent) / 90f);
-            fragAngle = extent / Nfrag;
-        }
-        double x_cen = (x1 + x2) / 2f;
-        double y_cen = (y1 + y2) / 2f;
-        double rx = (x2 - x1) / 2f;
-        double ry = (y2 - y1) / 2f;
-        double halfAng = (fragAngle * Math.PI / 360.0);
-        double kappa = Math.abs(4.0 / 3.0 * (1.0 - Math.cos(halfAng)) / Math.sin(halfAng));
-        List<double[]> pointList = new ArrayList<>();
-        for (int iter = 0; iter < Nfrag; ++iter) {
-            double theta0 = ((startAng + iter * fragAngle) * Math.PI / 180.0);
-            double theta1 = ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.0);
-            double cos0 = Math.cos(theta0);
-            double cos1 = Math.cos(theta1);
-            double sin0 = Math.sin(theta0);
-            double sin1 = Math.sin(theta1);
-            if (fragAngle > 0.0) {
-                pointList.add(new double[]{x_cen + rx * cos0,
-                        y_cen - ry * sin0,
-                        x_cen + rx * (cos0 - kappa * sin0),
-                        y_cen - ry * (sin0 + kappa * cos0),
-                        x_cen + rx * (cos1 + kappa * sin1),
-                        y_cen - ry * (sin1 - kappa * cos1),
-                        x_cen + rx * cos1,
-                        y_cen - ry * sin1});
-            } else {
-                pointList.add(new double[]{x_cen + rx * cos0,
-                        y_cen - ry * sin0,
-                        x_cen + rx * (cos0 + kappa * sin0),
-                        y_cen - ry * (sin0 - kappa * cos0),
-                        x_cen + rx * (cos1 - kappa * sin1),
-                        y_cen - ry * (sin1 + kappa * cos1),
-                        x_cen + rx * cos1,
-                        y_cen - ry * sin1});
-            }
-        }
-        return pointList;
+        return Bezier.bezierArc(x1, y1, x2, y2, startAng, extent);
     }
 
     /**
