@@ -89,6 +89,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1952,47 +1953,55 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyDestination(PdfDocument document) {
-        Object destination = this.<Object>getProperty(Property.DESTINATION);
-        if (destination == null) {
+        Set<Object> destinations = this.<Set<Object>>getProperty(Property.DESTINATION);
+        if (destinations == null) {
             return;
         }
-        String destinationName = null;
-        PdfDictionary linkActionDict = null;
-        if (destination instanceof String) {
-            destinationName = (String)destination;
-        } else if (CHECK_TUPLE2_TYPE.getClass().equals(destination.getClass())) {
-            // 'If' above is the only autoportable way it seems
-            Tuple2<String, PdfDictionary> destTuple = (Tuple2<String, PdfDictionary>)destination;
-            destinationName = destTuple.getFirst();
-            linkActionDict = destTuple.getSecond();
-        }
-
-        if (destinationName != null) {
-            int pageNumber = occupiedArea.getPageNumber();
-            if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                String logMessageArg = "Property.DESTINATION, which specifies this element location as destination, see ElementPropertyContainer.setDestination.";
-                logger.warn(MessageFormatUtil.format(
-                        IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN,
-                        logMessageArg));
-                return;
+        for (Object destination : destinations) {
+            String destinationName = null;
+            PdfDictionary linkActionDict = null;
+            if (destination == null) {
+                continue;
+            }
+            if (destination instanceof String) {
+                destinationName = (String) destination;
+            } else if (CHECK_TUPLE2_TYPE.getClass().equals(destination.getClass())) {
+                // 'If' above is the only autoportable way it seems
+                Tuple2<String, PdfDictionary> destTuple = (Tuple2<String, PdfDictionary>) destination;
+                destinationName = destTuple.getFirst();
+                linkActionDict = destTuple.getSecond();
             }
 
-            PdfArray array = new PdfArray();
-            array.add(document.getPage(pageNumber).getPdfObject());
-            array.add(PdfName.XYZ);
-            array.add(new PdfNumber(occupiedArea.getBBox().getX()));
-            array.add(new PdfNumber(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight()));
-            array.add(new PdfNumber(0));
-            document.addNamedDestination(destinationName, array.makeIndirect(document));
-        }
+            if (destinationName != null) {
+                int pageNumber = occupiedArea.getPageNumber();
+                if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
+                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+                    String logMessageArg =
+                            "Property.DESTINATION, which specifies this element location as destination, " +
+                                    "see ElementPropertyContainer.setDestination.";
+                    logger.warn(MessageFormatUtil.format(
+                            IoLogMessageConstant
+                                    .UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN,
+                            logMessageArg));
+                    return;
+                }
 
-        final boolean isPdf20 = document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
-        if (linkActionDict != null && isPdf20 && document.isTagged()) {
-            // Add structure destination for the action for tagged pdf 2.0
-            PdfStructElem structElem = getCurrentStructElem(document);
-            PdfStructureDestination dest = PdfStructureDestination.createFit(structElem);
-            linkActionDict.put(PdfName.SD, dest.getPdfObject());
+                PdfArray array = new PdfArray();
+                array.add(document.getPage(pageNumber).getPdfObject());
+                array.add(PdfName.XYZ);
+                array.add(new PdfNumber(occupiedArea.getBBox().getX()));
+                array.add(new PdfNumber(occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight()));
+                array.add(new PdfNumber(0));
+                document.addNamedDestination(destinationName, array.makeIndirect(document));
+            }
+
+            final boolean isPdf20 = document.getPdfVersion().compareTo(PdfVersion.PDF_2_0) >= 0;
+            if (linkActionDict != null && isPdf20 && document.isTagged()) {
+                // Add structure destination for the action for tagged pdf 2.0
+                PdfStructElem structElem = getCurrentStructElem(document);
+                PdfStructureDestination dest = PdfStructureDestination.createFit(structElem);
+                linkActionDict.put(PdfName.SD, dest.getPdfObject());
+            }
         }
 
         deleteProperty(Property.DESTINATION);

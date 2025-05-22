@@ -55,6 +55,9 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -424,7 +427,9 @@ public class LinkTest extends ExtendedITextTest {
         doc.add(text);
 
         Paragraph customText = new Paragraph("Custom text");
-        customText.setProperty(Property.DESTINATION, new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        Set<Object> destinations = new HashSet<>();
+        destinations.add(new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        customText.setProperty(Property.DESTINATION, destinations);
         doc.add(customText);
 
         doc.close();
@@ -446,7 +451,9 @@ public class LinkTest extends ExtendedITextTest {
                 .setAction(PdfAction.createGoTo("custom"));
 
         Paragraph customText = new Paragraph("Custom text");
-        customText.setProperty(Property.DESTINATION, new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        Set<Object> destinations = new HashSet<>();
+        destinations.add(new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        customText.setProperty(Property.DESTINATION, destinations);
         doc.add(customText);
 
         doc.add(new AreaBreak());
@@ -467,6 +474,23 @@ public class LinkTest extends ExtendedITextTest {
     }
 
     @Test
+    public void linkWithSetDestinationTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "linkWithSetDestination.pdf";
+        String cmpFileName = sourceFolder + "cmp_linkWithSetDestination.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Link link = new Link("link", PdfAction.createGoTo("destination"));
+            document.add(new Paragraph().add(link));
+            document.add(new AreaBreak());
+
+            Paragraph target = new Paragraph("target");
+            target.setDestination("destination");
+            document.add(target);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+        @Test
     public void destinationToFlushedPageTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "destinationToFlushedPage.pdf";
         String cmpFileName = sourceFolder + "cmp_destinationToFlushedPage.pdf";

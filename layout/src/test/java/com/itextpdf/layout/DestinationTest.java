@@ -33,6 +33,8 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -57,7 +59,9 @@ public class DestinationTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         Text text = new Text(MessageFormatUtil.format("Page {0}", 10));
-        text.setProperty(Property.DESTINATION, "p10");
+        Set<Object> destinations = new HashSet<>();
+        destinations.add("p10");
+        text.setProperty(Property.DESTINATION, destinations);
         doc.add(new Paragraph(text).setFixedPosition(1, 549, 742, 40).setMargin(0));
         doc.close();
 

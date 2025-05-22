@@ -81,6 +81,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -971,11 +973,13 @@ public class PdfUA2Test extends ExtendedITextTest {
 
 
             Paragraph header1 = new Paragraph("header1 text");
-            header1.setProperty(Property.DESTINATION,
-                    new Tuple2<String, PdfDictionary>("header1", action1.getPdfObject()));
+            Set<Object> destinations1 = new HashSet<>();
+            destinations1.add(new Tuple2<String, PdfDictionary>("header1", action1.getPdfObject()));
+            header1.setProperty(Property.DESTINATION, destinations1);
             Paragraph header11 = new Paragraph("header1.1 text");
-            header11.setProperty(Property.DESTINATION,
-                    new Tuple2<String, PdfDictionary>("header1.1", action11.getPdfObject()));
+            Set<Object> destinations2 = new HashSet<>();
+            destinations2.add(new Tuple2<String, PdfDictionary>("header1.1", action11.getPdfObject()));
+            header11.setProperty(Property.DESTINATION, destinations2);
 
             document.add(header1);
             document.add(header11);
