@@ -468,6 +468,9 @@ public class RectangleTest extends ExtendedITextTest {
 
         // Test rectangle
         Rectangle testRectangle = new Rectangle(200, 200, 100, 200);
+        Rectangle testRectangle2 = new Rectangle(20, 500, 100, 50);
+        Rectangle testRectangle3 = new Rectangle(170, 500, 100, 50);
+        Rectangle testRectangle4 = new Rectangle(320, 500, 100, 50);
 
         Assertions.assertEquals(0, page.getRotation());
         Assertions.assertTrue(new Rectangle(200, 200, 100, 200).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle, page)));
@@ -482,7 +485,11 @@ public class RectangleTest extends ExtendedITextTest {
 
         page.setRotation(270);
         Assertions.assertEquals(270, page.getRotation());
+
         Assertions.assertTrue(new Rectangle(200, 542, 200, 100).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle, page)));
+        Assertions.assertTrue(new Rectangle(500, 722, 50, 100).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle2, page)));
+        Assertions.assertTrue(new Rectangle(500, 572, 50, 100).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle3, page)));
+        Assertions.assertTrue(new Rectangle(500, 422, 50, 100).equalsWithEpsilon(Rectangle.getRectangleOnRotatedPage(testRectangle4, page)));
 
         page.setRotation(360);
         Assertions.assertEquals(0, page.getRotation());

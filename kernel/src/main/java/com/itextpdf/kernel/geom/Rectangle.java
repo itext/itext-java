@@ -108,36 +108,49 @@ public class Rectangle implements Cloneable {
     }
 
     /**
-     * Gets the rectangle as it looks on the rotated page
-     * and returns the rectangle in coordinates relevant to the true page origin.
-     * This rectangle can be used to add annotations, fields, and other objects
-     * to the rotated page.
+     * Transforms a rectangle defined in the space of unrotated origin (bottom-left)
+     * into coordinates as it would appear on a passed as parameter rotated page.
      *
-     * @param rect the rectangle as it looks on the rotated page.
-     * @param page the page on which one want to process the rectangle.
-     * @return the newly created rectangle with translated coordinates.
+     * <p>
+     * This method is useful when adding annotations, form fields, or other elements
+     * to a PDF page that has a rotation. The iText coordinate system always
+     * uses the bottom-left corner as origin, regardless of page rotation.
+     * This method compensates for that rotation, returning a rectangle positioned
+     * correctly in the true page coordinate space.
+     *
+     * @param rect the rectangle defined in page-space coordinates relative to the unrotated origin.
+     * @param page the {@link PdfPage} to which the rectangle will be added.
+     *             The rotation of this page is used to transform the coordinates.
+     *
+     * @return a new {@link Rectangle} with corrected coordinates suitable for placement
+     *         in the rotated coordinate space of the page.
      */
     public static Rectangle getRectangleOnRotatedPage(Rectangle rect, PdfPage page) {
-        Rectangle resultRect = rect;
+        Rectangle rectangleOnRotatedPage = rect;
         int rotation = page.getRotation();
-        if (0 != rotation) {
+
+        if (rotation != 0) {
             Rectangle pageSize = page.getPageSize();
+            float x = rect.getLeft();
+            float y = rect.getBottom();
+            float width = rect.getWidth();
+            float height = rect.getHeight();
+
             switch ((rotation / 90) % 4) {
                 case 1: // 90 degrees
-                    resultRect = new Rectangle(pageSize.getWidth() - resultRect.getTop(), resultRect.getLeft(), resultRect.getHeight(), resultRect.getWidth());
+                    rectangleOnRotatedPage = new Rectangle(pageSize.getWidth() - y - height, x, height, width);
                     break;
                 case 2: // 180 degrees
-                    resultRect = new Rectangle(pageSize.getWidth() - resultRect.getRight(), pageSize.getHeight() - resultRect.getTop(), resultRect.getWidth(), resultRect.getHeight());
+                    rectangleOnRotatedPage = new Rectangle(pageSize.getWidth() - x - width, pageSize.getHeight() - y - height, width, height);
                     break;
                 case 3: // 270 degrees
-                    resultRect = new Rectangle(resultRect.getLeft(), pageSize.getHeight() - resultRect.getRight(), resultRect.getHeight(), resultRect.getWidth());
+                    rectangleOnRotatedPage = new Rectangle(y, pageSize.getHeight() - x - width, height, width);
                     break;
-                case 4: // 0 degrees
                 default:
                     break;
             }
         }
-        return resultRect;
+        return rectangleOnRotatedPage;
     }
 
     /**
