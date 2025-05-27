@@ -1,0 +1,358 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2025 Apryse Group NV
+    Authors: Apryse Software.
+
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.signatures.validation;
+
+import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.signatures.validation.context.CertificateSources;
+import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.report.ValidationReport;
+import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
+import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@Tag("BouncyCastleIntegrationTest")
+public class XmlSignatureValidatorTest extends ExtendedITextTest {
+    private static final String SRC = "./src/test/resources/com/itextpdf/signatures/validation/XmlSignatureValidatorTest/";
+
+    @Test
+    public void lotlXmlValidationTest() throws CertificateException, IOException {
+        String chainName = SRC + "lotl_signing_cert.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "lotl.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0)
+                    .hasNumberOfLogs(1)
+                    .hasLogItem(la -> la
+                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                    l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
+                            .withCertificate(((X509Certificate) certificateChain[0]))
+                    ));
+        }
+    }
+
+    @Test
+    public void signedXmlContentModifiedTest() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_rsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlContentModified.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasNumberOfLogs(2)
+                    .hasLogItem(la -> la
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_FAILED)
+                    ));
+        }
+    }
+
+    @Test
+    public void signedXmlSignatureModifiedTest() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_rsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlSignatureModified.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasNumberOfLogs(2)
+                    .hasLogItem(la -> la
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_FAILED)
+                    ));
+        }
+    }
+
+    @Test
+    public void signedXmlSignedInfoModifiedTest() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_rsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlSignedInfoModified.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasNumberOfLogs(2)
+                    .hasLogItem(la -> la
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_FAILED)
+                    ));
+        }
+    }
+
+    @Test
+    public void signedXmlSignedInfoModifiedStopValidationTest() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_rsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.getProperties().setContinueAfterFailure(
+                ValidatorContexts.of(ValidatorContext.XML_SIGNATURE_VALIDATOR), CertificateSources.all(), false);
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlSignedInfoModified.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasNumberOfLogs(1)
+                    .hasLogItem(la -> la
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_FAILED)
+                    ));
+        }
+    }
+
+    @Test
+    public void signedXmlWithBrokenCertTest() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_rsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithBrokenCert.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(2)
+                    .hasNumberOfLogs(2)
+                    .hasLogItem(la -> la
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_EXCEPTION)
+                    )
+                    .hasLogItem(la -> la
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.NO_CERTIFICATE)
+                    ));
+        }
+    }
+
+    @Test
+    public void signedXmlWithoutKeyInfoTest() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_rsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithoutKeyInfo.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(2)
+                    .hasNumberOfLogs(2)
+                    .hasLogItem(la -> la
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_EXCEPTION)
+                            .withExceptionCauseType(PdfException.class)
+                    )
+                    .hasLogItem(la -> la
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.NO_CERTIFICATE)
+                    ));
+        }
+    }
+
+    @Test
+    public void xmlValidationRSATest() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_rsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithRSA.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0)
+                    .hasNumberOfLogs(1)
+                    .hasLogItem(la -> la
+                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                    l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
+                            .withCertificate(((X509Certificate) certificateChain[0]))
+                    ));
+        }
+    }
+
+    @Test
+    public void xmlValidationDSATest() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_dsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithDSA.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0)
+                    .hasNumberOfLogs(1)
+                    .hasLogItem(la -> la
+                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                    l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
+                            .withCertificate(((X509Certificate) certificateChain[0]))
+                    ));
+        }
+    }
+
+    @Test
+    public void xmlValidationECDSA_SHA1Test() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_ecdsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithECDSA_SHA1.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0)
+                    .hasNumberOfLogs(1)
+                    .hasLogItem(la -> la
+                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                    l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
+                            .withCertificate(((X509Certificate) certificateChain[0]))
+                    ));
+        }
+    }
+
+    @Test
+    public void xmlValidationECDSA_SHA256Test() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_ecdsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithECDSA_SHA256.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0)
+                    .hasNumberOfLogs(1)
+                    .hasLogItem(la -> la
+                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                    l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
+                            .withCertificate(((X509Certificate) certificateChain[0]))
+                    ));
+        }
+    }
+
+    @Test
+    public void xmlValidationECDSA_SHA384Test() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_ecdsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithECDSA_SHA384.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0)
+                    .hasNumberOfLogs(1)
+                    .hasLogItem(la -> la
+                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                    l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
+                            .withCertificate(((X509Certificate) certificateChain[0]))
+                    ));
+        }
+    }
+
+    @Test
+    public void xmlValidationECDSA_SHA512Test() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_ecdsa.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithECDSA_SHA512.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0)
+                    .hasNumberOfLogs(1)
+                    .hasLogItem(la -> la
+                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                    l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
+                            .withCertificate(((X509Certificate) certificateChain[0]))
+                    ));
+        }
+    }
+}

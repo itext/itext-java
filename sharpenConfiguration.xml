@@ -465,6 +465,10 @@
                 <file path="com/itextpdf/forms/xfdf/ExceptionTestXmlParserFactory.java"/>
             </fileset>
             <!-- sign -->
+            <fileset reason="XML validation is different in .NET">
+                <file path="com/itextpdf/signatures/validation/XmlValidationUtils.java" />
+                <file path="com/itextpdf/signatures/validation/CertificateSelector.java" />
+            </fileset>
             <file path="com/itextpdf/signatures/ProviderDigest.java"/>
             <fileset reason="ProviderDigest class exists only on Java.">
                 <file path="com/itextpdf/signatures/ProviderDigestUnitTest.java"/>

@@ -27,6 +27,7 @@ import com.itextpdf.signatures.validation.CertificateChainValidator;
 import com.itextpdf.signatures.validation.OCSPValidator;
 import com.itextpdf.signatures.validation.RevocationDataValidator;
 import com.itextpdf.signatures.validation.DocumentRevisionsValidator;
+import com.itextpdf.signatures.validation.SignatureValidator;
 
 /**
  * This enum lists all possible contexts related to the validator in which the validation is taking place.
@@ -49,11 +50,15 @@ public enum ValidatorContext {
      */
     CERTIFICATE_CHAIN_VALIDATOR,
     /**
-     * This value is expected to be used in SignatureValidator context.
+     * This value is expected to be used in {@link SignatureValidator} context.
      */
     SIGNATURE_VALIDATOR,
     /**
      * This value is expected to be used in {@link DocumentRevisionsValidator} context.
      */
-    DOCUMENT_REVISIONS_VALIDATOR
+    DOCUMENT_REVISIONS_VALIDATOR,
+    /**
+     * This value is expected to be used in XmlSignatureValidator context.
+     */
+    XML_SIGNATURE_VALIDATOR
 }

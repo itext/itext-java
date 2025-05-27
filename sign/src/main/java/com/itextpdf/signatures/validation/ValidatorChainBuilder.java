@@ -55,6 +55,7 @@ public class ValidatorChainBuilder {
     private Supplier<DocumentRevisionsValidator> documentRevisionsValidatorFactory;
     private Supplier<IOcspClientBouncyCastle> ocspClientFactory;
     private Supplier<ICrlClient> crlClientFactory;
+    private Supplier<XmlSignatureValidator> xmlSignatureValidatorFactory;
 
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
@@ -73,6 +74,7 @@ public class ValidatorChainBuilder {
         documentRevisionsValidatorFactory = () -> buildDocumentRevisionsValidator();
         ocspClientFactory = () -> new OcspClientBouncyCastle();
         crlClientFactory = () -> new CrlClientOnline();
+        xmlSignatureValidatorFactory = () -> buildXmlSignatureValidator();
     }
 
     /**
@@ -332,6 +334,15 @@ public class ValidatorChainBuilder {
     }
 
     /**
+     * Retrieves the explicitly added or automatically created {@link IResourceRetriever} instance.
+     *
+     * @return the explicitly added or automatically created {@link IResourceRetriever} instance.
+     */
+    public IResourceRetriever getResourceRetriever() {
+        return resourceRetrieverFactory.get();
+    }
+
+    /**
      * Retrieves the explicitly added or automatically created {@link DocumentRevisionsValidator} instance.
      *
      * @return the explicitly added or automatically created {@link DocumentRevisionsValidator} instance.
@@ -377,15 +388,6 @@ public class ValidatorChainBuilder {
     }
 
     /**
-     * Retrieves the explicitly added or automatically created {@link IResourceRetriever} instance.
-     *
-     * @return the explicitly added or automatically created {@link IResourceRetriever} instance.
-     */
-    public IResourceRetriever getResourceRetriever() {
-        return resourceRetrieverFactory.get();
-    }
-
-    /**
      * Retrieves the explicitly added or automatically created {@link CRLValidator} instance.
      *
      * @return the explicitly added or automatically created {@link CRLValidator} instance.
@@ -401,6 +403,19 @@ public class ValidatorChainBuilder {
      */
     OCSPValidator getOCSPValidator() {
         return ocspValidatorFactory.get();
+    }
+
+    ValidatorChainBuilder withXmlSignatureValidator(Supplier<XmlSignatureValidator> xmlSignatureValidatorFactory) {
+        this.xmlSignatureValidatorFactory = xmlSignatureValidatorFactory;
+        return this;
+    }
+
+    XmlSignatureValidator getXmlSignatureValidator() {
+        return xmlSignatureValidatorFactory.get();
+    }
+
+    XmlSignatureValidator buildXmlSignatureValidator() {
+        return new XmlSignatureValidator(this);
     }
 
     private IssuingCertificateRetriever buildIssuingCertificateRetriever() {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><table>
+  <tr>
+    <td>Simple</td>
+    <td>Content</td>
+  </tr>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/><ds:Reference URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>0ypQBo5Z0X3NLH5VGOfzweGCvCzkqgUzW6JZNzrrK+g=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>To5Nn6GnpyWQkErPLUq5ea7tjnHOT9hFCfYw9hb1RIjaTK6K9Z/7YTsVEwwEkjwJE1xSx43KY/JL
+TOfr89uxRg==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIDHjCCAgagAwIBAgIEWOn5ojANBgkqhkiG9w0BAQsFADBUMQswCQYDVQQGEwJCWTEOMAwGA1UE
+BwwFTWluc2sxDjAMBgNVBAoMBWlUZXh0MQ0wCwYDVQQLDAR0ZXN0MRYwFAYDVQQDDA1pVGV4dFRl
+c3RSb290MCAXDTE3MDQwOTA5MDczOFoYDzIxMTcwNDA5MDkwNzM4WjBZMQswCQYDVQQGEwJCWTEO
+MAwGA1UEBwwFTWluc2sxDjAMBgNVBAoMBWlUZXh0MQ0wCwYDVQQLDAR0ZXN0MRswGQYDVQQDDBJp
+VGV4dFRlc3RFY2NDZXJ0MDEwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATpCNFtn/aNvgPVtL1b
+9r4+fv/KASTWj/Mchca7F2Ymyih5BZ2/vQzc+OMQwDYdIiVrs1tymtKItQFhOjv2sIIao4G7MIG4
+MAkGA1UdEwQCMAAwfwYDVR0jBHgwdoAUXSpxda7d2L5ZuiCxZpHJdjZTXO6hWKRWMFQxCzAJBgNV
+BAYTAkJZMQ4wDAYDVQQHDAVNaW5zazEOMAwGA1UECgwFaVRleHQxDTALBgNVBAsMBHRlc3QxFjAU
+BgNVBAMMDWlUZXh0VGVzdFJvb3SCBFjnkdYwHQYDVR0OBBYEFATXm57GtdPrNEiKbf9FWi5qdX38
+MAsGA1UdDwQEAwIGwDANBgkqhkiG9w0BAQsFAAOCAQEApvhFAiRAm0qpWUbdsV887hbkbFh0C6kj
+80Pm/UWlRV74cLp4zHYlC47z8//U18GkBxqTucioGBCNtjZgEc3VzFyH5kCqX3iWSjcLhlgw4oxW
+Os9LOVPK4SFh6XzERTw38HJ7x8Ql+/F15nXi2PxLXQNJyKkAMHANYtk7lrkhkgJyIIjCH38A23ww
+fVe6JeZBZ8RwPpulb6526uGCK3jUSPFQrgze4JFSX4WZPg2mExrGNdy5am+9sfRdUGAqBbvXu4GA
+O8cF28iqDMStm0ppTH/LL7WxRnrVxpjWEiIFnbmur/PRai2zfwYQGxBWV9Vfpe3+2blvsSbOHOCJ
+e3kqRQ==</ds:X509Certificate></ds:X509Data></ds:KeyInfo></ds:Signature></table>
