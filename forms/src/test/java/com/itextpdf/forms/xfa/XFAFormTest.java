@@ -135,6 +135,16 @@ public class XFAFormTest extends ExtendedITextTest {
     }
 
     @Test
+    public void extractXfaDataFromDatasetTest() throws IOException {
+        String inFileName = sourceFolder + "xfaFormWithDataset2.pdf";
+        PdfDocument doc = new PdfDocument(new PdfReader(inFileName));
+        PdfAcroForm form = PdfAcroForm.getAcroForm(doc, false);
+        XfaForm xfa = form.getXfaForm();
+        String actualfieldValue = xfa.getXfaFieldValue("Subform_Order.TextField_CompanyName");
+        Assertions.assertEquals("Giedi Prime", actualfieldValue);
+    }
+
+    @Test
     public void extractNodeTextByPathText() throws IOException {
         String inFileName = sourceFolder + "TextField1.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName))) {
