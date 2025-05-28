@@ -672,7 +672,11 @@ public class LineRenderer extends AbstractRenderer {
                     result = new LineLayoutResult(LayoutResult.PARTIAL, occupiedArea, split[0],
                             split[1], causeOfNothing);
                 } else {
-                    result = new LineLayoutResult(LayoutResult.NOTHING, null, null, split[1], null);
+                    //Passing any cause of nothing here breaks RootRenderer#tryDisableKeepTogether logic, since it
+                    //traverses over causeOfNothing parents and those are invalidated at ParagraphRenderer level, so
+                    //in such a case we want ParagraphRenderer to be set as a causeOfNothing
+                    result = new LineLayoutResult(LayoutResult.NOTHING, null, null, split[1],
+                            causeOfNothing instanceof AreaBreakRenderer ? causeOfNothing : null);
                 }
                 result.setFloatsOverflowedToNextPage(floatsToNextPageOverflowRenderers);
                 if (newLineOccurred) {

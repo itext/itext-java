@@ -416,7 +416,8 @@ public class ParagraphRenderer extends BlockRenderer {
                                 }
                             } else {
                                 floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
-                                return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
+                                IRenderer overflowRenderer = result.getCauseOfNothing() instanceof AreaBreakRenderer ? split[1] : this;
+                                return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer, null == result.getCauseOfNothing() ? this : result.getCauseOfNothing());
                             }
                         }
                     }

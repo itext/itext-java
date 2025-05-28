@@ -28,6 +28,7 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
 import com.itextpdf.kernel.pdf.tagutils.PdfAllowedTagRelations;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
+import com.itextpdf.layout.renderer.AreaBreakRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.Arrays;
@@ -112,6 +113,9 @@ public class ProhibitedTagRelationsResolver {
         }
         final String normalizedParentRole = resolveToFinalRole(taggingHelper, currentThk, false);
         for (IRenderer childRenderer : topRender.getChildRenderers()) {
+            if (childRenderer instanceof AreaBreakRenderer) {
+                continue;
+            }
             final TaggingHintKey kid = LayoutTaggingHelper.getOrCreateHintKey(childRenderer);
             if (!kid.isAccessible()) {
                 continue;
