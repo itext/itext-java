@@ -29,6 +29,7 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject.ImageBytesRetrievalProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -101,16 +102,12 @@ public class ImagePdfBytesInfoTest extends ExtendedITextTest {
     public void negativeNTest() throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "negativeN.pdf"))) {
             PdfImageXObject img = getPdfImageCObject(pdfDoc, 1, "Im1");
-            ImagePdfBytesInfo imagePdfBytesInfo = new ImagePdfBytesInfo((int)img.getWidth(), (int)img.getHeight(),
-                    img.getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
-                    img.getPdfObject().get(PdfName.ColorSpace),
-                    img.getPdfObject().getAsArray(PdfName.Decode));
-
-            int pngColorType = imagePdfBytesInfo.getPngColorType();
-            Assertions.assertEquals(-1, pngColorType);
-
-            Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                    () -> imagePdfBytesInfo.decodeTiffAndPngBytes(img.getImageBytes()));
+            Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () ->
+                    {
+                        ImagePdfBytesInfo imagePdfBytesInfo =
+                                new ImagePdfBytesInfo(img, ImageBytesRetrievalProperties.getApplyFiltersOnly());
+                        imagePdfBytesInfo.getProcessedImageData(img.getImageBytes());
+                    });
             Assertions.assertEquals("N value -1 is not supported.", e.getMessage());
         }
     }
@@ -119,26 +116,21 @@ public class ImagePdfBytesInfoTest extends ExtendedITextTest {
     public void undefinedCSArrayTest() throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "undefinedInCSArray.pdf"))) {
             PdfImageXObject img = getPdfImageCObject(pdfDoc, 1, "Im1");
-            ImagePdfBytesInfo imagePdfBytesInfo = new ImagePdfBytesInfo((int)img.getWidth(), (int)img.getHeight(),
-                    img.getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
-                    img.getPdfObject().get(PdfName.ColorSpace),
-                    img.getPdfObject().getAsArray(PdfName.Decode));
-
-            int pngColorType = imagePdfBytesInfo.getPngColorType();
-            Assertions.assertEquals(-1, pngColorType);
-
             Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                    () -> imagePdfBytesInfo.decodeTiffAndPngBytes(img.getImageBytes()));
+                    () ->
+                    {
+                        ImagePdfBytesInfo imagePdfBytesInfo =
+                                new ImagePdfBytesInfo(img, ImageBytesRetrievalProperties.getApplyFiltersOnly());
+                        imagePdfBytesInfo.getProcessedImageData(img.getImageBytes());
+                    });
             Assertions.assertEquals("The color space /Undefined is not supported.", e.getMessage());
         }
     }
 
     private int getPngColorTypeFromObject(PdfDocument pdfDocument, int pageNum, String objectId) {
         PdfImageXObject img = getPdfImageCObject(pdfDocument, pageNum, objectId);
-        ImagePdfBytesInfo imagePdfBytesInfo = new ImagePdfBytesInfo((int)img.getWidth(), (int)img.getHeight(),
-                img.getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
-                img.getPdfObject().get(PdfName.ColorSpace),
-                img.getPdfObject().getAsArray(PdfName.Decode));
+        ImagePdfBytesInfo imagePdfBytesInfo =
+                new ImagePdfBytesInfo(img,  ImageBytesRetrievalProperties.getApplyFiltersOnly());
         return imagePdfBytesInfo.getPngColorType();
     }
 

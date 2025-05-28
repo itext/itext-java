@@ -62,9 +62,15 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
         configurator.mapAnnotationParameter("com.itextpdf.test.annotations.LogMessage", "messageTemplate", "");
         configurator.mapType("com.itextpdf.test.annotations.LogMessage", "iText.Test.Attributes.LogMessage");
+        mapJunit(configurator);
+    }
 
-        // JUnit 5
+    private void mapJunit(MappingConfigurator configurator) {
         configurator.mapMethod("org.junit.jupiter.api.Assertions.assertEquals", "NUnit.Framework.Assert.AreEqual");
+        configurator.mapMethod("org.junit.jupiter.api.Assertions.assertEquals(long,long,java.util.function.Supplier)","iText.Test.AssertUtil.AreEqual");
+        configurator.mapMethod("org.junit.jupiter.api.Assertions.assertEquals(long,long,java.util.function.Supplier)","iText.Test.AssertUtil.AreEqual");
+        configurator.mapMethod("org.junit.jupiter.api.Assertions.assertEquals(long,long,java.util.function.Supplier)","iText.Test.AssertUtil.AreEqual");
+        configurator.mapMethod("org.junit.jupiter.api.Assertions.assertEquals(long,long,java.util.function.Supplier)","iText.Test.AssertUtil.AreEqual");
         configurator.mapMethod("org.junit.jupiter.api.Assertions.assertFalse", "NUnit.Framework.Assert.IsFalse");
         configurator.mapMethod("org.junit.jupiter.api.Assertions.assertNotNull", "NUnit.Framework.Assert.IsNotNull");
         configurator.mapMethod("org.junit.jupiter.api.Assertions.assertNull", "NUnit.Framework.Assert.IsNull");

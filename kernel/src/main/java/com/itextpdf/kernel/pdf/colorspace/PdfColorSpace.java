@@ -84,4 +84,13 @@ public abstract class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
         return null;
     }
 
+    /**
+     * Returns the {@link PdfName} of the namespace
+     *
+     * @return the PdfName of the namespace
+     */
+    public PdfName getName() {
+        return new PdfName(this.getClass().getSimpleName());
+    }
+
 }
