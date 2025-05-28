@@ -51,8 +51,8 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class XMPMetadataTest extends ExtendedITextTest{
 
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/XmpWriterTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/XmpWriterTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/XMPMetadataTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/XMPMetadataTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -418,5 +418,42 @@ public class XMPMetadataTest extends ExtendedITextTest{
 
         Assertions.assertThrows(XMPException.class,
                 () -> XMPMetaFactory.parseFromBuffer(xmp.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    @Test
+    public void readDocumentWithControlCharactersInXMPMetadata() throws IOException {
+        String src = SOURCE_FOLDER + "docWithControlCharactersInXmp.pdf";
+        try (PdfDocument document = new PdfDocument(new PdfReader(src),
+                new PdfWriter(new ByteArrayOutputStream()), new StampingProperties())) {
+            Assertions.assertEquals(PdfConformance.PDF_A_3A, document.getConformance());
+        }
+    }
+
+    @Test
+    public void readDocumentWithBrokenControlCharactersInXMPMetadata() throws IOException {
+        String src = SOURCE_FOLDER + "docWithBrokenControlCharactersInXmp.pdf";
+        try (PdfDocument document = new PdfDocument(new PdfReader(src),
+                new PdfWriter(new ByteArrayOutputStream()), new StampingProperties())) {
+            Assertions.assertEquals(PdfConformance.PDF_A_3A, document.getConformance());
+        }
+    }
+
+    @Test
+    public void readDocumentWithInvalidConformance() throws IOException {
+        String src = SOURCE_FOLDER + "docWithInvalidConformance.pdf";
+        try (PdfDocument document = new PdfDocument(new PdfReader(src),
+                new PdfWriter(new ByteArrayOutputStream()), new StampingProperties())) {
+            Assertions.assertEquals(PdfConformance.PDF_NONE_CONFORMANCE, document.getConformance());
+        }
+    }
+
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)})
+    @Test
+    public void readDocumentWithInvalidXMPMetadata() throws IOException {
+        String src = SOURCE_FOLDER + "docWithInvalidMetadata.pdf";
+        try (PdfDocument document = new PdfDocument(new PdfReader(src),
+                new PdfWriter(new ByteArrayOutputStream()), new StampingProperties())) {
+            Assertions.assertEquals(PdfConformance.PDF_NONE_CONFORMANCE, document.getConformance());
+        }
     }
 }

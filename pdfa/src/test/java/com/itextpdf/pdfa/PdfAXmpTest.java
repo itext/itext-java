@@ -143,34 +143,6 @@ public class PdfAXmpTest extends ExtendedITextTest {
     }
 
     @Test
-    public void readDocumentWithControlCharactersInXMPMetadata() throws IOException {
-        String src = sourceFolder + "pdfs/docWithControlCharactersInXmp.pdf";
-        try (PdfADocument document = new PdfADocument(new PdfReader(src),
-                new PdfWriter(new java.io.ByteArrayOutputStream()), new StampingProperties())) {
-            Assertions.assertEquals(PdfConformance.PDF_A_3A, document.getConformance());
-        }
-    }
-
-    @Test
-    public void readDocumentWithInvalidConformance() throws IOException {
-        String src = sourceFolder + "pdfs/docWithInvalidConformance.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(src),
-                new PdfWriter(new java.io.ByteArrayOutputStream()), new StampingProperties())) {
-            Assertions.assertEquals(PdfConformance.PDF_NONE_CONFORMANCE, document.getConformance());
-        }
-    }
-
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA)})
-    @Test
-    public void readDocumentWithInvalidXMPMetadata() throws IOException {
-        String src = sourceFolder + "pdfs/docWithInvalidMetadata.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(src),
-                new PdfWriter(new java.io.ByteArrayOutputStream()), new StampingProperties())) {
-            Assertions.assertEquals(PdfConformance.PDF_NONE_CONFORMANCE, document.getConformance());
-        }
-    }
-
-    @Test
     public void testPdfUAExtensionMetadata() throws IOException {
 
         String outFile = destinationFolder + "testPdfUAExtensionMetadata.pdf";

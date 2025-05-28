@@ -83,8 +83,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("java.io.PrintWriter", "iText.Commons.Utils.FormattingStreamWriter");
         configurator.mapMethod("java.nio.charset.Charset.forName", "iText.Commons.Utils.EncodingUtil.GetEncoding", false);
         configurator.mapField("java.nio.charset.StandardCharsets.ISO_8859_1", "iText.Commons.Utils.EncodingUtil.ISO_8859_1");
-        configurator.mapType("java.io.PushbackReader", "iText.Commons.Utils.PushbackReader");
-        configurator.mapType("java.io.FilterReader", "iText.Commons.Utils.FilterReader");
         configurator.mapMethod("java.lang.String.valueOf(char[])", "iText.Commons.Utils.JavaUtil.GetStringForChars", false);
         configurator.mapMethod("java.lang.String.valueOf(char[],int,int)", "iText.Commons.Utils.JavaUtil.GetStringForChars", false);
         configurator.mapMethod("java.lang.String.String(byte[])", "iText.Commons.Utils.JavaUtil.getStringForBytes", false);

@@ -503,6 +503,12 @@
                 <excludes>
                   <!-- Contains interfaces for bouncycastle wrappers which can be changes in any time -->
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
+                  <!--
+                   Temporary exclude to be able to cleanup code.
+                   This class is not intended to be used by our users directly.
+                   TODO: DEVSIX-9096 - remove after 9.3.0 release
+                  -->
+                  <exclude>com.itextpdf.kernel.xmp.impl.FixASCIIControlsReader</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
