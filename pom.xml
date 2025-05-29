@@ -501,6 +501,11 @@
                   <exclude>com.itextpdf.test.LogListener</exclude>
                   <exclude>com.itextpdf.test.runners.RetryOnFailure</exclude>
                   <exclude>com.itextpdf.test.runners.RetryRunner</exclude>
+                  <!--
+                   Temporary exclude to be able to cleanup code.
+                   This class is not intended to be used by our users directly.
+                  -->
+                  <exclude>com.itextpdf.kernel.xmp.impl.FixASCIIControlsReader</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
