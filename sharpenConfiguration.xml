@@ -532,6 +532,10 @@
                 <file path="com/itextpdf/signatures/testutils/report/xml/ReportNamespaceContext.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
             </fileset>
+            <fileset reason="Different xml reading implementation on .NET and java">
+                <file path="com/itextpdf/signatures/XmlCertificateRetriever.java"/>
+                <file path="com/itextpdf/signatures/XmlCertificateHandler.java"/>
+            </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />
             <file path="com/itextpdf/styledxmlparser/jsoup/helper/DataUtil.java" />

@@ -114,6 +114,8 @@ public final class SignExceptionMessageConstant {
     public static final String CMS_CERTIFICATE_NOT_FOUND = "Signer certificate not found in list of certificates";
     public static final String CMS_MISSING_CERTIFICATES =
             "The certificate set must at least contains the signer certificate";
+    public static final String FAILED_TO_READ_CERTIFICATE_BYTES_FROM_XML = "Failed to read certificate binary data from {0}.";
+    public static final String FAILED_TO_RETRIEVE_CERTIFICATE = "Failed to retrieve certificates from binary data";
 
 
     private SignExceptionMessageConstant() {
