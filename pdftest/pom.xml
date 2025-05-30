@@ -15,7 +15,7 @@
 
   <properties>
     <sonar.skip>true</sonar.skip>
-    <verapdf.version>1.26.2</verapdf.version>
+    <verapdf.version>1.26.5</verapdf.version>
   </properties>
 
   <dependencyManagement>
