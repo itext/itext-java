@@ -28,10 +28,11 @@ import java.util.Objects;
  * The {@link AffineTransform} class represents an affine transformation,
  * which is a combination of linear transformations such as translation,
  * scaling, rotation, and shearing which allows preservation of the straightness of lines.
+ *
+ * <p>
+ * Note: this class is a special case of a 3 by 3 {@link Matrix}.
  */
 public class AffineTransform implements Cloneable {
-
-
     /**
      * The type of affine transformation. See {@link AffineTransform#getType()}.
      */
@@ -137,6 +138,8 @@ public class AffineTransform implements Cloneable {
      * Create an {@link AffineTransform} instance with the values provided.
      * The default type is for the transformation is {@code  TYPE_UNKNOWN}
      *
+     * Detailed explanation of parameters can be found in {@link Matrix} documentation.
+     *
      * @param m00 The value of the first row and first column of the matrix.
      * @param m10 The value of the second row and first column of the matrix.
      * @param m01 The value of the first row and second column of the matrix.
@@ -158,6 +161,8 @@ public class AffineTransform implements Cloneable {
      * Create an {@link AffineTransform} instance with the values provided.
      * The default type is for the transformation is {@code  TYPE_UNKNOWN}
      *
+     * Detailed explanation of parameters can be found in {@link Matrix} documentation.
+     *
      * @param matrix The array of values to be used for the transformation matrix.
      */
     public AffineTransform(float[] matrix) {
@@ -175,6 +180,8 @@ public class AffineTransform implements Cloneable {
     /**
      * Create an {@link AffineTransform} instance with the values provided.
      * The default type is for the transformation is {@code  TYPE_UNKNOWN}
+     *
+     * Detailed explanation of parameters can be found in {@link Matrix} documentation.
      *
      * @param matrix The array of values to be used for the transformation matrix.
      */

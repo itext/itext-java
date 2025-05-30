@@ -141,7 +141,10 @@ public class CanvasGraphicsState {
 
     /**
      * Updates current transformation matrix.
-     * The third column will always be [0 0 1]
+     *
+     * <p>
+     * Detailed explanation of {@code [a b c d e f]} parameters of transformation
+     * matrix can be found in {@link Matrix} documentation.
      *
      * @param a element at (1,1) of the transformation matrix
      * @param b element at (1,2) of the transformation matrix
