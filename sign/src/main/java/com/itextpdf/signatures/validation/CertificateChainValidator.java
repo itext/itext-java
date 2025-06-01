@@ -126,21 +126,23 @@ public class CertificateChainValidator {
     private ValidationReport validate(ValidationReport result, ValidationContext context, X509Certificate certificate,
             Date validationDate, int certificateChainSize) {
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR);
-        validateValidityPeriod(result, certificate, validationDate);
         validateRequiredExtensions(result, localContext, certificate, certificateChainSize);
         if (stopValidation(result, localContext)) {
             return result;
         }
+
         if (onExceptionLog(() -> checkIfCertIsTrusted(result, localContext, certificate), Boolean.FALSE, result,
                 e -> new CertificateReportItem(certificate, CERTIFICATE_CHECK, TRUSTSTORE_RETRIEVAL_FAILED,
                         e, ReportItemStatus.INFO))) {
             return result;
         }
 
+        validateValidityPeriod(result, certificate, validationDate);
         validateRevocationData(result, localContext, certificate, validationDate);
         if (stopValidation(result, localContext)) {
             return result;
         }
+
         validateChain(result, localContext, certificate, validationDate, certificateChainSize);
         return result;
     }

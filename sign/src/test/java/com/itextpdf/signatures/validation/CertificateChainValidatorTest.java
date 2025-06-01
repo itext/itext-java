@@ -54,6 +54,7 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
+import java.util.Date;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -1036,4 +1037,32 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                         + MessageFormatUtil.format(KeyUsageExtension.ACTUAL_VALUE, stringBuilder.toString()));
     }
 
+    @Test
+    public void validityPeriodCheckTrustedCertificateTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        String chainName = CERTS_SRC + "chain.pem";
+
+        //certificate expiration date year 2400
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(chainName)[0];
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        //validation year 2405
+        Date validationDate = new Date(13750537642000L);
+        ValidationReport report =
+                validator.validateCertificate(baseContext, rootCert, validationDate);
+        AssertValidationReport.assertThat(report, a-> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.withCheckName("Certificate check.")
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                i-> rootCert.getSubjectX500Principal())
+                        .withCertificate(rootCert))
+        );
+    }
 }
