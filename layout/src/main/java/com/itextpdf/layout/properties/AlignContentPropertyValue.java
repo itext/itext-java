@@ -27,6 +27,8 @@ public enum AlignContentPropertyValue {
     CENTER,
     FLEX_START,
     FLEX_END,
+    END,
+    START,
     STRETCH,
     SPACE_BETWEEN,
     SPACE_AROUND,

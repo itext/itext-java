@@ -258,10 +258,10 @@ public class FlexUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    public void simpleCentralAlignmentColumnDirectionTest() {
+    public void simpleCentralAlignmentFirstFlexStartTest() {
         Style stretchStyle = new Style(WRAP_STYLE);
-        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignmentPropertyValue.CENTER);
-        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_BETWEEN);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.CENTER);
+        stretchStyle.setProperty(Property.FLEX_FORCE_START_ON_TOP, true);
         List<List<FlexItemInfo>> rectangleTable = testFlex(
                 stretchStyle,
                 Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
@@ -277,7 +277,33 @@ public class FlexUtilTest extends ExtendedITextTest {
                 if(i == 0) {
                     Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
                 } else {
-                    Assertions.assertEquals(48.125f, flexItemInfo.getRectangle().getY(), EPS);
+                    Assertions.assertEquals(24.0625f, flexItemInfo.getRectangle().getY(), EPS);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void simpleCentralAlignmentColumnDirectionTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.CENTER);
+        stretchStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(50f, flexItemInfo.getRectangle().getX(), EPS);
+                } else {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getX(), EPS);
                 }
             }
         }
@@ -324,6 +350,32 @@ public class FlexUtilTest extends ExtendedITextTest {
                     Assertions.assertEquals(48.125f, flexItemInfo.getRectangle().getY(), EPS);
                 } else {
                     Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void simpleFlexEndAlignmentFirstFlexStartTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.FLEX_END);
+        stretchStyle.setProperty(Property.FLEX_FORCE_START_ON_TOP, true);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+                } else {
+                    Assertions.assertEquals(48.125f, flexItemInfo.getRectangle().getY(), EPS);
                 }
             }
         }
@@ -408,9 +460,66 @@ public class FlexUtilTest extends ExtendedITextTest {
 
         // after checks
         Assertions.assertFalse(rectangleTable.isEmpty());
-        for (List<FlexItemInfo> flexItemInfos : rectangleTable) {
-            for (FlexItemInfo flexItemInfo : flexItemInfos) {
-                Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+        for (int i = 0; i < rectangleTable.size(); i++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i < 2) {
+                    Assertions.assertEquals(33.333332f, flexItemInfo.getRectangle().getX(), EPS);
+                } else {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getX(), EPS);
+
+                }
+            }
+        }
+    }
+
+    @Test
+    public void simpleSpaceAroundAlignmentFirstFlexStartTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_AROUND);
+        stretchStyle.setProperty(Property.FLEX_FORCE_START_ON_TOP, true);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Collections.<UnitValue>singletonList(UnitValue.createPointValue(250f)),
+                Collections.singletonList(1f),
+                Collections.singletonList(0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+                } else {
+                    Assertions.assertEquals(24.0625f, flexItemInfo.getRectangle().getY(), EPS);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void simpleSpaceAroundAlignmentFirstFlexStartMoreThanTwoLinesTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_AROUND);
+        stretchStyle.setProperty(Property.FLEX_FORCE_START_ON_TOP, true);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+                } else {
+                    Assertions.assertEquals(24.0625f, flexItemInfo.getRectangle().getY(), EPS);
+                }
             }
         }
     }
@@ -450,14 +559,18 @@ public class FlexUtilTest extends ExtendedITextTest {
                 Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
                 Arrays.asList(1f, 1f, 1f),
                 Arrays.asList(0f, 0f, 0f),
-                new Style().setWidth(UnitValue.createPointValue(150f))
+                new Style().setWidth(UnitValue.createPointValue(100f))
         );
 
         // after checks
         Assertions.assertFalse(rectangleTable.isEmpty());
-        for (List<FlexItemInfo> flexItemInfos : rectangleTable) {
-            for (FlexItemInfo flexItemInfo : flexItemInfos) {
-                Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+        for (int i = 0; i < rectangleTable.size(); i++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(16.666666f, flexItemInfo.getRectangle().getX(), EPS);
+                } else {
+                    Assertions.assertEquals(33.333332f, flexItemInfo.getRectangle().getX(), EPS);
+                }
             }
         }
     }
@@ -483,6 +596,53 @@ public class FlexUtilTest extends ExtendedITextTest {
                     Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
                 } else {
                     Assertions.assertEquals(48.125f, flexItemInfo.getRectangle().getY(), EPS);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void simpleSpaceBetweenAlignmentOneLineTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_BETWEEN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Collections.<UnitValue>singletonList(UnitValue.createPointValue(250f)),
+                Collections.singletonList(1f),
+                Collections.singletonList(0f),
+                new Style().setWidth(UnitValue.createPointValue(150f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (List<FlexItemInfo> flexItemInfos : rectangleTable) {
+            for (FlexItemInfo flexItemInfo : flexItemInfos) {
+                Assertions.assertEquals(0f, flexItemInfo.getRectangle().getY(), EPS);
+            }
+        }
+    }
+
+    @Test
+    public void simpleSpaceBetweenAlignmentColumnDirectionTest() {
+        Style stretchStyle = new Style(WRAP_STYLE);
+        stretchStyle.setProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.SPACE_BETWEEN);
+        stretchStyle.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
+        List<List<FlexItemInfo>> rectangleTable = testFlex(
+                stretchStyle,
+                Arrays.<UnitValue>asList(UnitValue.createPointValue(250f), UnitValue.createPointValue(200f),UnitValue.createPointValue(100f)),
+                Arrays.asList(1f, 1f, 1f),
+                Arrays.asList(0f, 0f, 0f),
+                new Style().setWidth(UnitValue.createPointValue(100f))
+        );
+
+        // after checks
+        Assertions.assertFalse(rectangleTable.isEmpty());
+        for (int i = 0; i < rectangleTable.size(); i ++) {
+            for (FlexItemInfo flexItemInfo : rectangleTable.get(i)) {
+                if(i == 0) {
+                    Assertions.assertEquals(0f, flexItemInfo.getRectangle().getX(), EPS);
+                } else {
+                    Assertions.assertEquals(50f, flexItemInfo.getRectangle().getX(), EPS);
                 }
             }
         }
