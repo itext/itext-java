@@ -339,7 +339,6 @@ public class PdfOutline {
             parentContent.put(PdfName.First, children.get(0).content);
             parentContent.put(PdfName.Last, children.get(children.size() - 1).content);
         } else {
-            parent.removeOutline();
             return;
         }
 
