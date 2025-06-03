@@ -27,6 +27,7 @@ package com.itextpdf.kernel.exceptions;
  */
 public final class KernelExceptionMessageConstant {
     public static final String ALGORITHM_IS_NOT_SUPPORTED = "Algorithm {0} is not supported.";
+    public static final String ALREADY_CLOSED = "Already closed";
     public static final String AMOUNT_OF_BYTES_LESS_THAN_ZERO =
             "Amount of bytes in the PDF document cannot be less than zero";
     public static final String ANNOTATION_SHALL_HAVE_REFERENCE_TO_PAGE = "Annotation shall have reference to page.";
@@ -339,6 +340,7 @@ public final class KernelExceptionMessageConstant {
             "The passed page belongs to document {0} (page {1} of the document) and therefore cannot be added "
                     + "to this document ({2}).";
     public static final String PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE = "Page is not set for the pdf tag structure.";
+    public static final String PASSED_BYTE_BUFFER_CAN_NOT_BE_NULL = "Passed byte buffer can not be null.";
     public static final String PDF_DECRYPTION = "Exception occurred with PDF document decryption. One of the possible "
             + "reasons is wrong password or wrong public key certificate and private key.";
     public static final String PDF_ENCRYPTION = "PdfEncryption exception.";

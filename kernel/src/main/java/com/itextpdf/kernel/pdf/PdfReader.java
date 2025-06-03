@@ -1637,28 +1637,32 @@ public class PdfReader implements Closeable {
         private ByteBuffer buffer;
 
         public ReusableRandomAccessSource(ByteBuffer buffer) {
-            if (buffer == null) throw new IllegalArgumentException("Passed byte buffer can not be null.");
+            if (buffer == null) {
+                throw new IllegalArgumentException(KernelExceptionMessageConstant.PASSED_BYTE_BUFFER_CAN_NOT_BE_NULL);
+            }
             this.buffer = buffer;
         }
 
         @Override
         public int get(long offset) {
-            if (offset >= buffer.size()) return -1;
+            if (offset >= buffer.size()) {
+                return -1;
+            }
             return 0xff & buffer.getInternalBuffer()[(int) offset];
         }
 
         @Override
         public int get(long offset, byte[] bytes, int off, int len) {
-            if (buffer == null) throw new IllegalStateException("Already closed");
-
-            if (offset >= buffer.size())
+            if (buffer == null) {
+                throw new IllegalStateException(KernelExceptionMessageConstant.ALREADY_CLOSED);
+            }
+            if (offset >= buffer.size()) {
                 return -1;
-
-            if (offset + len > buffer.size())
+            }
+            if (offset + len > buffer.size()) {
                 len = (int) (buffer.size() - offset);
-
+            }
             System.arraycopy(buffer.getInternalBuffer(), (int) offset, bytes, off, len);
-
             return len;
         }
 
