@@ -482,6 +482,14 @@ public final class IoLogMessageConstant {
     public static final String XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE = "Error occurred while " +
             "reading cross reference table. Cross reference table will be rebuilt. Reason: {0}";
 
+    public static final String UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT =
+            "Unable to retrieve resource with given URL ({0}) and resource size byte limit ({1}).";
+
+    public static final String RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT =
+            "Resource with given URL ({0}) was filtered out.";
+
+
+
     private IoLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly
     }

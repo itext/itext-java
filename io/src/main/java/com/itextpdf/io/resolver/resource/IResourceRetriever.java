@@ -20,19 +20,15 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.styledxmlparser.resolver.resource;
+package com.itextpdf.io.resolver.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.net.URL;
 
 /**
  * Interface for classes that can retrieve data from resources by URL.
- *
- * @deprecated In favor of {@link com.itextpdf.io.resolver.resource.IResourceRetriever}
  */
-@Deprecated
 public interface IResourceRetriever {
     /**
      * Gets the {@link InputStream} that connect with source URL for retrieving data from that connection.

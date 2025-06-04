@@ -179,4 +179,6 @@ public final class IoExceptionMessageConstant {
     public static final String ENCODING_ERROR = "Error during encoding the following code point: {0} in characterset:" +
             " {1}";
     public static final String ONLY_BMP_ENCODING = "This encoder only accepts BMP codepoints";
+    public static final String READING_BYTE_LIMIT_MUST_NOT_BE_LESS_ZERO = "The reading byte limit argument must not " +
+            "be less than zero.";
 }

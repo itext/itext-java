@@ -65,6 +65,9 @@
                 <file path="com/itextpdf/commons/datastructures/ConcurrentHashSet.java"/>
             </fileset>
             <!-- io -->
+            <fileset reason="LimitedInputStream extends InputStream, which has different interfaces in Java and .NET">
+                <file path="com/itextpdf/io/resolver/resource/LimitedInputStream.java" />
+            </fileset>
             <fileset reason="This class seems to be specific for java and used for getting an instance of an Image from java.awt.Image.
         In .Net it looks not trivial to port automatically as it needs java.awt.BufferedImage and java.awt.PixelGrabber alternative in .Net.
         Currently we do not have this functionality in .Net">
@@ -586,6 +589,7 @@
             </fileset>
             <fileset reason="This test uses threads and sockets which are not autoportable">
                 <file path="com/itextpdf/styledxmlparser/resolver/resource/DefaultResourceRetrieverTest.java" />
+                <file path="com/itextpdf/io/resolver/resource/DefaultResourceRetrieverTest.java" />
             </fileset>
 
             <!-- svg -->

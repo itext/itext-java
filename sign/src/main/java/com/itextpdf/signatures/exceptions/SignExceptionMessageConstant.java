@@ -32,8 +32,8 @@ public final class SignExceptionMessageConstant {
             + "the digest.";
     public static final String AVAILABLE_SPACE_IS_NOT_ENOUGH_FOR_SIGNATURE = "Available space is not enough for "
             + "signature.";
-    public static final String TOKEN_ESTIMATION_SIZE_IS_NOT_LARGE_ENOUGH = "Timestamp token estimation size is not " 
-            + "large enough to accommodate the entire timestamp token. Timestamp token estimation size is: {0} bytes, " 
+    public static final String TOKEN_ESTIMATION_SIZE_IS_NOT_LARGE_ENOUGH = "Timestamp token estimation size is not "
+            + "large enough to accommodate the entire timestamp token. Timestamp token estimation size is: {0} bytes, "
             + "however real timestamp token size is: {1} bytes.";
     public static final String CANNOT_DECODE_PKCS7_SIGNED_DATA_OBJECT = "Cannot decode PKCS#7 SignedData object.";
     public static final String CANNOT_FIND_SIGNING_CERTIFICATE_WITH_THIS_SERIAL = "Cannot find signing certificate "
@@ -44,12 +44,12 @@ public final class SignExceptionMessageConstant {
             + "signature creation failed. Document shall not contain any certification or approval signatures before "
             + "signing with certification signature.";
     public static final String CERTIFICATE_TEMPLATE_FOR_EXCEPTION_MESSAGE = "Certificate {0} failed: {1}";
-    public static final String DEFAULT_CLIENTS_CANNOT_BE_CREATED = "Default implementation of OCSP and CRL clients " 
-            + "cannot be created, because signing certificate doesn't contain revocation data sources. " 
+    public static final String DEFAULT_CLIENTS_CANNOT_BE_CREATED = "Default implementation of OCSP and CRL clients "
+            + "cannot be created, because signing certificate doesn't contain revocation data sources. "
             + "Please try to explicitly add OCSP or CRL client.";
     public static final String DICTIONARY_THIS_KEY_IS_NOT_A_NAME = "Dictionary key {0} is not a name.";
-    public static final String DIGEST_ALGORITHMS_ARE_NOT_SAME = "Digest algorithm used in the provided " 
-            + "IExternalSignature shall be the same as digest algorithm in the provided CMSContainer. " 
+    public static final String DIGEST_ALGORITHMS_ARE_NOT_SAME = "Digest algorithm used in the provided "
+            + "IExternalSignature shall be the same as digest algorithm in the provided CMSContainer. "
             + "Digest algorithm in CMS container: \"{0}\". Digest algorithm in IExternalSignature: \"{1}\"";
     public static final String DOCUMENT_ALREADY_PRE_CLOSED = "Document has been already pre closed.";
     public static final String DOCUMENT_MUST_BE_PRE_CLOSED = "Document must be preClosed.";
@@ -63,7 +63,7 @@ public final class SignExceptionMessageConstant {
             + "certificate chain.";
     public static final String INVALID_TSA_RESPONSE = "Invalid TSA {0} response code {1}.";
     public static final String NO_CRYPTO_DICTIONARY_DEFINED = "No crypto dictionary defined.";
-    public static final String NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE = "Neither ocsp nor crl data are available " 
+    public static final String NO_REVOCATION_DATA_FOR_SIGNING_CERTIFICATE = "Neither ocsp nor crl data are available "
             + "for the signing certificate or certificate is revoked.";
     public static final String NO_SIGNATURES_TO_PROLONG = "Document doesn't contain any signatures to prolong.";
     public static final String NOT_A_VALID_PKCS7_OBJECT_NOT_A_SEQUENCE = "Not a valid PKCS#7 object - not a sequence";
@@ -116,6 +116,7 @@ public final class SignExceptionMessageConstant {
             "The certificate set must at least contains the signer certificate";
     public static final String FAILED_TO_READ_CERTIFICATE_BYTES_FROM_XML = "Failed to read certificate binary data from {0}.";
     public static final String FAILED_TO_RETRIEVE_CERTIFICATE = "Failed to retrieve certificates from binary data";
+    public static final String FAILED_TO_GET_EU_LOTL = "Failed to get European List of Trusted Lists (LOTL) from {0}.";
 
 
     private SignExceptionMessageConstant() {

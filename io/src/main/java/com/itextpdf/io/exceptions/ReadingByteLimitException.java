@@ -20,35 +20,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.styledxmlparser.resolver.resource;
+package com.itextpdf.io.exceptions;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.net.URL;
+import com.itextpdf.commons.exceptions.ITextException;
 
 /**
- * Interface for classes that can retrieve data from resources by URL.
- *
- * @deprecated In favor of {@link com.itextpdf.io.resolver.resource.IResourceRetriever}
+ * Thrown when the limit on the number of bytes read was violated.
  */
-@Deprecated
-public interface IResourceRetriever {
-    /**
-     * Gets the {@link InputStream} that connect with source URL for retrieving data from that connection.
-     *
-     * @param url the source URL
-     * @return the input stream or null if the retrieving failed
-     * @throws IOException if any input/output issue occurs
-     */
-    InputStream getInputStreamByUrl(URL url) throws IOException;
+public class ReadingByteLimitException extends ITextException {
 
     /**
-     * Gets the byte array that are retrieved from the source URL.
-     *
-     * @param url the source URL
-     * @return the byte array or null if the retrieving failed
-     * @throws IOException if any input/output issue occurs
+     * Creates a new {@link ReadingByteLimitException} instance.
      */
-    byte[] getByteArrayByUrl(URL url) throws IOException;
+    public ReadingByteLimitException() {
+        // Empty constructor
+    }
 }
