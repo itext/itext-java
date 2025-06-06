@@ -23,6 +23,8 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
 import com.itextpdf.kernel.utils.ICopyFilter;
 
 public class PdfIndirectReference extends PdfObject implements Comparable<PdfIndirectReference> {
@@ -60,6 +62,11 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      * PdfDocument object belongs to. For direct objects it is null.
      */
     protected PdfDocument pdfDocument = null;
+
+    /**
+     * Is reference resolving in process or not. Used to prevent cycled references.
+     */
+    private boolean resolvingReferenceInProcess = false;
 
     protected PdfIndirectReference(PdfDocument doc, int objNr) {
         this(doc, objNr, 0);
@@ -106,7 +113,18 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
         if (!recursively) {
             if (refersTo == null && !checkState(FLUSHED) && !checkState(MODIFIED) && !checkState(FREE)
                     && getReader() != null) {
-                refersTo = getReader().readObject(this);
+                if (resolvingReferenceInProcess) {
+                    throw new XrefCycledReferencesException(MessageFormatUtil.format(
+                                        KernelExceptionMessageConstant.XREF_STREAM_HAS_SELF_REFERENCED_OBJECT, objNr));
+                }
+                resolvingReferenceInProcess = true;
+                try {
+                    // readObject can call getRefersTo, it's why resolvingReferenceInProcess
+                    // is used to prevent StackOverflowException
+                    refersTo = getReader().readObject(this);
+                } finally {
+                    resolvingReferenceInProcess = false;
+                }
             }
             return refersTo;
         } else {
