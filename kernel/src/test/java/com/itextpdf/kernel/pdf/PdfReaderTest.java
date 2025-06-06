@@ -34,29 +34,27 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import com.itextpdf.test.annotations.type.IntegrationTest;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 
 @Category(IntegrationTest.class)
 public class PdfReaderTest extends ExtendedITextTest {
@@ -2262,6 +2260,36 @@ public class PdfReaderTest extends ExtendedITextTest {
             Thread.sleep(200);
         } catch (InterruptedException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    @Test
+    public void xrefStreamObjectPointsItselfTest() throws IOException {
+        String fileName = sourceFolder + "xrefObjPointsItself.pdf";
+
+        try (PdfReader pdfReader = new PdfReader(fileName)) {
+            Exception exception = Assert.assertThrows(PdfException.class, () -> new PdfDocument(pdfReader));
+
+            // 2 0 R refers to 8 0 R, which refers to 8 0 R
+            Assert.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assert.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.XREF_STREAM_HAS_SELF_REFERENCED_OBJECT, 8),
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void xrefStreamObjectPointsLoopTest() throws IOException {
+        String fileName = sourceFolder + "xrefObjPointsLoop.pdf";
+
+        try (PdfReader pdfReader = new PdfReader(fileName)) {
+            Exception exception = Assert.assertThrows(PdfException.class, () -> new PdfDocument(pdfReader));
+
+            // 2 0 R refers to 8 0 R, which refers to 7 0 R which refers to 2 0 R
+            Assert.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assert.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.XREF_STREAM_HAS_SELF_REFERENCED_OBJECT, 2),
+                    exception.getMessage());
         }
     }
 
