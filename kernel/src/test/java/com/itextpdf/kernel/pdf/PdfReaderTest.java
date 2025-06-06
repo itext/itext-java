@@ -2966,6 +2966,38 @@ public class PdfReaderTest extends ExtendedITextTest {
         Assertions.assertEquals(KernelExceptionMessageConstant.PASSED_BYTE_BUFFER_CAN_NOT_BE_NULL, e.getMessage());
     }
 
+    @Test
+    public void xrefStreamObjectPointsItselfTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "xrefObjPointsItself.pdf";
+
+        try (PdfReader pdfReader = new PdfReader(fileName)) {
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
+                    () -> new PdfDocument(pdfReader));
+
+            // 2 0 R refers to 8 0 R, which refers to 8 0 R
+            Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.XREF_STREAM_HAS_SELF_REFERENCED_OBJECT, 8),
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void xrefStreamObjectPointsLoopTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "xrefObjPointsLoop.pdf";
+
+        try (PdfReader pdfReader = new PdfReader(fileName)) {
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
+                    () -> new PdfDocument(pdfReader));
+
+            // 2 0 R refers to 8 0 R, which refers to 7 0 R which refers to 2 0 R
+            Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.XREF_STREAM_HAS_SELF_REFERENCED_OBJECT, 2),
+                    exception.getMessage());
+        }
+    }
+
     private static PdfDictionary getTestPdfDictionary() {
         HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
         tmpMap.put(new PdfName("b"), new PdfName("c"));
