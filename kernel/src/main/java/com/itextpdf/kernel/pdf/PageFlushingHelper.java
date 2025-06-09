@@ -22,10 +22,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -96,6 +97,11 @@ public class PageFlushingHelper {
     private Set<PdfIndirectReference> layersRefs = new HashSet<>();
 
 
+    /**
+     * Instantiates a new instance of {@link PageFlushingHelper} based on passed {@link PdfDocument}.
+     *
+     * @param pdfDoc the PDF document to flush
+     */
     public PageFlushingHelper(PdfDocument pdfDoc) {
         this.pdfDoc = pdfDoc;
     }

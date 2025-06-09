@@ -22,15 +22,30 @@
  */
 package com.itextpdf.kernel.pdf;
 
-
+/**
+ * Class with additional properties for {@link PdfDocument} processing
+ * in stamping mode. Needs to be passed at document initialization.
+ *
+ * <p>
+ * See {@link PageFlushingHelper} documentation to find more information about modes of document processing.
+ */
 public class StampingProperties extends DocumentProperties {
     protected boolean appendMode = false;
     protected boolean preserveEncryption = false;
     protected boolean disableMac = false;
 
+    /**
+     * Default constructor, use provided setters for configuration options.
+     */
     public StampingProperties() {
+        // Do nothing
     }
 
+    /**
+     * Creates a copy of class instance.
+     *
+     * @param other the base for new class instance
+     */
     public StampingProperties(StampingProperties other) {
         super(other);
         this.appendMode = other.appendMode;
@@ -38,6 +53,11 @@ public class StampingProperties extends DocumentProperties {
         this.disableMac = other.disableMac;
     }
 
+    /**
+     * Creates a copy of {@link DocumentProperties} instance.
+     *
+     * @param documentProperties the base for new class instance
+     */
     StampingProperties(DocumentProperties documentProperties) {
         super(documentProperties);
         this.dependencies = documentProperties.dependencies;

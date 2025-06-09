@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,11 @@ public class PdfVersion implements Comparable<PdfVersion> {
         return MessageFormatUtil.format("PDF-{0}.{1}", major, minor);
     }
 
+    /**
+     * Gets the PDF version in "X.Y" format. Use {@link #toString()} to get the version in "PDF-X.Y" format.
+     *
+     * @return the string representation of the PDF version
+     */
     public PdfName toPdfName() {
         return new PdfName(MessageFormatUtil.format("{0}.{1}", major, minor));
     }

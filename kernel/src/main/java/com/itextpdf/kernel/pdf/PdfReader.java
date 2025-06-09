@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
  * Reads a PDF document.
  */
 public class PdfReader implements Closeable {
-
     /**
      * The Logger instance.
      */

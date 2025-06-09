@@ -1673,6 +1673,12 @@ public class PdfDocument implements Closeable {
         outputIntents.add(outputIntent.getPdfObject());
     }
 
+    /**
+     * Checks ISO conformance of the passed context against
+     * registered {@link ValidationContainer} inside the {@code PdfDocument}.
+     *
+     * @param validationContext the context to check
+     */
     public void checkIsoConformance(IValidationContext validationContext) {
         if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
             return;

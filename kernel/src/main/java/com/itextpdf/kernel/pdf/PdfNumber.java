@@ -40,8 +40,6 @@ import java.nio.charset.StandardCharsets;
  * embedded period (decimal point).
  */
 public class PdfNumber extends PdfPrimitiveObject {
-
-
     private double value;
     private boolean isDouble;
 
@@ -215,6 +213,11 @@ public class PdfNumber extends PdfPrimitiveObject {
         return new PdfNumber();
     }
 
+    /**
+     * Checks if the stored value originally was double or not.
+     *
+     * @return {@code true} if the value was double originally, {@code false} otherwise
+     */
     protected boolean isDoubleNumber() {
         return isDouble;
     }
@@ -228,6 +231,9 @@ public class PdfNumber extends PdfPrimitiveObject {
         }
     }
 
+    /**
+     * Generates the value of the PDF number from stored byte content.
+     */
     protected void generateValue() {
         try {
             value = java.lang.Double.parseDouble(new String(content, StandardCharsets.ISO_8859_1));

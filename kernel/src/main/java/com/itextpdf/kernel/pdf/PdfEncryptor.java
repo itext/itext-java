@@ -49,6 +49,9 @@ public final class PdfEncryptor {
     private IMetaInfo metaInfo;
     private EncryptionProperties properties;
 
+    /**
+     * Default constructor, use provided setters for encryption options.
+     */
     public PdfEncryptor() {
     }
 

@@ -30,9 +30,10 @@ import com.itextpdf.kernel.utils.ICopyFilter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+/**
+ * A {@code PdfName}-class is the PDF-equivalent of a string constant.
+ */
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
-
-
     //  ' '
     private static final byte[] space = ByteUtils.getIsoBytes("#20");
     //  '%'
@@ -999,6 +1000,11 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         return PdfObject.NAME;
     }
 
+    /**
+     * Gets the string which represent {@code PdfName}.
+     *
+     * @return the string value of {@code PdfName} instance
+     */
     public String getValue() {
         if (value == null)
             generateValue();
@@ -1030,6 +1036,9 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         return getValue().hashCode();
     }
 
+    /**
+     * Generates the string value of the {@code PdfName} instance based on stored byte content.
+     */
     protected void generateValue() {
         value = PdfNameUtil.decodeName(content);
     }
