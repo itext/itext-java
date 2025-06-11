@@ -22,11 +22,15 @@
  */
 package com.itextpdf.test.utils;
 
+import com.itextpdf.test.ExtendedITextTest;
+
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UriUtilTest {
+@Tag("UnitTest")
+class UriUtilTest extends ExtendedITextTest {
 
     @Test
     void parseQueryParams01() {

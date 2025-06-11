@@ -29,6 +29,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ import static com.itextpdf.test.ITextTest.createOrClearDestinationFolder;
 
 
 @Tag("IntegrationTest")
-public class RectangleIntegrationTest {
+public class RectangleIntegrationTest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/RectangleTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/RectangleTest/";

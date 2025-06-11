@@ -25,7 +25,9 @@ package com.itextpdf.signatures.validation.report.xml;
 import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 
+@Tag("IntegrationTest")
 public class SignatureIdentifierTest extends AbstractIdentifiableObjectTest {
     @Override
     protected void performTestHashForEqualInstances() {

@@ -27,6 +27,8 @@ import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -35,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Tag("UnitTest")
-public class CircleSvgNodeRendererUnitTest {
+public class CircleSvgNodeRendererUnitTest extends ExtendedITextTest {
 
     @Test
     public void noViewPortTest() {

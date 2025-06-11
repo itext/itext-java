@@ -29,6 +29,7 @@ import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.font.FontSelector;
 import com.itextpdf.layout.font.FontSet;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
+import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +41,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 @Tag("UnitTest")
-public class BasicFontProviderTest {
+public class BasicFontProviderTest extends ExtendedITextTest {
 
     @Test
     public void basicTest() {
@@ -91,7 +92,6 @@ public class BasicFontProviderTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.ERROR_LOADING_FONT))
     public void invalidShippedFontTest() {
         FontProvider fontProvider = new InvalidTestFontProvider();
         FontSelector fontSelector = fontProvider.getFontSelector(Collections.singletonList("Courier"),

@@ -25,10 +25,12 @@ package com.itextpdf.test;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
-class AssertUtilTest {
+@Tag("UnitTest")
+class AssertUtilTest extends ExtendedITextTest{
 
     @Test
     void assertPassedWithinTimeoutTestKeepsFailing() throws InterruptedException {

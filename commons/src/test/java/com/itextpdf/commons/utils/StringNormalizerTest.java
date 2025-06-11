@@ -22,12 +22,14 @@
  */
 package com.itextpdf.commons.utils;
 
+import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
-public class StringNormalizerTest {
+public class StringNormalizerTest extends ExtendedITextTest {
 
     @Test
     public void toLowerCaseTest() {
