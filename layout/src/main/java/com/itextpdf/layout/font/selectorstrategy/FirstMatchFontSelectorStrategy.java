@@ -53,8 +53,25 @@ public class FirstMatchFontSelectorStrategy extends AbstractFontSelectorStrategy
 
     /**
      * The factory for {@link FirstMatchFontSelectorStrategy}.
+     *
+     * @deprecated in favour of {@link FirstMatchFontSelectorStrategyFactory} (typo fix in word "Match")
      */
+    @Deprecated
     public static final class FirstMathFontSelectorStrategyFactory implements IFontSelectorStrategyFactory {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public IFontSelectorStrategy createFontSelectorStrategy(FontProvider fontProvider, FontSelector fontSelector,
+                FontSet additionalFonts) {
+            return new FirstMatchFontSelectorStrategy(fontProvider, fontSelector, additionalFonts);
+        }
+    }
+
+    /**
+     * The factory for {@link FirstMatchFontSelectorStrategy}.
+     */
+    public static final class FirstMatchFontSelectorStrategyFactory implements IFontSelectorStrategyFactory {
         /**
          * {@inheritDoc}
          */

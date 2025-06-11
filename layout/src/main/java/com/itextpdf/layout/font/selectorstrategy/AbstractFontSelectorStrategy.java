@@ -103,9 +103,22 @@ public abstract class AbstractFontSelectorStrategy implements IFontSelectorStrat
                     if (codePoint > 0xFFFF) {
                         i++;
                     }
-                    if (isCurrentFontCheckRequired() && (i != indexDiacritic - 1)
-                            && !TextUtil.isWhitespaceOrNonPrintable(codePoint)) {
-                        if (currentFont != matchFont(codePoint, fontSelector, fontProvider, additionalFonts)) {
+                    if (isCurrentFontCheckRequired() && (i != indexDiacritic - 1)) {
+                        PdfFont pdfFont = matchFont(codePoint, fontSelector, fontProvider, additionalFonts);
+                        int nextSignificant = nextSignificantIndex(i, text);
+                        // if below describes the case when non-significant (e.g. whitespace, soft-hyphen)
+                        // symbol is surrounded by significant symbols
+                        if (nextSignificant != i && nextSignificant < text.length()) {
+                            PdfFont nextFont = matchFont(extractCodePoint(text, nextSignificant), fontSelector, fontProvider, additionalFonts);
+                            // currentFont - font to the left of current non-significant symbol
+                            // pdfFont - font of the non-significant symbol
+                            // nextFont - font to the right of current non-significant symbol
+                            if (currentFont != pdfFont && nextFont != currentFont) {
+                                // In this case it means that non-significant symbol will be written by nextFont
+                                // (after break currentFont will be selected based on nextSignificantIndex(index, text))
+                                breakRequested = true;
+                            }
+                        } else if (pdfFont != null && currentFont != pdfFont) {
                             breakRequested = true;
                         }
                     }

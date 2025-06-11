@@ -30,8 +30,8 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
@@ -43,8 +43,8 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
                 "L with accent: \u004f\u0301\u0302 abc");
         Assertions.assertEquals(3, result.size());
         Assertions.assertEquals("L with accent: ", result.get(0).getFirst().toString());
-        Assertions.assertEquals("\u004f\u0301\u0302 ", result.get(1).getFirst().toString());
-        Assertions.assertEquals("abc", result.get(2).getFirst().toString());
+        Assertions.assertEquals("\u004f\u0301\u0302", result.get(1).getFirst().toString());
+        Assertions.assertEquals(" abc", result.get(2).getFirst().toString());
         // Diacritics and symbol were separated, but the font is the same
         Assertions.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
     }
@@ -57,8 +57,8 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
                 "L with accent: \u004f\u0302 abc");
         Assertions.assertEquals(3, result.size());
         Assertions.assertEquals("L with accent: ", result.get(0).getFirst().toString());
-        Assertions.assertEquals("\u004f\u0302 ", result.get(1).getFirst().toString());
-        Assertions.assertEquals("abc", result.get(2).getFirst().toString());
+        Assertions.assertEquals("\u004f\u0302", result.get(1).getFirst().toString());
+        Assertions.assertEquals(" abc", result.get(2).getFirst().toString());
         Assertions.assertNotEquals(result.get(0).getSecond(), result.get(1).getSecond());
     }
 
@@ -112,8 +112,8 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "text \uD800\uDF10\uD800\uDF00\uD800\uDF11 text");
         Assertions.assertEquals(3, result.size());
-        Assertions.assertEquals("text ", result.get(0).getFirst().toString());
-        Assertions.assertEquals("\uD800\uDF10\uD800\uDF00\uD800\uDF11 ", result.get(1).getFirst().toString());
+        Assertions.assertEquals("text", result.get(0).getFirst().toString());
+        Assertions.assertEquals(" \uD800\uDF10\uD800\uDF00\uD800\uDF11 ", result.get(1).getFirst().toString());
         Assertions.assertEquals("text", result.get(2).getFirst().toString());
         Assertions.assertEquals(result.get(0).getSecond(), result.get(2).getSecond());
     }
@@ -150,5 +150,53 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines("Hello\r\n   World!\r\n ");
         Assertions.assertEquals(1, result.size());
         Assertions.assertEquals("Hello\r\n   World!\r\n ", result.get(0).getFirst().toString());
+    }
+
+    @Test
+    public void nonSignificantRequiresFontChangeToRightTest() {
+        IFontSelectorStrategy strategy =
+                FontSelectorTestsUtil.createStrategyWithNotoSansCJKAndFreeSans(new BestMatchFontSelectorStrategyFactory());
+        final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
+                // u3000 is ideographicSpace from CJK, the same as u5F53 and u65B9
+                "EC50:\u3000\u5F53\u65B9");
+
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("\u3000\u5F53\u65B9", result.get(1).getFirst().toString());
+    }
+
+    @Test
+    public void nonSignificantRequiresFontChangeToLeftTest() {
+        IFontSelectorStrategy strategy =
+                FontSelectorTestsUtil.createStrategyWithNotoSansCJKAndFreeSans(new BestMatchFontSelectorStrategyFactory());
+        final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
+                // u3000 is ideographicSpace from CJK, the same as u5F53 and u65B9
+                "\u5F53\u65B9\u3000:EC50");
+
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(":EC50", result.get(1).getFirst().toString());
+    }
+
+    @Test
+    public void nonSignificantRequiresFontChangeBetweenSameFontsTest() {
+        IFontSelectorStrategy strategy =
+                FontSelectorTestsUtil.createStrategyWithNotoSansCJKAndFreeSans(new BestMatchFontSelectorStrategyFactory());
+        final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
+                // u3000 is ideographicSpace from CJK
+                "EC50:\u3000:EC50");
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("EC50:\u3000:EC50", result.get(0).getFirst().toString());
+    }
+
+    @Test
+    public void nonSignificantRequiresFontChangeToNullFontTest() {
+        IFontSelectorStrategy strategy =
+                FontSelectorTestsUtil.createStrategyWithNotoSansCJKAndFreeSans(new BestMatchFontSelectorStrategyFactory());
+        final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
+                // u3000 is ideographicSpace from CJK, uD800 + uDF10 is surrogate pair with no font
+                "EC50:\u3000\uD800\uDF10");
+
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("\u3000\uD800\uDF10", result.get(1).getFirst().toString());
     }
 }

@@ -25,19 +25,19 @@ package com.itextpdf.layout.font.selectorstrategy;
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.layout.font.selectorstrategy.FirstMatchFontSelectorStrategy.FirstMathFontSelectorStrategyFactory;
+import com.itextpdf.layout.font.selectorstrategy.FirstMatchFontSelectorStrategy.FirstMatchFontSelectorStrategyFactory;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
     @Test
     public void twoDiacriticsInRowTest() {
-        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithFreeSansAndTNR(new FirstMathFontSelectorStrategyFactory());
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithFreeSansAndTNR(new FirstMatchFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "L with accent: \u004f\u0301\u0302 abc");
@@ -48,7 +48,7 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
     @Test
     public void oneDiacriticTest() {
-        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithFreeSansAndTNR(new FirstMathFontSelectorStrategyFactory());
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithFreeSansAndTNR(new FirstMatchFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "L with accent: \u004f\u0302 abc");
@@ -60,7 +60,7 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
     @Test
     public void diacriticFontDoesnotContainPreviousSymbolTest() {
-        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithNotoSans(new FirstMathFontSelectorStrategyFactory());
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithNotoSans(new FirstMatchFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "Ми\u0301ръ (mírə)");
@@ -77,7 +77,7 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
     @Test
     public void oneDiacriticWithUnsupportedFontTest() {
-        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithTNR(new FirstMathFontSelectorStrategyFactory());
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithTNR(new FirstMatchFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "L with accent: \u004f\u0302 abc");
@@ -91,7 +91,7 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
     @Test
     public void oneDiacriticWithOneSupportedFontTest() {
-        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithFreeSans(new FirstMathFontSelectorStrategyFactory());
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithFreeSans(new FirstMatchFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
                 "L with accent: \u004f\u0302 abc");
@@ -101,7 +101,7 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
     @Test
     public void surrogatePairsTest() {
-        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithOldItalic(new FirstMathFontSelectorStrategyFactory());
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithOldItalic(new FirstMatchFontSelectorStrategyFactory());
 
         // this text contains three successive surrogate pairs
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
@@ -115,7 +115,7 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
     @Test
     public void simpleThreeFontTest() {
-        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithLimitedThreeFonts(new FirstMathFontSelectorStrategyFactory());
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithLimitedThreeFonts(new FirstMatchFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines("abcdefxyz");
         Assertions.assertEquals(1, result.size());
@@ -124,10 +124,21 @@ public class FirstMatchFontSelectorStrategyTest extends ExtendedITextTest {
 
     @Test
     public void threeFontWithSpacesTest() {
-        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithLimitedThreeFonts(new FirstMathFontSelectorStrategyFactory());
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithLimitedThreeFonts(new FirstMatchFontSelectorStrategyFactory());
 
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(" axadefa ");
         Assertions.assertEquals(1, result.size());
         Assertions.assertEquals(" axadefa ", result.get(0).getFirst().toString());
+    }
+
+    @Test
+    public void ideographicSpaceRequireFontChangeTest() {
+        IFontSelectorStrategy strategy =
+                FontSelectorTestsUtil.createStrategyWithNotoSansCJKAndFreeSans(new FirstMatchFontSelectorStrategyFactory());
+        final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(
+                "EC50:\u3000\u5F53\u65B9");
+
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("\u5F53\u65B9", result.get(1).getFirst().toString());
     }
 }
