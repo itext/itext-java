@@ -271,17 +271,25 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
                 java.io.OutputStream fout = this;
                 DeflaterOutputStream def = null;
                 OutputStreamEncryption ose = null;
+
+                long beginStreamContent;
                 if (crypto != null &&
                         (!crypto.isEmbeddedFilesOnly() || document.doesStreamBelongToEmbeddedFile(pdfStream))) {
+                    updateCryptFilterForEmbeddedFilesOnlyMode(pdfStream);
+
+                    // We should store current position here because crypto.getEncryptionStream(fout) may already
+                    // output something into the stream (iv vector for AES256)
+                    beginStreamContent = writePdfStreamAndGetPosition(pdfStream);
                     fout = ose = crypto.getEncryptionStream(fout);
-                }
-                if (toCompress && (allowCompression || userDefinedCompression)) {
+                } else if (toCompress && (allowCompression || userDefinedCompression)) {
                     updateCompressionFilter(pdfStream);
+
+                    beginStreamContent = writePdfStreamAndGetPosition(pdfStream);
                     fout = def = new DeflaterOutputStream(fout, pdfStream.getCompressionLevel(), 0x8000);
+                } else {
+                    beginStreamContent = writePdfStreamAndGetPosition(pdfStream);
                 }
-                this.write((PdfDictionary) pdfStream);
-                writeBytes(PdfOutputStream.stream);
-                long beginStreamContent = getCurrentPos();
+
                 byte[] buf = new byte[4192];
                 while (true) {
                     int n = pdfStream.getInputStream().read(buf);
@@ -342,6 +350,8 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
                         }
                     }
                     if (checkEncryption(pdfStream)) {
+                        updateCryptFilterForEmbeddedFilesOnlyMode(pdfStream);
+
                         ByteArrayOutputStream encodedStream = new ByteArrayOutputStream();
                         OutputStreamEncryption ose = crypto.getEncryptionStream(encodedStream);
                         byteArrayStream.writeTo(ose);
@@ -424,7 +434,7 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
         if (filter == null) {
             // Remove if any
             pdfStream.remove(PdfName.DecodeParms);
-            
+
             pdfStream.put(PdfName.Filter, PdfName.FlateDecode);
             return;
         }
@@ -449,7 +459,50 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
                         .setMessageParams(decodeParms.getClass().toString());
             }
         }
-        pdfStream.put(PdfName.Filter, filters);
+    }
+
+    /**
+     * Adds required Filter and DecodeParms to the pdf stream if the stream is embedded file stream
+     * and only embedded files are expected to be encrypted. See {@link EncryptionConstants#EMBEDDED_FILES_ONLY}.
+     *
+     * @param pdfStream embedded file pdf stream.
+     */
+    protected void updateCryptFilterForEmbeddedFilesOnlyMode(PdfStream pdfStream) {
+        if (crypto != null && crypto.isEmbeddedFilesOnly() &&
+                document.doesStreamBelongToEmbeddedFile(pdfStream) &&
+                // This code works only for AES256.
+                // All tests we currently have for earlier versions do not work with and without this code.
+                crypto.getEncryptionAlgorithm() >= EncryptionConstants.ENCRYPTION_AES_256) {
+            // Filter
+            PdfObject currentFilters = pdfStream.get(PdfName.Filter);
+            PdfArray filters = new PdfArray();
+            filters.add(PdfName.Crypt);
+            if (currentFilters instanceof PdfArray) {
+                filters.addAll((PdfArray) currentFilters);
+            } else if (currentFilters != null) {
+                filters.add(currentFilters);
+            }
+            pdfStream.put(PdfName.Filter, filters);
+
+            // DecodeParms
+            PdfDictionary crypt = new PdfDictionary();
+            crypt.put(PdfName.Name, PdfName.StdCF);
+            crypt.put(PdfName.Type, PdfName.CryptFilterDecodeParms);
+            PdfObject decodeParms = pdfStream.get(PdfName.DecodeParms);
+            if (decodeParms instanceof PdfDictionary || decodeParms == null) {
+                PdfArray array = new PdfArray();
+                array.add(crypt);
+                if (decodeParms != null) {
+                    array.add(decodeParms);
+                }
+                pdfStream.put(PdfName.DecodeParms, array);
+            } else if (decodeParms instanceof PdfArray) {
+                ((PdfArray) decodeParms).add(0, crypt);
+            } else {
+                throw new PdfException(KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED)
+                        .setMessageParams(decodeParms.getClass().toString());
+            }
+        }
     }
 
     protected byte[] decodeFlateBytes(PdfStream stream, byte[] bytes) {
@@ -549,6 +602,13 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
         }
 
         return bytes;
+    }
+
+    private long writePdfStreamAndGetPosition(PdfStream pdfStream) {
+        write((PdfDictionary) pdfStream);
+        writeBytes(PdfOutputStream.stream);
+
+        return getCurrentPos();
     }
 
     private static boolean isFlushed(PdfDictionary dict, PdfName name) {

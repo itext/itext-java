@@ -232,6 +232,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName CreatorInfo = createDirectName("CreatorInfo");
     public static final PdfName CropBox = createDirectName("CropBox");
     public static final PdfName Crypt = createDirectName("Crypt");
+    public static final PdfName CryptFilterDecodeParms = createDirectName("CryptFilterDecodeParms");
     public static final PdfName CS = createDirectName("CS");
     public static final PdfName CT = createDirectName("CT");
     public static final PdfName D = createDirectName("D");
