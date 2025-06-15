@@ -26,7 +26,7 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import sharpen.config.ExtendedMappingConfiguration;
+import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
 import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
@@ -35,7 +35,7 @@ import sharpen.config.OptionsConfigurator;
 /**
  * Class containing the sharpen mappings for {@code svg} module.
  */
-public class SharpenConfigMapping implements ExtendedMappingConfiguration {
+public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
         return 11;
@@ -68,6 +68,11 @@ public class SharpenConfigMapping implements ExtendedMappingConfiguration {
     }
 
     @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+
+    }
+
+    @Override
     public Collection<ModuleOption> getAvailableModuleSettings() {
         return Collections.EMPTY_SET;
     }
@@ -90,10 +95,5 @@ public class SharpenConfigMapping implements ExtendedMappingConfiguration {
     @Override
     public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
         return Collections.EMPTY_LIST;
-    }
-
-    @Override
-    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
-
     }
 }

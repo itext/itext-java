@@ -22,7 +22,8 @@
  */
 package com.itextpdf.kernel;
 
-import sharpen.config.ExtendedMappingConfiguration;
+import com.itextpdf.commons.UseBCWrappersModuleOption;
+import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
 import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
@@ -34,10 +35,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class SharpenConfigMapping implements ExtendedMappingConfiguration {
+public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 18;
+        return 12;
     }
 
     @Override
@@ -47,6 +48,8 @@ public class SharpenConfigMapping implements ExtendedMappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
+        configurator.mapNamespace("clipper", "ClipperLib");
+        configurator.mapNamespace("xmp", "XMP");
         configurator.addFullName("iText.Kernel.Events.IEventHandler");
         configurator.mapMethod("com.itextpdf.kernel.pdf.PdfObject.getType", "GetObjectType");
         configurator.mapMethod("com.itextpdf.kernel.events.Event.getType", "GetEventType");
@@ -153,6 +156,7 @@ public class SharpenConfigMapping implements ExtendedMappingConfiguration {
 
         configurator.mapMethodParametersOrder("com.itextpdf.kernel.crypto.CryptoUtil.getMessageDigest", "1");
         configurator.mapMethodParametersOrder("com.itextpdf.kernel.crypto.CryptoUtil.getMessageDigest(java.lang.String,java.lang.String)", "1");
+        //BouncyCastleWrappersConfigUtils.applyMappingConfiguration(configurator);
     }
 
     @Override
@@ -163,6 +167,11 @@ public class SharpenConfigMapping implements ExtendedMappingConfiguration {
     @Override
     public void applyConfigModuleSettings(ModulesConfigurator configurator) {
 
+    }
+
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+        modulesConfigurator.setModuleOption(UseBCWrappersModuleOption.getInstance(), true);
     }
 
     @Override
@@ -188,10 +197,5 @@ public class SharpenConfigMapping implements ExtendedMappingConfiguration {
     @Override
     public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
         return Collections.EMPTY_LIST;
-    }
-
-    @Override
-    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
-
     }
 }
