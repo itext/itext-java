@@ -539,9 +539,13 @@
                 <file path="com/itextpdf/signatures/testutils/report/xml/ReportNamespaceContext.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
             </fileset>
-            <fileset reason="Different xml reading implementation on .NET and java">
-                <file path="com/itextpdf/signatures/XmlCertificateRetriever.java"/>
-                <file path="com/itextpdf/signatures/XmlCertificateHandler.java"/>
+            <fileset reason="Different xml SAX reading implementation on .NET and java">
+                <file path="com/itextpdf/signatures/validation/AbstractXmlCertificateHandler.java"/>
+                <file path="com/itextpdf/signatures/validation/XmlCertificateRetriever.java"/>
+            </fileset>
+            <fileset reason="LocalDateTime and DateTime have different constructors and parsing">
+                <file path="com/itextpdf/signatures/validation/ServiceStatusInfo.java"/>
+                <file path="com/itextpdf/signatures/validation/XmlCertificateRetrieverTest.java"/>
             </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />
