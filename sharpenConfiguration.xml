@@ -53,6 +53,10 @@
                 <file path="com/itextpdf/commons/datastructures/ConcurrentWeakMap.java" />
                 <file path="com/itextpdf/commons/datastructures/ConcurrentWeakMapTest.java" />
             </fileset>
+            <fileset reason="Checking class instance is different">
+                <file path="com/itextpdf/commons/utils/RuntimeUtil.java"/>
+                <file path="com/itextpdf/commons/utils/RuntimeUtilTest.java"/>
+            </fileset>
             <fileset reason="SystemUtil is a manual class, and the methods of this class can have input and output other than java despite similar names.
         Therefore, the test for this class also cannot be ported automatically">
                 <file path="com/itextpdf/commons/utils/SystemUtilTest.java"/>
@@ -469,6 +473,10 @@
                 <file path="com/itextpdf/signatures/validation/lotl/XmlValidationUtils.java" />
                 <file path="com/itextpdf/signatures/validation/lotl/CertificateSelector.java" />
                 <file path="com/itextpdf/signatures/validation/lotl/xml/XmlSaxProcessor.java" />
+            </fileset>
+            <fileset reason="uri handeling and certificate handeling is different">
+                <file path="com/itextpdf/signatures/validation/EuropeanTrustedCertificatesResourceLoader.java"/>
+                <file path="com/itextpdf/signatures/validation/LoadFromModuleEuropeanTrustedListConfigurationFactory.java"/>
             </fileset>
             <file path="com/itextpdf/signatures/ProviderDigest.java"/>
             <fileset reason="ProviderDigest class exists only on Java.">

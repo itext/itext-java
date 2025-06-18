@@ -107,7 +107,7 @@ public final class SignExceptionMessageConstant {
     public static final String INVALID_ARGUMENTS = "Invalid parameters provided.";
     public static final String CMS_SIGNERINFO_READONLY =
             "Updating the signed attributes of this SignerInfo instance is" +
-            " not possible because it has been serialized or been initiated from a serialized version.";
+                    " not possible because it has been serialized or been initiated from a serialized version.";
     public static final String CMS_SIGNERINFO_NOT_INITIALIZED = "Signer info is not yet initialized";
     public static final String CMS_INVALID_CONTAINER_STRUCTURE = "Provided data is not a CMS container";
     public static final String CMS_ONLY_ONE_SIGNER_ALLOWED = "Only one signer per CMS container is allowed";
@@ -116,6 +116,12 @@ public final class SignExceptionMessageConstant {
             "The certificate set must at least contains the signer certificate";
     public static final String FAILED_TO_RETRIEVE_CERTIFICATE = "Failed to retrieve certificates from binary data.";
     public static final String FAILED_TO_GET_EU_LOTL = "Failed to get European List of Trusted Lists (LOTL) from {0}.";
+    public static final String CERTIFICATE_HASH_MISMATCH = "Certificate {0} hash mismatch.";
+    public static final String CERTIFICATE_HASH_NULL = "Hash was null.";
+    public static final String EU_RESOURCES_NOT_LOADED = "European Trusted List resources are not available. " +
+            "Please ensure that the itextpdf-eutrustedlistsresources module is included in your project. " +
+            "Alternatively, " +
+            " you can use the EuropeanTrustedListConfigurationFactory to load the resources from a custom location.";
 
     private SignExceptionMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly

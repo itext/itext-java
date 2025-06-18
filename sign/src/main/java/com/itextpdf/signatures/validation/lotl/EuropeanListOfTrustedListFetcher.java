@@ -25,10 +25,11 @@ package com.itextpdf.signatures.validation.lotl;
 import com.itextpdf.commons.exceptions.ITextException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.resolver.resource.IResourceRetriever;
+import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.validation.EuropeanTrustedListConfigurationFactory;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Date;
@@ -39,16 +40,8 @@ import java.util.Date;
  * This class is used to retrieve the LOTL XML file, which contains information about trusted lists in the European
  * Union.
  */
-class EuropeanListOfTrustedListFetcher {
-    private static final URL LOTL_URL;
+public class EuropeanListOfTrustedListFetcher {
 
-    static {
-        try {
-            LOTL_URL = new URL("https://ec.europa.eu/tools/lotl/eu-lotl.xml");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
 
     private final IResourceRetriever resourceRetriever;
     private byte[] lotlData;
@@ -66,12 +59,16 @@ class EuropeanListOfTrustedListFetcher {
 
     /**
      * Loads the List of Trusted Lists (LOTL) from the predefined URL.
+     *
+     * @throws IOException if there is an error retrieving the LOTL data
      */
     public void load() throws IOException {
-        byte[] data = resourceRetriever.getByteArrayByUrl(LOTL_URL);
+        EuropeanTrustedListConfigurationFactory factory = EuropeanTrustedListConfigurationFactory.getFactory().get();
+        final URL url = UrlUtil.toURL(factory.getTrustedListUri());
+        byte[] data = resourceRetriever.getByteArrayByUrl(url);
         if (data == null) {
             throw new ITextException(MessageFormatUtil.format(
-                    SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL, LOTL_URL.toString()));
+                    SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL, url.toString()));
         }
         this.lotlData = data;
         this.lastLoaded = new Date();
@@ -82,7 +79,7 @@ class EuropeanListOfTrustedListFetcher {
      * If the data has not been loaded yet, it will call the {@link #load()} method to fetch it.
      *
      * @return the LOTL data as a byte array
-     * @throws IOException
+     * @throws IOException if there is an error loading the LOTL data
      */
     public byte[] getLotlData() throws IOException {
         if (lotlData == null) {

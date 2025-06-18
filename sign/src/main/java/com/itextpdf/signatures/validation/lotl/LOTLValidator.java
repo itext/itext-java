@@ -24,23 +24,24 @@ package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
-import com.itextpdf.signatures.CertificateUtil;
+import com.itextpdf.signatures.validation.EuropeanTrustedListConfigurationFactory;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
-import com.itextpdf.signatures.validation.lotl.XmlCountryRetriever.CountrySpecificLotl;
+import com.itextpdf.signatures.validation.lotl.xml.XmlSaxProcessor;
 import com.itextpdf.signatures.validation.report.ReportItem;
-import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
-import com.itextpdf.signatures.validation.lotl.xml.XmlSaxProcessor;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.itextpdf.signatures.validation.lotl.XmlCountryRetriever.CountrySpecificLotl;
+import static com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 
 /**
  * Class responsible for complete LOTL validation.
@@ -75,16 +76,36 @@ public class LOTLValidator {
         this.builder = builder;
     }
 
-    ValidationReport validate() {
+    private static List<CountryServiceContext> mapIServiceContextToCountry(List<IServiceContext> serviceContexts) {
+        return serviceContexts.stream()
+                .map(serviceContext -> serviceContext instanceof CountryServiceContext ?
+                        (CountryServiceContext) serviceContext : null)
+                .filter(countryServiceContext -> countryServiceContext != null).collect(Collectors.toList());
+    }
+
+    /**
+     * Validates the List of Trusted Lists (LOTL) and country-specific LOTLs.
+     *
+     * @return a {@link ValidationReport} containing the results of the validation
+     */
+    public ValidationReport validate() {
         ValidationReport report = new ValidationReport();
         if (builder.getLotlFetchingProperties() == null) {
             report.addReportItem(new ReportItem(
                     LOTL_VALIDATION, LOTL_FETCHING_PROPERTIES_NOT_PROVIDED, ReportItemStatus.INVALID));
             return report;
         }
-        byte[] lotlXml = getLotlBytes();
-        if (lotlXml == null) {
-            report.addReportItem(new ReportItem(LOTL_VALIDATION, UNABLE_TO_RETRIEVE_LOTL, ReportItemStatus.INVALID));
+        byte[] lotlXml = null;
+        try {
+            lotlXml = getLotlBytes();
+            if (lotlXml == null) {
+                report.addReportItem(
+                        new ReportItem(LOTL_VALIDATION, UNABLE_TO_RETRIEVE_LOTL, ReportItemStatus.INVALID));
+                return report;
+            }
+        } catch (Exception e) {
+            report.addReportItem(new ReportItem(LOTL_VALIDATION, MessageFormatUtil.format(
+                    UNABLE_TO_RETRIEVE_LOTL, e.getMessage()), e, ReportItemStatus.INVALID));
             return report;
         }
         if (validatePivotFiles(report, lotlXml)) {
@@ -97,14 +118,11 @@ public class LOTLValidator {
      * Gets the bytes of a main LOTL file.
      *
      * @return {@code byte[]} array representing main LOTL file
+     * @throws IOException if there is an error retrieving the LOTL file
      */
-    protected byte[] getLotlBytes() {
+    protected byte[] getLotlBytes() throws IOException {
         byte[] lotlXml;
-        try {
-            lotlXml = new EuropeanListOfTrustedListFetcher(new DefaultResourceRetriever()).getLotlData();
-        } catch (Exception e) {
-            return null;
-        }
+        lotlXml = new EuropeanListOfTrustedListFetcher(new DefaultResourceRetriever()).getLotlData();
         return lotlXml;
     }
 
@@ -116,22 +134,17 @@ public class LOTLValidator {
      * However, it is possible to override this method and provide certificates manually.
      *
      * @param report {@link ValidationReport} to report validation related information
-     *
      * @return list of {@link Certificate} objects representing EU Journal certificates
      */
     protected List<Certificate> getEUJournalCertificates(ValidationReport report) {
-        return new EuropeanTrustedListConfiguration().getCertificates().stream()
-                .map(certificateWithHash -> {
-                    try {
-                        return CertificateUtil.readCertificatesFromPem(
-                                new ByteArrayInputStream(certificateWithHash.getPemCertificate().getBytes(
-                                        StandardCharsets.UTF_8)))[0];
-                    } catch (Exception e) {
-                        report.addReportItem(
-                                new ReportItem(LOTL_VALIDATION, JOURNAL_CERT_NOT_PARSABLE, e, ReportItemStatus.INFO));
-                        return null;
-                    }
-                }).filter(certificate -> certificate != null).collect(Collectors.toList());
+        EuropeanTrustedListConfigurationFactory factory = EuropeanTrustedListConfigurationFactory.getFactory().get();
+        try {
+            return factory.getCertificates();
+        } catch (Exception e) {
+            report.addReportItem(
+                    new ReportItem(LOTL_VALIDATION, JOURNAL_CERT_NOT_PARSABLE, e, ReportItemStatus.INFO));
+            return new ArrayList<>();
+        }
     }
 
     List<CountryServiceContext> getNationalTrustedCertificates() {
@@ -239,12 +252,5 @@ public class LOTLValidator {
                     schemaNames.contains(countrySpecificLotl.getSchemeTerritory())).collect(Collectors.toList());
         }
         return countrySpecificLotls;
-    }
-
-    private static List<CountryServiceContext> mapIServiceContextToCountry(List<IServiceContext> serviceContexts) {
-        return serviceContexts.stream()
-                .map(serviceContext -> serviceContext instanceof CountryServiceContext ?
-                        (CountryServiceContext) serviceContext : null)
-                .filter(countryServiceContext -> countryServiceContext != null).collect(Collectors.toList());
     }
 }
