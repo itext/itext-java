@@ -30,8 +30,10 @@ import com.itextpdf.io.codec.TIFFField;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfIndirectReference;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -53,6 +55,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -266,6 +269,591 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 e.getMessage());
     }
 
+    @Test
+    public void deviceGray8bitTest() throws Exception {
+        testFile("deviceGray8bit.pdf", "fzImg0", "png");
+    }
+
+    @Test
+    public void deviceGray8bitFlateDecodeTest() throws Exception {
+        testFile("deviceGray8bitFlateDecode.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void deviceGray1bitFlateDecodeInvertedTest() throws Exception {
+        testFile("deviceGray1bitFlateDecodeInverted.pdf", "Im0", "png", true);
+    }
+
+    @Test
+    //TODO DEVSIX-7015 Support decoding images with Decode array and BitsPerComponent more than 1
+    public void deviceGray4bitFlateDecodeInvertedTest() throws Exception {
+        testFile("deviceGray4bitFlateDecodeInverted.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void deviceGray8bitFlateDecodeWithMaskTest() throws Exception {
+        testFile("deviceGray8bitFlateDecodeWithMask.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void deviceGray8bitDctDecodeTest() throws Exception {
+        testFile("deviceGray8bitDctDecode.pdf", "fzImg0", "jpg");
+    }
+
+    @Test
+    public void deviceGray8bitJPXDecodeTest() throws Exception {
+        testFile("deviceGray8bitJPXDecode.pdf", "fzImg0", "jp2");
+    }
+
+    @Test
+    public void deviceGray1bitCCITTFaxDecodeTest() throws Exception {
+        testFile("deviceGray1bitCCITTFaxDecode.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void deviceGray8bitFlateDecodeMaskRotatedTest() throws Exception {
+        testFile("deviceGray8bitFlateDecodeMaskRotated.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void deviceGray8bitFlateDecodeScaledTest() throws Exception {
+        testFile("deviceGray8bitFlateDecodeScaled.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void deviceGray8bitFlateCombinedTransformationTest() throws Exception {
+        testFile("deviceGray8bitFlateCombinedTransformation.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void dRgb1BitDecodeInvertTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb1BitDecodeInvert.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                1), e.getMessage());
+    }
+
+    @Test
+    public void dRgb1BitDecodeTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb1BitDecode.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                1), e.getMessage());
+    }
+
+    @Test
+    public void dRgb1BitTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb1Bit.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                1), e.getMessage());
+    }
+
+    @Test
+    public void dRgb4BitDecodeInvertTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb4BitDecodeInvert.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                4), e.getMessage());
+    }
+
+    @Test
+    public void dRgb4BitDecodeTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb4BitDecode.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                4), e.getMessage());
+    }
+
+    @Test
+    public void dRgb4BitTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb4Bit.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                4), e.getMessage());
+    }
+
+    @Test
+    public void dRgbDctDecodeInvertTest() throws Exception {
+        testFile("dRgbDctDecodeInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDctDecodeTest() throws Exception {
+        testFile("dRgbDctDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDctMaskedTest() throws Exception {
+        testFile("dRgbDctMasked.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTMaskedDecodeTest() throws Exception {
+        testFile("dRgbDCTMaskedDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTMaskedInvertTest() throws Exception {
+        testFile("dRgbDCTMaskedInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTtransformationsDecodeInvertTest() throws Exception {
+        testFile("dRgbDCTtransformationsDecodeInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTtransformationsDecodeTest() throws Exception {
+        testFile("dRgbDCTtransformationsDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTtransformationsMaskedDecodeInvertTest() throws Exception {
+        testFile("dRgbDCTtransformationsMaskedDecodeInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTtransformationsMaskedDecodeTest() throws Exception {
+        testFile("dRgbDCTtransformationsMaskedDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTtransformationsTest() throws Exception {
+        testFile("dRgbDCTtransformations.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyDecodeInvertTest() throws Exception {
+        testFile("dRgbDCTTransparancyDecodeInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyDecodeTest() throws Exception {
+        testFile("dRgbDCTTransparancyDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyMaskDecodeInvertTest() throws Exception {
+        testFile("dRgbDCTTransparancyMaskDecodeInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyMaskDecodeTest() throws Exception {
+        testFile("dRgbDCTTransparancyMaskDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyMaskTest() throws Exception {
+        testFile("dRgbDCTTransparancyMask.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyTest() throws Exception {
+        testFile("dRgbDCTTransparancy.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyTransformDecodeInvertTest() throws Exception {
+        testFile("dRgbDCTTransparancyTransformDecodeInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyTransformDecodeTest() throws Exception {
+        testFile("dRgbDCTTransparancyTransformDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyTransformMaskDecodeInvertTest() throws Exception {
+        testFile("dRgbDCTTransparancyTransformMaskDecodeInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyTransformMaskDecodeTest() throws Exception {
+        testFile("dRgbDCTTransparancyTransformMaskDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyTransformMaskTest() throws Exception {
+        testFile("dRgbDCTTransparancyTransformMask.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbDCTTransparancyTransformTest() throws Exception {
+        testFile("dRgbDCTTransparancyTransform.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void dRgbFlateTest() throws Exception {
+        testFile("dRgbFlate.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void dRgbFlateTransparencyTest() throws Exception {
+        testFile("dRgbFlateTransparency.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void dRgbFlateInvertedTest() throws Exception {
+        testFile("dRgbFlateInverted.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void dRgbFlateRotatedTest() throws Exception {
+        testFile("dRgbFlateRotated.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void dRgbFlateRotatedInvertedTest() throws Exception {
+        testFile("dRgbFlateRotatedInverted.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void dRgbFlate1bitTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("dRgbFlate1bit.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                1), e.getMessage());
+    }
+
+    @Test
+    public void dRgbFlate4bitTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("dRgbFlate4bit.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                4), e.getMessage());
+    }
+    
+    @Test
+    public void ICCBasedDctMaskedInvertedTest() throws Exception {
+        testFile("ICCBasedDctMaskedInverted.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void ICCBasedDCTTransformMaskedDecodeTest() throws Exception {
+        testFile("ICCBasedDCTTransformMaskedDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void ICCBasedDCTTransformMaskedDecodeInvertTest() throws Exception {
+        testFile("ICCBasedDCTTransformMaskedDecodeInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void ICCBasedFlateTransformMaskedDecodeTest() throws Exception {
+        testFile("ICCBasedFlateTransformMaskedDecode.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void ICCBasedFlateTransformMaskedDecodeInvertTest() throws Exception {
+        testFile("ICCBasedFlateTransformMaskedDecodeInvert.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void deviceCMYKTest() throws Exception {
+        testFile("deviceCMYK.pdf", "Im1", "tif");
+    }
+
+    @Test
+    public void deviceCMYKFlateDecodeInvertedTest() throws Exception {
+        testFile("deviceCMYKFlateDecodeInverted.pdf", "Im1", "tif");
+    }
+
+    @Test
+    public void calGray8bitTest() throws Exception {
+        testFile("calGray8bit.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calGray8bitGamma22Test() throws Exception {
+        testFile("calGray8bitGamma22.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calGray8bitGamma18InvertedTest() throws Exception {
+        testFile("calGray8bitGamma18Inverted.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calGray1bitTest() throws Exception {
+        testFile("calGray1bit.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calGray1bitInvertedTest() throws Exception {
+        testFile("calGray1bitInverted.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calGray4bitGamma22Test() throws Exception {
+        testFile("calGray4bitGamma22.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calGray4bitGamma10InvertedTest() throws Exception {
+        testFile("calGray4bitGamma10Inverted.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calGray8bitExtGStateTest() throws Exception {
+        testFile("calGray8bitExtGStateTest.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calRGB8bitTest() throws Exception {
+        testFile("calRGB8bit.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calRGB8bitCustomGammaTest() throws Exception {
+        testFile("calRGB8bitCustomGamma.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calRGB8bitInvertedTest() throws Exception {
+        testFile("calRGB8bitInverted.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calRGB4bitTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("calRGB4bit.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                "4"), e.getMessage());
+    }
+
+    @Test
+    public void calRGB8bitNoFilterTest() throws Exception {
+        testFile("calRGB8bitNoFilter.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calRGB8bitSMaskTest() throws Exception {
+        testFile("calRGB8bitSMask.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calRGB8bitExtGStateTest() throws Exception {
+        testFile("calRGB8bitExtGState.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calRGB8bitCustomWhitePointTest() throws Exception {
+        testFile("calRGB8bitCustomWhitePoint.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calRGB1bitTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("calRGB1bit.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                "1"), e.getMessage());
+    }
+
+    @Test
+    public void calRGB2bitTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("calRGB2bit.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                "2"), e.getMessage());
+    }
+
+    @Test
+    public void lab8bitTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("lab8bit.pdf", "Im1", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                "/Lab"), e.getMessage());
+    }
+
+    @Test
+    public void labDctMaskedTest() throws Exception {
+        testFile("labDctMasked.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void labDctTransformTest() throws Exception {
+        testFile("labDctTransform.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void labDctTransparancyTest() throws Exception {
+        testFile("labDctTransparancy.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void labDctTransparancyMaskTest() throws Exception {
+        testFile("labDctTransparancyMask.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void labDctTransparancyTransformTest() throws Exception {
+        testFile("labDctTransparancyTransform.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void labDctTransparancyTransformMaskTest() throws Exception {
+        testFile("labDctTransparancyTransformMask.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    public void indexed1bitTest() throws Exception {
+        testFile("indexed1bit.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void indexed2bitTest() throws Exception {
+        testFile("indexed2bit.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void indexed4bitTest() throws Exception {
+        testFile("indexed4bit.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void indexed8bitTest() throws Exception {
+        testFile("indexed8bit.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void indexed8bitGradientTest() throws Exception {
+        testFile("indexed8bitGradient.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void indexed8bitSMaskTest() throws Exception {
+        testFile("indexed8bitSMask.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void separation1bitDeviceCMYKTest() {
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> testFile("separation1bitDeviceCMYK.pdf", "Im0", "png"));
+        Assertions.assertEquals(KernelExceptionMessageConstant.GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB,
+                e.getMessage());
+
+    }
+
+    @Test
+    public void separation8bitDeviceCMYKTest() {
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> testFile("separation8bitDeviceCMYK.pdf", "Im0", "png"));
+        Assertions.assertEquals(KernelExceptionMessageConstant.GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB,
+                e.getMessage());
+    }
+
+    @Test
+    public void separation8bitDeviceRGBTest() throws Exception {
+        testFile("separation8bitDeviceRGB.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void separation8bitLabTest() throws Exception {
+        testFile("separation8bitLab.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void separation8bitDeviceCMYKExtGStateTest() {
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> testFile("separation8bitDeviceCMYKExtGState.pdf", "Im0", "png"));
+        Assertions.assertEquals(KernelExceptionMessageConstant.GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB,
+                e.getMessage());
+    }
+
+    @Test
+    public void separation8bitDeviceRGBTransparencyTest() throws Exception {
+        testFile("separation8bitDeviceRGBTransparency.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void separation8bitDeviceRGBDctDecodeTest() throws Exception {
+        testFile("separation8bitDeviceRGBDctDecode.pdf", "Im0", "jpg");
+    }
+
+    @Test
+    public void separation8bitDeviceRGBCustomDecodeRangeTest() throws Exception {
+        testFile("separation8bitDeviceRGBCustomDecodeRange.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void separation1bitDeviceRGBTest() throws Exception {
+        testFile("separation1bitDeviceRGB.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void separation2bitDeviceRGBTest() throws Exception {
+        testFile("separation2bitDeviceRGB.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void separation4bitDeviceRGBTest() throws Exception {
+        testFile("separation4bitDeviceRGB.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void deviceN8bitDeviceCMYKTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("deviceN8bitDeviceCMYK.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                "/DeviceN"), e.getMessage());
+    }
+
+    @Test
+    public void deviceN8bitDeviceRGBTransparencyTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("deviceN8bitDeviceRGBTransparency.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                "/DeviceN"), e.getMessage());
+    }
+
+    @Test
+    public void deviceN8bitDeviceRGBSpotASpotBTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("deviceN8bitDeviceRGBSpotASpotB.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                "/DeviceN"), e.getMessage());
+    }
+
+    @Test
+    public void deviceN4bitDeviceCMYKTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("deviceN4bitDeviceCMYKTest.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
+                "4"), e.getMessage());
+    }
+
+    @Test
+    public void deviceN8bitDeviceCMYKTransparencyDCTDecodeTest() throws Exception {
+        testFile("deviceN8bitDeviceCMYKTransparencyDCTDecode.pdf", "Im0", "jpg");
+    }
+
+    @Test
+    public void deviceN8bit5ChannelsTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("deviceN8bit5Channels.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                "/DeviceN"), e.getMessage());
+    }
+
+    @Test
+    public void deviceN8bitDeviceRGBCustomDecodeTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("deviceN8bitDeviceRGBCustomDecode.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                "/DeviceN"), e.getMessage());
+    }
+
+    @Test
+    public void deviceN8bitDeviceCMYKFunctionType0Test() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("deviceN8bitDeviceCMYKFunctionType0.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                "/DeviceN"), e.getMessage());
+    }
+
+    @Test
+    public void deviceN8bitDeviceRGBRotatedTest() {
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("deviceN8bitDeviceRGBRotated.pdf", "Im0", "tif"));
+        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                "/DeviceN"), e.getMessage());
+    }
+
     private void testFile(String filename, String objectid, String expectedImageFormat) throws Exception {
         testFile(filename, objectid, expectedImageFormat, false);
     }
@@ -276,13 +864,13 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 PdfDocument pdfDocument = new PdfDocument(reader)) {
             PdfResources resources = pdfDocument.getPage(1).getResources();
             PdfDictionary xobjects = resources.getResource(PdfName.XObject);
-            PdfObject obj = xobjects.get(new PdfName(objectid));
-            if (obj == null) {
-                throw new IllegalArgumentException("Reference " + objectid
+
+            PdfImageXObject img = findImageXObjectByName(xobjects, new PdfName(objectid));
+
+            if (img == null) {
+                throw new IllegalArgumentException("Image reference " + objectid
                         + " not found - Available keys are " + xobjects.keySet());
             }
-
-            PdfImageXObject img = new PdfImageXObject((PdfStream) obj);
 
             Assertions.assertEquals(expectedImageFormat, img.identifyImageFileExtension());
 
@@ -293,6 +881,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
                                 filename.substring(0, filename.length() - 4) + ".new." + expectedImageFormat),
                         result);
             }
+
             byte[] cmpBytes = Files.readAllBytes(Paths.get(
                     SOURCE_FOLDER, filename.substring(0, filename.length() - 4) + "." + expectedImageFormat));
             if (img.identifyImageFileExtension().equals("tif")) {
@@ -301,6 +890,41 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 Assertions.assertArrayEquals(cmpBytes, result);
             }
         }
+    }
+
+
+    private PdfImageXObject findImageXObjectByName(PdfDictionary xobjects, PdfName targetName) {
+        if (xobjects == null) {
+            return null;
+        }
+
+        for (PdfName name : xobjects.keySet()) {
+            PdfObject obj = xobjects.get(name);
+            if (obj == null) continue;
+
+            if (obj.isIndirectReference()) {
+                obj = ((PdfIndirectReference) obj).getRefersTo();
+            }
+
+            if (!(obj instanceof PdfStream)) continue;
+            PdfStream stream = (PdfStream) obj;
+            PdfName subtype = stream.getAsName(PdfName.Subtype);
+
+            if (PdfName.Image.equals(subtype) && name.equals(targetName)) {
+                return new PdfImageXObject(stream);
+            }
+
+            if (PdfName.Form.equals(subtype)) {
+                PdfDictionary innerResources = stream.getAsDictionary(PdfName.Resources);
+                if (innerResources != null) {
+                    PdfDictionary innerXObjects = innerResources.getAsDictionary(PdfName.XObject);
+                    PdfImageXObject result = findImageXObjectByName(innerXObjects, targetName);
+                    if (result != null) return result;
+                }
+            }
+        }
+
+        return null;
     }
 
     private void compareTiffImages(byte[] cmpBytes, byte[] resultBytes) throws IOException {
