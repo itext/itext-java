@@ -27,6 +27,9 @@ import com.itextpdf.io.font.PdfEncodings;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class containing base CMap functionality
+ */
 public abstract class AbstractCMap {
 
 
@@ -34,7 +37,12 @@ public abstract class AbstractCMap {
     private String registry;
     private String ordering;
     private int supplement;
-    
+
+    /**
+     * Gets cmap table name.
+     *
+     * @return table name
+     */
     public String getName() {
         return cmapName;
     }
@@ -42,7 +50,12 @@ public abstract class AbstractCMap {
     void setName(String cmapName) {
         this.cmapName = cmapName;
     }
-    
+
+    /**
+     * Gets string that uniquely names the character collection within the specified registry.
+     *
+     * @return character collection name
+     */
     public String getOrdering() {
         return ordering;
     }
@@ -50,7 +63,12 @@ public abstract class AbstractCMap {
     void setOrdering(String ordering) {
         this.ordering = ordering;
     }
-    
+
+    /**
+     * Gets string identifying the issuer of the character collection.
+     *
+     * @return name of the issuer
+     */
     public String getRegistry() {
         return registry;
     }
@@ -58,7 +76,12 @@ public abstract class AbstractCMap {
     void setRegistry(String registry) {
         this.registry = registry;
     }
-    
+
+    /**
+     * Gets the supplement number of the character collection.
+     *
+     * @return supplement number
+     */
     public int getSupplement() {
         return supplement;
     }
@@ -110,6 +133,13 @@ public abstract class AbstractCMap {
 //        }
 //    }
 
+    /**
+     * Converts given string to a byte array.
+     *
+     * @param range string to convert
+     *
+     * @return byte array representation of the provided string
+     */
     public static byte[] decodeStringToByte(String range) {
         byte[] bytes = new byte[range.length()];
         for (int i = 0; i < range.length(); i++) {
@@ -118,6 +148,15 @@ public abstract class AbstractCMap {
         return bytes;
     }
 
+    /**
+     * Converts string in pdf encoding to string in unicode encoding.
+     *
+     * @param value string in pdf encoding (Either {@link PdfEncodings#UNICODE_BIG_UNMARKED},
+     *              {@link PdfEncodings#UNICODE_BIG}, {@link PdfEncodings#PDF_DOC_ENCODING})
+     * @param isHexWriting marker if string is hex encoded
+     *
+     * @return string in unicode encoding
+     */
     protected String toUnicodeString(String value, boolean isHexWriting) {
         byte[] bytes = decodeStringToByte(value);
         if (isHexWriting) {
