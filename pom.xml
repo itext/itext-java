@@ -252,6 +252,9 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>${maven.jar.version}</version>
+        <configuration>
+          <skipIfEmpty>true</skipIfEmpty>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
