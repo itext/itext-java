@@ -22,7 +22,7 @@
  */
 package com.itextpdf.bouncycastlefips;
 
-import sharpen.config.MappingConfiguration;
+import sharpen.config.ExtendedMappingConfiguration;
 import sharpen.config.MappingConfigurator;
 import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class SharpenConfigMapping implements MappingConfiguration {
+public class SharpenConfigMapping implements ExtendedMappingConfiguration {
     @Override
     public int getMappingPriority() {
         return 15;
@@ -148,5 +148,10 @@ public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
         return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+
     }
 }
