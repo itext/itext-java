@@ -190,6 +190,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName CF = createDirectName("CF");
     public static final PdfName CFM = createDirectName("CFM");
     public static final PdfName Ch = createDirectName("Ch");
+    public static final PdfName CharSet = new PdfName("CharSet");
     public static final PdfName CI = createDirectName("CI");
     public static final PdfName CIDFontType0 = createDirectName("CIDFontType0");
     public static final PdfName CIDFontType2 = createDirectName("CIDFontType2");

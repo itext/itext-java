@@ -34,13 +34,18 @@ import com.itextpdf.io.util.IntHashtable;
 import java.io.Closeable;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 class OpenTypeParser implements Closeable {
-
+    private static final int ARG_1_AND_2_ARE_WORDS = 1;
+    private static final int WE_HAVE_A_SCALE = 8;
+    private static final int MORE_COMPONENTS = 32;
+    private static final int WE_HAVE_AN_X_AND_Y_SCALE = 64;
+    private static final int WE_HAVE_A_TWO_BY_TWO = 128;
 
     private static final int HEAD_LOCA_FORMAT_OFFSET = 51;
 
@@ -191,6 +196,9 @@ class OpenTypeParser implements Closeable {
     protected int cffLength;
 
     private int[] glyphWidthsByIndex;
+    private int[] locaTable;
+    // In case of lenient mode parsing 'name' table can be missed
+    private boolean isLenientMode = false;
 
     protected HeaderTable head;
     protected HorizontalHeader hhea;
@@ -206,8 +214,28 @@ class OpenTypeParser implements Closeable {
      */
     protected Map<String, int[]> tables;
 
+    /**
+     * Instantiates a new {@link OpenTypeParser} instance based on raw font data.
+     *
+     * @param ttf the raw font data
+     *
+     * @throws java.io.IOException if any input/output issue occurs
+     */
     public OpenTypeParser(byte[] ttf) throws java.io.IOException {
+        this(ttf, false);
+    }
+
+    /**
+     * Instantiates a new {@link OpenTypeParser} instance based on raw font data.
+     *
+     * @param ttf the raw font data
+     * @param isLenientMode whether font parsing will be in lenient mode (when some tables are allowed to be absent) or not
+     *
+     * @throws java.io.IOException if any input/output issue occurs
+     */
+    public OpenTypeParser(byte[] ttf, boolean isLenientMode) throws java.io.IOException {
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttf));
+        this.isLenientMode = isLenientMode;
         initializeSfntTables();
     }
 
@@ -238,10 +266,13 @@ class OpenTypeParser implements Closeable {
      */
     public String getPsFontName() {
         if (fontName == null) {
-            List<String[]> names = allNameEntries.get(6);
-            if (names != null && names.size() > 0) {
-                fontName = names.get(0)[3];
-            } else {
+            if (!allNameEntries.isEmpty()) {
+                List<String[]> names = allNameEntries.get(6);
+                if (names != null && !names.isEmpty()) {
+                    fontName = names.get(0)[3];
+                }
+            }
+            if (fontName == null && fileName != null) {
                 fontName = new File(fileName).getName().replace(' ', '-');
             }
         }
@@ -314,6 +345,13 @@ class OpenTypeParser implements Closeable {
         return cff;
     }
 
+    /**
+     * Gets the raw bytes of parsed font.
+     *
+     * @return the raw bytes of parsed font
+     *
+     * @throws java.io.IOException if any input/output issue occurs
+     */
     public byte[] getFullFont() throws java.io.IOException {
         RandomAccessFileOrArray rf2 = null;
         try {
@@ -329,6 +367,51 @@ class OpenTypeParser implements Closeable {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    /**
+     * Gets glyph data from `glyph` table for passed GID (glyph ID).
+     *
+     * @param gid the glyph ID to get data for
+     *
+     * @return the raw glyph data
+     *
+     * @throws java.io.IOException if any input/output issue occurs
+     */
+    public byte[] getGlyphDataForGid(int gid) throws java.io.IOException {
+        int[] tableLocation = tables.get("glyf");
+        if (tableLocation == null) {
+            throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("glyf", fileName);
+        }
+        int glyfOffset = tableLocation[0];
+        int start = locaTable[gid];
+        int len = locaTable[gid + 1] - start;
+        byte[] data = new byte[len];
+        raf.seek(glyfOffset + start);
+        raf.readFully(data, 0, len);
+        return data;
+    }
+
+    /**
+     * Gets horizontal metric data from `hmtx` table for passed GID (glyph ID).
+     *
+     * @param gid the glyph ID to get data for
+     *
+     * @return the raw horizontal metric data
+     *
+     * @throws java.io.IOException if any input/output issue occurs
+     */
+    public byte[] getHorizontalMetricForGid(int gid) throws java.io.IOException {
+        int[] tableLocation = tables.get("hmtx");
+        if (tableLocation == null) {
+            throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("hmtx", fileName);
+        }
+        int hmtxOffset = tableLocation[0];
+        // 4 bytes per each glyph, 2 bytes for width, 2 bytes for left side bearing
+        raf.seek(hmtxOffset + gid * 4);
+        byte[] metric = new byte[4];
+        raf.read(metric, 0, 4);
+        return metric;
     }
 
     /**
@@ -359,9 +442,20 @@ class OpenTypeParser implements Closeable {
         }
     }
 
-    byte[] getSubset(Set<Integer> glyphs, boolean subset) throws java.io.IOException {
-        TrueTypeFontSubset sb = new TrueTypeFontSubset(fileName,
-                raf.createView(), glyphs, directoryOffset, subset);
+    /**
+     * Gets raw bytes of subset of parsed font.
+     *
+     * @param glyphs the glyphs to subset the font
+     * @param subsetTables whether subset tables (remove `name` and `post` tables) or not. It's used in case of ttc
+     *                      (true type collection) font where single "full" font is needed. Despite the value of that
+     *                      flag, only used glyphs will be left in the font
+     *
+     * @return the raw data of subset font
+     *
+     * @throws java.io.IOException if any input/output issue occurs
+     */
+    byte[] getSubset(Set<Integer> glyphs, boolean subsetTables) throws java.io.IOException {
+        TrueTypeFontSubsetter sb = new TrueTypeFontSubsetter(fileName, this, glyphs, subsetTables);
         return sb.process();
     }
 
@@ -371,6 +465,79 @@ class OpenTypeParser implements Closeable {
             raf.close();
         }
         raf = null;
+    }
+
+    /**
+     * Gets flatten glyphs based on passed glyphs. Flattening means that for all
+     * composite glyphs contour glyph will be added to the returned list.
+     *
+     * @param glyphs the glyphs to flatten
+     *
+     * @return the list of passed glyphs plus their contours (if there are)
+     *
+     * @throws java.io.IOException if any input/output issue occurs
+     */
+    public List<Integer> getFlatGlyphs(Set<Integer> glyphs) throws java.io.IOException {
+        Set<Integer> glyphsUsed = new HashSet<>(glyphs);
+        List<Integer> glyphsInList = new ArrayList<>(glyphs);
+
+        int glyph0 = 0;
+        if (!glyphsUsed.contains(glyph0)) {
+            glyphsUsed.add(glyph0);
+            glyphsInList.add(glyph0);
+        }
+        int[] tableLocation = tables.get("glyf");
+        if (tableLocation == null) {
+            throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("glyf", fileName);
+        }
+        int glyfOffset = tableLocation[0];
+        // Do not replace with foreach. ConcurrentModificationException will arise.
+        for (int i = 0; i < glyphsInList.size(); i++) {
+            checkGlyphComposite((int) glyphsInList.get(i), glyphsUsed, glyphsInList, glyfOffset);
+        }
+
+        return glyphsInList;
+    }
+
+    private void checkGlyphComposite(int glyph, Set<Integer> glyphsUsed, List<Integer> glyphsInList, int glyfOffset) throws java.io.IOException {
+        int start = locaTable[glyph];
+
+        // no contour
+        if (start == locaTable[glyph + 1]) {
+            return;
+        }
+        raf.seek(glyfOffset + start);
+        int numContours = raf.readShort();
+        if (numContours >= 0) {
+            return;
+        }
+        raf.skipBytes(8);
+        for (; ; ) {
+            int flags = raf.readUnsignedShort();
+            int cGlyph = raf.readUnsignedShort();
+            if (!glyphsUsed.contains(cGlyph)) {
+                glyphsUsed.add(cGlyph);
+                glyphsInList.add(cGlyph);
+            }
+            if ((flags & MORE_COMPONENTS) == 0) {
+                return;
+            }
+            int skip;
+            if ((flags & ARG_1_AND_2_ARE_WORDS) != 0) {
+                skip = 4;
+            } else {
+                skip = 2;
+            }
+            if ((flags & WE_HAVE_A_SCALE) != 0) {
+                skip += 2;
+            } else if ((flags & WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
+                skip += 4;
+            }
+            if ((flags & WE_HAVE_A_TWO_BY_TWO) != 0) {
+                skip += 8;
+            }
+            raf.skipBytes(skip);
+        }
     }
 
     private void initializeSfntTables() throws java.io.IOException {
@@ -436,12 +603,15 @@ class OpenTypeParser implements Closeable {
         readNameTable();
         readHeadTable();
         readOs_2Table();
+        if (all) {
+            readHheaTable();
+        }
         readPostTable();
         if (all) {
             checkCff();
-            readHheaTable();
             readGlyphWidths();
             readCmapTable();
+            readLoca();
         }
     }
 
@@ -465,12 +635,11 @@ class OpenTypeParser implements Closeable {
     }
 
     protected void checkCff() {
-        int table_location[];
-        table_location = tables.get("CFF ");
-        if (table_location != null) {
+        int[] tableLocation = tables.get("CFF ");
+        if (tableLocation != null) {
             cff = true;
-            cffOffset = table_location[0];
-            cffLength = table_location[1];
+            cffOffset = tableLocation[0];
+            cffLength = tableLocation[1];
         }
     }
 
@@ -484,8 +653,7 @@ class OpenTypeParser implements Closeable {
     protected void readGlyphWidths() throws java.io.IOException {
         int numberOfHMetrics = hhea.numberOfHMetrics;
         int unitsPerEm = head.unitsPerEm;
-        int table_location[];
-        table_location = tables.get("hmtx");
+        int[] table_location = tables.get("hmtx");
         if (table_location == null) {
             if (fileName != null) {
                 throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("hmtx", fileName);
@@ -554,38 +722,10 @@ class OpenTypeParser implements Closeable {
      * @throws java.io.IOException the font file could not be read
      */
     protected int[][] readBbox(int unitsPerEm) throws java.io.IOException {
-        int tableLocation[];
-        tableLocation = tables.get("head");
-        if (tableLocation == null) {
-            if (fileName != null) {
-                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("head", fileName);
-            } else {
-                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("head");
-            }
-        }
-        raf.seek(tableLocation[0] + HEAD_LOCA_FORMAT_OFFSET);
-        boolean locaShortTable = raf.readUnsignedShort() == 0;
-        tableLocation = tables.get("loca");
-        if (tableLocation == null) {
+        if (locaTable == null) {
             return null;
         }
-        raf.seek(tableLocation[0]);
-        int locaTable[];
-        if (locaShortTable) {
-            int entries = tableLocation[1] / 2;
-            locaTable = new int[entries];
-            for (int k = 0; k < entries; ++k) {
-                locaTable[k] = raf.readUnsignedShort() * 2;
-            }
-        } else {
-            int entries = tableLocation[1] / 4;
-            locaTable = new int[entries];
-            for (int k = 0; k < entries; ++k) {
-                locaTable[k] = raf.readInt();
-            }
-        }
-
-        tableLocation = tables.get("glyf");
+        int[] tableLocation = tables.get("glyf");
         if (tableLocation == null) {
             if (fileName != null) {
                 throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("glyf", fileName);
@@ -620,6 +760,37 @@ class OpenTypeParser implements Closeable {
         }
     }
 
+    private void readLoca() throws java.io.IOException {
+        int[] tableLocation = tables.get("head");
+        if (tableLocation == null) {
+            if (fileName != null) {
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("head", fileName);
+            } else {
+                throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("head");
+            }
+        }
+        raf.seek(tableLocation[0] + HEAD_LOCA_FORMAT_OFFSET);
+        boolean locaShortTable = raf.readUnsignedShort() == 0;
+        tableLocation = tables.get("loca");
+        if (tableLocation == null) {
+            return;
+        }
+        raf.seek(tableLocation[0]);
+        if (locaShortTable) {
+            int entries = tableLocation[1] / 2;
+            locaTable = new int[entries];
+            for (int k = 0; k < entries; ++k) {
+                locaTable[k] = raf.readUnsignedShort() * 2;
+            }
+        } else {
+            int entries = tableLocation[1] / 4;
+            locaTable = new int[entries];
+            for (int k = 0; k < entries; ++k) {
+                locaTable[k] = raf.readInt();
+            }
+        }
+    }
+
     /**
      * Extracts the names of the font in all the languages available.
      *
@@ -628,14 +799,17 @@ class OpenTypeParser implements Closeable {
      */
     private void readNameTable() throws java.io.IOException {
         int[] table_location = tables.get("name");
+        allNameEntries = new LinkedHashMap<>();
         if (table_location == null) {
+            if (isLenientMode) {
+                return;
+            }
             if (fileName != null) {
                 throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("name", fileName);
             } else {
                 throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("name");
             }
         }
-        allNameEntries = new LinkedHashMap<>();
         raf.seek(table_location[0] + 2);
         int numRecords = raf.readUnsignedShort();
         int startOfStorage = raf.readUnsignedShort();

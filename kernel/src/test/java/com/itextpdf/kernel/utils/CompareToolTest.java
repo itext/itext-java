@@ -43,6 +43,8 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -383,5 +385,22 @@ public class CompareToolTest extends ExtendedITextTest {
 
         CompareTool.cleanup(destinationFolder + "cleanupTest");
         Assertions.assertNull(MemoryFirstPdfWriter.get(destinationFolder + "cleanupTest/cleanupTest.pdf"));
+    }
+
+    @Test
+    public void baseFontAbsenceInOutPdfTest() throws InterruptedException, IOException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        // basefont_absence doesn't have BaseFont in 1 0 R font
+        String outPdf = sourceFolder + "basefont_absence.pdf";
+        // cmp_basefont_absence has BaseFont in 1 0 R
+        String cmpPdf = sourceFolder + "cmp_basefont_absence.pdf";
+        String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
+        System.out.println("\nRESULT:\n" + result);
+        Assertions.assertNotNull("CompareTool must return differences found between the files", result);
+        Assertions.assertTrue(result.contains("differs on page [1, 2]."));
+        String xmlReport = new String(Files.readAllBytes(Paths.get(destinationFolder + "basefont_absence.report.xml")));
+        Assertions.assertTrue(xmlReport.contains("PdfDictionary /BaseFont entry: Expected: /Helvetica-Bold+ASAFAS. Found: null"));
     }
 }

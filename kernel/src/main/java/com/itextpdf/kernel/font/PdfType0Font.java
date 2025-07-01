@@ -33,7 +33,6 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.cmap.CMapCharsetEncoder;
-import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.cmap.StandardCMapCharsets;
 import com.itextpdf.io.font.otf.Glyph;
@@ -59,6 +58,7 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -164,9 +164,7 @@ public class PdfType0Font extends PdfFont {
             embeddedToUnicode = toUnicodeCMap;
         }
 
-        if (cmap.isName() && ((toUnicodeCMap != null) || PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()) ||
-                PdfEncodings.IDENTITY_V.equals(((PdfName) cmap).getValue()))) {
-
+        if (cmap.isName() && (toUnicodeCMap != null || isCmapIdentical(cmap))) {
             if (toUnicodeCMap == null) {
                 String uniMap = getUniMapFromOrdering(ordering, PdfEncodings.IDENTITY_H.equals(((PdfName) cmap).getValue()));
                 toUnicodeCMap = FontUtil.getToUnicodeFromUniMap(uniMap);
@@ -947,70 +945,12 @@ public class PdfType0Font extends PdfFont {
      * @return the stream representing this CMap or <CODE>null</CODE>
      */
     public PdfStream getToUnicode() {
-        HighPrecisionOutputStream<ByteArrayOutputStream> stream =
-                new HighPrecisionOutputStream<>(new ByteArrayOutputStream());
-        stream.writeString("/CIDInit /ProcSet findresource begin\n" +
-                "12 dict begin\n" +
-                "begincmap\n" +
-                "/CIDSystemInfo\n" +
-                "<< /Registry (Adobe)\n" +
-                "/Ordering (UCS)\n" +
-                "/Supplement 0\n" +
-                ">> def\n" +
-                "/CMapName /Adobe-Identity-UCS def\n" +
-                "/CMapType 2 def\n" +
-                "1 begincodespacerange\n" +
-                "<0000><FFFF>\n" +
-                "endcodespacerange\n");
-
-        //accumulate long tag into a subset and write it.
-        ArrayList<Glyph> glyphGroup = new ArrayList<>(100);
-
-        int bfranges = 0;
+        Set<Glyph> toUnicodeGlyphs = new LinkedHashSet<>();
         for (Integer glyphId : usedGlyphs) {
             Glyph glyph = fontProgram.getGlyphByCode((int) glyphId);
-            if (glyph.getChars() != null) {
-                glyphGroup.add(glyph);
-                if (glyphGroup.size() == 100) {
-                    bfranges += writeBfrange(stream, glyphGroup);
-                }
-            }
+            toUnicodeGlyphs.add(glyph);
         }
-        //flush leftovers
-        bfranges += writeBfrange(stream, glyphGroup);
-
-        if (bfranges == 0)
-            return null;
-
-        stream.writeString("endcmap\n" +
-                "CMapName currentdict /CMap defineresource pop\n" +
-                "end end\n");
-        return new PdfStream(((ByteArrayOutputStream)stream.getOutputStream()).toByteArray());
-    }
-
-    private static int writeBfrange(HighPrecisionOutputStream<ByteArrayOutputStream> stream, List<Glyph> range) {
-        if (range.isEmpty()) return 0;
-        stream.writeInteger(range.size());
-        stream.writeString(" beginbfrange\n");
-        for (Glyph glyph: range) {
-            String fromTo = CMapContentParser.toHex(glyph.getCode());
-            stream.writeString(fromTo);
-            stream.writeString(fromTo);
-            stream.writeByte('<');
-            for (char ch : glyph.getChars()) {
-                stream.writeString(toHex4(ch));
-            }
-            stream.writeByte('>');
-            stream.writeByte('\n');
-        }
-        stream.writeString("endbfrange\n");
-        range.clear();
-        return 1;
-    }
-
-    private static String toHex4(char ch) {
-        String s = "0000" + Integer.toHexString(ch);
-        return s.substring(s.length() - 4);
+        return FontUtil.getToUnicodeStream(toUnicodeGlyphs);
     }
 
     private String getCompatibleUniMap(String registry) {
@@ -1045,5 +985,13 @@ public class PdfType0Font extends PdfFont {
         return null == encoding || DEFAULT_ENCODING.equals(encoding)
                 ? PdfEncodings.IDENTITY_H
                 : encoding;
+    }
+
+    private static boolean isCmapIdentical(PdfObject cmap) {
+        if (cmap == null || !cmap.isName()) {
+            return false;
+        }
+        String cmapStr = ((PdfName) cmap).getValue();
+        return PdfEncodings.IDENTITY_H.equals(cmapStr) || PdfEncodings.IDENTITY_V.equals(cmapStr);
     }
 }

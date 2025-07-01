@@ -33,10 +33,9 @@ import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.io.font.otf.OpenTypeGdefTableReader;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +43,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TrueTypeFont extends FontProgram {
 
@@ -85,6 +86,10 @@ public class TrueTypeFont extends FontProgram {
 
     public TrueTypeFont(byte[] ttf) throws java.io.IOException {
         this(new OpenTypeParser(ttf));
+    }
+
+    public TrueTypeFont(byte[] ttf, boolean isLenientMode) throws java.io.IOException {
+        this(new OpenTypeParser(ttf, isLenientMode));
     }
 
     TrueTypeFont(String ttcPath, int ttcIndex) throws java.io.IOException {
@@ -189,9 +194,40 @@ public class TrueTypeFont extends FontProgram {
         return gdefTable;
     }
 
-    public byte[] getSubset(Set<Integer> glyphs, boolean subset) {
+    /**
+     * Gets subset of the current TrueType font based on the passed glyphs.
+     *
+     * @param glyphs the glyphs to subset the font
+     * @param subsetTables whether subset tables (remove `name` and `post` tables) or not. It's used in case of ttc
+     *                       (true type collection) font where single "full" font is needed. Despite the value of that
+     *                       flag, only used glyphs will be left in the font
+     *
+     * @return the subset font
+     */
+    public byte[] getSubset(Set<Integer> glyphs, boolean subsetTables) {
         try {
-            return fontParser.getSubset(glyphs, subset);
+            return fontParser.getSubset(glyphs, subsetTables);
+        } catch (java.io.IOException e) {
+            throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
+        }
+    }
+
+    /**
+     * Merges the passed font into one. Used glyphs per each font are applied to subset the merged font.
+     *
+     * @param toMerge the fonts to merge with used glyphs per each font
+     * @param fontName the name of fonts to merge
+     *
+     * @return the raw data of merged font
+     */
+    public static byte[] merge(Map<TrueTypeFont, Set<Integer>> toMerge, String fontName) {
+        try {
+            Map<OpenTypeParser, Set<Integer>> toMergeWithParsers = new HashMap<OpenTypeParser, Set<Integer>>();
+            for (Map.Entry<TrueTypeFont, Set<Integer>> entry : toMerge.entrySet()) {
+                toMergeWithParsers.put(entry.getKey().fontParser, entry.getValue());
+            }
+            TrueTypeFontMerger trueTypeFontMerger = new TrueTypeFontMerger(fontName, toMergeWithParsers);
+            return trueTypeFontMerger.process();
         } catch (java.io.IOException e) {
             throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
@@ -351,7 +387,7 @@ public class TrueTypeFont extends FontProgram {
             }
             int cid;
             Glyph glyph;
-            int[] glyphBBox = bBoxes != null ? bBoxes[index] : null;
+            int[] glyphBBox = (bBoxes != null && index < bBoxes.length) ? bBoxes[index] : null;
             if (cffFontSubset != null && cffFontSubset.isCID()) {
                 cid = cffFontSubset.getCidForGlyphId(index);
                 GidAwareGlyph cffGlyph = new GidAwareGlyph(cid, glyphWidths[index], charCode, glyphBBox);
@@ -380,7 +416,7 @@ public class TrueTypeFont extends FontProgram {
             avgWidth += glyph.getWidth();
         }
 
-        if (codeToGlyph.size() != 0) {
+        if (!codeToGlyph.isEmpty()) {
             avgWidth /= codeToGlyph.size();
         }
 

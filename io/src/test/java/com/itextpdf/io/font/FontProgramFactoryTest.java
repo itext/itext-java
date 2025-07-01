@@ -26,12 +26,15 @@ import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Tag("UnitTest")
+@Tag("IntegrationTest")
 public class FontProgramFactoryTest extends ExtendedITextTest {
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/FontProgramFactoryTest/";
 
     @Test
     public void createRegisteredFontTest() throws IOException {
@@ -51,4 +54,20 @@ public class FontProgramFactoryTest extends ExtendedITextTest {
 
     }
 
+    @Test
+    public void createTrueTypeWoffFontTest() throws IOException {
+        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "SourceSerif4-Black.woff"));
+        TrueTypeFont woffFont = FontProgramFactory.createTrueTypeFont(fontBytes, false);
+        Assertions.assertNotNull(woffFont);
+        Assertions.assertEquals(1463, woffFont.bBoxes.length);
+    }
+
+    @Test
+    public void tryToCreateTrueTypeWoff2FontTest() throws IOException {
+        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "valid.woff2"));
+        TrueTypeFont woff2Font = FontProgramFactory.createTrueTypeFont(fontBytes, false);
+        Assertions.assertNotNull(woff2Font);
+        Assertions.assertEquals(4, woff2Font.countOfGlyphs());
+
+    }
 }
