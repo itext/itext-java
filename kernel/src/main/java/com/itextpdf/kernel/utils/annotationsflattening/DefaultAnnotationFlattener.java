@@ -25,6 +25,7 @@ package com.itextpdf.kernel.utils.annotationsflattening;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -78,7 +79,11 @@ public class DefaultAnnotationFlattener implements IAnnotationFlattener {
             final Rectangle area = annotation.getRectangle().toRectangle();
             final PdfCanvas under = this.createCanvas(page);
             final PdfStream annotationNormalAppearanceStream = (PdfStream) normalAppearance;
-            under.addXObjectFittedIntoRectangle(new PdfFormXObject(annotationNormalAppearanceStream), area);
+            PdfFormXObject xObject = new PdfFormXObject(annotationNormalAppearanceStream);
+            AffineTransform at = PdfFormXObject.calcAppearanceTransformToAnnotRect(xObject, area);
+            float[] m = new float[6];
+            at.getMatrix(m);
+            under.addXObjectWithTransformationMatrix(xObject, m[0], m[1], m[2], m[3], m[4], m[5]);
             page.removeAnnotation(annotation);
             return true;
         }

@@ -37,7 +37,6 @@ import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.forms.xfa.XfaForm;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -808,7 +807,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                             canvas.openTag(tagRef);
                         }
 
-                        AffineTransform at = calcFieldAppTransformToAnnotRect(xObject, annotBBox);
+                        AffineTransform at = PdfFormXObject.calcAppearanceTransformToAnnotRect(xObject, annotBBox);
                         float[] m = new float[6];
                         at.getMatrix(m);
                         canvas.addXObjectWithTransformationMatrix(xObject, m[0], m[1], m[2], m[3], m[4], m[5]);
@@ -1206,50 +1205,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         return preparedFields;
     }
 
-    private AffineTransform calcFieldAppTransformToAnnotRect(PdfFormXObject xObject, Rectangle annotBBox) {
-        PdfArray bBox = xObject.getBBox();
-        if (bBox.size() != 4) {
-            bBox = new PdfArray(new Rectangle(0, 0));
-            xObject.setBBox(bBox);
-        }
-        float[] xObjBBox = bBox.toFloatArray();
 
-        PdfArray xObjMatrix = xObject.getPdfObject().getAsArray(PdfName.Matrix);
-        Rectangle transformedRect;
-        if (xObjMatrix != null && xObjMatrix.size() == 6) {
-            Point[] xObjRectPoints = new Point[]{
-                    new Point(xObjBBox[0], xObjBBox[1]),
-                    new Point(xObjBBox[0], xObjBBox[3]),
-                    new Point(xObjBBox[2], xObjBBox[1]),
-                    new Point(xObjBBox[2], xObjBBox[3])
-            };
-            Point[] transformedAppBoxPoints = new Point[xObjRectPoints.length];
-            new AffineTransform(xObjMatrix.toDoubleArray()).transform(xObjRectPoints, 0, transformedAppBoxPoints, 0, xObjRectPoints.length);
-
-            float[] transformedRectArr = new float[] {
-                    Float.MAX_VALUE, Float.MAX_VALUE,
-                    -Float.MAX_VALUE, -Float.MAX_VALUE,
-            };
-            for (Point p : transformedAppBoxPoints) {
-                transformedRectArr[0] = (float) Math.min(transformedRectArr[0], p.getX());
-                transformedRectArr[1] = (float) Math.min(transformedRectArr[1], p.getY());
-                transformedRectArr[2] = (float) Math.max(transformedRectArr[2], p.getX());
-                transformedRectArr[3] = (float) Math.max(transformedRectArr[3], p.getY());
-            }
-
-            transformedRect = new Rectangle(transformedRectArr[0], transformedRectArr[1], transformedRectArr[2] - transformedRectArr[0], transformedRectArr[3] - transformedRectArr[1]);
-        } else {
-            transformedRect = new Rectangle(0, 0).setBbox(xObjBBox[0], xObjBBox[1], xObjBBox[2], xObjBBox[3]);
-        }
-
-        AffineTransform at = AffineTransform.getTranslateInstance(-transformedRect.getX(), -transformedRect.getY());
-        float scaleX = transformedRect.getWidth() == 0 ? 1 : annotBBox.getWidth() / transformedRect.getWidth();
-        float scaleY = transformedRect.getHeight() == 0 ? 1 : annotBBox.getHeight() / transformedRect.getHeight();
-        at.preConcatenate(AffineTransform.getScaleInstance(scaleX, scaleY));
-        at.preConcatenate(AffineTransform.getTranslateInstance(annotBBox.getX(), annotBBox.getY()));
-
-        return at;
-    }
 
     private Set<PdfFormField> getAllFormFieldsWithoutNames() {
         if (fields.isEmpty()) {
