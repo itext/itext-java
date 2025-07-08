@@ -25,9 +25,17 @@ package com.itextpdf.commons;
 import sharpen.config.MappingConfigurator;
 import sharpen.config.MemberKind;
 
+/**
+ * Utility class for applying BC wrappers mappings.
+ */
 public class BCWrappersConfigurationUtils {
     private BCWrappersConfigurationUtils() {}
 
+    /**
+     * Applies mappings with custom wrappers for modules which use both bouncycastle and bouncycastle-fips.
+     *
+     * @param configurator {@link MappingConfigurator} instance in which mappings will be added
+     */
     public static void applyMappingConfiguration(MappingConfigurator configurator) {
         configurator.mapMethod("java.security.cert.X509Certificate.getSerialNumber", "GetSerialNumber");
         configurator.mapMethod("java.security.cert.X509Certificate.getThisUpdate", "GetThisUpdate");

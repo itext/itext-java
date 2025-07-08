@@ -39,6 +39,11 @@ public class UseBCWrappersModuleOption extends ModuleOption {
                 "Enables BC wrappers configuration in commons");
     }
 
+    /**
+     * Gets the BC wrappers option instance.
+     *
+     * @return The {@code  UseBCWrappersModuleOption} option instance
+     */
     public static UseBCWrappersModuleOption getInstance() {
         return INSTANCE;
     }
