@@ -148,7 +148,9 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("com.itextpdf.commons.utils.DateTimeUtil.addDaysToDate", "AddDays");
         configurator.mapMethod("com.itextpdf.commons.utils.DateTimeUtil.addYearsToDate", "AddYears");
         configurator.mapMethod("com.itextpdf.commons.utils.DateTimeUtil.getCurrentTimeDate", "GetCurrentUtcTime");
-        
+        configurator.mapMethod("java.time.LocalDateTime.of", "iText.Commons.Utils.DateTimeUtil.CreateDateTime");
+
+        configurator.mapMethod("java.nio.file.Files.newInputStream", "iText.Commons.Utils.FileUtil.GetInputStreamForFile");
 
         configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate", "iText.Commons.Bouncycastle.Asn1.X509.ITbsCertificateStructure");
         configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream", "iText.Commons.Bouncycastle.Asn1.IDerOutputStream");

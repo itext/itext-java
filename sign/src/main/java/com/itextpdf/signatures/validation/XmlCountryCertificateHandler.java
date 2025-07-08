@@ -23,25 +23,14 @@
 package com.itextpdf.signatures.validation;
 
 
-import org.xml.sax.Attributes;
-
 import java.security.cert.Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
 
     private static final List<String> INFORMATION_TAGS = new ArrayList<>();
-
-    private StringBuilder information;
-
-    private final List<Certificate> certificateList = new ArrayList<>();
-
-    private CountryServiceContext currentServiceContext = null;
-
-    private ServiceStatusInfo currentServiceStatusInfo = null;
-
-    private final List<CountryServiceContext> serviceContextList = new ArrayList<>();
 
     static {
         INFORMATION_TAGS.add(XmlTagConstants.SERVICE_TYPE);
@@ -50,12 +39,22 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
         INFORMATION_TAGS.add(XmlTagConstants.SERVICE_STATUS_STARTING_TIME);
     }
 
+    private final List<Certificate> certificateList = new ArrayList<>();
+    private final List<CountryServiceContext> serviceContextList = new ArrayList<>();
+    private StringBuilder information;
+    private CountryServiceContext currentServiceContext = null;
+    private ServiceStatusInfo currentServiceStatusInfo = null;
+
     XmlCountryCertificateHandler() {
         //empty constructor
     }
 
+    private static String removeWhitespacesAndBreakLines(String data) {
+        return data.replace(" ", "").replace("\n", "");
+    }
+
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) {
+    public void startElement(String uri, String localName, String qName, HashMap<String, String> attributes) {
         if (XmlTagConstants.TSP_SERVICE.equals(localName)) {
             startProvider();
         } else if (XmlTagConstants.SERVICE_HISTORY_INSTANCE.equals(localName)
@@ -153,9 +152,5 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
     void clear() {
         certificateList.clear();
         serviceContextList.clear();
-    }
-
-    private static String removeWhitespacesAndBreakLines(String data) {
-        return data.replace(" ", "").replace("\n", "");
     }
 }

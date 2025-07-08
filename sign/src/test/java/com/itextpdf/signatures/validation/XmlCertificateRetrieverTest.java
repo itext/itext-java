@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.time.LocalDateTime;
@@ -40,33 +42,35 @@ import java.util.List;
 @Tag("UnitTest")
 public class XmlCertificateRetrieverTest extends ExtendedITextTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/XmlCertificateRetrieverTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation" +
+            "/XmlCertificateRetrieverTest/";
 
     @Test
     public void readSingleCertificateTest() throws CertificateException, IOException {
         String xmlPath = SOURCE_FOLDER + "certificate.xml";
         String certPath = SOURCE_FOLDER + "certificate.pem";
         Certificate actualCertificate = new XmlCertificateRetriever(new XmlDefaultCertificateHandler())
-                .getCertificates(xmlPath).get(0);
+                .getCertificates(Files.newInputStream(Paths.get(xmlPath))).get(0);
         Certificate expectedCertificate = PemFileHelper.readFirstChain(certPath)[0];
         Assertions.assertEquals(expectedCertificate, actualCertificate);
     }
 
     @Test
-    public void readLotlCertificatesTest() {
+    public void readLotlCertificatesTest() throws IOException {
         String xmlPath = SOURCE_FOLDER + "eu-lotl.xml";
         List<Certificate> certificateList = new XmlCertificateRetriever(new XmlDefaultCertificateHandler())
-                .getCertificates(xmlPath);
+                .getCertificates(Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(142, certificateList.size());
     }
 
     @Test
-    public void readPivotCertificatesTest() {
+    public void readPivotCertificatesTest() throws IOException {
         String xmlPath = SOURCE_FOLDER + "eu-lotl-pivot-282.xml";
         XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(
                 new XmlDefaultCertificateHandler());
-        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(xmlPath);
+        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(
+                Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(126, certificateList.size());
         IServiceContext context = xmlCertificateRetriever.getServiceContext(certificateList.get(0));
@@ -75,37 +79,43 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
     }
 
     @Test
-    public void readAustriaCertificatesTest() {
+    public void readAustriaCertificatesTest() throws IOException {
         String xmlPath = SOURCE_FOLDER + "austriaTrustedList.xml";
         List<Certificate> certificateList = new XmlCertificateRetriever(new XmlDefaultCertificateHandler())
-                .getCertificates(xmlPath);
+                .getCertificates(Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(104, certificateList.size());
     }
 
     @Test
-    public void readBulgariaCertificatesTest() {
+    public void readBulgariaCertificatesTest() throws IOException {
         String xmlPath = SOURCE_FOLDER + "BulgariaTrustedList.xml";
-        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(new XmlCountryCertificateHandler());
-        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(xmlPath);
+        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(
+                new XmlCountryCertificateHandler());
+        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(
+                Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(104, certificateList.size());
     }
 
     @Test
-    public void readCzechiaCertificatesTest() {
+    public void readCzechiaCertificatesTest() throws IOException {
         String xmlPath = SOURCE_FOLDER + "CzechiaTrustedList.txt";
-        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever( new XmlCountryCertificateHandler());
-        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(xmlPath);
+        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(
+                new XmlCountryCertificateHandler());
+        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(
+                Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(441, certificateList.size());
     }
 
     @Test
-    public void readCyrpusCertificateContextTest() {
+    public void readCyrpusCertificateContextTest() throws IOException {
         String xmlPath = SOURCE_FOLDER + "cyprusTrustedList.xml";
-        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(new XmlCountryCertificateHandler());
-        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(xmlPath);
+        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(
+                new XmlCountryCertificateHandler());
+        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(
+                Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(8, certificateList.size());
         CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContext(
@@ -120,10 +130,12 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
     }
 
     @Test
-    public void readEstoniaCertificateContextTest() {
+    public void readEstoniaCertificateContextTest() throws IOException {
         String xmlPath = SOURCE_FOLDER + "estoniaTrustedList.xml";
-        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(new XmlCountryCertificateHandler());
-        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(xmlPath);
+        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(
+                new XmlCountryCertificateHandler());
+        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(
+                Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(64, certificateList.size());
         CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContext(
@@ -142,12 +154,14 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
     }
 
     @Test
-    public void readHungaryCertificateContextTest() {
+    public void readHungaryCertificateContextTest() throws IOException {
         String xmlPath = SOURCE_FOLDER + "HungaryTrustedList.xml";
-        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(new XmlCountryCertificateHandler());
-        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(xmlPath);
+        XmlCertificateRetriever xmlCertificateRetriever = new XmlCertificateRetriever(
+                new XmlCountryCertificateHandler());
+        List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(
+                Files.newInputStream(Paths.get(xmlPath)));
 
-            Assertions.assertEquals(346, certificateList.size());
+        Assertions.assertEquals(346, certificateList.size());
         CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContext(
                 certificateList.get(0));
         Assertions.assertEquals(3, serviceContext.getServiceStatusInfosSize());
@@ -165,10 +179,9 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
         String xmlPath = SOURCE_FOLDER + "emptyXml.xml";
         XmlCertificateRetriever certificateRetriever = new XmlCertificateRetriever(new XmlDefaultCertificateHandler());
 
-        Exception exception = Assertions.assertThrows(PdfException.class,
-                () -> certificateRetriever.getCertificates(xmlPath));
-        Assertions.assertEquals(MessageFormatUtil.format(
-                SignExceptionMessageConstant.FAILED_TO_READ_CERTIFICATE_BYTES_FROM_XML, xmlPath), exception.getMessage());
+        //No checking for message as it is different for C# and java because of differences in library
+        Assertions.assertThrows(PdfException.class,
+                () -> certificateRetriever.getCertificates(Files.newInputStream(Paths.get(xmlPath))));
     }
 
     @Test
@@ -177,7 +190,7 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
         XmlCertificateRetriever certificateRetriever = new XmlCertificateRetriever(new XmlDefaultCertificateHandler());
 
         Exception exception = Assertions.assertThrows(PdfException.class,
-                () -> certificateRetriever.getCertificates(xmlPath));
+                () -> certificateRetriever.getCertificates(Files.newInputStream(Paths.get(xmlPath))));
         Assertions.assertEquals(SignExceptionMessageConstant.FAILED_TO_RETRIEVE_CERTIFICATE, exception.getMessage());
     }
 }

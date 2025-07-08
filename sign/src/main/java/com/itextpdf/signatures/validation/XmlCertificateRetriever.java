@@ -22,40 +22,26 @@
  */
 package com.itextpdf.signatures.validation;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.utils.XmlProcessorCreator;
-import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import com.itextpdf.signatures.validation.xml.XmlSaxProcessor;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.util.List;
 
 
 class XmlCertificateRetriever {
 
-    private AbstractXmlCertificateHandler handler;
+    private final AbstractXmlCertificateHandler handler;
 
     XmlCertificateRetriever(AbstractXmlCertificateHandler handler) {
         this.handler = handler;
     }
 
-    List<Certificate> getCertificates(String path) {
+    List<Certificate> getCertificates(InputStream inputStream) {
         if (!handler.getCertificateList().isEmpty()) {
             handler.clear();
         }
-
-        XMLReader reader = XmlProcessorCreator.createSafeXMLReader(true, false);
-        reader.setContentHandler(handler);
-        try {
-            reader.parse(path);
-        } catch (IOException | SAXException e) {
-            throw new PdfException(MessageFormatUtil.format(
-                    SignExceptionMessageConstant.FAILED_TO_READ_CERTIFICATE_BYTES_FROM_XML, path), e);
-        }
-
+        new XmlSaxProcessor().process(inputStream,handler);
         return handler.getCertificateList();
     }
 

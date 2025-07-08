@@ -22,26 +22,27 @@
  */
 package com.itextpdf.signatures.validation;
 
-import org.xml.sax.Attributes;
-
 import java.security.cert.Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class XmlDefaultCertificateHandler extends AbstractXmlCertificateHandler {
 
-    private StringBuilder information;
-
     private final List<Certificate> certificateList = new ArrayList<>();
-
     private final List<SimpleServiceContext> serviceContextList = new ArrayList<>();
+    private StringBuilder information;
 
     XmlDefaultCertificateHandler() {
         //empty constructor
     }
 
+    private static String removeWhitespacesAndBreakLines(String data) {
+        return data.replace(" ", "").replace("\n", "");
+    }
+
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) {
+    public void startElement(String uri, String localName, String qName, HashMap<String, String> attributes) {
         if (XmlTagConstants.X509CERTIFICATE.equals(localName)) {
             information = new StringBuilder();
         }
@@ -86,9 +87,5 @@ class XmlDefaultCertificateHandler extends AbstractXmlCertificateHandler {
     void clear() {
         certificateList.clear();
         serviceContextList.clear();
-    }
-
-    private static String removeWhitespacesAndBreakLines(String data) {
-        return data.replace(" ", "").replace("\n", "");
     }
 }
