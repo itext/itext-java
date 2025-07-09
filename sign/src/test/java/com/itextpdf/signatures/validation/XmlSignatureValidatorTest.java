@@ -40,11 +40,14 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 @Tag("BouncyCastleIntegrationTest")
+@DisabledInNativeImage
 public class XmlSignatureValidatorTest extends ExtendedITextTest {
     private static final String SRC = "./src/test/resources/com/itextpdf/signatures/validation/XmlSignatureValidatorTest/";
 
+    @DisabledInNativeImage
     @Test
     public void lotlXmlValidationTest() throws CertificateException, IOException {
         String chainName = SRC + "lotl_signing_cert.pem";
@@ -69,6 +72,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void signedXmlContentModifiedTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -91,6 +95,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void signedXmlSignatureModifiedTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -113,6 +118,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void signedXmlSignedInfoModifiedTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -135,6 +141,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void signedXmlSignedInfoModifiedStopValidationTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -159,6 +166,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void signedXmlWithBrokenCertTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -185,6 +193,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void signedXmlWithoutKeyInfoTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -212,6 +221,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void xmlValidationRSATest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -236,6 +246,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void xmlValidationDSATest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_dsa.pem";
@@ -260,6 +271,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void xmlValidationECDSA_SHA1Test() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_ecdsa.pem";
@@ -284,6 +296,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void xmlValidationECDSA_SHA256Test() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_ecdsa.pem";
@@ -308,6 +321,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void xmlValidationECDSA_SHA384Test() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_ecdsa.pem";
@@ -332,6 +346,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
+    @DisabledInNativeImage
     @Test
     public void xmlValidationECDSA_SHA512Test() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_ecdsa.pem";
