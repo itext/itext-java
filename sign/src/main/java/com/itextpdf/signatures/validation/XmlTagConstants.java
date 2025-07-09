@@ -25,6 +25,7 @@ package com.itextpdf.signatures.validation;
 class XmlTagConstants {
     static final String X509CERTIFICATE = "X509Certificate";
     static final String TSP_SERVICE = "TSPService";
+    static final String SCHEME_INFORMATION_URI = "SchemeInformationURI";
     static final String SERVICE_TYPE = "ServiceTypeIdentifier";
     static final String SERVICE_STATUS = "ServiceStatus";
     static final String SERVICE_STATUS_STARTING_TIME = "StatusStartingTime";
@@ -34,5 +35,5 @@ class XmlTagConstants {
     static final String SCHEME_TERRITORY = "SchemeTerritory";
     static final String TSLLOCATION = "TSLLocation";
     static final String MIME_TYPE = "MimeType";
-
+    static final String URI = "URI";
 }

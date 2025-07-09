@@ -55,6 +55,9 @@ final class XmlValidationUtils {
         preProcessXmlDocument(xmlDocument);
         Node sigElement = xmlDocument.getElementsByTagName("ds:Signature").item(0);
         if (sigElement == null) {
+            sigElement = xmlDocument.getElementsByTagName("dsig:Signature").item(0);
+        }
+        if (sigElement == null) {
             sigElement = xmlDocument.getElementsByTagName("Signature").item(0);
         }
         org.apache.xml.security.Init.init();

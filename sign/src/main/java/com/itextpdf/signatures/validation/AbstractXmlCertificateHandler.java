@@ -22,42 +22,28 @@
  */
 package com.itextpdf.signatures.validation;
 
-import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
-import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
-import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.validation.xml.IDefaultXmlHandler;
 
-import java.io.IOException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 abstract class AbstractXmlCertificateHandler implements IDefaultXmlHandler {
+    final List<IServiceContext> serviceContextList = new ArrayList<>();
 
-    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
-
-    private static final IJcaX509CertificateConverter X509_CERTIFICATE_CONVERTER = BOUNCY_CASTLE_FACTORY
-            .createJcaX509CertificateConverter().setProvider(BOUNCY_CASTLE_FACTORY.getProvider());
-
-    abstract IServiceContext getServiceContext(Certificate certificate);
-
-    abstract List<Certificate> getCertificateList();
-
-    Certificate getCertificateFromEncodedData(String certificateString) {
-        try {
-            byte[] bytes = Base64.getDecoder().decode(certificateString);
-            IX509CertificateHolder certificateHolder = BOUNCY_CASTLE_FACTORY
-                    .createX509CertificateHolder(bytes);
-            return X509_CERTIFICATE_CONVERTER.getCertificate(certificateHolder);
-        } catch (CertificateException | IOException e) {
-            throw new PdfException(SignExceptionMessageConstant.FAILED_TO_RETRIEVE_CERTIFICATE, e);
-        }
+    List<IServiceContext> getServiceContexts() {
+        return serviceContextList;
     }
 
-    abstract void clear();
+    List<Certificate> getCertificateList() {
+        List<Certificate> certificateList = new ArrayList<>();
+        for (IServiceContext context : serviceContextList) {
+            certificateList.addAll(context.getCertificates());
+        }
+        return certificateList;
+    }
+
+    void clear() {
+        serviceContextList.clear();
+    }
 }

@@ -23,6 +23,8 @@
 package com.itextpdf.signatures.validation;
 
 
+import com.itextpdf.signatures.CertificateUtil;
+
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,8 +41,6 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
         INFORMATION_TAGS.add(XmlTagConstants.SERVICE_STATUS_STARTING_TIME);
     }
 
-    private final List<Certificate> certificateList = new ArrayList<>();
-    private final List<CountryServiceContext> serviceContextList = new ArrayList<>();
     private StringBuilder information;
     private CountryServiceContext currentServiceContext = null;
     private ServiceStatusInfo currentServiceStatusInfo = null;
@@ -113,22 +113,6 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
         }
     }
 
-    @Override
-    IServiceContext getServiceContext(Certificate certificate) {
-        for (CountryServiceContext context : serviceContextList) {
-            if (context.getCertificates().contains(certificate)) {
-                return context;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    List<Certificate> getCertificateList() {
-        return certificateList;
-    }
-
     void startProvider() {
         currentServiceContext = new CountryServiceContext();
     }
@@ -137,20 +121,13 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
         if (currentServiceContext == null) {
             return;
         }
-
-        Certificate certificate = getCertificateFromEncodedData(removeWhitespacesAndBreakLines(certificateString));
+        Certificate certificate =
+                CertificateUtil.createCertificateFromEncodedData(removeWhitespacesAndBreakLines(certificateString));
         currentServiceContext.addCertificate(certificate);
-        certificateList.add(certificate);
     }
 
     void endProvider() {
         serviceContextList.add(currentServiceContext);
         currentServiceContext = null;
-    }
-
-    @Override
-    void clear() {
-        certificateList.clear();
-        serviceContextList.clear();
     }
 }

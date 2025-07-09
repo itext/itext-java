@@ -135,6 +135,21 @@ public class ValidationReport {
     }
 
     /**
+     * Merge all {@link ReportItem} objects from sub report into this one with different status.
+     *
+     * @param subReport report from which items will be merged
+     * @param newStatus {@link ReportItemStatus} which will be used instead of provided ones
+     *
+     * @return {@link ValidationReport} the same updated validation report instance.
+     */
+    public ValidationReport mergeWithDifferentStatus(ValidationReport subReport, ReportItemStatus newStatus) {
+        for (ReportItem item : subReport.getLogs()) {
+            addReportItem(new ReportItem(item).setStatus(newStatus));
+        }
+        return this;
+    }
+
+    /**
      * Enum representing possible validation results.
      */
     public enum ValidationResult {

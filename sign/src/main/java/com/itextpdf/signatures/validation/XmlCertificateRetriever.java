@@ -41,11 +41,11 @@ class XmlCertificateRetriever {
         if (!handler.getCertificateList().isEmpty()) {
             handler.clear();
         }
-        new XmlSaxProcessor().process(inputStream,handler);
+        new XmlSaxProcessor().process(inputStream, handler);
         return handler.getCertificateList();
     }
 
-    IServiceContext getServiceContext(Certificate certificate) {
-        return handler.getServiceContext(certificate);
+    List<IServiceContext> getServiceContexts() {
+        return handler.getServiceContexts();
     }
 }

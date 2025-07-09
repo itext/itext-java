@@ -57,6 +57,7 @@ public class ValidatorChainBuilder {
     private Supplier<ICrlClient> crlClientFactory;
     private Supplier<XmlSignatureValidator> xmlSignatureValidatorFactory;
     private Supplier<LOTLTrustedStore> lotlTrustedStoreFactory;
+    private Supplier<LOTLValidator> lotlValidatorFactory;
 
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
@@ -77,6 +78,7 @@ public class ValidatorChainBuilder {
         ocspClientFactory = () -> new OcspClientBouncyCastle();
         crlClientFactory = () -> new CrlClientOnline();
         xmlSignatureValidatorFactory = () -> buildXmlSignatureValidator();
+        lotlValidatorFactory = () -> buildLotlValidator();
     }
 
     /**
@@ -429,6 +431,15 @@ public class ValidatorChainBuilder {
         return this.lotlTrustedStoreFactory.get();
     }
 
+    LOTLValidator getLotlValidator() {
+        return lotlValidatorFactory.get();
+    }
+
+    ValidatorChainBuilder withLOTLValidator(Supplier<LOTLValidator> lotlValidatorFactory) {
+        this.lotlValidatorFactory = lotlValidatorFactory;
+        return this;
+    }
+
     private IssuingCertificateRetriever buildIssuingCertificateRetriever() {
         IssuingCertificateRetriever result = new IssuingCertificateRetriever(this.resourceRetrieverFactory.get());
         if (trustedCertificates != null) {
@@ -440,6 +451,10 @@ public class ValidatorChainBuilder {
 
         result.addKnownCertificates(lotlTrustedStoreFactory.get().getCertificates());
         return result;
+    }
+
+    private LOTLValidator buildLotlValidator() {
+        return new LOTLValidator(this);
     }
 
     private LOTLTrustedStore buildLOTLTrustedStore() {

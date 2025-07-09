@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns4="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" Id="ID0001" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>5</TSLVersionIdentifier>
+        <TSLSequenceNumber>365</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUlistofthelists</TSLType>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="fr">
+                    <StreetAddress>Rue de la Loi 200</StreetAddress>
+                    <Locality>Bruxelles</Locality>
+                    <PostalCode>1049</PostalCode>
+                    <CountryName>BE</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="nl">
+                    <StreetAddress>Wetstraat 200</StreetAddress>
+                    <Locality>Brussel</Locality>
+                    <PostalCode>1049</PostalCode>
+                    <CountryName>BE</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>Rue de la Loi/Wetstraat 200</StreetAddress>
+                    <Locality>Brussels</Locality>
+                    <PostalCode>1049</PostalCode>
+                    <CountryName>BE</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="en">mailto:EC-TL-Service@ec.europa.eu</URI>
+                <URI xml:lang="en">https://digital-strategy.ec.europa.eu/en/policies/eu-trusted-lists</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeInformationURI>
+            <URI xml:lang="en">https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml</URI>
+            <URI xml:lang="en">https://ec.europa.eu/tools/lotl/eu-lotl-pivot-335-BrokenUri.xml</URI>
+            <URI xml:lang="en">https://ec.europa.eu/tools/lotl/eu-lotl-pivot-300.xml</URI>
+            <URI xml:lang="en">https://ec.europa.eu/tools/lotl/eu-lotl-pivot-282.xml</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>http://uri.etsi.org/TrstSvc/TrustedList/StatusDetn/EUlistofthelists</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/EUlistofthelists</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>EU</SchemeTerritory>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <ListIssueDateTime>2025-05-14T08:09:22Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2025-11-05T09:09:22Z</dateTime>
+        </NextUpdate>
+        <DistributionPoints>
+            <URI>https://ec.europa.eu/tools/lotl/eu-lotl.xml</URI>
+        </DistributionPoints>
+    </SchemeInformation>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="id-8066c63ca43195197359b0e2d55d8591"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512"/><ds:Reference Id="ref-enveloped-signature" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>7fJYUe3MzpnrkGQym4RxTt/x2r14venz2ElrSeORGcvNLiIrGm+E35jxr3/C9uXY9+H5Me0UiIsKuY9a6cAEUA==</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xades-id-8066c63ca43195197359b0e2d55d8591"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>1zggJJ4QdMhi8vMX6cSmkx6cKwJQF3k6zT5LPE6cHU/7hrWBunK6Vsmrem2tg4dbpYO/pinkE7p0YDy7HAPSnA==</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="value-id-8066c63ca43195197359b0e2d55d8591">nLZansn9ERs31cHDs22D6ZVn8bE7I/0BUE/5pMBMc6ppKu6jsaxGT92Yeo92prEL8KJD9hRKzyFG91NtGEvESZ+MoUHWpCLN8aMsFCGGPhTsqF5ZsCPmTsCTuy3H4fYsGM4fwz3ynVt9rhZ8yv5r1bsZijZ+ZxrSIryXNDkDyjH2jRPe+oDG9+yPVew6hFIHI5VjAUYhfpfHH+oUuN+MZYugj7aX7BUNqhTvKcHTjNNl9n7a/7bvPm7Tn6xncpjYKXhfw3emRPQn9HFZEUClXvZdTxbha93tLQ++xZVB1+DaVcbTlIZLcQYprUuUZ7i8J/UzZ3TR+l9dnni7gI44LPkpFWZchgw7WkZOsnveD0GGq1F5Pked7Y6lMh+XQZrH7F/2pOw52UoftfzY+EAfgXtTj+sJ6qMIOmcVPMmy3v97/YccA0xnxmwNv8ItaJNwEpROz1K3oCHC/0xtIJIh5JzRpLKj4+SWBf0Vg0Xnnu/VRRJ2LSpAG/HMen/wlVnqflmNKrpCYb6GUxsAShcgbXfky+x/ReTGAHKr8jMJ7T9qjuxvPbd4BLsAA7fPdMjbQXZNBWK4Zh6QqwK87sGc7VpzKGo25V0IY99/vm3jA88sYoVTOuUpRsnX/9xOYLQsdzgOhUiWjV2nFp6li75Qx3LN2GACrSL5fB6B507uA4I=</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>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</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#id-8066c63ca43195197359b0e2d55d8591"><xades:SignedProperties Id="xades-id-8066c63ca43195197359b0e2d55d8591"><xades:SignedSignatureProperties><xades:SigningTime>2025-05-19T14:48:35Z</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>MChItQCvaWcTKbZ1lIIXL2BVbmm0YgKgZVrgIx0FFUhNIdTlv6RylET5voFVvbYBiGh3nUr2rsAQouSJzYkTaQ==</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>CN=DIGITALSIGN QUALIFIED CA G1,O=DigitalSign Certificadora Digital,C=PT</ds:X509IssuerName><ds:X509SerialNumber>660862747298009142807362633871991440505734410485</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#ref-enveloped-signature"><xades:MimeType>text/xml</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></TrustServiceStatusList>

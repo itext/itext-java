@@ -23,15 +23,18 @@
 package com.itextpdf.signatures.validation;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 
 import java.io.InputStream;
+import java.security.cert.X509Certificate;
 
 class XmlSignatureValidator {
     static final String XML_SIGNATURE_VERIFICATION = "XML Signature verification check.";
@@ -41,12 +44,16 @@ class XmlSignatureValidator {
             "XML signing certificate wasn't find in the document. Validation wasn't successful.";
     static final String XML_SIGNATURE_VERIFICATION_FAILED =
             "XML Signature verification wasn't successful. Signature is invalid.";
-    private final CertificateChainValidator certificateChainValidator;
+    static final String CERTIFICATE_TRUSTED =
+            "Certificate {0} is trusted. Validation is successful.";
+    static final String CERTIFICATE_NOT_TRUSTED =
+            "Certificate {0} is NOT trusted. Validation isn't successful.";
+    private final TrustedCertificatesStore trustedCertificatesStore;
     private final SignatureValidationProperties properties;
     private final ValidationContext context;
 
     XmlSignatureValidator(ValidatorChainBuilder builder) {
-        this.certificateChainValidator = builder.getCertificateChainValidator();
+        this.trustedCertificatesStore = builder.getCertificateRetriever().getTrustedCertificatesStore();
         this.properties = builder.getProperties();
         this.context = new ValidationContext(
                 ValidatorContext.XML_SIGNATURE_VALIDATOR, CertificateSource.LOTL_CERT, TimeBasedContext.PRESENT);
@@ -66,7 +73,7 @@ class XmlSignatureValidator {
             report.addReportItem(new ReportItem(
                     XML_SIGNATURE_VERIFICATION, XML_SIGNATURE_VERIFICATION_EXCEPTION, e, ReportItemStatus.INVALID));
         }
-        if (stopValidation(report, context)) {
+        if (report.getValidationResult() == ValidationReport.ValidationResult.INVALID) {
             return report;
         }
 
@@ -74,8 +81,16 @@ class XmlSignatureValidator {
             report.addReportItem(new ReportItem(XML_SIGNATURE_VERIFICATION, NO_CERTIFICATE, ReportItemStatus.INVALID));
             return report;
         }
-        certificateChainValidator.validate(
-                report, context, keySelector.getCertificate(), DateTimeUtil.getCurrentTimeDate());
+        X509Certificate certificate = keySelector.getCertificate();
+        if (trustedCertificatesStore.isCertificateGenerallyTrusted(certificate)) {
+            report.addReportItem(new CertificateReportItem(certificate, XML_SIGNATURE_VERIFICATION,
+                    MessageFormatUtil.format(CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()),
+                    ReportItemStatus.INFO));
+        } else {
+            report.addReportItem(new CertificateReportItem(certificate, XML_SIGNATURE_VERIFICATION,
+                    MessageFormatUtil.format(CERTIFICATE_NOT_TRUSTED, certificate.getSubjectX500Principal()),
+                    ReportItemStatus.INVALID));
+        }
         return report;
     }
 

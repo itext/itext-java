@@ -22,11 +22,11 @@
  */
 package com.itextpdf.signatures.validation;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,7 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
                 Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(126, certificateList.size());
-        IServiceContext context = xmlCertificateRetriever.getServiceContext(certificateList.get(0));
+        IServiceContext context = xmlCertificateRetriever.getServiceContexts().get(0);
         Assertions.assertNotNull(context);
         Assertions.assertTrue(context instanceof SimpleServiceContext);
     }
@@ -116,10 +116,8 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
                 new XmlCountryCertificateHandler());
         List<Certificate> certificateList = xmlCertificateRetriever.getCertificates(
                 Files.newInputStream(Paths.get(xmlPath)));
-
         Assertions.assertEquals(8, certificateList.size());
-        CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContext(
-                certificateList.get(0));
+        CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContexts().get(0);
         Assertions.assertEquals(2, serviceContext.getServiceStatusInfosSize());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
                 serviceContext.getCurrentStatusInfo().getServiceStatus());
@@ -138,8 +136,7 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
                 Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(64, certificateList.size());
-        CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContext(
-                certificateList.get(0));
+        CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContexts().get(0);
         Assertions.assertEquals(3, serviceContext.getServiceStatusInfosSize());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
                 serviceContext.getCurrentStatusInfo().getServiceStatus());
@@ -162,8 +159,7 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
                 Files.newInputStream(Paths.get(xmlPath)));
 
         Assertions.assertEquals(346, certificateList.size());
-        CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContext(
-                certificateList.get(0));
+        CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContexts().get(0);
         Assertions.assertEquals(3, serviceContext.getServiceStatusInfosSize());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
                 serviceContext.getCurrentStatusInfo().getServiceStatus());

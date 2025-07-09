@@ -47,7 +47,6 @@ import org.junit.jupiter.api.condition.DisabledInNativeImage;
 public class XmlSignatureValidatorTest extends ExtendedITextTest {
     private static final String SRC = "./src/test/resources/com/itextpdf/signatures/validation/XmlSignatureValidatorTest/";
 
-    @DisabledInNativeImage
     @Test
     public void lotlXmlValidationTest() throws CertificateException, IOException {
         String chainName = SRC + "lotl_signing_cert.pem";
@@ -64,15 +63,14 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
                     .hasNumberOfFailures(0)
                     .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
-                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
-                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.CERTIFICATE_TRUSTED,
                                     l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
                             .withCertificate(((X509Certificate) certificateChain[0]))
                     ));
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void signedXmlContentModifiedTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -87,7 +85,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
             AssertValidationReport.assertThat(report, a -> a
                     .hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1)
-                    .hasNumberOfLogs(2)
+                    .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
                             .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
                             .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_FAILED)
@@ -95,7 +93,6 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void signedXmlSignatureModifiedTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -110,7 +107,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
             AssertValidationReport.assertThat(report, a -> a
                     .hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1)
-                    .hasNumberOfLogs(2)
+                    .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
                             .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
                             .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_FAILED)
@@ -118,7 +115,6 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void signedXmlSignedInfoModifiedTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -133,7 +129,7 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
             AssertValidationReport.assertThat(report, a -> a
                     .hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(1)
-                    .hasNumberOfLogs(2)
+                    .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
                             .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
                             .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_FAILED)
@@ -141,7 +137,6 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void signedXmlSignedInfoModifiedStopValidationTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -166,7 +161,6 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void signedXmlWithBrokenCertTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -180,20 +174,14 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
             ValidationReport report = validator.validate(inputStream);
             AssertValidationReport.assertThat(report, a -> a
                     .hasStatus(ValidationResult.INVALID)
-                    .hasNumberOfFailures(2)
-                    .hasNumberOfLogs(2)
+                    .hasNumberOfFailures(1)
                     .hasLogItem(la -> la
                             .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
                             .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_EXCEPTION)
-                    )
-                    .hasLogItem(la -> la
-                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
-                            .withMessage(XmlSignatureValidator.NO_CERTIFICATE)
                     ));
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void signedXmlWithoutKeyInfoTest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -207,21 +195,15 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
             ValidationReport report = validator.validate(inputStream);
             AssertValidationReport.assertThat(report, a -> a
                     .hasStatus(ValidationResult.INVALID)
-                    .hasNumberOfFailures(2)
-                    .hasNumberOfLogs(2)
+                    .hasNumberOfFailures(1)
                     .hasLogItem(la -> la
                             .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
                             .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_EXCEPTION)
                             .withExceptionCauseType(PdfException.class)
-                    )
-                    .hasLogItem(la -> la
-                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
-                            .withMessage(XmlSignatureValidator.NO_CERTIFICATE)
                     ));
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void xmlValidationRSATest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_rsa.pem";
@@ -238,15 +220,14 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
                     .hasNumberOfFailures(0)
                     .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
-                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
-                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.CERTIFICATE_TRUSTED,
                                     l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
                             .withCertificate(((X509Certificate) certificateChain[0]))
                     ));
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void xmlValidationDSATest() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_dsa.pem";
@@ -263,15 +244,14 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
                     .hasNumberOfFailures(0)
                     .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
-                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
-                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.CERTIFICATE_TRUSTED,
                                     l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
                             .withCertificate(((X509Certificate) certificateChain[0]))
                     ));
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void xmlValidationECDSA_SHA1Test() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_ecdsa.pem";
@@ -288,15 +268,14 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
                     .hasNumberOfFailures(0)
                     .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
-                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
-                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.CERTIFICATE_TRUSTED,
                                     l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
                             .withCertificate(((X509Certificate) certificateChain[0]))
                     ));
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void xmlValidationECDSA_SHA256Test() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_ecdsa.pem";
@@ -313,15 +292,14 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
                     .hasNumberOfFailures(0)
                     .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
-                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
-                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.CERTIFICATE_TRUSTED,
                                     l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
                             .withCertificate(((X509Certificate) certificateChain[0]))
                     ));
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void xmlValidationECDSA_SHA384Test() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_ecdsa.pem";
@@ -338,15 +316,14 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
                     .hasNumberOfFailures(0)
                     .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
-                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
-                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.CERTIFICATE_TRUSTED,
                                     l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
                             .withCertificate(((X509Certificate) certificateChain[0]))
                     ));
         }
     }
 
-    @DisabledInNativeImage
     @Test
     public void xmlValidationECDSA_SHA512Test() throws CertificateException, IOException {
         String chainName = SRC + "signing_cert_ecdsa.pem";
@@ -363,8 +340,32 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
                     .hasNumberOfFailures(0)
                     .hasNumberOfLogs(1)
                     .hasLogItem(la -> la
-                            .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
-                            .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.CERTIFICATE_TRUSTED,
+                                    l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
+                            .withCertificate(((X509Certificate) certificateChain[0]))
+                    ));
+        }
+    }
+
+    @Test
+    public void xmlValidationRsaPssTest() throws CertificateException, IOException {
+        String chainName = SRC + "signing_cert_rsa_pss.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+
+        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithRsaPss.xml")) {
+            ValidationReport report = validator.validate(inputStream);
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0)
+                    .hasNumberOfLogs(1)
+                    .hasLogItem(la -> la
+                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
+                            .withMessage(XmlSignatureValidator.CERTIFICATE_TRUSTED,
                                     l -> ((X509Certificate) certificateChain[0]).getSubjectX500Principal())
                             .withCertificate(((X509Certificate) certificateChain[0]))
                     ));

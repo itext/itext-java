@@ -528,6 +528,7 @@
             </fileset>
             <fileset reason=".pem files reading logic is different in java and .net">
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
+                <file path="com/itextpdf/signatures/CertificateUtil.java"/>
             </fileset>
             <fileset reason="EnumSet generics mapping problems">
                 <file path="com/itextpdf/signatures/validation/context/ValidatorContexts.java" />
@@ -539,9 +540,6 @@
                 <file path="com/itextpdf/signatures/validation/report/xml/XmlReportGenerator.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/ReportNamespaceContext.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
-            </fileset>
-            <fileset reason="Different xml SAX reading implementation on .NET and java">
-                <file path="com/itextpdf/signatures/validation/AbstractXmlCertificateHandler.java"/>
             </fileset>
             <fileset reason="LocalDateTime and DateTime have different constructors and parsing">
                 <file path="com/itextpdf/signatures/validation/ServiceStatusInfo.java"/>

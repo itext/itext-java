@@ -30,7 +30,7 @@ import java.util.List;
 
 class CountryServiceContext implements IServiceContext {
 
-    private List<Certificate> certificates;
+    private final List<Certificate> certificates = new ArrayList<>();
 
     private String serviceType;
 
@@ -38,7 +38,7 @@ class CountryServiceContext implements IServiceContext {
     private final List<ServiceStatusInfo> serviceStatusInfos = new ArrayList<>();
 
     CountryServiceContext() {
-        //empty constructor
+        // Empty constructor
     }
 
     @Override
@@ -48,10 +48,6 @@ class CountryServiceContext implements IServiceContext {
 
     @Override
     public void addCertificate(Certificate certificate) {
-        if (certificates == null) {
-            certificates = new ArrayList<>();
-        }
-
         certificates.add(certificate);
     }
 

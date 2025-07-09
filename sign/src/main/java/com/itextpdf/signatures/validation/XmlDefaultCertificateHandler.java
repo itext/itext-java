@@ -22,15 +22,12 @@
  */
 package com.itextpdf.signatures.validation;
 
+import com.itextpdf.signatures.CertificateUtil;
+
 import java.security.cert.Certificate;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 class XmlDefaultCertificateHandler extends AbstractXmlCertificateHandler {
-
-    private final List<Certificate> certificateList = new ArrayList<>();
-    private final List<SimpleServiceContext> serviceContextList = new ArrayList<>();
     private StringBuilder information;
 
     XmlDefaultCertificateHandler() {
@@ -51,10 +48,9 @@ class XmlDefaultCertificateHandler extends AbstractXmlCertificateHandler {
     @Override
     public void endElement(String uri, String localName, String qName) {
         if (XmlTagConstants.X509CERTIFICATE.equals(localName)) {
-            Certificate certificate = getCertificateFromEncodedData(
+            Certificate certificate = CertificateUtil.createCertificateFromEncodedData(
                     removeWhitespacesAndBreakLines(information.toString()));
             serviceContextList.add(new SimpleServiceContext(certificate));
-            certificateList.add(certificate);
         }
 
         information = null;
@@ -65,27 +61,5 @@ class XmlDefaultCertificateHandler extends AbstractXmlCertificateHandler {
         if (information != null) {
             information.append(ch, start, length);
         }
-    }
-
-    @Override
-    IServiceContext getServiceContext(Certificate certificate) {
-        for (SimpleServiceContext context : serviceContextList) {
-            if (context.getCertificates().contains(certificate)) {
-                return context;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    List<Certificate> getCertificateList() {
-        return new ArrayList<>(certificateList);
-    }
-
-    @Override
-    void clear() {
-        certificateList.clear();
-        serviceContextList.clear();
     }
 }

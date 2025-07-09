@@ -42,16 +42,22 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IDistributionPointName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralName;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
+import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
+import com.itextpdf.commons.bouncycastle.cert.jcajce.IJcaX509CertificateConverter;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
+import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.kernel.crypto.OID;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CRL;
@@ -63,6 +69,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
@@ -517,6 +524,61 @@ public class CertificateUtil {
      */
     public static IASN1Primitive getExtensionValue(CRL crl, String oid) throws IOException {
         return getExtensionValueFromByteArray(SignUtils.getExtensionValueByOid(crl, oid));
+    }
+
+    /**
+     * Reads certificate from der encoded string.
+     *
+     * @param encodedCertificateBytes der encoded data
+     *
+     * @return {@link X509Certificate} object
+     */
+    public static X509Certificate createCertificateFromEncodedData(String encodedCertificateBytes) {
+        try {
+            byte[] bytes = Base64.getDecoder().decode(encodedCertificateBytes);
+            IX509CertificateHolder certificateHolder = FACTORY.createX509CertificateHolder(bytes);
+            return FACTORY.createJcaX509CertificateConverter().setProvider(FACTORY.getProvider())
+                    .getCertificate(certificateHolder);
+        } catch (CertificateException | IOException e) {
+            throw new PdfException(SignExceptionMessageConstant.FAILED_TO_RETRIEVE_CERTIFICATE, e);
+        }
+    }
+
+    /**
+     * Read all certificates from an input stream in PEM format.
+     *
+     * @param pemFileStream {@link InputStream} in PEM format
+     *
+     * @return {@link Certificate} array
+     */
+    public static Certificate[] readCertificatesFromPem(InputStream pemFileStream) {
+        try {
+            List<IX509CertificateHolder> certificatesHolders = readCertificates(pemFileStream);
+            IJcaX509CertificateConverter converter =
+                    FACTORY.createJcaX509CertificateConverter().setProvider(FACTORY.getProvider());
+            Certificate[] certificates = new Certificate[certificatesHolders.size()];
+            for (int i = 0; i < certificatesHolders.size(); i++) {
+                certificates[i] = converter.getCertificate(certificatesHolders.get(i));
+            }
+            return certificates;
+        } catch (CertificateException | IOException e) {
+            throw new PdfException(SignExceptionMessageConstant.FAILED_TO_RETRIEVE_CERTIFICATE, e);
+        }
+    }
+
+    private static List<IX509CertificateHolder> readCertificates(InputStream pemFileStream) throws IOException {
+        try (IPEMParser parser = FACTORY.createPEMParser(
+                new InputStreamReader(pemFileStream, StandardCharsets.UTF_8))) {
+            Object readObject = parser.readObject();
+            List<IX509CertificateHolder> certificateHolders = new ArrayList<>();
+            while (readObject != null) {
+                if (readObject instanceof IX509CertificateHolder) {
+                    certificateHolders.add((IX509CertificateHolder) readObject);
+                }
+                readObject = parser.readObject();
+            }
+            return certificateHolders;
+        }
     }
 
     /**
