@@ -53,8 +53,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -1056,6 +1058,88 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         ValidationReport report =
                 validator.validateCertificate(baseContext, rootCert, validationDate);
         AssertValidationReport.assertThat(report, a-> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.withCheckName("Certificate check.")
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                i-> rootCert.getSubjectX500Principal())
+                        .withCertificate(rootCert))
+        );
+    }
+
+    @Test
+    public void lotlTrustedStoreTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        String chainName = CERTS_SRC + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CountryServiceContext context = new CountryServiceContext();
+        context.addCertificate(rootCert);
+        context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.GRANTED,
+                LocalDateTime.of(1900,1,1, 0, 0)));
+
+        LOTLTrustedStore lotlTrustedStore = new LOTLTrustedStore();
+        lotlTrustedStore.addCertificatesWithContext(Collections.<CountryServiceContext>singletonList(context));
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder
+                .withSignatureValidationProperties(properties)
+                .withRevocationDataValidatorFactory(()-> mockRevocationDataValidator)
+                .withLOTLTrustedStoreFactory(() -> lotlTrustedStore);
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report1 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.CRL_ISSUER),
+                rootCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report1, a-> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(l -> l.withCheckName("Certificate check.")
+                        .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                i-> rootCert.getSubjectX500Principal())
+                        .withCertificate(rootCert))
+        );
+    }
+
+    @Test
+    public void lotlTrustedStoreChainTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+
+        String chainName = CERTS_SRC + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert = (X509Certificate) certificateChain[0];
+        X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CountryServiceContext context = new CountryServiceContext();
+        context.addCertificate(rootCert);
+        context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.GRANTED,
+                LocalDateTime.of(1900,1,1, 0, 0)));
+
+        LOTLTrustedStore lotlTrustedStore = new LOTLTrustedStore();
+        lotlTrustedStore.addCertificatesWithContext(Collections.<CountryServiceContext>singletonList(context));
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        validatorChainBuilder
+                .withKnownCertificates(Collections.<Certificate>singletonList(intermediateCert))
+                .withSignatureValidationProperties(properties)
+                .withRevocationDataValidatorFactory(()-> mockRevocationDataValidator)
+                .withLOTLTrustedStoreFactory(() -> lotlTrustedStore);
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report1 = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.CRL_ISSUER),
+                signingCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report1, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
                 .hasNumberOfLogs(1)

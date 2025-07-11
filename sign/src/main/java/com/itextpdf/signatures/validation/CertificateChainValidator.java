@@ -48,6 +48,12 @@ import static com.itextpdf.signatures.validation.SafeCalling.onRuntimeExceptionL
  * Validator class, which is expected to be used for certificates chain validation.
  */
 public class CertificateChainValidator {
+
+    private final SignatureValidationProperties properties;
+    private final IssuingCertificateRetriever certificateRetriever;
+    private final RevocationDataValidator revocationDataValidator;
+    private final LOTLTrustedStore lotlTrustedStore;
+
     static final String CERTIFICATE_CHECK = "Certificate check.";
     static final String VALIDITY_CHECK = "Certificate validity period check.";
     static final String EXTENSIONS_CHECK = "Required certificate extensions check.";
@@ -74,11 +80,6 @@ public class CertificateChainValidator {
     static final String VALIDITY_PERIOD_CHECK_FAILED =
             "Unexpected exception occurred while validating certificate validity period.";
 
-
-    private final SignatureValidationProperties properties;
-    private final IssuingCertificateRetriever certificateRetriever;
-    private final RevocationDataValidator revocationDataValidator;
-
     /**
      * Create new instance of {@link CertificateChainValidator}.
      *
@@ -88,6 +89,7 @@ public class CertificateChainValidator {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.revocationDataValidator = builder.getRevocationDataValidator();
+        this.lotlTrustedStore = builder.getLOTLTrustedstore();
     }
 
     /**
@@ -131,9 +133,9 @@ public class CertificateChainValidator {
             return result;
         }
 
-        if (onExceptionLog(() -> checkIfCertIsTrusted(result, localContext, certificate), Boolean.FALSE, result,
-                e -> new CertificateReportItem(certificate, CERTIFICATE_CHECK, TRUSTSTORE_RETRIEVAL_FAILED,
-                        e, ReportItemStatus.INFO))) {
+        if (onExceptionLog(() -> checkIfCertIsTrusted(result, localContext, certificate, validationDate),
+                Boolean.FALSE, result, e -> new CertificateReportItem(certificate, CERTIFICATE_CHECK,
+                        TRUSTSTORE_RETRIEVAL_FAILED, e, ReportItemStatus.INFO))) {
             return result;
         }
 
@@ -148,72 +150,9 @@ public class CertificateChainValidator {
     }
 
     private boolean checkIfCertIsTrusted(ValidationReport result, ValidationContext context,
-            X509Certificate certificate) {
-        if (CertificateSource.TRUSTED == context.getCertificateSource()) {
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItemStatus.INFO));
-            return true;
-        }
-        TrustedCertificatesStore store = certificateRetriever.getTrustedCertificatesStore();
-        if (store.isCertificateGenerallyTrusted(certificate)) {
-            // Certificate is trusted for everything.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItemStatus.INFO));
-            return true;
-        }
-        if (store.isCertificateTrustedForCA(certificate)) {
-            // Certificate is trusted to be CA, we need to make sure it wasn't used to directly sign anything else.
-            if (CertificateSource.CERT_ISSUER == context.getCertificateSource()) {
-                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                        CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItemStatus.INFO));
-                return true;
-            }
-            // Certificate is trusted to be CA, but is not used in CA context.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT, certificate.getSubjectX500Principal(),
-                    "certificates generation"), ReportItemStatus.INFO));
-        }
-        if (store.isCertificateTrustedForTimestamp(certificate)) {
-            // Certificate is trusted for timestamp signing,
-            // we need to make sure this chain is responsible for timestamping.
-            if (ValidationContext.checkIfContextChainContainsCertificateSource(context, CertificateSource.TIMESTAMP)) {
-                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                        CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItemStatus.INFO));
-                return true;
-            }
-            // Certificate is trusted for timestamps generation, but is not used in timestamp generation context.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT, certificate.getSubjectX500Principal(),
-                    "timestamp generation"), ReportItemStatus.INFO));
-        }
-        if (store.isCertificateTrustedForOcsp(certificate)) {
-            // Certificate is trusted for OCSP response signing,
-            // we need to make sure this chain is responsible for OCSP response generation.
-            if (ValidationContext.checkIfContextChainContainsCertificateSource(
-                    context, CertificateSource.OCSP_ISSUER)) {
-                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                        CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItemStatus.INFO));
-                return true;
-            }
-            // Certificate is trusted for OCSP response generation, but is not used in OCSP response generation context.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT, certificate.getSubjectX500Principal(),
-                    "OCSP response generation"), ReportItemStatus.INFO));
-        }
-        if (store.isCertificateTrustedForCrl(certificate)) {
-            // Certificate is trusted for CRL signing,
-            // we need to make sure this chain is responsible for CRL generation.
-            if (ValidationContext.checkIfContextChainContainsCertificateSource(context, CertificateSource.CRL_ISSUER)) {
-                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                        CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItemStatus.INFO));
-                return true;
-            }
-            // Certificate is trusted for CRL generation, but is not used in CRL generation context.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT, certificate.getSubjectX500Principal(),
-                    "CRL generation"), ReportItemStatus.INFO));
-        }
-        return false;
+            X509Certificate certificate, Date validationDate) {
+        return certificateRetriever.getTrustedCertificatesStore().checkIfCertIsTrusted(result, context, certificate)
+                || lotlTrustedStore.checkIfCertIsTrusted(result, context, certificate, validationDate);
     }
 
     private boolean stopValidation(ValidationReport result, ValidationContext context) {

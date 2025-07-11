@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.validation;
 
+import com.itextpdf.commons.utils.DateTimeUtil;
 import java.security.cert.Certificate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -64,6 +65,10 @@ class CountryServiceContext implements IServiceContext {
 
     void addNewServiceStatus(ServiceStatusInfo serviceStatusInfo) {
         serviceStatusInfos.add(serviceStatusInfo);
+    }
+
+    String getServiceStatusByDate(long milliseconds) {
+        return getServiceStatusByDate(DateTimeUtil.getTimeFromMillis(milliseconds));
     }
 
     String getServiceStatusByDate(LocalDateTime time) {

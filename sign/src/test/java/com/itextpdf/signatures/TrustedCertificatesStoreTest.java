@@ -22,50 +22,21 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
-import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.commons.utils.FileUtil;
-import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
-import com.itextpdf.signatures.testutils.TimeTestUtil;
-import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
-import com.itextpdf.signatures.validation.AssertValidationReport;
-import com.itextpdf.signatures.validation.CRLValidator;
-import com.itextpdf.signatures.validation.SignatureValidationProperties;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
-import com.itextpdf.signatures.validation.ValidatorChainBuilder;
-import com.itextpdf.signatures.validation.context.CertificateSource;
-import com.itextpdf.signatures.validation.context.TimeBasedContext;
-import com.itextpdf.signatures.validation.context.ValidationContext;
-import com.itextpdf.signatures.validation.context.ValidatorContext;
-import com.itextpdf.signatures.validation.mocks.MockChainValidator;
-import com.itextpdf.signatures.validation.mocks.MockIssuingCertificateRetriever;
-import com.itextpdf.signatures.validation.report.ReportItem;
-import com.itextpdf.signatures.validation.report.ValidationReport;
-import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
-public class TrustedCerrtificatesStoreTest extends ExtendedITextTest {
+public class TrustedCertificatesStoreTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] KEY_PASSWORD = "testpassphrase".toCharArray();

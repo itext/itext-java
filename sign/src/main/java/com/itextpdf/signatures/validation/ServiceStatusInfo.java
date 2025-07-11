@@ -24,6 +24,8 @@ package com.itextpdf.signatures.validation;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
 class ServiceStatusInfo {
 
@@ -33,6 +35,19 @@ class ServiceStatusInfo {
     private LocalDateTime serviceStatusStartingTime;
 
     private final DateTimeFormatter statusStartDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    static final String GRANTED = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted";
+    static final String GRANTED_NATIONALLY =
+            "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel";
+    static final String WITHDRAWN = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn";
+    static final String ACCREDITED = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited";
+    private static final Set<String> validStatuses = new HashSet<>();
+
+    static {
+        validStatuses.add(GRANTED);
+        validStatuses.add(GRANTED_NATIONALLY);
+        validStatuses.add(ACCREDITED);
+    }
 
     ServiceStatusInfo() {
         // empty constructor
@@ -55,12 +70,15 @@ class ServiceStatusInfo {
         this.serviceStatusStartingTime = statusStartDateFormat.parse(timeString, LocalDateTime::from);
     }
 
-
     void setServiceStatusStartingTime(LocalDateTime serviceStatusStartingTime) {
         this.serviceStatusStartingTime = serviceStatusStartingTime;
     }
 
     LocalDateTime getServiceStatusStartingTime() {
         return serviceStatusStartingTime;
+    }
+
+    static boolean isStatusValid(String status) {
+        return validStatuses.contains(status);
     }
 }
