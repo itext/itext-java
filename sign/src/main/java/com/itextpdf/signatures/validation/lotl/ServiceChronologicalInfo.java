@@ -24,21 +24,24 @@ package com.itextpdf.signatures.validation.lotl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-class ServiceStatusInfo {
+class ServiceChronologicalInfo {
     private String serviceStatus;
 
     //Local time is used here because it is required to use UTC in a trusted lists, so no offset shall be presented.
     private LocalDateTime serviceStatusStartingTime;
+
+    private final List<AdditionalServiceInformationExtension> extensions = new ArrayList<>();
 
     private final DateTimeFormatter statusStartDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     static final String GRANTED = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted";
     static final String GRANTED_NATIONALLY =
             "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel";
-    static final String WITHDRAWN = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn";
     static final String ACCREDITED = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited";
     private static final Set<String> validStatuses = new HashSet<>();
 
@@ -48,11 +51,11 @@ class ServiceStatusInfo {
         validStatuses.add(ACCREDITED);
     }
 
-    ServiceStatusInfo() {
+    ServiceChronologicalInfo() {
         // empty constructor
     }
 
-    ServiceStatusInfo(String serviceStatus, LocalDateTime serviceStatusStartingTime) {
+    ServiceChronologicalInfo(String serviceStatus, LocalDateTime serviceStatusStartingTime) {
         this.serviceStatus = serviceStatus;
         this.serviceStatusStartingTime = serviceStatusStartingTime;
     }
@@ -79,5 +82,13 @@ class ServiceStatusInfo {
 
     static boolean isStatusValid(String status) {
         return validStatuses.contains(status);
+    }
+
+    void addExtension(AdditionalServiceInformationExtension extension) {
+        extensions.add(extension);
+    }
+
+    List<AdditionalServiceInformationExtension> getExtensions() {
+        return extensions;
     }
 }

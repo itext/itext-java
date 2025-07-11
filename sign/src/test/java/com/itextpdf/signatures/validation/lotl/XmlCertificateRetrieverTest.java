@@ -141,13 +141,13 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
                 Files.newInputStream(Paths.get(xmlPath)));
         Assertions.assertEquals(8, certificateList.size());
         CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContexts().get(0);
-        Assertions.assertEquals(2, serviceContext.getServiceStatusInfosSize());
+        Assertions.assertEquals(2, serviceContext.getServiceChronologicalInfosSize());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
-                serviceContext.getCurrentStatusInfo().getServiceStatus());
+                serviceContext.getCurrentChronologicalInfo().getServiceStatus());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/Svctype/CA/QC",
                 serviceContext.getServiceType());
         Assertions.assertEquals(LocalDateTime.of(2021, 12, 16, 6, 0, 18),
-                serviceContext.getCurrentStatusInfo().getServiceStatusStartingTime());
+                serviceContext.getCurrentChronologicalInfo().getServiceStatusStartingTime());
     }
 
     @Test
@@ -160,15 +160,15 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
 
         Assertions.assertEquals(64, certificateList.size());
         CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContexts().get(0);
-        Assertions.assertEquals(3, serviceContext.getServiceStatusInfosSize());
+        Assertions.assertEquals(3, serviceContext.getServiceChronologicalInfosSize());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
-                serviceContext.getCurrentStatusInfo().getServiceStatus());
+                serviceContext.getCurrentChronologicalInfo().getServiceStatus());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/Svctype/CA/QC",
                 serviceContext.getServiceType());
         Assertions.assertEquals(LocalDateTime.of(2017, 6, 30, 22, 0),
-                serviceContext.getCurrentStatusInfo().getServiceStatusStartingTime());
+                serviceContext.getCurrentChronologicalInfo().getServiceStatusStartingTime());
         LocalDateTime previousStatusTime = LocalDateTime.of(2016, 6, 30, 22, 0);
-        String previousStatus = serviceContext.getServiceStatusByDate(previousStatusTime);
+        String previousStatus = serviceContext.getServiceChronologicalInfoByDate(previousStatusTime).getServiceStatus();
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision",
                 previousStatus);
     }
@@ -183,13 +183,13 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
 
         Assertions.assertEquals(346, certificateList.size());
         CountryServiceContext serviceContext = (CountryServiceContext) xmlCertificateRetriever.getServiceContexts().get(0);
-        Assertions.assertEquals(3, serviceContext.getServiceStatusInfosSize());
+        Assertions.assertEquals(3, serviceContext.getServiceChronologicalInfosSize());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
-                serviceContext.getCurrentStatusInfo().getServiceStatus());
+                serviceContext.getCurrentChronologicalInfo().getServiceStatus());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/Svctype/CA/QC",
                 serviceContext.getServiceType());
         Assertions.assertEquals(LocalDateTime.of(2016, 6, 30, 22, 0),
-                serviceContext.getCurrentStatusInfo().getServiceStatusStartingTime());
+                serviceContext.getCurrentChronologicalInfo().getServiceStatusStartingTime());
     }
 
 

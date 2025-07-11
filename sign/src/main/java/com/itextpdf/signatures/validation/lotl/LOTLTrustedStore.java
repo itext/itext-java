@@ -59,6 +59,10 @@ public class LOTLTrustedStore {
     static final String CERTIFICATE_SERVICE_TYPE_NOT_RECOGNIZED =
             "Certificate {0} is trusted, but it's service type {1} is not recognized.";
     static final String NOT_YET_VALID_CERTIFICATE = "Certificate {0} is not yet valid.";
+    static final String SCOPE_SPECIFIED_WITH_INVALID_TYPES = "Certificate {0} is trusted for {1}, " +
+            "which is incorrect scope for pdf validation.";
+    static final String EXTENSIONS_CHECK = "Certificate extensions check.";
+
     private static final Map<String, Set<CertificateSource>> serviceTypeIdentifiersScope;
 
     private final Set<CountryServiceContext> contexts = new HashSet<>();
@@ -176,7 +180,10 @@ public class LOTLTrustedStore {
 
         List<ReportItem> validationReportItems = new ArrayList<>();
         for (CountryServiceContext currentContext : currentContextSet) {
-            if (!isCertificateValidInTime(validationReportItems, certificate, currentContext, validationDate)) {
+            ServiceChronologicalInfo chronologicalInfo = getCertificateChronologicalInfoByTime(validationReportItems,
+                    certificate, currentContext, validationDate);
+            if (chronologicalInfo == null ||
+                    !isScopeCorrectlySpecified(validationReportItems, certificate, chronologicalInfo.getExtensions())) {
                 continue;
             }
 
@@ -211,6 +218,37 @@ public class LOTLTrustedStore {
         return false;
     }
 
+    /**
+     * Check if scope specified by extensions contains valid types.
+     *
+     * @param reportItems {@link ValidationReport} which is populated with detailed validation results
+     * @param certificate {@link X509Certificate} to be validated
+     * @param extensions {@link AdditionalServiceInformationExtension} that specify scope
+     *
+     * @return false if extensions specify scope only with invalid types.
+     */
+    boolean isScopeCorrectlySpecified(List<ReportItem>  reportItems, X509Certificate certificate,
+                                      List<AdditionalServiceInformationExtension> extensions) {
+        List<ReportItem> currentReportItems = new ArrayList<>();
+        for (AdditionalServiceInformationExtension extension : extensions) {
+            if (extension.isScopeValid()) {
+                return true;
+            } else {
+                currentReportItems.add(new CertificateReportItem(certificate, EXTENSIONS_CHECK,
+                        MessageFormatUtil.format(SCOPE_SPECIFIED_WITH_INVALID_TYPES,
+                                certificate.getSubjectX500Principal(), extension.getUri()),
+                        ReportItem.ReportItemStatus.INVALID));
+            }
+        }
+
+        if (currentReportItems.isEmpty()) {
+            return true;
+        } else {
+            reportItems.addAll(currentReportItems);
+            return false;
+        }
+    }
+
     final void addCertificatesWithContext(Collection<CountryServiceContext> contexts) {
         this.contexts.addAll(contexts);
     }
@@ -225,23 +263,37 @@ public class LOTLTrustedStore {
         return contextSet;
     }
 
-    private static boolean isCertificateValidInTime(List<ReportItem> reportItems, X509Certificate certificate,
-                                     CountryServiceContext currentContext, Date validationDate) {
-        String status = currentContext.getServiceStatusByDate(DateTimeUtil.getRelativeTime(validationDate));
+    /**
+     * Find {@link ServiceChronologicalInfo} corresponding to provided date. If Service wasn't operating at that date
+     * report item will be added and null will be returned.
+     *
+     * @param reportItems {@link ValidationReport} which is populated with detailed validation results
+     * @param certificate {@link X509Certificate} to be validated
+     * @param currentContext {@link CountryServiceContext} which contains statuses and their starting time
+     * @param validationDate {@link Date} against which certificate is expected to be validated. Usually signing
+     *                       date
+     *
+     * @return {@link ServiceChronologicalInfo} which contains time specific service information.
+     */
+    ServiceChronologicalInfo getCertificateChronologicalInfoByTime(
+            List<ReportItem> reportItems, X509Certificate certificate, CountryServiceContext currentContext,
+            Date validationDate) {
+        ServiceChronologicalInfo status = currentContext.getServiceChronologicalInfoByDate(
+                DateTimeUtil.getRelativeTime(validationDate));
         if (status == null) {
             reportItems.add(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
-                    MessageFormatUtil.format(NOT_YET_VALID_CERTIFICATE, certificate.getSubjectX500Principal()),
-                    ReportItem.ReportItemStatus.INVALID));
-            return false;
+                    MessageFormatUtil.format(NOT_YET_VALID_CERTIFICATE,
+                            certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INVALID));
+            return null;
         }
 
-        if (!ServiceStatusInfo.isStatusValid(status)) {
+        if (!ServiceChronologicalInfo.isStatusValid(status.getServiceStatus())) {
             reportItems.add(new CertificateReportItem(certificate, CERTIFICATE_CHECK,
                     MessageFormatUtil.format(REVOKED_CERTIFICATE, certificate.getSubjectX500Principal()),
                     ReportItem.ReportItemStatus.INVALID));
-            return false;
+            return null;
         }
 
-        return true;
+        return status;
     }
 }

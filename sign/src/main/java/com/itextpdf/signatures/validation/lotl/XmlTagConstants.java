@@ -35,5 +35,6 @@ class XmlTagConstants {
     static final String SCHEME_TERRITORY = "SchemeTerritory";
     static final String TSLLOCATION = "TSLLocation";
     static final String MIME_TYPE = "MimeType";
+    static final String ADDITIONAL_INFORMATION_EXTENSION = "AdditionalServiceInformation";
     static final String URI = "URI";
 }

@@ -41,11 +41,13 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
         INFORMATION_TAGS.add(XmlTagConstants.SERVICE_STATUS);
         INFORMATION_TAGS.add(XmlTagConstants.X509CERTIFICATE);
         INFORMATION_TAGS.add(XmlTagConstants.SERVICE_STATUS_STARTING_TIME);
+        INFORMATION_TAGS.add(XmlTagConstants.URI);
     }
 
     private StringBuilder information;
     private CountryServiceContext currentServiceContext = null;
-    private ServiceStatusInfo currentServiceStatusInfo = null;
+    private ServiceChronologicalInfo currentServiceChronologicalInfo = null;
+    private AdditionalServiceInformationExtension currentExtension = null;
 
     XmlCountryCertificateHandler(Set<String> serviceTypes) {
         this.serviceTypes = new HashSet<>(serviceTypes);
@@ -64,8 +66,10 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
             startProvider();
         } else if (XmlTagConstants.SERVICE_HISTORY_INSTANCE.equals(localName)
                 || XmlTagConstants.SERVICE_INFORMATION.equals(localName)) {
-            currentServiceStatusInfo = new ServiceStatusInfo();
-        } else if (INFORMATION_TAGS.contains(localName)) {
+            currentServiceChronologicalInfo = new ServiceChronologicalInfo();
+        } else if (XmlTagConstants.ADDITIONAL_INFORMATION_EXTENSION.equals(localName)) {
+            currentExtension = new AdditionalServiceInformationExtension();
+        }else if (INFORMATION_TAGS.contains(localName)) {
             information = new StringBuilder();
         }
     }
@@ -84,8 +88,8 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
                 information = null;
                 break;
             case XmlTagConstants.SERVICE_STATUS:
-                if (currentServiceContext != null) {
-                    currentServiceStatusInfo.setServiceStatus(information.toString());
+                if (currentServiceChronologicalInfo != null) {
+                    currentServiceChronologicalInfo.setServiceStatus(information.toString());
                 }
 
                 information = null;
@@ -103,8 +107,8 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
                 information = null;
                 break;
             case XmlTagConstants.SERVICE_STATUS_STARTING_TIME:
-                if (currentServiceContext != null) {
-                    currentServiceStatusInfo.setServiceStatusStartingTime(information.toString());
+                if (currentServiceChronologicalInfo != null) {
+                    currentServiceChronologicalInfo.setServiceStatusStartingTime(information.toString());
                 }
 
                 information = null;
@@ -112,10 +116,23 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
             case XmlTagConstants.SERVICE_INFORMATION:
             case XmlTagConstants.SERVICE_HISTORY_INSTANCE:
                 if (currentServiceContext != null) {
-                    currentServiceContext.addNewServiceStatus(currentServiceStatusInfo);
+                    currentServiceContext.addServiceChronologicalInfo(currentServiceChronologicalInfo);
                 }
 
-                currentServiceStatusInfo = null;
+                currentServiceChronologicalInfo = null;
+                break;
+            case XmlTagConstants.URI:
+                if (currentExtension != null) {
+                    currentExtension.setUri(information.toString());
+                }
+
+                break;
+            case XmlTagConstants.ADDITIONAL_INFORMATION_EXTENSION:
+                if (currentServiceChronologicalInfo != null) {
+                    currentServiceChronologicalInfo.addExtension(currentExtension);
+                }
+
+                currentExtension = null;
         }
     }
 

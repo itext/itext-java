@@ -65,7 +65,7 @@ public class LOTLCertificateChainValidatorTest extends ExtendedITextTest {
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(rootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
-        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.GRANTED,
+        context.addServiceChronologicalInfo(new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
                 LocalDateTime.of(1900,1,1, 0, 0)));
 
         ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
@@ -107,7 +107,7 @@ public class LOTLCertificateChainValidatorTest extends ExtendedITextTest {
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(rootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
-        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.GRANTED,
+        context.addServiceChronologicalInfo(new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
                 LocalDateTime.of(1900,1,1, 0, 0)));
 
         ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
@@ -132,6 +132,49 @@ public class LOTLCertificateChainValidatorTest extends ExtendedITextTest {
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(LOTLTrustedStore.CERTIFICATE_TRUSTED,
                                 i-> rootCert.getSubjectX500Principal())
+                        .withCertificate(rootCert))
+        );
+    }
+
+    @Test
+    public void lotlTrustedStoreExtensionTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        String chainName = CERTS_SRC + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CountryServiceContext context = new CountryServiceContext();
+        context.addCertificate(rootCert);
+        context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+        ServiceChronologicalInfo info =new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
+                LocalDateTime.of(1900,1,1, 0, 0));
+        info.addExtension(new AdditionalServiceInformationExtension(
+                "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication"));
+        context.addServiceChronologicalInfo(info);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        LOTLTrustedStore lotlTrustedStore = new LOTLTrustedStore(validatorChainBuilder);
+        validatorChainBuilder
+                .withSignatureValidationProperties(properties)
+                .withRevocationDataValidatorFactory(()-> mockRevocationDataValidator)
+                .withLOTLTrustedStoreFactory(() -> lotlTrustedStore);
+        lotlTrustedStore.addCertificatesWithContext(Collections.<CountryServiceContext>singletonList(context));
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report = validator.validateCertificate(baseContext.setCertificateSource(CertificateSource.CRL_ISSUER),
+                rootCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a-> a
+                .hasStatus(ValidationResult.INVALID)
+                .hasNumberOfFailures(2)
+                .hasNumberOfLogs(2)
+                .hasLogItem(l -> l.withCheckName(LOTLTrustedStore.EXTENSIONS_CHECK)
+                        .withMessage(LOTLTrustedStore.SCOPE_SPECIFIED_WITH_INVALID_TYPES,
+                                i-> rootCert.getSubjectX500Principal(),
+                                k -> "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication")
                         .withCertificate(rootCert))
         );
     }

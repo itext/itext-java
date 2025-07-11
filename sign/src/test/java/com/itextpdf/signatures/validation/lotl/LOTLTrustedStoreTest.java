@@ -62,7 +62,7 @@ class LOTLTrustedStoreTest extends ExtendedITextTest {
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
-        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.GRANTED,
+        context.addServiceChronologicalInfo(new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
                 LocalDateTime.of(1900,1,1, 0, 0)));
         store.addCertificatesWithContext(Collections.singletonList(context));
 
@@ -88,7 +88,7 @@ class LOTLTrustedStoreTest extends ExtendedITextTest {
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/Certstatus/CRL");
-        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.GRANTED,
+        context.addServiceChronologicalInfo(new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
                 LocalDateTime.of(1900,1,1, 0, 0)));
         store.addCertificatesWithContext(Collections.singletonList(context));
 
@@ -117,7 +117,7 @@ class LOTLTrustedStoreTest extends ExtendedITextTest {
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/TSA/QTST");
-        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.GRANTED,
+        context.addServiceChronologicalInfo(new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
                 LocalDateTime.of(1900,1,1, 0, 0)));
         store.addCertificatesWithContext(Collections.singletonList(context));
 
@@ -143,7 +143,7 @@ class LOTLTrustedStoreTest extends ExtendedITextTest {
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("invalid service type");
-        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.GRANTED,
+        context.addServiceChronologicalInfo(new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
                 LocalDateTime.of(1900,1,1, 0, 0)));
         store.addCertificatesWithContext(Collections.singletonList(context));
 
@@ -163,13 +163,14 @@ class LOTLTrustedStoreTest extends ExtendedITextTest {
                 ));
     }
 
+
     @Test
     public void incorrectTimeBeforeValidTest() {
         LOTLTrustedStore store = new ValidatorChainBuilder().getLOTLTrustedstore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
-        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.GRANTED,
+        context.addServiceChronologicalInfo(new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
                 LocalDateTime.of(2025,1,1, 0, 0)));
         store.addCertificatesWithContext(Collections.singletonList(context));
 
@@ -195,7 +196,8 @@ class LOTLTrustedStoreTest extends ExtendedITextTest {
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
-        context.addNewServiceStatus(new ServiceStatusInfo(ServiceStatusInfo.WITHDRAWN,
+        context.addServiceChronologicalInfo(new ServiceChronologicalInfo(
+                "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
                 LocalDateTime.of(1900,1,1, 0, 0)));
         store.addCertificatesWithContext(Collections.singletonList(context));
 
@@ -211,6 +213,96 @@ class LOTLTrustedStoreTest extends ExtendedITextTest {
                         .withCheckName(LOTLTrustedStore.CERTIFICATE_CHECK)
                         .withMessage("Certificate {0} is revoked.",
                                 l -> crlRootCert.getSubjectX500Principal())
+                        .withCertificate(crlRootCert)
+                ));
+    }
+
+    @Test
+    public void checkCertificateWithCorrectExtensionScopeTest() {
+        LOTLTrustedStore store = new ValidatorChainBuilder().getLOTLTrustedstore();
+        CountryServiceContext context = new CountryServiceContext();
+        context.addCertificate(crlRootCert);
+        context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+        ServiceChronologicalInfo info = new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
+                LocalDateTime.of(1900,1,1, 0, 0));
+        info.addExtension(new AdditionalServiceInformationExtension(
+                "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures"));
+        context.addServiceChronologicalInfo(info);
+        store.addCertificatesWithContext(Collections.singletonList(context));
+
+        ValidationReport report = new ValidationReport();
+        Assertions.assertTrue(store.checkIfCertIsTrusted(report, new ValidationContext(
+                        ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR, CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT),
+                crlRootCert, TimeTestUtil.TEST_DATE_TIME));
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(la -> la
+                        .withCheckName(LOTLTrustedStore.CERTIFICATE_CHECK)
+                        .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                l -> crlRootCert.getSubjectX500Principal())
+                        .withCertificate(crlRootCert)
+                ));
+    }
+
+    @Test
+    public void checkCertificateWithCorrectExtensionScope2Test() {
+        LOTLTrustedStore store = new ValidatorChainBuilder().getLOTLTrustedstore();
+        CountryServiceContext context = new CountryServiceContext();
+        context.addCertificate(crlRootCert);
+        context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+        ServiceChronologicalInfo info = new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
+                LocalDateTime.of(1900,1,1, 0, 0));
+        info.addExtension(new AdditionalServiceInformationExtension(
+                "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures"));
+        info.addExtension(new AdditionalServiceInformationExtension(
+                "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication"));
+        context.addServiceChronologicalInfo(info);
+        store.addCertificatesWithContext(Collections.singletonList(context));
+
+        ValidationReport report = new ValidationReport();
+        Assertions.assertTrue(store.checkIfCertIsTrusted(report, new ValidationContext(
+                        ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR, CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT),
+                crlRootCert, TimeTestUtil.TEST_DATE_TIME));
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(1)
+                .hasLogItem(la -> la
+                        .withCheckName(LOTLTrustedStore.CERTIFICATE_CHECK)
+                        .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
+                                l -> crlRootCert.getSubjectX500Principal())
+                        .withCertificate(crlRootCert)
+                ));
+    }
+
+    @Test
+    public void checkCertificateWithIncorrectExtensionScopeTest() {
+        LOTLTrustedStore store = new ValidatorChainBuilder().getLOTLTrustedstore();
+        CountryServiceContext context = new CountryServiceContext();
+        context.addCertificate(crlRootCert);
+        context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+        ServiceChronologicalInfo info = new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
+                LocalDateTime.of(1900,1,1, 0, 0));
+        info.addExtension(new AdditionalServiceInformationExtension(
+                "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication"));
+        context.addServiceChronologicalInfo(info);
+        store.addCertificatesWithContext(Collections.singletonList(context));
+
+        ValidationReport report = new ValidationReport();
+        Assertions.assertFalse(store.checkIfCertIsTrusted(report, new ValidationContext(
+                        ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR, CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT),
+                crlRootCert, TimeTestUtil.TEST_DATE_TIME));
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationReport.ValidationResult.INVALID)
+                .hasNumberOfFailures(1)
+                .hasNumberOfLogs(1)
+                .hasLogItem(la -> la
+                        .withCheckName(LOTLTrustedStore.EXTENSIONS_CHECK)
+                        .withMessage(LOTLTrustedStore.SCOPE_SPECIFIED_WITH_INVALID_TYPES,
+                                l -> crlRootCert.getSubjectX500Principal(),
+                                k -> "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication")
                         .withCertificate(crlRootCert)
                 ));
     }

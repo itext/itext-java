@@ -542,7 +542,7 @@
                 <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
             </fileset>
             <fileset reason="LocalDateTime and DateTime have different constructors and parsing">
-                <file path="com/itextpdf/signatures/validation/lotl/ServiceStatusInfo.java"/>
+                <file path="com/itextpdf/signatures/validation/lotl/ServiceChronologicalInfo.java"/>
             </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />

@@ -34,7 +34,7 @@ class CountryServiceContext implements IServiceContext {
     private String serviceType;
 
     //It is expected that service statuses are ordered starting from the newest one.
-    private final List<ServiceStatusInfo> serviceStatusInfos = new ArrayList<>();
+    private final List<ServiceChronologicalInfo> serviceChronologicalInfos = new ArrayList<>();
 
     CountryServiceContext() {
         // Empty constructor
@@ -64,29 +64,29 @@ class CountryServiceContext implements IServiceContext {
         return serviceType;
     }
 
-    void addNewServiceStatus(ServiceStatusInfo serviceStatusInfo) {
-        serviceStatusInfos.add(serviceStatusInfo);
+    void addServiceChronologicalInfo(ServiceChronologicalInfo serviceChronologicalInfo) {
+        serviceChronologicalInfos.add(serviceChronologicalInfo);
     }
 
-    String getServiceStatusByDate(long milliseconds) {
-        return getServiceStatusByDate(DateTimeUtil.getTimeFromMillis(milliseconds));
+    ServiceChronologicalInfo getServiceChronologicalInfoByDate(long milliseconds) {
+        return getServiceChronologicalInfoByDate(DateTimeUtil.getTimeFromMillis(milliseconds));
     }
 
-    String getServiceStatusByDate(LocalDateTime time) {
-        for (ServiceStatusInfo serviceStatusInfo: serviceStatusInfos) {
-            if (serviceStatusInfo.getServiceStatusStartingTime().isBefore(time)) {
-                return serviceStatusInfo.getServiceStatus();
+    ServiceChronologicalInfo getServiceChronologicalInfoByDate(LocalDateTime time) {
+        for (ServiceChronologicalInfo serviceChronologicalInfo : serviceChronologicalInfos) {
+            if (serviceChronologicalInfo.getServiceStatusStartingTime().isBefore(time)) {
+                return serviceChronologicalInfo;
             }
         }
 
         return null;
     }
 
-    ServiceStatusInfo getCurrentStatusInfo() {
-        return serviceStatusInfos.get(0);
+    ServiceChronologicalInfo getCurrentChronologicalInfo() {
+        return serviceChronologicalInfos.get(0);
     }
 
-    int getServiceStatusInfosSize() {
-        return serviceStatusInfos.size();
+    int getServiceChronologicalInfosSize() {
+        return serviceChronologicalInfos.size();
     }
 }
