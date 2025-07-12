@@ -57,6 +57,9 @@ public class ContextManager {
         local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
                 Collections.singleton(ProductNameConstant.PDF_OCR_TESSERACT4));
 
+        local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_ONNXTR),
+                Collections.singleton(ProductNameConstant.PDF_OCR_ONNXTR));
+
         INSTANCE = local;
     }
 

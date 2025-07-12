@@ -52,6 +52,11 @@ public final class ProductNameConstant {
      */
     public static final String PDF_OCR_TESSERACT4 = "pdfOcr-tesseract4";
     /**
+     * pdfocr-onnxtr constant.
+     */
+    public static final String PDF_OCR_ONNXTR = "pdfOcr-onnxtr";
+
+    /**
      * set of product names.
      */
     public static final Set<String> PRODUCT_NAMES = Collections.unmodifiableSet(
@@ -59,7 +64,8 @@ public final class ProductNameConstant {
                     ProductNameConstant.ITEXT_CORE,
                     ProductNameConstant.PDF_HTML,
                     ProductNameConstant.PDF_SWEEP,
-                    ProductNameConstant.PDF_OCR_TESSERACT4
+                    ProductNameConstant.PDF_OCR_TESSERACT4,
+                    ProductNameConstant.PDF_OCR_ONNXTR
             )));
 
     private ProductNameConstant() {}
