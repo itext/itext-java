@@ -34,8 +34,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
+/**
+ * This class provides an autoport independent SAX processor for XML documents.
+ */
 public class XmlSaxProcessor {
 
+    /**
+     * Processes the XML document from the given input stream using the provided handler.
+     *
+     * @param inputStream the input stream containing the XML document
+     * @param handler     the handler to process the XML elements
+     */
     public void process(InputStream inputStream, IDefaultXmlHandler handler) {
         XMLReader reader = XmlProcessorCreator.createSafeXMLReader(true, false);
         reader.setContentHandler(new HandlerProxy(handler));
@@ -44,7 +53,6 @@ public class XmlSaxProcessor {
         } catch (IOException | SAXException e) {
             throw new PdfException(e);
         }
-
     }
 
 

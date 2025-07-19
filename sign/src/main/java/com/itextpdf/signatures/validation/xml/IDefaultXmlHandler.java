@@ -24,12 +24,36 @@ package com.itextpdf.signatures.validation.xml;
 
 import java.util.HashMap;
 
+/**
+ * Interface for handling XML elements during SAX processing.
+ */
 public interface IDefaultXmlHandler {
-
+    /**
+     * Called when a start element is encountered in the XML document.
+     *
+     * @param uri        the namespace URI of the element
+     * @param localName  the local name of the element
+     * @param qName      the qualified name of the element
+     * @param attributes a map of attributes associated with the element
+     */
     void startElement(String uri, String localName, String qName, HashMap<String, String> attributes);
 
+    /**
+     * Called when an end element is encountered in the XML document.
+     *
+     * @param uri       the namespace URI of the element
+     * @param localName the local name of the element
+     * @param qName     the qualified name of the element
+     */
     void endElement(String uri, String localName, String qName);
 
+    /**
+     * Called when character data is encountered within an element.
+     *
+     * @param ch     the character array containing the data
+     * @param start  the start index of the data in the array
+     * @param length the length of the data
+     */
     void characters(char[] ch, int start, int length);
 
 
