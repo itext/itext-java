@@ -35,7 +35,6 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,7 +221,7 @@ public class TrueTypeFont extends FontProgram {
      */
     public static byte[] merge(Map<TrueTypeFont, Set<Integer>> toMerge, String fontName) {
         try {
-            Map<OpenTypeParser, Set<Integer>> toMergeWithParsers = new HashMap<OpenTypeParser, Set<Integer>>();
+            Map<OpenTypeParser, Set<Integer>> toMergeWithParsers = new LinkedHashMap<>();
             for (Map.Entry<TrueTypeFont, Set<Integer>> entry : toMerge.entrySet()) {
                 toMergeWithParsers.put(entry.getKey().fontParser, entry.getValue());
             }

@@ -24,6 +24,7 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
@@ -115,6 +116,22 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () ->
             FontProgramFactory.createTrueTypeFont(fontBytes, true));
         String exp = MessageFormatUtil.format(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST, "glyf");
+        Assertions.assertEquals(exp, e.getMessage());
+    }
+
+    @Test
+    public void readFontSubsetWithoutOs2TableTest() throws IOException {
+        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetWithoutOsTable.ttf"));
+        AssertUtil.doesNotThrow(() -> FontProgramFactory.createTrueTypeFont(fontBytes, true));
+    }
+
+    @Test
+    public void tryToReadFontSubsetWithoutOs2TableTest() throws IOException {
+        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetWithoutOsTable.ttf"));
+
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () ->
+                FontProgramFactory.createTrueTypeFont(fontBytes, false));
+        String exp = MessageFormatUtil.format(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST, "os/2");
         Assertions.assertEquals(exp, e.getMessage());
     }
 }

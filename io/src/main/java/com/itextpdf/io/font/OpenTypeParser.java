@@ -197,7 +197,7 @@ class OpenTypeParser implements Closeable {
 
     private int[] glyphWidthsByIndex;
     private int[] locaTable;
-    // In case of lenient mode parsing 'name' table can be missed
+    // In case of lenient mode parsing 'name' and 'OS/2' table can be missed
     private boolean isLenientMode = false;
 
     protected HeaderTable head;
@@ -910,14 +910,17 @@ class OpenTypeParser implements Closeable {
      */
     private void readOs_2Table() throws java.io.IOException {
         int[] table_location = tables.get("OS/2");
+        os_2 = new WindowsMetrics();
         if (table_location == null) {
+            if (isLenientMode) {
+                return;
+            }
             if (fileName != null) {
                 throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("os/2", fileName);
             } else {
                 throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST).setMessageParams("os/2");
             }
         }
-        os_2 = new WindowsMetrics();
         raf.seek(table_location[0]);
         int version = raf.readUnsignedShort();
         os_2.xAvgCharWidth = raf.readShort();
