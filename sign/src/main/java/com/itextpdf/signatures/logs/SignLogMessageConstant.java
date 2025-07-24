@@ -26,6 +26,8 @@ package com.itextpdf.signatures.logs;
  * Class which contains constants to be used in logging inside sign module.
  */
 public final class SignLogMessageConstant {
+    public static final String COUNTRY_SPECIFIC_FETCHING_FAILED =
+            "Country specific Lotl fetching with schema name \"{0}\" failed because of:\n \"{1}\"";
     public static final String EXCEPTION_WITHOUT_MESSAGE =
             "Unexpected exception without message was thrown during keystore processing";
     public static final String UNABLE_TO_PARSE_AIA_CERT = "Unable to parse certificates coming from authority info "
@@ -36,6 +38,15 @@ public final class SignLogMessageConstant {
             "since it is incorrect or unsupported (e.g. SCVP Request and Response).";
     public static final String VALID_CERTIFICATE_IS_REVOKED = "The certificate was valid on the verification date, " +
             "but has been revoked since {0}.";
+    public static final String UPDATING_MAIN_LOTL_TO_CACHE_FAILED = "Unable to update cache with main Lotl file. " +
+            "Downloading of the main Lotl file failed.\n{0}";
+    public static final String UPDATING_PIVOT_TO_CACHE_FAILED = "Unable to pivot files " +
+            "because of pivot file fetching failure.\n{0}";
+    public static final String FAILED_TO_FETCH_COUNTRY_SPECIFIC_LOTL = "Problem occurred while fetching " +
+            "country specific Lotl files.\n{0}";
+    public static final String NO_COUNTRY_SPECIFIC_LOTL_FETCHED = "Zero country specific Lotl files were fetched." ;
+    public static final String FAILED_TO_FETCH_EU_JOURNAL_CERTIFICATES = "Problem occurred while fetching " +
+            "EU Journal certificates.\n{0}";
 
     private SignLogMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly

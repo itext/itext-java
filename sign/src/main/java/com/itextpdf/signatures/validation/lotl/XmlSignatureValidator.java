@@ -35,7 +35,7 @@ import java.security.cert.X509Certificate;
 
 /**
  * Validator class responsible for XML signature validation.
- * This class is not intended to be used to validate anything besides LOTL files.
+ * This class is not intended to be used to validate anything besides Lotl files.
  */
 public class XmlSignatureValidator {
     static final String XML_SIGNATURE_VERIFICATION = "XML Signature verification check.";
@@ -55,16 +55,16 @@ public class XmlSignatureValidator {
      * Creates {@link XmlSignatureValidator} instance. This constructor shall not be used directly.
      * Instead, in order to create such instance {@link ValidatorChainBuilder#getXmlSignatureValidator()} shall be used.
      *
-     * @param builder {@link ValidatorChainBuilder} which was responsible for creation
+     * @param trustedCertificatesStore {@link TrustedCertificatesStore} which contains trusted certificates
      */
-    public XmlSignatureValidator(ValidatorChainBuilder builder) {
-        this.trustedCertificatesStore = builder.getCertificateRetriever().getTrustedCertificatesStore();
+    public XmlSignatureValidator(TrustedCertificatesStore trustedCertificatesStore) {
+        this.trustedCertificatesStore = trustedCertificatesStore;
     }
 
     /**
-     * Validates provided XML LOTL file.
+     * Validates provided XML Lotl file.
      *
-     * @param xmlDocumentInputStream {@link InputStream} representing XML LOTL file to be validated
+     * @param xmlDocumentInputStream {@link InputStream} representing XML Lotl file to be validated
      *
      * @return {@link ValidationReport} containing all validation related information
      */

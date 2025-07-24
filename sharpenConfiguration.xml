@@ -33,6 +33,13 @@
             <fileset reason="Differences in string split">
                 <file path="com/itextpdf/commons/utils/StringSplitUtil.java"/>
             </fileset>
+            <fileset reason="Differences in Timer api">
+                <file path="com/itextpdf/commons/utils/TimerUtil.java"/>
+            </fileset>
+
+            <fileset reason="Differences in Timer api">
+                <file path="com/itextpdf/commons/utils/MultiThreadingUtil.java"/>
+            </fileset>
             <file path="com/itextpdf/commons/utils/Base64.java"/>
             <fileset reason="The way java and .NET works with such data types is different. So right now they can be ported only manually.">
                 <file path="com/itextpdf/commons/utils/JsonUtil.java"/>

@@ -29,7 +29,7 @@ import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.DynamicCertificateExtension;
-import com.itextpdf.signatures.validation.lotl.LOTLTrustedStore;
+import com.itextpdf.signatures.validation.lotl.LotlTrustedStore;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
@@ -52,7 +52,7 @@ public class CertificateChainValidator {
     private final SignatureValidationProperties properties;
     private final IssuingCertificateRetriever certificateRetriever;
     private final RevocationDataValidator revocationDataValidator;
-    private final LOTLTrustedStore lotlTrustedStore;
+    private final LotlTrustedStore lotlTrustedStore;
 
     static final String CERTIFICATE_CHECK = "Certificate check.";
     static final String VALIDITY_CHECK = "Certificate validity period check.";
@@ -89,7 +89,7 @@ public class CertificateChainValidator {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.revocationDataValidator = builder.getRevocationDataValidator();
-        this.lotlTrustedStore = builder.getLOTLTrustedstore();
+        this.lotlTrustedStore = builder.getLotlTrustedstore();
     }
 
     /**

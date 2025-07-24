@@ -25,8 +25,23 @@ package com.itextpdf.signatures.validation.lotl;
 import java.security.cert.Certificate;
 import java.util.List;
 
-interface IServiceContext {
+
+/**
+ * Interface for managing service context related to certificates.
+ * This interface provides methods to retrieve and add certificates.
+ */
+public interface IServiceContext {
+    /**
+     * Retrieves the list of certificates associated with the service context.
+     *
+     * @return a list of {@link Certificate} objects
+     */
     List<Certificate> getCertificates();
 
+    /**
+     * Adds a certificate to the service context.
+     *
+     * @param certificate the certificate to be added
+     */
     void addCertificate(Certificate certificate);
 }

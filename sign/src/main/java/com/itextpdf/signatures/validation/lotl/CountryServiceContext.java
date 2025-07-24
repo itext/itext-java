@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
+
 import java.security.cert.Certificate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,11 +31,9 @@ import java.util.List;
 
 class CountryServiceContext implements IServiceContext {
     private final List<Certificate> certificates = new ArrayList<>();
-
-    private String serviceType;
-
     //It is expected that service statuses are ordered starting from the newest one.
     private final List<ServiceChronologicalInfo> serviceChronologicalInfos = new ArrayList<>();
+    private String serviceType;
 
     CountryServiceContext() {
         // Empty constructor
@@ -56,12 +55,12 @@ class CountryServiceContext implements IServiceContext {
         certificates.add(certificate);
     }
 
-    void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
-
     String getServiceType() {
         return serviceType;
+    }
+
+    void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
     }
 
     void addServiceChronologicalInfo(ServiceChronologicalInfo serviceChronologicalInfo) {

@@ -28,9 +28,9 @@ import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClientBouncyCastle;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
-import com.itextpdf.signatures.validation.lotl.LOTLFetchingProperties;
-import com.itextpdf.signatures.validation.lotl.LOTLTrustedStore;
-import com.itextpdf.signatures.validation.lotl.LOTLValidator;
+import com.itextpdf.signatures.validation.lotl.LotlFetchingProperties;
+import com.itextpdf.signatures.validation.lotl.LotlTrustedStore;
+import com.itextpdf.signatures.validation.lotl.LotlValidator;
 import com.itextpdf.signatures.validation.lotl.XmlSignatureValidator;
 import com.itextpdf.signatures.validation.report.xml.AdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.NullAdESReportAggregator;
@@ -50,7 +50,7 @@ import java.util.function.Supplier;
  */
 public class ValidatorChainBuilder {
     private SignatureValidationProperties properties = new SignatureValidationProperties();
-    private LOTLFetchingProperties lotlFetchingProperties;
+    private LotlFetchingProperties lotlFetchingProperties;
     private Supplier<IssuingCertificateRetriever> certificateRetrieverFactory;
     private Supplier<CertificateChainValidator> certificateChainValidatorFactory;
     private Supplier<RevocationDataValidator> revocationDataValidatorFactory;
@@ -61,8 +61,8 @@ public class ValidatorChainBuilder {
     private Supplier<IOcspClientBouncyCastle> ocspClientFactory;
     private Supplier<ICrlClient> crlClientFactory;
     private Supplier<XmlSignatureValidator> xmlSignatureValidatorFactory;
-    private Supplier<LOTLTrustedStore> lotlTrustedStoreFactory;
-    private Supplier<LOTLValidator> lotlValidatorFactory;
+    private Supplier<LotlTrustedStore> lotlTrustedStoreFactory;
+    private Supplier<LotlValidator> lotlValidatorFactory;
 
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
@@ -72,7 +72,7 @@ public class ValidatorChainBuilder {
      * Creates a ValidatorChainBuilder using default implementations
      */
     public ValidatorChainBuilder() {
-        lotlTrustedStoreFactory = () -> buildLOTLTrustedStore();
+        lotlTrustedStoreFactory = () -> buildLotlTrustedStore();
         certificateRetrieverFactory = () -> buildIssuingCertificateRetriever();
         certificateChainValidatorFactory = () -> buildCertificateChainValidator();
         revocationDataValidatorFactory = () -> buildRevocationDataValidator();
@@ -82,7 +82,8 @@ public class ValidatorChainBuilder {
         documentRevisionsValidatorFactory = () -> buildDocumentRevisionsValidator();
         ocspClientFactory = () -> new OcspClientBouncyCastle();
         crlClientFactory = () -> new CrlClientOnline();
-        xmlSignatureValidatorFactory = () -> buildXmlSignatureValidator();
+        xmlSignatureValidatorFactory = () -> buildXmlSignatureValidator(
+                this.getCertificateRetriever().getTrustedCertificatesStore());
         lotlValidatorFactory = () -> buildLotlValidator();
     }
 
@@ -91,7 +92,6 @@ public class ValidatorChainBuilder {
      * This method can be used to create multiple validators.
      *
      * @param document {@link PdfDocument} instance which will be validated
-     *
      * @return a new instance of a signature validator.
      */
     public SignatureValidator buildSignatureValidator(PdfDocument document) {
@@ -153,7 +153,6 @@ public class ValidatorChainBuilder {
      * for use in the validation chain.
      *
      * @param documentRevisionsValidatorFactory the document revisions validator factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withDocumentRevisionsValidatorFactory(
@@ -166,7 +165,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link CRLValidator} for use in the validation chain.
      *
      * @param crlValidatorFactory the CRLValidatorFactory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withCRLValidatorFactory(Supplier<CRLValidator> crlValidatorFactory) {
@@ -178,7 +176,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link IResourceRetriever} for use in the validation chain.
      *
      * @param resourceRetrieverFactory the ResourceRetrieverFactory method to use.
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withResourceRetriever(Supplier<IResourceRetriever> resourceRetrieverFactory) {
@@ -190,7 +187,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link OCSPValidator} for use in the validation chain.
      *
      * @param ocspValidatorFactory the OCSPValidatorFactory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withOCSPValidatorFactory(Supplier<OCSPValidator> ocspValidatorFactory) {
@@ -202,7 +198,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link RevocationDataValidator} for use in the validation chain.
      *
      * @param revocationDataValidatorFactory the RevocationDataValidator factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withRevocationDataValidatorFactory(
@@ -215,7 +210,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link CertificateChainValidator} for use in the validation chain.
      *
      * @param certificateChainValidatorFactory the CertificateChainValidator factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withCertificateChainValidatorFactory(
@@ -228,7 +222,6 @@ public class ValidatorChainBuilder {
      * Use this instance of a {@link SignatureValidationProperties} in the validation chain.
      *
      * @param properties the SignatureValidationProperties instance to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withSignatureValidationProperties(SignatureValidationProperties properties) {
@@ -237,13 +230,12 @@ public class ValidatorChainBuilder {
     }
 
     /**
-     * Sets this instance of {@link LOTLFetchingProperties} to be used in the validation chain.
+     * Sets this instance of {@link LotlFetchingProperties} to be used in the validation chain.
      *
-     * @param lotlFetchingProperties {@link LOTLFetchingProperties} to be used
-     *
+     * @param lotlFetchingProperties {@link LotlFetchingProperties} to be used
      * @return this same instance of {@link ValidatorChainBuilder}.
      */
-    public ValidatorChainBuilder withLOTLFetchingProperties(LOTLFetchingProperties lotlFetchingProperties) {
+    public ValidatorChainBuilder withLotlFetchingProperties(LotlFetchingProperties lotlFetchingProperties) {
         this.lotlFetchingProperties = lotlFetchingProperties;
         return this;
     }
@@ -253,7 +245,6 @@ public class ValidatorChainBuilder {
      * for use in the validation chain.
      *
      * @param certificateRetrieverFactory the IssuingCertificateRetriever factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withIssuingCertificateRetrieverFactory(
@@ -266,7 +257,6 @@ public class ValidatorChainBuilder {
      * Use this factory to create instances of {@link IOcspClientBouncyCastle} for use in the validation chain.
      *
      * @param ocspClientFactory the IOcspClient factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withOcspClient(Supplier<IOcspClientBouncyCastle> ocspClientFactory) {
@@ -278,7 +268,6 @@ public class ValidatorChainBuilder {
      * Use this factory to create instances of {@link ICrlClient} for use in the validation chain.
      *
      * @param crlClientFactory the ICrlClient factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withCrlClient(Supplier<ICrlClient> crlClientFactory) {
@@ -290,7 +279,6 @@ public class ValidatorChainBuilder {
      * Adds known certificates to the {@link IssuingCertificateRetriever}.
      *
      * @param knownCertificates the list of known certificates to add
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withKnownCertificates(Collection<Certificate> knownCertificates) {
@@ -302,7 +290,6 @@ public class ValidatorChainBuilder {
      * Sets the trusted certificates to the {@link IssuingCertificateRetriever}.
      *
      * @param trustedCertificates the list of trusted certificates to set
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withTrustedCertificates(Collection<Certificate> trustedCertificates) {
@@ -318,7 +305,6 @@ public class ValidatorChainBuilder {
      * {@link com.itextpdf.signatures.validation.report.xml.XmlReportGenerator#generate(PadesValidationReport, Writer)}.
      *
      * @param adESReportAggregator the report aggregator to use
-     *
      * @return the current ValidatorChainBuilder
      */
     public ValidatorChainBuilder withAdESReportAggregator(AdESReportAggregator adESReportAggregator) {
@@ -345,11 +331,11 @@ public class ValidatorChainBuilder {
     }
 
     /**
-     * Gets explicitly added or automatically created {@link LOTLFetchingProperties}.
+     * Gets explicitly added or automatically created {@link LotlFetchingProperties}.
      *
-     * @return explicitly added or automatically created {@link LOTLFetchingProperties}
+     * @return explicitly added or automatically created {@link LotlFetchingProperties}
      */
-    public LOTLFetchingProperties getLotlFetchingProperties() {
+    public LotlFetchingProperties getLotlFetchingProperties() {
         return lotlFetchingProperties;
     }
 
@@ -439,7 +425,6 @@ public class ValidatorChainBuilder {
      * Sets up factory which is responsible for {@link XmlSignatureValidator} creation.
      *
      * @param xmlSignatureValidatorFactory factory responsible for {@link XmlSignatureValidator} creation
-     *
      * @return this same instance of {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withXmlSignatureValidator(
@@ -458,43 +443,41 @@ public class ValidatorChainBuilder {
     }
 
     /**
-     * Sets up factory which is responsible for {@link LOTLTrustedStore} creation.
+     * Sets up factory which is responsible for {@link LotlTrustedStore} creation.
      *
-     * @param lotlTrustedStoreFactory factory responsible for {@link LOTLTrustedStore} creation
-     *
+     * @param lotlTrustedStoreFactory factory responsible for {@link LotlTrustedStore} creation
      * @return this same instance of {@link ValidatorChainBuilder}
      */
-    public ValidatorChainBuilder withLOTLTrustedStoreFactory(Supplier<LOTLTrustedStore> lotlTrustedStoreFactory) {
+    public ValidatorChainBuilder withLotlTrustedStoreFactory(Supplier<LotlTrustedStore> lotlTrustedStoreFactory) {
         this.lotlTrustedStoreFactory = lotlTrustedStoreFactory;
         return this;
     }
 
     /**
-     * Retrieves explicitly added or automatically created {@link LOTLTrustedStore} instance.
+     * Retrieves explicitly added or automatically created {@link LotlTrustedStore} instance.
      *
-     * @return explicitly added or automatically created {@link LOTLTrustedStore} instance
+     * @return explicitly added or automatically created {@link LotlTrustedStore} instance
      */
-    public LOTLTrustedStore getLOTLTrustedstore() {
+    public LotlTrustedStore getLotlTrustedstore() {
         return this.lotlTrustedStoreFactory.get();
     }
 
     /**
-     * Retrieves explicitly added or automatically created {@link LOTLValidator} instance.
+     * Retrieves explicitly added or automatically created {@link LotlValidator} instance.
      *
-     * @return explicitly added or automatically created {@link LOTLValidator} instance
+     * @return explicitly added or automatically created {@link LotlValidator} instance
      */
-    public LOTLValidator getLotlValidator() {
+    public LotlValidator getLotlValidator() {
         return lotlValidatorFactory.get();
     }
 
     /**
-     * Sets up factory which is responsible for {@link LOTLValidator} creation.
+     * Sets up factory which is responsible for {@link LotlValidator} creation.
      *
-     * @param lotlValidatorFactory factory responsible for {@link LOTLValidator} creation
-     *
+     * @param lotlValidatorFactory factory responsible for {@link LotlValidator} creation
      * @return this same instance of {@link ValidatorChainBuilder}
      */
-    public ValidatorChainBuilder withLOTLValidator(Supplier<LOTLValidator> lotlValidatorFactory) {
+    public ValidatorChainBuilder withLotlValidator(Supplier<LotlValidator> lotlValidatorFactory) {
         this.lotlValidatorFactory = lotlValidatorFactory;
         return this;
     }
@@ -512,15 +495,22 @@ public class ValidatorChainBuilder {
         return result;
     }
 
-    private XmlSignatureValidator buildXmlSignatureValidator() {
-        return new XmlSignatureValidator(this);
+    /**
+     * Builds an instance of {@link XmlSignatureValidator} using the provided
+     *
+     * @param trustedCertificatesStore {@link TrustedCertificatesStore} to be used for validation.
+     * @return a new instance of {@link XmlSignatureValidator} configured with the provided
+     * {@link TrustedCertificatesStore}.
+     */
+    public XmlSignatureValidator buildXmlSignatureValidator(TrustedCertificatesStore trustedCertificatesStore) {
+        return new XmlSignatureValidator(trustedCertificatesStore);
     }
 
-    private LOTLValidator buildLotlValidator() {
-        return new LOTLValidator(this);
+    private LotlValidator buildLotlValidator() {
+        return new LotlValidator(this);
     }
 
-    private LOTLTrustedStore buildLOTLTrustedStore() {
-        return new LOTLTrustedStore(this);
+    private LotlTrustedStore buildLotlTrustedStore() {
+        return new LotlTrustedStore(this);
     }
 }

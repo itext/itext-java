@@ -327,6 +327,12 @@ public class SharpenConfigMapping implements MappingConfiguration {
         for (String name : streamImplementations) {
             configurator.addCustomUsingForMethodInvocation(name + ".sorted", Collections.singletonList("iText.Commons.Utils.Collections"));
         }
+
+
+
+        configurator.mapType("java.util.Timer", "System.Threading.Timer");
+        configurator.mapType("java.util.concurrent.Callable<>", "Func");
+        configurator.mapMethod("java.util.concurrent.Callable.call", "Invoke");
     }
 
     private void mapBouncyCastle(MappingConfigurator configurator) {

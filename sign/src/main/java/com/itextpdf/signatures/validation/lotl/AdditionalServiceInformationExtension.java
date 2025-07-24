@@ -28,18 +28,17 @@ import java.util.Set;
 class AdditionalServiceInformationExtension {
 
     private static final Set<String> invalidScopes = new HashSet<>();
+    private String uri;
 
     static {
         invalidScopes.add("http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication");
     }
 
-    private String uri;
-
     AdditionalServiceInformationExtension() {
         // Empty constructor.
     }
 
-    AdditionalServiceInformationExtension (String uri) {
+    AdditionalServiceInformationExtension(String uri) {
         this.uri = uri;
     }
 

@@ -35,6 +35,10 @@ import java.util.Set;
 class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
     private static final List<String> INFORMATION_TAGS = new ArrayList<>();
     private final Set<String> serviceTypes;
+    private StringBuilder information;
+    private CountryServiceContext currentServiceContext = null;
+    private ServiceChronologicalInfo currentServiceChronologicalInfo = null;
+    private AdditionalServiceInformationExtension currentExtension = null;
 
     static {
         INFORMATION_TAGS.add(XmlTagConstants.SERVICE_TYPE);
@@ -44,17 +48,8 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
         INFORMATION_TAGS.add(XmlTagConstants.URI);
     }
 
-    private StringBuilder information;
-    private CountryServiceContext currentServiceContext = null;
-    private ServiceChronologicalInfo currentServiceChronologicalInfo = null;
-    private AdditionalServiceInformationExtension currentExtension = null;
-
     XmlCountryCertificateHandler(Set<String> serviceTypes) {
         this.serviceTypes = new HashSet<>(serviceTypes);
-    }
-
-    private static String removeWhitespacesAndBreakLines(String data) {
-        return data.replace(" ", "").replace("\n", "");
     }
 
     /**
@@ -69,7 +64,7 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
             currentServiceChronologicalInfo = new ServiceChronologicalInfo();
         } else if (XmlTagConstants.ADDITIONAL_INFORMATION_EXTENSION.equals(localName)) {
             currentExtension = new AdditionalServiceInformationExtension();
-        }else if (INFORMATION_TAGS.contains(localName)) {
+        } else if (INFORMATION_TAGS.contains(localName)) {
             information = new StringBuilder();
         }
     }
@@ -164,5 +159,9 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
             serviceContextList.add(currentServiceContext);
             currentServiceContext = null;
         }
+    }
+
+    private static String removeWhitespacesAndBreakLines(String data) {
+        return data.replace(" ", "").replace("\n", "");
     }
 }

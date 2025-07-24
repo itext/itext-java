@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class is used to retrieve the list of countries and their corresponding TSL (Trusted List) locations
@@ -48,64 +49,21 @@ final class XmlCountryRetriever {
      * {@code CountrySpecificLotl} objects.
      *
      * @param data the InputStream of the XML data containing country-specific TSL locations
+     *
      * @return a list of CountrySpecificLotl objects, each containing the scheme territory and TSL location.
      */
-    public List<CountrySpecificLotl> getAllCountriesLotlFilesLocation(InputStream data) {
+    public List<CountrySpecificLotl> getAllCountriesLotlFilesLocation(InputStream data,
+            LotlFetchingProperties lotlFetchingProperties) {
         TSLLocationExtractor tslLocationExtractor = new TSLLocationExtractor();
         new XmlSaxProcessor().process(data, tslLocationExtractor);
-        return tslLocationExtractor.tslLocations;
-    }
 
-    /**
-     * This class represents a country-specific TSL (Trusted List) location.
-     * It contains the scheme territory and the TSL location URL.
-     */
-    public static final class CountrySpecificLotl {
-        private final String schemeTerritory;
-        private final String tslLocation;
-        private final String mimeType;
+        List<CountrySpecificLotl> countrySpecificLotls = tslLocationExtractor.tslLocations;
 
+        // Ignored country specific Lotl files which were not requested.
+        return countrySpecificLotls.stream().filter(countrySpecificLotl ->
+                        lotlFetchingProperties.shouldProcessCountry(countrySpecificLotl.getSchemeTerritory()))
+                .collect(Collectors.toList());
 
-        CountrySpecificLotl(String schemeTerritory, String tslLocation, String mimeType) {
-            this.schemeTerritory = schemeTerritory;
-            this.tslLocation = tslLocation;
-            this.mimeType = mimeType;
-        }
-
-        /**
-         * Returns the scheme territory of this country-specific TSL.
-         *
-         * @return The scheme territory
-         */
-        public String getSchemeTerritory() {
-            return schemeTerritory;
-        }
-
-        /**
-         * Returns the TSL location URL of this country-specific TSL.
-         *
-         * @return The TSL location URL
-         */
-        public String getTslLocation() {
-            return tslLocation;
-        }
-
-        /**
-         * Returns the MIME type of the TSL location.
-         *
-         * @return The MIME type of the TSL location
-         */
-        public String getMimeType() {
-            return mimeType;
-        }
-
-        @Override
-        public String toString() {
-            return "CountrySpecificLotl{" + "schemeTerritory='" +
-                    schemeTerritory + '\'' + ", tslLocation='" + tslLocation + '\'' +
-                    ", mimeType='" + mimeType + '\'' +
-                    '}';
-        }
     }
 
     private static final class TSLLocationExtractor implements IDefaultXmlHandler {
@@ -118,10 +76,6 @@ final class XmlCountryRetriever {
 
         TSLLocationExtractor() {
             //Empty constructor
-        }
-
-        private static boolean isXmlLink(CountrySpecificLotl data) {
-            return MIME_TYPE_ETSI_TSL.equals(data.getMimeType());
         }
 
         @Override
@@ -168,6 +122,10 @@ final class XmlCountryRetriever {
             tslLocation = null;
             parsingState = null;
             mimeType = null;
+        }
+
+        private static boolean isXmlLink(CountrySpecificLotl data) {
+            return MIME_TYPE_ETSI_TSL.equals(data.getMimeType());
         }
     }
 }

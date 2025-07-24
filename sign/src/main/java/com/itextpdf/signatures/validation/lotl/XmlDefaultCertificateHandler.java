@@ -34,10 +34,6 @@ class XmlDefaultCertificateHandler extends AbstractXmlCertificateHandler {
         //empty constructor
     }
 
-    private static String removeWhitespacesAndBreakLines(String data) {
-        return data.replace(" ", "").replace("\n", "");
-    }
-
     @Override
     public void startElement(String uri, String localName, String qName, HashMap<String, String> attributes) {
         if (XmlTagConstants.X509CERTIFICATE.equals(localName)) {
@@ -60,5 +56,9 @@ class XmlDefaultCertificateHandler extends AbstractXmlCertificateHandler {
         if (information != null) {
             information.append(ch, start, length);
         }
+    }
+
+    private static String removeWhitespacesAndBreakLines(String data) {
+        return data.replace(" ", "").replace("\n", "");
     }
 }

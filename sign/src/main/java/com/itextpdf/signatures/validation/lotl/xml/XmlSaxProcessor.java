@@ -24,6 +24,7 @@ package com.itextpdf.signatures.validation.lotl.xml;
 
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.XmlProcessorCreator;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

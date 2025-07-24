@@ -128,8 +128,10 @@ public class ValidationReport {
      * @return {@link ValidationReport} the same updated validation report instance.
      */
     public ValidationReport merge(ValidationReport subReport) {
-        for (ReportItem item : subReport.getLogs()) {
-            addReportItem(item);
+        if (subReport != null) {
+            for (ReportItem item : subReport.getLogs()) {
+                addReportItem(item);
+            }
         }
         return this;
     }
@@ -143,8 +145,10 @@ public class ValidationReport {
      * @return {@link ValidationReport} the same updated validation report instance.
      */
     public ValidationReport mergeWithDifferentStatus(ValidationReport subReport, ReportItemStatus newStatus) {
-        for (ReportItem item : subReport.getLogs()) {
-            addReportItem(new ReportItem(item).setStatus(newStatus));
+        if (subReport != null) {
+            for (ReportItem item : subReport.getLogs()) {
+                addReportItem(new ReportItem(item).setStatus(newStatus));
+            }
         }
         return this;
     }
