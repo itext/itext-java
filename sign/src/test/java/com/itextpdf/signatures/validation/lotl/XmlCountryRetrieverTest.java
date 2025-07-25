@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.Assertions;
@@ -36,8 +36,7 @@ import java.util.List;
 @Tag("IntegrationTest")
 class XmlCountryRetrieverTest extends ExtendedITextTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation" +
-            "/XmlCertificateRetrieverTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/lotl/XmlCertificateRetrieverTest/";
 
 
     @Test

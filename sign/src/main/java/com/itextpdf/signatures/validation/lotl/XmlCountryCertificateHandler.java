@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
 
 import com.itextpdf.signatures.CertificateUtil;
@@ -28,11 +28,13 @@ import com.itextpdf.signatures.CertificateUtil;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
-
     private static final List<String> INFORMATION_TAGS = new ArrayList<>();
+    private final Set<String> serviceTypes;
 
     static {
         INFORMATION_TAGS.add(XmlTagConstants.SERVICE_TYPE);
@@ -45,14 +47,17 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
     private CountryServiceContext currentServiceContext = null;
     private ServiceStatusInfo currentServiceStatusInfo = null;
 
-    XmlCountryCertificateHandler() {
-        //empty constructor
+    XmlCountryCertificateHandler(Set<String> serviceTypes) {
+        this.serviceTypes = new HashSet<>(serviceTypes);
     }
 
     private static String removeWhitespacesAndBreakLines(String data) {
         return data.replace(" ", "").replace("\n", "");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void startElement(String uri, String localName, String qName, HashMap<String, String> attributes) {
         if (XmlTagConstants.TSP_SERVICE.equals(localName)) {
@@ -65,6 +70,9 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void endElement(String uri, String localName, String qName) {
         switch (localName) {
@@ -84,7 +92,12 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
                 break;
             case XmlTagConstants.SERVICE_TYPE:
                 if (currentServiceContext != null) {
-                    currentServiceContext.setServiceType(information.toString());
+                    if (serviceTypes.isEmpty() || serviceTypes.contains(information.toString())) {
+                        currentServiceContext.setServiceType(information.toString());
+                    } else {
+                        // If this service type is not among those which were requested, we should skip such service.
+                        currentServiceContext = null;
+                    }
                 }
 
                 information = null;
@@ -106,6 +119,9 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void characters(char[] ch, int start, int length) {
         if (information != null) {
@@ -127,7 +143,9 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
     }
 
     void endProvider() {
-        serviceContextList.add(currentServiceContext);
-        currentServiceContext = null;
+        if (currentServiceContext != null) {
+            serviceContextList.add(currentServiceContext);
+            currentServiceContext = null;
+        }
     }
 }

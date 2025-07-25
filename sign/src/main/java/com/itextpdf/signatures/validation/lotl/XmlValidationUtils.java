@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -47,7 +47,7 @@ final class XmlValidationUtils {
         // Private constructor so that the class instance cannot be instantiated.
     }
 
-    public static boolean createXmlDocumentAndCheckValidity(InputStream xmlDocumentInputStream,
+    static boolean createXmlDocumentAndCheckValidity(InputStream xmlDocumentInputStream,
             CertificateSelector keySelector) throws IOException, SAXException, XMLSecurityException {
         Document xmlDocument = XmlProcessorCreator.createSafeDocumentBuilder(true, false)
                 .parse(xmlDocumentInputStream);

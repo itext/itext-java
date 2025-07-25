@@ -20,14 +20,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.signatures.validation.AssertValidationReport;
+import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.File;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -42,24 +44,61 @@ import org.junit.jupiter.api.condition.DisabledInNativeImage;
 @Tag("BouncyCastleIntegrationTest")
 @DisabledInNativeImage
 public class LOTLValidatorTest extends ExtendedITextTest {
-    private static final String SOURCE = "./src/test/resources/com/itextpdf/signatures/validation/LOTLValidatorTest/";
+    private static final String SOURCE = "./src/test/resources/com/itextpdf/signatures/validation/lotl/LOTLValidatorTest/";
 
     @Test
     public void validationTest() {
         ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
+        chainBuilder.withLOTLFetchingProperties(new LOTLFetchingProperties());
         LOTLValidator validator = chainBuilder.getLotlValidator();
         ValidationReport report = validator.validate();
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
         );
-        List<IServiceContext> trustedCertificates = validator.getNationalTrustedCertificates();
+        List<CountryServiceContext> trustedCertificates = validator.getNationalTrustedCertificates();
         Assertions.assertFalse(trustedCertificates.isEmpty());
+    }
+
+    @Test
+    public void lotlWithConfiguredSchemaNamesTest() {
+        ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
+        LOTLFetchingProperties lotlFetchingProperties = new LOTLFetchingProperties();
+        lotlFetchingProperties.addSchemaName("HU");
+        lotlFetchingProperties.addSchemaName("EE");
+        chainBuilder.withLOTLFetchingProperties(lotlFetchingProperties);
+        LOTLValidator validator = chainBuilder.getLotlValidator();
+        ValidationReport report = validator.validate();
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+        );
+        List<CountryServiceContext> trustedCertificates = validator.getNationalTrustedCertificates();
+        Assertions.assertFalse(trustedCertificates.isEmpty());
+        // Assuming Estonian and Hungarian LOTL files don't have more than a thousand certificates.
+        Assertions.assertTrue(trustedCertificates.size() < 1000);
+    }
+
+    @Test
+    public void lotlWithInvalidSchemaNameTest() {
+        ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
+        LOTLFetchingProperties lotlFetchingProperties = new LOTLFetchingProperties();
+        lotlFetchingProperties.addSchemaName("Invalid");
+        chainBuilder.withLOTLFetchingProperties(lotlFetchingProperties);
+        LOTLValidator validator = chainBuilder.getLotlValidator();
+        ValidationReport report = validator.validate();
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+        );
+        List<CountryServiceContext> trustedCertificates = validator.getNationalTrustedCertificates();
+        Assertions.assertTrue(trustedCertificates.isEmpty());
     }
 
     @Test
     public void lotlUnavailableTest() {
         ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
+        chainBuilder.withLOTLFetchingProperties(new LOTLFetchingProperties());
         chainBuilder.withLOTLValidator(() -> new LOTLValidator(chainBuilder) {
             @Override
             protected byte[] getLotlBytes() {
@@ -78,6 +117,7 @@ public class LOTLValidatorTest extends ExtendedITextTest {
     @Test
     public void euJournalCertificatesEmptyTest() {
         ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
+        chainBuilder.withLOTLFetchingProperties(new LOTLFetchingProperties());
         chainBuilder.withLOTLValidator(() -> new LOTLValidator(chainBuilder) {
             @Override
             protected List<Certificate> getEUJournalCertificates(ValidationReport report) {
@@ -96,6 +136,7 @@ public class LOTLValidatorTest extends ExtendedITextTest {
     @Test
     public void lotlWithBrokenPivotsTest() {
         ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
+        chainBuilder.withLOTLFetchingProperties(new LOTLFetchingProperties());
         chainBuilder.withLOTLValidator(() -> new LOTLValidator(chainBuilder) {
             @Override
             protected byte[] getLotlBytes() {

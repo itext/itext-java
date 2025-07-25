@@ -20,20 +20,23 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
-class XmlTagConstants {
-    static final String X509CERTIFICATE = "X509Certificate";
-    static final String TSP_SERVICE = "TSPService";
-    static final String SCHEME_INFORMATION_URI = "SchemeInformationURI";
-    static final String SERVICE_TYPE = "ServiceTypeIdentifier";
-    static final String SERVICE_STATUS = "ServiceStatus";
-    static final String SERVICE_STATUS_STARTING_TIME = "StatusStartingTime";
-    static final String SERVICE_INFORMATION = "ServiceInformation";
-    static final String SERVICE_HISTORY_INSTANCE = "ServiceHistoryInstance";
-    static final String OTHER_TSL_POINTER = "OtherTSLPointer";
-    static final String SCHEME_TERRITORY = "SchemeTerritory";
-    static final String TSLLOCATION = "TSLLocation";
-    static final String MIME_TYPE = "MimeType";
-    static final String URI = "URI";
+import java.security.cert.X509Certificate;
+
+class CertificateSelector {
+    private X509Certificate certificate;
+
+    public CertificateSelector() {
+        // Empty constructor.
+    }
+
+    X509Certificate getCertificate() {
+        return certificate;
+    }
+
+    CertificateSelector setCertificate(X509Certificate certificate) {
+        this.certificate = certificate;
+        return this;
+    }
 }

@@ -466,9 +466,9 @@
             </fileset>
             <!-- sign -->
             <fileset reason="XML validation is different in .NET">
-                <file path="com/itextpdf/signatures/validation/XmlValidationUtils.java" />
-                <file path="com/itextpdf/signatures/validation/CertificateSelector.java" />
-                <file path="com/itextpdf/signatures/validation/xml/XmlSaxProcessor.java" />
+                <file path="com/itextpdf/signatures/validation/lotl/XmlValidationUtils.java" />
+                <file path="com/itextpdf/signatures/validation/lotl/CertificateSelector.java" />
+                <file path="com/itextpdf/signatures/validation/lotl/xml/XmlSaxProcessor.java" />
             </fileset>
             <file path="com/itextpdf/signatures/ProviderDigest.java"/>
             <fileset reason="ProviderDigest class exists only on Java.">
@@ -542,7 +542,7 @@
                 <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
             </fileset>
             <fileset reason="LocalDateTime and DateTime have different constructors and parsing">
-                <file path="com/itextpdf/signatures/validation/ServiceStatusInfo.java"/>
+                <file path="com/itextpdf/signatures/validation/lotl/ServiceStatusInfo.java"/>
             </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />

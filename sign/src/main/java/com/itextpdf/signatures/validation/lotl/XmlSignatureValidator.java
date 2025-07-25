@@ -20,14 +20,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
-import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.signatures.validation.context.CertificateSource;
-import com.itextpdf.signatures.validation.context.TimeBasedContext;
-import com.itextpdf.signatures.validation.context.ValidationContext;
-import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.TrustedCertificatesStore;
+import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
@@ -36,7 +33,11 @@ import com.itextpdf.signatures.validation.report.ValidationReport;
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
 
-class XmlSignatureValidator {
+/**
+ * Validator class responsible for XML signature validation.
+ * This class is not intended to be used to validate anything besides LOTL files.
+ */
+public class XmlSignatureValidator {
     static final String XML_SIGNATURE_VERIFICATION = "XML Signature verification check.";
     static final String XML_SIGNATURE_VERIFICATION_EXCEPTION =
             "XML Signature verification threw exception. Validation wasn't successful.";
@@ -49,17 +50,25 @@ class XmlSignatureValidator {
     static final String CERTIFICATE_NOT_TRUSTED =
             "Certificate {0} is NOT trusted. Validation isn't successful.";
     private final TrustedCertificatesStore trustedCertificatesStore;
-    private final SignatureValidationProperties properties;
-    private final ValidationContext context;
 
-    XmlSignatureValidator(ValidatorChainBuilder builder) {
+    /**
+     * Creates {@link XmlSignatureValidator} instance. This constructor shall not be used directly.
+     * Instead, in order to create such instance {@link ValidatorChainBuilder#getXmlSignatureValidator()} shall be used.
+     *
+     * @param builder {@link ValidatorChainBuilder} which was responsible for creation
+     */
+    public XmlSignatureValidator(ValidatorChainBuilder builder) {
         this.trustedCertificatesStore = builder.getCertificateRetriever().getTrustedCertificatesStore();
-        this.properties = builder.getProperties();
-        this.context = new ValidationContext(
-                ValidatorContext.XML_SIGNATURE_VALIDATOR, CertificateSource.LOTL_CERT, TimeBasedContext.PRESENT);
     }
 
-    ValidationReport validate(InputStream xmlDocumentInputStream) {
+    /**
+     * Validates provided XML LOTL file.
+     *
+     * @param xmlDocumentInputStream {@link InputStream} representing XML LOTL file to be validated
+     *
+     * @return {@link ValidationReport} containing all validation related information
+     */
+    protected ValidationReport validate(InputStream xmlDocumentInputStream) {
         ValidationReport report = new ValidationReport();
         CertificateSelector keySelector = new CertificateSelector();
         try {
@@ -92,10 +101,5 @@ class XmlSignatureValidator {
                     ReportItemStatus.INVALID));
         }
         return report;
-    }
-
-    private boolean stopValidation(ValidationReport result, ValidationContext context) {
-        return !properties.getContinueAfterFailure(context)
-                && result.getValidationResult() == ValidationReport.ValidationResult.INVALID;
     }
 }

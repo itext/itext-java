@@ -20,11 +20,13 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.testutils.PemFileHelper;
+import com.itextpdf.signatures.validation.AssertValidationReport;
+import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.context.CertificateSources;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
@@ -45,7 +47,7 @@ import org.junit.jupiter.api.condition.DisabledInNativeImage;
 @Tag("BouncyCastleIntegrationTest")
 @DisabledInNativeImage
 public class XmlSignatureValidatorTest extends ExtendedITextTest {
-    private static final String SRC = "./src/test/resources/com/itextpdf/signatures/validation/XmlSignatureValidatorTest/";
+    private static final String SRC = "./src/test/resources/com/itextpdf/signatures/validation/lotl/XmlSignatureValidatorTest/";
 
     @Test
     public void lotlXmlValidationTest() throws CertificateException, IOException {

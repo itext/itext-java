@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
 // TODO DEVSIX-9218 Remove this class when repository with EU Journal certificates is released.
 class Certificates2019C27601 {

@@ -20,32 +20,31 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.signatures.validation.lotl.xml.XmlSaxProcessor;
+
+import java.io.InputStream;
 import java.security.cert.Certificate;
-import java.util.ArrayList;
 import java.util.List;
 
-class SimpleServiceContext implements IServiceContext {
 
-    private List<Certificate> certificates;
+class XmlCertificateRetriever {
+    private final AbstractXmlCertificateHandler handler;
 
-    SimpleServiceContext(Certificate certificate) {
-        this.certificates = new ArrayList<>();
-        certificates.add(certificate);
+    XmlCertificateRetriever(AbstractXmlCertificateHandler handler) {
+        this.handler = handler;
     }
 
-    @Override
-    public List<Certificate> getCertificates() {
-        return new ArrayList<>(certificates);
-    }
-
-    @Override
-    public void addCertificate(Certificate certificate) {
-        if (certificates == null) {
-            certificates = new ArrayList<>();
+    List<Certificate> getCertificates(InputStream inputStream) {
+        if (!handler.getCertificateList().isEmpty()) {
+            handler.clear();
         }
+        new XmlSaxProcessor().process(inputStream, handler);
+        return handler.getCertificateList();
+    }
 
-        certificates.add(certificate);
+    List<IServiceContext> getServiceContexts() {
+        return handler.getServiceContexts();
     }
 }

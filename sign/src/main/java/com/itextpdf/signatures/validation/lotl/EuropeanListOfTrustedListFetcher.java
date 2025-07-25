@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.exceptions.ITextException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -40,7 +40,6 @@ import java.util.Date;
  * Union.
  */
 class EuropeanListOfTrustedListFetcher {
-
     private static final URL LOTL_URL;
 
     static {

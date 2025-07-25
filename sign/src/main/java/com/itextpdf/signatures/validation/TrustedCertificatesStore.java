@@ -38,10 +38,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.itextpdf.signatures.validation.CertificateChainValidator.CERTIFICATE_CHECK;
-import static com.itextpdf.signatures.validation.CertificateChainValidator.CERTIFICATE_TRUSTED;
-import static com.itextpdf.signatures.validation.CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT;
-
 /**
  * Trusted certificates storage class to be used to configure trusted certificates in a particular way.
  */
@@ -306,41 +302,47 @@ public class TrustedCertificatesStore {
     boolean checkIfCertIsTrusted(ValidationReport result, ValidationContext context,
                                          X509Certificate certificate) {
         if (CertificateSource.TRUSTED == context.getCertificateSource()) {
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
+            result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                    MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                            certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
             return true;
         }
 
 
         if (this.isCertificateGenerallyTrusted(certificate)) {
             // Certificate is trusted for everything.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
+            result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                    MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                            certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
             return true;
         }
         if (this.isCertificateTrustedForCA(certificate)) {
             // Certificate is trusted to be CA, we need to make sure it wasn't used to directly sign anything else.
             if (CertificateSource.CERT_ISSUER == context.getCertificateSource()) {
-                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                        CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
+                result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                        MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
                 return true;
             }
             // Certificate is trusted to be CA, but is not used in CA context.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT, certificate.getSubjectX500Principal(),
+            result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                    MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
+                            certificate.getSubjectX500Principal(),
                     "certificates generation"), ReportItem.ReportItemStatus.INFO));
         }
         if (this.isCertificateTrustedForTimestamp(certificate)) {
             // Certificate is trusted for timestamp signing,
             // we need to make sure this chain is responsible for timestamping.
             if (ValidationContext.checkIfContextChainContainsCertificateSource(context, CertificateSource.TIMESTAMP)) {
-                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                        CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
+                result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                        MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
                 return true;
             }
             // Certificate is trusted for timestamps generation, but is not used in timestamp generation context.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT, certificate.getSubjectX500Principal(),
+            result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                    MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
+                            certificate.getSubjectX500Principal(),
                     "timestamp generation"), ReportItem.ReportItemStatus.INFO));
         }
         if (this.isCertificateTrustedForOcsp(certificate)) {
@@ -348,26 +350,30 @@ public class TrustedCertificatesStore {
             // we need to make sure this chain is responsible for OCSP response generation.
             if (ValidationContext.checkIfContextChainContainsCertificateSource(
                     context, CertificateSource.OCSP_ISSUER)) {
-                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                        CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
+                result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                        MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
                 return true;
             }
             // Certificate is trusted for OCSP response generation, but is not used in OCSP response generation context.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT, certificate.getSubjectX500Principal(),
+            result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                    MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
+                            certificate.getSubjectX500Principal(),
                     "OCSP response generation"), ReportItem.ReportItemStatus.INFO));
         }
         if (this.isCertificateTrustedForCrl(certificate)) {
             // Certificate is trusted for CRL signing,
             // we need to make sure this chain is responsible for CRL generation.
             if (ValidationContext.checkIfContextChainContainsCertificateSource(context, CertificateSource.CRL_ISSUER)) {
-                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                        CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
+                result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                        MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED,
+                                certificate.getSubjectX500Principal()), ReportItem.ReportItemStatus.INFO));
                 return true;
             }
             // Certificate is trusted for CRL generation, but is not used in CRL generation context.
-            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
-                    CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT, certificate.getSubjectX500Principal(),
+            result.addReportItem(new CertificateReportItem(certificate, CertificateChainValidator.CERTIFICATE_CHECK,
+                    MessageFormatUtil.format(CertificateChainValidator.CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
+                            certificate.getSubjectX500Principal(),
                     "CRL generation"), ReportItem.ReportItemStatus.INFO));
         }
         return false;

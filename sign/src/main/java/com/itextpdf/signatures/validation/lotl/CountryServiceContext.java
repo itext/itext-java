@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
 import java.security.cert.Certificate;
@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 class CountryServiceContext implements IServiceContext {
-
     private final List<Certificate> certificates = new ArrayList<>();
 
     private String serviceType;
@@ -41,11 +40,17 @@ class CountryServiceContext implements IServiceContext {
         // Empty constructor
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Certificate> getCertificates() {
         return new ArrayList<>(certificates);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addCertificate(Certificate certificate) {
         certificates.add(certificate);

@@ -20,7 +20,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 class ServiceStatusInfo {
-
     private String serviceStatus;
 
     //Local time is used here because it is required to use UTC in a trusted lists, so no offset shall be presented.

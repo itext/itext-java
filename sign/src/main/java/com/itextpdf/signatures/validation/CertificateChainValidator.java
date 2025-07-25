@@ -29,6 +29,7 @@ import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.DynamicCertificateExtension;
+import com.itextpdf.signatures.validation.lotl.LOTLTrustedStore;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
@@ -48,7 +49,6 @@ import static com.itextpdf.signatures.validation.SafeCalling.onRuntimeExceptionL
  * Validator class, which is expected to be used for certificates chain validation.
  */
 public class CertificateChainValidator {
-
     private final SignatureValidationProperties properties;
     private final IssuingCertificateRetriever certificateRetriever;
     private final RevocationDataValidator revocationDataValidator;
@@ -151,8 +151,13 @@ public class CertificateChainValidator {
 
     private boolean checkIfCertIsTrusted(ValidationReport result, ValidationContext context,
             X509Certificate certificate, Date validationDate) {
-        return certificateRetriever.getTrustedCertificatesStore().checkIfCertIsTrusted(result, context, certificate)
-                || lotlTrustedStore.checkIfCertIsTrusted(result, context, certificate, validationDate);
+        if (certificateRetriever.getTrustedCertificatesStore().checkIfCertIsTrusted(result, context, certificate)) {
+            return true;
+        }
+        if (lotlTrustedStore == null) {
+            return false;
+        }
+        return lotlTrustedStore.checkIfCertIsTrusted(result, context, certificate, validationDate);
     }
 
     private boolean stopValidation(ValidationReport result, ValidationContext context) {

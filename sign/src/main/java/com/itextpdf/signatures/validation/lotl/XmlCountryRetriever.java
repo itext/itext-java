@@ -20,10 +20,10 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.lotl;
 
-import com.itextpdf.signatures.validation.xml.IDefaultXmlHandler;
-import com.itextpdf.signatures.validation.xml.XmlSaxProcessor;
+import com.itextpdf.signatures.validation.lotl.xml.IDefaultXmlHandler;
+import com.itextpdf.signatures.validation.lotl.xml.XmlSaxProcessor;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,8 +35,6 @@ import java.util.List;
  * from an XML file.
  */
 final class XmlCountryRetriever {
-
-
     /**
      * Default constructor for XmlCountryRetriever.
      * Creates an instance of {@code XmlCountryRetriever}.
@@ -63,7 +61,6 @@ final class XmlCountryRetriever {
      * It contains the scheme territory and the TSL location URL.
      */
     public static final class CountrySpecificLotl {
-
         private final String schemeTerritory;
         private final String tslLocation;
         private final String mimeType;
@@ -111,7 +108,6 @@ final class XmlCountryRetriever {
         }
     }
 
-
     private static final class TSLLocationExtractor implements IDefaultXmlHandler {
         private static final String MIME_TYPE_ETSI_TSL = "application/vnd.etsi.tsl+xml";
         final List<CountrySpecificLotl> tslLocations = new ArrayList<>();
@@ -119,7 +115,6 @@ final class XmlCountryRetriever {
         String schemeTerritory = null;
         String tslLocation = null;
         String mimeType = null;
-
 
         TSLLocationExtractor() {
             //Empty constructor
