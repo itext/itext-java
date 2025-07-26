@@ -108,7 +108,7 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void loadGetByteArrayByUrl() throws IOException {
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
-        byte[] data = resourceRetriever.getByteArrayByUrl(new URL("https://itextpdf.com/"));
+        byte[] data = resourceRetriever.getByteArrayByUrl(new URL("https://itextpdf.com/blog/itext-news-technical-notes/get-excited-itext-8-here"));
         Assertions.assertNotNull(data);
         Assertions.assertTrue(data.length > 0);
     }
