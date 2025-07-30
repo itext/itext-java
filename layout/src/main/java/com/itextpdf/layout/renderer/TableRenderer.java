@@ -1331,15 +1331,9 @@ public class TableRenderer extends AbstractRenderer {
         if (isOriginalNonSplitRenderer) {
             initializeTableLayoutBorders();
         }
+
         float rightMaxBorder = bordersHandler.getRightBorderMaxWidth();
         float leftMaxBorder = bordersHandler.getLeftBorderMaxWidth();
-        TableWidths tableWidths = new TableWidths(this, MinMaxWidthUtils.getInfWidth(), true, rightMaxBorder, leftMaxBorder);
-        float maxColTotalWidth = 0;
-        float[] columns = isOriginalNonSplitRenderer ? tableWidths.layout() : countedColumnWidth;
-        for (float column : columns) {
-            maxColTotalWidth += column;
-        }
-        float minWidth = isOriginalNonSplitRenderer ? tableWidths.getMinWidth() : maxColTotalWidth;
         UnitValue marginRightUV = this.getPropertyAsUnitValue(Property.MARGIN_RIGHT);
         if (!marginRightUV.isPointValue()) {
             LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
@@ -1350,8 +1344,25 @@ public class TableRenderer extends AbstractRenderer {
             LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_LEFT));
         }
-        float additionalWidth = marginLefttUV.getValue() + marginRightUV.getValue() + rightMaxBorder / 2 + leftMaxBorder / 2;
-        return new MinMaxWidth(minWidth, maxColTotalWidth, additionalWidth);
+        float additionalWidth =
+                marginLefttUV.getValue() + marginRightUV.getValue() + rightMaxBorder / 2 + leftMaxBorder / 2;
+
+        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth);
+        if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
+            TableWidths tableWidths = new TableWidths(this, MinMaxWidthUtils.getInfWidth(), true, rightMaxBorder,
+                    leftMaxBorder);
+            float maxColTotalWidth = 0;
+            float[] columns = isOriginalNonSplitRenderer ? tableWidths.layout() : countedColumnWidth;
+            for (float column : columns) {
+                maxColTotalWidth += column;
+            }
+            float minWidth = isOriginalNonSplitRenderer ? tableWidths.getMinWidth() : maxColTotalWidth;
+
+            minMaxWidth.setChildrenMinWidth(minWidth);
+            minMaxWidth.setChildrenMaxWidth(maxColTotalWidth);
+        }
+
+        return minMaxWidth;
     }
 
     @Override
