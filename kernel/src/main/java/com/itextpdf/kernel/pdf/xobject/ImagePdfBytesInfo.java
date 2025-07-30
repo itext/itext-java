@@ -56,18 +56,18 @@ class ImagePdfBytesInfo {
     private byte[] icc;
     private int stride;
 
-    public ImagePdfBytesInfo(PdfImageXObject imageXObject) {
+    ImagePdfBytesInfo(int width, int height, int bpc, PdfObject colorspace, PdfArray decode) {
         pngColorType = -1;
-        bpc = imageXObject.getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue();
+        this.bpc = bpc;
         pngBitDepth = bpc;
 
         palette = null;
         icc = null;
         stride = 0;
-        width = (int) imageXObject.getWidth();
-        height = (int) imageXObject.getHeight();
-        colorspace = imageXObject.getPdfObject().get(PdfName.ColorSpace);
-        decode = imageXObject.getPdfObject().getAsArray(PdfName.Decode);
+        this.width = width;
+        this.height = height;
+        this.colorspace = colorspace;
+        this.decode = decode;
         findColorspace(colorspace, false);
     }
 

@@ -22,8 +22,10 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.utils.Pair;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.codec.TIFFField;
@@ -47,6 +49,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,6 +57,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
@@ -154,6 +158,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO: DEVSIX-6757 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
         Assertions.assertThrows(UnsupportedOperationException.class, () ->
@@ -168,12 +173,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO: DEVSIX-6757 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceRGBAsAlternative() throws Exception {
         testFile("separationCSWithDeviceRgbAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
+    // TODO: DEVSIX-6757 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceRGBAsAlternative2() throws Exception {
         testFile("spotColorImagesSmall.pdf", "Im1", "png");
@@ -228,19 +235,19 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
 
-        ImageExtractor listener = new ImageExtractor();
+        ImageAndTypeExtractor listener = new ImageAndTypeExtractor();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
         processor.processPageContent(pdfDocument.getPage(1));
 
-        java.util.List<byte[]> images = listener.getImages();
+        List<Tuple2<String, byte[]>> images = listener.getImages();
         Assertions.assertEquals(1, images.size());
 
         try (OutputStream fos = FileUtil.getFileOutputStream(outImageFileName)) {
-            fos.write(images.get(0), 0, images.size());
+            fos.write(images.get(0).getSecond(), 0, images.size());
         }
 
         // expected and actual are swapped here for simplicity
-        int expectedLen = images.get(0).length;
+        int expectedLen = images.get(0).getSecond().length;
         byte[] buf = new byte[expectedLen];
         try (InputStream is = FileUtil.getInputStreamForFile(cmpImageFileName)) {
             int read = is.read(buf, 0, buf.length);
@@ -248,7 +255,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
             read = is.read(buf, 0, buf.length);
             Assertions.assertTrue(read <= 0);
         }
-        Assertions.assertArrayEquals(images.get(0), buf);
+        Assertions.assertArrayEquals(images.get(0).getSecond(), buf);
     }
 
     @Test
@@ -258,7 +265,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
 
-        ImageExtractor listener = new ImageExtractor();
+        ImageAndTypeExtractor listener = new ImageAndTypeExtractor();
         PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
 
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
@@ -267,6 +274,34 @@ public class GetImageBytesTest extends ExtendedITextTest {
         Assertions.assertEquals(MessageFormatUtil
                         .format(IoExceptionMessageConstant.EXPECTED_TRAILING_ZERO_BITS_FOR_BYTE_ALIGNED_LINES),
                 e.getMessage());
+    }
+
+
+    @Test
+    public void inlineImageColorDepth1Test() throws IOException {
+        //Byte-aligned image is expected in pdf file, but in fact it's not
+        String inFileName = SOURCE_FOLDER + "inline_image_with_cs_object.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
+
+        ImageAndTypeExtractor listener = new ImageAndTypeExtractor();
+        PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
+        processor.processPageContent(pdfDocument.getPage(1));
+
+
+        Files.write(Paths.get(
+                        DESTINATION_FOLDER,
+                        "inline_image_with_cs_object.new." + listener.images.get(0).getFirst()),
+                listener.images.get(0).getSecond());
+
+
+        Assertions.assertEquals(1, listener.images.size());
+        Assertions.assertEquals("png", listener.images.get(0).getFirst());
+
+        byte[] cmpBytes = Files.readAllBytes(Paths.get(
+                SOURCE_FOLDER, "inline_image_with_cs_object.png"));
+        Assertions.assertArrayEquals(cmpBytes, listener.images.get(0).getSecond());
+
     }
 
     @Test
@@ -281,7 +316,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     public void deviceGray1bitFlateDecodeInvertedTest() throws Exception {
-        testFile("deviceGray1bitFlateDecodeInverted.pdf", "Im0", "png", true);
+        testFile("deviceGray1bitFlateDecodeInverted.pdf", "Im0", "png");
     }
 
     @Test
@@ -1018,15 +1053,16 @@ public class GetImageBytesTest extends ExtendedITextTest {
         return Arrays.copyOfRange(array, beg, end + 1);
     }
 
-    private class ImageExtractor implements IEventListener {
-        private final java.util.List<byte[]> images = new ArrayList<>();
+    private static class ImageAndTypeExtractor implements IEventListener {
+        public final java.util.List<Tuple2<String, byte[]>> images = new ArrayList<>();
+
 
         public void eventOccurred(IEventData data, EventType type) {
             switch (type) {
                 case RENDER_IMAGE:
                     ImageRenderInfo renderInfo = (ImageRenderInfo) data;
                     byte[] bytes = renderInfo.getImage().getImageBytes();
-                    images.add(bytes);
+                    images.add(new Tuple2<>( renderInfo.getImage().identifyImageFileExtension(), bytes));
                     break;
                 default:
                     break;
@@ -1037,7 +1073,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
             return null;
         }
 
-        public java.util.List<byte[]> getImages() {
+        public List<Tuple2<String, byte[]>> getImages() {
             return images;
         }
     }
