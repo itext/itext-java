@@ -67,7 +67,7 @@ public class UrlUtilTest extends ExtendedITextTest {
         URLConnection finalConnection = null;
 
         try {
-            finalConnection = UrlUtil.getFinalConnection(initialUrl, 0, 0);
+            finalConnection = UrlUtil.getFinalConnection(initialUrl, 0, 0, null);
 
             Assertions.assertNotNull(finalConnection);
             Assertions.assertNotEquals(initialUrl, finalConnection.getURL());
