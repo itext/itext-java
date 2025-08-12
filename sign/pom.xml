@@ -54,7 +54,7 @@
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>styled-xml-parser</artifactId>
-      <version>9.3.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
