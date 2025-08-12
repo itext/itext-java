@@ -338,6 +338,33 @@ public class LotlValidatorTest extends ExtendedITextTest {
         });
     }
 
+
+    @Test
+    public void inMemoryCacheThrowsException() throws InterruptedException {
+        ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
+        chainBuilder.withLotlFetchingProperties(new LotlFetchingProperties(new IgnoreCountrySpecificCertificates()));
+        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
+        chainBuilder.getLotlFetchingProperties().setCacheStalenessInMilliseconds(100);
+        chainBuilder.getLotlFetchingProperties().setRefreshIntervalCalculator((f) -> 100000);
+
+        LotlService service = new LotlService(chainBuilder);
+        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
+        service.initializeCache();
+
+        chainBuilder.withLotlValidator(() -> new LotlValidator(chainBuilder).withService(service));
+
+        Thread.sleep(1000);
+
+        LotlValidator validator = chainBuilder.getLotlValidator();
+
+        Exception e = assertThrows(PdfException.class, () -> {
+            // This should throw an exception because the cache is stale
+            validator.validate();
+        });
+        Assertions.assertEquals(SignExceptionMessageConstant.STALE_DATA_IS_USED, e.getMessage());
+
+    }
+
     @Test
     @LogMessages(
             messages = {

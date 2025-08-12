@@ -82,7 +82,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
         byte[] data = "test data".getBytes(StandardCharsets.UTF_8);
         EuropeanLotlFetcher.Result result = new EuropeanLotlFetcher.Result(data);
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(50);
+        Thread.sleep(250);
 
         cache.setLotlResult(result);
         assertArrayEquals(data, cache.getLotlResult().getLotlXml(), "The byte data should match the set data.");

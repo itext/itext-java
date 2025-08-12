@@ -42,6 +42,11 @@ public class EuropeanLotlFetcher {
 
     private final LotlService service;
 
+    /**
+     * Constructs a new instance of {@link EuropeanLotlFetcher} with the specified LotlService.
+     *
+     * @param service the LotlService used to retrieve resources
+     */
     public EuropeanLotlFetcher(LotlService service) {
         this.service = service;
     }
@@ -86,7 +91,6 @@ public class EuropeanLotlFetcher {
          */
         public Result(byte[] lotlXml) {
             setLotlXml(lotlXml);
-
         }
 
         /**

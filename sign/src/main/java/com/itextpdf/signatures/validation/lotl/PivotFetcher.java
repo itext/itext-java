@@ -50,6 +50,12 @@ public class PivotFetcher {
     private final LotlService service;
     private final ValidatorChainBuilder builder;
 
+    /**
+     * Constructs a PivotFetcher with the specified LotlService and ValidatorChainBuilder.
+     *
+     * @param service the LotlService used to retrieve resources
+     * @param builder the ValidatorChainBuilder used to build the XML signature validator
+     */
     public PivotFetcher(LotlService service, ValidatorChainBuilder builder) {
         this.service = service;
         this.builder = builder;
