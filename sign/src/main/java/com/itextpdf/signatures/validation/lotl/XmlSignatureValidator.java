@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.signatures.validation.SafeCalling;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
@@ -53,11 +54,10 @@ public class XmlSignatureValidator {
 
     /**
      * Creates {@link XmlSignatureValidator} instance. This constructor shall not be used directly.
-     * Instead, in order to create such instance {@link ValidatorChainBuilder#getXmlSignatureValidator()} shall be used.
      *
      * @param trustedCertificatesStore {@link TrustedCertificatesStore} which contains trusted certificates
      */
-    public XmlSignatureValidator(TrustedCertificatesStore trustedCertificatesStore) {
+    protected XmlSignatureValidator(TrustedCertificatesStore trustedCertificatesStore) {
         this.trustedCertificatesStore = trustedCertificatesStore;
     }
 
@@ -71,17 +71,19 @@ public class XmlSignatureValidator {
     protected ValidationReport validate(InputStream xmlDocumentInputStream) {
         ValidationReport report = new ValidationReport();
         CertificateSelector keySelector = new CertificateSelector();
-        try {
-            boolean coreValidity =
-                    XmlValidationUtils.createXmlDocumentAndCheckValidity(xmlDocumentInputStream, keySelector);
-            if (!coreValidity) {
-                report.addReportItem(new ReportItem(
-                        XML_SIGNATURE_VERIFICATION, XML_SIGNATURE_VERIFICATION_FAILED, ReportItemStatus.INVALID));
-            }
-        } catch (Exception e) {
-            report.addReportItem(new ReportItem(
-                    XML_SIGNATURE_VERIFICATION, XML_SIGNATURE_VERIFICATION_EXCEPTION, e, ReportItemStatus.INVALID));
-        }
+        SafeCalling.onExceptionLog(
+                () -> {
+                    boolean coreValidity =
+                            XmlValidationUtils.createXmlDocumentAndCheckValidity(xmlDocumentInputStream, keySelector);
+                    if (!coreValidity) {
+                        report.addReportItem(new ReportItem(
+                                XML_SIGNATURE_VERIFICATION, XML_SIGNATURE_VERIFICATION_FAILED,
+                                ReportItemStatus.INVALID));
+                    }
+                },
+                report,
+                e -> new ReportItem(XML_SIGNATURE_VERIFICATION, XML_SIGNATURE_VERIFICATION_EXCEPTION, e,
+                        ReportItemStatus.INVALID));
         if (report.getValidationResult() == ValidationReport.ValidationResult.INVALID) {
             return report;
         }

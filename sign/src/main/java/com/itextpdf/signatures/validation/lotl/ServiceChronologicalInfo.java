@@ -34,6 +34,7 @@ class ServiceChronologicalInfo {
     static final String GRANTED_NATIONALLY =
             "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel";
     static final String ACCREDITED = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited";
+    static final String SET_BY_NATIONAL_LAW = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/setbynationallaw";
     private static final Set<String> validStatuses = new HashSet<>();
     private final List<AdditionalServiceInformationExtension> extensions = new ArrayList<>();
     private final DateTimeFormatter statusStartDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -45,6 +46,7 @@ class ServiceChronologicalInfo {
         validStatuses.add(GRANTED);
         validStatuses.add(GRANTED_NATIONALLY);
         validStatuses.add(ACCREDITED);
+        validStatuses.add(SET_BY_NATIONAL_LAW);
     }
 
     ServiceChronologicalInfo() {

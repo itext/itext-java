@@ -20,48 +20,37 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation.lotl;
+package com.itextpdf.signatures.validation;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.itextpdf.kernel.exceptions.PdfException;
 
 /**
- * Wrapper class for additional service information extension.
+ * In some cases we need to propagate the exception without @{link SafeCalling} mechanism converting it to
+ * report items.
+ * This exception is used to indicate that something actually went wrong and not only the validation report is Invalid,
+ * but an underlying process might be affected.
  */
-public class AdditionalServiceInformationExtension {
-
-    private static final Set<String> invalidScopes = new HashSet<>();
-    private String uri;
-
-    static {
-        invalidScopes.add("http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication");
-    }
+public class SafeCallingAvoidantException extends PdfException {
 
     /**
-     * Creates empty instance of {@link AdditionalServiceInformationExtension}.
-     */
-    public AdditionalServiceInformationExtension() {
-        // Empty constructor.
-    }
-
-    AdditionalServiceInformationExtension(String uri) {
-        this.uri = uri;
-    }
-
-    /**
-     * Gets URI representing a value of {@link AdditionalServiceInformationExtension}.
+     * Creates a new instance of {@link SafeCallingAvoidantException} with the specified detail message.
      *
-     * @return URI representing a value of {@link AdditionalServiceInformationExtension}
+     * @param message the detail message
      */
-    public String getUri() {
-        return uri;
+    public SafeCallingAvoidantException(String message) {
+        super(message);
     }
 
-    void setUri(String uri) {
-        this.uri = uri;
+
+    /**
+     * Creates a new instance of {@link SafeCallingAvoidantException} with the specified detail message
+     *
+     * @param message the detail message.
+     * @param obj     an object for more details.
+     */
+    public SafeCallingAvoidantException(String message, Object obj) {
+        this(message);
+        this.object = obj;
     }
 
-    boolean isScopeValid() {
-        return !invalidScopes.contains(uri);
-    }
 }

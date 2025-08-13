@@ -22,33 +22,28 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import java.util.Collections;
 
 /**
- * This class implements the {@link IOnCountryFetchFailureStrategy} interface and provides a strategy
+ * This class implements the {@link IOnFailingCountryLotlData} interface and provides a strategy
  * for handling failures when fetching country-specific Lotl (List of Trusted Lists) files.
- * <p>
- * It throws an exception if the specific country fetch or Lotl validation fails.
+ * It ignores the failure of the specific country, and converts all report items to INFO status.
+ * This way the country-specific Lotl is not used and the validation report is not invalid but can be indeterminate.
  */
-public class ThrowExceptionIOnFailureStrategy implements IOnCountryFetchFailureStrategy {
+public class RemoveOnFailingCountryData implements IOnFailingCountryLotlData {
 
     /**
-     * Creates an instance of {@link ThrowExceptionIOnFailureStrategy}.
+     * Constructs an instance of {@link RemoveOnFailingCountryData}.
      */
-    public ThrowExceptionIOnFailureStrategy() {
-        // Default constructor
+    public RemoveOnFailingCountryData() {
+        //Empty constructor
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void onCountryFetchFailure(CountrySpecificLotlFetcher.Result fetchResult) {
-        CountrySpecificLotl country = fetchResult.getCountrySpecificLotl();
-        throw new PdfException(
-                MessageFormatUtil.format(SignExceptionMessageConstant.FAILED_TO_FETCH_LOTL_FOR_COUNTRY,
-                        country.getSchemeTerritory(), country.getTslLocation()), fetchResult.getLocalReport());
+    public void onCountryFailure(CountrySpecificLotlFetcher.Result fetchResult) {
+        fetchResult.setContexts(Collections.<IServiceContext>emptyList());
     }
 }

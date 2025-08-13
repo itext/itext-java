@@ -23,8 +23,8 @@
 package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.SystemUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.validation.SafeCallingAvoidantException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,13 +37,15 @@ final class InMemoryLotlServiceCache implements LotlServiceCache {
     private final Object lock = new Object();
     private final long maxAllowedStalenessInMillis;
     private final HashMap<String, Long> staleTracker = new HashMap<>();
+    private final IOnFailingCountryLotlData strategy;
     private EuropeanLotlFetcher.Result lotlCache = null;
     private PivotFetcher.Result pivotCache = null;
     private EuropeanResourceFetcher.Result europeanResourceFetcherCache = null;
     private Map<String, CountrySpecificLotlFetcher.Result> countrySpecificLotlCache = null;
 
-    InMemoryLotlServiceCache(long maxAllowedStalenessInMillis) {
+    InMemoryLotlServiceCache(long maxAllowedStalenessInMillis, IOnFailingCountryLotlData strategy) {
         this.maxAllowedStalenessInMillis = maxAllowedStalenessInMillis;
+        this.strategy = strategy;
     }
 
 
@@ -69,7 +71,7 @@ final class InMemoryLotlServiceCache implements LotlServiceCache {
     public PivotFetcher.Result getPivotResult() {
         synchronized (lock) {
             if (isObjectStale(pivotCache.generateUniqueIdentifier())) {
-                throw new PdfException("Pivot cache is stale.");
+                throw new InvalidLotlDataException(SignExceptionMessageConstant.STALE_DATA_IS_USED);
             }
             return pivotCache;
         }
@@ -120,7 +122,7 @@ final class InMemoryLotlServiceCache implements LotlServiceCache {
     public EuropeanLotlFetcher.Result getLotlResult() {
         synchronized (lock) {
             if (isObjectStale(CACHE_KEY_LOTL)) {
-                throw new PdfException(SignExceptionMessageConstant.STALE_DATA_IS_USED);
+                throw new InvalidLotlDataException(SignExceptionMessageConstant.STALE_DATA_IS_USED);
             }
             return lotlCache;
         }
@@ -155,7 +157,7 @@ final class InMemoryLotlServiceCache implements LotlServiceCache {
     public EuropeanResourceFetcher.Result getEUJournalCertificates() {
         synchronized (lock) {
             if (isObjectStale(CACHE_KEY_EU_JOURNAL_CERTIFICATES)) {
-                throw new PdfException(SignExceptionMessageConstant.STALE_DATA_IS_USED);
+                throw new InvalidLotlDataException(SignExceptionMessageConstant.STALE_DATA_IS_USED);
             }
             return europeanResourceFetcherCache;
         }
@@ -179,7 +181,7 @@ final class InMemoryLotlServiceCache implements LotlServiceCache {
     private CountrySpecificLotlFetcher.Result getCountrySpecificLotl(String country) {
         CountrySpecificLotlFetcher.Result result = this.countrySpecificLotlCache.get(country);
         if (isObjectStale(result.createUniqueIdentifier())) {
-            throw new PdfException(SignExceptionMessageConstant.STALE_DATA_IS_USED);
+            strategy.onCountryFailure(result);
         }
         return result;
     }
@@ -193,3 +195,4 @@ final class InMemoryLotlServiceCache implements LotlServiceCache {
         addToStaleTracker(cacheId);
     }
 }
+

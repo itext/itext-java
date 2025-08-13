@@ -46,7 +46,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void setByteDataWorks() {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000, new ThrowExceptionOnFailingCountryData());
         byte[] data = "test data".getBytes(StandardCharsets.UTF_8);
         EuropeanLotlFetcher.Result result = new EuropeanLotlFetcher.Result(data);
 
@@ -56,20 +56,20 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void setNullByteDataWorks() {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000, new ThrowExceptionOnFailingCountryData());
         cache.setLotlResult(null);
         assertNull(cache.getLotlResult(), "The byte data should be null after setting it to null.");
     }
 
     @Test
     public void setByteDataStaleDataThrowsException() throws InterruptedException {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(20);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(200, new ThrowExceptionOnFailingCountryData());
         byte[] data = "test data".getBytes(StandardCharsets.UTF_8);
         EuropeanLotlFetcher.Result result = new EuropeanLotlFetcher.Result(data);
         cache.setLotlResult(result);
 
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(100);
+        Thread.sleep(500);
         Assertions.assertThrows(PdfException.class, () -> {
             cache.getLotlResult();
         }, SignExceptionMessageConstant.STALE_DATA_IS_USED);
@@ -78,11 +78,11 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void cacheInvalidationWorks() throws InterruptedException {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(20);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(200, new ThrowExceptionOnFailingCountryData());
         byte[] data = "test data".getBytes(StandardCharsets.UTF_8);
         EuropeanLotlFetcher.Result result = new EuropeanLotlFetcher.Result(data);
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(250);
+        Thread.sleep(500);
 
         cache.setLotlResult(result);
         assertArrayEquals(data, cache.getLotlResult().getLotlXml(), "The byte data should match the set data.");
@@ -90,7 +90,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void setCountrySpecificLotlCacheWorks() {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000, new ThrowExceptionOnFailingCountryData());
         CountrySpecificLotlFetcher.Result result = new CountrySpecificLotlFetcher.Result();
         result.setContexts(new ArrayList<>());
 
@@ -108,7 +108,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void getCountrySpecificLotlReturnsEmptyMapWhenNoEntries() {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000, new ThrowExceptionOnFailingCountryData());
         Map<String, CountrySpecificLotlFetcher.Result> countrySpecificLotlCache = cache.getCountrySpecificLotls();
         Assertions.assertTrue(countrySpecificLotlCache.isEmpty(),
                 "The cache should be empty when no country-specific Lotl entries are set.");
@@ -116,7 +116,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void getCountrySpecificCacheWithStaleDataThrowsException() throws InterruptedException {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(20);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(200, new ThrowExceptionOnFailingCountryData());
         CountrySpecificLotlFetcher.Result result = new CountrySpecificLotlFetcher.Result();
         result.setContexts(new ArrayList<>());
 
@@ -127,7 +127,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
         cache.setCountrySpecificLotlResult(result);
 
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(50);
+        Thread.sleep(500);
 
         Assertions.assertThrows(PdfException.class, () -> {
             cache.getCountrySpecificLotls();
@@ -136,7 +136,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void europeanResultUpdatedDoesNotThrowException() throws InterruptedException {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(20);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(200, new ThrowExceptionOnFailingCountryData());
         CountrySpecificLotlFetcher.Result result = new CountrySpecificLotlFetcher.Result();
         result.setContexts(new ArrayList<>());
 
@@ -147,20 +147,17 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
         cache.setCountrySpecificLotlResult(result);
 
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(50);
+        Thread.sleep(500);
         cache.setCountrySpecificLotlResult(result);
         AssertUtil.doesNotThrow(() -> {
 
             cache.getCountrySpecificLotls();
         });
-
-
     }
-
 
     @Test
     public void pivotFilesCacheWorks() {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000, new ThrowExceptionOnFailingCountryData());
         PivotFetcher.Result result = new PivotFetcher.Result();
         result.setPivotUrls(Arrays.asList("https://example.com/pivot1.xml", "https://example.com/pivot2.xml"));
         cache.setPivotResult(result);
@@ -169,13 +166,13 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void pivotFilesStaleThrowsException() throws InterruptedException {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(20);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(200, new ThrowExceptionOnFailingCountryData());
         PivotFetcher.Result result = new PivotFetcher.Result();
         result.setPivotUrls(Arrays.asList("https://example.com/pivot1.xml", "https://example.com/pivot2.xml"));
         cache.setPivotResult(result);
 
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(50);
+        Thread.sleep(500);
 
         Assertions.assertThrows(PdfException.class, () -> {
             cache.getPivotResult();
@@ -184,7 +181,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void europeanResultCacheWorks() {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000, new ThrowExceptionOnFailingCountryData());
         EuropeanResourceFetcher.Result result = new EuropeanResourceFetcher.Result();
         result.setCertificates(new ArrayList<>());
 
@@ -196,14 +193,14 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void europeanResultCacheStaleDataThrowsException() throws InterruptedException {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(20);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(200, new ThrowExceptionOnFailingCountryData());
         EuropeanResourceFetcher.Result result = new EuropeanResourceFetcher.Result();
         result.setCertificates(new ArrayList<>());
 
         cache.setEuropeanResourceFetcherResult(result);
 
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(50);
+        Thread.sleep(500);
 
         Assertions.assertThrows(PdfException.class, () -> {
             cache.getEUJournalCertificates();
@@ -213,14 +210,14 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void europeanResultCacheStaleDataDoesNotThrowExceptionAfterUpdate() throws InterruptedException {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(20);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(200, new ThrowExceptionOnFailingCountryData());
         EuropeanResourceFetcher.Result result = new EuropeanResourceFetcher.Result();
         result.setCertificates(new ArrayList<>());
 
         cache.setEuropeanResourceFetcherResult(result);
 
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(50);
+        Thread.sleep(500);
 
         cache.setEuropeanResourceFetcherResult(result);
 
@@ -231,7 +228,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void setAllData() {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(1000, new ThrowExceptionOnFailingCountryData());
         byte[] lotlData = "lotl data".getBytes(StandardCharsets.UTF_8);
         EuropeanLotlFetcher.Result lotlResult = new EuropeanLotlFetcher.Result(lotlData);
 
@@ -262,7 +259,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void setAllDataAfterStaleNessThrowsException() throws InterruptedException {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(20);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(200, new ThrowExceptionOnFailingCountryData());
 
         byte[] lotlData = "lotl data".getBytes(StandardCharsets.UTF_8);
         EuropeanLotlFetcher.Result lotlResult = new EuropeanLotlFetcher.Result(lotlData);
@@ -284,7 +281,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
         cache.setAllValues(lotlResult, europeanResult, pivotResult, countrySpecificLotlCache);
 
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(50);
+        Thread.sleep(500);
         Assertions.assertThrows(PdfException.class, () -> {
             cache.getLotlResult();
         }, SignExceptionMessageConstant.STALE_DATA_IS_USED);
@@ -303,7 +300,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
     @Test
     public void setAllDataResetAfterStalenessWorks() throws InterruptedException {
-        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(20);
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(200, new ThrowExceptionOnFailingCountryData());
 
         byte[] lotlData = "lotl data".getBytes(StandardCharsets.UTF_8);
 
@@ -326,7 +323,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
         cache.setAllValues(lotlResult, europeanResult, pivotResult, countrySpecificLotlCache);
 
         // Simulate staleness by waiting longer than the max allowed staleness
-        Thread.sleep(50);
+        Thread.sleep(500);
         cache.setAllValues(lotlResult, europeanResult, pivotResult, countrySpecificLotlCache);
 
         AssertUtil.doesNotThrow(() -> {

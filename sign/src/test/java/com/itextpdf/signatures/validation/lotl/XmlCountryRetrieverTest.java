@@ -48,7 +48,7 @@ class XmlCountryRetrieverTest extends ExtendedITextTest {
         List<CountrySpecificLotl> otherCountryList =
                 xmlCountryRetriever.getAllCountriesLotlFilesLocation(
                         Files.newInputStream(Paths.get(xmlPath)),
-                        new LotlFetchingProperties(new ThrowExceptionIOnFailureStrategy()));
+                        new LotlFetchingProperties(new ThrowExceptionOnFailingCountryData()));
 
         Assertions.assertEquals(32, otherCountryList.size());
 

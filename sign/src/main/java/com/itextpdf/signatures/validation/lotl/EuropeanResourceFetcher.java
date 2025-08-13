@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.signatures.validation.EuropeanTrustedListConfigurationFactory;
+import com.itextpdf.signatures.validation.SafeCalling;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 
@@ -39,8 +40,6 @@ import static com.itextpdf.signatures.validation.lotl.LotlValidator.LOTL_VALIDAT
  * It reads the PEM certificates and returns them in a structured result.
  */
 public class EuropeanResourceFetcher {
-
-
     /**
      * Default constructor for EuropeanResourceFetcher.
      * Initializes the fetcher without any specific configuration.
@@ -59,13 +58,10 @@ public class EuropeanResourceFetcher {
         EuropeanTrustedListConfigurationFactory factory =
                 EuropeanTrustedListConfigurationFactory.getFactory().get();
 
-        try {
-            result.setCertificates(factory.getCertificates());
-        } catch (Exception e) {
-            result.getLocalReport().addReportItem(
-                    new ReportItem(LOTL_VALIDATION, JOURNAL_CERT_NOT_PARSABLE, e,
-                            ReportItem.ReportItemStatus.INFO));
-        }
+        SafeCalling.onExceptionLog(
+                () -> result.setCertificates(factory.getCertificates()),
+                result.getLocalReport(),
+                e -> new ReportItem(LOTL_VALIDATION, JOURNAL_CERT_NOT_PARSABLE, e, ReportItem.ReportItemStatus.INFO));
         return result;
     }
 
@@ -90,7 +86,6 @@ public class EuropeanResourceFetcher {
         public ValidationReport getLocalReport() {
             return localReport;
         }
-
 
         /**
          * Gets the list of certificates.

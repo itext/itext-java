@@ -23,7 +23,6 @@
 package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.io.resolver.resource.IResourceRetriever;
-import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Tag;
@@ -39,32 +38,31 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("IntegrationTest")
-class EULotlFetcherTest extends ExtendedITextTest {
-
+class EuropeanLotlFetcherTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER_LOTL = "./src/test/resources/com/itextpdf/signatures/validation" +
             "/lotl/LotlState2025_08_08/";
 
     @Test
     public void simpleTestFetchesLotlCorrectly() {
-        LotlService service = new LotlService(new ValidatorChainBuilder()
-                .withLotlFetchingProperties(new LotlFetchingProperties(new IgnoreCountrySpecificCertificates())));
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL));
-        EuropeanLotlFetcher fetcher = new EuropeanLotlFetcher(service);
+        EuropeanLotlFetcher fetcher;
+        try (LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL));
+            fetcher = new EuropeanLotlFetcher(service);
+        }
 
         assertNotNull(fetcher);
         EuropeanLotlFetcher.Result result = fetcher.fetch();
         assertNotNull(result);
         String xmlString = new String(result.getLotlXml(), StandardCharsets.UTF_8);
         assertTrue(xmlString.contains("<X509Certificate>"));
-
     }
-
 
     @Test
     public void loadReloadsTheLotl() {
-        LotlService service = new LotlService(new ValidatorChainBuilder()
-                .withLotlFetchingProperties(new LotlFetchingProperties(new IgnoreCountrySpecificCertificates())));
-        EuropeanLotlFetcher fetcher = new EuropeanLotlFetcher(service);
+        EuropeanLotlFetcher fetcher;
+        try (LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            fetcher = new EuropeanLotlFetcher(service);
+        }
         EuropeanLotlFetcher.Result result = fetcher.fetch();
         assertNotNull(result);
         EuropeanLotlFetcher.Result result2 = fetcher.fetch();
@@ -73,10 +71,9 @@ class EULotlFetcherTest extends ExtendedITextTest {
     }
 
     @Test
-    public void dummmyRetrieverCausesException() {
-
-        LotlService service = new LotlService(new ValidatorChainBuilder()
-                .withLotlFetchingProperties(new LotlFetchingProperties(new IgnoreCountrySpecificCertificates())))
+    public void dummyRetrieverCausesException() {
+        EuropeanLotlFetcher fetcher;
+        try (LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))
                 .withCustomResourceRetriever(
                         new IResourceRetriever() {
                             @Override
@@ -88,9 +85,10 @@ class EULotlFetcherTest extends ExtendedITextTest {
                             public byte[] getByteArrayByUrl(URL url) {
                                 return null;
                             }
-                        });
+                        })) {
 
-        EuropeanLotlFetcher fetcher = new EuropeanLotlFetcher(service);
+            fetcher = new EuropeanLotlFetcher(service);
+        }
         EuropeanLotlFetcher.Result result = fetcher.fetch();
         assertNotNull(result);
         assertNull(result.getLotlXml());

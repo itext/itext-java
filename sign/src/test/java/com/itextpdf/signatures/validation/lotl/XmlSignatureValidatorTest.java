@@ -26,6 +26,7 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.validation.AssertValidationReport;
+import com.itextpdf.signatures.validation.TrustedCertificatesStore;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.context.CertificateSources;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
@@ -42,10 +43,8 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 @Tag("BouncyCastleIntegrationTest")
-@DisabledInNativeImage
 public class XmlSignatureValidatorTest extends ExtendedITextTest {
     private static final String SRC = "./src/test/resources/com/itextpdf/signatures/validation/lotl/XmlSignatureValidatorTest/";
 
@@ -54,9 +53,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "lotl_signing_cert.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "lotl.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -78,9 +77,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_rsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlContentModified.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -100,9 +99,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_rsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlSignatureModified.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -122,33 +121,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_rsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
-
-        try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlSignedInfoModified.xml")) {
-            ValidationReport report = validator.validate(inputStream);
-            AssertValidationReport.assertThat(report, a -> a
-                    .hasStatus(ValidationResult.INVALID)
-                    .hasNumberOfFailures(1)
-                    .hasNumberOfLogs(1)
-                    .hasLogItem(la -> la
-                            .withCheckName(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION)
-                            .withMessage(XmlSignatureValidator.XML_SIGNATURE_VERIFICATION_FAILED)
-                    ));
-        }
-    }
-
-    @Test
-    public void signedXmlSignedInfoModifiedStopValidationTest() throws CertificateException, IOException {
-        String chainName = SRC + "signing_cert_rsa.pem";
-        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
-
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.getProperties().setContinueAfterFailure(
-                ValidatorContexts.of(ValidatorContext.XML_SIGNATURE_VALIDATOR), CertificateSources.all(), false);
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlSignedInfoModified.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -168,9 +143,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_rsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithBrokenCert.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -189,9 +164,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_rsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithoutKeyInfo.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -211,9 +186,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_rsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithRSA.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -235,9 +210,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_dsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithDSA.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -259,9 +234,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_ecdsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithECDSA_SHA1.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -283,9 +258,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_ecdsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithECDSA_SHA256.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -307,9 +282,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_ecdsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithECDSA_SHA384.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -331,9 +306,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_ecdsa.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithECDSA_SHA512.xml")) {
             ValidationReport report = validator.validate(inputStream);
@@ -355,9 +330,9 @@ public class XmlSignatureValidatorTest extends ExtendedITextTest {
         String chainName = SRC + "signing_cert_rsa_pss.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
 
-        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
-        validatorChainBuilder.withTrustedCertificates(Arrays.asList(certificateChain));
-        XmlSignatureValidator validator = validatorChainBuilder.getXmlSignatureValidator();
+        TrustedCertificatesStore trustedStore = new TrustedCertificatesStore();
+        trustedStore.addGenerallyTrustedCertificates(Arrays.asList(certificateChain));
+        XmlSignatureValidator validator = new XmlSignatureValidator(trustedStore);
 
         try (InputStream inputStream = FileUtil.getInputStreamForFile(SRC + "signedXmlWithRsaPss.xml")) {
             ValidationReport report = validator.validate(inputStream);

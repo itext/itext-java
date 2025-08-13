@@ -25,6 +25,7 @@ package com.itextpdf.signatures.validation.lotl;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.validation.EuropeanTrustedListConfigurationFactory;
+import com.itextpdf.signatures.validation.SafeCalling;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 
@@ -38,8 +39,6 @@ import java.util.Arrays;
  * Union.
  */
 public class EuropeanLotlFetcher {
-
-
     private final LotlService service;
 
     /**
@@ -61,19 +60,20 @@ public class EuropeanLotlFetcher {
         final Result result = new Result();
         final EuropeanTrustedListConfigurationFactory factory = EuropeanTrustedListConfigurationFactory.getFactory()
                 .get();
-        try {
-            final URL url = UrlUtil.toURL(factory.getTrustedListUri());
-            result.setLotlXml(service.getResourceRetriever().getByteArrayByUrl(url));
-            if (result.getLotlXml() == null || result.getLotlXml().length == 0) {
-                ReportItem reportItem = new ReportItem(LotlValidator.LOTL_VALIDATION,
-                        SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL, ReportItem.ReportItemStatus.INVALID);
-                result.getLocalReport().addReportItem(reportItem);
-            }
-        } catch (Exception e) {
-            ReportItem reportItem = new ReportItem(LotlValidator.LOTL_VALIDATION,
-                    SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL, e, ReportItem.ReportItemStatus.INVALID);
-            result.getLocalReport().addReportItem(reportItem);
-        }
+        SafeCalling.onExceptionLog(
+                () -> {
+                    final URL url = UrlUtil.toURL(factory.getTrustedListUri());
+                    result.setLotlXml(service.getResourceRetriever().getByteArrayByUrl(url));
+                    if (result.getLotlXml() == null || result.getLotlXml().length == 0) {
+                        ReportItem reportItem = new ReportItem(LotlValidator.LOTL_VALIDATION,
+                                SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL,
+                                ReportItem.ReportItemStatus.INVALID);
+                        result.getLocalReport().addReportItem(reportItem);
+                    }
+                },
+                result.getLocalReport(),
+                e -> new ReportItem(LotlValidator.LOTL_VALIDATION, SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL,
+                        e, ReportItem.ReportItemStatus.INVALID));
         return result;
     }
 

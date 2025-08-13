@@ -127,21 +127,21 @@ public final class SignExceptionMessageConstant {
             "and 'addSchemaNameToIgnore' methods. " + "either provide specific countries to process, or provide " +
             "specific countries to ignore (All " + "countries not ignored will be processed). ";
     public static final String STALE_DATA_IS_USED = "Cached data is older then configured staleness. This means that "
-            + "the cache has failed to update automatically for the configured period " + "Please refresh using " +
-            "LotlService#intializeCache, or look into the generated log messages for more " + "details" + " why the " +
+            + "the cache has failed to update automatically for the configured period. Please, refresh using " +
+            "LotlService#intializeCache, or look into the generated log messages for more details on why the " +
             "cache has not been updated.";
     public static final String STALENESS_MUST_BE_POSITIVE = "Staleness must be a positive value. " + "It is used to " +
             "determine how long the cache is valid before it needs to be refreshed.";
     public static final String FAILED_TO_FETCH_LOTL_FOR_COUNTRY =
             "Failed to fetch Lotl for country {0} from {1}. " + "Report {2}";
     public static final String CACHE_NOT_INITIALIZED = "Lotl cache has not been initialized. " + "Please call " +
-            "LotlFetchingProperties#initializeCache before using LotlValidator.\n" + "If you are using a custom Lotl " +
-            "service, " + "please make sure to call #initializeCache on your custom implementation.";
+            "LotlService#initializeGlobalCache if European LOTLs are trusted.\nIf you are using a custom LotlService, "
+            + "please make sure to call LotlService#initializeCache on your custom implementation.";
     public static final String FAILED_TO_FETCH_EU_JOURNAL_CERTIFICATES = "Problem occurred while fetching " + "EU " +
             "Journal certificates.\n{0}";
-    public static final String CACHE_ALREADY_INITIALIZED = "Global Lotl service has already been initialized. " +
+    public static final String CACHE_ALREADY_INITIALIZED = "Global LOTL service has already been initialized. " +
             "You cannot initialize it again. If you want to use a different configuration, please create a new " +
-            "instance " + "of LotlService with the desired properties and use this one in the LotlValidator.";
+            "instance of LotlService with the desired properties and use it in ValidatorChainBuilder.";
 
     private SignExceptionMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly

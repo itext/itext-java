@@ -27,14 +27,12 @@ package com.itextpdf.signatures.validation.lotl;
  * Implementations can define custom strategies for dealing with such failures.
  * <p>
  * We provide 2 default implementations out of the box:
- * - {@link com.itextpdf.signatures.validation.lotl.IgnoreCountrySpecificCertificates} - which does nothing and won't
+ * - {@link com.itextpdf.signatures.validation.lotl.RemoveOnFailingCountryData} - which does nothing and won't
  * throw an exception, but will not add any country-specific certificates to the trust store.
- * - {@link com.itextpdf.signatures.validation.lotl.ThrowExceptionIOnFailureStrategy} - which will throw an exception
+ * - {@link com.itextpdf.signatures.validation.lotl.ThrowExceptionOnFailingCountryData} - which will throw an exception
  * if the fetching of a country-specific Lotl fails so that the validation process can be halted.
  */
 public interface IOnCountryFetchFailureStrategy {
-
-
     /**
      * This method is called when the fetching of a country-specific Lotl fails.
      * It allows for custom handling of the failure.
@@ -45,7 +43,5 @@ public interface IOnCountryFetchFailureStrategy {
      * @param fetchResult the result of the fetch attempt, which may contain error details
      */
     void onCountryFetchFailure(CountrySpecificLotlFetcher.Result fetchResult);
-
-
 }
 

@@ -37,7 +37,7 @@ class LotlFetchingPropertiesTest extends ExtendedITextTest {
 
     @Test
     public void testAddCountryName() {
-        LotlFetchingProperties properties = new LotlFetchingProperties(new IgnoreCountrySpecificCertificates());
+        LotlFetchingProperties properties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         properties.setCountryNames("BE");
         assertTrue(properties.shouldProcessCountry("BE"));
         assertFalse(properties.shouldProcessCountry("NL"));
@@ -45,7 +45,7 @@ class LotlFetchingPropertiesTest extends ExtendedITextTest {
 
     @Test
     public void addIgnoredCountryName() {
-        LotlFetchingProperties properties = new LotlFetchingProperties(new IgnoreCountrySpecificCertificates());
+        LotlFetchingProperties properties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         properties.setCountryNamesToIgnore("BE");
         assertFalse(properties.shouldProcessCountry("BE"));
         assertTrue(properties.shouldProcessCountry("NL"));
@@ -53,21 +53,21 @@ class LotlFetchingPropertiesTest extends ExtendedITextTest {
 
     @Test
     public void byDefaultShouldProcessCountryReturnsTrue() {
-        LotlFetchingProperties properties = new LotlFetchingProperties(new IgnoreCountrySpecificCertificates());
+        LotlFetchingProperties properties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         assertTrue(properties.shouldProcessCountry("BE"));
         assertTrue(properties.shouldProcessCountry("NL"));
     }
 
     @Test
     public void byDefaultShouldProcessCountryReturnsTrueEvenIfItsNotACountry() {
-        LotlFetchingProperties properties = new LotlFetchingProperties(new IgnoreCountrySpecificCertificates());
+        LotlFetchingProperties properties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         assertTrue(properties.shouldProcessCountry("INVALID"));
     }
 
 
     @Test
     public void tryAddingBothCountryAndIgnoredCountryThrowsException() {
-        LotlFetchingProperties properties = new LotlFetchingProperties(new IgnoreCountrySpecificCertificates());
+        LotlFetchingProperties properties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         properties.setCountryNames("BE");
         Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             properties.setCountryNamesToIgnore("NL");
@@ -78,7 +78,7 @@ class LotlFetchingPropertiesTest extends ExtendedITextTest {
 
     @Test
     public void tryAddingCountryNameToIgnoreAndCountryNameThrowsException() {
-        LotlFetchingProperties properties = new LotlFetchingProperties(new IgnoreCountrySpecificCertificates());
+        LotlFetchingProperties properties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         properties.setCountryNamesToIgnore("BE");
         Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             properties.setCountryNames("NL");

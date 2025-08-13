@@ -27,7 +27,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.AssertValidationReport;
-import com.itextpdf.signatures.validation.SignatureValidationProperties;
+import com.itextpdf.signatures.validation.SafeCallingAvoidantException;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
@@ -37,11 +37,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,53 +57,55 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("BouncyCastleIntegrationTest")
-@DisabledInNativeImage
 public class LotlValidatorTest extends ExtendedITextTest {
     private static final String SOURCE = "./src/test/resources/com/itextpdf/signatures/validation/lotl" +
             "/LotlValidatorTest/";
 
-    private static final String SOURCE_FOLDER_LOL_FILES = "./src/test/resources/com/itextpdf/signatures/validation" +
+    private static final String SOURCE_FOLDER_LOTL_FILES = "./src/test/resources/com/itextpdf/signatures/validation" +
             "/lotl/LotlState2025_08_08/";
 
     @BeforeAll
     public static void beforeAll() {
         // Initialize the LotlService with a default EuropeanResourceFetcher
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        chainBuilder.withLotlValidator(() -> new LotlValidator(chainBuilder).withService(service));
-        LotlValidator.GLOBAL_SERVICE = service;
+        LotlService service = new LotlService(getLotlFetchingProperties());
+        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+        service.withLotlValidator(() -> new LotlValidator(service));
+        LotlService.GLOBAL_SERVICE = service;
         service.initializeCache();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        LotlService.GLOBAL_SERVICE.close();
+        LotlService.GLOBAL_SERVICE = null;
     }
 
     @Test
     public void validationTest() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        LotlValidator validator = chainBuilder.getLotlValidator();
+        LotlValidator validator = LotlService.GLOBAL_SERVICE.getLotlValidator();
         ValidationReport report = validator.validate();
         AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfFailures(0));
     }
 
     @Test
     public void validationWithForcedInitializationWithExceptionBecauseOfCustomImplementation() {
-        ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
-        chainBuilder.withLotlFetchingProperties(new LotlFetchingProperties(new ThrowExceptionIOnFailureStrategy()));
-        LotlService lotlService = new LotlService(chainBuilder);
-        lotlService.withCustomResourceRetriever(new IResourceRetriever() {
-            @Override
-            public InputStream getInputStreamByUrl(URL url) throws IOException {
-                throw new IOException("Failed to fetch Lotl");
-            }
+        Exception e;
+        try (LotlService lotlService = new LotlService(
+                new LotlFetchingProperties(new ThrowExceptionOnFailingCountryData()))) {
+            lotlService.withCustomResourceRetriever(new IResourceRetriever() {
+                @Override
+                public InputStream getInputStreamByUrl(URL url) throws IOException {
+                    throw new IOException("Failed to fetch Lotl");
+                }
 
-            @Override
-            public byte[] getByteArrayByUrl(URL url) throws IOException {
-                throw new IOException("Failed to fetch Lotl");
-            }
-        });
+                @Override
+                public byte[] getByteArrayByUrl(URL url) throws IOException {
+                    throw new IOException("Failed to fetch Lotl");
+                }
+            });
 
-        Exception e = assertThrows(PdfException.class, () -> {
-            lotlService.initializeCache();
-        });
+            e = assertThrows(PdfException.class, () -> lotlService.initializeCache());
+        }
         Assertions.assertTrue(e.getMessage().contains("Failed to "),
                 "Expected exception message to contain 'Failed to ', but got: " + e.getMessage());
     }
@@ -111,78 +113,70 @@ public class LotlValidatorTest extends ExtendedITextTest {
 
     @Test
     public void validationWithCallingPropertiesInitializeCacheFailsAndGuidesToInitializeCache() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-
-        LotlService lotlService = new LotlService(chainBuilder);
-
-        chainBuilder.withLotlValidator(() -> new LotlValidator(chainBuilder).withService(lotlService));
-        LotlValidator validator = chainBuilder.getLotlValidator();
+        ValidatorChainBuilder validatorChainBuilder;
+        try (LotlService lotlService = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            validatorChainBuilder = new ValidatorChainBuilder();
+            validatorChainBuilder.withLotlService(() -> lotlService);
+        }
+        validatorChainBuilder.trustEuropeanLotl(true);
 
         Exception e = assertThrows(PdfException.class, () -> {
             // This should throw an exception because the cache is not initialized
-            validator.validate();
+            validatorChainBuilder.getLotlTrustedStore();
         });
         Assertions.assertEquals(SignExceptionMessageConstant.CACHE_NOT_INITIALIZED, e.getMessage());
     }
 
     @Test
     public void validationWithForcedInitializationWithIgnoredFailuresWorksAsExpected() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-
-        LotlService lotlService = new LotlService(chainBuilder);
-        lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        lotlService.initializeCache();
-
-        ValidatorChainBuilder chainBuilder2 = new LotlEnableValidatorChainBuilder().withLotlValidator(
-                () -> new LotlValidator(chainBuilder).withService(lotlService));
-        LotlValidator validator2 = chainBuilder2.getLotlValidator();
+        LotlValidator validator2 = new ValidatorChainBuilder().getLotlService().getLotlValidator();
         ValidationReport report2 = validator2.validate();
         AssertValidationReport.assertThat(report2, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfFailures(0));
     }
 
     @Test
     public void validationWithOnlyAFewCountriesWorksAsExpected() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        // gutentag
-        chainBuilder.getLotlFetchingProperties().setCountryNames("DE", "ES");
+        ValidationReport report2;
+        try (LotlService lotlService = new LotlService(
+                new LotlFetchingProperties(new RemoveOnFailingCountryData()).setCountryNames("DE", "ES"))) {
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            lotlService.initializeCache();
 
-        LotlService lotlService = new LotlService(chainBuilder);
-        lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        lotlService.initializeCache();
-
-        ValidatorChainBuilder chainBuilder2 = new LotlEnableValidatorChainBuilder().withLotlValidator(
-                () -> new LotlValidator(chainBuilder).withService(lotlService));
-        LotlValidator validator2 = chainBuilder2.getLotlValidator();
-        ValidationReport report2 = validator2.validate();
+            report2 = lotlService.getLotlValidator().validate();
+        }
         AssertValidationReport.assertThat(report2, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfFailures(0));
     }
 
     @Test
     public void primeCacheAndRunValidationTest() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.withLotlFetchingProperties(new LotlFetchingProperties(new IgnoreCountrySpecificCertificates()));
-        LotlService lotlService = new LotlService(chainBuilder);
-        lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        lotlService.initializeCache();
-        chainBuilder.withLotlValidator(() -> new LotlValidator(chainBuilder).withService(lotlService));
-        LotlValidator validator = chainBuilder.getLotlValidator();
-        ValidationReport report = validator.validate();
+        LotlValidator lotlValidator;
+        try (LotlService lotlService = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            lotlService.initializeCache();
+
+            lotlValidator = lotlService.getLotlValidator();
+        }
+        ValidationReport report = lotlValidator.validate();
         AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
-        List<IServiceContext> trustedCertificates = validator.getNationalTrustedCertificates();
+        List<IServiceContext> trustedCertificates = lotlValidator.getNationalTrustedCertificates();
         Assertions.assertFalse(trustedCertificates.isEmpty());
     }
 
 
     @Test
     public void lotlWithConfiguredSchemaNamesTest() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
         LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
-                new IgnoreCountrySpecificCertificates());
+                new RemoveOnFailingCountryData());
         lotlFetchingProperties.setCountryNames("HU");
         lotlFetchingProperties.setCountryNames("EE");
-        chainBuilder.withLotlFetchingProperties(lotlFetchingProperties);
-        LotlValidator validator = chainBuilder.getLotlValidator();
+
+        LotlValidator validator;
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+            lotlService.initializeCache();
+            validator = lotlService.getLotlValidator();
+        }
         ValidationReport report = validator.validate();
+
         AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfFailures(0));
         List<IServiceContext> trustedCertificates = validator.getNationalTrustedCertificates();
         Assertions.assertFalse(trustedCertificates.isEmpty());
@@ -192,13 +186,17 @@ public class LotlValidatorTest extends ExtendedITextTest {
 
     @Test
     public void lotlWithInvalidSchemaNameTest() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
         LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
-                new IgnoreCountrySpecificCertificates());
+                new RemoveOnFailingCountryData());
         lotlFetchingProperties.setCountryNames("Invalid");
-        chainBuilder.withLotlFetchingProperties(lotlFetchingProperties);
-        LotlValidator validator = chainBuilder.getLotlValidator();
+
+        LotlValidator validator;
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+            lotlService.initializeCache();
+            validator = lotlService.getLotlValidator();
+        }
         ValidationReport report = validator.validate();
+
         AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfFailures(0));
         List<IServiceContext> trustedCertificates = validator.getNationalTrustedCertificates();
         Assertions.assertTrue(trustedCertificates.isEmpty());
@@ -206,58 +204,61 @@ public class LotlValidatorTest extends ExtendedITextTest {
 
     @Test
     public void lotlUnavailableTest() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("NL");
 
-        LotlService lotlService = new LotlService(chainBuilder).withEULotlFetcher(new EuropeanLotlFetcher(null) {
-            @Override
-            public Result fetch() {
-                return new Result(null);
-            }
-        });
+        Exception e;
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties).withEuropeanLotlFetcher(
+                new EuropeanLotlFetcher(null) {
+                    @Override
+                    public Result fetch() {
+                        return new Result(null);
+                    }
+                })) {
 
-        Exception e = assertThrows(PdfException.class, () -> {
-            lotlService.initializeCache();
-        });
+            e = assertThrows(PdfException.class, () -> lotlService.initializeCache());
+        }
 
-        Assertions.assertEquals(LotlValidator.UNABLE_TO_RETRIEVE_Lotl, e.getMessage());
+        Assertions.assertEquals(LotlValidator.UNABLE_TO_RETRIEVE_LOTL, e.getMessage());
     }
 
     @Test
     public void euJournalCertificatesEmptyTest() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-
-        LotlService service = new LotlService(chainBuilder).withDefaultEuropeanResourceFetcher(
+        Exception e;
+        try (LotlService service = new LotlService(
+                new LotlFetchingProperties(new RemoveOnFailingCountryData())).withEuropeanResourceFetcher(
                 new EuropeanResourceFetcher() {
                     @Override
-                    public EuropeanResourceFetcher.Result getEUJournalCertificates() {
+                    public Result getEUJournalCertificates() {
                         Result result = new Result();
                         result.setCertificates(Collections.<Certificate>emptyList());
                         return result;
                     }
-                });
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        Exception e = assertThrows(PdfException.class, () -> {
-            service.initializeCache();
-        });
+                })) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            e = assertThrows(PdfException.class, () -> service.initializeCache());
+        }
         Assertions.assertEquals(LotlValidator.LOTL_VALIDATION_UNSUCCESSFUL, e.getMessage());
 
     }
 
     @Test
     public void lotlWithBrokenPivotsTest() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.getLotlFetchingProperties().setCountryNames("DE");
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("DE");
 
-        IResourceRetriever resourceRetriever = new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES) {
+        IResourceRetriever resourceRetriever = new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES) {
             @Override
             public byte[] getByteArrayByUrl(URL url) {
                 return new byte[0];
             }
         };
 
-        LotlService lotlService = new LotlService(chainBuilder).withCustomResourceRetriever(resourceRetriever)
-                .withEULotlFetcher(new EuropeanLotlFetcher(null) {
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties).withCustomResourceRetriever(
+                        resourceRetriever)
+                .withEuropeanLotlFetcher(new EuropeanLotlFetcher(null) {
                     @Override
                     public Result fetch() {
                         try {
@@ -266,18 +267,20 @@ public class LotlValidatorTest extends ExtendedITextTest {
                             throw new RuntimeException(e.getMessage());
                         }
                     }
-                });
-        lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        assertThrows(PdfException.class, () -> {
-            // This should throw an exception because the cache is not initialized
-            lotlService.initializeCache();
-        });
+                })) {
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            assertThrows(PdfException.class, () -> {
+                // This should throw an exception because the cache is not initialized
+                lotlService.initializeCache();
+            });
+        }
     }
 
     @Test
     public void withCustomEuropeanFetcher() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        LotlService service = new LotlService(chainBuilder).withDefaultEuropeanResourceFetcher(
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        try (LotlService service = new LotlService(lotlFetchingProperties).withEuropeanResourceFetcher(
                 new EuropeanResourceFetcher() {
                     @Override
                     public Result getEUJournalCertificates() {
@@ -285,77 +288,74 @@ public class LotlValidatorTest extends ExtendedITextTest {
                         result.setCertificates(Collections.<Certificate>emptyList());
                         return result;
                     }
-                });
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        Assertions.assertThrows(PdfException.class, () -> {
-            // This should throw an exception because the cache is not initialized
-            service.initializeCache();
-        });
+                })) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            Assertions.assertThrows(PdfException.class, () -> {
+                // This should throw an exception because the cache is not initialized
+                service.initializeCache();
+            });
+        }
     }
 
 
     @Test
     public void tryRefetchCatchManually() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("NL");
 
-        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
-
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        service.initializeCache();
-        AssertUtil.doesNotThrow(() -> {
-            service.tryAndRefreshCache();
-        });
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
+            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+        }
     }
 
 
     @Test
     @LogMessages(
             messages = {
-                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_MAIN_LOTL_TO_CACHE_FAILED,
-                            count = 1),
-                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED,
-                            count = 1)
+                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_MAIN_LOTL_TO_CACHE_FAILED),
+                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED)
             }
     )
     public void cacheRefreshFailingLotlDoesNotUpdateMainLotlAndPivotFiles() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("NL");
 
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        service.initializeCache();
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
 
-        // Simulate a failure in the cache refresh
-        service.withEULotlFetcher(new EuropeanLotlFetcher(service) {
-            @Override
-            public Result fetch() {
-                throw new RuntimeException("Simulated failure");
-            }
-        });
-        AssertUtil.doesNotThrow(() -> {
-            service.tryAndRefreshCache();
-        });
+            // Simulate a failure in the cache refresh
+            service.withEuropeanLotlFetcher(new EuropeanLotlFetcher(service) {
+                @Override
+                public Result fetch() {
+                    throw new RuntimeException("Simulated failure");
+                }
+            });
+            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+        }
     }
 
 
     @Test
     public void inMemoryCacheThrowsException() throws InterruptedException {
-        ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
-        chainBuilder.withLotlFetchingProperties(new LotlFetchingProperties(new IgnoreCountrySpecificCertificates()));
-        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
-        chainBuilder.getLotlFetchingProperties().setCacheStalenessInMilliseconds(100);
-        chainBuilder.getLotlFetchingProperties().setRefreshIntervalCalculator((f) -> 100000);
+        LotlFetchingProperties lotlFetchingProperties = getLotlFetchingProperties();
+        lotlFetchingProperties.setCountryNames("NL");
+        lotlFetchingProperties.setCacheStalenessInMilliseconds(100);
+        lotlFetchingProperties.setRefreshIntervalCalculator(f -> 100000);
 
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        service.initializeCache();
+        LotlValidator validator;
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
 
-        chainBuilder.withLotlValidator(() -> new LotlValidator(chainBuilder).withService(service));
+            Thread.sleep(1000);
 
-        Thread.sleep(1000);
-
-        LotlValidator validator = chainBuilder.getLotlValidator();
+            validator = service.getLotlValidator();
+        }
 
         Exception e = assertThrows(PdfException.class, () -> {
             // This should throw an exception because the cache is stale
@@ -368,253 +368,371 @@ public class LotlValidatorTest extends ExtendedITextTest {
     @Test
     @LogMessages(
             messages = {
-                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_MAIN_LOTL_TO_CACHE_FAILED,
-                            count = 1),
-                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED,
-                            count = 1)
+                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_MAIN_LOTL_TO_CACHE_FAILED),
+                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED)
             }
     )
     public void cacheRefreshInvalidLotlDoesNotUpdateMainLotlAndPivotFiles() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("NL");
 
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        service.initializeCache();
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
 
-        // Simulate a failure in the cache refresh
-        service.withEULotlFetcher(new EuropeanLotlFetcher(service) {
-            @Override
-            public Result fetch() {
-                Result result = new Result();
-                result.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
-                        "Simulated invalid Lotl", ReportItem.ReportItemStatus.INVALID));
-                return result;
-            }
-        });
+            // Simulate a failure in the cache refresh
+            service.withEuropeanLotlFetcher(new EuropeanLotlFetcher(service) {
+                @Override
+                public Result fetch() {
+                    Result result = new Result();
+                    result.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
+                            "Simulated invalid Lotl", ReportItem.ReportItemStatus.INVALID));
+                    return result;
+                }
+            });
 
-        AssertUtil.doesNotThrow(() -> {
-            service.tryAndRefreshCache();
-        });
+            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+        }
     }
 
     @Test
-    @LogMessages(
-            messages = {
-                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED,
-                            count = 1)
-            }
-    )
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED))
     public void cacheRefreshWithInvalidPivotFileDoesNotUpdateCache() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("NL");
 
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        service.initializeCache();
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
 
-        // Simulate a failure in the cache refresh
-        service.withPivotFetcher(new PivotFetcher(service, chainBuilder) {
-            @Override
-            public Result downloadAndValidatePivotFiles(byte[] lotlXml, List<Certificate> certificates,
-                    SignatureValidationProperties properties) {
-                Result result = new Result();
-                result.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
-                        "Simulated invalid pivot file", ReportItem.ReportItemStatus.INVALID));
-                return result;
-            }
-        });
+            // Simulate a failure in the cache refresh
+            service.withPivotFetcher(new PivotFetcher(service) {
+                @Override
+                public Result downloadAndValidatePivotFiles(byte[] lotlXml, List<Certificate> certificates) {
+                    Result result = new Result();
+                    result.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
+                            "Simulated invalid pivot file", ReportItem.ReportItemStatus.INVALID));
+                    return result;
+                }
+            });
 
-        AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+        }
     }
 
 
     @Test
-    @LogMessages(
-            messages = {
-                    @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED,
-                            count = 1)
-            }
-    )
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED))
     public void cacheRefreshWithExceptionInPivot() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("NL");
 
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        service.initializeCache();
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
 
-        // Simulate a failure in the cache refresh
-        service.withPivotFetcher(new PivotFetcher(service, chainBuilder) {
-            @Override
-            public Result downloadAndValidatePivotFiles(byte[] lotlXml, List<Certificate> certificates,
-                    SignatureValidationProperties properties) {
-                throw new RuntimeException("Simulated failure in pivot file download");
-            }
-        });
+            // Simulate a failure in the cache refresh
+            service.withPivotFetcher(new PivotFetcher(service) {
+                @Override
+                public Result downloadAndValidatePivotFiles(byte[] lotlXml, List<Certificate> certificates) {
+                    throw new RuntimeException("Simulated failure in pivot file download");
+                }
+            });
 
-        AssertUtil.doesNotThrow(() -> {
-            service.tryAndRefreshCache();
-        });
+            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+        }
     }
 
     @Test
-    @LogMessages(
-            messages = {
-                    @LogMessage(messageTemplate = SignLogMessageConstant.FAILED_TO_FETCH_COUNTRY_SPECIFIC_LOTL,
-                            count = 1)
-            }
-    )
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.FAILED_TO_FETCH_COUNTRY_SPECIFIC_LOTL))
     public void cacheRefreshWithExceptionDoesNotUpdateCacheWithCountrySpecific2() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("NL");
 
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        service.initializeCache();
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
 
-        // Simulate a failure in the cache refresh
-        service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
-            @Override
-            public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
-                    ValidatorChainBuilder builder) {
-                throw new RuntimeException("Simulated failure in country specific Lotl file download");
-            }
-        });
+            // Simulate a failure in the cache refresh
+            service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
+                @Override
+                public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, LotlService service) {
+                    throw new RuntimeException("Simulated failure in country specific Lotl file download");
+                }
+            });
 
-        AssertUtil.doesNotThrow(() -> {
-            service.tryAndRefreshCache();
-        });
+            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+        }
     }
 
 
     @Test
-    @LogMessages(
-            messages = {
-                    @LogMessage(messageTemplate = SignLogMessageConstant.NO_COUNTRY_SPECIFIC_LOTL_FETCHED,
-                            count = 1)
-            }
-    )
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.NO_COUNTRY_SPECIFIC_LOTL_FETCHED))
     public void cacheRefreshWithReturningNullDoesNotThrow() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
 
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        service.initializeCache();
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
 
-        // Simulate a failure in the cache refresh
-        service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
-            @Override
-            public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
-                    ValidatorChainBuilder builder) {
-                return null;
-            }
-        });
+            // Simulate a failure in the cache refresh
+            service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
+                @Override
+                public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, LotlService service) {
+                    return null;
+                }
+            });
 
-        AssertUtil.doesNotThrow(() -> {
-            service.tryAndRefreshCache();
-        });
+            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+        }
     }
+
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.COUNTRY_SPECIFIC_FETCHING_FAILED))
+    public void cacheRefreshWithSomeSpecificCountryFailuresDoesNotUpdateCache() throws InterruptedException {
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("NL");
+        lotlFetchingProperties.setCacheStalenessInMilliseconds(100L);
+        lotlFetchingProperties.setRefreshIntervalCalculator(f -> 10000L);
+
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
+
+            // Simulate a failure in the cache refresh
+            service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
+                @Override
+                public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, LotlService service) {
+                    HashMap<String, Result> result = new HashMap<>();
+                    Result r = new Result();
+                    r.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
+                            "Simulated invalid country specific Lotl", ReportItem.ReportItemStatus.INVALID));
+                    r.setCountrySpecificLotl(new CountrySpecificLotl("NL",
+                            "https://www.rdi.nl/site/binaries/site-content/collections/documents/current-tsl.xml",
+                            "application/xml"));
+                    result.put(r.createUniqueIdentifier(), r);
+                    return result;
+                }
+            });
+            service.tryAndRefreshCache();
+            Thread.sleep(1000); // Wait for the cache refresh to complete
+
+            Assertions.assertThrows(SafeCallingAvoidantException.class, () -> service.getLotlValidator().validate());
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.COUNTRY_SPECIFIC_FETCHING_FAILED))
+    public void cacheRefreshWithSomeSpecificCountryFailuresDoesNotUpdateCacheAndIgnores() throws InterruptedException {
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("NL");
+        lotlFetchingProperties.setCacheStalenessInMilliseconds(2000L);
+        lotlFetchingProperties.setRefreshIntervalCalculator(f -> 1000000L);
+
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.initializeCache();
+
+            // Simulate a failure in the cache refresh
+            service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
+                @Override
+                public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
+                        LotlService lotlService) {
+                    HashMap<String, Result> result = new HashMap<>();
+                    Result r = new Result();
+                    r.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
+                            "Simulated invalid country specific Lotl", ReportItem.ReportItemStatus.INVALID));
+                    r.setCountrySpecificLotl(new CountrySpecificLotl("NL",
+                            "https://www.rdi.nl/site/binaries/site-content/collections/documents/current-tsl.xml",
+                            "application/xml"));
+                    result.put(r.createUniqueIdentifier(), r);
+                    return result;
+                }
+            });
+            Thread.sleep(2100);
+            service.tryAndRefreshCache();
+            AssertUtil.doesNotThrow(() -> service.getLotlValidator().validate());
+        }
+    }
+
 
     @Test
     @LogMessages(
             messages = {
-                    @LogMessage(messageTemplate = SignLogMessageConstant.COUNTRY_SPECIFIC_FETCHING_FAILED,
-                            count = 1)
+                    @LogMessage(messageTemplate = SignLogMessageConstant.COUNTRY_SPECIFIC_FETCHING_FAILED
+                    )
             }
     )
-    public void cacheRefreshWithSomeSpecificCountryFailuresDoesNotUpdateCache() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
+    public void cacheRefreshWithValidationWorksButCertsNotIncluded() throws InterruptedException {
+        LotlFetchingProperties properties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        properties.setCountryNames("NL");
+        properties.setCacheStalenessInMilliseconds(1000);
+        properties.setRefreshIntervalCalculator((f) -> Integer.MAX_VALUE);
 
-        LotlService service = new LotlService(chainBuilder);
-        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        service.initializeCache();
+        int originalAmountOfCertificates;
+        LotlValidator validator2;
+        try (LotlService service = new LotlService(properties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
 
-        // Simulate a failure in the cache refresh
-        service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
-            @Override
-            public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
-                    ValidatorChainBuilder builder) {
-                HashMap<String, Result> result = new HashMap<>();
-                Result r = new Result();
-                r.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
-                        "Simulated invalid country specific Lotl", ReportItem.ReportItemStatus.INVALID));
-                r.setCountrySpecificLotl(new CountrySpecificLotl("NL", "NL", "application/xml"));
-                result.put("NL", r);
-                return result;
+            // Simulate a failure in the cache refresh
+            service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
+                boolean firstTime = true;
 
-            }
-        });
+                @Override
+                public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
+                        LotlService lotlService) {
+                    if (firstTime) {
+                        firstTime = false;
+                        return super.getAndValidateCountrySpecificLotlFiles(lotlXml, lotlService);
+                    }
+                    HashMap<String, Result> result = new HashMap<>();
+                    Result r = new Result();
+                    r.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
+                            "Simulated invalid country specific Lotl", ReportItem.ReportItemStatus.INVALID));
+                    r.setCountrySpecificLotl(new CountrySpecificLotl("NL",
+                            "https://www.rdi.nl/site/binaries/site-content/collections/documents/current-tsl.xml",
+                            "application/xml"));
+                    result.put(r.createUniqueIdentifier(), r);
+                    return result;
+                }
+            });
 
-        AssertUtil.doesNotThrow(() -> {
+            service.initializeCache();
+
+            LotlValidator validator = service.getLotlValidator();
+            validator.validate();
+            originalAmountOfCertificates = validator.getNationalTrustedCertificates().size();
+            Thread.sleep(2000);
             service.tryAndRefreshCache();
-        });
+            validator2 = service.getLotlValidator();
+        }
+        validator2.validate();
+        int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
+        Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
+                "Expected the number of certificates to decrease after a failed refresh, but got: " +
+                        originalAmountOfCertificates + " and " + newAmountOfCertificates);
+        Assertions.assertEquals(0, newAmountOfCertificates,
+                "Expected the number of certificates to be 0 after a failed refresh, but got: "
+                        + newAmountOfCertificates);
+    }
+
+
+    @Test
+    @LogMessages(
+            messages = {
+                    @LogMessage(messageTemplate = SignLogMessageConstant.COUNTRY_SPECIFIC_FETCHING_FAILED
+                    )
+            }
+    )
+    public void cacheRefreshWithValidationWorksButCertsNotIncludedMultipleCountries() throws InterruptedException {
+        LotlFetchingProperties properties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        properties.setCountryNames("NL", "BE");
+        properties.setCacheStalenessInMilliseconds(1800);
+        properties.setRefreshIntervalCalculator((f) -> Integer.MAX_VALUE);
+
+        int originalAmountOfCertificates;
+        LotlValidator validator2;
+        try (LotlService service = new LotlService(properties)) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+
+            // Simulate a failure in the cache refresh
+            service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
+                boolean firstTime = true;
+
+                @Override
+                public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
+                        LotlService lotlService) {
+                    if (firstTime) {
+                        firstTime = false;
+                        return super.getAndValidateCountrySpecificLotlFiles(lotlXml, lotlService);
+                    }
+                    Map<String, Result> result = super.getAndValidateCountrySpecificLotlFiles(lotlXml, lotlService);
+                    Result r = new Result();
+                    r.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
+                            "Simulated invalid country specific Lotl", ReportItem.ReportItemStatus.INVALID));
+                    r.setCountrySpecificLotl(new CountrySpecificLotl("NL",
+                            "https://www.rdi.nl/site/binaries/site-content/collections/documents/current-tsl.xml",
+                            "application/xml"));
+                    result.put(r.createUniqueIdentifier(), r);
+                    return result;
+
+                }
+            });
+
+            service.initializeCache();
+
+            LotlValidator validator = service.getLotlValidator();
+            validator.validate();
+            originalAmountOfCertificates = validator.getNationalTrustedCertificates().size();
+            Thread.sleep(2000);
+            service.tryAndRefreshCache();
+            validator2 = service.getLotlValidator();
+        }
+        validator2.validate();
+        int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
+        Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
+                "Expected the number of certificates to decrease after a failed refresh, but got: " +
+                        originalAmountOfCertificates + " and " + newAmountOfCertificates);
     }
 
     @Test
     public void useOwnCountrySpecificLotlFetcher() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.withLotlFetchingProperties(new LotlFetchingProperties(new IgnoreCountrySpecificCertificates()));
-        LotlService service = new LotlService(chainBuilder);
-        CountrySpecificLotlFetcher f = new CountrySpecificLotlFetcher(service) {
-            @Override
-            public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
-                    ValidatorChainBuilder builder) {
-                return Collections.<String, Result>emptyMap();
-            }
-        };
-        AssertUtil.doesNotThrow(() -> {
-            chainBuilder.withLotlValidator(() -> new LotlValidator(chainBuilder).withService(
-                    new LotlService(chainBuilder).withCountrySpecificLotlFetcher(f)));
-        });
+        try (LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            CountrySpecificLotlFetcher lotlFetcher = new CountrySpecificLotlFetcher(service) {
+                @Override
+                public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, LotlService service) {
+                    return Collections.<String, Result>emptyMap();
+                }
+            };
+            service.withCountrySpecificLotlFetcher(lotlFetcher);
+            service.initializeCache();
+            AssertUtil.doesNotThrow(() -> service.getLotlValidator().validate());
+        }
     }
 
     @Test
     public void lotlBytesThrowsPdfException() {
-        LotlFetchingProperties p = new LotlFetchingProperties(new IgnoreCountrySpecificCertificates());
-
+        LotlFetchingProperties p = getLotlFetchingProperties();
         p.setCountryNames("NL");
-        LotlService service = new LotlService(new ValidatorChainBuilder().withLotlFetchingProperties(p));
+        Exception e;
+        try (LotlService service = new LotlService(p)) {
 
-        EuropeanLotlFetcher lotlByteFetcher = new EuropeanLotlFetcher(service) {
-            @Override
-            public Result fetch() {
-                throw new RuntimeException("Test exception");
-            }
-        };
+            EuropeanLotlFetcher lotlByteFetcher = new EuropeanLotlFetcher(service) {
+                @Override
+                public Result fetch() {
+                    throw new RuntimeException("Test exception");
+                }
+            };
+            service.withEuropeanLotlFetcher(lotlByteFetcher);
 
-        service.withEULotlFetcher(lotlByteFetcher);
-
-        Exception e = assertThrows(RuntimeException.class, () -> {
-            service.initializeCache();
-        });
+            e = assertThrows(RuntimeException.class, () -> service.initializeCache());
+        }
         Assertions.assertEquals("Test exception", e.getMessage());
     }
 
     @Test
     public void cacheInitializationWithSomeSpecificCountryThatWorksTest() {
-        ValidatorChainBuilder chainBuilder = new LotlEnableValidatorChainBuilder();
-        chainBuilder.getLotlFetchingProperties().setCountryNames("NL");
-        LotlService lotlService = new LotlService(chainBuilder);
-        lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOL_FILES));
-        AssertUtil.doesNotThrow(() -> {
-            lotlService.initializeCache();
-        });
-    }
+        LotlFetchingProperties p = getLotlFetchingProperties();
+        p.setCountryNames("NL");
+        try (LotlService lotlService = new LotlService(p)) {
 
-    static final class LotlEnableValidatorChainBuilder extends ValidatorChainBuilder {
-
-        @Override
-        public LotlFetchingProperties getLotlFetchingProperties() {
-            LotlFetchingProperties properties = super.getLotlFetchingProperties();
-            if (properties == null) {
-                properties = new LotlFetchingProperties(new IgnoreCountrySpecificCertificates());
-                withLotlFetchingProperties(properties);
-            }
-            return super.getLotlFetchingProperties();
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            AssertUtil.doesNotThrow(() -> lotlService.initializeCache());
         }
     }
 
-
+    private static LotlFetchingProperties getLotlFetchingProperties() {
+        return new LotlFetchingProperties(new RemoveOnFailingCountryData());
+    }
 }
 

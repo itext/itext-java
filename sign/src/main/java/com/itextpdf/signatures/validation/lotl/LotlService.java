@@ -29,13 +29,14 @@ import com.itextpdf.io.resolver.resource.IResourceRetriever;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
-import com.itextpdf.signatures.validation.SignatureValidationProperties;
-import com.itextpdf.signatures.validation.ValidatorChainBuilder;
+import com.itextpdf.signatures.validation.TrustedCertificatesStore;
 import com.itextpdf.signatures.validation.lotl.CountrySpecificLotlFetcher.Result;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -56,40 +57,74 @@ import java.util.function.LongUnaryOperator;
  * Fetcher and Country-Specific Lotl Fetcher.
  * It also allows for setting custom resource retrievers and cache timeouts.
  */
-public class LotlService {
+public class LotlService implements AutoCloseable {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LotlService.class);
-    private ValidatorChainBuilder builder;
 
     //Services
     private LotlServiceCache cache;
     private EuropeanResourceFetcher europeanResourceFetcher = new EuropeanResourceFetcher();
-    private EuropeanLotlFetcher lotlByteFetcher = null;
-    private PivotFetcher pivotFetcher = null;
-    private CountrySpecificLotlFetcher countrySpecificLotlFetcher = null;
+    private EuropeanLotlFetcher lotlByteFetcher;
+    private PivotFetcher pivotFetcher;
+    private CountrySpecificLotlFetcher countrySpecificLotlFetcher;
     private boolean cacheInitialized = false;
     private Timer cacheTimer = null;
-    private IResourceRetriever resourceRetriever = new DefaultResourceRetriever();
+    private IResourceRetriever resourceRetriever = new LoggableResourceRetriever();
+    private Function<TrustedCertificatesStore, XmlSignatureValidator> xmlSignatureValidatorFactory;
+    private Supplier<LotlValidator> lotlValidatorFactory;
+    private final LotlFetchingProperties lotlFetchingProperties;
+    // Global service
+    static LotlService GLOBAL_SERVICE;
+    private static final Object GLOBAL_SERVICE_LOCK = new Object();
 
 
     /**
      * Creates a new instance of {@link LotlService}.
      *
-     * @param builder the {@link ValidatorChainBuilder} used to build the validation chain
+     * @param lotlFetchingProperties {@link LotlFetchingProperties} to configure the way in which LOTL will be fetched
      */
-    public LotlService(ValidatorChainBuilder builder) {
-        final long staleNessInMillis = builder.getLotlFetchingProperties().getCacheStalenessInMilliseconds();
-        withChainBuilder(builder);
-        setupTimer();
-        withCustomResourceRetriever(new LoggableResourceRetriever());
-        this.cache = new InMemoryLotlServiceCache(staleNessInMillis);
+    public LotlService(LotlFetchingProperties lotlFetchingProperties) {
+        this.lotlFetchingProperties = lotlFetchingProperties;
+        this.cache = new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
+                lotlFetchingProperties.getOnCountryFetchFailureStrategy());
         this.lotlByteFetcher = new EuropeanLotlFetcher(this);
-        this.pivotFetcher = new PivotFetcher(this, builder);
+        this.pivotFetcher = new PivotFetcher(this);
         this.countrySpecificLotlFetcher = new CountrySpecificLotlFetcher(this);
+        this.xmlSignatureValidatorFactory =
+                trustedCertificatesStore -> buildXmlSignatureValidator(trustedCertificatesStore);
+        this.lotlValidatorFactory = () -> buildLotlValidator();
     }
 
     /**
-     * Sets the cache for the Lotl service.
+     * Initializes the global cache with the provided LotlFetchingProperties.
+     * This method must be called before using the LotlService to ensure that the cache is set up.
+     * <p>
+     * If you are using a custom implementation of {@link LotlService} you can use the instance method.
+     *
+     * @param lotlFetchingProperties the LotlFetchingProperties to use for initializing the cache
+     */
+    public static void initializeGlobalCache(LotlFetchingProperties lotlFetchingProperties) {
+        synchronized (GLOBAL_SERVICE_LOCK) {
+            if (GLOBAL_SERVICE == null) {
+                GLOBAL_SERVICE = new LotlService(lotlFetchingProperties);
+                GLOBAL_SERVICE.initializeCache();
+            } else {
+                throw new PdfException(SignExceptionMessageConstant.CACHE_ALREADY_INITIALIZED);
+            }
+        }
+    }
+
+    /**
+     * Gets global static instance of {@link LotlService}.
+     *
+     * @return global static instance of {@link LotlService}
+     */
+    public static LotlService getGlobalService() {
+        return GLOBAL_SERVICE;
+    }
+
+    /**
+     * Sets the cache for the LotlService.
      * <p>
      * This method allows you to provide a custom implementation of {@link LotlServiceCache} to be used
      * for caching Lotl data, pivot files, and country-specific Lotls.
@@ -98,7 +133,7 @@ public class LotlService {
      *
      * @return the current instance of {@link LotlService} for method chaining
      */
-    public LotlService withCache(LotlServiceCache cache) {
+    public LotlService withLotlServiceCache(LotlServiceCache cache) {
         this.cache = cache;
         return this;
     }
@@ -122,9 +157,10 @@ public class LotlService {
      * Initializes the cache with the latest Lotl data and related resources.
      */
     public void initializeCache() {
+        setupTimer();
         EuropeanLotlFetcher.Result mainLotlResult = lotlByteFetcher.fetch();
         if (!mainLotlResult.getLocalReport().getFailures().isEmpty()) {
-            //We throw on main Lotl fetch failure, so we don't proceed to pivot and country specific LOT fetches
+            //We throw on main Lotl fetch failure, so we don't proceed to pivot and country specific LOTL fetches
             final ReportItem reportItem = mainLotlResult.getLocalReport().getFailures().get(0);
             throw new PdfException(reportItem.getMessage(), reportItem.getExceptionCause());
         }
@@ -132,7 +168,7 @@ public class LotlService {
         EuropeanResourceFetcher.Result europeanResourceFetcherEUJournalCertificates =
                 europeanResourceFetcher.getEUJournalCertificates();
         PivotFetcher.Result pivotsResult = pivotFetcher.downloadAndValidatePivotFiles(mainLotlResult.getLotlXml(),
-                europeanResourceFetcherEUJournalCertificates.getCertificates(), builder.getProperties());
+                europeanResourceFetcherEUJournalCertificates.getCertificates());
 
         if (!pivotsResult.getLocalReport().getFailures().isEmpty()){
             ReportItem failure = pivotsResult.getLocalReport().getFailures().get(0);
@@ -141,7 +177,7 @@ public class LotlService {
 
         Map<String, CountrySpecificLotlFetcher.Result> countrySpecificResults =
                 countrySpecificLotlFetcher.getAndValidateCountrySpecificLotlFiles(
-                        mainLotlResult.getLotlXml(), builder);
+                        mainLotlResult.getLotlXml(), this);
 
         Map<String, CountrySpecificLotlFetcher.Result> resultToAddToCache = new HashMap<>(
                 countrySpecificResults.size());
@@ -151,9 +187,7 @@ public class LotlService {
                 for (ReportItem log : countrySpecificResult.getLocalReport().getLogs()) {
                     log.setStatus(ReportItemStatus.INFO);
                 }
-                builder.getLotlFetchingProperties()
-                        .getOnCountryFetchFailureStrategy()
-                        .onCountryFetchFailure(countrySpecificResult);
+                lotlFetchingProperties.getOnCountryFetchFailureStrategy().onCountryFailure(countrySpecificResult);
             }
             resultToAddToCache.put(entry.getKey(), countrySpecificResult);
         }
@@ -194,63 +228,91 @@ public class LotlService {
      *
      * @return the current instance of {@link LotlService} for method chaining
      */
-    public LotlService withEULotlFetcher(EuropeanLotlFetcher fetcher) {
+    public LotlService withEuropeanLotlFetcher(EuropeanLotlFetcher fetcher) {
         this.lotlByteFetcher = fetcher;
         return this;
     }
 
     /**
-     * Gets the resource retriever used by the Lotl service.
+     * Sets up factory which is responsible for {@link XmlSignatureValidator} creation.
      *
-     * @return the {@link IResourceRetriever} instance used for fetching resources
+     * @param xmlSignatureValidatorFactory factory responsible for {@link XmlSignatureValidator} creation
+     *
+     * @return the current instance of {@link LotlService} for method chaining
      */
-    public IResourceRetriever getResourceRetriever() {
-        return resourceRetriever;
+    public LotlService withXmlSignatureValidator(
+            Function<TrustedCertificatesStore, XmlSignatureValidator> xmlSignatureValidatorFactory) {
+        this.xmlSignatureValidatorFactory = xmlSignatureValidatorFactory;
+        return this;
     }
 
     /**
-     * Sets the European Resource Fetcher for the Lotl service.
+     * Sets up factory which is responsible for {@link LotlValidator} creation.
+     *
+     * @param lotlValidatorFactory factory responsible for {@link LotlValidator} creation
+     *
+     * @return this same instance of {@link LotlService}
+     */
+    public LotlService withLotlValidator(Supplier<LotlValidator> lotlValidatorFactory) {
+        this.lotlValidatorFactory = lotlValidatorFactory;
+        return this;
+    }
+
+    /**
+     * Sets the European Resource Fetcher for the LotlService.
      *
      * @param europeanResourceFetcher the European Resource Fetcher to be used for fetching EU journal certificates
      *
      * @return the current instance of {@link LotlService} for method chaining
      */
-    public LotlService withDefaultEuropeanResourceFetcher(EuropeanResourceFetcher europeanResourceFetcher) {
+    public LotlService withEuropeanResourceFetcher(EuropeanResourceFetcher europeanResourceFetcher) {
         this.europeanResourceFetcher = europeanResourceFetcher;
         return this;
     }
 
     /**
-     * Sets up a timer to periodically refresh the Lotl cache.
+     * {@inheritDoc}.
+     */
+    @Override
+    public void close() {
+        cancelTimer();
+    }
+
+    /**
+     * Sets up a timer to periodically refresh the LOTL cache.
      * <p>
      * The timer will use the refresh interval calculated based on the stale-ness of the cache.
      * If the cache is null, it will create a new instance of {@link InMemoryLotlServiceCache}.
      */
     protected void setupTimer() {
-        long staleNessInMillis = builder.getLotlFetchingProperties().getCacheStalenessInMilliseconds();
-        if (cache == null) {
-            cache = new InMemoryLotlServiceCache(staleNessInMillis);
-        }
+        long staleNessInMillis = lotlFetchingProperties.getCacheStalenessInMilliseconds();
         TimerUtil.stopTimer(cacheTimer);
-        LongUnaryOperator cacheRefreshTimer = builder.getLotlFetchingProperties().getRefreshIntervalCalculator();
+        LongUnaryOperator cacheRefreshTimer = lotlFetchingProperties.getRefreshIntervalCalculator();
         long refreshInterval = cacheRefreshTimer.applyAsLong(staleNessInMillis);
-        cacheTimer = TimerUtil.newTimerWithRecurringTask(() -> {
-                    tryAndRefreshCache();
-                },
+        cacheTimer = TimerUtil.newTimerWithRecurringTask(() -> tryAndRefreshCache(),
                 refreshInterval, refreshInterval);
     }
 
     /**
-     * This method is intended to refresh the cache, it will try and download the latest Lotl data and update the
+     * Cancels timer, if it was already set up.
+     */
+    protected void cancelTimer() {
+        if (cacheTimer != null) {
+            TimerUtil.stopTimer(cacheTimer);
+        }
+    }
+
+    /**
+     * This method is intended to refresh the cache, it will try to download the latest LOTL data and update the
      * cache accordingly.
      * <p>
      * The rules taken into account are:
-     * Country specific Lotl files will be fetched, validated and updated per country. If country fails to fetch,
-     * the cache will not be updated for that country.
+     * Country specific LOTL files will be fetched, validated and updated per country. If country fails to fetch,
+     * {@link LotlFetchingProperties#getOnCountryFetchFailureStrategy()} will be used to perform corresponding action.
      * <p>
-     * For the main Lotl file, if the fetch fails, the cache will not be updated. Also, we will NOT proceed to update
+     * For the main LOTL file, if the fetch fails, the cache will not be updated. Also, we will NOT proceed to update
      * the pivot files.
-     * If the main Lotl file is fetched successfully, the pivot files will be fetched, validated and stored in the
+     * If the main LOTL file is fetched successfully, the pivot files will be fetched, validated and stored in the
      * cache.
      */
     protected void tryAndRefreshCache() {
@@ -261,7 +323,8 @@ public class LotlService {
         try {
             EuropeanResourceFetcher.Result europeanResourceFetcherEUJournalCertificates =
                     europeanResourceFetcher.getEUJournalCertificates();
-            if (!europeanResourceFetcherEUJournalCertificates.getLocalReport().getFailures().isEmpty()) {
+            if (europeanResourceFetcherEUJournalCertificates.getLocalReport().getValidationResult()
+                    != ValidationResult.VALID) {
                 throw new PdfException(
                         MessageFormatUtil.format(SignExceptionMessageConstant.FAILED_TO_FETCH_EU_JOURNAL_CERTIFICATES,
                                 europeanResourceFetcherEUJournalCertificates.getLocalReport().getFailures()
@@ -291,8 +354,7 @@ public class LotlService {
             try {
                 pivotResult = pivotFetcher.downloadAndValidatePivotFiles(
                         mainLotlResult.getLotlXml(),
-                        europeanResourceFetcher.getEUJournalCertificates().getCertificates(),
-                        this.builder.getProperties());
+                        europeanResourceFetcher.getEUJournalCertificates().getCertificates());
                 fetchPivotFilesSuccessful =
                         pivotResult.getLocalReport().getValidationResult() == ValidationResult.VALID;
             } catch (Exception e) {
@@ -318,7 +380,7 @@ public class LotlService {
         try {
             //Try updating the country specific Lotl files.
             allCountries = countrySpecificLotlFetcher
-                    .getAndValidateCountrySpecificLotlFiles(mainLotlResult.getLotlXml(), this.builder);
+                    .getAndValidateCountrySpecificLotlFiles(mainLotlResult.getLotlXml(), this);
 
         } catch (Exception e) {
             LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.FAILED_TO_FETCH_COUNTRY_SPECIFIC_LOTL,
@@ -343,34 +405,27 @@ public class LotlService {
         }
     }
 
-    final LotlService withChainBuilder(ValidatorChainBuilder builder) {
-        this.builder = builder;
-        return this;
-    }
-
-    PivotFetcher.Result getAndValidatePivotFiles(byte[] lotlXml, List<Certificate> certificates,
-            SignatureValidationProperties properties) {
+    PivotFetcher.Result getAndValidatePivotFiles(byte[] lotlXml, List<Certificate> certificates) {
         PivotFetcher.Result result = cache.getPivotResult();
         if (result != null) {
             return result;
         }
-        PivotFetcher.Result newResult = pivotFetcher.downloadAndValidatePivotFiles(lotlXml, certificates, properties);
+        PivotFetcher.Result newResult = pivotFetcher.downloadAndValidatePivotFiles(lotlXml, certificates);
         cache.setPivotResult(newResult);
         return newResult;
     }
 
-    List<CountrySpecificLotlFetcher.Result> getCountrySpecificLotlFiles(byte[] lotlXml, ValidatorChainBuilder builder) {
+    List<CountrySpecificLotlFetcher.Result> getCountrySpecificLotlFiles(byte[] lotlXml) {
         final Map<String, CountrySpecificLotlFetcher.Result> result = cache.getCountrySpecificLotls();
         if (result != null) {
             return new ArrayList<>(result.values());
         }
         final Map<String, CountrySpecificLotlFetcher.Result> countrySpecificLotlResults =
                 countrySpecificLotlFetcher.getAndValidateCountrySpecificLotlFiles(
-                        lotlXml, builder);
+                        lotlXml, this);
         for (Map.Entry<String, CountrySpecificLotlFetcher.Result> s : countrySpecificLotlResults.entrySet()) {
-            boolean hasError = s.getValue().getLocalReport().getLogs().stream()
-                    .anyMatch(reportItem -> reportItem.getStatus() == ReportItem.ReportItemStatus.INVALID);
-            if (!hasError || s.getValue().getLocalReport().getLogs().isEmpty()) {
+            boolean successful = s.getValue().getLocalReport().getValidationResult() == ValidationResult.VALID;
+            if (successful || s.getValue().getLocalReport().getLogs().isEmpty()) {
                 cache.setCountrySpecificLotlResult(s.getValue());
             }
         }
@@ -404,8 +459,43 @@ public class LotlService {
         return result;
     }
 
-    ValidatorChainBuilder getBuilder() {
-        return builder;
+    /**
+     * Gets the resource retriever used by the Lotl service.
+     *
+     * @return the {@link IResourceRetriever} instance used for fetching resources
+     */
+    IResourceRetriever getResourceRetriever() {
+        return resourceRetriever;
+    }
+
+    /**
+     * Retrieves explicitly added or automatically created {@link XmlSignatureValidator} instance.
+     *
+     * @return explicitly added or automatically created {@link XmlSignatureValidator} instance.
+     */
+    XmlSignatureValidator getXmlSignatureValidator(TrustedCertificatesStore trustedCertificatesStore) {
+        return xmlSignatureValidatorFactory.apply(trustedCertificatesStore);
+    }
+
+    LotlFetchingProperties getLotlFetchingProperties() {
+        return lotlFetchingProperties;
+    }
+
+    /**
+     * Retrieves explicitly added or automatically created {@link LotlValidator} instance.
+     *
+     * @return explicitly added or automatically created {@link LotlValidator} instance
+     */
+    LotlValidator getLotlValidator() {
+        return lotlValidatorFactory.get();
+    }
+
+    private static XmlSignatureValidator buildXmlSignatureValidator(TrustedCertificatesStore trustedCertificatesStore) {
+        return new XmlSignatureValidator(trustedCertificatesStore);
+    }
+
+    private LotlValidator buildLotlValidator() {
+        return new LotlValidator(this);
     }
 
     private static final class LoggableResourceRetriever extends DefaultResourceRetriever {

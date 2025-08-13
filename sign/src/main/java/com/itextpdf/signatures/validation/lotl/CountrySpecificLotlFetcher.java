@@ -26,8 +26,8 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.MultiThreadingUtil;
 import com.itextpdf.io.resolver.resource.IResourceRetriever;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.validation.SafeCalling;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
-import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 
@@ -46,8 +46,6 @@ import static com.itextpdf.signatures.validation.lotl.LotlValidator.LOTL_VALIDAT
  * This class fetches and validates country-specific List of Trusted Lists (Lotls).
  */
 public class CountrySpecificLotlFetcher {
-
-
     private final LotlService service;
 
     /**
@@ -64,41 +62,24 @@ public class CountrySpecificLotlFetcher {
      * Fetches and validates country-specific Lotls from the provided Lotl XML.
      *
      * @param lotlXml the byte array of the Lotl XML
-     * @param builder the {@link ValidatorChainBuilder} used to build the validation chain
+     * @param lotlService the {@link LotlService} used to build this fetcher
      *
      * @return a map of results containing validated country-specific Lotls and their contexts
      */
-    public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, ValidatorChainBuilder builder) {
+    public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, LotlService lotlService) {
         XmlCertificateRetriever certificateRetriever = new XmlCertificateRetriever(new XmlDefaultCertificateHandler());
         List<Certificate> lotlTrustedCertificates = certificateRetriever.getCertificates(
                 new ByteArrayInputStream(lotlXml));
         XmlCountryRetriever countryRetriever = new XmlCountryRetriever();
         List<CountrySpecificLotl> countrySpecificLotl = countryRetriever
                 .getAllCountriesLotlFilesLocation(new ByteArrayInputStream(lotlXml),
-                        builder.getLotlFetchingProperties());
+                        lotlService.getLotlFetchingProperties());
 
         final TrustedCertificatesStore certificatesStore = new TrustedCertificatesStore();
         certificatesStore.addGenerallyTrustedCertificates(lotlTrustedCertificates);
-        final XmlSignatureValidator validator = builder.buildXmlSignatureValidator(certificatesStore);
+        final XmlSignatureValidator validator = lotlService.getXmlSignatureValidator(certificatesStore);
 
-        final List<Callable<Result>> tasks = new ArrayList<>(countrySpecificLotl.size());
-        for (CountrySpecificLotl f : countrySpecificLotl) {
-            Callable<Result> resultCallable = () -> {
-                try {
-                    return new CountryFetcher(service.getResourceRetriever(), validator,
-                            f, builder.getLotlFetchingProperties()).getCountrySpecificLotl();
-                } catch (Exception e) {
-                    Result r = new Result();
-                    r.getLocalReport().addReportItem(new ReportItem(LOTL_VALIDATION, MessageFormatUtil.format(
-                            SignExceptionMessageConstant.FAILED_TO_FETCH_LOTL_FOR_COUNTRY, f.getSchemeTerritory(),
-                            f.getTslLocation(), e.getMessage()), e,
-                            ReportItem.ReportItemStatus.INVALID));
-                    r.setCountrySpecificLotl(f);
-                    return r;
-                }
-            };
-            tasks.add(resultCallable);
-        }
+        final List<Callable<Result>> tasks = getTasks(lotlService, countrySpecificLotl, validator);
 
         HashMap<String, Result> countrySpecificCacheEntries = new HashMap<>();
         for (Result result : executeTasks(tasks)) {
@@ -122,6 +103,28 @@ public class CountrySpecificLotlFetcher {
         return MultiThreadingUtil.<Result>runActionsParallel(tasks, tasks.size());
     }
 
+    private List<Callable<Result>> getTasks(LotlService lotlService, List<CountrySpecificLotl> countrySpecificLotl,
+            XmlSignatureValidator validator) {
+        final List<Callable<Result>> tasks = new ArrayList<>(countrySpecificLotl.size());
+        for (CountrySpecificLotl f : countrySpecificLotl) {
+            Callable<Result> resultCallable = () -> {
+                ValidationReport report = new ValidationReport();
+                Result result = SafeCalling.onExceptionLog(
+                        () -> new CountryFetcher(service.getResourceRetriever(), validator, f,
+                                lotlService.getLotlFetchingProperties()).getCountrySpecificLotl(),
+                        new Result().setCountrySpecificLotl(f),
+                        report,
+                        e -> new ReportItem(LOTL_VALIDATION, MessageFormatUtil.format(
+                                SignExceptionMessageConstant.FAILED_TO_FETCH_LOTL_FOR_COUNTRY, f.getSchemeTerritory(),
+                                f.getTslLocation(), e.getMessage()), e,
+                                ReportItem.ReportItemStatus.INVALID));
+                result.getLocalReport().merge(report);
+                return result;
+            };
+            tasks.add(resultCallable);
+        }
+        return tasks;
+    }
 
     /**
      * Represents the result of fetching and validating country-specific Lotls.
@@ -190,9 +193,12 @@ public class CountrySpecificLotlFetcher {
          * Sets the country-specific Lotl that was fetched and validated.
          *
          * @param countrySpecificLotl the CountrySpecificLotl object to set
+         *
+         * @return same result instance.
          */
-        public void setCountrySpecificLotl(CountrySpecificLotl countrySpecificLotl) {
+        public Result setCountrySpecificLotl(CountrySpecificLotl countrySpecificLotl) {
             this.countrySpecificLotl = countrySpecificLotl;
+            return this;
         }
 
         /**
@@ -227,13 +233,14 @@ public class CountrySpecificLotlFetcher {
             final Result countryResult = new Result();
             countryResult.setCountrySpecificLotl(countrySpecificLotl);
             byte[] countryLotlBytes;
-            try {
-                countryLotlBytes = resourceRetriever.getByteArrayByUrl(new URL(countrySpecificLotl.getTslLocation()));
-            } catch (Exception e) {
-                countryResult.setLocalReport(new ValidationReport());
-                countryResult.getLocalReport().addReportItem(new ReportItem(LOTL_VALIDATION,
-                        MessageFormatUtil.format(COULD_NOT_RESOLVE_URL, countrySpecificLotl.getTslLocation()), e,
-                        ReportItem.ReportItemStatus.INVALID));
+            countryLotlBytes = SafeCalling.onExceptionLog(
+                    () -> resourceRetriever.getByteArrayByUrl(new URL(countrySpecificLotl.getTslLocation())),
+                    null,
+                    countryResult.getLocalReport(),
+                    e -> new ReportItem(LOTL_VALIDATION, MessageFormatUtil.format(
+                            COULD_NOT_RESOLVE_URL, countrySpecificLotl.getTslLocation()), e,
+                            ReportItem.ReportItemStatus.INVALID));
+            if (countryLotlBytes == null) {
                 return countryResult;
             }
             ValidationReport localReport = xmlSignatureValidator.validate(new ByteArrayInputStream(countryLotlBytes));

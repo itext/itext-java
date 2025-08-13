@@ -22,27 +22,30 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
-/**
- * This class implements the {@link IOnCountryFetchFailureStrategy} interface and provides a strategy
- * for handling failures when fetching country-specific Lotl (List of Trusted Lists) files.
- * It ignores the failure of the specific country, and converts all report items to INFO status.
- * This way the country-specific Lotl is not used, the validation report is not invalid, but the items are still
- * preserved.
- */
-public class IgnoreCountrySpecificCertificates implements IOnCountryFetchFailureStrategy {
+import com.itextpdf.signatures.validation.SafeCallingAvoidantException;
 
+/**
+ * This exception is thrown when there is invalid data in the country-specific Lotl (List of Trusted Lists).
+ * It extends {@link SafeCallingAvoidantException} to indicate that the issue is severe enough to avoid safe calling.
+ */
+public class InvalidLotlDataException extends SafeCallingAvoidantException {
     /**
-     * Constructs an instance of {@link IgnoreCountrySpecificCertificates}.
+     * Constructs a new InvalidCountryLotlDataException with the specified detail message.
+     *
+     * @param message the detail message
      */
-    public IgnoreCountrySpecificCertificates() {
-        //Empty constructor
+    public InvalidLotlDataException(String message) {
+        super(message);
     }
 
     /**
-     * {@inheritDoc}
+     * Constructs a new InvalidCountryLotlDataException with the specified detail message and an object for more
+     * details.
+     *
+     * @param message the detail message
+     * @param obj     an object providing additional context or details about the exception
      */
-    @Override
-    public void onCountryFetchFailure(CountrySpecificLotlFetcher.Result fetchResult) {
-        // we do nothing here, as we ignore the failure of the specific country
+    public InvalidLotlDataException(String message, Object obj) {
+        super(message, obj);
     }
 }

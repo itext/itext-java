@@ -24,6 +24,8 @@ package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.validation.SafeCallingAvoidantException;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.ValidationContext;
@@ -44,7 +46,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * Trusted certificates storage class for country specific Lotl trusted certificates.
@@ -80,65 +81,70 @@ public class LotlTrustedStore {
                 new HashSet<>(Collections.singletonList(CertificateSource.TIMESTAMP));
         Set<CertificateSource> signScope =
                 new HashSet<>(Collections.singletonList(CertificateSource.SIGNER_CERT));
-        Map<String, Set<CertificateSource>> tempServiceTypeIdentifiersScope = new HashMap<>();
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/CA/QC", crlOcspSignScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/CA/PKC", crlOcspSignScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/Certstatus/OCSP/QC", ocspScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/Certstatus/CRL/QC", crlScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/TSA/QTST", timestampScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/EDS/Q", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/EDS/REM/Q", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/PSES/Q", timestampScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/QESValidation/Q", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/RemoteQSigCDManagement/Q", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/RemoteQSealCDManagement/Q", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/EAA/Q", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/ElectronicArchiving/Q", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/Ledgers/Q", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/Certstatus/OCSP", crlScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/Certstatus/CRL", crlScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/TS/", timestampScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/TSA/TSS-QC", timestampScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/TSA/TSS-AdESQCandQES", timestampScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/PSES", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/AdESValidation", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/AdESGeneration", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/RemoteSigCDManagemen", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/RemoteSealCDManagement", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/EAA", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/ElectronicArchiving", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/Ledgers", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/PKCValidation", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/PKCPreservation", timestampScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/EAAValidation", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/TSTValidation", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/EDSValidation", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/EAA/Pub-EAA", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/PKCValidation/CertsforOtherTypesOfTS",
+        Map<String, Set<CertificateSource>> tempServiceTypeIdentifiersScope =
+                new HashMap<>(ServiceTypeIdentifiersConstants.getAllValues().size());
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.CA_QC, crlOcspSignScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.CA_PKC, crlOcspSignScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.OCSP_QC, ocspScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.CRL_QC, crlScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.TSA_QTST, timestampScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.EDS_Q, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.REM_Q, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.PSES_Q, timestampScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.QES_VALIDATION_Q, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.REMOTE_Q_SIG_CD_MANAGEMENT_Q, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.REMOTE_Q_SEAL_CD_MANAGEMENT_Q, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.EAA_Q, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.ELECTRONIC_ARCHIVING_Q, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.LEDGERS_Q, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.OCSP, crlScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.CRL, crlScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.TS, timestampScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.TSA_TSS_QC, timestampScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.TSA_TSS_ADES_Q_CAND_QES, timestampScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.PSES, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.ADES_VALIDATION, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.ADES_GENERATION, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.REMOTE_SIG_CD_MANAGEMENT, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.REMOTE_SEAL_CD_MANAGEMENT, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.EAA, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.ELECTRONIC_ARCHIVING, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.LEDGERS, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.PKC_VALIDATION, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.PKC_PRESERVATION, timestampScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.EAA_VALIDATION, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.TST_VALIDATION, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.EDS_VALIDATION, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.EAA_PUB_EAA, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.CERTS_FOR_OTHER_TYPES_OF_TS,
                 signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/RA", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/RA/nothavingPKIid", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/SignaturePolicyAuthority", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/Archiv", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/Archiv/nothavingPKIid", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/IdV", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/KEscrow", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/KEscrow/nothavingPKIid", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/PPwd", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/PPwd/nothavingPKIid", signScope);
-        tempServiceTypeIdentifiersScope.put("http://uri.etsi.org/TrstSvc/Svctype/TLIssuer", signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.RA, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.RA_NOT_HAVING_PKI_ID, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.SIGNATURE_POLICY_AUTHORITY, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.ARCHIV, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.ARCHIV_NOT_HAVING_PKI_ID, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.ID_V, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.K_ESCROW, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.K_ESCROW_NOT_HAVING_PKI_ID, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.PP_WD, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.PP_WD_NOT_HAVING_PKI_ID, signScope);
+        tempServiceTypeIdentifiersScope.put(ServiceTypeIdentifiersConstants.TL_ISSUER, signScope);
         serviceTypeIdentifiersScope = Collections.unmodifiableMap(tempServiceTypeIdentifiersScope);
     }
 
     /**
      * Creates new instance of {@link LotlTrustedStore}. This constructor shall not be used directly.
-     * Instead, in order to create such instance {@link ValidatorChainBuilder#getLotlTrustedstore()} shall be used.
+     * Instead, in order to create such instance {@link ValidatorChainBuilder#getLotlTrustedStore()} shall be used.
      *
      * @param builder {@link ValidatorChainBuilder} which was responsible for creation
      */
     public LotlTrustedStore(ValidatorChainBuilder builder) {
-        if (builder.getLotlFetchingProperties() != null) {
-            LotlValidator lotlValidator = builder.getLotlValidator();
+        if (builder.isEuropeanLotlTrusted()) {
+            LotlService lotlService = builder.getLotlService();
+            if (lotlService == null || !lotlService.isCacheInitialized()) {
+                throw new SafeCallingAvoidantException(SignExceptionMessageConstant.CACHE_NOT_INITIALIZED);
+            }
+            LotlValidator lotlValidator = builder.getLotlService().getLotlValidator();
             this.report = lotlValidator.validate();
             if (report.getValidationResult() == ValidationResult.VALID) {
                 addCertificatesWithContext(mapIServiceContextToCountry(lotlValidator.getNationalTrustedCertificates()));
@@ -186,26 +192,27 @@ public class LotlTrustedStore {
                 continue;
             }
 
-            Set<CertificateSource> currentScope = serviceTypeIdentifiersScope.get(currentContext.getServiceType());
+            Set<CertificateSource> currentScope =
+                    getCertificateSourceBasedOnServiceType(currentContext.getServiceType());
             if (currentScope == null) {
                 validationReportItems.add(new CertificateReportItem(certificate,
                         CERTIFICATE_CHECK, MessageFormatUtil.format(CERTIFICATE_SERVICE_TYPE_NOT_RECOGNIZED,
                         certificate.getSubjectX500Principal(), currentContext.getServiceType()),
                         ReportItem.ReportItemStatus.INFO));
-                continue;
-            }
-            for (CertificateSource source : currentScope) {
-                if (ValidationContext.checkIfContextChainContainsCertificateSource(context, source)) {
-                    result.addReportItem(new CertificateReportItem(certificate,
-                            CERTIFICATE_CHECK, MessageFormatUtil.format(
-                            CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()),
-                            ReportItem.ReportItemStatus.INFO));
-                    return true;
-                } else {
-                    validationReportItems.add(new CertificateReportItem(certificate,
-                            CERTIFICATE_CHECK, MessageFormatUtil.format(CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
-                            certificate.getSubjectX500Principal(), currentContext.getServiceType()),
-                            ReportItem.ReportItemStatus.INFO));
+            } else {
+                for (CertificateSource source : currentScope) {
+                    if (ValidationContext.checkIfContextChainContainsCertificateSource(context, source)) {
+                        result.addReportItem(new CertificateReportItem(certificate,
+                                CERTIFICATE_CHECK, MessageFormatUtil.format(
+                                CERTIFICATE_TRUSTED, certificate.getSubjectX500Principal()),
+                                ReportItem.ReportItemStatus.INFO));
+                        return true;
+                    } else {
+                        validationReportItems.add(new CertificateReportItem(certificate,
+                                CERTIFICATE_CHECK, MessageFormatUtil.format(CERTIFICATE_TRUSTED_FOR_DIFFERENT_CONTEXT,
+                                certificate.getSubjectX500Principal(), currentContext.getServiceType()),
+                                ReportItem.ReportItemStatus.INFO));
+                    }
                 }
             }
         }
@@ -217,20 +224,21 @@ public class LotlTrustedStore {
         return false;
     }
 
-    static List<CountryServiceContext> mapIServiceContextToCountry(List<IServiceContext> serviceContexts) {
-        List<CountryServiceContext> list = new ArrayList<>();
-        for (IServiceContext serviceContext : serviceContexts) {
-            CountryServiceContext countryServiceContext = serviceContext instanceof CountryServiceContext ?
-                    (CountryServiceContext) serviceContext : null;
-            if (countryServiceContext != null) {
-                list.add(countryServiceContext);
-            }
-        }
-        return list;
+    /**
+     * Gets set of {@link CertificateSource} items based on service type identifier of a given certificate in LOTL file.
+     * <p>
+     * Certificate source defines in which context this certificate is supposed to be trusted.
+     *
+     * @param serviceType {@link String} representing service type identifier field in LOTL file.
+     *
+     * @return set of {@link CertificateSource} representing contexts, in which certificate is supposed to be trusted.
+     */
+    protected Set<CertificateSource> getCertificateSourceBasedOnServiceType(String serviceType) {
+        return serviceTypeIdentifiersScope.get(serviceType);
     }
 
     /**
-     * Check if scope specified by extensions contains valid types.
+     * Checks if scope specified by extensions contains valid types.
      *
      * @param reportItems {@link ValidationReport} which is populated with detailed validation results
      * @param certificate {@link X509Certificate} to be validated
@@ -238,7 +246,7 @@ public class LotlTrustedStore {
      *
      * @return false if extensions specify scope only with invalid types.
      */
-    boolean isScopeCorrectlySpecified(List<ReportItem> reportItems, X509Certificate certificate,
+    protected boolean isScopeCorrectlySpecified(List<ReportItem> reportItems, X509Certificate certificate,
             List<AdditionalServiceInformationExtension> extensions) {
         List<ReportItem> currentReportItems = new ArrayList<>();
         for (AdditionalServiceInformationExtension extension : extensions) {
@@ -258,6 +266,18 @@ public class LotlTrustedStore {
             reportItems.addAll(currentReportItems);
             return false;
         }
+    }
+
+    static List<CountryServiceContext> mapIServiceContextToCountry(List<IServiceContext> serviceContexts) {
+        List<CountryServiceContext> list = new ArrayList<>();
+        for (IServiceContext serviceContext : serviceContexts) {
+            CountryServiceContext countryServiceContext = serviceContext instanceof CountryServiceContext ?
+                    (CountryServiceContext) serviceContext : null;
+            if (countryServiceContext != null) {
+                list.add(countryServiceContext);
+            }
+        }
+        return list;
     }
 
     final void addCertificatesWithContext(Collection<CountryServiceContext> contexts) {

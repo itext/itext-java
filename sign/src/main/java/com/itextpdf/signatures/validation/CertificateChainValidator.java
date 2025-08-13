@@ -89,7 +89,7 @@ public class CertificateChainValidator {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
         this.revocationDataValidator = builder.getRevocationDataValidator();
-        this.lotlTrustedStore = builder.getLotlTrustedstore();
+        this.lotlTrustedStore = builder.getLotlTrustedStore();
     }
 
     /**
@@ -161,8 +161,8 @@ public class CertificateChainValidator {
     }
 
     private boolean stopValidation(ValidationReport result, ValidationContext context) {
-        return !properties.getContinueAfterFailure(context)
-                && result.getValidationResult() == ValidationReport.ValidationResult.INVALID;
+        return result.getValidationResult() == ValidationResult.INVALID &&
+                !properties.getContinueAfterFailure(context);
     }
 
     private void validateValidityPeriod(ValidationReport result, X509Certificate certificate,

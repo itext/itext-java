@@ -30,6 +30,8 @@ import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.report.ReportItem;
+import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
 
@@ -48,6 +50,8 @@ import java.util.Collections;
 class LotlTrustedStoreTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/certs/";
+    private static final String SOURCE_FOLDER_LOTL_FILES = "./src/test/resources/com/itextpdf/signatures/validation" +
+            "/lotl/LotlState2025_08_08/";
 
     private static X509Certificate crlRootCert;
 
@@ -59,7 +63,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
 
     @Test
     public void checkCertificateTest() {
-        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedstore();
+        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedStore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
@@ -85,7 +89,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
 
     @Test
     public void checkCertificateWithValidationContextChainTest() {
-        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedstore();
+        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedStore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/Certstatus/CRL");
@@ -114,7 +118,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
 
     @Test
     public void incorrectContextTest() {
-        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedstore();
+        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedStore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/TSA/QTST");
@@ -141,7 +145,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
 
     @Test
     public void serviceTypeNotRecognizedTest() {
-        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedstore();
+        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedStore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("invalid service type");
@@ -168,7 +172,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
 
     @Test
     public void incorrectTimeBeforeValidTest() {
-        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedstore();
+        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedStore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
@@ -194,7 +198,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
 
     @Test
     public void incorrectTimeAfterValidTest() {
-        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedstore();
+        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedStore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
@@ -221,7 +225,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
 
     @Test
     public void checkCertificateWithCorrectExtensionScopeTest() {
-        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedstore();
+        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedStore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
@@ -250,7 +254,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
 
     @Test
     public void checkCertificateWithCorrectExtensionScope2Test() {
-        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedstore();
+        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedStore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
@@ -281,7 +285,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
 
     @Test
     public void checkCertificateWithIncorrectExtensionScopeTest() {
-        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedstore();
+        LotlTrustedStore store = new ValidatorChainBuilder().getLotlTrustedStore();
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(crlRootCert);
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
@@ -307,5 +311,45 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
                                 k -> "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication")
                         .withCertificate(crlRootCert)
                 ));
+    }
+
+    @Test
+    public void createTrustedStoreWithValidLotl() {
+        ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
+        chainBuilder.trustEuropeanLotl(true);
+        LotlFetchingProperties fetchingProperties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
+        try (LotlService lotlService = new LotlService(fetchingProperties)) {
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            chainBuilder.withLotlService(() -> lotlService);
+            lotlService.initializeCache();
+        }
+
+        LotlTrustedStore trustedStore = chainBuilder.getLotlTrustedStore();
+        Assertions.assertFalse(trustedStore.getCertificates().isEmpty());
+    }
+
+    @Test
+    public void createTrustedStoreWithInvalidLotl() {
+        ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
+        chainBuilder.trustEuropeanLotl(true);
+        LotlFetchingProperties fetchingProperties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
+        try (LotlService lotlService = new LotlService(fetchingProperties)) {
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            chainBuilder.withLotlService(() -> lotlService);
+            lotlService.initializeCache();
+
+            LotlValidator invalidValidator = new LotlValidator(lotlService) {
+                @Override
+                public ValidationReport validate() {
+                    ValidationReport report = new ValidationReport();
+                    report.addReportItem(new ReportItem("check", "test invalid", ReportItemStatus.INVALID));
+                    return report;
+                }
+            };
+            lotlService.withLotlValidator(() -> invalidValidator);
+        }
+
+        LotlTrustedStore trustedStore = chainBuilder.getLotlTrustedStore();
+        Assertions.assertTrue(trustedStore.getCertificates().isEmpty());
     }
 }
