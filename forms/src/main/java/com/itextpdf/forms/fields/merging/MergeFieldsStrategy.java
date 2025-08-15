@@ -29,6 +29,7 @@ import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfString;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,10 +66,10 @@ public class MergeFieldsStrategy implements OnDuplicateFormFieldNameStrategy {
         PdfObject secondFieldValue = secondField.getValue();
         PdfObject firstFieldDefaultValue = firstField.getDefaultValue();
         PdfObject secondFieldDefaultValue = secondField.getDefaultValue();
+        boolean isValueEqualsOrNull = isValueEqualsOrNull(firstFieldValue, secondFieldValue);
+        boolean isDefaultValueEqualsOrNull = isValueEqualsOrNull(firstFieldDefaultValue, secondFieldDefaultValue);
         if ((firstFieldFormType == null || firstFieldFormType.equals(secondField.getFormType())) &&
-                (firstFieldValue == null || secondFieldValue == null || firstFieldValue.equals(secondFieldValue)) &&
-                (firstFieldDefaultValue == null || secondFieldDefaultValue == null ||
-                        firstFieldDefaultValue.equals(secondFieldDefaultValue))) {
+                isValueEqualsOrNull && isDefaultValueEqualsOrNull) {
             mergeFormFields(firstField, secondField, throwExceptionOnError);
         } else {
             if (throwExceptionOnError) {
@@ -82,5 +83,16 @@ public class MergeFieldsStrategy implements OnDuplicateFormFieldNameStrategy {
             }
         }
         return true;
+    }
+
+    private static boolean isValueEqualsOrNull(PdfObject obj1, PdfObject obj2) {
+        if(obj1 == null || obj2 == null){
+            return true;
+        }
+        if (obj1 instanceof PdfString && obj2 instanceof PdfString) {
+            return ((PdfString) obj1).toUnicodeString()
+                    .equals(((PdfString) obj2).toUnicodeString());
+        }
+        return obj1.equals(obj2);
     }
 }
