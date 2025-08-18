@@ -25,38 +25,32 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.exceptions.ReadingByteLimitException;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.net.URL;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the {@link IResourceRetriever} interface, which can set a limit
  * on the size of retrieved resources using input stream with a limit on the number of bytes read.
+ * @deprecated In favor of {@link com.itextpdf.io.resolver.resource.DefaultResourceRetriever}
  */
+@Deprecated
 public class DefaultResourceRetriever implements IResourceRetriever{
     private static final Logger logger = LoggerFactory.getLogger(DefaultResourceRetriever.class);
 
-    private long resourceSizeByteLimit;
-    private int connectTimeout;
-    private int readTimeout;
-    private static final int DEFAULT_CONNECT_TIMEOUT = 300000;
-    private static final int DEFAULT_READ_TIMEOUT = 300000;
-
+    private com.itextpdf.io.resolver.resource.DefaultResourceRetriever proxy;
     /**
      * Creates a new {@link DefaultResourceRetriever} instance.
      * The limit on the size of retrieved resources is by default equal to {@link Long#MAX_VALUE} bytes.
      */
     public DefaultResourceRetriever() {
-        resourceSizeByteLimit = Long.MAX_VALUE;
-        connectTimeout = DEFAULT_CONNECT_TIMEOUT;
-        readTimeout = DEFAULT_READ_TIMEOUT;
+        // empty constructor
+        this.proxy = new com.itextpdf.io.resolver.resource.DefaultResourceRetriever();
     }
 
     /**
@@ -67,7 +61,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      * @return the resource size byte limit
      */
     public long getResourceSizeByteLimit() {
-        return resourceSizeByteLimit;
+        return proxy.getResourceSizeByteLimit();
     }
 
     /**
@@ -79,7 +73,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      * @return the {@link IResourceRetriever} instance
      */
     public IResourceRetriever setResourceSizeByteLimit(long resourceSizeByteLimit) {
-        this.resourceSizeByteLimit = resourceSizeByteLimit;
+         proxy.setResourceSizeByteLimit(resourceSizeByteLimit);
         return this;
     }
 
@@ -91,7 +85,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      * @return the connect timeout in milliseconds
      */
     public int getConnectTimeout() {
-        return connectTimeout;
+        return proxy.getConnectTimeout();
     }
 
     /**
@@ -104,7 +98,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      * @return the {@link IResourceRetriever} instance
      */
     public IResourceRetriever setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
+        proxy.setConnectTimeout(connectTimeout);
         return this;
     }
 
@@ -116,7 +110,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      * @return the read timeout in milliseconds
      */
     public int getReadTimeout() {
-        return readTimeout;
+        return proxy.getReadTimeout();
     }
 
     /**
@@ -129,7 +123,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      * @return the {@link IResourceRetriever} instance
      */
     public IResourceRetriever setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
+        proxy.setReadTimeout(readTimeout);
         return this;
     }
 
@@ -147,8 +141,9 @@ public class DefaultResourceRetriever implements IResourceRetriever{
                             url));
             return null;
         }
-        return new LimitedInputStream(UrlUtil.getInputStreamOfFinalConnection(url, connectTimeout, readTimeout),
-                resourceSizeByteLimit);
+        return new LimitedInputStream(UrlUtil.getInputStreamOfFinalConnection(url, proxy.getConnectTimeout(),
+                proxy.getReadTimeout()),
+                proxy.getResourceSizeByteLimit());
     }
 
     /**
@@ -168,7 +163,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
         } catch (ReadingByteLimitException ex) {
             logger.warn(MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT,
-                    url, resourceSizeByteLimit));
+                    url, proxy.getResourceSizeByteLimit()));
         }
         return null;
     }

@@ -27,7 +27,6 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
@@ -48,7 +47,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,16 +57,9 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUACanvasTextTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/iTextFreeSansWithE001Glyph.ttf";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void setUp() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
     }
 
     public static List<String> textRepresentation() {
@@ -78,6 +69,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     @Test
     public void puaValueInLayoutTest() throws IOException {
         String filename = "puaValueInLayoutTest";
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -93,6 +85,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
     @MethodSource("textRepresentation")
     public void puaValueWithoutAttributesTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithoutAttributesTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -106,13 +99,14 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT, PdfUAConformance.PDF_UA_2);
+        assertResult(false, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
     public void puaValueWithAltOnTagTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithAltOnTagTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -128,13 +122,14 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        assertResult(true, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
     public void puaValueWithActualTextOnTagTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithActualTextOnTagTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -150,13 +145,14 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        assertResult(true, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
     public void puaValueWithAltOnCanvasTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithAltOnCanvasTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -172,13 +168,14 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        assertResult(true, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
     public void puaValueWithActualTextOnCanvasTest(String textRepresentation) throws IOException {
         String filename = "puaValueWithActualTextOnCanvasTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -194,13 +191,14 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        assertResult(true, textRepresentation, filename, framework);
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
     public void puaValueOnTwoPagesTest(String textRepresentation) throws IOException {
         String filename = "puaValueOnTwoPagesTest_" + textRepresentation;
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             // Text on page 1 contains PUA and alt, which is valid.
             PdfCanvas canvasOnPageOne = new PdfCanvas(document.addNewPage());
@@ -230,7 +228,22 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvasOnPageTwo.closeTag();
             canvasOnPageTwo.endText();
         });
-        framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT, PdfUAConformance.PDF_UA_2);
+        assertResult(false, textRepresentation, filename, framework);
+    }
+
+    private void assertResult(boolean expectedValid, String textRepresentation, String filename,
+            UaValidationTestFramework framework) throws IOException {
+        if (expectedValid) {
+            framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        } else {
+            if ("array".equals(textRepresentation)) {
+                // In case of "array" PdfCanvas#showText(PdfArray) is used. In this method we don't have this check, because
+                // of the complications regarding not symbolic fonts.
+                framework.assertOnlyVeraPdfFail(filename, PdfUAConformance.PDF_UA_2);
+            } else {
+                framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT, PdfUAConformance.PDF_UA_2);
+            }
+        }
     }
 
     private void addPuaTextToCanvas(PdfCanvas canvas, String textRepresentation, PdfFont font) {

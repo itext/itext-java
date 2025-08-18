@@ -50,9 +50,12 @@ import com.itextpdf.signatures.validation.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.mocks.MockChainValidator;
 import com.itextpdf.signatures.validation.mocks.MockCrlValidator;
+import com.itextpdf.signatures.validation.mocks.MockDocumentRevisionsValidator;
 import com.itextpdf.signatures.validation.mocks.MockIssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.mocks.MockOCSPValidator;
+import com.itextpdf.signatures.validation.mocks.MockRevocationDataValidator;
 import com.itextpdf.signatures.validation.mocks.MockSignatureValidationProperties;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
@@ -100,14 +103,8 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
     private static PrivateKey ocspRespPrivateKey;
     private static X509Certificate trustedOcspResponderCert;
 
-    private IssuingCertificateRetriever certificateRetriever;
-    private SignatureValidationProperties parameters;
     private final ValidationContext baseContext = new ValidationContext(ValidatorContext.SIGNATURE_VALIDATOR,
             CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
-    private ValidatorChainBuilder validatorChainBuilder;
-    private MockCrlValidator mockCrlValidator;
-    private MockOCSPValidator mockOCSPValidator;
-    private MockSignatureValidationProperties mockParameters;
 
     @BeforeAll
     public static void before()
@@ -127,14 +124,10 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         trustedOcspResponderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
     }
 
-    @BeforeEach
-    public void setUp() {
-        certificateRetriever = new IssuingCertificateRetriever();
-        parameters = new SignatureValidationProperties();
-        mockCrlValidator = new MockCrlValidator();
-        mockOCSPValidator = new MockOCSPValidator();
-        mockParameters = new MockSignatureValidationProperties(parameters);
-        validatorChainBuilder = new ValidatorChainBuilder()
+    private ValidatorChainBuilder createValidatorChainBuilder(IssuingCertificateRetriever certificateRetriever,
+            MockSignatureValidationProperties mockParameters, MockCrlValidator mockCrlValidator,
+            MockOCSPValidator mockOCSPValidator){
+        return new ValidatorChainBuilder()
                 .withIssuingCertificateRetrieverFactory(() -> certificateRetriever)
                 .withSignatureValidationProperties(mockParameters)
                 .withCRLValidatorFactory(() -> mockCrlValidator)
@@ -143,6 +136,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void basicOCSPValidatorUsageTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
@@ -189,6 +190,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void basicCrlValidatorUsageTest() throws GeneralSecurityException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
         TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
@@ -229,6 +238,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void crlResponseOrderingTest() throws CertificateEncodingException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         Date thisUpdate1 = DateTimeUtil.addDaysToDate(checkDate, -2);
@@ -265,6 +282,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void ocspResponseOrderingTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         TestOcspResponseBuilder builder1 = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
@@ -313,6 +338,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void validityAssuredTest() throws CertificateException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         String checkCertFileName = SOURCE_FOLDER + "validityAssuredSigningCert.pem";
         X509Certificate certificate = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
@@ -333,6 +366,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void noRevAvailTest() throws CertificateException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         String checkCertFileName = SOURCE_FOLDER + "noRevAvailCertWithoutCA.pem";
         X509Certificate certificate = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
@@ -353,6 +394,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void noRevAvailWithCATest() throws CertificateException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         String checkCertFileName = SOURCE_FOLDER + "noRevAvailCert.pem";
         X509Certificate certificate = (X509Certificate) PemFileHelper.readFirstChain(checkCertFileName)[0];
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
@@ -373,6 +422,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void selfSignedCertificateIsNotValidatedTest() {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         ValidationReport report = new ValidationReport();
@@ -391,6 +448,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void nocheckExtensionShouldNotFurtherValidateTest() {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         ValidationReport report = new ValidationReport();
 
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
@@ -410,6 +475,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void noRevocationDataTest() {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         ValidationReport report = new ValidationReport();
 
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
@@ -430,6 +503,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void doNotFetchOcspOnlineIfCrlAvailableTest() throws Exception {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         Date thisUpdate = DateTimeUtil.addDaysToDate(checkDate, -2);
@@ -458,6 +539,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void doNotFetchCrlOnlineIfOcspAvailableTest() throws Exception {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
@@ -494,6 +583,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                     logLevel = LogLevelConstants.INFO)
     })
     public void tryToFetchCrlOnlineIfOnlyIndeterminateOcspAvailableTest() throws Exception {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
@@ -531,6 +628,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void tryFetchRevocationDataOnlineTest() {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         ValidationReport report = new ValidationReport();
         parameters.setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
                         TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH)
@@ -548,6 +653,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void crlEncodingErrorTest() throws Exception {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         byte[] crl = new TestCrlBuilder(caCert, caPrivateKey).makeCrl();
         crl[5] = 0;
         ValidationReport report = new ValidationReport();
@@ -586,6 +699,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void sortResponsesTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         // The oldest one, but the only one valid.
@@ -664,7 +785,15 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
 @Test
     public void responsesFromValidationClientArePassedTest() throws GeneralSecurityException, IOException {
-        Date checkDate = TimeTestUtil.TEST_DATE_TIME;
+    IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+    SignatureValidationProperties parameters = new SignatureValidationProperties();
+    MockCrlValidator mockCrlValidator = new MockCrlValidator();
+    MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+    MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+    ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+            mockCrlValidator, mockOCSPValidator);
+
+    Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         Date ocspGeneration = DateTimeUtil.addDaysToDate(checkDate, 2);
         // Here we check that proper generation time was set.
@@ -710,6 +839,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void timeBasedContextProperlySetValidationClientsTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
 
         mockOCSPValidator.onCallDo(c -> Assertions.assertEquals(TimeBasedContext.HISTORICAL, c.context.getTimeBasedContext()));
@@ -740,6 +877,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void timeBasedContextProperlySetRandomClientsTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
@@ -760,6 +905,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void timeBasedContextProperlySetOnlineClientsTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
 
@@ -794,6 +947,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void basicOCSPValidatorFailureTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
@@ -823,6 +984,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void OCSPValidatorFailureTest() throws GeneralSecurityException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
         TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
@@ -855,6 +1024,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void certificateRetrieverRetrieveIssuerCertificateFailureTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
@@ -890,6 +1067,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void ocspClientGetEncodedFailureTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setProducedAt(DateTimeUtil.addDaysToDate(checkDate, 5));
@@ -924,6 +1109,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void crlClientGetEncodedFailureTest() throws GeneralSecurityException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         Date revocationDate = DateTimeUtil.addDaysToDate(checkDate, -1);
         TestCrlBuilder builder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
@@ -958,6 +1151,13 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void testCrlClientInjection() throws CertificateEncodingException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
 
         TestCrlClient testCrlClient = new TestCrlClient();
         TestCrlClientWrapper mockCrlClient = new TestCrlClientWrapper(testCrlClient);
@@ -974,6 +1174,13 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
 
     @Test
     public void testOcspClientInjection() throws CertificateEncodingException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        MockCrlValidator mockCrlValidator = new MockCrlValidator();
+        MockOCSPValidator mockOCSPValidator = new MockOCSPValidator();
+        MockSignatureValidationProperties mockParameters = new MockSignatureValidationProperties(parameters);
+        ValidatorChainBuilder validatorChainBuilder = createValidatorChainBuilder(certificateRetriever, mockParameters,
+                mockCrlValidator, mockOCSPValidator);
 
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);

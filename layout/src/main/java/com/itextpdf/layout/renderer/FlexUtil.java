@@ -88,6 +88,9 @@ final class FlexUtil {
         // We need to have crossSize only if its value is definite.
         Float[] crossSizes = getCrossSizes(flexContainerRenderer, layoutBox);
         Float crossSize = crossSizes[0];
+        if (crossSize == null && isColumnDirection(flexContainerRenderer)) {
+            crossSize = layoutBox.getWidth();
+        }
         Float minCrossSize = crossSizes[1];
         Float maxCrossSize = crossSizes[2];
 
@@ -194,27 +197,44 @@ final class FlexUtil {
         AlignContentPropertyValue alignContent = (AlignContentPropertyValue) renderer
                 .<AlignContentPropertyValue>getProperty(Property.ALIGN_CONTENT, AlignContentPropertyValue.NORMAL);
 
+        boolean isFirstFlexStart = (boolean) renderer.<Boolean>getProperty(Property.FLEX_FORCE_START_ON_TOP, false);
+
         if (crossSize != null) {
             if (renderer.isWrapReverse()) {
                 Collections.reverse(lines);
             }
 
-            float lineCrossSize = 0;
-
-            for (List<FlexItemCalculationInfo> line : lines) {
-                float maxItemSize = getItemMaxCrossSize(line);
-                lineCrossSize += maxItemSize;
-            }
-
+            float boxSize;
             float freeSpace;
 
             if (isColumnDirection(renderer)) {
-                freeSpace = Math.min(layoutBox.getWidth(), (float) crossSize) - lineCrossSize;
+                boxSize = Math.min(layoutBox.getWidth(), (float) crossSize);
             } else {
-                freeSpace = Math.min(layoutBox.getHeight(), (float) crossSize) - lineCrossSize;
+                boxSize = Math.min(layoutBox.getHeight(), (float) crossSize);
             }
 
-            applyAlignContent(lines, alignContent, freeSpace, isColumnDirection(renderer));
+            float lineCrossSize = 0;
+            int columnsOnPage = 0;
+
+            for (List<FlexItemCalculationInfo> line : lines) {
+                float maxItemSize = getItemMaxCrossSize(line);
+                if (isColumnDirection(renderer)) {
+                    if (lineCrossSize + maxItemSize <= boxSize) {
+                        lineCrossSize += maxItemSize;
+                        columnsOnPage++;
+                    } else {
+                        break;
+                    }
+                } else {
+                    lineCrossSize += maxItemSize;
+                }
+            }
+
+            freeSpace = boxSize - lineCrossSize;
+            applyAlignContent(lines, isColumnDirection(renderer) ? columnsOnPage : lines.size(),
+                    alignContent, freeSpace < 0 ? 0 : freeSpace,
+                    isColumnDirection(renderer),
+                    isFirstFlexStart);
 
             if (renderer.isWrapReverse()) {
                 Collections.reverse(lines);
@@ -223,36 +243,43 @@ final class FlexUtil {
     }
 
     private static void applyAlignContent(List<List<FlexItemCalculationInfo>> lines,
-            AlignContentPropertyValue alignContent,
-            float freeSpace, boolean isColumnDirection) {
+            int linesOnPage, AlignContentPropertyValue alignContent,
+            float freeSpace, boolean isColumnDirection, boolean isFirstFlexStart) {
         if (!lines.isEmpty()) {
             switch (alignContent) {
                 case CENTER:
-                    applyCentralAlignment(lines, freeSpace, isColumnDirection);
+                    applyCenterAlignment(lines, freeSpace, isColumnDirection, isFirstFlexStart);
                     break;
                 case FLEX_END:
-                    applyFlexEndAlignment(lines, freeSpace, isColumnDirection);
+                case END:
+                    applyFlexEndAlignment(lines, freeSpace, isColumnDirection, isFirstFlexStart);
                     break;
                 case SPACE_BETWEEN:
-                    applySpaceBetweenAlignment(lines, freeSpace, isColumnDirection);
+                    applySpaceBetweenAlignment(lines, linesOnPage, freeSpace, isColumnDirection);
                     break;
                 case SPACE_AROUND:
-                    applySpaceAroundAlignment(lines, freeSpace, isColumnDirection);
+                    applySpaceAroundAlignment(lines, linesOnPage, freeSpace, isColumnDirection, isFirstFlexStart);
                     break;
                 case SPACE_EVENLY:
-                    applySpaceEvenlyAlignment(lines, freeSpace, isColumnDirection);
+                    applySpaceEvenlyAlignment(lines, linesOnPage, freeSpace, isColumnDirection, isFirstFlexStart);
                     break;
                 case FLEX_START:
+                case START:
+
                 default:
                     break;
-                    // We don't need to do anything in these cases
+                // We don't need to do anything in these cases
             }
         }
     }
 
     private static void applyFlexEndAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
-            boolean isColumnDirection) {
-        for (FlexItemCalculationInfo item : lines.get(0)) {
+            boolean isColumnDirection, boolean isFirstFlexStart) {
+        if (isFirstFlexStart && lines.size() < 2) {
+            return;
+        }
+        List<FlexItemCalculationInfo> targetLine = isFirstFlexStart && lines.size() > 1 ? lines.get(1) : lines.get(0);
+        for (FlexItemCalculationInfo item : targetLine) {
             if (isColumnDirection) {
                 item.xShift = freeSpace;
             } else {
@@ -261,11 +288,12 @@ final class FlexUtil {
         }
     }
 
-    private static void applySpaceBetweenAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
+    private static void applySpaceBetweenAlignment(List<List<FlexItemCalculationInfo>> lines, int linesOnPage,
+            float freeSpace,
             boolean isColumnDirection) {
-        if(lines.size() != 1) {
-            float indentation = freeSpace / (lines.size() - 1);
-            for (int i = 1; i < lines.size(); i++) {
+        if (linesOnPage > 1) {
+            final float indentation = freeSpace / (linesOnPage - 1);
+            for (int i = 1; i < linesOnPage; i++) {
                 for (FlexItemCalculationInfo item : lines.get(i)) {
                     if (isColumnDirection) {
                         item.xShift = indentation;
@@ -277,12 +305,12 @@ final class FlexUtil {
         }
     }
 
-    private static void applySpaceEvenlyAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
-            boolean isColumnDirection) {
-        float indentation = freeSpace / (lines.size() + 1);
-
-        for (List<FlexItemCalculationInfo> line : lines) {
-            for (FlexItemCalculationInfo item : line) {
+    private static void applySpaceEvenlyAlignment(List<List<FlexItemCalculationInfo>> lines, int linesOnPage,
+            float freeSpace, boolean isColumnDirection, boolean isFirstFlexStart) {
+        final float indentation = freeSpace / (linesOnPage + 1);
+        final int startIndex = isFirstFlexStart ? 1 : 0;
+        for (int i = startIndex; i < linesOnPage; i++) {
+            for (FlexItemCalculationInfo item : lines.get(i)) {
                 if (isColumnDirection) {
                     item.xShift = indentation;
                 } else {
@@ -292,40 +320,36 @@ final class FlexUtil {
         }
     }
 
-    private static void applySpaceAroundAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
-            boolean isColumnDirection) {
-        float indentation = freeSpace / lines.size();
-
-        for (FlexItemCalculationInfo item : lines.get(0)) {
-            if (isColumnDirection) {
-                item.xShift = indentation / 2;
-            } else {
-                item.yShift = indentation / 2;
-            }
-        }
-
-        if(lines.size() != 1) {
-            for (int i = 1; i < lines.size(); i++) {
-                for (FlexItemCalculationInfo item : lines.get(i)) {
-                    if (isColumnDirection) {
-                        item.xShift = indentation;
-                    } else {
-                        item.yShift = indentation;
-                    }
+    private static void applySpaceAroundAlignment(List<List<FlexItemCalculationInfo>> lines, int linesOnPage,
+            float freeSpace,
+            boolean isColumnDirection, boolean isFirstFlexStart) {
+        final int startIndex = isFirstFlexStart ? 1 : 0;
+        final float indentation = freeSpace / linesOnPage;
+        for (int i = startIndex; i < linesOnPage; i++) {
+            float shift = (i == 0) ? (indentation / 2) : indentation;
+            for (FlexItemCalculationInfo item : lines.get(i)) {
+                if (isColumnDirection) {
+                    item.xShift = shift;
+                } else {
+                    item.yShift = shift;
                 }
             }
         }
     }
 
-    private static void applyCentralAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
-            boolean isColumnDirection) {
-        for (FlexItemCalculationInfo item : lines.get(0)) {
+    private static void applyCenterAlignment(List<List<FlexItemCalculationInfo>> lines, float freeSpace,
+            boolean isColumnDirection, boolean isFirstFlexStart) {
+        if (isFirstFlexStart && lines.size() < 2) {
+            return;
+        }
+        final float indentation = freeSpace / 2;
+        final int targetIndex = isFirstFlexStart && lines.size() > 1 ? 1 : 0;
+        for (FlexItemCalculationInfo item : lines.get(targetIndex)) {
             if (isColumnDirection) {
-                item.xShift = freeSpace / 2;
+                item.xShift = indentation;
             } else {
-                item.yShift = freeSpace / 2;
+                item.yShift = indentation;
             }
-
         }
     }
 

@@ -44,14 +44,12 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class TrailerTest extends ExtendedITextTest {
 
-    private ProductData productData;
     public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/TrailerTest/";
     private static final byte[] USERPASS = "user".getBytes();
     private static final byte[] OWNERPASS = "owner".getBytes();
@@ -61,15 +59,11 @@ public class TrailerTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
-    @BeforeEach
-    public void beforeTest() {
-        this.productData = new ProductData("pdfProduct", "pdfProduct", "1.0.0", 1900, 2000);
-    }
-
     @Test
     public void trailerFingerprintTest() throws IOException {
+        ProductData productData = new ProductData("pdfProduct", "pdfProduct", "1.0.0", 1900, 2000);
         PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + "output.pdf"));
-        pdf.registerProduct(this.productData);
+        pdf.registerProduct(productData);
         PdfPage page = pdf.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText()
@@ -175,9 +169,10 @@ public class TrailerTest extends ExtendedITextTest {
 
     @Test
     public void enableFingerprintInAGPLModeTest() throws IOException {
+        ProductData productData = new ProductData("pdfProduct", "pdfProduct", "1.0.0", 1900, 2000);
         PdfDocument pdf = new PdfDocument(new PdfWriter(
                 destinationFolder + "enableFingerprintInAGPLMode.pdf"));
-        pdf.registerProduct(this.productData);
+        pdf.registerProduct(productData);
         PdfPage page = pdf.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText()
@@ -195,9 +190,10 @@ public class TrailerTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate =
             KernelLogMessageConstant.FINGERPRINT_DISABLED_BUT_NO_REQUIRED_LICENCE))
     public void tryDisablingFingerprintInAGPLModeTest() throws IOException {
+        ProductData productData = new ProductData("pdfProduct", "pdfProduct", "1.0.0", 1900, 2000);
         PdfDocument pdf = new PdfDocument(new PdfWriter(
                 destinationFolder + "tryDisablingFingerprintInAGPLMode.pdf"));
-        pdf.registerProduct(this.productData);
+        pdf.registerProduct(productData);
         PdfPage page = pdf.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.beginText()

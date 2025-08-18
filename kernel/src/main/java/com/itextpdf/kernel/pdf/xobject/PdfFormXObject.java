@@ -22,9 +22,11 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Matrix;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -131,6 +133,66 @@ public class PdfFormXObject extends PdfXObject {
         float height = bBoxMaxByMatrix.get(Vector.I2) - bBoxMinByMatrix.get(Vector.I2);
 
         return new Rectangle(bBoxMinByMatrix.get(Vector.I1), bBoxMinByMatrix.get(Vector.I2), width, height);
+    }
+
+    /**
+     * Calculates an {@link AffineTransform} that maps the coordinate system of a given {@link PdfFormXObject}
+     * to fit within a specified annotation bounding box.
+     *
+     * <p>
+     *
+     * This transformation includes translation and scaling so that the xObject's transformed bounding box
+     * aligns with the specified annotation rectangle.
+     *
+     * @param xObject   the {@link PdfFormXObject} whose appearance is to be transformed.
+     * @param annotBBox the {@link Rectangle} representing the target annotation's bounding box to which the
+     *                  appearance should be fitted.
+     * @return an {@link AffineTransform} that, when applied to the appearance stream's graphics, maps it
+     *         to the target annotation rectangle.
+     */
+    public static AffineTransform calcAppearanceTransformToAnnotRect(PdfFormXObject xObject, Rectangle annotBBox) {
+        PdfArray bBox = xObject.getBBox();
+        if (bBox.size() != 4) {
+            bBox = new PdfArray(new Rectangle(0, 0));
+            xObject.setBBox(bBox);
+        }
+        float[] xObjBBox = bBox.toFloatArray();
+
+        PdfArray xObjMatrix = xObject.getPdfObject().getAsArray(PdfName.Matrix);
+        Rectangle transformedRect;
+        if (xObjMatrix != null && xObjMatrix.size() == 6) {
+            Point[] xObjRectPoints = new Point[]{
+                    new Point(xObjBBox[0], xObjBBox[1]),
+                    new Point(xObjBBox[0], xObjBBox[3]),
+                    new Point(xObjBBox[2], xObjBBox[1]),
+                    new Point(xObjBBox[2], xObjBBox[3])
+            };
+            Point[] transformedAppBoxPoints = new Point[xObjRectPoints.length];
+            new AffineTransform(xObjMatrix.toDoubleArray()).transform(xObjRectPoints, 0, transformedAppBoxPoints, 0, xObjRectPoints.length);
+
+            float[] transformedRectArr = new float[] {
+                    Float.MAX_VALUE, Float.MAX_VALUE,
+                    -Float.MAX_VALUE, -Float.MAX_VALUE,
+            };
+            for (Point p : transformedAppBoxPoints) {
+                transformedRectArr[0] = (float) Math.min(transformedRectArr[0], p.getX());
+                transformedRectArr[1] = (float) Math.min(transformedRectArr[1], p.getY());
+                transformedRectArr[2] = (float) Math.max(transformedRectArr[2], p.getX());
+                transformedRectArr[3] = (float) Math.max(transformedRectArr[3], p.getY());
+            }
+
+            transformedRect = new Rectangle(transformedRectArr[0], transformedRectArr[1], transformedRectArr[2] - transformedRectArr[0], transformedRectArr[3] - transformedRectArr[1]);
+        } else {
+            transformedRect = new Rectangle(0, 0).setBbox(xObjBBox[0], xObjBBox[1], xObjBBox[2], xObjBBox[3]);
+        }
+
+        AffineTransform at = AffineTransform.getTranslateInstance(-transformedRect.getX(), -transformedRect.getY());
+        float scaleX = transformedRect.getWidth() == 0 ? 1 : annotBBox.getWidth() / transformedRect.getWidth();
+        float scaleY = transformedRect.getHeight() == 0 ? 1 : annotBBox.getHeight() / transformedRect.getHeight();
+        at.preConcatenate(AffineTransform.getScaleInstance(scaleX, scaleY));
+        at.preConcatenate(AffineTransform.getTranslateInstance(annotBBox.getX(), annotBBox.getY()));
+
+        return at;
     }
 
     /**

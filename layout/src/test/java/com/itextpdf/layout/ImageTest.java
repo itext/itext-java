@@ -57,6 +57,8 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import java.net.URL;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -938,11 +940,12 @@ public class ImageTest extends ExtendedITextTest {
 
         ImageData id = ImageDataFactory.create(imgPath);
 
+        URL imageURL = UrlUtil.toURL(imgPath);
         ImageData idAsTiff = ImageDataFactory
-                .createTiff(UrlUtil.toURL(imgPath), true, 1, true);
+                .createTiff(imageURL, true, 1, true);
 
         ImageData idAsTiffFalse = ImageDataFactory
-                .createTiff(UrlUtil.toURL(imgPath), false, 1, false);
+                .createTiff(imageURL, false, 1, false);
 
         document.add(new Image(id));
         document.add(new Image(idAsTiff));

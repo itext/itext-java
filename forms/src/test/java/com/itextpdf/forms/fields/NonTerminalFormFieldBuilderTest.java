@@ -40,26 +40,27 @@ import java.util.List;
 
 @Tag("UnitTest")
 public class NonTerminalFormFieldBuilderTest extends ExtendedITextTest {
-    private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
 
     @Test
     public void constructorTest() {
-        NonTerminalFormFieldBuilder builder = new NonTerminalFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        NonTerminalFormFieldBuilder builder = new NonTerminalFormFieldBuilder(pdfDoc, DUMMY_NAME);
 
-        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(pdfDoc, builder.getDocument());
         Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
     public void createNonTerminalFormField() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfFormField nonTerminalFormField =
-                new NonTerminalFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME).createNonTerminalFormField();
+                new NonTerminalFormFieldBuilder(pdfDoc, DUMMY_NAME).createNonTerminalFormField();
 
-        compareNonTerminalFormFields(nonTerminalFormField);
+        compareNonTerminalFormFields(nonTerminalFormField, pdfDoc);
     }
 
-    private static void compareNonTerminalFormFields(PdfFormField nonTerminalFormField) {
+    private static void compareNonTerminalFormFields(PdfFormField nonTerminalFormField, PdfDocument pdfDoc) {
         PdfDictionary expectedDictionary = new PdfDictionary();
 
         List<PdfWidgetAnnotation> widgets = nonTerminalFormField.getWidgets();
@@ -68,8 +69,8 @@ public class NonTerminalFormFieldBuilderTest extends ExtendedITextTest {
 
         putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
 
-        expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
-        nonTerminalFormField.makeIndirect(DUMMY_DOCUMENT);
+        expectedDictionary.makeIndirect(pdfDoc);
+        nonTerminalFormField.makeIndirect(pdfDoc);
         Assertions.assertNull(new CompareTool().compareDictionariesStructure(
                 expectedDictionary, nonTerminalFormField.getPdfObject()));
     }

@@ -31,14 +31,12 @@
 package com.itextpdf.kernel.xmp.impl;
 
 import java.io.IOException;
-import java.io.PushbackReader;
 import java.io.Reader;
-
 
 /**
  * @since   22.08.2006
  */
-public class FixASCIIControlsReader extends PushbackReader
+public class FixASCIIControlsReader extends Reader
 {
 	/** */
 	private static final int STATE_START = 0;
@@ -52,43 +50,41 @@ public class FixASCIIControlsReader extends PushbackReader
 	private static final int STATE_DIG1 = 4;
 	/** */
 	private static final int STATE_ERROR = 5;
-	/** */
-	private static final int BUFFER_SIZE = 8;
 	/** the state of the automaton */
 	private int state = STATE_START;
 	/** the result of the escaping sequence */
 	private int control = 0;
 	/** count the digits of the sequence */
-	private int digits = 0; 
-	
+	private int digits = 0;
+
+	private Reader in;
+
 	/**
-	 * The look-ahead size is 6 at maximum (&amp;#xAB;)
-	 * @see java.io.PushbackReader#PushbackReader(java.io.Reader, int)
+	 * A wrapper xmp reader to handle control characters (&#xAB;)
+	 *
 	 * @param input a Reader
 	 */
 	public FixASCIIControlsReader(Reader input)
 	{
-		super(input, BUFFER_SIZE);
+		in = input;
 	}
-
 
 	/**
 	 * @see java.io.Reader#read(char[], int, int)
 	 */
 	public int read(char[] cbuf, int off, int len) throws IOException
 	{
-		int readAhead = 0;
 		int read = 0;
 		int pos = off;
-		char[] readAheadBuffer = new char[BUFFER_SIZE];
+		char[] readAheadBuffer = new char[1];
 		
 		boolean available = true;
-		while (available  &&  read < len)
+		while (available && read < len)
 		{
-			available = super.read(readAheadBuffer, readAhead, 1) == 1;
+			available = in.read(readAheadBuffer, 0, 1) == 1;
 			if (available)
 			{
-				char c = processChar(readAheadBuffer[readAhead]);
+				char c = processChar(readAheadBuffer[0]);
 				if (state == STATE_START)
 				{
 					// replace control chars with space
@@ -97,34 +93,26 @@ public class FixASCIIControlsReader extends PushbackReader
 						c = ' ';
 					}	
 					cbuf[pos++] = c;
-					readAhead = 0;
 					read++;
 				}
 				else if (state == STATE_ERROR)
 				{
-					unread(readAheadBuffer, 0, readAhead + 1);
-					readAhead = 0;
+					// It's broken ASCII character sequence, let's just skip them
+					// If we try to preserve them, SAX parser will throw later on anyway
 				}
-				else
-				{
-					readAhead++;
-				}
-			}
-			else if (readAhead > 0)
-			{
-				// handles case when file ends within excaped sequence
-				unread(readAheadBuffer, 0, readAhead);
-				state = STATE_ERROR;
-				readAhead = 0;
-				available = true;
 			}
 		}
 		
-		
-		return read > 0  ||  available ? read : -1; 
+		return read > 0 || available ? read : XMPUtilsImpl.eofReadBytesValue();
 	}
-	
-	
+
+    /**
+     * {@inheritDoc}
+     */
+    public void close() throws IOException {
+        in.close();
+    }
+
 	/**
 	 * Processes numeric escaped chars to find out if they are a control character.
 	 * @param ch a char

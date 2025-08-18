@@ -36,7 +36,7 @@ import java.util.List;
 public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 15;
+        return 12;
     }
 
     @Override
@@ -122,6 +122,11 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
     @Override
     public void applyConfigModuleSettings(ModulesConfigurator configurator) {
+
+    }
+
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
 
     }
 

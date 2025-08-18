@@ -31,9 +31,13 @@ import com.itextpdf.signatures.validation.report.ValidationReport;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-final class SafeCalling {
+/**
+ * Utility class to handle exceptions and generate validation report items instead.
+ */
+public final class SafeCalling {
 
-    private SafeCalling() {}
+    private SafeCalling() {
+    }
 
     /**
      * Adds a report item to the report when an exception is thrown in the action.
@@ -43,9 +47,11 @@ final class SafeCalling {
      * @param reportItemCreator A callback to generate a ReportItem
      */
     public static void onExceptionLog(ThrowingAction action, ValidationReport report,
-                                      Function<Exception, ReportItem> reportItemCreator) {
+            Function<Exception, ReportItem> reportItemCreator) {
         try {
             action.execute();
+        } catch (SafeCallingAvoidantException e) {
+            throw e;
         } catch (Exception e) {
             report.addReportItem(reportItemCreator.apply(e));
         }
@@ -58,14 +64,16 @@ final class SafeCalling {
      * @param defaultValue      The value to return when an exception is thrown
      * @param report            The report to add the ReportItem to
      * @param reportItemCreator A callback to generate a ReportItem
-     * @param <T>
+     * @param <T>               type of return value
      *
      * @return The returned value from the action
      */
     public static <T> T onExceptionLog(ThrowingSupplier<T> action, T defaultValue, ValidationReport report,
-                                       Function<Exception, ReportItem> reportItemCreator) {
+            Function<Exception, ReportItem> reportItemCreator) {
         try {
             return action.get();
+        } catch (SafeCallingAvoidantException e) {
+            throw e;
         } catch (Exception e) {
             report.addReportItem(reportItemCreator.apply(e));
         }
@@ -80,9 +88,11 @@ final class SafeCalling {
      * @param reportItemCreator A callback to generate a ReportItem
      */
     public static void onRuntimeExceptionLog(Action action, ValidationReport report,
-                                             Function<Exception, ReportItem> reportItemCreator) {
+            Function<Exception, ReportItem> reportItemCreator) {
         try {
             action.execute();
+        } catch (SafeCallingAvoidantException e) {
+            throw e;
         } catch (RuntimeException e) {
             report.addReportItem(reportItemCreator.apply(e));
         }
@@ -95,14 +105,16 @@ final class SafeCalling {
      * @param defaultValue      The value to return when an exception is thrown
      * @param report            The report to add the ReportItem to
      * @param reportItemCreator A callback to generate a ReportItem
-     * @param <T>
+     * @param <T>               type of return value
      *
      * @return The returned value from the action
      */
     public static <T> T onRuntimeExceptionLog(Supplier<T> action, T defaultValue, ValidationReport report,
-                                              Function<Exception, ReportItem> reportItemCreator) {
+            Function<Exception, ReportItem> reportItemCreator) {
         try {
             return action.get();
+        } catch (SafeCallingAvoidantException e) {
+            throw e;
         } catch (RuntimeException e) {
             report.addReportItem(reportItemCreator.apply(e));
         }

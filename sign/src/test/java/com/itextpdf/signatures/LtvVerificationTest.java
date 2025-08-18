@@ -67,17 +67,14 @@ public class LtvVerificationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/LtvVerificationTest/";
     private static final String SRC_PDF = SOURCE_FOLDER + "pdfWithDssDictionary.pdf";
     private static final String SIG_FIELD_NAME = "Signature1";
-    private static final String CRL_DISTRIBUTION_POINT = "https://example.com";
+    private static final String CRL_DISTRIBUTION_POINT = "https://itextpdf.com/blog/itext-news-technical-notes/get-excited-itext-8-here";
     private static final String CERT_FOLDER_PATH = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
-    private static LtvVerification TEST_VERIFICATION;
-
-    @BeforeAll
-    public static void before() throws IOException {
+    public static LtvVerification setup() throws IOException {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SRC_PDF));
-        TEST_VERIFICATION = new LtvVerification(pdfDoc);
+        return new LtvVerification(pdfDoc);
     }
 
     @Test
@@ -148,7 +145,8 @@ public class LtvVerificationTest extends ExtendedITextTest {
         List<byte[]> certs = new ArrayList<>();
         certs.add(new byte[0]);
 
-        Assertions.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
+        LtvVerification testVerification = setup();
+        Assertions.assertTrue(testVerification.addVerification(SIG_FIELD_NAME, ocsps, crls, certs));
     }
     
     @Test
@@ -180,22 +178,25 @@ public class LtvVerificationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void validateSigNameWithNullCrlOcspCertTest() throws GeneralSecurityException, IOException {
-        Assertions.assertTrue(TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, null, null, null));
+    public void validateSigNameWithNullCrlOcspCertTest() throws IOException, GeneralSecurityException {
+        LtvVerification testVerification = setup();
+        Assertions.assertTrue(testVerification.addVerification(SIG_FIELD_NAME, null, null, null));
     }
 
     @Test
     //TODO DEVSIX-5696 Sign: NPE is thrown because no such a signature
-    public void exceptionWhenValidateNonExistentSigNameTest() {
+    public void exceptionWhenValidateNonExistentSigNameTest() throws IOException {
+        LtvVerification testVerification = setup();
         Assertions.assertThrows(NullPointerException.class,
-                () -> TEST_VERIFICATION.addVerification("nonExistentSigName", null, null, null));
+                () -> testVerification.addVerification("nonExistentSigName", null, null, null));
     }
 
     @Test
     //TODO DEVSIX-5696 Sign: NPE is thrown because no such a signature
-    public void exceptionWhenValidateParticularNonExistentSigNameTest() {
+    public void exceptionWhenValidateParticularNonExistentSigNameTest() throws IOException {
+        LtvVerification testVerification = setup();
         Assertions.assertThrows(NullPointerException.class,
-                () -> TEST_VERIFICATION.addVerification("nonExistentSigName", null, null,
+                () -> testVerification.addVerification("nonExistentSigName", null, null,
                         CertificateOption.SIGNING_CERTIFICATE, Level.OCSP_CRL, CertificateInclusion.YES));
     }
 
@@ -379,9 +380,9 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameSigningOcspCrlYesTest() throws GeneralSecurityException, IOException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.SIGNING_CERTIFICATE, Level.OCSP_CRL,
@@ -390,7 +391,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameSigningOcspYesTest() throws GeneralSecurityException, IOException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.SIGNING_CERTIFICATE, Level.OCSP,
@@ -399,9 +400,9 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameSigningCrlYesTest() throws GeneralSecurityException, IOException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.SIGNING_CERTIFICATE, Level.CRL,
@@ -410,9 +411,9 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameSigningOcspOptionalCrlYesTest() throws GeneralSecurityException, IOException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.SIGNING_CERTIFICATE,
@@ -421,9 +422,9 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameSigningOcspCrlNoTest() throws GeneralSecurityException, IOException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.SIGNING_CERTIFICATE, Level.OCSP_CRL,
@@ -432,7 +433,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameSigningOcspNoTest() throws GeneralSecurityException, IOException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.SIGNING_CERTIFICATE, Level.OCSP,
@@ -441,9 +442,9 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameSigningCrlNoTest() throws GeneralSecurityException, IOException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.SIGNING_CERTIFICATE, Level.CRL,
@@ -452,9 +453,9 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameSigningOcspOptionalCrlNoTest() throws GeneralSecurityException, IOException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.SIGNING_CERTIFICATE,
@@ -463,10 +464,10 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO,
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO,
                     count = 2),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO
                     , count = 2)
     })
     public void validateSigNameWholeChainOcspCrlYesTest() throws GeneralSecurityException, IOException {
@@ -476,10 +477,10 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO,
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO,
                     count = 2),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO
                     , count = 2)
     })
     public void validateSigNameWholeChainOcspOptionalCrlYesTest() throws IOException, GeneralSecurityException {
@@ -489,7 +490,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameWholeChainOcspYesTest() throws IOException, GeneralSecurityException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.WHOLE_CHAIN, Level.OCSP,
@@ -498,10 +499,10 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO,
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO,
                     count = 2),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO
                     , count = 2)
     })
     public void validateSigNameWholeChainCrlYesTest() throws IOException, GeneralSecurityException {
@@ -511,10 +512,10 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO,
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO,
                     count = 2),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO
                     , count = 2)
     })
     public void validateSigNameWholeChainOcspCrlNoTest() throws GeneralSecurityException, IOException {
@@ -524,10 +525,10 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO,
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO,
                     count = 2),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO
                     , count = 2)
     })
     public void validateSigNameWholeChainOcspOptionalCrlNoTest() throws IOException, GeneralSecurityException {
@@ -537,7 +538,7 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO)
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO)
     })
     public void validateSigNameWholeChainOcspNoTest() throws IOException, GeneralSecurityException {
         validateOptionLevelInclusion(CRL_DISTRIBUTION_POINT, CertificateOption.WHOLE_CHAIN, Level.OCSP,
@@ -546,10 +547,10 @@ public class LtvVerificationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = "Added CRL url: https://example.com", logLevel = LogLevelConstants.INFO),
-            @LogMessage(messageTemplate = "Checking CRL: https://example.com", logLevel = LogLevelConstants.INFO,
+            @LogMessage(messageTemplate = "Added CRL url: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO),
+            @LogMessage(messageTemplate = "Checking CRL: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO,
                     count = 2),
-            @LogMessage(messageTemplate = "Added CRL found at: https://example.com", logLevel = LogLevelConstants.INFO
+            @LogMessage(messageTemplate = "Added CRL found at: " + CRL_DISTRIBUTION_POINT, logLevel = LogLevelConstants.INFO
                     , count = 2)
     })
     public void validateSigNameWholeChainCrlNoTest() throws IOException, GeneralSecurityException {
@@ -575,7 +576,8 @@ public class LtvVerificationTest extends ExtendedITextTest {
         } else {
             crl = new CrlClientOnline(crlUrl);
         }
+        LtvVerification testVerification = setup();
         Assertions.assertEquals(expectedResult,
-                TEST_VERIFICATION.addVerification(SIG_FIELD_NAME, ocsp, crl, certificateOption, level, inclusion));
+                testVerification.addVerification(SIG_FIELD_NAME, ocsp, crl, certificateOption, level, inclusion));
     }
 }

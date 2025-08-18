@@ -71,6 +71,15 @@ public final class XMPUtilsImpl implements XMPConst
 		// EMPTY
 	}
 
+	/**
+	 * Return value when eof encountered of {@link java.io.Reader#read(char[], int, int)}.
+	 *
+	 * @return platform dependent eof read value (-1 for java)
+	 */
+	public static int eofReadBytesValue() {
+		return -1;
+	}
+
 
 	/**
 	 * @see XMPUtils#catenateArrayItems(XMPMeta, String, String, String, String,

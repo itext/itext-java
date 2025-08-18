@@ -28,7 +28,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -58,34 +57,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.AfterEach;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @org.junit.jupiter.api.Tag("UnitTest")
 public class SvgConverterUnitTest extends ExtendedITextTest {
 
     // we cannot easily mock the PdfDocument, so we make do with as close to unit testing as we can
-    private PdfDocument doc;
     private final String content = "<svg width=\"10\" height=\"10\"/>";
-    private InputStream is;
-
-    @BeforeEach
-    public void setup() {
-        doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        doc.addNewPage();
-        is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
-    }
-
-    @AfterEach
-    public void teardown() {
-        doc.close();
-    }
 
     private void testResourceCreated(PdfDocument doc, int pageNo) {
         PdfResources res = doc.getPage(pageNo).getResources();
@@ -98,118 +80,174 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
 
     @Test
     public void drawStringOnDocumentCreatesResourceTest() {
-        SvgConverter.drawOnDocument(content, doc, 1);
-        testResourceCreated(doc, 1);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))){
+            doc.addNewPage();
+            SvgConverter.drawOnDocument(content, doc, 1);
+            testResourceCreated(doc, 1);
+        }
     }
 
     @Test
     public void drawStringOnDocumentWithPropsCreatesResourceTest() {
-        SvgConverter.drawOnDocument(content, doc, 1, new DummySvgConverterProperties());
-        testResourceCreated(doc, 1);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            SvgConverter.drawOnDocument(content, doc, 1, new DummySvgConverterProperties());
+            testResourceCreated(doc, 1);
+        }
     }
 
     @Test
     public void drawStreamOnDocumentCreatesResourceTest() throws IOException {
-        SvgConverter.drawOnDocument(is, doc, 1);
-        testResourceCreated(doc, 1);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+            SvgConverter.drawOnDocument(is, doc, 1);
+            testResourceCreated(doc, 1);
+        }
     }
 
     @Test
     public void drawStreamOnDocumentWithPropsCreatesResourceTest() throws IOException {
-        SvgConverter.drawOnDocument(is, doc, 1, new DummySvgConverterProperties());
-        testResourceCreated(doc, 1);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+            SvgConverter.drawOnDocument(is, doc, 1, new DummySvgConverterProperties());
+            testResourceCreated(doc, 1);
+        }
     }
 
     @Test
     public void drawStringOnPageCreatesResourceTest() {
-        PdfPage page = doc.addNewPage();
-        SvgConverter.drawOnPage(content, page);
-        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
-        testResourceCreated(doc, 2);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            PdfPage page = doc.addNewPage();
+            SvgConverter.drawOnPage(content, page);
+            Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+            testResourceCreated(doc, 2);
+        }
     }
 
     @Test
     public void drawStringOnPageWithPropsCreatesResourceTest() {
-        PdfPage page = doc.addNewPage();
-        SvgConverter.drawOnPage(content, page, new DummySvgConverterProperties());
-        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
-        testResourceCreated(doc, 2);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            PdfPage page = doc.addNewPage();
+            SvgConverter.drawOnPage(content, page, new DummySvgConverterProperties());
+            Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+            testResourceCreated(doc, 2);
+        }
     }
 
     @Test
     public void drawStreamOnPageCreatesResourceTest() throws IOException {
-        PdfPage page = doc.addNewPage();
-        SvgConverter.drawOnPage(is, page);
-        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
-        testResourceCreated(doc, 2);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            PdfPage page = doc.addNewPage();
+            InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+            SvgConverter.drawOnPage(is, page);
+            Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+            testResourceCreated(doc, 2);
+        }
     }
 
     @Test
     public void drawStreamOnPageWithPropsCreatesResourceTest() throws IOException {
-        PdfPage page = doc.addNewPage();
-        SvgConverter.drawOnPage(is, page, new DummySvgConverterProperties());
-        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
-        testResourceCreated(doc, 2);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            PdfPage page = doc.addNewPage();
+            InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+            SvgConverter.drawOnPage(is, page, new DummySvgConverterProperties());
+            Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+            testResourceCreated(doc, 2);
+        }
     }
 
     @Test
     public void drawStringOnCanvasCreatesResourceTest() {
-        PdfPage page = doc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-        SvgConverter.drawOnCanvas(content, canvas);
-        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
-        testResourceCreated(doc, 2);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            PdfPage page = doc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            SvgConverter.drawOnCanvas(content, canvas);
+            Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+            testResourceCreated(doc, 2);
+        }
     }
 
     @Test
     public void drawStringOnCanvasWithPropsCreatesResourceTest() {
-        PdfPage page = doc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-        SvgConverter.drawOnCanvas(content, canvas, new DummySvgConverterProperties());
-        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
-        testResourceCreated(doc, 2);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            PdfPage page = doc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            SvgConverter.drawOnCanvas(content, canvas, new DummySvgConverterProperties());
+            Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+            testResourceCreated(doc, 2);
+        }
     }
 
     @Test
     public void drawStreamOnCanvasCreatesResourceTest() throws IOException {
-        PdfPage page = doc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-        SvgConverter.drawOnCanvas(is, canvas);
-        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
-        testResourceCreated(doc, 2);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            PdfPage page = doc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+            SvgConverter.drawOnCanvas(is, canvas);
+            Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+            testResourceCreated(doc, 2);
+        }
     }
 
     @Test
     public void drawStreamOnCanvasWithPropsCreatesResourceTest() throws IOException {
-        PdfPage page = doc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page);
-        SvgConverter.drawOnCanvas(is, canvas, new DummySvgConverterProperties());
-        Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
-        testResourceCreated(doc, 2);
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            PdfPage page = doc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page);
+            InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+            SvgConverter.drawOnCanvas(is, canvas, new DummySvgConverterProperties());
+            Assertions.assertEquals(0, doc.getFirstPage().getResources().getPdfObject().size());
+            testResourceCreated(doc, 2);
+        }
     }
 
     @Test
     public void convertStringToXObjectCreatesNoResourceTest() {
-        SvgConverter.convertToXObject(content, doc);
-        Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            SvgConverter.convertToXObject(content, doc);
+            Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        }
     }
 
     @Test
     public void convertStringToXObjectWithPropsCreatesNoResourceTest() {
-        SvgConverter.convertToXObject(content, doc, new DummySvgConverterProperties());
-        Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            SvgConverter.convertToXObject(content, doc, new DummySvgConverterProperties());
+            Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        }
     }
 
     @Test
     public void convertStreamToXObjectCreatesNoResourceTest() throws IOException {
-        SvgConverter.convertToXObject(is, doc);
-        Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+            SvgConverter.convertToXObject(is, doc);
+            Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        }
     }
 
     @Test
     public void convertStreamToXObjectWithPropsCreatesNoResourceTest() throws IOException {
-        SvgConverter.convertToXObject(is, doc, new DummySvgConverterProperties());
-        Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+            SvgConverter.convertToXObject(is, doc, new DummySvgConverterProperties());
+            Assertions.assertEquals(0, doc.getLastPage().getResources().getPdfObject().size());
+        }
     }
     
     @Test
@@ -243,6 +281,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
 
     @Test
     public void parseStream() throws IOException {
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
         INode actual = SvgConverter.parse(is);
 
         Assertions.assertEquals(1, actual.childNodes().size());
@@ -253,6 +292,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
 
     @Test
     public void parseStreamWithProps() throws IOException {
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
         INode actual = SvgConverter.parse(is, new DummySvgConverterProperties());
 
         Assertions.assertEquals(1, actual.childNodes().size());
@@ -263,7 +303,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
 
     @Test
     public void parseStreamErrorEncodingTooBig() throws IOException {
-        is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_16LE));
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_16LE));
         INode actual = SvgConverter.parse(is, new DummySvgConverterProperties()); // defaults to UTF-8
 
         Assertions.assertEquals(1, actual.childNodes().size());
@@ -281,7 +321,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
 
     @Test
     public void parseStreamWithOtherEncoding() throws IOException {
-        is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_16LE));
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_16LE));
         INode actual = SvgConverter.parse(is, new OtherCharsetDummySvgConverterProperties());
 
         Assertions.assertEquals(1, actual.childNodes().size());
@@ -292,6 +332,7 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
 
     @Test
     public void parseStreamErrorOtherCharset() throws IOException {
+        InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
         INode actual = SvgConverter.parse(is, new OtherCharsetDummySvgConverterProperties());
 
         Assertions.assertEquals(1, actual.childNodes().size());
@@ -343,12 +384,15 @@ public class SvgConverterUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void nullBBoxInDrawTest() throws Exception {
-        Assertions.assertThrows(PdfException.class, () -> {
-            PdfFormXObject object = SvgConverter.convertToXObject(content, doc);
-            ((PdfDictionary)object.getPdfObject()).remove(PdfName.BBox);
-            SvgConverter.draw(object, new PdfCanvas(doc, 1), 0, 0);
-        });
+    public void nullBBoxInDrawTest() {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            doc.addNewPage();
+            Assertions.assertThrows(PdfException.class, () -> {
+                PdfFormXObject object = SvgConverter.convertToXObject(content, doc);
+                ((PdfDictionary) object.getPdfObject()).remove(PdfName.BBox);
+                SvgConverter.draw(object, new PdfCanvas(doc, 1), 0, 0);
+            });
+        }
     }
 
     private static class TestSvgProcessorResult implements ISvgProcessorResult {

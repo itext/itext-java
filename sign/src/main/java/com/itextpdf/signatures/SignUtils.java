@@ -131,13 +131,21 @@ final class SignUtils {
     }
 
     static InputStream getHttpResponse(URL urlt) throws IOException {
+        return getHttpResponse(urlt, -1);
+    }
+
+    static InputStream getHttpResponse(URL urlt, int connectionTimeout) throws IOException {
         HttpURLConnection con = (HttpURLConnection) urlt.openConnection();
+        if (connectionTimeout >= 0) {
+            con.setConnectTimeout(connectionTimeout);
+        }
         if (con.getResponseCode() / 100 != 2) {
             throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE)
                     .setMessageParams(con.getResponseCode());
         }
         return (InputStream) con.getContent();
     }
+
 
     static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
             IAlgorithmIdentifier digestAlgorithmIdentifier)

@@ -46,6 +46,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
+        configurator.mapNamespace("styledxmlparser", "StyledXmlParser");
         configurator.addFullName("iText.StyledXmlParser.Jsoup.Nodes.Node");
         configurator.addFullName("iText.StyledXmlParser.Jsoup.Nodes.Attribute");
         configurator.addFullName("iText.StyledXmlParser.Jsoup.Nodes.Element");
@@ -96,6 +97,11 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
     @Override
     public void applyConfigModuleSettings(ModulesConfigurator configurator) {
+
+    }
+
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
 
     }
 

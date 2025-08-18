@@ -28,6 +28,9 @@ import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClientBouncyCastle;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
+import com.itextpdf.signatures.validation.lotl.LotlFetchingProperties;
+import com.itextpdf.signatures.validation.lotl.LotlService;
+import com.itextpdf.signatures.validation.lotl.LotlTrustedStore;
 import com.itextpdf.signatures.validation.report.xml.AdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.NullAdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.PadesValidationReport;
@@ -55,15 +58,19 @@ public class ValidatorChainBuilder {
     private Supplier<DocumentRevisionsValidator> documentRevisionsValidatorFactory;
     private Supplier<IOcspClientBouncyCastle> ocspClientFactory;
     private Supplier<ICrlClient> crlClientFactory;
+    private Supplier<LotlTrustedStore> lotlTrustedStoreFactory;
+    private Supplier<LotlService> lotlServiceFactory;
 
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
     private AdESReportAggregator adESReportAggregator = new NullAdESReportAggregator();
+    private boolean trustEuropeanLotl = false;
 
     /**
      * Creates a ValidatorChainBuilder using default implementations
      */
     public ValidatorChainBuilder() {
+        lotlTrustedStoreFactory = () -> buildLotlTrustedStore();
         certificateRetrieverFactory = () -> buildIssuingCertificateRetriever();
         certificateChainValidatorFactory = () -> buildCertificateChainValidator();
         revocationDataValidatorFactory = () -> buildRevocationDataValidator();
@@ -73,6 +80,47 @@ public class ValidatorChainBuilder {
         documentRevisionsValidatorFactory = () -> buildDocumentRevisionsValidator();
         ocspClientFactory = () -> new OcspClientBouncyCastle();
         crlClientFactory = () -> new CrlClientOnline();
+        lotlServiceFactory = () -> buildLotlService();
+    }
+
+    /**
+     * Establishes trust in European Union List of Trusted Lists.
+     * <p>
+     * This feature by default relies on remote resource fetching and third-party EU trusted lists posted online.
+     * iText has no influence over these resources maintained by third-party authorities.
+     * <p>
+     * If this feature is enabled, {@link LotlService} is created and used to retrieve,
+     * validate and establish trust in EU List of Trusted Lists.
+     * <p>
+     * In order to properly work, apart from enabling it, user needs to call
+     * {@link LotlService#initializeGlobalCache(LotlFetchingProperties)} method, which performs initial initialization.
+     * <p>
+     * Additionally, in order to successfully use this feature, a user needs to provide a source for trusted
+     * certificates which will be used for LOTL files validation.
+     * One can either add an explicit dependency to "eu-trusted-lists-resources" iText module or configure own source of
+     * trusted certificates. When iText dependency is used it is required to make sure that the newest version of the
+     * dependency is selected, otherwise LOTL validation will fail.
+     * <p>
+     * The required certificates for LOTL files validations are published in the Official Journal of the European Union.
+     * Your own source of trusted certificates can be configured by using
+     * {@link EuropeanTrustedListConfigurationFactory#setFactory(Supplier)}.
+     *
+     * @param trustEuropeanLotl {@code true} if European Union LOTLs are expected to be trusted, {@code false} otherwise
+     *
+     * @return current ValidatorChainBuilder.
+     */
+    public ValidatorChainBuilder trustEuropeanLotl(boolean trustEuropeanLotl) {
+        this.trustEuropeanLotl = trustEuropeanLotl;
+        return this;
+    }
+
+    /**
+     * Checks if European Union List of Trusted Lists is supposed to be trusted.
+     *
+     * @return {@code true} if European Union LOTLs are expected to be trusted, {@code false} otherwise
+     */
+    public boolean isEuropeanLotlTrusted() {
+        return this.trustEuropeanLotl;
     }
 
     /**
@@ -80,7 +128,6 @@ public class ValidatorChainBuilder {
      * This method can be used to create multiple validators.
      *
      * @param document {@link PdfDocument} instance which will be validated
-     *
      * @return a new instance of a signature validator.
      */
     public SignatureValidator buildSignatureValidator(PdfDocument document) {
@@ -142,7 +189,6 @@ public class ValidatorChainBuilder {
      * for use in the validation chain.
      *
      * @param documentRevisionsValidatorFactory the document revisions validator factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withDocumentRevisionsValidatorFactory(
@@ -155,7 +201,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link CRLValidator} for use in the validation chain.
      *
      * @param crlValidatorFactory the CRLValidatorFactory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withCRLValidatorFactory(Supplier<CRLValidator> crlValidatorFactory) {
@@ -167,7 +212,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link IResourceRetriever} for use in the validation chain.
      *
      * @param resourceRetrieverFactory the ResourceRetrieverFactory method to use.
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withResourceRetriever(Supplier<IResourceRetriever> resourceRetrieverFactory) {
@@ -179,7 +223,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link OCSPValidator} for use in the validation chain.
      *
      * @param ocspValidatorFactory the OCSPValidatorFactory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withOCSPValidatorFactory(Supplier<OCSPValidator> ocspValidatorFactory) {
@@ -191,7 +234,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link RevocationDataValidator} for use in the validation chain.
      *
      * @param revocationDataValidatorFactory the RevocationDataValidator factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withRevocationDataValidatorFactory(
@@ -204,7 +246,6 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link CertificateChainValidator} for use in the validation chain.
      *
      * @param certificateChainValidatorFactory the CertificateChainValidator factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withCertificateChainValidatorFactory(
@@ -217,7 +258,6 @@ public class ValidatorChainBuilder {
      * Use this instance of a {@link SignatureValidationProperties} in the validation chain.
      *
      * @param properties the SignatureValidationProperties instance to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withSignatureValidationProperties(SignatureValidationProperties properties) {
@@ -230,7 +270,6 @@ public class ValidatorChainBuilder {
      * for use in the validation chain.
      *
      * @param certificateRetrieverFactory the IssuingCertificateRetriever factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withIssuingCertificateRetrieverFactory(
@@ -243,7 +282,6 @@ public class ValidatorChainBuilder {
      * Use this factory to create instances of {@link IOcspClientBouncyCastle} for use in the validation chain.
      *
      * @param ocspClientFactory the IOcspClient factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withOcspClient(Supplier<IOcspClientBouncyCastle> ocspClientFactory) {
@@ -255,7 +293,6 @@ public class ValidatorChainBuilder {
      * Use this factory to create instances of {@link ICrlClient} for use in the validation chain.
      *
      * @param crlClientFactory the ICrlClient factory method to use
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withCrlClient(Supplier<ICrlClient> crlClientFactory) {
@@ -267,7 +304,6 @@ public class ValidatorChainBuilder {
      * Adds known certificates to the {@link IssuingCertificateRetriever}.
      *
      * @param knownCertificates the list of known certificates to add
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withKnownCertificates(Collection<Certificate> knownCertificates) {
@@ -279,7 +315,6 @@ public class ValidatorChainBuilder {
      * Sets the trusted certificates to the {@link IssuingCertificateRetriever}.
      *
      * @param trustedCertificates the list of trusted certificates to set
-     *
      * @return the current ValidatorChainBuilder.
      */
     public ValidatorChainBuilder withTrustedCertificates(Collection<Certificate> trustedCertificates) {
@@ -295,7 +330,6 @@ public class ValidatorChainBuilder {
      * {@link com.itextpdf.signatures.validation.report.xml.XmlReportGenerator#generate(PadesValidationReport, Writer)}.
      *
      * @param adESReportAggregator the report aggregator to use
-     *
      * @return the current ValidatorChainBuilder
      */
     public ValidatorChainBuilder withAdESReportAggregator(AdESReportAggregator adESReportAggregator) {
@@ -329,6 +363,15 @@ public class ValidatorChainBuilder {
      */
     public AdESReportAggregator getAdESReportAggregator() {
         return adESReportAggregator;
+    }
+
+    /**
+     * Retrieves the explicitly added or automatically created {@link IResourceRetriever} instance.
+     *
+     * @return the explicitly added or automatically created {@link IResourceRetriever} instance.
+     */
+    public IResourceRetriever getResourceRetriever() {
+        return resourceRetrieverFactory.get();
     }
 
     /**
@@ -377,15 +420,6 @@ public class ValidatorChainBuilder {
     }
 
     /**
-     * Retrieves the explicitly added or automatically created {@link IResourceRetriever} instance.
-     *
-     * @return the explicitly added or automatically created {@link IResourceRetriever} instance.
-     */
-    public IResourceRetriever getResourceRetriever() {
-        return resourceRetrieverFactory.get();
-    }
-
-    /**
      * Retrieves the explicitly added or automatically created {@link CRLValidator} instance.
      *
      * @return the explicitly added or automatically created {@link CRLValidator} instance.
@@ -403,6 +437,51 @@ public class ValidatorChainBuilder {
         return ocspValidatorFactory.get();
     }
 
+    /**
+     * Sets up factory which is responsible for {@link LotlTrustedStore} creation.
+     *
+     * @param lotlTrustedStoreFactory factory responsible for {@link LotlTrustedStore} creation
+     * @return this same instance of {@link ValidatorChainBuilder}
+     */
+    public ValidatorChainBuilder withLotlTrustedStoreFactory(Supplier<LotlTrustedStore> lotlTrustedStoreFactory) {
+        this.lotlTrustedStoreFactory = lotlTrustedStoreFactory;
+        return this;
+    }
+
+    /**
+     * Retrieves explicitly added or automatically created {@link LotlTrustedStore} instance.
+     *
+     * @return explicitly added or automatically created {@link LotlTrustedStore} instance
+     */
+    public LotlTrustedStore getLotlTrustedStore() {
+        return this.lotlTrustedStoreFactory.get();
+    }
+
+    /**
+     * Sets up factory which is responsible for {@link LotlService} creation.
+     *
+     * @param lotlServiceFactory factory responsible for {@link LotlService} creation
+     *
+     * @return this same instance of {@link ValidatorChainBuilder}
+     */
+    public ValidatorChainBuilder withLotlService(Supplier<LotlService> lotlServiceFactory) {
+        this.lotlServiceFactory = lotlServiceFactory;
+        return this;
+    }
+
+    /**
+     * Retrieves explicitly added or automatically created {@link LotlService} instance.
+     *
+     * @return explicitly added or automatically created {@link LotlService} instance
+     */
+    public LotlService getLotlService() {
+        return this.lotlServiceFactory.get();
+    }
+
+    private static LotlService buildLotlService() {
+        return LotlService.getGlobalService();
+    }
+
     private IssuingCertificateRetriever buildIssuingCertificateRetriever() {
         IssuingCertificateRetriever result = new IssuingCertificateRetriever(this.resourceRetrieverFactory.get());
         if (trustedCertificates != null) {
@@ -411,6 +490,12 @@ public class ValidatorChainBuilder {
         if (knownCertificates != null) {
             result.addKnownCertificates(knownCertificates);
         }
+
+        result.addKnownCertificates(lotlTrustedStoreFactory.get().getCertificates());
         return result;
+    }
+
+    private LotlTrustedStore buildLotlTrustedStore() {
+        return new LotlTrustedStore(this);
     }
 }

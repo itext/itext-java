@@ -105,4 +105,18 @@ public class FontSelectorTestsUtil {
         fontFamilies.add("random");
         return fontProvider.createFontSelectorStrategy(fontFamilies, new FontCharacteristics(), null);
     }
+
+    public static IFontSelectorStrategy createStrategyWithNotoSansCJKAndFreeSans(IFontSelectorStrategyFactory factory) {
+        FontSet fs = new FontSet();
+        fs.addFont(FONTS_FOLDER + "FreeSans.ttf");
+        fs.addFont(FONTS_FOLDER + "NotoSansCJKjp-Regular.otf");
+
+        final FontProvider fontProvider = new FontProvider(fs, StandardFontFamilies.TIMES);
+        fontProvider.setFontSelectorStrategyFactory(factory);
+
+        List<String> fontFamilies = new ArrayList<>();
+        fontFamilies.add("random");
+
+        return fontProvider.createFontSelectorStrategy(fontFamilies, new FontCharacteristics(), null);
+    }
 }

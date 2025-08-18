@@ -57,7 +57,6 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -71,16 +70,9 @@ import java.util.List;
 public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUA2AnnotationTypesTest/";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfName> markupAnnotsTypes() {
@@ -100,6 +92,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void annotationContentsAndStructureElementAltTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
@@ -115,6 +108,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void pageWithTaggedAnnotTabOrderTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             pdfPage.setTabOrder(PdfName.C);
@@ -128,6 +122,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void pageWithNotTaggedAnnotTabOrderTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             pdfPage.setTabOrder(PdfName.R);
@@ -142,6 +137,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("markupAnnotsTypes")
     public void markupAnnotationIsNotTaggedTest(PdfName annotType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfDictionary annotation = new PdfDictionary();
@@ -162,6 +158,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("markupAnnotsTypes")
     public void markupAnnotationIsNotTaggedAsAnnotTest(PdfName annotType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfDictionary annot = new PdfDictionary();
@@ -190,6 +187,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("markupAnnotsTypes")
     public void markupAnnotationRCAndContentsTest(PdfName annotType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             String richText = "<body xmlns=\"http://www.w3.org/1999/xhtml\"><p style=\"color:#FF0000;\">Some&#13;</p>" +
@@ -216,6 +214,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("markupAnnotsTypes")
     public void markupAnnotationValidTest(PdfName annotType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             String value = "Red\rBlue\r";
@@ -235,6 +234,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void rubberStampAnnotationNoNameAndContentsTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(100, 100));
@@ -247,6 +247,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("annotTypesToCheckContents")
     public void annotationNoContentsTest(PdfName annotType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfDictionary annot = new PdfDictionary();
@@ -263,6 +264,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("annotTypesToCheckContents")
     public void annotationEmptyContentsTest(PdfName annotType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfDictionary annot = new PdfDictionary();
@@ -279,6 +281,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void popupAnnotationTaggedAsAnnotTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfPopupAnnotation popupAnnotation = new PdfPopupAnnotation(new Rectangle(100, 100));
@@ -290,6 +293,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void popupAnnotationTaggedAsArtifactTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfPopupAnnotation popupAnnotation = new PdfPopupAnnotation(new Rectangle(100, 100));
@@ -306,6 +310,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void fileAttachmentAnnotationValidTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -319,6 +324,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void fileAttachmentAnnotationInvalidFileSpecTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -336,6 +342,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("deprecatedAnnotTypes")
     public void deprecatedAnnotationTypeTest(PdfName annotType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfDictionary annot = new PdfDictionary();
@@ -352,6 +359,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void widgetAnnotationZeroWidthAndHeightTaggedAsFormTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -370,6 +378,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void printerMarkAnnotationTaggedAsAnnotTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfFormXObject form = new PdfFormXObject(PageSize.A4);
@@ -395,6 +404,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void printerMarkAnnotationTaggedAsArtifactTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfFormXObject form = new PdfFormXObject(PageSize.A4);
@@ -414,6 +424,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void printerMarkAnnotationNotTaggedTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfFormXObject form = new PdfFormXObject(PageSize.A4);
@@ -433,6 +444,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void watermarkAnnotationAsRealContentTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfWatermarkAnnotation annot = new PdfWatermarkAnnotation(new Rectangle(100, 100));
@@ -446,6 +458,7 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
 
     @Test
     public void watermarkAnnotationAsArtifactTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfWatermarkAnnotation annot = new PdfWatermarkAnnotation(new Rectangle(100, 100));

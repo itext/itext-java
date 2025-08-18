@@ -91,7 +91,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -100,12 +99,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PdfUAFormFieldsTest extends ExtendedITextTest {
 
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUATest/PdfUAFormFieldTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAFormFieldTest/";
 
     private static final String DOG = "./src/test/resources/com/itextpdf/pdfua/img/DOG.bmp";
-
-    private UaValidationTestFramework framework;
-
+    
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -115,14 +112,10 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
         return Arrays.asList(PdfUAConformance.PDF_UA_1, PdfUAConformance.PDF_UA_2);
     }
 
-    @BeforeEach
-    public void setUp() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
-    }
-
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBox(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -135,6 +128,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxWithCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -151,6 +145,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxChecked(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -166,6 +161,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxCheckedAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -182,6 +178,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxCheckedCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -201,6 +198,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -216,6 +214,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxInteractiveCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -235,6 +234,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxInteractiveCustomAppearanceChecked(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -255,6 +255,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButton(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -267,6 +268,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonChecked(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -281,6 +283,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -297,6 +300,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonCustomAppearanceChecked(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -314,6 +318,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonGroup(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -333,6 +338,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonGroupCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -359,6 +365,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonGroupCustomAppearanceChecked(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -387,6 +394,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -402,6 +410,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonCheckedInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -418,6 +427,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -437,6 +447,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testRadioButtonCustomAppearanceCheckedInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -456,6 +467,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonGroupInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -481,6 +493,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonGroupCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -512,6 +525,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testRadioButtonGroupCustomAppearanceCheckedInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -544,6 +558,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButton(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -559,6 +574,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -576,6 +592,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonSingleLine(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -591,6 +608,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonCustomContent(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -607,6 +625,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonCustomContentIsAlsoForm(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -623,6 +642,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -641,6 +661,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -661,6 +682,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonSingleLineInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -679,6 +701,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonCustomContentInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -698,6 +721,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonCustomContentIsAlsoFormInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -719,6 +743,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInputField(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -733,6 +758,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInputFieldWithValue(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -748,6 +774,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInputFieldWithCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -764,6 +791,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInputFieldWithCustomAppearanceAndValue(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -781,6 +809,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInputFieldWithCustomAppearanceAndPlaceHolder(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -798,6 +827,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInputFieldInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -814,6 +844,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInputFieldWithValueInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -831,6 +862,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInputFieldWithCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -850,6 +882,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testInputFieldWithCustomAppearanceAndValueInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -870,6 +903,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testInputFieldWithCustomAppearanceAndPlaceHolderInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -889,6 +923,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextArea(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -903,6 +938,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextAreaWithValue(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -918,6 +954,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextAreaWithCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -934,6 +971,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextAreaWithCustomAppearanceAndValue(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -951,6 +989,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextAreaWithCustomAppearanceAndPlaceHolder(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -968,6 +1007,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextAreaInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -984,6 +1024,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextAreaWithValueInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1001,6 +1042,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextAreaWithCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1020,6 +1062,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testTextAreaWithCustomAppearanceAndValueInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1040,6 +1083,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testTextAreaWithCustomAppearanceAndPlaceHolderInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1059,6 +1103,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testListBox(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1075,6 +1120,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testListBoxCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1094,6 +1140,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testListBoxCustomAppearanceSelected(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1113,6 +1160,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testListBoxInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1131,6 +1179,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testListBoxCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1152,6 +1201,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testListBoxCustomAppearanceSelectedInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1173,6 +1223,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testComboBox(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1189,6 +1240,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testComboBoxCustomAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1208,6 +1260,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testComboBoxCustomAppearanceSelected(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1227,6 +1280,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testComboBoxInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1245,6 +1299,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testComboBoxCustomAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1266,6 +1321,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testComboBoxCustomAppearanceSelectedInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1287,6 +1343,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testSignatureAppearance(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1302,6 +1359,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testSignatureAppearanceWithSignedAppearanceText(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1321,6 +1379,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testSignatureAppearanceWithCustomContent(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1340,6 +1399,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testSignatureAppearanceWithSignedAppearanceAndCustomAppearanceText(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1361,6 +1421,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testSignatureAppearanceInteractive(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1379,6 +1440,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testSignatureAppearanceWithSignedAppearanceTextInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1401,6 +1463,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testSignatureAppearanceWithCustomContentInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1422,6 +1485,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testSignedAndCustomAppearanceTextInteractive(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1445,6 +1509,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInteractiveCheckBoxNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1467,6 +1532,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testInteractiveRadioButtonNoAlternativeDescription(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1488,6 +1554,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInteractiveButtonNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1511,6 +1578,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testInteractiveInputFieldNoAlternativeDescription(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1533,6 +1601,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInteractiveTextAreaNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1555,6 +1624,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInteractiveListBoxNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1577,6 +1647,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInteractiveComboBoxNoAlternativeDescription(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1600,6 +1671,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     public void testInteractiveSignatureAppearanceNoAlternativeDescription(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1622,6 +1694,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1638,6 +1711,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testCheckBoxArtifactRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1653,6 +1727,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1687,6 +1762,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonArtifactRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1721,6 +1797,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1748,6 +1825,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testInputFieldDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1786,6 +1864,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextAreaDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1820,6 +1899,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testListBoxDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1847,6 +1927,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testComboBoxDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1875,6 +1956,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testSignatureAppearanceDifferentRole(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -1903,6 +1985,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -1925,6 +2008,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testTextBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -1949,6 +2033,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testChoiceBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc, "hello")
@@ -1970,6 +2055,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testChoiceBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfChoiceFormField field = new ChoiceFormFieldBuilder(pdfDoc, "hello")
@@ -1991,6 +2077,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc, "hello")
@@ -2012,6 +2099,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc, "hello")
@@ -2034,6 +2122,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testButtonBuilderNoTuNotVisible(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfButtonFormField field = new PushButtonFormFieldBuilder(pdfDoc, "hello")
@@ -2056,6 +2145,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, "Radio");
@@ -2084,6 +2174,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testRadioButtonBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, "Radio");
@@ -2113,6 +2204,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testSignatureBuilderWithTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc, "hello")
@@ -2135,6 +2227,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testSignatureBuilderNoTu(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc, "hello")
@@ -2157,6 +2250,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testFormFieldWithAltEntry(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -2181,6 +2275,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testFormFieldWithContentsEntry(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -2203,6 +2298,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void testFormFieldAsStream(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfObject page = pdfDoc.addNewPage().getPdfObject();
 
@@ -2239,6 +2335,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void severalWidgetKidsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfObject page = pdfDoc.addNewPage().getPdfObject();
 
@@ -2283,6 +2380,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void severalWidgetKidsWithRoleTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfObject page = pdfDoc.addNewPage().getPdfObject();
 
@@ -2331,6 +2429,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void widgetNeitherFormNorArtifactTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
 
@@ -2372,6 +2471,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void widgetNeitherFormNorArtifactInAcroformTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
@@ -2402,6 +2502,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void widgetIsArtifactInAcroformTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
@@ -2436,6 +2537,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void widgetLabelNoContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfObject page = pdfDoc.addNewPage().getPdfObject();
 
@@ -2477,6 +2579,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void additionalActionAndContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfObject page = pdfDoc.addNewPage().getPdfObject();
 
@@ -2514,6 +2617,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void additionalActionNoContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
 
@@ -2549,6 +2653,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void additionalActionNoContentsAcroformTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfDictionary page = pdfDoc.addNewPage().getPdfObject();
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
@@ -2588,6 +2693,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void noContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addAfterGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
 
@@ -2615,6 +2721,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void textFieldRVAndVPositiveTest1(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -2642,6 +2749,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void textFieldRVAndVPositiveTest2(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -2663,6 +2771,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void textFieldRVAndVPositiveTest3(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -2694,6 +2803,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void textFieldRVAndVNegativeTest1(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -2719,6 +2829,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void textFieldRVAndVNegativeTest2(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -2746,6 +2857,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void textFieldRVAndVNegativeTest3(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "hello")
@@ -2773,6 +2885,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
     public void signatureAppearanceWithImage(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -2798,6 +2911,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
     public void signatureAppearanceWithLineSeparator(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -2818,6 +2932,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
     @MethodSource("data")
     // TODO DEVSIX-9023 Support "Signature fields" UA-2 rules
     public void signatureAppearanceBackgroundImage(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {

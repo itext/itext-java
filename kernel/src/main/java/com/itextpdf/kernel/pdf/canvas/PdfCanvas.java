@@ -41,6 +41,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfType0Font;
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PageContentRotationHelper;
@@ -60,8 +61,8 @@ import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageHelper;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
+import com.itextpdf.kernel.pdf.colorspace.shading.AbstractPdfShading;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
@@ -83,12 +84,12 @@ import com.itextpdf.kernel.validation.context.RenderingIntentValidationContext;
 import com.itextpdf.kernel.validation.context.StrokeColorValidationContext;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.Stack;
 
 /**
  * PdfCanvas class represents an algorithm for writing data into content stream.
@@ -351,9 +352,12 @@ public class PdfCanvas {
     }
 
     /**
-     * Concatenates the 2x3 affine transformation matrix to the current matrix
-     * in the content stream managed by this Canvas.
-     * Contrast with {@link PdfCanvas#setTextMatrix}
+     * Concatenates the 2x3 affine transformation matrix to the current matrix in the
+     * content stream managed by this Canvas.
+     *
+     * <p>
+     * Detailed explanation of {@code [a b c d e f]} parameters of transformation
+     * matrix can be found in {@link Matrix} documentation.
      *
      * @param a operand 1,1 in the matrix.
      * @param b operand 1,2 in the matrix.
@@ -652,17 +656,21 @@ public class PdfCanvas {
     }
 
     /**
-     * Replaces the text matrix. Contrast with {@link PdfCanvas#concatMatrix}
+     * Replaces the text matrix.
+     *
+     * <p>
+     * Detailed explanation of {@code [a b c d e f]} parameters of transformation
+     * matrix can be found in {@link Matrix} documentation.
      *
      * @param a operand 1,1 in the matrix.
      * @param b operand 1,2 in the matrix.
      * @param c operand 2,1 in the matrix.
      * @param d operand 2,2 in the matrix.
-     * @param x operand 3,1 in the matrix.
-     * @param y operand 3,2 in the matrix.
+     * @param e operand 3,1 in the matrix.
+     * @param f operand 3,2 in the matrix.
      * @return current canvas.
      */
-    public PdfCanvas setTextMatrix(float a, float b, float c, float d, float x, float y) {
+    public PdfCanvas setTextMatrix(float a, float b, float c, float d, float e, float f) {
         contentStream.getOutputStream()
                 .writeFloat(a)
                 .writeSpace()
@@ -672,15 +680,15 @@ public class PdfCanvas {
                 .writeSpace()
                 .writeFloat(d)
                 .writeSpace()
-                .writeFloat(x)
+                .writeFloat(e)
                 .writeSpace()
-                .writeFloat(y).writeSpace()
+                .writeFloat(f).writeSpace()
                 .writeBytes(Tm);
         return this;
     }
 
     /**
-     * Replaces the text matrix. Contrast with {@link PdfCanvas#concatMatrix}
+     * Replaces the text matrix.
      *
      * @param transform new textmatrix as transformation
      * @return current canvas
@@ -931,16 +939,6 @@ public class PdfCanvas {
                     KernelExceptionMessageConstant.FONT_AND_SIZE_MUST_BE_SET_BEFORE_WRITING_ANY_TEXT, currentGs);
         }
 
-        // Take text part to process
-        StringBuilder decodedText = new StringBuilder();
-        for (PdfObject obj : textArray) {
-            if (obj instanceof PdfString) {
-                decodedText.append(currentGs.getFont().decode((PdfString) obj));
-            }
-        }
-        checkTextOnAddition(decodedText.toString());
-        document.checkIsoConformance(new FontValidationContext(decodedText.toString(), currentGs.getFont()));
-
         contentStream.getOutputStream().writeBytes(ByteUtils.getIsoBytes("["));
         for (PdfObject obj : textArray) {
             if (obj.isString()) {
@@ -1137,62 +1135,7 @@ public class PdfCanvas {
      * @return a list of double[] with the bezier curves.
      */
     public static List<double[]> bezierArc(double x1, double y1, double x2, double y2, double startAng, double extent) {
-        double tmp;
-        if (x1 > x2) {
-            tmp = x1;
-            x1 = x2;
-            x2 = tmp;
-        }
-        if (y2 > y1) {
-            tmp = y1;
-            y1 = y2;
-            y2 = tmp;
-        }
-
-        double fragAngle;
-        int Nfrag;
-        if (Math.abs(extent) <= 90f) {
-            fragAngle = extent;
-            Nfrag = 1;
-        } else {
-            Nfrag = (int) Math.ceil(Math.abs(extent) / 90f);
-            fragAngle = extent / Nfrag;
-        }
-        double x_cen = (x1 + x2) / 2f;
-        double y_cen = (y1 + y2) / 2f;
-        double rx = (x2 - x1) / 2f;
-        double ry = (y2 - y1) / 2f;
-        double halfAng = (fragAngle * Math.PI / 360.0);
-        double kappa = Math.abs(4.0 / 3.0 * (1.0 - Math.cos(halfAng)) / Math.sin(halfAng));
-        List<double[]> pointList = new ArrayList<>();
-        for (int iter = 0; iter < Nfrag; ++iter) {
-            double theta0 = ((startAng + iter * fragAngle) * Math.PI / 180.0);
-            double theta1 = ((startAng + (iter + 1) * fragAngle) * Math.PI / 180.0);
-            double cos0 = Math.cos(theta0);
-            double cos1 = Math.cos(theta1);
-            double sin0 = Math.sin(theta0);
-            double sin1 = Math.sin(theta1);
-            if (fragAngle > 0.0) {
-                pointList.add(new double[]{x_cen + rx * cos0,
-                        y_cen - ry * sin0,
-                        x_cen + rx * (cos0 - kappa * sin0),
-                        y_cen - ry * (sin0 + kappa * cos0),
-                        x_cen + rx * (cos1 + kappa * sin1),
-                        y_cen - ry * (sin1 - kappa * cos1),
-                        x_cen + rx * cos1,
-                        y_cen - ry * sin1});
-            } else {
-                pointList.add(new double[]{x_cen + rx * cos0,
-                        y_cen - ry * sin0,
-                        x_cen + rx * (cos0 + kappa * sin0),
-                        y_cen - ry * (sin0 - kappa * cos0),
-                        x_cen + rx * (cos1 - kappa * sin1),
-                        y_cen - ry * (sin1 + kappa * cos1),
-                        x_cen + rx * cos1,
-                        y_cen - ry * sin1});
-            }
-        }
-        return pointList;
+        return Bezier.bezierArc(x1, y1, x2, y2, startAng, extent);
     }
 
     /**
@@ -1967,6 +1910,10 @@ public class PdfCanvas {
      * <p>
      * The float arguments will be used in concatenating the transformation matrix as operands.
      *
+     * <p>
+     * Detailed explanation of {@code [a b c d e f]} parameters of transformation
+     * matrix can be found in {@link Matrix} documentation.
+     *
      * @param image the image from which {@link PdfImageXObject} will be created
      * @param a     an element of the transformation matrix
      * @param b     an element of the transformation matrix
@@ -1974,7 +1921,9 @@ public class PdfCanvas {
      * @param d     an element of the transformation matrix
      * @param e     an element of the transformation matrix
      * @param f     an element of the transformation matrix
+     *
      * @return the created imageXObject or null in case of in-line image (asInline = true)
+     *
      * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImageWithTransformationMatrix(ImageData image, float a, float b, float c, float d, float e, float f) {
@@ -1988,6 +1937,10 @@ public class PdfCanvas {
      * <p>
      * The float arguments will be used in concatenating the transformation matrix as operands.
      *
+     * <p>
+     * Detailed explanation of {@code [a b c d e f]} parameters of transformation
+     * matrix can be found in {@link Matrix} documentation.
+     *
      * @param image    the image from which {@link PdfImageXObject} will be created
      * @param a        an element of the transformation matrix
      * @param b        an element of the transformation matrix
@@ -1996,7 +1949,9 @@ public class PdfCanvas {
      * @param e        an element of the transformation matrix
      * @param f        an element of the transformation matrix
      * @param asInline true if to add image as in-line
+     *
      * @return the created imageXObject or null in case of in-line image (asInline = true)
+     *
      * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfXObject addImageWithTransformationMatrix(ImageData image, float a, float b, float c, float d, float e, float f, boolean asInline) {
@@ -2075,6 +2030,10 @@ public class PdfCanvas {
      * <p>
      * The float arguments will be used in concatenating the transformation matrix as operands.
      *
+     * <p>
+     * Detailed explanation of {@code [a b c d e f]} parameters of transformation
+     * matrix can be found in {@link Matrix} documentation.
+     *
      * @param xObject the xObject to add
      * @param a       an element of the transformation matrix
      * @param b       an element of the transformation matrix
@@ -2082,7 +2041,9 @@ public class PdfCanvas {
      * @param d       an element of the transformation matrix
      * @param e       an element of the transformation matrix
      * @param f       an element of the transformation matrix
+     *
      * @return the current canvas
+     *
      * @see #concatMatrix(double, double, double, double, double, double)
      */
     public PdfCanvas addXObjectWithTransformationMatrix(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {
@@ -2318,6 +2279,10 @@ public class PdfCanvas {
     /**
      * Adds {@code PdfImageXObject} to canvas.
      *
+     * <p>
+     * Detailed explanation of {@code [a b c d e f]} parameters of transformation
+     * matrix can be found in {@link Matrix} documentation.
+     *
      * @param imageXObject the {@code PdfImageXObject} object
      * @param a            an element of the transformation matrix
      * @param b            an element of the transformation matrix
@@ -2372,6 +2337,10 @@ public class PdfCanvas {
     /**
      * Adds {@link PdfFormXObject} to canvas.
      *
+     * <p>
+     * Detailed explanation of {@code [a b c d e f]} parameters of transformation
+     * matrix can be found in {@link Matrix} documentation.
+     *
      * @param form the formXObject to add
      * @param a an element of the transformation matrix
      * @param b an element of the transformation matrix
@@ -2382,6 +2351,7 @@ public class PdfCanvas {
      * @param writeIdentityMatrix true if the matrix is written in any case, otherwise if the
      *                            {@link #isIdentityMatrix(float, float, float, float, float, float)} method indicates
      *                            that the matrix is identity, the matrix will not be written
+     *
      * @return current canvas
      */
     private PdfCanvas addFormWithTransformationMatrix(PdfFormXObject form, float a, float b, float c,
@@ -2437,6 +2407,10 @@ public class PdfCanvas {
     /**
      * Adds {@link PdfXObject} to canvas.
      *
+     * <p>
+     * Detailed explanation of {@code [a b c d e f]} parameters of transformation
+     * matrix can be found in {@link Matrix} documentation.
+     *
      * @param xObject the xObject to add
      * @param a     an element of the transformation matrix
      * @param b     an element of the transformation matrix
@@ -2444,6 +2418,7 @@ public class PdfCanvas {
      * @param d     an element of the transformation matrix
      * @param e     an element of the transformation matrix
      * @param f     an element of the transformation matrix
+     *
      * @return current canvas
      */
     private PdfCanvas addImageWithTransformationMatrix(PdfXObject xObject, float a, float b, float c, float d, float e, float f) {

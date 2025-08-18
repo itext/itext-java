@@ -22,16 +22,16 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.StringNormalizer;
+import com.itextpdf.io.exceptions.FontCompressionException;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.FontStyles;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.exceptions.FontCompressionException;
 import com.itextpdf.io.font.woff2.Woff2Converter;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.Set;
 
@@ -141,12 +141,31 @@ public final class FontProgramFactory {
      * <p>
      *
      * @param fontProgram the byte contents of the font program
-     * @param cached whether to to cache this font program
+     * @param cached whether to cache this font program
      * @return returns a new {@link FontProgram}. This font program may come from the cache
      * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading the file
      */
     public static FontProgram createFont(byte[] fontProgram, boolean cached) throws java.io.IOException {
         return createFont(null, null, fontProgram, cached);
+    }
+
+    /**
+     * Creates a new TrueType font from the byte content.
+     *
+     * @param fontProgram the byte contents of the font program
+     * @param isLenientMode whether parse font in lenient mode (when allowed that some tables can be missed) or not
+     *
+     * @return a new {@link FontProgram}
+     *
+     * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading the file
+     */
+    public static TrueTypeFont createTrueTypeFont(byte[] fontProgram, boolean isLenientMode) throws java.io.IOException {
+        if (WoffConverter.isWoffFont(fontProgram)) {
+            return new TrueTypeFont(WoffConverter.convert(fontProgram), isLenientMode);
+        } else if (Woff2Converter.isWoff2Font(fontProgram)) {
+            return new TrueTypeFont(Woff2Converter.convert(fontProgram), isLenientMode);
+        }
+        return new TrueTypeFont(fontProgram, isLenientMode);
     }
 
     private static FontProgram createFont(String name, String cmap, byte[] fontProgram, boolean cached)
@@ -175,12 +194,7 @@ public final class FontProgramFactory {
         if (name == null) {
             if (fontProgram != null) {
                 try {
-                    if (WoffConverter.isWoffFont(fontProgram)) {
-                        fontProgram = WoffConverter.convert(fontProgram);
-                    } else if (Woff2Converter.isWoff2Font(fontProgram)) {
-                        fontProgram = Woff2Converter.convert(fontProgram);
-                    }
-                    fontBuilt = new TrueTypeFont(fontProgram);
+                    fontBuilt = createTrueTypeFont(fontProgram, false);
                 } catch (Exception ignored) {
                 }
                 if (fontBuilt == null) {

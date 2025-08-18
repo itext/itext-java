@@ -25,12 +25,17 @@ package com.itextpdf.kernel.pdf.annot;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNameTree;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
-
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -290,6 +295,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
      * entry (see {@link PdfAnnotation#getBorder()}). If an annotation dictionary includes the BS entry, then the Border
      * entry is ignored. If annotation includes AP (see {@link PdfAnnotation#getAppearanceDictionary()}) it takes
      * precedence over the BS entry. For more info on BS entry see ISO-320001, Table 166.
+     *
      * @return {@link PdfDictionary} which is a border style dictionary or null if it is not specified.
      */
     public PdfDictionary getBorderStyle() {
@@ -299,6 +305,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     /**
      * Sets border style dictionary that has more settings than the array specified for the Border entry ({@link PdfAnnotation#getBorder()}).
      * See ISO-320001, Table 166 and {@link #getBorderStyle()} for more info.
+     *
      * @param borderStyle a border style dictionary specifying the line width and dash pattern that shall be used
      *                    in drawing the annotation’s border.
      * @return this {@link PdfLinkAnnotation} instance.
@@ -317,6 +324,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
      *     <li>{@link PdfAnnotation#STYLE_UNDERLINE} - A single line along the bottom of the annotation rectangle.
      * </ul>
      * See also ISO-320001, Table 166.
+     *
      * @param style The new value for the annotation's border style.
      * @return this {@link PdfLinkAnnotation} instance.
      * @see #getBorderStyle()
@@ -329,11 +337,110 @@ public class PdfLinkAnnotation extends PdfAnnotation {
      * Setter for the annotation's preset dashed border style. This property has affect only if {@link PdfAnnotation#STYLE_DASHED}
      * style was used for the annotation border style (see {@link #setBorderStyle(PdfName)}.
      * See ISO-320001 8.4.3.6, "Line Dash Pattern" for the format in which dash pattern shall be specified.
+     *
      * @param dashPattern a dash array defining a pattern of dashes and gaps that
      *                    shall be used in drawing a dashed border.
      * @return this {@link PdfLinkAnnotation} instance.
      */
     public PdfLinkAnnotation setDashPattern(PdfArray dashPattern) {
         return setBorderStyle(BorderStyleUtil.setDashPattern(getBorderStyle(), dashPattern));
+    }
+
+    /**
+     * Gets link annotation tag role based on link destination.
+     *
+     * <p>
+     * The Link structure type should be used for external links and
+     * the Reference structure type should be used for intra-document targets.
+     *
+     * @param document to check conformance, e.g. for PDF/UA-1, only Link role is allowed.
+     *
+     * @return link annotation tag role
+     */
+    public String getRoleBasedOnDestination(PdfDocument document) {
+        if (document != null && PdfUAConformance.PDF_UA_1 == document.getConformance().getUAConformance()) {
+            return StandardRoles.LINK;
+        }
+        PdfObject dest = null;
+        PdfDictionary action = this.getAction();
+        if (action != null) {
+            PdfName actionType = action.getAsName(PdfName.S);
+            if (PdfName.GoTo.equals(actionType)) {
+                dest = action.get(PdfName.SD);
+                if (dest == null) {
+                    dest = action.get(PdfName.D);
+                }
+            } else {
+                return StandardRoles.LINK;
+            }
+        } else {
+            dest = this.getDestinationObject();
+        }
+        return isNonIntraDocumentDestination(dest, document, 0) ? StandardRoles.LINK : StandardRoles.REFERENCE;
+    }
+
+    private static boolean isNonIntraDocumentDestination(PdfObject destination, PdfDocument document, int counter) {
+        if (counter > 50) {
+            // If we reached this method more than 50 times. Something is definitely wrong and destination isn't valid.
+            // This can, for example, happen with named or string destinations pointing towards one another.
+            return false;
+        }
+        counter++;
+        if (destination == null) {
+            return false;
+        }
+        if (destination.getType() == PdfObject.ARRAY) {
+            PdfArray destArray = (PdfArray) destination;
+            if (destArray.isEmpty()) {
+                return false;
+            }
+            PdfObject firstObj = destArray.get(0);
+            return firstObj.isNumber();
+        }
+        if (document == null) {
+            return false;
+        }
+        if (destination.getType() == PdfObject.NAME) {
+            return isNonIntraDocumentDestination((PdfName) destination, document, counter);
+        }
+        if (destination.getType() == PdfObject.STRING) {
+            return isNonIntraDocumentDestination((PdfString) destination, document, counter);
+        }
+        return true;
+    }
+
+    private static boolean isNonIntraDocumentDestination(PdfName namedDestination, PdfDocument document,
+                                                         int counter) {
+        PdfCatalog catalog = document.getCatalog();
+        PdfDictionary dests = catalog.getPdfObject().getAsDictionary(PdfName.Dests);
+        if (dests != null) {
+            PdfObject actualDestinationObject = dests.get(namedDestination);
+            if (actualDestinationObject instanceof PdfDictionary) {
+                return isNonIntraDocumentDestination((PdfDictionary) actualDestinationObject, document, counter);
+            }
+            return isNonIntraDocumentDestination(actualDestinationObject, document, counter);
+        }
+        return true;
+    }
+
+    private static boolean isNonIntraDocumentDestination(PdfString stringDestination, PdfDocument document,
+                                                         int counter) {
+        PdfCatalog catalog = document.getCatalog();
+        PdfNameTree dests = catalog.getNameTree(PdfName.Dests);
+        PdfObject actualDestinationObject = dests.getEntry(stringDestination);
+        if (actualDestinationObject instanceof PdfDictionary) {
+            return isNonIntraDocumentDestination((PdfDictionary) actualDestinationObject, document, counter);
+        }
+        return isNonIntraDocumentDestination(actualDestinationObject, document, counter);
+    }
+
+    private static boolean isNonIntraDocumentDestination(PdfDictionary destDictionary, PdfDocument document,
+                                                         int counter) {
+        boolean isSdPresent = destDictionary.get(PdfName.SD) != null;
+        if (isSdPresent && !isNonIntraDocumentDestination(destDictionary.get(PdfName.SD), document, counter)) {
+            return false;
+        }
+        // We only check D entry if SD is not present.
+        return isSdPresent || isNonIntraDocumentDestination(destDictionary.get(PdfName.D), document, counter);
     }
 }

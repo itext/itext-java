@@ -545,8 +545,10 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return fully initialized {@link PdfOutline} object.
      */
     PdfOutline getOutlines(boolean updateOutlines) {
-        if (outlines != null && !updateOutlines)
+        if (outlines != null && !updateOutlines) {
             return outlines;
+        }
+
         if (outlines != null) {
             outlines.clear();
             pagesWithOutlines.clear();
@@ -556,11 +558,13 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         PdfNameTree destsTree = getNameTree(PdfName.Dests);
 
         PdfDictionary outlineRoot = getPdfObject().getAsDictionary(PdfName.Outlines);
+        PdfDocument document = getDocument();
         if (outlineRoot == null) {
-            if (null == getDocument().getWriter()) {
+            if (null == document.getWriter()) {
                 return null;
             }
-            outlines = new PdfOutline(getDocument());
+
+            outlines = new PdfOutline(document);
         } else {
             constructOutlines(outlineRoot, destsTree);
         }

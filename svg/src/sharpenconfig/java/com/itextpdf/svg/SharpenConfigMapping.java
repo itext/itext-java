@@ -68,6 +68,11 @@ public class SharpenConfigMapping implements MappingConfiguration {
     }
 
     @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+
+    }
+
+    @Override
     public Collection<ModuleOption> getAvailableModuleSettings() {
         return Collections.EMPTY_SET;
     }

@@ -111,9 +111,14 @@ public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
             fontProgram.avgWidth = 0;
             for (int cid : toUnicode.getCodes()) {
                 final int width = widths.containsKey(cid) ? widths.get(cid) : defaultWidth;
-                fontProgram.registerGlyph(cid, width, toUnicode.lookup(cid));
+                Glyph glyph = new Glyph(cid, width, toUnicode.lookup(cid));
+                fontProgram.codeToGlyph.put(cid, glyph);
+                if (glyph.hasValidUnicode()) {
+                    fontProgram.unicodeToGlyph.put(glyph.getUnicode(), glyph);
+                }
+                fontProgram.avgWidth += width;
             }
-            if (fontProgram.codeToGlyph.size() != 0) {
+            if (!fontProgram.codeToGlyph.isEmpty()) {
                 fontProgram.avgWidth /= fontProgram.codeToGlyph.size();
             }
         }
@@ -262,14 +267,5 @@ public class DocTrueTypeFont extends TrueTypeFont implements IDocFontProgram {
                 break;
             }
         }
-    }
-
-    private void registerGlyph(int cid, int width, char[] unicode) {
-        Glyph glyph = new Glyph(cid, width, unicode);
-        if (glyph.hasValidUnicode()) {
-            this.unicodeToGlyph.put(glyph.getUnicode(), glyph);
-        }
-        this.codeToGlyph.put(cid, glyph);
-        this.avgWidth += width;
     }
 }

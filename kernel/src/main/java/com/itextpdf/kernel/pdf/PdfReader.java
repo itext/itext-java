@@ -60,6 +60,10 @@ import org.slf4j.LoggerFactory;
  * Reads a PDF document.
  */
 public class PdfReader implements Closeable {
+    /**
+     * The Logger instance.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfReader.class);
 
     /**
      * The default {@link StrictnessLevel} to be used.
@@ -646,6 +650,7 @@ public class PdfReader implements Closeable {
                 }
                 pdfConformance = PdfConformance.getConformance(xmpMeta);
             } catch (XMPException ignored) {
+                pdfConformance = PdfConformance.PDF_NONE_CONFORMANCE;
             }
         }
 
@@ -856,15 +861,13 @@ public class PdfReader implements Closeable {
         PdfIndirectReference reference = table.get(num);
         if (reference != null) {
             if (reference.isFree()) {
-                Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
                         tokens.getGenNr()));
                 return createPdfNullInstance(readAsDirect);
             }
             if (reference.getGenNumber() != tokens.getGenNr()) {
                 if (fixedXref) {
-                    Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                    logger.warn(
+                    LOGGER.warn(
                             MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
                                     tokens.getGenNr()));
                     return createPdfNullInstance(readAsDirect);
@@ -876,8 +879,7 @@ public class PdfReader implements Closeable {
             }
         } else {
             if (table.isReadingCompleted()) {
-                Logger logger = LoggerFactory.getLogger(PdfReader.class);
-                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
+                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
                         tokens.getGenNr()));
                 return createPdfNullInstance(readAsDirect);
             } else {
@@ -1430,8 +1432,7 @@ public class PdfReader implements Closeable {
         final String error = MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN,
                 new String(tokens.getByteContent(), StandardCharsets.UTF_8));
         if (StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
-            final Logger logger = LoggerFactory.getLogger(PdfReader.class);
-            logger.error(error);
+            LOGGER.error(error);
         } else {
             tokens.throwError(error);
         }
@@ -1618,17 +1619,16 @@ public class PdfReader implements Closeable {
     }
 
     private static void logXrefException(RuntimeException ex) {
-        Logger logger = LoggerFactory.getLogger(PdfReader.class);
         if (ex.getCause() != null) {
-            logger.error(MessageFormatUtil.format(
+            LOGGER.error(MessageFormatUtil.format(
                     IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
                     , ex.getCause().getMessage()));
         } else if (ex.getMessage() !=null) {
-            logger.error(MessageFormatUtil.format(
+            LOGGER.error(MessageFormatUtil.format(
                     IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
                     , ex.getMessage()));
         } else {
-            logger.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT);
+            LOGGER.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT);
         }
     }
 
@@ -1636,28 +1636,32 @@ public class PdfReader implements Closeable {
         private ByteBuffer buffer;
 
         public ReusableRandomAccessSource(ByteBuffer buffer) {
-            if (buffer == null) throw new IllegalArgumentException("Passed byte buffer can not be null.");
+            if (buffer == null) {
+                throw new IllegalArgumentException(KernelExceptionMessageConstant.PASSED_BYTE_BUFFER_CAN_NOT_BE_NULL);
+            }
             this.buffer = buffer;
         }
 
         @Override
         public int get(long offset) {
-            if (offset >= buffer.size()) return -1;
+            if (offset >= buffer.size()) {
+                return -1;
+            }
             return 0xff & buffer.getInternalBuffer()[(int) offset];
         }
 
         @Override
         public int get(long offset, byte[] bytes, int off, int len) {
-            if (buffer == null) throw new IllegalStateException("Already closed");
-
-            if (offset >= buffer.size())
+            if (buffer == null) {
+                throw new IllegalStateException(KernelExceptionMessageConstant.ALREADY_CLOSED);
+            }
+            if (offset >= buffer.size()) {
                 return -1;
-
-            if (offset + len > buffer.size())
+            }
+            if (offset + len > buffer.size()) {
                 len = (int) (buffer.size() - offset);
-
+            }
             System.arraycopy(buffer.getInternalBuffer(), (int) offset, bytes, off, len);
-
             return len;
         }
 

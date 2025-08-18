@@ -58,6 +58,18 @@ public class ReportItem {
     }
 
     /**
+     * Create report item from another report item.
+     *
+     * @param otherReportItem {@link ReportItem} from which new one will be created
+     */
+    public ReportItem(ReportItem otherReportItem) {
+        this.checkName = otherReportItem.checkName;
+        this.message = otherReportItem.message;
+        this.cause = otherReportItem.cause;
+        this.status = otherReportItem.status;
+    }
+
+    /**
      * Get the check name related to this report item.
      *
      * @return {@link String} check name related to this report item.

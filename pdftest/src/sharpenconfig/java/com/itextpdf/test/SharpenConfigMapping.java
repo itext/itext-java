@@ -31,8 +31,6 @@ import sharpen.config.MappingConfigurator;
 import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
-import sharpen.core.csharp.ast.CSExpression;
-import sharpen.core.csharp.ast.CSStringLiteralExpression;
 
 public class SharpenConfigMapping implements MappingConfiguration {
     @Override
@@ -47,6 +45,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
+        configurator.mapNamespace("com.itextpdf", "iText");
         configurator.removeMethod("com.itextpdf.test.ITextTest.removeCryptographyRestrictions");
         configurator.removeMethod("com.itextpdf.test.ITextTest.restoreCryptographyRestrictions");
 
@@ -94,5 +93,10 @@ public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
         return null;
+    }
+
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+
     }
 }

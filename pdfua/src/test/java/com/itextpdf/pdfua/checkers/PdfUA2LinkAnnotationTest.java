@@ -29,7 +29,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -52,7 +51,6 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -66,16 +64,9 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUA2LinkAnnotationTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfName> testSources() {
@@ -85,6 +76,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void linkAnnotationIsNotTaggedTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
 
@@ -101,6 +93,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void linkAnnotationWithInvalidTagTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
 
@@ -121,6 +114,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void linkAnnotationWithReferenceTagTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
 
@@ -151,6 +145,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @MethodSource("testSources")
     public void differentStructureDestinationsInDifferentStructureElementsTest(PdfName destLocation)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
             PdfStructElem structElem2 = structElem.addKid(new PdfStructElem(pdfDoc, PdfName.P));
@@ -173,6 +168,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void sameStructureDestinationsInDifferentParagraphsTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             document.setFont(loadFont());
@@ -205,12 +201,13 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
         });
         String filename = "sameStructDestsParagraph_";
         String expectedMessage = PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS;
-        validate(filename, expectedMessage, destLocation);
+        validate(filename, expectedMessage, destLocation, framework);
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
     public void sameStructureDestinationsInDifferentStructureElementsOnPageTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
             PdfStructureDestination dest = PdfStructureDestination.createFit(structElem);
@@ -218,12 +215,13 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
         });
         String filename = "sameStructureDestinations_";
         String expectedMessage = PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS;
-        validate(filename, expectedMessage, destLocation);
+        validate(filename, expectedMessage, destLocation, framework);
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
     public void sameNamedDestinationsInDifferentStructureElementsOnPageTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
             PdfNamedDestination namedDestination = getNamedDestination(pdfDoc, structElem, "dest");
@@ -238,6 +236,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void sameStringDestinationsInDifferentStructureElementsOnPageTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
             PdfStringDestination namedDestination = getStringDestination(pdfDoc, structElem, "dest");
@@ -252,6 +251,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void sameStringDestinationsInDifferentStructureElementsSDTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
 
@@ -275,6 +275,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void sameStringDestinationsInDifferentStructureElementsDTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
 
@@ -303,6 +304,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void differentStructureDestinationsInSameStructureElementTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
             PdfStructElem structElem2 = structElem.addKid(new PdfStructElem(pdfDoc, PdfName.P));
@@ -314,12 +316,13 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
         });
         String filename = "differentStructureDestinations_";
         String expectedMessage = PdfUAExceptionMessageConstants.DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM;
-        validate(filename, expectedMessage, destLocation);
+        validate(filename, expectedMessage, destLocation, framework);
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
     public void differentNamedDestinationsInSameStructureElementTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
             PdfStructElem structElem2 = structElem.addKid(new PdfStructElem(pdfDoc, PdfName.P));
@@ -338,6 +341,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void differentStringDestinationsInSameStructureElementTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
             PdfStructElem structElem2 = structElem.addKid(new PdfStructElem(pdfDoc, PdfName.P));
@@ -356,6 +360,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("testSources")
     public void sameDestinationsDifferentTypesTest(PdfName destLocation) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfStructElem structElem = getPdfStructElem(pdfDoc);
             PdfStructureDestination dest = PdfStructureDestination.createFit(structElem);
@@ -364,7 +369,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
         });
         String filename = "sameDestinationsDifferentTypes_";
         String expectedMessage = PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS;
-        validate(filename, expectedMessage, destLocation);
+        validate(filename, expectedMessage, destLocation, framework);
     }
 
     private static void addLinkAnnotations(PdfName destLocation, PdfDocument pdfDoc, PdfDestination destination) {
@@ -454,7 +459,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
         }
     }
 
-    private void validate(String filename, String expectedMessage, PdfName destLocation) throws IOException {
+    private void validate(String filename, String expectedMessage, PdfName destLocation, UaValidationTestFramework framework) throws IOException {
         // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
         if (PdfName.D.equals(destLocation)) {

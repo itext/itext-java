@@ -37,9 +37,7 @@ import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -52,514 +50,734 @@ public class TransparencyTest extends ExtendedITextTest {
     private static final PdfName FILL_OPAC = new PdfName("ca");
     private static final PdfName STROKE_OPAC = new PdfName("CA");
 
-    private PdfCanvas cv;
-    private SvgDrawContext sdc;
-
-    @BeforeEach
-    public void setupDrawContextAndCanvas() {
-        sdc = new SvgDrawContext(new ResourceResolver(""), new FontProvider());
-
-        // set compression to none, in case you want to write to disk and inspect the created document
-        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setCompressionLevel(0));
-        PdfDocument doc = new PdfDocument(writer);
-
-        cv = new PdfCanvas(doc.addNewPage());
-        sdc.pushCanvas(cv);
-    }
-
-    @AfterEach
-    public void close() {
-        cv.getDocument().close();
-    }
-
     @Test
     public void noOpacitySet() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "blue");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "blue");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            renderer.draw(sdc);
+
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void strokeOpacitySetWithStroke() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "blue");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "blue");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void strokeOpacitySetWithoutStroke() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void strokeOpacitySetWithFill() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "blue");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "blue");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void strokeOpacitySetWithNoneStroke() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, SvgConstants.Values.NONE);
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, SvgConstants.Values.NONE);
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
-
 
     @Test
     public void fillOpacitySetWithFill() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "blue");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "blue");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void fillOpacitySetWithoutFill() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void fillOpacitySetWithNoneFill() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, SvgConstants.Values.NONE);
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, SvgConstants.Values.NONE);
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void fillOpacitySetWithStroke() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "blue");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "blue");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void fillAndStrokeOpacitySetWithStrokeAndFill() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "blue");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "green");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "blue");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "green");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(2, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(2, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        }
     }
-
 
     @Test
     public void noOpacitySetRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgb(100,20,80)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgb(100,20,80)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void strokeOpacitySetWithStrokeRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgb(100,20,80)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgb(100,20,80)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void strokeOpacitySetWithoutStrokeRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void strokeOpacitySetWithFillRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "rgb(100,20,80)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "rgb(100,20,80)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void strokeOpacitySetWithNoneStrokeRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, SvgConstants.Values.NONE);
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, SvgConstants.Values.NONE);
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
-
 
     @Test
     public void fillOpacitySetWithFillRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "rgb(100,20,80)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "rgb(100,20,80)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void fillOpacitySetWithoutFillRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void fillOpacitySetWithNoneFillRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, SvgConstants.Values.NONE);
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, SvgConstants.Values.NONE);
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void fillOpacitySetWithStrokeRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgb(100,20,80)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgb(100,20,80)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void fillAndStrokeOpacitySetWithStrokeAndFillRGB() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "rgb(100,20,80)");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgb(60,90,180)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "rgb(100,20,80)");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgb(60,90,180)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(2, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(2, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void noOpacitySetRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(100,20,80, .75)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(100,20,80, .75)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void strokeOpacitySetWithStrokeRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(100,20,80,.75)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(100,20,80,.75)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.5625));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.5625));
+        }
     }
 
     @Test
     public void strokeOpacitySetWithoutStrokeRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void strokeOpacitySetWithFillRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void strokeOpacitySetWithNoneStrokeRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, SvgConstants.Values.NONE);
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, SvgConstants.Values.NONE);
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
-
 
     @Test
     public void fillOpacitySetWithFillRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.5625));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.5625));
+        }
     }
 
     @Test
     public void fillOpacitySetWithoutFillRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void fillOpacitySetWithNoneFillRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, SvgConstants.Values.NONE);
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, SvgConstants.Values.NONE);
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void fillOpacitySetWithStrokeRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(100,20,80,.75)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(100,20,80,.75)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(2, resDic.size());
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(2, resDic.size());
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void fillAndStrokeOpacitySetWithStrokeAndFillRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(60,90,180,.75)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(60,90,180,.75)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(2, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.5625));
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.5625));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(2, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.5625));
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.5625));
+        }
     }
 
     @Test
     public void noOpacitySetWithStrokeRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(100,20,80,.75)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(100,20,80,.75)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void noOpacitySetWithoutStrokeRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void noOpacitySetWithFillRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(1, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(1, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+        }
     }
 
     @Test
     public void noOpacitySetWithNoneStrokeRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, SvgConstants.Values.NONE);
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.STROKE_OPACITY, "0.75");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, SvgConstants.Values.NONE);
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void noOpacitySetWithNoneFillRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL, SvgConstants.Values.NONE);
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL, SvgConstants.Values.NONE);
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertTrue(resources.getResourceNames().isEmpty());
+            Assertions.assertTrue(resources.getResourceNames().isEmpty());
+        }
     }
 
     @Test
     public void noAndStrokeOpacitySetWithStrokeAndFillRGBA() {
-        AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
-        renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
-        renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(60,90,180,.75)");
+        // set compression to none, in case you want to write to disk and inspect the created document
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setCompressionLevel(0)))) {
+            SvgDrawContext sdc = setupDrawContext(pdfDocument);
+            AbstractSvgNodeRenderer renderer = new CircleSvgNodeRenderer();
+            renderer.setAttribute(SvgConstants.Attributes.FILL, "rgba(100,20,80,.75)");
+            renderer.setAttribute(SvgConstants.Attributes.STROKE, "rgba(60,90,180,.75)");
 
-        renderer.draw(sdc);
-        PdfResources resources = cv.getResources();
+            renderer.draw(sdc);
+            PdfCanvas cv = sdc.getCurrentCanvas();
+            PdfResources resources = cv.getResources();
 
-        Assertions.assertEquals(1, resources.getResourceNames().size());
-        PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState, DEFAULT_RESOURCE_NAME);
-        Assertions.assertEquals(2, resDic.size());
-        Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
-        Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(1, resources.getResourceNames().size());
+            PdfDictionary resDic = (PdfDictionary) resources.getResourceObject(PdfName.ExtGState,
+                    DEFAULT_RESOURCE_NAME);
+            Assertions.assertEquals(2, resDic.size());
+            Assertions.assertEquals(resDic.get(FILL_OPAC), new PdfNumber(0.75));
+            Assertions.assertEquals(resDic.get(STROKE_OPAC), new PdfNumber(0.75));
+        }
+    }
+
+    private SvgDrawContext setupDrawContext(PdfDocument pdfDocument) {
+        SvgDrawContext sdc = new SvgDrawContext(new ResourceResolver(""), new FontProvider());
+        PdfCanvas cv = new PdfCanvas(pdfDocument.addNewPage());
+        sdc.pushCanvas(cv);
+        return sdc;
     }
 }

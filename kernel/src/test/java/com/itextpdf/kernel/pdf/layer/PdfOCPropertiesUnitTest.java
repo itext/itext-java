@@ -24,6 +24,8 @@ package com.itextpdf.kernel.pdf.layer;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Tag("UnitTest")
-public class PdfOCPropertiesUnitTest {
+public class PdfOCPropertiesUnitTest extends ExtendedITextTest {
 
     @Test
     public void orderArrayOcgWithTwoParentsTest() throws IOException {

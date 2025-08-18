@@ -28,6 +28,7 @@ import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.PdfTokenizer;
@@ -38,6 +39,7 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.XrefCycledReferencesException;
+import com.itextpdf.kernel.pdf.PdfReader.ReusableRandomAccessSource;
 import com.itextpdf.kernel.pdf.PdfReader.StrictnessLevel;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -332,8 +334,8 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void exponentialXObjectLoopTest() throws IOException {
         String fileName = SOURCE_FOLDER + "exponentialXObjectLoop.pdf";
         MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
-        //setting the limit to 256mb for xobjects
-        memoryLimitsAwareHandler.setMaxXObjectsSizePerPage(1024L*1024L*256L);
+        //setting the limit to 25mb for xobjects
+        memoryLimitsAwareHandler.setMaxXObjectsSizePerPage(10*1024L*256L);
         PdfReader pdfReader = new PdfReader(fileName, new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler));
         PdfDocument document = new PdfDocument(pdfReader);
         Exception exception = Assertions.assertThrows(MemoryLimitsAwareException.class,
@@ -2940,6 +2942,60 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outputFile, cmpFile, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void reusableRandomAccessSourceTest() {
+        ByteBuffer buffer = new ByteBuffer();
+        buffer.append("Hello World!");
+        ReusableRandomAccessSource source = new ReusableRandomAccessSource(buffer);
+
+        Assertions.assertEquals('d', source.get(10));
+
+        byte[] actual = new byte[5];
+        Assertions.assertEquals(5, source.get(6, actual, 0, actual.length));
+        Assertions.assertArrayEquals(new byte[]{(byte) 'W', (byte) 'o', (byte) 'r', (byte) 'l', (byte) 'd'}, actual);
+
+        Assertions.assertEquals(-1, source.get(15, actual, 0, actual.length));
+
+        actual = new byte[5];
+        Assertions.assertEquals(2, source.get(10, actual, 0, actual.length));
+        Assertions.assertArrayEquals(new byte[]{(byte) 'd', (byte) '!', 0, 0, 0}, actual);
+
+        Exception e = Assertions.assertThrows(Exception.class, () -> new ReusableRandomAccessSource(null));
+        Assertions.assertEquals(KernelExceptionMessageConstant.PASSED_BYTE_BUFFER_CAN_NOT_BE_NULL, e.getMessage());
+    }
+
+    @Test
+    public void xrefStreamObjectPointsItselfTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "xrefObjPointsItself.pdf";
+
+        try (PdfReader pdfReader = new PdfReader(fileName)) {
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
+                    () -> new PdfDocument(pdfReader));
+
+            // 2 0 R refers to 8 0 R, which refers to 8 0 R
+            Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.XREF_STREAM_HAS_SELF_REFERENCED_OBJECT, 8),
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void xrefStreamObjectPointsLoopTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "xrefObjPointsLoop.pdf";
+
+        try (PdfReader pdfReader = new PdfReader(fileName)) {
+            Exception exception = Assertions.assertThrows(XrefCycledReferencesException.class,
+                    () -> new PdfDocument(pdfReader));
+
+            // 2 0 R refers to 8 0 R, which refers to 7 0 R which refers to 2 0 R
+            Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assertions.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.XREF_STREAM_HAS_SELF_REFERENCED_OBJECT, 2),
+                    exception.getMessage());
+        }
     }
 
     private static PdfDictionary getTestPdfDictionary() {

@@ -23,13 +23,16 @@
 package com.itextpdf.kernel.pdf.xobject;
 
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfXObjectUnitTest extends ExtendedITextTest {
@@ -49,5 +52,17 @@ public class PdfXObjectUnitTest extends ExtendedITextTest {
         Exception exception = Assertions.assertThrows(UnsupportedOperationException.class,
                 () -> PdfXObject.makeXObject(pdfStream));
         Assertions.assertEquals(KernelExceptionMessageConstant.UNSUPPORTED_XOBJECT_TYPE, exception.getMessage());
+    }
+
+    @Test
+    public void invalidBBoxParametersTest() {
+        AffineTransform expectedTransform = new AffineTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+        PdfFormXObject pdfFormXObject = new PdfFormXObject(new Rectangle(200, 200));
+        pdfFormXObject.setBBox(new PdfArray(new int[]{0, 0, 20}));
+        AffineTransform affineTransform = PdfFormXObject.calcAppearanceTransformToAnnotRect(
+                pdfFormXObject, new Rectangle(200, 200));
+
+        Assertions.assertEquals(expectedTransform,affineTransform);
+
     }
 }

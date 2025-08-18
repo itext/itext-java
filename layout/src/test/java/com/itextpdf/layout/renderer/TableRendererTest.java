@@ -22,27 +22,43 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TableRendererTest extends ExtendedITextTest {
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/TableRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/TableRendererTest/";
+
+    @BeforeAll
+    public static void beforeClass() {
+        createDestinationFolder(DESTINATION_FOLDER);
+    }
 
     @Test
     @LogMessages(messages = {
@@ -95,5 +111,44 @@ public class TableRendererTest extends ExtendedITextTest {
         TableRenderer[] grandChildren = children[1].split(1);
 
         Assertions.assertFalse(grandChildren[0].isOriginalNonSplitRenderer);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH),
+    })
+    public void nestedTableWithSpecifiedWidthTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "nestedTableWithSpecifiedWidth.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_nestedTableWithSpecifiedWidth.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDoc);
+
+        Table table = new Table(2);
+
+        Cell cell1 = new Cell(1, 1);
+        cell1.setBorder(new SolidBorder(ColorConstants.GRAY, 1.5f));
+
+        Table nestedTable = new Table(1);
+        nestedTable.setWidth(422.25f);
+        nestedTable.setHeight(52.5f);
+        Paragraph paragraph = new Paragraph("Hello");
+        paragraph.setBorder(new SolidBorder(ColorConstants.GREEN, 1.5f));
+        nestedTable.addCell(paragraph);
+        cell1.add(nestedTable);
+        table.addCell(cell1);
+
+        Cell cell2 = new Cell(2, 1);
+        cell2.setBorder(new SolidBorder(ColorConstants.YELLOW, 1.5f));
+        Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "itis.jpg"));
+        image.setWidth(406.5f);
+        image.setHeight(7.5f);
+        cell2.add(image);
+        table.addCell(cell2);
+
+        doc.add(table);
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 }

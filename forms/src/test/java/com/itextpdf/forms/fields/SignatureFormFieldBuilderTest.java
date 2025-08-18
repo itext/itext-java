@@ -44,51 +44,54 @@ import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class SignatureFormFieldBuilderTest extends ExtendedITextTest {
-
-    private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
     private static final Rectangle DUMMY_RECTANGLE = new Rectangle(7, 11, 13, 17);
 
     @Test
     public void constructorTest() {
-        SignatureFormFieldBuilder builder = new SignatureFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        SignatureFormFieldBuilder builder = new SignatureFormFieldBuilder(pdfDoc, DUMMY_NAME);
 
-        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(pdfDoc, builder.getDocument());
         Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
     public void createSignatureWithWidgetTest() {
-        PdfSignatureFormField signatureFormField = new SignatureFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfSignatureFormField signatureFormField = new SignatureFormFieldBuilder(pdfDoc, DUMMY_NAME)
                 .setWidgetRectangle(DUMMY_RECTANGLE).createSignature();
 
-        compareSignatures(signatureFormField, true);
+        compareSignatures(signatureFormField, pdfDoc, true);
     }
 
     @Test
     public void createSignatureWithoutWidgetTest() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfSignatureFormField signatureFormField =
-                new SignatureFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME).createSignature();
+                new SignatureFormFieldBuilder(pdfDoc, DUMMY_NAME).createSignature();
 
-        compareSignatures(signatureFormField, false);
+        compareSignatures(signatureFormField, pdfDoc, false);
     }
 
     @Test
     public void createSignatureWithIncorrectNameTest() {
-        AssertUtil.doesNotThrow(() -> new SignatureFormFieldBuilder(DUMMY_DOCUMENT, "incorrect.name")
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        AssertUtil.doesNotThrow(() -> new SignatureFormFieldBuilder(pdfDoc, "incorrect.name")
                 .setWidgetRectangle(DUMMY_RECTANGLE).createSignature());
     }
 
     @Test
     public void createSignatureWithConformanceLevelTest() {
-        PdfSignatureFormField signatureFormField = new SignatureFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfSignatureFormField signatureFormField = new SignatureFormFieldBuilder(pdfDoc, DUMMY_NAME)
                 .setWidgetRectangle(DUMMY_RECTANGLE).setConformance(PdfConformance.PDF_A_1A)
                 .createSignature();
 
-        compareSignatures(signatureFormField, true);
+        compareSignatures(signatureFormField, pdfDoc, true);
     }
 
-    private static void compareSignatures(PdfSignatureFormField signatureFormField, boolean widgetExpected) {
+    private static void compareSignatures(PdfSignatureFormField signatureFormField,PdfDocument pdfDoc, boolean widgetExpected) {
         PdfDictionary expectedDictionary = new PdfDictionary();
 
         List<PdfWidgetAnnotation> widgets = signatureFormField.getWidgets();
@@ -110,8 +113,8 @@ public class SignatureFormFieldBuilderTest extends ExtendedITextTest {
         putIfAbsent(expectedDictionary, PdfName.FT, PdfName.Sig);
         putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
 
-        expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
-        signatureFormField.makeIndirect(DUMMY_DOCUMENT);
+        expectedDictionary.makeIndirect(pdfDoc);
+        signatureFormField.makeIndirect(pdfDoc);
         Assertions.assertNull(
                 new CompareTool().compareDictionariesStructure(expectedDictionary, signatureFormField.getPdfObject()));
     }

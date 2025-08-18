@@ -218,7 +218,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
 
     @Test
     public void standardStructureTypeIsRemappedThroughNonStandardOneTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "standardStructureTypeIsRemappedThroughNonStandardOneTest.pdf";
+        String outPdf = DESTINATION_FOLDER + "stStructTypeRemappedNonStandardOne.pdf";
 
         PdfUA2TestPdfDocument pdfDoc = new PdfUA2TestPdfDocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));

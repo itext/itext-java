@@ -22,8 +22,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.utils.ICopyFilter;
 
@@ -170,14 +170,31 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
             add(element);
     }
 
+    /**
+     * Gets the size of the array.
+     *
+     * @return the size of the array
+     */
     public int size() {
         return list.size();
     }
 
+    /**
+     * Checks whether the array is empty or not.
+     *
+     * @return {@code true} if the array is empty, {@code false} otherwise
+     */
     public boolean isEmpty() {
         return list.size() == 0;
     }
 
+    /**
+     * Checks whether the array contains the passed object or not.
+     *
+     * @param o the object to check presence
+     *
+     * @return {@code true} if the object exists in the array, {@code false} otherwise
+     */
     public boolean contains(PdfObject o) {
         if (list.contains(o))
             return true;
@@ -204,6 +221,11 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         return new PdfArrayDirectIterator(list);
     }
 
+    /**
+     * Adds the passed {@link PdfObject} to the array.
+     *
+     * @param pdfObject the object to add
+     */
     public void add(PdfObject pdfObject) {
         list.add(pdfObject);
     }
@@ -290,6 +312,9 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
         }
     }
 
+    /**
+     * Remove all elements from the array.
+     */
     public void clear() {
         list.clear();
     }

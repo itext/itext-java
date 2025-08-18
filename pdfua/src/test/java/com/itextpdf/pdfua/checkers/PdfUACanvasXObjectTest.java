@@ -62,7 +62,6 @@ import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -76,17 +75,10 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
 
     private static final String DOG = "./src/test/resources/com/itextpdf/pdfua/img/DOG.bmp";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-
-    private UaValidationTestFramework framework;
-
+    
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfUAConformance> data() {
@@ -215,6 +207,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
     @MethodSource("data")
     public void manuallyAddToCanvasCorrectFontAndUnTaggedContent(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             try {
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -252,6 +245,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
     public void manuallyAddToCanvasAndCorrectFontAndArtifactUnTaggedContent(PdfUAConformance pdfUAConformance)
             throws IOException {
         //Now we are again adding untagged content with some artifacts and embedded font's so we should also be fine
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
@@ -322,6 +316,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             throws IOException {
         // We are adding tagged content to an artifact. Looks like Verapdf doesn't check xobject stream at all because
         // page content is marked as artifact. We think it's wrong though.
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             try {
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -350,6 +345,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
     @MethodSource("data")
     public void manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContent(PdfUAConformance pdfUAConformance)
             throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
         dummyDoc.setTagged();
@@ -380,6 +376,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
     public void manuallyAddToCanvasAtLocationAndCorrectFontAndArtifactTaggedContentInsideUntaggedPageContent(PdfUAConformance pdfUAConformance)
             throws IOException {
         // We are adding untagged content, so we should throw an exception.
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
         dummyDoc.setTagged();
@@ -440,6 +437,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             throws IOException {
         // We are adding untagged content, so we should throw an exception.
 
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PdfDocument dummyDoc = new PdfDocument(new PdfWriter(os));
         Document document = new Document(dummyDoc);
@@ -466,6 +464,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addImageObjectNotInline(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         // We are adding untagged content, so we should throw an exception.
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -485,6 +484,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addImageObjectInline(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         // We are adding untagged content, so we should throw an exception.
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -504,6 +504,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addImageTranformationMatrix(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         // We are adding untagged content, so we should throw an exception.
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());
@@ -523,6 +524,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addImageFittedIntoRectangle(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         // We are adding untagged content, so we should throw an exception.
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfCanvas canvas = new PdfCanvas(pdfDocument.addNewPage());

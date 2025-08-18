@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>9.2.0</version>
+    <version>9.3.0</version>
   </parent>
 
   <artifactId>bouncy-castle-fips-adapter</artifactId>
@@ -15,7 +15,7 @@
 
   <properties>
     <bouncycastleFips.version>2.0.0</bouncycastleFips.version>
-    <bouncycastlePkixFips.version>2.0.7</bouncycastlePkixFips.version>
+    <bouncycastlePkixFips.version>2.0.8</bouncycastlePkixFips.version>
     <sonar.coverage.exclusions>**/*</sonar.coverage.exclusions>
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
   </properties>

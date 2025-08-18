@@ -39,6 +39,7 @@ import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
@@ -55,11 +56,14 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 @Tag("IntegrationTest")
 public class LinkTest extends ExtendedITextTest {
@@ -335,6 +339,7 @@ public class LinkTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
+        pdfDocument.setTagged();
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com");
         PdfLinkAnnotation annotation = new PdfLinkAnnotation(new Rectangle(1, 1)).setAction(action);
@@ -356,8 +361,10 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "linkAnnotationOnDivSplitTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkAnnotationOnDivSplitTest01.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         Document doc = new Document(pdfDocument);
+        pdfDocument.setTagged();
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com");
         PdfLinkAnnotation annotation = new PdfLinkAnnotation(new Rectangle(1, 1)).setAction(action);
@@ -420,7 +427,9 @@ public class LinkTest extends ExtendedITextTest {
         doc.add(text);
 
         Paragraph customText = new Paragraph("Custom text");
-        customText.setProperty(Property.DESTINATION, new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        Set<Object> destinations = new HashSet<>();
+        destinations.add(new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        customText.setProperty(Property.DESTINATION, destinations);
         doc.add(customText);
 
         doc.close();
@@ -442,7 +451,9 @@ public class LinkTest extends ExtendedITextTest {
                 .setAction(PdfAction.createGoTo("custom"));
 
         Paragraph customText = new Paragraph("Custom text");
-        customText.setProperty(Property.DESTINATION, new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        Set<Object> destinations = new HashSet<>();
+        destinations.add(new Tuple2<String, PdfDictionary>("custom", linkAnnotation.getAction()));
+        customText.setProperty(Property.DESTINATION, destinations);
         doc.add(customText);
 
         doc.add(new AreaBreak());
@@ -459,6 +470,40 @@ public class LinkTest extends ExtendedITextTest {
 
         doc.close();
 
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void linkWithSetDestinationTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "linkWithSetDestination.pdf";
+        String cmpFileName = sourceFolder + "cmp_linkWithSetDestination.pdf";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Link link = new Link("link", PdfAction.createGoTo("destination"));
+            document.add(new Paragraph().add(link));
+            document.add(new AreaBreak());
+
+            Paragraph target = new Paragraph("target");
+            target.setDestination("destination");
+            document.add(target);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+        @Test
+    public void destinationToFlushedPageTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "destinationToFlushedPage.pdf";
+        String cmpFileName = sourceFolder + "cmp_destinationToFlushedPage.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName,
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0))); Document doc = new Document(pdfDoc)) {
+            pdfDoc.setTagged();
+            doc.add(new Paragraph("text")).add(new AreaBreak());
+            pdfDoc.getPage(1).flush();
+            Link link = new Link("Goto page 1", PdfExplicitDestination.createXYZ(pdfDoc.getPage(1), 36f, 806f, 0f));
+            link.getAccessibilityProperties().setRole(StandardRoles.P);
+            doc.add(new Paragraph(link));
+        }
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 }

@@ -74,18 +74,11 @@ import org.junit.jupiter.api.Test;
 public class CheckBoxTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/form/element/CheckBoxTest/";
     public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/form/element/CheckBoxTest/";
-    private int counter = 0;
 
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
-
-    @BeforeEach
-    public void before() {
-        counter = 0;
-    }
-
 
     @Test
     public void renderingModeDefaultValueTest() {
@@ -272,13 +265,14 @@ public class CheckBoxTest extends ExtendedITextTest {
 
     @Test
     public void basicCheckBoxSetSize() throws IOException, InterruptedException {
+        int counter = 0;
         String outPdf = DESTINATION_FOLDER + "checkBoxSetSize.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBoxSetSize.pdf";
         final int scaleFactor = 5;
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             for (int i = 1; i < 5; i++) {
                 final int size = i * i * scaleFactor;
-                generateCheckBoxesForAllRenderingModes(document, checkBox -> {
+                counter = generateCheckBoxesForAllRenderingModes(document, counter, checkBox -> {
                     checkBox.setSize(size);
                 });
             }
@@ -290,13 +284,14 @@ public class CheckBoxTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = FormsLogMessageConstants.INVALID_VALUE_FALLBACK_TO_DEFAULT,
             count = 8))
     public void basicCheckBoxSetSizeNegativeValueFallsBackToDefaultValue() throws IOException, InterruptedException {
+        int counter = 0;
         String outPdf = DESTINATION_FOLDER + "checkBoxSetSizeBadSize.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBoxSetSizeBadSize.pdf";
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            generateCheckBoxes(document, checkBox -> {
+            counter = generateCheckBoxes(document, counter, checkBox -> {
                 checkBox.setSize(0);
             });
-            generateCheckBoxes(document, checkBox -> {
+            generateCheckBoxes(document, counter, checkBox -> {
                 checkBox.setSize(-1);
             });
         }
@@ -305,18 +300,19 @@ public class CheckBoxTest extends ExtendedITextTest {
 
     @Test
     public void basicCheckBoxSetBorderTest() throws IOException, InterruptedException {
+        int counter = 0;
         String outPdf = DESTINATION_FOLDER + "checkBox_setBorder.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_setBorder.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            generateCheckBoxesForAllRenderingModes(document, checkBox -> {
+            counter = generateCheckBoxesForAllRenderingModes(document, counter, checkBox -> {
                 checkBox.setBorder(new SolidBorder(ColorConstants.GREEN, .5f));
             });
-            generateCheckBoxesForAllRenderingModes(document, checkBox -> {
+            counter = generateCheckBoxesForAllRenderingModes(document, counter, checkBox -> {
                 checkBox.setBorder(new SolidBorder(ColorConstants.YELLOW, 1));
             });
 
-            generateCheckBoxesForAllRenderingModes(document, checkBox -> {
+            generateCheckBoxesForAllRenderingModes(document, counter, checkBox -> {
                 checkBox.setBorder(new SolidBorder(ColorConstants.BLUE, 3));
             });
         }
@@ -325,11 +321,12 @@ public class CheckBoxTest extends ExtendedITextTest {
 
     @Test
     public void basicCheckBoxSetBackgroundTest() throws IOException, InterruptedException {
+        int counter = 0;
         String outPdf = DESTINATION_FOLDER + "checkBox_setBackground.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBox_setBackground.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
-            generateCheckBoxesForAllRenderingModes(document, checkBox -> {
+            generateCheckBoxesForAllRenderingModes(document, counter, checkBox -> {
                 checkBox.setBackgroundColor(ColorConstants.MAGENTA);
             });
         }
@@ -364,15 +361,16 @@ public class CheckBoxTest extends ExtendedITextTest {
 
     @Test
     public void checkBoxSetCheckTypes() throws IOException, InterruptedException {
+        int counter = 0;
         String outPdf = DESTINATION_FOLDER + "checkBox_setCheckType.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBox_setCheckType.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             for (CheckBoxType enumConstant : EnumUtil.getAllValuesOfEnum(CheckBoxType.class)) {
-                generateCheckBoxes(document, checkBox -> {
+                counter = generateCheckBoxes(document, counter, checkBox -> {
                     checkBox.setCheckBoxType(enumConstant);
                 });
-                generateCheckBoxes(document, checkBox -> {
+                counter = generateCheckBoxes(document, counter, checkBox -> {
                     checkBox.setPdfConformance(PdfConformance.PDF_A_1B);
                     checkBox.setCheckBoxType(enumConstant);
                 });
@@ -384,12 +382,13 @@ public class CheckBoxTest extends ExtendedITextTest {
 
     @Test
     public void setPdfAConformanceLevel() throws IOException, InterruptedException {
+        int counter = 0;
         String outPdf = DESTINATION_FOLDER + "checkBox_setConformanceLevel.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBox_setConformanceLevel.pdf";
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             for (CheckBoxType enumConstant : EnumUtil.getAllValuesOfEnum(CheckBoxType.class)) {
-                generateCheckBoxes(document, checkBox -> {
+                counter = generateCheckBoxes(document, counter, checkBox -> {
                     checkBox.setSize(20);
                     checkBox.setPdfConformance(PdfConformance.PDF_A_3B);
                     checkBox.setCheckBoxType(enumConstant);
@@ -401,12 +400,13 @@ public class CheckBoxTest extends ExtendedITextTest {
 
     @Test
     public void removingFormFieldsLeavesNoVisualTrace() throws IOException, InterruptedException {
+        int counter = 0;
         String outPdf = DESTINATION_FOLDER + "checkBox_removeFormField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBox_removeFormField.pdf";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try (Document document = new Document(new PdfDocument(new PdfWriter(baos)))) {
-            generateCheckBoxesForAllRenderingModes(document, checkBox -> {
+            generateCheckBoxesForAllRenderingModes(document, counter, checkBox -> {
                 checkBox.setBorder(new SolidBorder(ColorConstants.GREEN, 1f));
                 checkBox.setBackgroundColor(ColorConstants.CYAN);
             });
@@ -548,36 +548,38 @@ public class CheckBoxTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
-    private void generateCheckBoxesForAllRenderingModes(Document document, Consumer<CheckBox> alterFunction) {
+    private int generateCheckBoxesForAllRenderingModes(Document document, int counter, Consumer<CheckBox> alterFunction) {
         document.add(new Paragraph("Normal rendering mode"));
-        generateCheckBoxes(document, (checkBox) -> {
+        counter = generateCheckBoxes(document, counter, (checkBox) -> {
             checkBox.setProperty(Property.RENDERING_MODE, RenderingMode.DEFAULT_LAYOUT_MODE);
             alterFunction.accept(checkBox);
         });
         document.add(new Paragraph("Pdfa rendering mode"));
-        generateCheckBoxes(document, (checkBox) -> {
+        counter = generateCheckBoxes(document, counter, (checkBox) -> {
             checkBox.setProperty(Property.RENDERING_MODE, RenderingMode.DEFAULT_LAYOUT_MODE);
             checkBox.setPdfConformance(PdfConformance.PDF_A_1B);
             alterFunction.accept(checkBox);
         });
 
         document.add(new Paragraph("Html rendering mode"));
-        generateCheckBoxes(document, (checkBox) -> {
+        counter = generateCheckBoxes(document, counter, (checkBox) -> {
             checkBox.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             alterFunction.accept(checkBox);
         });
 
+        return counter;
     }
 
     @Test
     public void basicCheckBoxTagged() throws IOException, InterruptedException {
+        int counter = 0;
         String outPdf = DESTINATION_FOLDER + "basicCheckboxTagged.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicCheckboxTagged.pdf";
         try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
-            generateCheckBoxes(document, checkBox -> {
+            counter = generateCheckBoxes(document, counter, checkBox -> {
             });
-            generateCheckBoxes(document, checkBox -> {
+            generateCheckBoxes(document, counter, checkBox -> {
             });
         }
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
@@ -616,34 +618,34 @@ public class CheckBoxTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
-    private List<CheckBox> generateCheckBoxes(Document document, Consumer<CheckBox> alterFunction) {
+    private int generateCheckBoxes(Document document, int counter, Consumer<CheckBox> alterFunction) {
         List<CheckBox> checkBoxList = new ArrayList<>();
 
-        CheckBox formCheckbox = new CheckBox("checkbox_interactive_off_" + this.counter);
+        CheckBox formCheckbox = new CheckBox("checkbox_interactive_off_" + counter);
         formCheckbox.setInteractive(true);
         checkBoxList.add(formCheckbox);
-        this.counter++;
+        counter++;
 
-        CheckBox flattenCheckbox = new CheckBox("checkbox_flatten_off_" + this.counter);
+        CheckBox flattenCheckbox = new CheckBox("checkbox_flatten_off_" + counter);
         checkBoxList.add(flattenCheckbox);
-        this.counter++;
+        counter++;
 
-        CheckBox formCheckboxChecked = new CheckBox("checkbox_interactive_checked_" + this.counter);
+        CheckBox formCheckboxChecked = new CheckBox("checkbox_interactive_checked_" + counter);
         formCheckboxChecked.setInteractive(true);
         formCheckboxChecked.setChecked(true);
         checkBoxList.add(formCheckboxChecked);
-        this.counter++;
+        counter++;
 
-        CheckBox flattenCheckboxChecked = new CheckBox("checkbox_flatten_checked_" + this.counter);
+        CheckBox flattenCheckboxChecked = new CheckBox("checkbox_flatten_checked_" + counter);
         flattenCheckboxChecked.setChecked(true);
         checkBoxList.add(flattenCheckboxChecked);
-        this.counter++;
+        counter++;
 
         for (CheckBox checkBox : checkBoxList) {
             alterFunction.accept(checkBox);
             document.add(checkBox);
         }
 
-        return checkBoxList;
+        return counter;
     }
 }

@@ -69,7 +69,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-
 import org.slf4j.LoggerFactory;
 
 /**
@@ -124,6 +123,7 @@ public abstract class PdfAChecker implements IValidationChecker {
      * may be opened (i.e. not yet closed by a corresponding <code>Q</code>) at
      * any point in a content stream sequence.
      *
+     * <p>
      * Defined as 28 by PDF/A-1 section 6.1.12, by referring to the PDF spec
      * Appendix C table 1 "architectural limits".
      */
@@ -144,6 +144,7 @@ public abstract class PdfAChecker implements IValidationChecker {
      * NOTE: Not all objects that were checked are stored in that set. This set is used for avoiding double checks for
      * actions, signatures, xObjects and page objects; and for letting those objects to be manually flushed.
      *
+     * <p>
      * Use this mechanism carefully: objects that are able to be changed (or at least if object's properties
      * that shall be checked are able to be changed) shouldn't be marked as checked if they are not to be
      * flushed immediately.

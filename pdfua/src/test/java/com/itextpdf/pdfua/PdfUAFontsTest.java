@@ -43,7 +43,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,16 +57,9 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/pdfua/font/";
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfUAConformance> data() {
@@ -77,6 +69,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void tryToUseType0Cid0FontTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -99,6 +92,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void type0Cid2FontTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -118,6 +112,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void trueTypeFontTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -137,6 +132,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void trueTypeFontGlyphNotPresentTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font;
             try {
@@ -166,6 +162,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void trueTypeFontWithDifferencesTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font;
             try {
@@ -194,6 +191,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void tryToUseStandardFontsTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -216,6 +214,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void type1EmbeddedFontTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -245,6 +244,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void nonSymbolicTtfWithValidEncodingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -264,6 +264,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void nonSymbolicTtfWithIncompatibleEncodingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -284,6 +285,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void symbolicTtfTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -304,6 +306,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void symbolicTtfWithEncodingTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -327,6 +330,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void symbolicTtfWithInvalidCmapTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -354,6 +358,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void nonSymbolicTtfWithInvalidCmapTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;

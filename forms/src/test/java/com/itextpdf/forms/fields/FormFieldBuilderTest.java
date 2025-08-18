@@ -36,27 +36,29 @@ import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class FormFieldBuilderTest extends ExtendedITextTest {
-    private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
 
     @Test
     public void constructorTest() {
-        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        TestBuilder builder = new TestBuilder(pdfDoc, DUMMY_NAME);
 
-        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(pdfDoc, builder.getDocument());
         Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
     public void getSetConformanceLevelTest() {
-        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        TestBuilder builder = new TestBuilder(pdfDoc, DUMMY_NAME);
         builder.setConformance(PdfConformance.PDF_A_1A);
         Assertions.assertSame(PdfAConformance.PDF_A_1A, builder.getConformance().getAConformance());
     }
 
     @Test
     public void getSetConformanceLevelPdfUATest() {
-        TestBuilder builder = new TestBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        TestBuilder builder = new TestBuilder(pdfDoc, DUMMY_NAME);
         builder.setConformance(PdfConformance.PDF_UA_1);
         Assertions.assertSame(PdfUAConformance.PDF_UA_1, builder.getConformance().getUAConformance());
     }

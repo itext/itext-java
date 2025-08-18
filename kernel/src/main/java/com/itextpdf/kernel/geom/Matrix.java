@@ -25,35 +25,58 @@ package com.itextpdf.kernel.geom;
 import java.util.Arrays;
 
 /**
- * Keeps all the values of a 3 by 3 matrix and allows you to
- * do some math with matrices.
+ * Keeps all the values of a 3 by 3 matrix and allows you to do some math with matrices.
+ *
+ * <p>
+ * Transformation matrix in PDF is a special case of a 3 by 3 matrix
+ * <br>{@code [a b 0]}
+ * <br>{@code [c d 0]}
+ * <br>{@code [e f 1]}
+ *
+ * <p>
+ * In its most general form, this matrix is specified by six numbers, usually in the form of an array containing six
+ * elements {@code [a b c d e f]}. It can represent any linear transformation from one coordinate system to
+ * another. Here the most common transformations:
+ * <ul>
+ * <li>Translations shall be specified as {@code [1 0 0 1 Tx Ty]}, where {@code Tx} and {@code Ty} shall be the
+ * distances to translate the origin of the coordinate system in the horizontal and vertical dimensions, respectively.
+ * <li>Scaling shall be obtained by {@code [Sx 0 0 Sy 0 0]}. This scales the coordinates so that 1 unit in the
+ * horizontal and vertical dimensions of the new coordinate system is the same size as {@code Sx} and {@code Sy} units,
+ * respectively, in the previous coordinate system.
+ * <li>Rotations shall be produced by {@code [Rc Rs -Rs Rc 0 0]}, where {@code Rc = cos(q)} and {@code Rs = sin(q)}
+ * which has the effect of rotating the coordinate system axes by an angle {@code q} counterclockwise.
+ * <li>Skew shall be specified by {@code [1 Wx Wy 1 0 0]}, where {@code Wx = tan(a)} and {@code Wy = tan(b)} which
+ * skews the x-axis by an angle {@code a} and the y-axis by an angle {@code b}.
+ * </ul>
+ *
+ * <p>
+ * For more information see PDF Specification ISO 32000-1 section 8.3.
  */
 public class Matrix {
-
-    /** the row=1, col=1 position ('a') in the matrix. */
+    /** The row=1, col=1 position ('a') in the matrix. */
     public static final int I11 = 0;
-    /** the row=1, col=2 position ('b') in the matrix. */
+    /** The row=1, col=2 position ('b') in the matrix. */
     public static final int I12 = 1;
-    /** the row=1, col=3 position (always 0 for 2-D) in the matrix. */
+    /** The row=1, col=3 position (always 0 for 2D) in the matrix. */
     public static final int I13 = 2;
-    /** the row=2, col=1 position ('c') in the matrix. */
+    /** The row=2, col=1 position ('c') in the matrix. */
     public static final int I21 = 3;
-    /** the row=2, col=2 position ('d') in the matrix. */
+    /** The row=2, col=2 position ('d') in the matrix. */
     public static final int I22 = 4;
-    /** the row=2, col=3 position (always 0 for 2-D) in the matrix. */
+    /** The row=2, col=3 position (always 0 for 2D) in the matrix. */
     public static final int I23 = 5;
-    /** the row=3, col=1 ('e', or X translation) position in the matrix. */
+    /** The row=3, col=1 ('e', or X translation) position in the matrix. */
     public static final int I31 = 6;
-    /** the row=3, col=2 ('f', or Y translation) position in the matrix. */
+    /** The row=3, col=2 ('f', or Y translation) position in the matrix. */
     public static final int I32 = 7;
-    /** the row=3, col=3 position (always 1 for 2-D) in the matrix. */
+    /** The row=3, col=3 position (always 1 for 2D) in the matrix. */
     public static final int I33 = 8;
 
     /**
      * The values inside the matrix (the identity matrix by default).
      *
      * <p>
-     * For reference, the indeces are as follows:
+     * For reference, the indexes are as follows:
      * <br>I11 I12 I13
      * <br>I21 I22 I23
      * <br>I31 I32 I33
@@ -65,7 +88,7 @@ public class Matrix {
     };
 
     /**
-     * constructs a new Matrix with identity.
+     * Constructs a new Matrix with identity.
      */
     public Matrix() {
     }
@@ -148,7 +171,7 @@ public class Matrix {
 
     /**
      * multiplies this matrix by 'b' and returns the result.
-     * See http://en.wikipedia.org/wiki/Matrix_multiplication
+     * See <a href="http://en.wikipedia.org/wiki/Matrix_multiplication">Matrix_multiplication</a>
      *
      * @param by The matrix to multiply by
      * @return the resulting matrix
@@ -195,7 +218,6 @@ public class Matrix {
         c[I31] = a[I31]+b[I31];
         c[I32] = a[I32]+b[I32];
         c[I33] = a[I33]+b[I33];
-
 
         return rslt;
     }

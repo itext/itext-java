@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>9.2.0</version>
+  <version>9.3.0</version>
   <packaging>pom</packaging>
 
   <name>iText</name>
@@ -83,7 +83,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.78.1</bouncycastle.version>
+    <bouncycastle.version>1.81</bouncycastle.version>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <jacoco.version>0.8.4</jacoco.version>
@@ -107,6 +107,7 @@
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
     <surefire.version>3.0.0-M3</surefire.version>
+    <apache.santuario.version>3.0.6</apache.santuario.version>
 
     <sharpen.builddotnet>false</sharpen.builddotnet>
     <sharpen.showdiff>false</sharpen.showdiff>
@@ -252,6 +253,9 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>${maven.jar.version}</version>
+        <configuration>
+          <skipIfEmpty>true</skipIfEmpty>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -503,6 +507,12 @@
                 <excludes>
                   <!-- Contains interfaces for bouncycastle wrappers which can be changes in any time -->
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
+                  <!--
+                   Temporary exclude to be able to cleanup code.
+                   This class is not intended to be used by our users directly.
+                   TODO: DEVSIX-9096 - remove after 9.3.0 release
+                  -->
+                  <exclude>com.itextpdf.kernel.xmp.impl.FixASCIIControlsReader</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
@@ -933,7 +943,6 @@
                 <arg>
                   --initialize-at-build-time=org.junit.validator.PublicClassValidator
                   --initialize-at-build-time=org.junit.platform.engine.TestTag
-
                   --initialize-at-run-time=org.bouncycastle.crypto.prng.SP800SecureRandom
                   --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV
                   --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default
@@ -942,6 +951,9 @@
 
                   --enable-all-security-services
                   --enable-url-protocols=http,https,ftp
+
+                  -H:IncludeLocales=en_US
+                  -H:IncludeResourceBundles=org.apache.xml.security.resource.xmlsecurity
 
                   -H:+AddAllCharsets
                   -H:ReflectionConfigurationFiles=${basedir}/../resources/graalvm/reflect-config.json

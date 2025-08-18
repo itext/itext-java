@@ -101,7 +101,10 @@ public class ImagePdfBytesInfoTest extends ExtendedITextTest {
     public void negativeNTest() throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "negativeN.pdf"))) {
             PdfImageXObject img = getPdfImageCObject(pdfDoc, 1, "Im1");
-            ImagePdfBytesInfo imagePdfBytesInfo = new ImagePdfBytesInfo(img);
+            ImagePdfBytesInfo imagePdfBytesInfo = new ImagePdfBytesInfo((int)img.getWidth(), (int)img.getHeight(),
+                    img.getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
+                    img.getPdfObject().get(PdfName.ColorSpace),
+                    img.getPdfObject().getAsArray(PdfName.Decode));
 
             int pngColorType = imagePdfBytesInfo.getPngColorType();
             Assertions.assertEquals(-1, pngColorType);
@@ -116,7 +119,10 @@ public class ImagePdfBytesInfoTest extends ExtendedITextTest {
     public void undefinedCSArrayTest() throws IOException {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "undefinedInCSArray.pdf"))) {
             PdfImageXObject img = getPdfImageCObject(pdfDoc, 1, "Im1");
-            ImagePdfBytesInfo imagePdfBytesInfo = new ImagePdfBytesInfo(img);
+            ImagePdfBytesInfo imagePdfBytesInfo = new ImagePdfBytesInfo((int)img.getWidth(), (int)img.getHeight(),
+                    img.getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
+                    img.getPdfObject().get(PdfName.ColorSpace),
+                    img.getPdfObject().getAsArray(PdfName.Decode));
 
             int pngColorType = imagePdfBytesInfo.getPngColorType();
             Assertions.assertEquals(-1, pngColorType);
@@ -128,7 +134,11 @@ public class ImagePdfBytesInfoTest extends ExtendedITextTest {
     }
 
     private int getPngColorTypeFromObject(PdfDocument pdfDocument, int pageNum, String objectId) {
-        ImagePdfBytesInfo imagePdfBytesInfo = new ImagePdfBytesInfo(getPdfImageCObject(pdfDocument, pageNum, objectId));
+        PdfImageXObject img = getPdfImageCObject(pdfDocument, pageNum, objectId);
+        ImagePdfBytesInfo imagePdfBytesInfo = new ImagePdfBytesInfo((int)img.getWidth(), (int)img.getHeight(),
+                img.getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
+                img.getPdfObject().get(PdfName.ColorSpace),
+                img.getPdfObject().getAsArray(PdfName.Decode));
         return imagePdfBytesInfo.getPngColorType();
     }
 

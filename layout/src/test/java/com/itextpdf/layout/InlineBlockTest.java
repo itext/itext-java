@@ -31,10 +31,13 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AnonymousInlineBox;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -43,6 +46,9 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -171,6 +177,23 @@ public class InlineBlockTest extends ExtendedITextTest {
             );
         }
 
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
+    }
+
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    @Test
+    public void areaBreakWithinInlineBlockTest() throws IOException, InterruptedException {
+        String name = "areaBreakWithinInlineBlockTest.pdf";
+        String output = destinationFolder + name;
+        String cmp = sourceFolder + "cmp_" + name;
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(output)))) {
+            AnonymousInlineBox root = new AnonymousInlineBox();
+            Div container = new Div();
+            container.add(new AreaBreak());
+            container.add(new Paragraph("test"));
+            root.add(container);
+            doc.add(root);
+        }
         Assertions.assertNull(new CompareTool().compareByContent(output, cmp, destinationFolder));
     }
 }

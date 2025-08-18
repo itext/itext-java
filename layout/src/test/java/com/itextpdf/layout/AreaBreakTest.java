@@ -35,6 +35,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.tagging.ProhibitedTagRelationsResolver;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -236,6 +237,20 @@ public class AreaBreakTest extends ExtendedITextTest {
 
         document.close();
 
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void areaBreakInsideDivInTaggedDocumentTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "areaBreakInsideDivInTaggedDocument.pdf";
+        String cmpFileName = sourceFolder + "cmp_areaBreakInsideDivInTaggedDocument.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        pdfDocument.setTagged();
+        pdfDocument.getDiContainer().register(ProhibitedTagRelationsResolver.class, new ProhibitedTagRelationsResolver(pdfDocument));
+        Document document = new Document(pdfDocument);
+        Div div = new Div().add(new AreaBreak()).add(new Div().add(new Paragraph("test")));
+        document.add(div);
+        document.close();
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 

@@ -109,6 +109,8 @@ public final class IoExceptionMessageConstant {
     public static final String IMAGE_MAGICK_OUTPUT_IS_NULL = "ImageMagick process output is null.";
     public static final String IMAGE_MAGICK_PROCESS_EXECUTION_FAILED = "ImageMagick process execution finished with errors: ";
     public static final String IMAGE_MASK_CANNOT_CONTAIN_ANOTHER_IMAGE_MASK = "Image mask cannot contain another image mask.";
+    public static final String INCOMPATIBLE_GLYPH_DATA_DURING_FONT_MERGING =
+            "Incompatibility of glyph data/metrics between merged fonts";
     public static final String INCOMPLETE_PALETTE = "Incomplete palette.";
     public static final String INCORRECT_SIGNATURE = "Incorrect woff2 signature";
     public static final String INVALID_BMP_FILE_COMPRESSION = "Invalid BMP file compression.";
@@ -179,4 +181,6 @@ public final class IoExceptionMessageConstant {
     public static final String ENCODING_ERROR = "Error during encoding the following code point: {0} in characterset:" +
             " {1}";
     public static final String ONLY_BMP_ENCODING = "This encoder only accepts BMP codepoints";
+    public static final String READING_BYTE_LIMIT_MUST_NOT_BE_LESS_ZERO = "The reading byte limit argument must not " +
+            "be less than zero.";
 }

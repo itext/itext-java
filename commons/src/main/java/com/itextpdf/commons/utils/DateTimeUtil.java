@@ -25,6 +25,9 @@ package com.itextpdf.commons.utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -244,6 +247,17 @@ public final class DateTimeUtil {
      */
     public static String dateToString(Calendar date) {
         return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z").format(date.getTime());
+    }
+
+    /**
+     * Gets the {@link LocalDateTime} from milliseconds.
+     *
+     * @param milliseconds the UTC milliseconds from the epoch
+     *
+     * @return {@link LocalDateTime} converted from milliseconds
+     */
+    public static LocalDateTime getTimeFromMillis(long milliseconds) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneOffset.ofHours(0));
     }
 
     private static DateFormat initParserSDF(String pattern) {

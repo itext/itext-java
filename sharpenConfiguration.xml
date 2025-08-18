@@ -33,6 +33,13 @@
             <fileset reason="Differences in string split">
                 <file path="com/itextpdf/commons/utils/StringSplitUtil.java"/>
             </fileset>
+            <fileset reason="Differences in Timer api">
+                <file path="com/itextpdf/commons/utils/TimerUtil.java"/>
+            </fileset>
+
+            <fileset reason="Differences in Timer api">
+                <file path="com/itextpdf/commons/utils/MultiThreadingUtil.java"/>
+            </fileset>
             <file path="com/itextpdf/commons/utils/Base64.java"/>
             <fileset reason="The way java and .NET works with such data types is different. So right now they can be ported only manually.">
                 <file path="com/itextpdf/commons/utils/JsonUtil.java"/>
@@ -53,6 +60,10 @@
                 <file path="com/itextpdf/commons/datastructures/ConcurrentWeakMap.java" />
                 <file path="com/itextpdf/commons/datastructures/ConcurrentWeakMapTest.java" />
             </fileset>
+            <fileset reason="Checking class instance is different">
+                <file path="com/itextpdf/commons/utils/RuntimeUtil.java"/>
+                <file path="com/itextpdf/commons/utils/RuntimeUtilTest.java"/>
+            </fileset>
             <fileset reason="SystemUtil is a manual class, and the methods of this class can have input and output other than java despite similar names.
         Therefore, the test for this class also cannot be ported automatically">
                 <file path="com/itextpdf/commons/utils/SystemUtilTest.java"/>
@@ -65,6 +76,9 @@
                 <file path="com/itextpdf/commons/datastructures/ConcurrentHashSet.java"/>
             </fileset>
             <!-- io -->
+            <fileset reason="LimitedInputStream extends InputStream, which has different interfaces in Java and .NET">
+                <file path="com/itextpdf/io/resolver/resource/LimitedInputStream.java" />
+            </fileset>
             <fileset reason="This class seems to be specific for java and used for getting an instance of an Image from java.awt.Image.
         In .Net it looks not trivial to port automatically as it needs java.awt.BufferedImage and java.awt.PixelGrabber alternative in .Net.
         Currently we do not have this functionality in .Net">
@@ -462,6 +476,15 @@
                 <file path="com/itextpdf/forms/xfdf/ExceptionTestXmlParserFactory.java"/>
             </fileset>
             <!-- sign -->
+            <fileset reason="XML validation is different in .NET">
+                <file path="com/itextpdf/signatures/validation/lotl/XmlValidationUtils.java" />
+                <file path="com/itextpdf/signatures/validation/lotl/CertificateSelector.java" />
+                <file path="com/itextpdf/signatures/validation/lotl/xml/XmlSaxProcessor.java" />
+            </fileset>
+            <fileset reason="uri handeling and certificate handeling is different">
+                <file path="com/itextpdf/signatures/validation/EuropeanTrustedCertificatesResourceLoader.java"/>
+                <file path="com/itextpdf/signatures/validation/LoadFromModuleEuropeanTrustedListConfigurationFactory.java"/>
+            </fileset>
             <file path="com/itextpdf/signatures/ProviderDigest.java"/>
             <fileset reason="ProviderDigest class exists only on Java.">
                 <file path="com/itextpdf/signatures/ProviderDigestUnitTest.java"/>
@@ -520,6 +543,7 @@
             </fileset>
             <fileset reason=".pem files reading logic is different in java and .net">
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
+                <file path="com/itextpdf/signatures/CertificateUtil.java"/>
             </fileset>
             <fileset reason="EnumSet generics mapping problems">
                 <file path="com/itextpdf/signatures/validation/context/ValidatorContexts.java" />
@@ -531,6 +555,9 @@
                 <file path="com/itextpdf/signatures/validation/report/xml/XmlReportGenerator.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/ReportNamespaceContext.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
+            </fileset>
+            <fileset reason="LocalDateTime and DateTime have different constructors and parsing">
+                <file path="com/itextpdf/signatures/validation/lotl/ServiceChronologicalInfo.java"/>
             </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />
@@ -582,6 +609,7 @@
             </fileset>
             <fileset reason="This test uses threads and sockets which are not autoportable">
                 <file path="com/itextpdf/styledxmlparser/resolver/resource/DefaultResourceRetrieverTest.java" />
+                <file path="com/itextpdf/io/resolver/resource/DefaultResourceRetrieverTest.java" />
             </fileset>
 
             <!-- svg -->
@@ -605,6 +633,14 @@
                 <file path="com/itextpdf/test/runtime/VeraPdfValidatorAppTest.java"/>
                 <file path="com/itextpdf/test/utils/UriUtilTest.java"/>
             </fileset>
+            <fileset reason="AssertUtil relies on java.time.Instant which is not portable.">
+                <file path="com/itextpdf/test/AssertUtil.java" />
+            </fileset>
+            <fileset reason="AssertUtilTest has to use AtomicInteger for access from a lambda function. This is not portable.">
+                <file path="com/itextpdf/test/AssertUtilTest.java" />
+            </fileset>
+
+
         </java>
     </ignored>
      <resource>

@@ -25,9 +25,10 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.utils.ICopyFilter;
 
+/**
+ * The {@code PdfBoolean} class is a PDF analog of {@code boolean} value.
+ */
 public class PdfBoolean extends PdfPrimitiveObject {
-
-
     public static final PdfBoolean TRUE = new PdfBoolean(true, true);
     public static final PdfBoolean FALSE = new PdfBoolean(false, true);
 
@@ -54,6 +55,11 @@ public class PdfBoolean extends PdfPrimitiveObject {
         super();
     }
 
+    /**
+     * Gets the stored {@code boolean} value.
+     *
+     * @return the {@code boolean} value
+     */
     public boolean getValue() {
         return value;
     }

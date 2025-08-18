@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,16 +49,9 @@ public class PdfUAStringTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAStringTest/";
     private static final Rectangle RECTANGLE = new Rectangle(100, 100, 100, 100);
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void setUp() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
     }
 
     public static List<Integer> privateUseAreaSymbols() {
@@ -68,6 +60,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
 
     @Test
     public void validValueWithDocEncodingTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             PdfString pdfString = new PdfString("value", PdfEncodings.PDF_DOC_ENCODING);
@@ -79,6 +72,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("privateUseAreaSymbols")
     public void puaValueWithDocEncodingTest(Integer puaSymbol) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         String filename = "puaValueWithDocEncoding_" + getPuaValueName(puaSymbol);
         framework.addBeforeGenerationHook(document -> {
             PdfString pdfString = new PdfString("hello_" + new String(Character.toChars((int) puaSymbol)), PdfEncodings.PDF_DOC_ENCODING);
@@ -95,6 +89,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("privateUseAreaSymbols")
     public void puaValueWithUTF8Test(Integer puaSymbol) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         String filename = "puaValueWithUTF8_" + getPuaValueName(puaSymbol);
         framework.addBeforeGenerationHook(document -> {
             PdfString pdfString = new PdfString("hello_" + new String(Character.toChars((int) puaSymbol)), PdfEncodings.UTF8);
@@ -109,6 +104,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("privateUseAreaSymbols")
     public void puaValueWithUTF16Test(Integer puaSymbol) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         String filename = "puaValueWithUTF16_" + getPuaValueName(puaSymbol);
         framework.addBeforeGenerationHook(document -> {
             PdfString pdfString = new PdfString("hello_" + new String(Character.toChars((int) puaSymbol)), PdfEncodings.UNICODE_BIG);
@@ -123,6 +119,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("privateUseAreaSymbols")
     public void puaValueWithUTF16UnmarkedTest(Integer puaSymbol) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         String filename = "puaValueWithUTF16Unmarked_" + getPuaValueName(puaSymbol);
         framework.addBeforeGenerationHook(document -> {
             PdfString pdfString = new PdfString("hello_" + new String(Character.toChars((int) puaSymbol)), PdfEncodings.UNICODE_BIG_UNMARKED);
@@ -136,6 +133,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("privateUseAreaSymbols")
     public void puaValueInLangTest(Integer puaSymbol) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "puaValueInLang_" + getPuaValueName(puaSymbol);
         framework.addBeforeGenerationHook(document -> {
             PdfString pdfString = new PdfString("hello_" + new String(Character.toChars((int) puaSymbol)), PdfEncodings.UTF8);
@@ -150,6 +148,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
 
     @Test
     public void puaValueWithTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             PdfString pdfString = new PdfString(new String(Character.toChars(0xE005)), PdfEncodings.WINANSI);

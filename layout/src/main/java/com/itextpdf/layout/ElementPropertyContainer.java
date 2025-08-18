@@ -45,8 +45,10 @@ import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A generic abstract element that fits in a PDF layout object hierarchy.
@@ -882,7 +884,12 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      * @return this Element.
      */
     public T setDestination(String destination) {
-        setProperty(Property.DESTINATION, destination);
+        Set<Object> existingDestinations = this.<Set<Object>>getProperty(Property.DESTINATION);
+        if (existingDestinations == null) {
+            existingDestinations = new HashSet<>();
+        }
+        existingDestinations.add(destination);
+        setProperty(Property.DESTINATION, existingDestinations);
         return (T) (Object) this;
     }
 

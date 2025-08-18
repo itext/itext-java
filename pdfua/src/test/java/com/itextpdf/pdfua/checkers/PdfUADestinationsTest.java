@@ -61,8 +61,6 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUADestinationsTest/";
     private static final Rectangle RECTANGLE = new Rectangle(200, 200, 100, 100);
 
-    private UaValidationTestFramework framework;
-
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -72,14 +70,10 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
         return Arrays.asList("GoTo", "Destination", "Outline", "OutlineWithAction", "GoToR", "Manual", "GoToInRandomPlace");
     }
 
-    @BeforeEach
-    public void setUp() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
-    }
-
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void pureStructureDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "pureStructureDestinationTest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -106,6 +100,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void pureExplicitDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "pureExplicitDestinationTest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -134,6 +129,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithStructureDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "namedDestWithStructureDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -146,6 +142,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithDictionaryWithStructureDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "namedDestWithDictWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -171,6 +168,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithDictionaryAndSDWithStructureDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "namedDestWithDictAndSDWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -183,6 +181,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithExplicitDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "namedDestWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -212,6 +211,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithDictionaryAndSDWithExplicitDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "namedDestWithDictAndSDWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -241,6 +241,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithNamedDestinationWithStructureDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "namedDestWithNamedDestWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -266,6 +267,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void namedDestinationWithCyclicReferenceTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "namedDestWithCyclicReference_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -296,6 +298,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithStructureDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "stringDestWithStructureDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -308,6 +311,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithDictionaryWithStructureDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "stringDestWithDictWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -333,6 +337,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithDictionaryAndSDWithStructureDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "stringDestWithDictAndSDWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -345,6 +350,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithExplicitDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "stringDestWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -374,6 +380,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
     public void stringDestinationWithDictionaryAndSDWithExplicitDestinationTest(String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
         String filename = "stringDestWithDictAndSDWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();

@@ -23,7 +23,6 @@
 package com.itextpdf.io;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -83,6 +82,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("java.nio.charset.Charset.newEncoder", "iText.IO.Util.TextUtil.NewEncoder");
         configurator.mapMethod("java.io.DataInputStreamReadFully", "iText.IO.Util.StreamUtil.ReadFully", false);
         configurator.mapMethod("java.net.URL.openStream", "iText.IO.Util.UrlUtil.OpenStream", false);
+        configurator.mapMethod("java.lang.Character.isWhitespace", "iText.IO.Util.TextUtil.IsWhiteSpace", false);
 
         configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.io.image.ImageDataFactory.create(java.awt.Image,java.awt.Color)", "!NETSTANDARD2_0");
         configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.io.image.ImageDataFactory.create(java.awt.Image,java.awt.Color,boolean)", "!NETSTANDARD2_0");
@@ -121,5 +121,10 @@ public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
         return null;
+    }
+
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+
     }
 }

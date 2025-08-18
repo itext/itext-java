@@ -63,17 +63,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PdfUANotesTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUANotesTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-
-    private UaValidationTestFramework framework;
-
+    
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfUAConformance> data() {
@@ -87,7 +80,8 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addNoteForUA2AndFENoteForUA1Test(PdfUAConformance pdfUAConformance) {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph note = new Paragraph("FENote");
@@ -118,7 +112,8 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addFENoteWithoutReferencesTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph note = new Paragraph("FENote");
@@ -144,7 +139,8 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addFENoteWithValidNoteTypeTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph note = new Paragraph("FENote");
@@ -176,7 +172,8 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addFENoteWithInvalidNoteTypeTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph note = new Paragraph("FENote");
@@ -210,6 +207,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @MethodSource("data")
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, count = 4), ignore = true)
     public void realContentDoesntHaveReferenceTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             pdfDocument.addNewPage();
             PdfAnnotation annotation = new PdfTextAnnotation(new Rectangle(100, 100)).setContents("Real content");
@@ -254,6 +252,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @MethodSource("data")
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, count = 4), ignore = true)
     public void noteDoesntHaveReferenceTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             pdfDocument.addNewPage();
             PdfAnnotation annotation = new PdfTextAnnotation(new Rectangle(100, 100)).setContents("Real content");
@@ -298,6 +297,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @MethodSource("data")
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, count = 4), ignore = true)
     public void feNoteWithValidReferencesTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addBeforeGenerationHook(pdfDocument -> {
             pdfDocument.addNewPage();
             PdfAnnotation annotation = new PdfTextAnnotation(new Rectangle(100, 100)).setContents("Real content");
@@ -345,6 +345,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addNoteWithoutIdTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -372,6 +373,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @MethodSource("data")
     @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, ignore = true)})
     public void addTwoNotesWithSameIdTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(
                 new UaValidationTestFramework.Generator<IBlockElement>() {
                     @Override
@@ -417,6 +419,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addNoteWithValidIdTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
@@ -439,6 +442,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void addTwoNotesWithDifferentIdTest(PdfUAConformance pdfUAConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
         framework.addSuppliers(
                 new UaValidationTestFramework.Generator<IBlockElement>() {
                     @Override

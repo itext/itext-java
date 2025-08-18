@@ -24,13 +24,17 @@ package com.itextpdf.kernel.font;
 
 import com.itextpdf.io.font.CjkResourceLoader;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.cmap.CMapContentParser;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
 import com.itextpdf.io.font.cmap.CMapLocationResource;
 import com.itextpdf.io.font.cmap.CMapParser;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
 import com.itextpdf.io.font.cmap.CMapUniCid;
 import com.itextpdf.io.font.cmap.ICMapLocation;
+import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.HighPrecisionOutputStream;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -39,13 +43,18 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Utility class for font processing.
+ */
 public class FontUtil {
     private static final SecureRandom NUMBER_GENERATOR = new SecureRandom();
 
@@ -60,13 +69,27 @@ public class FontUtil {
 
     private FontUtil() {}
 
+    /**
+     * Adds random subset prefix (+ and 6 upper case letters) to passed font name.
+     *
+     * @param fontName the font add prefix to
+     *
+     * @return the font name with added prefix.
+     */
     public static String addRandomSubsetPrefixForFontName(final String fontName) {
         final StringBuilder newFontName = getRandomFontPrefix(6);
         newFontName.append('+').append(fontName);
         return newFontName.toString();
     }
 
-    static CMapToUnicode processToUnicode(PdfObject toUnicode) {
+    /**
+     * Processes passed {@code ToUnicode} object to {@link CMapToUnicode} instance.
+     *
+     * @param toUnicode the {@code ToUnicode} object
+     *
+     * @return parsed {@link CMapToUnicode} instance
+     */
+    public static CMapToUnicode processToUnicode(PdfObject toUnicode) {
         CMapToUnicode cMapToUnicode = null;
         if (toUnicode instanceof PdfStream) {
             try {
@@ -82,6 +105,115 @@ public class FontUtil {
             cMapToUnicode = CMapToUnicode.getIdentity();
         }
         return cMapToUnicode;
+    }
+
+    /**
+     * Converts passed {@code W} array to integer table.
+     *
+     * @param widthsArray the {@code W} array to convert
+     *
+     * @return converted {@code W} array as an integer table
+     */
+    public static IntHashtable convertCompositeWidthsArray(PdfArray widthsArray) {
+        IntHashtable res = new IntHashtable();
+        if (widthsArray == null) {
+            return res;
+        }
+
+        for (int k = 0; k < widthsArray.size(); ++k) {
+            int c1 = widthsArray.getAsNumber(k).intValue();
+            PdfObject obj = widthsArray.get(++k);
+            if (obj.isArray()) {
+                PdfArray subWidths = (PdfArray)obj;
+                for (int j = 0; j < subWidths.size(); ++j) {
+                    int c2 = subWidths.getAsNumber(j).intValue();
+                    res.put(c1++, c2);
+                }
+            } else {
+                int c2 = ((PdfNumber)obj).intValue();
+                int w = widthsArray.getAsNumber(++k).intValue();
+                for (; c1 <= c2; ++c1) {
+                    res.put(c1, w);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Gets a {@code ToUnicode} {@link PdfStream} from passed glyphs.
+     *
+     * @param glyphs the glyphs {@code ToUnicode} will be based on
+     *
+     * @return the created {@code ToUnicode} {@link PdfStream}
+     */
+    public static PdfStream getToUnicodeStream(Set<Glyph> glyphs) {
+        HighPrecisionOutputStream<ByteArrayOutputStream> stream =
+                new HighPrecisionOutputStream<>(new ByteArrayOutputStream());
+        stream.writeString("/CIDInit /ProcSet findresource begin\n" +
+                "12 dict begin\n" +
+                "begincmap\n" +
+                "/CIDSystemInfo\n" +
+                "<< /Registry (Adobe)\n" +
+                "/Ordering (UCS)\n" +
+                "/Supplement 0\n" +
+                ">> def\n" +
+                "/CMapName /Adobe-Identity-UCS def\n" +
+                "/CMapType 2 def\n" +
+                "1 begincodespacerange\n" +
+                "<0000><FFFF>\n" +
+                "endcodespacerange\n");
+
+        //accumulate long tag into a subset and write it.
+        List<Glyph> glyphGroup = new ArrayList<>(100);
+
+        int bfranges = 0;
+        for (Glyph glyph : glyphs) {
+            if (glyph.getChars() != null) {
+                glyphGroup.add(glyph);
+                if (glyphGroup.size() == 100) {
+                    bfranges += writeBfrange(stream, glyphGroup);
+                }
+            }
+        }
+        //flush leftovers
+        bfranges += writeBfrange(stream, glyphGroup);
+
+        if (bfranges == 0) {
+            return null;
+        }
+
+        stream.writeString("endcmap\n" +
+                "CMapName currentdict /CMap defineresource pop\n" +
+                "end end\n");
+        return new PdfStream(((ByteArrayOutputStream)stream.getOutputStream()).toByteArray());
+    }
+
+    private static int writeBfrange(HighPrecisionOutputStream<ByteArrayOutputStream> stream, List<Glyph> range) {
+        if (range.isEmpty()) {
+            return 0;
+        }
+        stream.writeInteger(range.size());
+        stream.writeString(" beginbfrange\n");
+        for (Glyph glyph: range) {
+            String fromTo = CMapContentParser.toHex(glyph.getCode());
+            stream.writeString(fromTo);
+            stream.writeString(fromTo);
+            stream.writeByte('<');
+            for (char ch : glyph.getChars()) {
+                stream.writeString(toHex4(ch));
+            }
+            stream.writeByte('>');
+            stream.writeByte('\n');
+        }
+        stream.writeString("endbfrange\n");
+        range.clear();
+        return 1;
+    }
+
+    private static String toHex4(char ch) {
+        String s = "0000" + Integer.toHexString(ch);
+        return s.substring(s.length() - 4);
     }
 
     static CMapToUnicode parseUniversalToUnicodeCMap(String ordering) {
@@ -134,32 +266,6 @@ public class FontUtil {
         for (int i = 0; i < widthsArray.size() && first + i < 256; i++) {
             PdfNumber number = widthsArray.getAsNumber(i);
             res[first + i] = number != null ? number.intValue() : missingWidth;
-        }
-        return res;
-    }
-
-    static IntHashtable convertCompositeWidthsArray(PdfArray widthsArray) {
-        IntHashtable res = new IntHashtable();
-        if (widthsArray == null) {
-            return res;
-        }
-
-        for (int k = 0; k < widthsArray.size(); ++k) {
-            int c1 = widthsArray.getAsNumber(k).intValue();
-            PdfObject obj = widthsArray.get(++k);
-            if (obj.isArray()) {
-                PdfArray subWidths = (PdfArray)obj;
-                for (int j = 0; j < subWidths.size(); ++j) {
-                    int c2 = subWidths.getAsNumber(j).intValue();
-                    res.put(c1++, c2);
-                }
-            } else {
-                int c2 = ((PdfNumber)obj).intValue();
-                int w = widthsArray.getAsNumber(++k).intValue();
-                for (; c1 <= c2; ++c1) {
-                    res.put(c1, w);
-                }
-            }
         }
         return res;
     }

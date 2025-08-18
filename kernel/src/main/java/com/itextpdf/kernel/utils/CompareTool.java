@@ -1478,7 +1478,10 @@ public class CompareTool {
                 PdfObject cmpObj = cmpDict.get(key);
                 if (cmpObj != null && cmpObj.isName() && cmpObj.toString().indexOf('+') > 0) {
                     PdfObject outObj = outDict.get(key);
-                    if (!outObj.isName() || outObj.toString().indexOf('+') == -1) {
+                    if (outObj == null) {
+                        compareResult.addError(currentPath, MessageFormatUtil.format("PdfDictionary {0} entry: Expected: {1}. Found: {2}", key.toString(), cmpObj.toString(), "null"));
+                        dictsAreSame = false;
+                    } else if (!outObj.isName() || outObj.toString().indexOf('+') == -1) {
                         if (compareResult != null && currentPath != null)
                             compareResult.addError(currentPath, MessageFormatUtil.format("PdfDictionary {0} entry: Expected: {1}. Found: {2}", key.toString(), cmpObj.toString(), outObj.toString()));
                         dictsAreSame = false;

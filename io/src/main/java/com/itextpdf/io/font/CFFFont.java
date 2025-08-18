@@ -29,6 +29,9 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.util.LinkedList;
 
+/**
+ * Class containing base Compact Font Format functionality
+ */
 public class CFFFont {
 
     static final String[] operatorNames = {
@@ -124,7 +127,13 @@ public class CFFFont {
             "Bold", "Book", "Light", "Medium", "Regular", "Roman", "Semibold"
     };
 
-    //private String[] strings;
+    /**
+     * Gets string from INDEX structure which corresponds to provided SID.
+     *
+     * @param sid 2-byte string identifier
+     *
+     * @return string value
+     */
     public String getString(char sid) {
         if (sid < standardStrings.length) return standardStrings[sid];
         if (sid >= standardStrings.length+stringOffsets.length-1) return null;
@@ -316,9 +325,9 @@ public class CFFFont {
         }
     }
 
-    /** List items for the linked list that builds the new CID font.
+    /**
+     * List items for the linked list that builds the new CID font.
      */
-
     protected static abstract class Item {
         protected int myOffset = -1;
 
@@ -344,6 +353,9 @@ public class CFFFont {
         public void xref() {}
     }
 
+    /**
+     * An offset item, representing a data object.
+     */
     protected static abstract class OffsetItem extends Item {
         private int offset;
 
@@ -357,8 +369,8 @@ public class CFFFont {
         }
 
         /**
-         * Set the value of an offset item that was initially unknown.
-         * It will be fixed up latex by a call to xref on some marker.
+         * Sets the value of an offset item that was initially unknown.
+         * It will be fixed up later by a call to xref on some marker.
          *
          * @param offset offset to set
          */
@@ -366,23 +378,33 @@ public class CFFFont {
     }
 
 
-    /** A range item.
+    /**
+     * A range item.
      */
-
     protected static final class RangeItem extends Item {
         private final int offset;
         private final int length;
         private final RandomAccessFileOrArray buf;
+
+        /**
+         * Creates a new range item represented by offset and length
+         *
+         * @param buf buffer containing font data
+         * @param offset an offset relative to start of the CFF data
+         * @param length length of the data
+         */
         public RangeItem(RandomAccessFileOrArray buf, int offset, int length) {
             this.offset = offset;
             this.length = length;
             this.buf = buf;
         }
+
         @Override
         public void increment(int[] currentOffset) {
             super.increment(currentOffset);
             currentOffset[0] += length;
         }
+
         @Override
         public void emit(byte[] buffer) {
             //System.err.println("range emit offset "+offset+" size="+length);
@@ -397,7 +419,8 @@ public class CFFFont {
         }
     }
 
-    /** An index-offset item for the list.
+    /**
+     * An index-offset item for the list.
      * The size denotes the required size in the CFF. A positive
      * value means that we need a specific size in bytes (for offset arrays)
      * and a negative value means that this is a dict item that uses a
@@ -405,7 +428,20 @@ public class CFFFont {
      */
     protected static final class IndexOffsetItem extends OffsetItem {
         private final int size;
+
+        /**
+         * Creates a new index-offset item
+         *
+         * @param size required size in the CFF
+         * @param value offset value
+         */
         public IndexOffsetItem(int size, int value) {this.size=size; this.setOffset(value);}
+
+        /**
+         * Creates a new index-offset item
+         *
+         * @param size required size in the CFF
+         */
         public IndexOffsetItem(int size) {this.size=size; }
 
         @Override
@@ -413,6 +449,7 @@ public class CFFFont {
             super.increment(currentOffset);
             currentOffset[0] += size;
         }
+
         @Override
         public void emit(byte[] buffer) {
             if (size >= 1 && size <= 4) {
@@ -456,11 +493,16 @@ public class CFFFont {
     }
 
 
-    /** an unknown offset in a dictionary for the list.
+    /**
+     * An unknown offset in a dictionary for the list.
      * We will fix up the offset later; for now, assume it's large.
      */
     protected static final class DictOffsetItem extends OffsetItem {
         public final int size;
+
+        /**
+         * Creates a new unknown offset item
+         */
         public DictOffsetItem() {this.size=5; }
 
         @Override
@@ -468,6 +510,7 @@ public class CFFFont {
             super.increment(currentOffset);
             currentOffset[0] += size;
         }
+
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
@@ -481,11 +524,17 @@ public class CFFFont {
         }
     }
 
-    /** Card24 item.
+    /**
+     * Card24 item.
      */
-
     protected static final class UInt24Item extends Item {
         private final int value;
+
+        /**
+         * Creates a new Card24 item.
+         *
+         * @param value 0 - 2097151 unsigned number
+         */
         public UInt24Item(int value) {this.value=value;}
 
         @Override
@@ -493,6 +542,7 @@ public class CFFFont {
             super.increment(currentOffset);
             currentOffset[0] += 3;
         }
+
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
@@ -502,9 +552,8 @@ public class CFFFont {
         }
     }
 
-    /** Card32 item.
+    /** A Card32 item.
      */
-
     protected static final class UInt32Item extends Item {
         private final int value;
         public UInt32Item(int value) {this.value=value;}
@@ -514,6 +563,7 @@ public class CFFFont {
             super.increment(currentOffset);
             currentOffset[0] += 4;
         }
+
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
@@ -524,11 +574,18 @@ public class CFFFont {
         }
     }
 
-    /** A SID or Card16 item.
+    /**
+     * A SID or Card16 item.
      */
 
     protected static final class UInt16Item extends Item {
         private final char value;
+
+        /**
+         * Creates a new Card16 item
+         *
+         * @param value 0 - 65535 unsigned number
+         */
         public UInt16Item(char value) {this.value = value;}
 
         @Override
@@ -536,6 +593,7 @@ public class CFFFont {
             super.increment(currentOffset);
             currentOffset[0] += 2;
         }
+
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
@@ -547,11 +605,17 @@ public class CFFFont {
         }
     }
 
-    /** A Card8 item.
+    /**
+     * A Card8 item.
      */
-
     protected static final class UInt8Item extends Item {
         private final char value;
+
+        /**
+         * Creates a new card8 item
+         *
+         * @param value 0 - 255 unsigned number
+         */
         public UInt8Item(char value) {this.value=value;}
 
         @Override
@@ -559,6 +623,7 @@ public class CFFFont {
             super.increment(currentOffset);
             currentOffset[0] += 1;
         }
+
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
@@ -567,8 +632,17 @@ public class CFFFont {
         }
     }
 
+    /**
+     * A String item
+     */
     protected static final class StringItem extends Item {
         private final String s;
+
+        /**
+         * Creates a new string item.
+         *
+         * @param s string to be represented
+         */
         public StringItem(String s) {this.s=s;}
 
         @Override
@@ -576,6 +650,7 @@ public class CFFFont {
             super.increment(currentOffset);
             currentOffset[0] += s.length();
         }
+
         @Override
         public void emit(byte[] buffer) {
             for (int i=0; i<s.length(); i++)
@@ -584,11 +659,11 @@ public class CFFFont {
     }
 
 
-    /** A dictionary number on the list.
+    /**
+     * A dictionary number on the list.
      * This implementation is inefficient: it doesn't use the variable-length
      * representation.
      */
-
     protected static final class DictNumberItem extends Item {
         private final int value;
         private int size = 5;
@@ -617,6 +692,7 @@ public class CFFFont {
             super.increment(currentOffset);
             currentOffset[0] += size;
         }
+
         // this is incomplete!
         @Override
         public void emit(byte[] buffer) {
@@ -630,10 +706,10 @@ public class CFFFont {
         }
     }
 
-    /** An offset-marker item for the list.
+    /**
+     * An offset-marker item for the list.
      * It is used to mark an offset and to set the offset list item.
      */
-
     protected static final class MarkerItem extends Item {
         OffsetItem p;
         public MarkerItem(OffsetItem pointerToMarker) {p=pointerToMarker;}
@@ -643,12 +719,12 @@ public class CFFFont {
         }
     }
 
-    /** a utility that creates a range item for an entire index
+    /**
+     * A utility that creates a range item for an entire index
      *
      * @param indexOffset where the index is
      * @return a range item representing the entire index
      */
-
     protected RangeItem getEntireIndexRange(int indexOffset) {
         seek(indexOffset);
         int count = getCard16();
@@ -664,7 +740,8 @@ public class CFFFont {
     }
 
 
-    /** get a single CID font. The PDF architecture (1.4)
+    /**
+     * Gets a single CID font. The PDF architecture (1.4)
      * supports 16-bit strings only with CID CFF fonts, not
      * in Type-1 CFF fonts, so we convert the font to CID if
      * it is in the Type-1 format.
@@ -674,6 +751,7 @@ public class CFFFont {
      * description.
      *
      * @param fontName name of the font
+     *
      * @return byte array represents the CID font
      */
     public byte[] getCID(String fontName)
@@ -953,10 +1031,22 @@ public class CFFFont {
         return b;
     }
 
+    /**
+     * Determines whether the first font in FontSet is CID font.
+     *
+     * @return {@code true} if font is CID, {@code false} otherwise
+     */
     public boolean isCID() {
         return isCID(getNames()[0]);
     }
 
+    /**
+     * Determines whether specified font is CID font.
+     *
+     * @param fontName font name to check in fonts table
+     *
+     * @return {@code true} if specified font is CID, {@code false} otherwise
+     */
     public boolean isCID(String fontName) {
         int j;
         for (j=0; j<fonts.length; j++)
@@ -964,6 +1054,13 @@ public class CFFFont {
         return false;
     }
 
+    /**
+     * Checks for font existence in FontSet.
+     *
+     * @param fontName font name to search for
+     *
+     * @return {@code true} if font exists in FontSet, {@code false} otherwise
+     */
     public boolean exists(String fontName) {
         int j;
         for (j=0; j<fonts.length; j++)
@@ -971,13 +1068,18 @@ public class CFFFont {
         return false;
     }
 
-
+    /**
+     * Gets all font names from FontSet table.
+     *
+     * @return font names contained by this CFF font
+     */
     public String[] getNames() {
         String[] names = new String[ fonts.length ];
         for (int i=0; i<fonts.length; i++)
             names[i] = fonts[i].getName();
         return names;
     }
+
     /**
      * A random Access File or an array
      */
@@ -993,6 +1095,9 @@ public class CFFFont {
     protected int[] stringOffsets;
     protected int[] gsubrOffsets;
 
+    /**
+     * Represents font contained by the CFF font in a FontSet.
+     */
     protected final class Font {
         private String    name;
         private String    fullName;
@@ -1071,7 +1176,7 @@ public class CFFFont {
         /**
          * Retrieves whether the font is a CID font.
          *
-         * @return true if font is CID font, false otherwise
+         * @return {@code true} if font is CID font, {@code false} otherwise
          */
         public boolean isCID() {
             return isCID;
@@ -1080,7 +1185,7 @@ public class CFFFont {
         /**
          * Sets if font is CID font.
          *
-         * @param CID true if font is CID font, false otherwise
+         * @param CID {@code true} if font is CID font, {@code false} otherwise
          */
         public void setCID(boolean CID) {
             isCID = CID;
@@ -1197,7 +1302,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary array offset of the object.
          *
-         * @return FD array offset
+         * @return font dictionary array offset
          */
         public int getFdarrayOffset() {
             return fdarrayOffset;
@@ -1206,7 +1311,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary array offset of the object.
          *
-         * @param fdarrayOffset FD array offset
+         * @param fdarrayOffset font dictionary array offset
          */
         public void setFdarrayOffset(int fdarrayOffset) {
             this.fdarrayOffset = fdarrayOffset;
@@ -1215,7 +1320,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary select offset of the object.
          *
-         * @return FD select offset
+         * @return font dictionary select offset
          */
         public int getFdselectOffset() {
             return fdselectOffset;
@@ -1224,7 +1329,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary select offset of the object.
          *
-         * @param fdselectOffset FD select offset
+         * @param fdselectOffset font dictionary select offset
          */
         public void setFdselectOffset(int fdselectOffset) {
             this.fdselectOffset = fdselectOffset;
@@ -1233,7 +1338,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary private offsets of the object.
          *
-         * @return FD private offsets
+         * @return font dictionary private offsets
          */
         public int[] getFdprivateOffsets() {
             return fdprivateOffsets;
@@ -1242,7 +1347,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary private offsets of the object.
          *
-         * @param fdprivateOffsets FD private offsets
+         * @param fdprivateOffsets font dictionary private offsets
          */
         public void setFdprivateOffsets(int[] fdprivateOffsets) {
             this.fdprivateOffsets = fdprivateOffsets;
@@ -1251,7 +1356,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary private lengths of the object.
          *
-         * @return FD private lengths
+         * @return font dictionary private lengths
          */
         public int[] getFdprivateLengths() {
             return fdprivateLengths;
@@ -1260,7 +1365,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary private lengths of the object.
          *
-         * @param fdprivateLengths FD private lengths
+         * @param fdprivateLengths font dictionary private lengths
          */
         public void setFdprivateLengths(int[] fdprivateLengths) {
             this.fdprivateLengths = fdprivateLengths;
@@ -1269,7 +1374,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary private subrs of the object.
          *
-         * @return FD private subrs
+         * @return font dictionary private subrs
          */
         public int[] getFdprivateSubrs() {
             return fdprivateSubrs;
@@ -1278,14 +1383,14 @@ public class CFFFont {
         /**
          * Sets the font dictionary private subrs of the object.
          *
-         * @param fdprivateSubrs FD private subrs
+         * @param fdprivateSubrs font dictionary private subrs
          */
         public void setFdprivateSubrs(int[] fdprivateSubrs) {
             this.fdprivateSubrs = fdprivateSubrs;
         }
 
         /**
-         * Retrieves the number of glyphs of the font.
+         * Retrieves the number of glyphs in the font.
          *
          * @return number of glyphs
          */
@@ -1294,7 +1399,7 @@ public class CFFFont {
         }
 
         /**
-         * Sets the number of glyphs of the font.
+         * Sets the number of glyphs in the font.
          *
          * @param nglyphs number of glyphs
          */
@@ -1386,7 +1491,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary select of the object.
          *
-         * @param FDSelect FD select
+         * @param FDSelect font dictionary select
          */
         public void setFDSelect(int[] FDSelect) {
             this.FDSelect = FDSelect;
@@ -1395,7 +1500,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary select length of the object.
          *
-         * @return FD select length
+         * @return font dictionary select length
          */
         public int getFDSelectLength() {
             return FDSelectLength;
@@ -1404,7 +1509,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary select length of the object.
          *
-         * @param FDSelectLength FD select length
+         * @param FDSelectLength font dictionary select length
          */
         public void setFDSelectLength(int FDSelectLength) {
             this.FDSelectLength = FDSelectLength;
@@ -1413,7 +1518,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary select format of the object.
          *
-         * @return FD select format
+         * @return font dictionary select format
          */
         public int getFDSelectFormat() {
             return FDSelectFormat;
@@ -1422,7 +1527,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary select format of the object.
          *
-         * @param FDSelectFormat FD select format
+         * @param FDSelectFormat font dictionary select format
          */
         public void setFDSelectFormat(int FDSelectFormat) {
             this.FDSelectFormat = FDSelectFormat;
@@ -1449,7 +1554,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary array count of the object.
          *
-         * @return FD array count
+         * @return font dictionary array count
          */
         public int getFDArrayCount() {
             return FDArrayCount;
@@ -1458,7 +1563,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary array count of the object.
          *
-         * @param FDArrayCount FD array count
+         * @param FDArrayCount font dictionary array count
          */
         public void setFDArrayCount(int FDArrayCount) {
             this.FDArrayCount = FDArrayCount;
@@ -1467,7 +1572,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary array offsize of the object.
          *
-         * @return FD array offsize
+         * @return font dictionary array offsize
          */
         public int getFDArrayOffsize() {
             return FDArrayOffsize;
@@ -1476,7 +1581,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary array offsize of the object.
          *
-         * @param FDArrayOffsize FD array offsize
+         * @param FDArrayOffsize font dictionary array offsize
          */
         public void setFDArrayOffsize(int FDArrayOffsize) {
             this.FDArrayOffsize = FDArrayOffsize;
@@ -1485,7 +1590,7 @@ public class CFFFont {
         /**
          * Retrieves the font dictionary array offsets of the object.
          *
-         * @return FD array offsets
+         * @return font dictionary array offsets
          */
         public int[] getFDArrayOffsets() {
             return FDArrayOffsets;
@@ -1494,7 +1599,7 @@ public class CFFFont {
         /**
          * Sets the font dictionary array offsets of the object.
          *
-         * @param FDArrayOffsets FD array offsets
+         * @param FDArrayOffsets font dictionary array offsets
          */
         public void setFDArrayOffsets(int[] FDArrayOffsets) {
             this.FDArrayOffsets = FDArrayOffsets;
@@ -1510,7 +1615,7 @@ public class CFFFont {
         }
 
         /**
-         * Set the private subrs offset of the font
+         * Sets the private subrs offset of the font
          *
          * @param privateSubrsOffset private subrs offset
          */
@@ -1577,6 +1682,11 @@ public class CFFFont {
 
     RandomAccessSourceFactory rasFactory = new RandomAccessSourceFactory();
 
+    /**
+     * Creates a new CFF font instance from CFF font data.
+     *
+     * @param cff cff font binary data
+     */
     public CFFFont(byte[] cff) {
         //System.err.println("CFF: nStdString = "+standardStrings.length);
         buf = new RandomAccessFileOrArray(rasFactory.createSource(cff));

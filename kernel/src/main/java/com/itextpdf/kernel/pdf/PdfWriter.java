@@ -44,6 +44,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Writes the PDF to the specified output. Writing can be customized using {@link WriterProperties}.
+ */
 public class PdfWriter extends PdfOutputStream {
     private static final byte[] OBJ = ByteUtils.getIsoBytes(" obj\n");
     private static final byte[] ENDOBJ = ByteUtils.getIsoBytes("\nendobj\n");

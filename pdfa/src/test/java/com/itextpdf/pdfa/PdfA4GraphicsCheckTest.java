@@ -35,6 +35,7 @@ import com.itextpdf.kernel.colors.Separation;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -376,7 +377,6 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
     @Test
     public void colorCheckTest5() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "pdfA4_colorCheckTest5.pdf";
-        String cmpPdf = CMP_FOLDER + "cmp_pdfA4_colorCheckTest5.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
@@ -390,15 +390,16 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         canvas.setFillColor(ColorConstants.BLUE);
         canvas.setStrokeColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f));
-        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        PageSize defaultSize = doc.getDefaultPageSize();
+        canvas.moveTo(defaultSize.getLeft(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getTop());
         canvas.fill();
 
         canvas.setFillColor(DeviceGray.BLACK);
-        canvas.moveTo(doc.getDefaultPageSize().getLeft(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getBottom());
-        canvas.lineTo(doc.getDefaultPageSize().getRight(), doc.getDefaultPageSize().getTop());
+        canvas.moveTo(defaultSize.getLeft(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getBottom());
+        canvas.lineTo(defaultSize.getRight(), defaultSize.getTop());
         canvas.fill();
 
         // Here we use RGB and CMYK at the same time. And only page output intent is taken into account not both.

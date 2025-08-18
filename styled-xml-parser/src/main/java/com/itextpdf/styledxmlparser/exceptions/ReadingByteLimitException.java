@@ -26,6 +26,17 @@ import com.itextpdf.commons.exceptions.ITextException;
 
 /**
  * Thrown when the limit on the number of bytes read was violated.
+ *
+ * @deprecated In favor of {@link com.itextpdf.io.exceptions.ReadingByteLimitException}
  */
+@Deprecated
 public class ReadingByteLimitException extends ITextException {
+
+
+    /**
+     * Creates a new {@link ReadingByteLimitException} instance.
+     */
+    public ReadingByteLimitException() {
+        //Empty constructor
+    }
 }

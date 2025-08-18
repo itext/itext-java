@@ -60,6 +60,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
             ignore = true))
     public void noReaderStandardEncryptionAddFileAttachment() throws IOException, InterruptedException {
+        // Test result here is wrong. Note that createEncryptedDocument adds EncryptionConstants.EMBEDDED_FILES_ONLY.
         String outFileName = destinationFolder + "noReaderStandardEncryptionAddFileAttachment.pdf";
         String cmpFileName = sourceFolder + "cmp_noReaderStandardEncryptionAddFileAttachment.pdf";
 
@@ -78,6 +79,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
             ignore = true))
     public void noReaderAesEncryptionAddFileAttachment() throws IOException, InterruptedException {
+        // Test result here is wrong. Note that createEncryptedDocument adds EncryptionConstants.EMBEDDED_FILES_ONLY.
         String outFileName = destinationFolder + "noReaderAesEncryptionAddFileAttachment.pdf";
         String cmpFileName = sourceFolder + "cmp_noReaderAesEncryptionAddFileAttachment.pdf";
 
@@ -117,6 +119,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
             ignore = true))
     public void noReaderStandardEncryptionAddAnnotation() throws IOException, InterruptedException {
+        // Test result here is wrong. Note that createEncryptedDocument adds EncryptionConstants.EMBEDDED_FILES_ONLY.
         String outFileName = destinationFolder + "noReaderStandardEncryptionAddAnnotation.pdf";
         String cmpFileName = sourceFolder + "cmp_noReaderStandardEncryptionAddAnnotation.pdf";
 
@@ -156,6 +159,7 @@ public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT, 
             ignore = true))
     public void readerWithoutEncryptionWriterStandardEncryption() throws IOException, InterruptedException {
+        // Test result here is wrong. Note that createEncryptedDocument adds EncryptionConstants.EMBEDDED_FILES_ONLY.
         String outFileName = destinationFolder + "readerWithoutEncryptionWriterStandardEncryption.pdf";
         String cmpFileName = sourceFolder + "cmp_readerWithoutEncryptionWriterStandardEncryption.pdf";
 

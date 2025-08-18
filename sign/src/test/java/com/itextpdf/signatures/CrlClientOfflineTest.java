@@ -49,13 +49,12 @@ public class CrlClientOfflineTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/CrlClientOfflineTest/";
     private static final String CRL_DISTRIBUTION_POINT = "http://www.example.com/";
     
-    private static Collection<byte[]> listOfByteArrays;
-
     @Test
     public void checkUnknownPdfExceptionWhenCrlIsNull() {
+        Collection<byte[]> listOfByteArrays = null;
         Exception e = Assertions.assertThrows(PdfException.class,
-                () -> listOfByteArrays = new CrlClientOffline(
-                        BouncyCastleFactoryCreator.getFactory().createNullCrl()).getEncoded(null, ""));
+                () -> listOfByteArrays.addAll(new CrlClientOffline(
+                        BouncyCastleFactoryCreator.getFactory().createNullCrl()).getEncoded(null, "")));
         Assertions.assertEquals(KernelExceptionMessageConstant.UNKNOWN_PDF_EXCEPTION, e.getMessage());
     }
 
@@ -147,7 +146,7 @@ public class CrlClientOfflineTest extends ExtendedITextTest {
         X509Certificate checkCert =
                 (X509Certificate) PemFileHelper.readFirstChain(SOURCE_FOLDER + "crlDistPoint.pem")[0];
 
-        listOfByteArrays = crlClientOffline.getEncoded(checkCert, crlDistPoint);
+        Collection<byte[]> listOfByteArrays = crlClientOffline.getEncoded(checkCert, crlDistPoint);
 
         //These checks are enough, because there is exactly one element in the collection,
         //and these are the same test bytes 

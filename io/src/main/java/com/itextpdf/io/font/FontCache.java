@@ -22,14 +22,7 @@
  */
 package com.itextpdf.io.font;
 
-import com.itextpdf.io.font.cmap.CMapByteCid;
-import com.itextpdf.io.font.cmap.CMapCidToCodepoint;
-import com.itextpdf.io.font.cmap.CMapCidUni;
-import com.itextpdf.io.font.cmap.CMapCodepointToCid;
-import com.itextpdf.io.font.cmap.CMapUniCid;
-
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FontCache {

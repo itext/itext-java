@@ -408,12 +408,12 @@ public class PdfAcroFormTest extends ExtendedITextTest {
             acroForm.addField(firstField);
 
             Assertions.assertEquals(1, acroForm.getFields().size());
-            Assertions.assertEquals(1, acroForm.getField("root").getKids().size());
+            PdfArray kids = acroForm.getField("root").getKids();
+            Assertions.assertEquals(1, kids.size());
 
-            Assertions.assertTrue(PdfFormAnnotationUtil.isPureWidgetOrMergedField(
-                    (PdfDictionary) acroForm.getField("root").getKids().get(0)));
-            Assertions.assertFalse(PdfFormAnnotationUtil.isPureWidget(
-                    (PdfDictionary) acroForm.getField("root").getKids().get(0)));
+            PdfObject firstKid = kids.get(0);
+            Assertions.assertTrue(PdfFormAnnotationUtil.isPureWidgetOrMergedField((PdfDictionary) firstKid));
+            Assertions.assertFalse(PdfFormAnnotationUtil.isPureWidget((PdfDictionary) firstKid));
         }
     }
 

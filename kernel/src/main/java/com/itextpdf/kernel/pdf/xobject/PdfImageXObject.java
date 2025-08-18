@@ -68,7 +68,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfImageXObject extends PdfXObject {
 
-
     private float width;
     private float height;
     private boolean mask;
@@ -129,6 +128,7 @@ public class PdfImageXObject extends PdfXObject {
     public float getHeight() {
         return height;
     }
+
 
     /**
      * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
@@ -196,7 +196,10 @@ public class PdfImageXObject extends PdfXObject {
             ImageType imageType = identifyImageType();
             if (imageType == ImageType.TIFF || imageType == ImageType.PNG) {
                 try {
-                    bytes = new ImagePdfBytesInfo(this).decodeTiffAndPngBytes(bytes);
+                    bytes = new ImagePdfBytesInfo((int)width, (int)height,
+                            getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
+                            getPdfObject().get(PdfName.ColorSpace),
+                            getPdfObject().getAsArray(PdfName.Decode)).decodeTiffAndPngBytes(bytes);
                 } catch (IOException e) {
                     throw new RuntimeException("IO exception in PdfImageXObject", e);
                 }
@@ -235,9 +238,11 @@ public class PdfImageXObject extends PdfXObject {
                 return ImageType.JPEG2000;
             }
         }
-
         // None of the previous types match
-        ImagePdfBytesInfo imageInfo = new ImagePdfBytesInfo(this);
+        ImagePdfBytesInfo imageInfo = new ImagePdfBytesInfo((int)width, (int)height,
+                getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
+                getPdfObject().get(PdfName.ColorSpace),
+                getPdfObject().getAsArray(PdfName.Decode));
         if (imageInfo.getPngColorType() < 0) {
             return ImageType.TIFF;
         } else {

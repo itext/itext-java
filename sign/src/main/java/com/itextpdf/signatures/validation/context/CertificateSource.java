@@ -49,5 +49,9 @@ public enum CertificateSource {
     /**
      * The context while validating a timestamp issuer certificate.
      */
-    TIMESTAMP
+    TIMESTAMP,
+    /**
+     * A certificate, which is used to sign List of Trusted Lists.
+     */
+    LOTL_CERT
 }

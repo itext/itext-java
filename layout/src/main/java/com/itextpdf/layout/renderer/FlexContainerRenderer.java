@@ -535,7 +535,7 @@ public class FlexContainerRenderer extends DivRenderer {
                     // Get rid of vertical alignment for item with partial result. For column direction, justify-content
                     // is applied to the entire line, not the single item, so there is no point in getting rid of it
                     if (!FlexUtil.isColumnDirection(this)) {
-                        setAlignSelfIfNotStretch(childResult.getOverflowRenderer());
+                        startContentOnTopOfNewPage(childResult.getOverflowRenderer(), overflowRenderer);
                     }
                     overflowRenderer.addChildRenderer(childResult.getOverflowRenderer());
                 }
@@ -575,7 +575,7 @@ public class FlexContainerRenderer extends DivRenderer {
                 if (neighbourLayoutResult.getOverflowRenderer() != null) {
                     if (neighbourLayoutResult.getStatus() == LayoutResult.PARTIAL) {
                         // Get rid of cross alignment for item with partial result
-                        setAlignSelfIfNotStretch(neighbourLayoutResult.getOverflowRenderer());
+                        startContentOnTopOfNewPage(neighbourLayoutResult.getOverflowRenderer(), overflowRenderer);
                     }
                     overflowRenderer.addChildRenderer(neighbourLayoutResult.getOverflowRenderer());
                 } else {
@@ -600,16 +600,17 @@ public class FlexContainerRenderer extends DivRenderer {
         }
     }
 
-    private void setAlignSelfIfNotStretch(IRenderer overflowRenderer) {
+    private void startContentOnTopOfNewPage(IRenderer overflowChildRenderer, AbstractRenderer overflowRenderer) {
         AlignmentPropertyValue alignItems =
                 (AlignmentPropertyValue) this.<AlignmentPropertyValue>getProperty(
                         Property.ALIGN_ITEMS, AlignmentPropertyValue.STRETCH);
         AlignmentPropertyValue alignSelf =
-                (AlignmentPropertyValue) overflowRenderer.<AlignmentPropertyValue>getProperty(
+                (AlignmentPropertyValue) overflowChildRenderer.<AlignmentPropertyValue>getProperty(
                         Property.ALIGN_SELF, alignItems);
         if (alignSelf != AlignmentPropertyValue.STRETCH) {
-            overflowRenderer.setProperty(Property.ALIGN_SELF, AlignmentPropertyValue.START);
+            overflowChildRenderer.setProperty(Property.ALIGN_SELF, AlignmentPropertyValue.START);
         }
+        overflowRenderer.setProperty(Property.FLEX_FORCE_START_ON_TOP, true);
     }
 
     private void restoreHeightForOverflowRenderer(IRenderer childRenderer, IRenderer overflowRenderer) {
@@ -701,6 +702,10 @@ public class FlexContainerRenderer extends DivRenderer {
     private List<IRenderer> retrieveRenderersToOverflow(Rectangle flexContainerBBox) {
         List<IRenderer> renderersToOverflow = new ArrayList<>();
         Rectangle layoutContextRectangle = flexContainerBBox.clone();
+        UnitValue unitWidthValue =  (UnitValue) this.modelElement.<UnitValue>getProperty(Property.WIDTH);
+        if (unitWidthValue != null && unitWidthValue.getValue() < layoutContextRectangle.getWidth()){
+            layoutContextRectangle.setWidth(unitWidthValue.getValue());
+        }
         applyMarginsBordersPaddings(layoutContextRectangle, false);
         if (FlexUtil.isColumnDirection(this) &&
                 FlexUtil.getMainSize(this, layoutContextRectangle) >= layoutContextRectangle.getHeight()) {

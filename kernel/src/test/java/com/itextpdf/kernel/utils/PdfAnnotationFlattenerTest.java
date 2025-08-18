@@ -622,6 +622,23 @@ public class PdfAnnotationFlattenerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void flattenAnnotationWithRotationTest() throws IOException, InterruptedException {
+        String sourceFile = SOURCE_FOLDER + "rotatedStampAnnotation.pdf";
+        String resultFile = DESTINATION_FOLDER + "rotatedStampAnnotationTest.pdf";
+        try (PdfDocument document = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(resultFile))) {
+            PdfAnnotationFlattener flattener = new PdfAnnotationFlattener();
+            flattener.flatten(document);
+
+            Assertions.assertEquals(0, document.getFirstPage().getAnnotations().size());
+        }
+
+        Assertions.assertNull(
+                new CompareTool().compareByContent(resultFile,
+                        SOURCE_FOLDER + "cmp_rotatedStampAnnotation.pdf",
+                        DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
     public void flattenTrapNetAnnotationTest() throws IOException, InterruptedException {
         String sourceFile = SOURCE_FOLDER + "flattenTrapNetAnnotationTest.pdf";
         String resultFile = DESTINATION_FOLDER + "flattenTrapNetAnnotationTest.pdf";

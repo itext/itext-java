@@ -1177,8 +1177,9 @@ public class HtmlParserTest extends ExtendedITextTest {
         String html = "<p>test</p><div /><div>Two</div>";
         Parser parser = Parser.htmlParser().setTrackErrors(5);
         parser.parseInput(html, "");
-        Assertions.assertEquals(1, parser.getErrors().size());
-        Assertions.assertEquals("18: Tag cannot be self closing; not a void tag", parser.getErrors().get(0).toString());
+        ParseErrorList errorList = parser.getErrors();
+        Assertions.assertEquals(1, errorList.size());
+        Assertions.assertEquals("18: Tag cannot be self closing; not a void tag", errorList.get(0).toString());
 
         Assertions.assertFalse(Jsoup.isValid(html, Safelist.relaxed()));
         String clean = Jsoup.clean(html, Safelist.relaxed());

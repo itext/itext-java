@@ -54,7 +54,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -62,11 +61,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class PdfUAHeadingsTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAHeadingsTest/";
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUAHeadingsTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-
-    private UaValidationTestFramework framework;
-
+    
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -84,16 +80,12 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         }
     }
 
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-    }
-
     // -------- Negative tests --------
     @ParameterizedTest
     @MethodSource("data")
     public void addH2AsFirstHeaderTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h2 = new Paragraph("Header level 2");
@@ -115,7 +107,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void brokenHnParallelSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -145,7 +138,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void brokenHnInheritedSequenceTest1(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -173,7 +167,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void brokenHnMixedSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -206,7 +201,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void brokenHnMixedSequenceTest2(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -243,7 +239,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void fewHInOneNodeTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Div div = new Div();
@@ -274,7 +271,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void fewHInDocumentTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph header1 = new Paragraph("Header");
@@ -305,7 +303,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hAndHnInDocumentTest1(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph header1 = new Paragraph("Header");
@@ -336,7 +335,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hAndHnInDocumentTest2(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -367,7 +367,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hAndHnInDocumentTest3(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -398,7 +399,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void roleMappingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -438,7 +440,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void roleMappingTestValid(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -478,7 +481,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void directWritingToCanvasTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             TagTreePointer pointer = new TagTreePointer(pdfDoc);
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -500,7 +504,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hInDocumentTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph header1 = new Paragraph("Header");
@@ -521,7 +526,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hAndHnInDocumentTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -552,7 +558,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void incorrectHeadingLevelInUA2Test(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Div div = new Div();
@@ -585,7 +592,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @MethodSource("data")
     @LogMessages(messages = {@LogMessage(messageTemplate = PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED, ignore = true)})
     public void flushPreviousPageTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             Document doc = new Document(pdfDoc);
 
             String longHeader = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
@@ -645,7 +653,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hnInheritedSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -677,7 +686,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hnCompareWithLastFromAnotherBranchTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -723,7 +733,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hnCompareWithLastFromAnotherBranchTest2(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -769,7 +780,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hnInheritedSequenceTest2(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -806,7 +818,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hnParallelSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -839,7 +852,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void usualHTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             Document doc = new Document(pdfDoc);
 
             Paragraph header = new Paragraph("Header");
@@ -870,7 +884,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void usualHTest2(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph header = new Paragraph("Header");
@@ -909,7 +924,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hnMixedSequenceTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -947,7 +963,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hnMixedSequenceTest2(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -979,7 +996,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void hnMixedSequenceTest3(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph h1 = new Paragraph("Header level 1");
@@ -1015,7 +1033,8 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void nonSequentialHeadersTest(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Div div = new Div();

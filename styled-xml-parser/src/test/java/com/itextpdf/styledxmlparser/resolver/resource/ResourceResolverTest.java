@@ -23,6 +23,7 @@
 package com.itextpdf.styledxmlparser.resolver.resource;
 
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.exceptions.ReadingByteLimitException;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
@@ -265,7 +266,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, logLevel = LogLevelConstants.WARN))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, logLevel = LogLevelConstants.WARN))
     public void attemptToRetrieveBytesFromResourceStyleSheetWithFilterRetrieverTest() {
         String fileName = "retrieveStyleSheetTest.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);
@@ -385,7 +386,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, logLevel = LogLevelConstants.WARN))
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, logLevel = LogLevelConstants.WARN))
     public void attemptToRetrieveInputStreamWithFilterRetrieverTest() {
         String fileName = "retrieveStyleSheetTest.css";
         ResourceResolver resourceResolver = new ResourceResolver(baseUri);

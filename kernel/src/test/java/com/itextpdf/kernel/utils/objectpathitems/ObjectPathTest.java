@@ -38,125 +38,140 @@ import java.util.Stack;
 @Tag("IntegrationTest")
 public class ObjectPathTest extends ExtendedITextTest {
 
-    private PdfDocument testCmp;
-    private PdfDocument testOut;
-
-    @BeforeEach
-    public void setUpPdfDocuments() {
-        testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        testCmp.addNewPage();
-        testCmp.addNewPage();
-
-        testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        testOut.addNewPage();
-        testOut.addNewPage();
-    }
-
-    @AfterEach
-    public void closePdfDocuments() {
-        testCmp.close();
-        testOut.close();
+    private void init(PdfDocument pdfDocument) {
+        pdfDocument.addNewPage();
+        pdfDocument.addNewPage();
     }
 
     @Test
     public void getIndirectObjectsTest() {
-        PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
-        Stack<LocalPathItem> localPath = new Stack<>();
-        localPath.push(new ArrayPathItem(1));
-        Stack<IndirectPathItem> indirectPathItems = new Stack<>();
-        indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
+            PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
+            Stack<LocalPathItem> localPath = new Stack<>();
+            localPath.push(new ArrayPathItem(1));
+            Stack<IndirectPathItem> indirectPathItems = new Stack<>();
+            indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
 
-        ObjectPath objectPath = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
+            ObjectPath objectPath = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
-        Assertions.assertEquals(cmpIndirect, objectPath.getBaseCmpObject());
-        Assertions.assertEquals(outIndirect, objectPath.getBaseOutObject());
-        Assertions.assertEquals(localPath, objectPath.getLocalPath());
-        Assertions.assertEquals(indirectPathItems, objectPath.getIndirectPath());
+            Assertions.assertEquals(cmpIndirect, objectPath.getBaseCmpObject());
+            Assertions.assertEquals(outIndirect, objectPath.getBaseOutObject());
+            Assertions.assertEquals(localPath, objectPath.getLocalPath());
+            Assertions.assertEquals(indirectPathItems, objectPath.getIndirectPath());
+        }
     }
 
     @Test
     public void hashCodeWithoutNullParametersTest() {
-        PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
-        Stack<LocalPathItem> localPath = new Stack<>();
-        localPath.push(new ArrayPathItem(1));
-        Stack<IndirectPathItem> indirectPathItems = new Stack<>();
-        indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
+            PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
+            Stack<LocalPathItem> localPath = new Stack<>();
+            localPath.push(new ArrayPathItem(1));
+            Stack<IndirectPathItem> indirectPathItems = new Stack<>();
+            indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
 
-        ObjectPath objectPath1 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
-        ObjectPath objectPath2 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
+            ObjectPath objectPath1 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
+            ObjectPath objectPath2 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
-        Assertions.assertNotEquals(0, objectPath1.hashCode());
-        Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+            Assertions.assertNotEquals(0, objectPath1.hashCode());
+            Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        }
     }
 
     @Test
     public void hashCodeWithNullParametersTest() {
-        Stack<LocalPathItem> localPath = new Stack<>();
-        Stack<IndirectPathItem> indirectPathItems = new Stack<>();
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
+            Stack<LocalPathItem> localPath = new Stack<>();
+            Stack<IndirectPathItem> indirectPathItems = new Stack<>();
 
-        ObjectPath objectPath1 = new ObjectPath(null, null, localPath, indirectPathItems);
-        ObjectPath objectPath2 = new ObjectPath(null, null, localPath, indirectPathItems);
+            ObjectPath objectPath1 = new ObjectPath(null, null, localPath, indirectPathItems);
+            ObjectPath objectPath2 = new ObjectPath(null, null, localPath, indirectPathItems);
 
-        Assertions.assertEquals(0, objectPath1.hashCode());
-        Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+            Assertions.assertEquals(0, objectPath1.hashCode());
+            Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        }
     }
 
     @Test
     public void equalsAndHashCodeTest() {
-        PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
-        Stack<LocalPathItem> localPath = new Stack<>();
-        localPath.push(new ArrayPathItem(1));
-        localPath.push(new ArrayPathItem(2));
-        localPath.push(new ArrayPathItem(3));
-        Stack<IndirectPathItem> indirectPathItems = new Stack<>();
-        indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
+            PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
+            Stack<LocalPathItem> localPath = new Stack<>();
+            localPath.push(new ArrayPathItem(1));
+            localPath.push(new ArrayPathItem(2));
+            localPath.push(new ArrayPathItem(3));
+            Stack<IndirectPathItem> indirectPathItems = new Stack<>();
+            indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
 
-        ObjectPath objectPath1 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
-        ObjectPath objectPath2 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
+            ObjectPath objectPath1 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
+            ObjectPath objectPath2 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
-        boolean result = objectPath1.equals(objectPath2);
-        Assertions.assertTrue(result);
-        Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+            boolean result = objectPath1.equals(objectPath2);
+            Assertions.assertTrue(result);
+            Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        }
     }
 
     @Test
     public void notEqualsAndHashCodeTest() {
-        PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
-        Stack<LocalPathItem> localPath = new Stack<>();
-        localPath.push(new ArrayPathItem(1));
-        Stack<IndirectPathItem> indirectPathItems = new Stack<>();
-        indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
+            PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
+            Stack<LocalPathItem> localPath = new Stack<>();
+            localPath.push(new ArrayPathItem(1));
+            Stack<IndirectPathItem> indirectPathItems = new Stack<>();
+            indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
 
-        ObjectPath objectPath1 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
+            ObjectPath objectPath1 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
-        localPath = new Stack<>();
-        indirectPathItems = new Stack<>();
-        ObjectPath objectPath2 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
+            localPath = new Stack<>();
+            indirectPathItems = new Stack<>();
+            ObjectPath objectPath2 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
-        boolean result = objectPath1.equals(objectPath2);
-        Assertions.assertFalse(result);
-        Assertions.assertNotEquals(objectPath1.hashCode(), objectPath2.hashCode());
+            boolean result = objectPath1.equals(objectPath2);
+            Assertions.assertFalse(result);
+            Assertions.assertNotEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        }
     }
 
     @Test
     public void cloneConstructorTest() {
-        PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
-        PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
-        Stack<LocalPathItem> localPath = new Stack<>();
-        localPath.push(new ArrayPathItem(1));
-        Stack<IndirectPathItem> indirectPathItems = new Stack<>();
-        indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
+        try (PdfDocument testCmp = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocument testOut = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            init(testCmp);
+            init(testOut);
+            PdfIndirectReference cmpIndirect = testCmp.getFirstPage().getPdfObject().getIndirectReference();
+            PdfIndirectReference outIndirect = testOut.getFirstPage().getPdfObject().getIndirectReference();
+            Stack<LocalPathItem> localPath = new Stack<>();
+            localPath.push(new ArrayPathItem(1));
+            Stack<IndirectPathItem> indirectPathItems = new Stack<>();
+            indirectPathItems.push(new IndirectPathItem(cmpIndirect, outIndirect));
 
-        ObjectPath objectPath1 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
+            ObjectPath objectPath1 = new ObjectPath(cmpIndirect, outIndirect, localPath, indirectPathItems);
 
-        ObjectPath objectPath2 = new ObjectPath(objectPath1);
+            ObjectPath objectPath2 = new ObjectPath(objectPath1);
 
-        boolean result = objectPath1.equals(objectPath2);
-        Assertions.assertTrue(result);
-        Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+            boolean result = objectPath1.equals(objectPath2);
+            Assertions.assertTrue(result);
+            Assertions.assertEquals(objectPath1.hashCode(), objectPath2.hashCode());
+        }
     }
 }

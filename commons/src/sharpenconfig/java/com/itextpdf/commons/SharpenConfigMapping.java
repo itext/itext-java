@@ -35,6 +35,7 @@ import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
 
 public class SharpenConfigMapping implements MappingConfiguration {
+    private boolean useBCWrappersConfig = false;
     @Override
     public int getMappingPriority() {
         return 15;
@@ -47,6 +48,17 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
+        configurator.mapNamespace("com.itextpdf", "iText");
+        configurator.mapNamespace("licensekey", "License");
+        configurator.mapNamespace("property", "Properties");
+        configurator.mapNamespace("org.bouncycastle", "Org.BouncyCastle");
+        configurator.mapNamespace("xpath", "XPath");
+        configurator.mapMethod("org.junit.Assert.assertArrayEquals(double[],double[],double)", "iText.Test.TestUtil.AreEqual");
+        configurator.mapMethod("org.junit.Assert.assertArrayEquals(float[],float[],float)", "iText.Test.TestUtil.AreEqual");
+        configurator.mapMethod("org.junit.jupiter.api.Assertions.assertArrayEquals(double[],double[],double)", "iText.Test.TestUtil.AreEqual");
+        configurator.mapMethod("org.junit.jupiter.api.Assertions.assertArrayEquals(float[],float[],float)", "iText.Test.TestUtil.AreEqual");
+        mapStandardJavaToUtil(configurator);
+        mapBouncyCastle(configurator);
         configurator.mapMethod("java.text.Normalizer.normalize", "iText.Commons.Utils.StringUtil.Normalize");
         configurator.mapType("java.util.regex.Matcher", "iText.Commons.Utils.Matcher");
         configurator.mapMethod("java.util.regex.Pattern.compile", "iText.Commons.Utils.StringUtil.RegexCompile");
@@ -83,8 +95,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("java.io.PrintWriter", "iText.Commons.Utils.FormattingStreamWriter");
         configurator.mapMethod("java.nio.charset.Charset.forName", "iText.Commons.Utils.EncodingUtil.GetEncoding", false);
         configurator.mapField("java.nio.charset.StandardCharsets.ISO_8859_1", "iText.Commons.Utils.EncodingUtil.ISO_8859_1");
-        configurator.mapType("java.io.PushbackReader", "iText.Commons.Utils.PushbackReader");
-        configurator.mapType("java.io.FilterReader", "iText.Commons.Utils.FilterReader");
         configurator.mapMethod("java.lang.String.valueOf(char[])", "iText.Commons.Utils.JavaUtil.GetStringForChars", false);
         configurator.mapMethod("java.lang.String.valueOf(char[],int,int)", "iText.Commons.Utils.JavaUtil.GetStringForChars", false);
         configurator.mapMethod("java.lang.String.String(byte[])", "iText.Commons.Utils.JavaUtil.getStringForBytes", false);
@@ -138,7 +148,9 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("com.itextpdf.commons.utils.DateTimeUtil.addDaysToDate", "AddDays");
         configurator.mapMethod("com.itextpdf.commons.utils.DateTimeUtil.addYearsToDate", "AddYears");
         configurator.mapMethod("com.itextpdf.commons.utils.DateTimeUtil.getCurrentTimeDate", "GetCurrentUtcTime");
-        
+        configurator.mapMethod("java.time.LocalDateTime.of", "iText.Commons.Utils.DateTimeUtil.CreateDateTime");
+
+        configurator.mapMethod("java.nio.file.Files.newInputStream", "iText.Commons.Utils.FileUtil.GetInputStreamForFile");
 
         configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate", "iText.Commons.Bouncycastle.Asn1.X509.ITbsCertificateStructure");
         configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream", "iText.Commons.Bouncycastle.Asn1.IDerOutputStream");
@@ -248,7 +260,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams",
                 "iText.Commons.Bouncycastle.Asn1.Pkcs.IRsassaPssParameters");
 
-
         configurator.mapMethod("java.math.BigInteger.intValue", "GetIntValue");
         configurator.mapMethod("java.security.cert.X509Certificate.getIssuerX500Principal", "GetIssuerDN");
         configurator.mapMethod("java.security.cert.X509Certificate.getSubjectX500Principal", "GetSubjectDN");
@@ -291,6 +302,255 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
         configurator.removeMethod("java.security.Security.addProvider");
         configurator.mapStringLiteral("com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT", "Either itext7.bouncy-castle-adapter or itext7.bouncy-castle-fips-adapter dependency must be added in order to use BouncyCastleFactoryCreator");
+
+        configurator.mapMemberToInvocationsChain("org.bouncycastle.asn1.esf.SigPolicyQualifiers.SigPolicyQualifiers" + "(org.bouncycastle.asn1.esf.SigPolicyQualifierInfo[])", "", MemberKind.Method);
+        if (useBCWrappersConfig) {
+            BCWrappersConfigurationUtils.applyMappingConfiguration(configurator);
+        }
+    }
+
+    private void mapStandardJavaToUtil(MappingConfigurator configurator) {
+        configurator.mapType("java.lang.System", "iText");
+        configurator.mapMethod("java.lang.Class.getDeclaredField", "iText.GetDeclaredField");
+        configurator.mapMethod("java.lang.Class.getDeclaredMethod", "iText.GetDeclaredMethod");
+        configurator.mapMethod("java.lang.Class.getDeclaredMethods", "iText.GetDeclaredMethods");
+        configurator.mapMethod("java.lang.reflect.Array.getLength", "iText.GetArrayLength");
+        configurator.mapMethod("java.lang.reflect.Method.getParameterTypes", "iText.GetParameterTypes");
+        configurator.mapMethod("java.lang.reflect.Array.get", "iText.GetArrayValue");
+        configurator.mapMethod("java.lang.reflect.Array.set", "iText.SetArrayValue");
+        configurator.mapMethod("java.lang.Object.wait", "iText.wait");
+        configurator.mapMethod("java.lang.Object.notify", "iText.notify");
+        configurator.mapMethod("java.lang.Object.notifyAll", "iText.notifyAll");
+        configurator.mapMethod("java.lang.System.identityHashCode", "iText.IdentityHashCode");
+        configurator.mapMethod("java.lang.Throwable.printStackTrace", "iText.printStackTrace");
+        String[] streamImplementations = new String[]{"java.util.stream.Stream", "java.util.stream.IntStream", "java.util.stream.DoubleStream", "java.util.stream.LongStream"};
+        for (String name : streamImplementations) {
+            configurator.addCustomUsingForMethodInvocation(name + ".sorted", Collections.singletonList("iText.Commons.Utils.Collections"));
+        }
+
+
+
+        configurator.mapType("java.util.Timer", "System.Threading.Timer");
+        configurator.mapType("java.util.concurrent.Callable<>", "Func");
+        configurator.mapMethod("java.util.concurrent.Callable.call", "Invoke");
+    }
+
+    private void mapBouncyCastle(MappingConfigurator configurator) {
+        configurator.mapType("java.security.NoSuchAlgorithmException", "Org.BouncyCastle.Security.SecurityUtilityException");
+        configurator.mapType("java.security.NoSuchProviderException", "Org.BouncyCastle.Security.NoSuchProviderException");
+        configurator.mapType("java.security.SignatureException", "Org.BouncyCastle.Security.SignatureException");
+        configurator.mapType("java.security.InvalidKeyException", "Org.BouncyCastle.Security.InvalidKeyException");
+        configurator.mapType("java.security.cert.CertificateEncodingException", "Org.BouncyCastle.Security.Certificates.CertificateEncodingException");
+        configurator.mapType("java.security.cert.CertificateParsingException", "Org.BouncyCastle.Security.Certificates.CertificateParsingException");
+        configurator.mapType("java.math.BigInteger", "Org.BouncyCastle.Math.BigInteger");
+        configurator.mapType("java.security.PrivateKey", "Org.BouncyCastle.Crypto.ICipherParameters");
+        configurator.mapType("java.security.cert.Certificate", "Org.BouncyCastle.X509.X509Certificate");
+        configurator.mapType("java.security.cert.X509Certificate", "Org.BouncyCastle.X509.X509Certificate");
+        configurator.mapType("java.security.cert.CRL", "Org.BouncyCastle.X509.X509Crl");
+        configurator.mapType("java.security.cert.X509CRL", "Org.BouncyCastle.X509.X509Crl");
+        configurator.mapType("java.security.Signature", "Org.BouncyCastle.Crypto.ISigner");
+        configurator.mapType("java.security.PublicKey", "Org.BouncyCastle.Crypto.AsymmetricKeyParameter");
+        configurator.mapType("java.security.Key", "Org.BouncyCastle.Crypto.ICipherParameters");
+        configurator.mapType("java.security.KeyStore", "System.Collections.Generic.List<X509Certificate>");
+        configurator.mapType("java.security.GeneralSecurityException", "Org.BouncyCastle.Security.GeneralSecurityException");
+        configurator.mapType("java.security.InvalidAlgorithmParameterException", "System.Exception");
+        configurator.mapType("java.security.KeyPairGenerator", "Org.BouncyCastle.Crypto.Generators.RsaKeyPairGenerator");
+        configurator.mapType("java.security.KeyPair", "Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair");
+        configurator.mapType("java.security.cert.CertificateExpiredException", "Org.BouncyCastle.Security.Certificates.CertificateExpiredException");
+        configurator.mapType("java.security.cert.CertificateNotYetValidException", "Org.BouncyCastle.Security.Certificates.CertificateNotYetValidException");
+        configurator.mapType("java.security.cert.CertificateParsingException", "Org.BouncyCastle.Security.Certificates.CertificateParsingException");
+
+        configurator.mapType("org.bouncycastle.crypto.BlockCipher", "Org.BouncyCastle.Crypto.IBlockCipher");
+        configurator.mapType("org.bouncycastle.crypto.engines.AESFastEngine", "Org.BouncyCastle.Crypto.Engines.AesFastEngine");
+        configurator.mapType("org.bouncycastle.crypto.params.KeyParameter", "Org.BouncyCastle.Crypto.Parameters.KeyParameter");
+        configurator.mapType("org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher", "Org.BouncyCastle.Crypto.Paddings.PaddedBufferedBlockCipher");
+        configurator.mapType("org.bouncycastle.crypto.modes.CBCBlockCipher", "Org.BouncyCastle.Crypto.Modes.CbcBlockCipher");
+        configurator.mapType("org.bouncycastle.crypto.modes.GCMBlockCipher", "Org.BouncyCastle.Crypto.Modes.GcmBlockCipher");
+        configurator.mapType("org.bouncycastle.crypto.params.ParametersWithIV", "Org.BouncyCastle.Crypto.Parameters.ParametersWithIV");
+        configurator.mapType("org.bouncycastle.crypto.params.AEADParameters", "Org.BouncyCastle.Crypto.Parameters.AeadParameters");
+        configurator.mapType("org.bouncycastle.asn1.DEROctetString", "Org.BouncyCastle.Asn1.DerOctetString");
+        configurator.mapType("org.bouncycastle.asn1.ASN1Encoding", "Org.BouncyCastle.Asn1.Asn1Encodable");
+        configurator.mapType("org.bouncycastle.asn1.DERSet", "Org.BouncyCastle.Asn1.DerSet");
+        configurator.mapType("org.bouncycastle.asn1.ASN1Set", "Org.BouncyCastle.Asn1.Asn1Set");
+        configurator.mapType("org.bouncycastle.asn1.ASN1Primitive", "Org.BouncyCastle.Asn1.Asn1Object");
+        configurator.mapType("org.bouncycastle.asn1.ASN1Encodable", "Org.BouncyCastle.Asn1.Asn1Encodable");
+        configurator.mapType("org.bouncycastle.asn1.ASN1InputStream", "Org.BouncyCastle.Asn1.Asn1InputStream");
+        configurator.mapType("org.bouncycastle.asn1.x509.CRLReason", "Org.BouncyCastle.Asn1.X509.CrlReason");
+        configurator.mapType("org.bouncycastle.asn1.x509.KeyPurposeId", "Org.BouncyCastle.Asn1.X509.KeyPurposeID");
+        configurator.mapType("org.bouncycastle.asn1.x509.TBSCertificate", "Org.BouncyCastle.Asn1.X509.TbsCertificateStructure");
+        configurator.mapType("org.bouncycastle.asn1.x509.AlgorithmIdentifier", "Org.BouncyCastle.Asn1.X509.AlgorithmIdentifier");
+        configurator.mapType("org.bouncycastle.asn1.cms.ContentInfo", "Org.BouncyCastle.Asn1.Cms.ContentInfo");
+        configurator.mapType("org.bouncycastle.asn1.cms.IssuerAndSerialNumber", "Org.BouncyCastle.Asn1.Cms.IssuerAndSerialNumber");
+        configurator.mapType("org.bouncycastle.asn1.cms.RecipientIdentifier", "Org.BouncyCastle.Asn1.Cms.RecipientIdentifier");
+        configurator.mapType("org.bouncycastle.asn1.cms.KeyTransRecipientInfo", "Org.BouncyCastle.Asn1.Cms.KeyTransRecipientInfo");
+        configurator.mapType("org.bouncycastle.asn1.cms.RecipientInfo", "Org.BouncyCastle.Asn1.Cms.RecipientInfo");
+        configurator.mapType("org.bouncycastle.asn1.cms.EnvelopedData", "Org.BouncyCastle.Asn1.Cms.EnvelopedData");
+        configurator.mapType("org.bouncycastle.asn1.cms.EncryptedContentInfo", "Org.BouncyCastle.Asn1.Cms.EncryptedContentInfo");
+        configurator.mapType("org.bouncycastle.asn1.cmp.PKIFailureInfo", "Org.BouncyCastle.Asn1.Cmp.PkiFailureInfo");
+        configurator.mapType("org.bouncycastle.asn1.ASN1ObjectIdentifier", "Org.BouncyCastle.Asn1.DerObjectIdentifier");
+        configurator.mapType("org.bouncycastle.asn1.ASN1Sequence", "Org.BouncyCastle.Asn1.Asn1Sequence");
+        configurator.mapType("org.bouncycastle.asn1.ASN1String", "Org.BouncyCastle.Asn1.DerStringBase");
+        configurator.mapType("org.bouncycastle.asn1.ASN1TaggedObject", "Org.BouncyCastle.Asn1.Asn1TaggedObject");
+        configurator.mapType("org.bouncycastle.asn1.DEROctetString", "Org.BouncyCastle.Asn1.DerOctetString");
+        configurator.mapType("org.bouncycastle.asn1.ASN1EncodableVector", "Org.BouncyCastle.Asn1.Asn1EncodableVector");
+        configurator.mapType("org.bouncycastle.asn1.DERIA5String", "Org.BouncyCastle.Asn1.DerIA5String");
+        configurator.mapType("org.bouncycastle.asn1.ASN1OctetString", "Org.BouncyCastle.Asn1.Asn1OctetString");
+        configurator.mapType("org.bouncycastle.asn1.ASN1BitString", "Org.BouncyCastle.Asn1.DerBitString");
+        configurator.mapType("org.bouncycastle.asn1.ASN1GeneralizedTime", "Org.BouncyCastle.Asn1.DerGeneralizedTime");
+        configurator.mapType("org.bouncycastle.asn1.ASN1UTCTime", "Org.BouncyCastle.Asn1.DerUtcTime");
+        configurator.mapType("org.bouncycastle.asn1.ASN1Integer", "Org.BouncyCastle.Asn1.DerInteger");
+        configurator.mapType("org.bouncycastle.asn1.ASN1OutputStream", "Org.BouncyCastle.Asn1.Asn1OutputStream");
+        configurator.mapType("org.bouncycastle.asn1.DERNull", "Org.BouncyCastle.Asn1.DerNull");
+        configurator.mapType("org.bouncycastle.asn1.ASN1Enumerated", " Org.BouncyCastle.Asn1.DerEnumerated");
+        configurator.mapType("org.bouncycastle.asn1.DERTaggedObject", " Org.BouncyCastle.Asn1.DerTaggedObject");
+        configurator.mapType("org.bouncycastle.asn1.DERSequence", " Org.BouncyCastle.Asn1.DerSequence");
+        configurator.mapType("org.bouncycastle.asn1.x509.Extension", "Org.BouncyCastle.Asn1.X509.X509Extensions");
+        configurator.mapType("org.bouncycastle.asn1.x509.CRLDistPoint", "Org.BouncyCastle.Asn1.X509.CrlDistPoint");
+        configurator.mapType("org.bouncycastle.asn1.x509.DistributionPoint", "Org.BouncyCastle.Asn1.X509.DistributionPoint");
+        configurator.mapType("org.bouncycastle.asn1.x509.DistributionPointName", "Org.BouncyCastle.Asn1.X509.DistributionPointName");
+        configurator.mapType("org.bouncycastle.asn1.x509.GeneralNames", "Org.BouncyCastle.Asn1.X509.GeneralNames");
+        configurator.mapType("org.bouncycastle.asn1.x509.GeneralName", "Org.BouncyCastle.Asn1.X509.GeneralName");
+        configurator.mapType("org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers", "Org.BouncyCastle.Asn1.Ocsp.OcspObjectIdentifiers");
+        configurator.mapType("org.bouncycastle.asn1.ocsp.BasicOCSPResponse", "Org.BouncyCastle.Asn1.Ocsp.BasicOcspResponse");
+        configurator.mapType("org.bouncycastle.asn1.ocsp.BasicOCSPResponseBC", "Org.BouncyCastle.Asn1.Ocsp.BasicOcspResponseBC");
+        configurator.mapType("org.bouncycastle.asn1.ocsp.OCSPResponseBC", "Org.BouncyCastle.Asn1.Ocsp.OcspResponseBC");
+        configurator.mapType("org.bouncycastle.asn1.tsp.MessageImprint", "Org.BouncyCastle.Asn1.Tsp.MessageImprint");
+        configurator.mapType("org.bouncycastle.asn1.tsp.TSTInfo", "Org.BouncyCastle.Asn1.Tsp.TstInfo");
+        configurator.mapType("org.bouncycastle.tsp.TimeStampRequest", "Org.BouncyCastle.Tsp.TimeStampRequest");
+        configurator.mapType("org.bouncycastle.tsp.TimeStampRequestGenerator", "Org.BouncyCastle.Tsp.TimeStampRequestGenerator");
+        configurator.mapType("org.bouncycastle.tsp.TimeStampResponse", "Org.BouncyCastle.Tsp.TimeStampResponse");
+        configurator.mapType("org.bouncycastle.tsp.TimeStampToken", "Org.BouncyCastle.Tsp.TimeStampToken");
+        configurator.mapType("org.bouncycastle.tsp.TimeStampTokenInfo", "Org.BouncyCastle.Tsp.TimeStampTokenInfo");
+        configurator.mapType("org.bouncycastle.tsp.TSPException", "Org.BouncyCastle.Tsp.TspException");
+        configurator.mapType("org.bouncycastle.cert.CertIOException", "Org.BouncyCastle.Security.Certificates.CertificateEncodingException");
+        configurator.mapType("org.bouncycastle.cert.ocsp.OCSPResp", "Org.BouncyCastle.Ocsp.OcspResp");
+        configurator.mapType("org.bouncycastle.cert.ocsp.OCSPException", "Org.BouncyCastle.Ocsp.OcspException");
+        configurator.mapType("org.bouncycastle.cert.ocsp.RevokedStatus", "Org.BouncyCastle.Ocsp.RevokedStatus");
+        configurator.mapType("org.bouncycastle.cert.ocsp.UnknownStatus", "Org.BouncyCastle.Ocsp.UnknownStatus");
+        configurator.mapType("org.bouncycastle.ocsp.OCSPRespStatus", "Org.BouncyCastle.Ocsp.OcspRespStatus");
+        configurator.mapType("org.bouncycastle.ocsp.OCSPRespStatusBC", "Org.BouncyCastle.Ocsp.OcspRespStatusBC");
+        configurator.mapType("org.bouncycastle.ocsp.RevokedStatus", "Org.BouncyCastle.Ocsp.RevokedStatus");
+        configurator.mapType("org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers", "Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers");
+        configurator.mapType("org.bouncycastle.asn1.pkcs.RSASSAPSSparams", "Org.BouncyCastle.Asn1.Pkcs.RsassaPssParameters");
+        configurator.mapType("org.bouncycastle.asn1.ess.SigningCertificate", "Org.BouncyCastle.Asn1.Ess.SigningCertificate");
+        configurator.mapType("org.bouncycastle.asn1.ess.SigningCertificateV2", "Org.BouncyCastle.Asn1.Ess.SigningCertificateV2");
+        configurator.mapType("org.bouncycastle.asn1.ess.ESSCertIDv2", "Org.BouncyCastle.Asn1.Ess.EssCertIDv2");
+        configurator.mapType("org.bouncycastle.asn1.ess.ESSCertID", "Org.BouncyCastle.Asn1.Ess.EssCertID");
+        configurator.mapType("org.bouncycastle.jce.X509Principal", "Org.BouncyCastle.Asn1.X509.X509Name");
+        configurator.mapType("org.bouncycastle.asn1.DERObjectIdentifier", "Org.BouncyCastle.Asn1.DerObjectIdentifier");
+        configurator.mapType("org.bouncycastle.asn1.ocsp.OCSPResponseStatus", "Org.BouncyCastle.Asn1.Ocsp.OcspResponseStatus");
+        configurator.mapType("org.bouncycastle.asn1.ocsp.OCSPResponse", "Org.BouncyCastle.Asn1.Ocsp.OcspResponse");
+        configurator.mapType("org.bouncycastle.asn1.x500.X500Name", "Org.BouncyCastle.Asn1.X509.X509Name");
+        configurator.mapType("org.bouncycastle.cert.ocsp.OCSPRespBuilder", "Org.BouncyCastle.Ocsp.OCSPRespGenerator");
+        configurator.mapType("org.bouncycastle.cert.ocsp.RespID", "Org.BouncyCastle.Ocsp.RespID");
+        configurator.mapType("org.bouncycastle.operator.DigestCalculator", "Org.BouncyCastle.Crypto.IDigestFactory");
+        configurator.mapType("org.bouncycastle.jcajce.provider.digest.MD5.Digest", "Org.BouncyCastle.Crypto.Digests.MD5Digest");
+        configurator.mapType("org.bouncycastle.asn1.util.ASN1Dump", "Org.BouncyCastle.Asn1.Utilities.Asn1Dump");
+        configurator.mapType("org.bouncycastle.cms.CMSException", "Org.BouncyCastle.Cms.CmsException");
+        configurator.mapType("org.bouncycastle.cms.CMSEnvelopedData", "Org.BouncyCastle.Cms.CmsEnvelopedData");
+        configurator.mapType("org.bouncycastle.operator.ContentSigner", "Org.BouncyCastle.Crypto.Operators.Asn1SignatureFactory");
+        configurator.mapType("org.bouncycastle.asn1.cms.Attribute", "Org.BouncyCastle.Asn1.Cms.Attribute");
+        configurator.addFullName("Org.BouncyCastle.Asn1.Cms.Attribute");
+        configurator.addFullName("Org.BouncyCastle.Asn1.Cms.AttributeTable");
+        configurator.mapType("org.bouncycastle.asn1.cms.AttributeTable", "Org.BouncyCastle.Asn1.Cms.AttributeTable");
+        configurator.mapMethod("org.bouncycastle.asn1.ASN1Encodable.toASN1Primitive", "ToAsn1Object");
+        configurator.mapMethod("org.bouncycastle.asn1.ASN1OutputStream.close", "Dispose");
+        configurator.mapMethod("org.bouncycastle.asn1.ASN1Set.getObjects", "GetEnumerator");
+        configurator.mapMethod("org.bouncycastle.asn1.ASN1Sequence.getObjects", "GetEnumerator");
+        configurator.mapMethod("org.bouncycastle.asn1.ASN1GeneralizedTime.getDate", "ToDateTime");
+        configurator.mapMethod("org.bouncycastle.cert.ocsp.OCSPRespBuilder.build", "Generate");
+        configurator.mapProperty("org.bouncycastle.asn1.DERInteger.getValue", "Value");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1Integer.getValue", "Value");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1BitString.intValue", "IntValue");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1Enumerated.intValueExact", "IntValueExact");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1Enumerated.getValue", "Value");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1Set.size", "Count");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1Sequence.size", "Count");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1EncodableVector.size", "Count");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1Sequence.getValue", "Value");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1Sequence.getId", "Id");
+        configurator.mapProperty("org.bouncycastle.asn1.DERObjectIdentifier.getId", "Id");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1ObjectIdentifier.getId", "Id");
+        configurator.mapProperty("org.bouncycastle.asn1.DERBitString.intValue", "IntValue");
+        configurator.mapProperty("org.bouncycastle.asn1.ASN1TaggedObjectParser.getTagNo", "TagNo");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.DistributionPoint.getDistributionPoint", "DistributionPointName");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.DistributionPointName.getType", "PointType");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.GeneralName.getTagNo", "TagNo");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.DistributionPointName.getName", "Name");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.TBSCertificateStructure.getSubjectPublicKeyInfo", "SubjectPublicKeyInfo");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.TBSCertificate.getSubjectPublicKeyInfo", "SubjectPublicKeyInfo");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.SubjectPublicKeyInfo.getAlgorithm", "AlgorithmID");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.TBSCertificateStructure.getIssuer", "Issuer");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.TBSCertificateStructure.getSerialNumber", "SerialNumber");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.TBSCertificate.getIssuer", "Issuer");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.TBSCertificate.getSerialNumber", "SerialNumber");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.AlgorithmIdentifier.getAlgorithm", "Algorithm");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.AlgorithmIdentifier.getParameters", "Parameters");
+        configurator.mapProperty("org.bouncycastle.asn1.cms.Attribute.getAttrValues", "AttrValues");
+        configurator.mapProperty("org.bouncycastle.asn1.ess.ESSCertIDv2.getHashAlgorithm", "HashAlgorithm");
+        configurator.mapProperty("org.bouncycastle.asn1.tsp.TSTInfo.getMessageImprint", "MessageImprint");
+        configurator.mapProperty("org.bouncycastle.asn1.tsp.TSTInfo.getGenTime", "GenTime");
+        configurator.mapProperty("org.bouncycastle.asn1.tsp.MessageImprint.getHashAlgorithm", "HashAlgorithm");
+        configurator.mapProperty("org.bouncycastle.cert.ocsp.OCSPResp.getStatus", "Status");
+        configurator.mapProperty("org.bouncycastle.cert.ocsp.SingleResp.getNextUpdate", "NextUpdate");
+        configurator.mapProperty("org.bouncycastle.cert.ocsp.SingleResp.getThisUpdate", "ThisUpdate");
+        configurator.mapProperty("org.bouncycastle.cert.ocsp.BasicOCSPResp.getResponses", "Responses");
+        configurator.mapProperty("org.bouncycastle.cert.ocsp.BasicOCSPResp.getProducedAt", "ProducedAt");
+        configurator.mapProperty("org.bouncycastle.cert.ocsp.CertificateID.getSerialNumber", "SerialNumber");
+        configurator.mapProperty("org.bouncycastle.cert.ocsp.CertificateID.getHashAlgOID", "HashAlgOid");
+        configurator.mapProperty("org.bouncycastle.tsp.TimeStampResponse.getTimeStampToken", "TimeStampToken");
+        configurator.mapProperty("org.bouncycastle.tsp.TimeStampToken.getTimeStampInfo", "TimeStampInfo");
+        configurator.mapProperty("org.bouncycastle.tsp.TimeStampTokenInfo.getGenTime", "GenTime");
+        configurator.mapProperty("org.bouncycastle.tsp.TimeStampTokenInfo.toASN1Structure", "TstInfo");
+        configurator.mapProperty("org.bouncycastle.tsp.TimeStampTokenInfo.getHashAlgorithm", "HashAlgorithm");
+        configurator.mapIndexer("org.bouncycastle.asn1.ASN1Sequence.getObjectAt");
+        configurator.mapIndexer("org.bouncycastle.asn1.ASN1Set.getObjectAt");
+        configurator.mapIndexer("org.bouncycastle.asn1.cms.AttributeTable.get");
+        configurator.mapField("org.bouncycastle.asn1.DERNull.INSTANCE", "Org.BouncyCastle.Asn1.DerNull.Instance");
+        configurator.mapField("org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.data", "Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers.Data");
+        configurator.mapField("org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.envelopedData", "Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers.EnvelopedData");
+        configurator.mapField("org.bouncycastle.asn1.x509.Extension.cRLDistributionPoints", "X509Extensions.CrlDistributionPoints");
+        configurator.mapField("org.bouncycastle.asn1.x509.Extension.authorityInfoAccess", "X509Extensions.AuthorityInfoAccess");
+        configurator.mapField("org.bouncycastle.asn1.x509.Extension.basicConstraints", "X509Extensions.BasicConstraints");
+        configurator.mapField("org.bouncycastle.asn1.x509.Extension.keyUsage", "X509Extensions.KeyUsage");
+        configurator.mapField("org.bouncycastle.asn1.x509.Extension.extendedKeyUsage", "X509Extensions.ExtendedKeyUsage");
+        configurator.mapField("org.bouncycastle.asn1.x509.Extension.authorityKeyIdentifier", "X509Extensions.AuthorityKeyIdentifier");
+        configurator.mapField("org.bouncycastle.asn1.x509.Extension.subjectKeyIdentifier", "X509Extensions.SubjectKeyIdentifier");
+        configurator.mapField("org.bouncycastle.asn1.x509.DistributionPointName.FULL_NAME", "DistributionPointName.FullName");
+        configurator.mapField("org.bouncycastle.asn1.x509.GeneralName.uniformResourceIdentifier", "GeneralName.UniformResourceIdentifier");
+        configurator.mapField("org.bouncycastle.asn1.x509.KeyPurposeId.id_kp_OCSPSigning", "KeyPurposeID.IdKPOcspSigning");
+        configurator.mapField("org.bouncycastle.asn1.x509.KeyUsage.digitalSignature", "KeyUsage.DigitalSignature");
+        configurator.mapField("org.bouncycastle.asn1.x509.KeyUsage.nonRepudiation", "KeyUsage.NonRepudiation");
+        configurator.mapField("org.bouncycastle.ocsp.OCSPRespStatus.SUCCESSFUL", "Successful");
+        configurator.mapField("org.bouncycastle.cert.ocsp.CertificateStatus.GOOD", "Good");
+        configurator.mapField("org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers.id_pkix_ocsp_basic", "PkixOcspBasic");
+        configurator.mapField("org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers.id_pkix_ocsp_nocheck", "PkixOcspNocheck");
+        configurator.mapField("org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers.id_pkix_ocsp_nonce", "PkixOcspNonce");
+        configurator.mapField("org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers.id_pkix_ocsp_archive_cutoff", "PkixOcspArchiveCutoff");
+        configurator.mapField("org.bouncycastle.asn1.ASN1Encoding.DER", "Org.BouncyCastle.Asn1.Asn1Encodable.Der");
+        configurator.mapField("org.bouncycastle.asn1.ASN1Encoding.BER", "Org.BouncyCastle.Asn1.Asn1Encodable.Ber");
+        configurator.mapField("org.bouncycastle.cert.ocsp.CertificateID.HASH_SHA1", "Org.BouncyCastle.Ocsp.CertificateID.HashSha1");
+        configurator.mapField("org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.id_aa_signatureTimeStampToken", "Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers.IdAASignatureTimeStampToken");
+        configurator.mapField("org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.id_spq_ets_uri", "Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers.IdSpqEtsUri");
+        configurator.mapField("org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.id_aa_ets_sigPolicyId", "Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers.IdAAEtsSigPolicyID");
+        configurator.mapField("org.bouncycastle.cert.ocsp.OCSPRespBuilder.SUCCESSFUL", "Org.BouncyCastle.Asn1.Ocsp.OcspResponseStatus.Successful");
+        configurator.mapField("org.bouncycastle.asn1.ocsp.OCSPResponseStatus.SUCCESSFUL", "Org.BouncyCastle.Asn1.Ocsp.OcspResponseStatus.Successful");
+        configurator.mapField("org.bouncycastle.cert.ocsp.OCSPResp.SUCCESSFUL", "Org.BouncyCastle.Asn1.Ocsp.OcspResponseStatus.Successful");
+        configurator.mapField("org.bouncycastle.asn1.x509.CRLReason.keyCompromise", "Org.BouncyCastle.Asn1.X509.CrlReason.KeyCompromise");
+        configurator.mapField("org.bouncycastle.asn1.x509.CRLReason.removeFromCRL", "Org.BouncyCastle.Asn1.X509.CrlReason.RemoveFromCrl");
+        configurator.mapType("org.bouncycastle.cert.ocsp.OCSPReq", "Org.BouncyCastle.Ocsp.OcspReq");
+        configurator.mapType("org.bouncycastle.cert.ocsp.SingleResp", "Org.BouncyCastle.Ocsp.SingleResp");
+        configurator.mapType("org.bouncycastle.cert.ocsp.CertificateID", "Org.BouncyCastle.Ocsp.CertificateID");
+        configurator.mapType("org.bouncycastle.cert.ocsp.CertificateStatus", "Org.BouncyCastle.Ocsp.CertificateStatus");
+        configurator.mapType("org.bouncycastle.cert.ocsp.BasicOCSPResp", "Org.BouncyCastle.Ocsp.BasicOcspResp");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.DistributionPoint.getCRLIssuer", "CrlIssuer");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.DistributionPoint.getReasons", "Reasons");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.IssuingDistributionPoint.getDistributionPoint", "DistributionPoint");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.IssuingDistributionPoint.onlyContainsUserCerts", "OnlyContainsUserCerts");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.IssuingDistributionPoint.onlyContainsCACerts", "OnlyContainsCACerts");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.IssuingDistributionPoint.isIndirectCRL", "IsIndirectCrl");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.IssuingDistributionPoint.onlyContainsAttributeCerts", "OnlyContainsAttributeCerts");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.IssuingDistributionPoint.getOnlySomeReasons", "OnlySomeReasons");
     }
 
     @Override
@@ -300,12 +560,17 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
     @Override
     public void applyConfigModuleSettings(ModulesConfigurator configurator) {
+        useBCWrappersConfig = configurator.getModuleOption(UseBCWrappersModuleOption.getInstance());
+    }
 
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+        modulesConfigurator.setModuleOption(UseBCWrappersModuleOption.getInstance(), true);
     }
 
     @Override
     public Collection<ModuleOption> getAvailableModuleSettings() {
-        return Collections.EMPTY_SET;
+        return Collections.singletonList(UseBCWrappersModuleOption.getInstance());
     }
 
     @Override

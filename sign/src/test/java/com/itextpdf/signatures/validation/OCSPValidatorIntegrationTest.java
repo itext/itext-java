@@ -26,13 +26,10 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
-import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.DateTimeUtil;
-import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
-import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
@@ -54,7 +51,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
@@ -63,7 +59,6 @@ import java.util.Collections;
 import java.util.Date;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -78,11 +73,8 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
     private static X509Certificate checkCert;
     private static X509Certificate responderCert;
     private static PrivateKey ocspRespPrivateKey;
-    private IssuingCertificateRetriever certificateRetriever;
-    private SignatureValidationProperties parameters;
     private final ValidationContext baseContext = new ValidationContext(ValidatorContext.REVOCATION_DATA_VALIDATOR,
             CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
-    private ValidatorChainBuilder validatorChainBuilder;
 
     @BeforeAll
     public static void before()
@@ -100,19 +92,16 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         ocspRespPrivateKey = PemFileHelper.readFirstKey(ocspResponderCertFileName, PASSWORD);
     }
 
-    @BeforeEach
-    public void setUp() {
-        certificateRetriever = new IssuingCertificateRetriever();
-        parameters = new SignatureValidationProperties();
-        validatorChainBuilder = new ValidatorChainBuilder()
-                .withSignatureValidationProperties(parameters)
-                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever);
-    }
-
     @Test
     public void validateResponderOcspNoCheckTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
+                .withSignatureValidationProperties(parameters)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever);
+
         Date checkDate = TimeTestUtil.TEST_DATE_TIME;
-        ValidationReport report = validateTest(checkDate);
+        ValidationReport report = validateTest(checkDate, certificateRetriever, validatorChainBuilder, parameters);
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
@@ -132,7 +121,14 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
     @Test
     public void validateAuthorizedOCSPResponderWithOcspTest()
             throws AbstractOperatorCreationException, GeneralSecurityException, IOException, AbstractPKCSException {
-        ValidationReport report = verifyResponderWithOcsp(false);
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
+                .withSignatureValidationProperties(parameters)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever);
+
+        ValidationReport report = verifyResponderWithOcsp(false, certificateRetriever,
+                validatorChainBuilder, parameters);
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
@@ -153,11 +149,18 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
     @Test
     public void validateAuthorizedOCSPResponderWithOcspRevokedTest()
             throws AbstractOperatorCreationException, GeneralSecurityException, IOException, AbstractPKCSException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
+                .withSignatureValidationProperties(parameters)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever);
+
         String ocspResponderCertFileName = SOURCE_FOLDER + "ocspResponderCertForOcspTest.pem";
         X509Certificate responderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
         certificateRetriever.addKnownCertificates(Collections.singleton(responderCert));
 
-        ValidationReport report = verifyResponderWithOcsp(true);
+        ValidationReport report = verifyResponderWithOcsp(true, certificateRetriever, validatorChainBuilder,
+                parameters);
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(1)
@@ -172,7 +175,13 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void validateAuthorizedOCSPResponderFromTheTrustedStoreTest() throws GeneralSecurityException, IOException {
-        ValidationReport report = validateOcspWithoutCertsTest();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
+                .withSignatureValidationProperties(parameters)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever);
+
+        ValidationReport report = validateOcspWithoutCertsTest(certificateRetriever, validatorChainBuilder);
 
         Assertions.assertEquals(0, report.getFailures().size());
         Assertions.assertEquals(ValidationReport.ValidationResult.VALID, report.getValidationResult());
@@ -180,6 +189,12 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void trustedOcspResponderDoesNotHaveOcspSigningExtensionTest() throws GeneralSecurityException, IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
+                .withSignatureValidationProperties(parameters)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever);
+
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(caCert, caPrivateKey);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
         IBasicOCSPResp caBasicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
@@ -204,6 +219,12 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
             throws GeneralSecurityException, IOException {
         String ocspResponderCertFileName = SOURCE_FOLDER + "ocspResponderCertWithoutOcspSigning.pem";
         X509Certificate responderCert = (X509Certificate) PemFileHelper.readFirstChain(ocspResponderCertFileName)[0];
+
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
+                .withSignatureValidationProperties(parameters)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever);
 
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setThisUpdate(DateTimeUtil.getCalendar(DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 1)));
@@ -230,6 +251,12 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void ocspResponseWithoutHashAlgoParametersTest() throws IOException {
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties parameters = new SignatureValidationProperties();
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
+                .withSignatureValidationProperties(parameters)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever);
+
         TestOcspClient ocspClient = new TestOcspClient();
         IBasicOCSPResp caBasicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
                 FACTORY.createASN1Primitive(ocspClient.getEncoded(checkCert, caCert,
@@ -249,7 +276,9 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         );
     }
 
-    private ValidationReport validateTest(Date checkDate) throws CertificateException, IOException {
+    private ValidationReport validateTest(Date checkDate, IssuingCertificateRetriever certificateRetriever,
+            ValidatorChainBuilder validatorChainBuilder, SignatureValidationProperties parameters)
+            throws CertificateException, IOException {
         Date thisUpdate = DateTimeUtil.addDaysToDate(checkDate, 1);
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setThisUpdate(DateTimeUtil.getCalendar(thisUpdate));
@@ -267,7 +296,8 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         return report;
     }
 
-    private ValidationReport validateOcspWithoutCertsTest() throws IOException, CertificateException {
+    private ValidationReport validateOcspWithoutCertsTest(IssuingCertificateRetriever certificateRetriever,
+            ValidatorChainBuilder validatorChainBuilder) throws IOException, CertificateException {
         TestOcspResponseBuilder builder = new TestOcspResponseBuilder(responderCert, ocspRespPrivateKey);
         builder.setOcspCertsChain(new IX509CertificateHolder[0]);
         TestOcspClient ocspClient = new TestOcspClient().addBuilderForCertIssuer(caCert, builder);
@@ -283,7 +313,8 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
         return report;
     }
 
-    private ValidationReport verifyResponderWithOcsp(boolean revokedOcsp)
+    private ValidationReport verifyResponderWithOcsp(boolean revokedOcsp, IssuingCertificateRetriever certificateRetriever,
+            ValidatorChainBuilder validatorChainBuilder, SignatureValidationProperties parameters)
             throws IOException, CertificateException, AbstractOperatorCreationException, AbstractPKCSException {
         String rootCertFileName = SOURCE_FOLDER + "rootCertForOcspTest.pem";
         String checkCertFileName = SOURCE_FOLDER + "signCertForOcspTest.pem";

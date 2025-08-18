@@ -668,11 +668,14 @@ public class ElementTest extends ExtendedITextTest {
         Document doc = Jsoup.parse("<div><p>Hello</p><p>There</p></div>");
         Element p = doc.select("p").first();
         p.wrap("<div class='head'></div>");
-        Assertions.assertEquals("<div><div class=\"head\"><p>Hello</p></div><p>There</p></div>", TextUtil.stripNewlines(doc.body().html()));
+        Element docBody = doc.body();
+        Assertions.assertEquals("<div><div class=\"head\"><p>Hello</p></div><p>There</p></div>",
+                TextUtil.stripNewlines(docBody.html()));
 
         Element ret = (Element) p.wrap("<div><div class=foo></div><p>What?</p></div>");
-        Assertions.assertEquals("<div><div class=\"head\"><div><div class=\"foo\"><p>Hello</p></div><p>What?</p></div></div><p>There</p></div>",
-            TextUtil.stripNewlines(doc.body().html()));
+        Assertions.assertEquals("<div><div class=\"head\"><div><div class=\"foo\"><p>Hello</p></div>" +
+                        "<p>What?</p></div></div><p>There</p></div>",
+            TextUtil.stripNewlines(docBody.html()));
 
         Assertions.assertEquals(ret, p);
     }
@@ -834,11 +837,12 @@ public class ElementTest extends ExtendedITextTest {
 
         clone.append("<span>Three");
         Assertions.assertEquals("<p><span>Two</span><span>Three</span></p>", TextUtil.stripNewlines(clone.outerHtml()));
-        Assertions.assertEquals("<div><p>One</p><p><span>Two</span></p></div>", TextUtil.stripNewlines(doc.body().html())); // not modified
+        Element docBody = doc.body();
+        Assertions.assertEquals("<div><p>One</p><p><span>Two</span></p></div>", TextUtil.stripNewlines(docBody.html())); // not modified
 
-        doc.body().appendChild(clone); // adopt
+        docBody.appendChild(clone); // adopt
         Assertions.assertNotNull(clone.parent());
-        Assertions.assertEquals("<div><p>One</p><p><span>Two</span></p></div><p><span>Two</span><span>Three</span></p>", TextUtil.stripNewlines(doc.body().html()));
+        Assertions.assertEquals("<div><p>One</p><p><span>Two</span></p></div><p><span>Two</span><span>Three</span></p>", TextUtil.stripNewlines(docBody.html()));
     }
 
     @Test
@@ -1945,13 +1949,13 @@ public class ElementTest extends ExtendedITextTest {
     public void moveChildrenToOuter() {
         Document doc = Jsoup.parse("<div><p>One<p>Two<p>Three</div><div></div>");
         Elements divs = doc.select("div");
-        Element a = divs.get(0);
-        Element b = doc.body();
+        Element firstDiv = divs.get(0);
+        Element body = doc.body();
 
-        b.insertChildren(-1, a.childNodes());
+        body.insertChildren(-1, firstDiv.childNodes());
 
         Assertions.assertEquals("<div></div>\n<div></div>\n<p>One</p>\n<p>Two</p>\n<p>Three</p>",
-            doc.body().html());
+            body.html());
     }
 
     @Test

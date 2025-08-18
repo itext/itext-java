@@ -150,10 +150,23 @@ public class CFFFontSubset extends CFFFont {
         this(cff, Collections.<Integer>emptySet(), true);
     }
 
+    /**
+     * C'tor for CFFFontSubset
+     *
+     * @param cff font binary data
+     * @param GlyphsUsed glyphs used in the text after being converted to glyph number by the CMap
+     */
     public CFFFontSubset(byte[] cff, Set<Integer> GlyphsUsed) {
         this(cff, GlyphsUsed, false);
     }
 
+    /**
+     * C'tor for CFFFontSubset
+     *
+     * @param cff font binary data
+     * @param GlyphsUsed glyphs used in the text after being converted to glyph number by the CMap
+     * @param isCidParsingRequired if {@code true}, gid to cid array will be created
+     */
     CFFFontSubset(byte[] cff, Set<Integer> GlyphsUsed, boolean isCidParsingRequired) {
         // Use CFFFont c'tor in order to parse the font file.
         super(cff);

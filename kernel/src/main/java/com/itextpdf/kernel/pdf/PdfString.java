@@ -50,8 +50,6 @@ import java.nio.charset.StandardCharsets;
  * @see PdfObject
  */
 public class PdfString extends PdfPrimitiveObject {
-
-
     protected String value;
     protected String encoding;
     protected boolean hexWriting = false;

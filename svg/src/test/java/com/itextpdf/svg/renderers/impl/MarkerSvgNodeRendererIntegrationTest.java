@@ -70,11 +70,6 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void markerPathRefXAndRefYTest() throws IOException, InterruptedException {
-        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathAutoOrient");
-    }
-
-    @Test
     public void markerPathViewboxRightOrientTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathViewboxRightOrient");
     }

@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Objects;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Class representing CMap encoding in pdf document.
+ */
 public class CMapEncoding {
 
     private static final List<byte[]> IDENTITY_H_V_CODESPACE_RANGES = Arrays.asList(new byte[] {0, 0}, new byte[] {(byte)0xff, (byte)0xff});
@@ -52,8 +55,9 @@ public class CMapEncoding {
     private List<byte[]> codeSpaceRanges;
 
     /**
+     * Creates a new CMap encoding.
      *
-     * @param cmap CMap name.
+     * @param cmap CMap name
      */
     public CMapEncoding(String cmap) {
         this.cmap = cmap;
@@ -66,9 +70,10 @@ public class CMapEncoding {
     }
 
     /**
+     * Creates a new CMap encoding.
      *
-     * @param cmap CMap name.
-     * @param uniMap CMap to convert Unicode value to CID.
+     * @param cmap CMap name
+     * @param uniMap CMap to convert Unicode value to CID
      */
     public CMapEncoding(String cmap, String uniMap) {
         this.cmap = cmap;
@@ -83,6 +88,12 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Creates a new CMap encoding.
+     *
+     * @param cmap CMap name
+     * @param cmapBytes CMap binary data
+     */
     public CMapEncoding(String cmap, byte[] cmapBytes) {
         this.cmap = cmap;
         cid2Code = new CMapCidToCodepoint();
@@ -95,14 +106,29 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Checks if CMap is direct or indirect pdf object
+     *
+     * @return {@code true} if direct, {@code false} otherwise
+     */
     public boolean isDirect() {
         return isDirect;
     }
 
+    /**
+     * Checks if CMap to convert Unicode value to CID is present.
+     *
+     * @return {@code true} if present, {@code false} otherwise
+     */
     public boolean hasUniMap() {
         return uniMap != null && uniMap.length() > 0;
     }
 
+    /**
+     * Gets string identifying the issuer of the character collection.
+     *
+     * @return name of the issuer
+     */
     public String getRegistry() {
         if (isDirect()) {
             return "Adobe";
@@ -111,6 +137,11 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Gets string that uniquely names the character collection within the specified registry.
+     *
+     * @return character collection name
+     */
     public String getOrdering() {
         if (isDirect()) {
             return "Identity";
@@ -119,6 +150,11 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Gets the supplement number of the character collection
+     *
+     * @return supplement number
+     */
     public int getSupplement() {
         if (isDirect()) {
             return 0;
@@ -127,10 +163,20 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Gets CMap name which converts Unicode value to CID.
+     *
+     * @return CMap name
+     */
     public String getUniMapName() {
         return uniMap;
     }
 
+    /**
+     * Gets CMap name.
+     *
+     * @return CMap name
+     */
     public String getCmapName() {
         return cmap;
     }
@@ -139,12 +185,19 @@ public class CMapEncoding {
      * Checks whether the {@link CMapEncoding} was built with corresponding cmap name.
      *
      * @param cmap a CMAP
-     * @return true, if the CMapEncoding was built with the cmap. Otherwise false.
+     * @return {@code true}, if the CMapEncoding was built with the cmap, {@code false} otherwise.
      */
     public boolean isBuiltWith(String cmap) {
         return Objects.equals(cmap, this.cmap);
     }
 
+    /**
+     * Gets CMap bytes by CID.
+     *
+     * @param cid id of the CMap
+     *
+     * @return cmap as byte array
+     */
     public byte[] getCmapBytes(int cid) {
         int length = getCmapBytesLength(cid);
         byte[] result = new byte[length];

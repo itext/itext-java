@@ -62,6 +62,11 @@ import org.slf4j.LoggerFactory;
  */
 public class TableRenderer extends AbstractRenderer {
 
+    /**
+     * The Logger instance.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TableRenderer.class);
+
     protected List<CellRenderer[]> rows = new ArrayList<>();
     // Row range of the current renderer. For large tables it may contain only a few rows.
     protected Table.RowRange rowRange;
@@ -114,8 +119,7 @@ public class TableRenderer extends AbstractRenderer {
             Cell cell = (Cell) renderer.getModelElement();
             rows.get(cell.getRow() - rowRange.getStartRow() + cell.getRowspan() - 1)[cell.getCol()] = (CellRenderer) renderer;
         } else {
-            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error("Only CellRenderer could be added");
+            LOGGER.error("Only CellRenderer could be added");
         }
     }
 
@@ -918,8 +922,7 @@ public class TableRenderer extends AbstractRenderer {
                     if ((status == LayoutResult.NOTHING && Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)))
                             || wasHeightClipped) {
                         if (wasHeightClipped) {
-                            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                            logger.warn(IoLogMessageConstant.CLIP_ELEMENT);
+                            LOGGER.warn(IoLogMessageConstant.CLIP_ELEMENT);
                             // Process borders
                             if (status == LayoutResult.NOTHING) {
                                 bordersHandler.applyTopTableBorder(occupiedArea.getBBox(), layoutBox, 0 == childRenderers.size(), true, false);
@@ -967,8 +970,7 @@ public class TableRenderer extends AbstractRenderer {
                 lastInRow--;
             }
             if (lastInRow < 0 || lastRow.length != lastInRow + (int) lastRow[lastInRow].getPropertyAsInteger(Property.COLSPAN)) {
-                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.warn(IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
+                LOGGER.warn(IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
             }
         }
 
@@ -1329,29 +1331,38 @@ public class TableRenderer extends AbstractRenderer {
         if (isOriginalNonSplitRenderer) {
             initializeTableLayoutBorders();
         }
+
         float rightMaxBorder = bordersHandler.getRightBorderMaxWidth();
         float leftMaxBorder = bordersHandler.getLeftBorderMaxWidth();
-        TableWidths tableWidths = new TableWidths(this, MinMaxWidthUtils.getInfWidth(), true, rightMaxBorder, leftMaxBorder);
-        float maxColTotalWidth = 0;
-        float[] columns = isOriginalNonSplitRenderer ? tableWidths.layout() : countedColumnWidth;
-        for (float column : columns) {
-            maxColTotalWidth += column;
-        }
-        float minWidth = isOriginalNonSplitRenderer ? tableWidths.getMinWidth() : maxColTotalWidth;
         UnitValue marginRightUV = this.getPropertyAsUnitValue(Property.MARGIN_RIGHT);
         if (!marginRightUV.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_RIGHT));
         }
         UnitValue marginLefttUV = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
         if (!marginLefttUV.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_LEFT));
         }
-        float additionalWidth = marginLefttUV.getValue() + marginRightUV.getValue() + rightMaxBorder / 2 + leftMaxBorder / 2;
-        return new MinMaxWidth(minWidth, maxColTotalWidth, additionalWidth);
+        float additionalWidth =
+                marginLefttUV.getValue() + marginRightUV.getValue() + rightMaxBorder / 2 + leftMaxBorder / 2;
+
+        MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth);
+        if (!setMinMaxWidthBasedOnFixedWidth(minMaxWidth)) {
+            TableWidths tableWidths = new TableWidths(this, MinMaxWidthUtils.getInfWidth(), true, rightMaxBorder,
+                    leftMaxBorder);
+            float maxColTotalWidth = 0;
+            float[] columns = isOriginalNonSplitRenderer ? tableWidths.layout() : countedColumnWidth;
+            for (float column : columns) {
+                maxColTotalWidth += column;
+            }
+            float minWidth = isOriginalNonSplitRenderer ? tableWidths.getMinWidth() : maxColTotalWidth;
+
+            minMaxWidth.setChildrenMinWidth(minWidth);
+            minMaxWidth.setChildrenMaxWidth(maxColTotalWidth);
+        }
+
+        return minMaxWidth;
     }
 
     @Override
@@ -1414,8 +1425,7 @@ public class TableRenderer extends AbstractRenderer {
         if (hasProperty(Property.MARGIN_TOP)) {
             UnitValue topMargin = this.getPropertyAsUnitValue(Property.MARGIN_TOP);
             if (null != topMargin && !topMargin.isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                         Property.MARGIN_LEFT));
             }
             startY -= null == topMargin ? 0 : topMargin.getValue();
@@ -1423,8 +1433,7 @@ public class TableRenderer extends AbstractRenderer {
         if (hasProperty(Property.MARGIN_LEFT)) {
             UnitValue leftMargin = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
             if (null != leftMargin && !leftMargin.isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                         Property.MARGIN_LEFT));
             }
             startX += +(null == leftMargin ? 0 : leftMargin.getValue());
@@ -1710,8 +1719,7 @@ public class TableRenderer extends AbstractRenderer {
 
             // TODO Remove try-catch when DEVSIX-1655 is resolved.
             } catch (NullPointerException e) {
-                Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                         "Some of the cell's content might not end up placed correctly."));
             }
         }
@@ -1990,24 +1998,20 @@ public class TableRenderer extends AbstractRenderer {
     void applyMarginsAndPaddingsAndCalculateColumnWidths(Rectangle layoutBox) {
         UnitValue[] margins = getMargins();
         if (!margins[1].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_RIGHT));
         }
         if (!margins[3].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_LEFT));
         }
         UnitValue[] paddings = getPaddings();
         if (!paddings[1].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_RIGHT));
         }
         if (!paddings[3].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_LEFT));
         }
         calculateColumnWidths(layoutBox.getWidth()

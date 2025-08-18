@@ -25,10 +25,8 @@ package com.itextpdf.pdfua.checkers;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -37,18 +35,15 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,16 +53,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PdfUAFormulaTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAFormulaTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-    private UaValidationTestFramework framework;
-
+    
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-    }
-
-    @BeforeEach
-    public void initializeFramework() {
-        framework = new UaValidationTestFramework(DESTINATION_FOLDER);
     }
 
     public static List<PdfUAConformance> data() {
@@ -77,7 +66,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void layoutTest01(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -96,7 +86,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void layoutTest02(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -111,7 +102,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void layoutTest03(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -126,7 +118,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void layoutTest04(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -146,7 +139,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void layoutTest05(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -161,7 +155,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void layoutTest06(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("⫊").setFont(loadFont(FONT));
@@ -178,7 +173,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void layoutTest07(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("⫊").setFont(loadFont(FONT));
@@ -195,7 +191,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void layoutWithValidRole(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
@@ -221,7 +218,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void layoutWithValidRoleButNoAlternateDescription(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
@@ -251,7 +249,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void canvasTest01(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
@@ -274,7 +273,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void canvasTest02(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
@@ -294,7 +294,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
     @ParameterizedTest
     @MethodSource("data")
     public void canvasTest03(PdfUAConformance pdfUAConformance) throws IOException {
-        framework.addBeforeGenerationHook(pdfDoc -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
@@ -314,7 +315,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     @Test
     public void mathStructureElementInvalidUA2Test() throws IOException {
-        framework.addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -332,7 +334,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     @Test
     public void mathStructureElementValidUA2Test() throws IOException {
-        framework.addAfterGenerationHook(pdfDocument -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        framework        .addAfterGenerationHook(pdfDocument -> {
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 

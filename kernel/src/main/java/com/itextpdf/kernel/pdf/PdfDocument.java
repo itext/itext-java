@@ -1673,6 +1673,12 @@ public class PdfDocument implements Closeable {
         outputIntents.add(outputIntent.getPdfObject());
     }
 
+    /**
+     * Checks ISO conformance of the passed context against
+     * registered {@link ValidationContainer} inside the {@code PdfDocument}.
+     *
+     * @param validationContext the context to check
+     */
     public void checkIsoConformance(IValidationContext validationContext) {
         if (!this.getDiContainer().isRegistered(ValidationContainer.class)) {
             return;
@@ -2320,11 +2326,13 @@ public class PdfDocument implements Closeable {
         if (page.isFlushed()) {
             throw new PdfException(KernelExceptionMessageConstant.FLUSHED_PAGE_CANNOT_BE_ADDED_OR_INSERTED, page);
         }
-        if (page.getDocument() != null && this != page.getDocument()) {
+
+        PdfDocument document = page.getDocument();
+        if (document != null && this != document) {
             throw new PdfException(
                     KernelExceptionMessageConstant.
                             PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT).setMessageParams(
-                    page.getDocument(), page.getDocument().getPageNumber(page), this);
+                    document, document.getPageNumber(page), this);
         }
         catalog.getPageTree().addPage(index, page);
     }

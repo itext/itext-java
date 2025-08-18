@@ -29,7 +29,10 @@ import java.net.URL;
 
 /**
  * Interface for classes that can retrieve data from resources by URL.
+ *
+ * @deprecated In favor of {@link com.itextpdf.io.resolver.resource.IResourceRetriever}
  */
+@Deprecated
 public interface IResourceRetriever {
     /**
      * Gets the {@link InputStream} that connect with source URL for retrieving data from that connection.

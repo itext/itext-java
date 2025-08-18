@@ -55,6 +55,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -415,8 +416,6 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, count = 6))
-    @Disabled("DEVSIX-9125")
     public void pdfArrayWithUndefinedGlyphsTest() throws Exception {
         String outPdf = DESTINATION_FOLDER + "pdfArrayWithUndefinedGlyphs.pdf";
 
@@ -437,11 +436,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         pdfArray.add(new PdfString("ABC"));
         pdfArray.add(new PdfNumber(1));
         pdfArray.add(new PdfString("\u898B\u7A4D\u3082\u308A"));
-        Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> canvas.showText(pdfArray)
-        );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
-                e.getMessage());
+        // PdfCanvas#showText(PdfArray) doesn't contain any checks.
+        AssertUtil.doesNotThrow(() -> canvas.showText(pdfArray));
     }
 
     @Test

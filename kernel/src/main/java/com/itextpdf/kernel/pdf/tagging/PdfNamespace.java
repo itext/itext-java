@@ -22,10 +22,11 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
@@ -71,6 +72,27 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
         this(new PdfDictionary());
         put(PdfName.Type, PdfName.Namespace);
         put(PdfName.NS, namespaceName);
+    }
+
+    /**
+     * Retrieves default namespace from provided document or adds a new one in case it's absent.
+     *
+     * @param pdfDocument {@link PdfDocument document} to retrieve the namespace instance
+     *
+     * @return default namespace instance
+     */
+    public static PdfNamespace getDefault(PdfDocument pdfDocument) {
+        if (pdfDocument == null || pdfDocument.getStructTreeRoot() == null) {
+            return new PdfNamespace(StandardNamespaces.getDefault());
+        }
+        for (PdfNamespace namespace : pdfDocument.getStructTreeRoot().getNamespaces()) {
+            if (StandardNamespaces.getDefault().equals(namespace.getNamespaceName())) {
+                return namespace;
+            }
+        }
+        PdfNamespace defaultNamespace = new PdfNamespace(StandardNamespaces.getDefault());
+        pdfDocument.getStructTreeRoot().addNamespace(defaultNamespace);
+        return defaultNamespace;
     }
 
     /**

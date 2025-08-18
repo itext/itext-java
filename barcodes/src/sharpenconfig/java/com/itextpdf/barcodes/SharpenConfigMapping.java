@@ -96,4 +96,9 @@ public class SharpenConfigMapping implements MappingConfiguration {
     public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
         return null;
     }
+
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+
+    }
 }

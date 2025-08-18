@@ -141,6 +141,10 @@ public final class InlineImageParsingUtils {
     public static PdfStream parse(PdfCanvasParser ps, PdfDictionary colorSpaceDic) throws IOException {
         PdfDictionary inlineImageDict = parseDictionary(ps);
         byte[] samples = parseSamples(inlineImageDict, colorSpaceDic, ps);
+        PdfName colorSpaceName = inlineImageDict.getAsName(PdfName.ColorSpace);
+        if (colorSpaceDic != null && colorSpaceName != null) {
+            inlineImageDict.put(PdfName.ColorSpace, colorSpaceDic.get(colorSpaceName));
+        }
         PdfStream inlineImageAsStreamObject = new PdfStream(samples);
         inlineImageAsStreamObject.putAll(inlineImageDict);
         return inlineImageAsStreamObject;
@@ -187,7 +191,6 @@ public final class InlineImageParsingUtils {
                 }
             }
         }
-
         throw new InlineImageParseException(KernelExceptionMessageConstant.UNEXPECTED_COLOR_SPACE).setMessageParams(colorSpaceName);
     }
 

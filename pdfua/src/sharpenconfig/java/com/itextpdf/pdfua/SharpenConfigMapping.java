@@ -26,6 +26,8 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import com.itextpdf.commons.UseBCWrappersModuleOption;
 import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
 import sharpen.config.ModuleOption;
@@ -55,6 +57,11 @@ public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public void applyConfigModuleSettings(ModulesConfigurator configurator) {
 
+    }
+
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+        modulesConfigurator.setModuleOption(UseBCWrappersModuleOption.getInstance(), true);
     }
 
     @Override

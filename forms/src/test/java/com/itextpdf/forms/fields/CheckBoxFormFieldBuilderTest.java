@@ -45,21 +45,22 @@ import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
-    private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
     private static final Rectangle DUMMY_RECTANGLE = new Rectangle(7, 11, 13, 17);
 
     @Test
     public void constructorTest() {
-        CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(pdfDoc, DUMMY_NAME);
 
-        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(pdfDoc, builder.getDocument());
         Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
     public void setGetCheckType() {
-        CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        CheckBoxFormFieldBuilder builder = new CheckBoxFormFieldBuilder(pdfDoc, DUMMY_NAME);
         builder.setCheckType(CheckBoxType.DIAMOND);
 
         Assertions.assertEquals(CheckBoxType.DIAMOND, builder.getCheckType());
@@ -67,36 +68,41 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
 
     @Test
     public void createCheckBoxWithWidgetTest() {
-        PdfButtonFormField checkBoxFormField = new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfButtonFormField checkBoxFormField = new CheckBoxFormFieldBuilder(pdfDoc, DUMMY_NAME)
                 .setWidgetRectangle(DUMMY_RECTANGLE).createCheckBox();
 
-        compareCheckBoxes(checkBoxFormField, true);
+        compareCheckBoxes(checkBoxFormField, pdfDoc, true);
     }
 
     @Test
     public void createCheckBoxWithIncorrectNameTest() {
-        AssertUtil.doesNotThrow(() -> new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, "incorrect.name")
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        AssertUtil.doesNotThrow(() -> new CheckBoxFormFieldBuilder(pdfDoc, "incorrect.name")
                 .setWidgetRectangle(DUMMY_RECTANGLE).createCheckBox());
     }
 
     @Test
     public void createCheckBoxWithoutWidgetTest() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfButtonFormField checkBoxFormField =
-                new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME).createCheckBox();
+                new CheckBoxFormFieldBuilder(pdfDoc, DUMMY_NAME).createCheckBox();
 
-        compareCheckBoxes(checkBoxFormField, false);
+        compareCheckBoxes(checkBoxFormField, pdfDoc, false);
     }
 
     @Test
     public void createCheckBoxWithConformanceLevelTest() {
-        PdfButtonFormField checkBoxFormField = new CheckBoxFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfButtonFormField checkBoxFormField = new CheckBoxFormFieldBuilder(pdfDoc, DUMMY_NAME)
                 .setWidgetRectangle(DUMMY_RECTANGLE).setConformance(PdfConformance.PDF_A_1A)
                 .createCheckBox();
 
-        compareCheckBoxes(checkBoxFormField, true);
+        compareCheckBoxes(checkBoxFormField, pdfDoc, true);
     }
 
-    private static void compareCheckBoxes(PdfButtonFormField checkBoxFormField, boolean widgetExpected) {
+    private static void compareCheckBoxes(PdfButtonFormField checkBoxFormField, PdfDocument pdfDoc,
+            boolean widgetExpected) {
         PdfDictionary expectedDictionary = new PdfDictionary();
 
         List<PdfWidgetAnnotation> widgets = checkBoxFormField.getWidgets();
@@ -119,8 +125,8 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
         putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
         putIfAbsent(expectedDictionary, PdfName.V, new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
 
-        expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
-        checkBoxFormField.makeIndirect(DUMMY_DOCUMENT);
+        expectedDictionary.makeIndirect(pdfDoc);
+        checkBoxFormField.makeIndirect(pdfDoc);
         Assertions.assertNull(
                 new CompareTool().compareDictionariesStructure(expectedDictionary, checkBoxFormField.getPdfObject()));
     }

@@ -45,22 +45,22 @@ import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
-
-    private static final PdfDocument DUMMY_DOCUMENT = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
     private static final String DUMMY_NAME = "dummy name";
     private static final Rectangle DUMMY_RECTANGLE = new Rectangle(7, 11, 13, 17);
 
     @Test
     public void constructorTest() {
-        PushButtonFormFieldBuilder builder = new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PushButtonFormFieldBuilder builder = new PushButtonFormFieldBuilder(pdfDoc, DUMMY_NAME);
 
-        Assertions.assertSame(DUMMY_DOCUMENT, builder.getDocument());
+        Assertions.assertSame(pdfDoc, builder.getDocument());
         Assertions.assertSame(DUMMY_NAME, builder.getFormFieldName());
     }
 
     @Test
     public void setGetCaptionType() {
-        PushButtonFormFieldBuilder builder = new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME);
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PushButtonFormFieldBuilder builder = new PushButtonFormFieldBuilder(pdfDoc, DUMMY_NAME);
         builder.setCaption("Caption");
 
         Assertions.assertEquals("Caption", builder.getCaption());
@@ -68,38 +68,43 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
 
     @Test
     public void createPushButtonWithWidgetTest() {
-        PdfButtonFormField pushButtonFormField = new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfButtonFormField pushButtonFormField = new PushButtonFormFieldBuilder(pdfDoc, DUMMY_NAME)
                 .setWidgetRectangle(DUMMY_RECTANGLE).createPushButton();
 
-        comparePushButtons(pushButtonFormField, true);
+        comparePushButtons(pushButtonFormField, pdfDoc, true);
     }
 
     @Test
     public void createPushButtonWithoutWidgetTest() {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfButtonFormField pushButtonFormField =
-                new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME).createPushButton();
+                new PushButtonFormFieldBuilder(pdfDoc, DUMMY_NAME).createPushButton();
 
-        comparePushButtons(pushButtonFormField, false);
+        comparePushButtons(pushButtonFormField, pdfDoc, false);
     }
 
     @Test
     public void createPushButtonWithIncorrectNameTest() {
-        AssertUtil.doesNotThrow(() -> new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, "incorrect.name")
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        AssertUtil.doesNotThrow(() -> new PushButtonFormFieldBuilder(pdfDoc, "incorrect.name")
                 .setWidgetRectangle(DUMMY_RECTANGLE).createPushButton());
     }
 
     @Test
     public void createPushButtonWithConformanceLevelTest() {
-        PdfButtonFormField pushButtonFormField = new PushButtonFormFieldBuilder(DUMMY_DOCUMENT, DUMMY_NAME)
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfButtonFormField pushButtonFormField = new PushButtonFormFieldBuilder(pdfDoc, DUMMY_NAME)
                 .setWidgetRectangle(DUMMY_RECTANGLE).setConformance(PdfConformance.PDF_A_1A)
                 .createPushButton();
 
-        comparePushButtons(pushButtonFormField, true);
+        comparePushButtons(pushButtonFormField, pdfDoc, true);
     }
 
-    private static void comparePushButtons(PdfButtonFormField pushButtonFormField, boolean widgetExpected) {
+    private static void comparePushButtons(PdfButtonFormField pushButtonFormField, PdfDocument pdfDoc,
+            boolean widgetExpected) {
         PdfDictionary expectedDictionary = new PdfDictionary();
-        
+
         List<PdfWidgetAnnotation> widgets = pushButtonFormField.getWidgets();
 
         if (widgetExpected) {
@@ -121,8 +126,8 @@ public class PushButtonFormFieldBuilderTest extends ExtendedITextTest {
         putIfAbsent(expectedDictionary, PdfName.T, new PdfString(DUMMY_NAME));
         putIfAbsent(expectedDictionary, PdfName.DA, pushButtonFormField.getPdfObject().get(PdfName.DA));
 
-        expectedDictionary.makeIndirect(DUMMY_DOCUMENT);
-        pushButtonFormField.makeIndirect(DUMMY_DOCUMENT);
+        expectedDictionary.makeIndirect(pdfDoc);
+        pushButtonFormField.makeIndirect(pdfDoc);
         Assertions.assertNull(
                 new CompareTool().compareDictionariesStructure(expectedDictionary, pushButtonFormField.getPdfObject()));
     }

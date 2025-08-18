@@ -90,6 +90,7 @@ public final class StyledXmlParserLogMessageConstant {
             "The rule @{0} is unsupported. All selectors in this rule will be ignored.";
 
     /** The Constant RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT. */
+    @Deprecated
     public static final String RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT =
             "Resource with given URL ({0}) was filtered out.";
 

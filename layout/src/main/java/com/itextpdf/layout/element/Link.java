@@ -28,8 +28,8 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LinkRenderer;
@@ -59,7 +59,8 @@ public class Link extends Text {
      * @param action a {@link PdfAction}
      */
     public Link(String text, PdfAction action) {
-        this(text, (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setAction(action).setFlags(PdfAnnotation.PRINT));
+        this(text, (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0))
+                .setAction(action).setFlags(PdfAnnotation.PRINT));
     }
 
     /**
@@ -69,11 +70,13 @@ public class Link extends Text {
      * @param destination a {@link PdfDestination}
      */
     public Link(String text, PdfDestination destination) {
-        this(text, (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setDestination(destination).setFlags(PdfAnnotation.PRINT));
+        this(text, (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0))
+                .setDestination(destination).setFlags(PdfAnnotation.PRINT));
     }
 
     /**
      * Gets the link annotation dictionary associated with this link.
+     *
      * @return a {@link PdfLinkAnnotation}
      */
     public PdfLinkAnnotation getLinkAnnotation() {

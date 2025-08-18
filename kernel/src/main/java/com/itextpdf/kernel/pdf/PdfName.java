@@ -30,9 +30,10 @@ import com.itextpdf.kernel.utils.ICopyFilter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+/**
+ * A {@code PdfName}-class is the PDF-equivalent of a string constant.
+ */
 public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
-
-
     //  ' '
     private static final byte[] space = ByteUtils.getIsoBytes("#20");
     //  '%'
@@ -189,6 +190,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName CF = createDirectName("CF");
     public static final PdfName CFM = createDirectName("CFM");
     public static final PdfName Ch = createDirectName("Ch");
+    public static final PdfName CharSet = new PdfName("CharSet");
     public static final PdfName CI = createDirectName("CI");
     public static final PdfName CIDFontType0 = createDirectName("CIDFontType0");
     public static final PdfName CIDFontType2 = createDirectName("CIDFontType2");
@@ -231,6 +233,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName CreatorInfo = createDirectName("CreatorInfo");
     public static final PdfName CropBox = createDirectName("CropBox");
     public static final PdfName Crypt = createDirectName("Crypt");
+    public static final PdfName CryptFilterDecodeParms = createDirectName("CryptFilterDecodeParms");
     public static final PdfName CS = createDirectName("CS");
     public static final PdfName CT = createDirectName("CT");
     public static final PdfName D = createDirectName("D");
@@ -999,6 +1002,11 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         return PdfObject.NAME;
     }
 
+    /**
+     * Gets the string which represent {@code PdfName}.
+     *
+     * @return the string value of {@code PdfName} instance
+     */
     public String getValue() {
         if (value == null)
             generateValue();
@@ -1030,6 +1038,9 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
         return getValue().hashCode();
     }
 
+    /**
+     * Generates the string value of the {@code PdfName} instance based on stored byte content.
+     */
     protected void generateValue() {
         value = PdfNameUtil.decodeName(content);
     }

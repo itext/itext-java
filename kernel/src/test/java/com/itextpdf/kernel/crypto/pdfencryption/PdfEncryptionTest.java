@@ -391,7 +391,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
     }
 
     @Test
-    public void encryptWithPasswordAes256EmbeddedFilesOnly() throws IOException, InterruptedException {
+    public void encryptWithPasswordAes256EmbeddedFilesOnly() throws IOException {
         String filename = "encryptWithPasswordAes256EmbeddedFilesOnly.pdf";
         int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.EMBEDDED_FILES_ONLY;
 
@@ -411,6 +411,39 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         String path = sourceFolder + "pageWithContent.pdf";
         document.addFileAttachment(descripton,
                 PdfFileSpec.createEmbeddedFileSpec(document, path, descripton, path, null, null));
+
+        page.flush();
+        document.close();
+
+        //TODO DEVSIX-5355 Specific crypto filters for EFF StmF and StrF are not supported at the moment.
+        // However we can read embedded files only mode.
+        boolean ERROR_IS_EXPECTED = false;
+        encryptionUtil.checkDecryptedWithPasswordContent(destinationFolder + filename, PdfEncryptionTestUtils.OWNER,
+                textContent, ERROR_IS_EXPECTED);
+        encryptionUtil.checkDecryptedWithPasswordContent(destinationFolder + filename, PdfEncryptionTestUtils.USER,
+                textContent, ERROR_IS_EXPECTED);
+    }
+
+    @Test
+    public void encryptWithPasswordAes256EmbeddedFilesOnly2() throws IOException {
+        String filename = "encryptWithPasswordAes256EmbeddedFilesOnly2.pdf";
+        int encryptionType = EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.EMBEDDED_FILES_ONLY;
+
+        String outFileName = destinationFolder + filename;
+        int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
+        PdfWriter writer = new PdfWriter(outFileName,
+                new WriterProperties().setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER, permissions,
+                        encryptionType).addXmpMetadata().setPdfVersion(PdfVersion.PDF_2_0)
+        );
+        PdfDocument document = new PdfDocument(writer);
+        document.getDocumentInfo().setMoreInfo(PdfEncryptionTestUtils.CUSTOM_INFO_ENTRY_KEY, PdfEncryptionTestUtils.CUSTOM_INFO_ENTRY_VALUE);
+        PdfPage page = document.addNewPage();
+        String textContent = "Hello world!";
+        PdfEncryptionTestUtils.writeTextBytesOnPageContent(page, textContent);
+
+        String descripton = "encryptedFile";
+        document.addFileAttachment(descripton,
+                PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), descripton, "test.txt", null, null));
 
         page.flush();
         document.close();

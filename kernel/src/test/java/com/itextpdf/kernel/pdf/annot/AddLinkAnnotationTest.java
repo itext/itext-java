@@ -27,6 +27,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
@@ -36,21 +37,26 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.filespec.PdfStringFS;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitRemoteGoToDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfNamedDestination;
+import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
-import java.io.IOException;
-import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.List;
 
 @Tag("IntegrationTest")
 public class AddLinkAnnotationTest extends ExtendedITextTest {
@@ -71,6 +77,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
     @Test
     public void addLinkAnnotation01() throws Exception {
         PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "linkAnnotation01.pdf"));
+        document.setTagged();
 
         PdfPage page1 = document.addNewPage();
         PdfPage page2 = document.addNewPage();
@@ -120,7 +127,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
         canvas.release();
 
         page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
-                setAction(PdfAction.createURI("http://itextpdf.com")).
+                setDestination(PdfExplicitDestination.createFit(page)).
                 setBorder(new PdfArray(new float[] {0, 0, 1})).
                 setColor(new PdfArray(new float[] {1, 0, 0})));
         page.flush();
@@ -131,6 +138,146 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
                 .compareByContent(destinationFolder + "linkAnnotation02.pdf", sourceFolder + "cmp_linkAnnotation02.pdf",
                         destinationFolder, "diff_"));
 
+    }
+
+    @Test
+    public void linkAnnotationReferenceTest() throws Exception {
+        PdfDocument document = new PdfDocument(
+                CompareTool.createTestPdfWriter(destinationFolder + "linkAnnotationReference.pdf",
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        document.setTagged();
+        document.getTagStructureContext().getAutoTaggingPointer().addTag("P");
+
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD), 14);
+        canvas.moveText(100, 600);
+        canvas.showText("Click here to go to itextpdf site.");
+        canvas.endText();
+        canvas.release();
+
+        page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
+                setDestination(PdfExplicitDestination.createFit(page)).
+                setBorder(new PdfArray(new float[] {0, 0, 1})).
+                setColor(new PdfArray(new float[] {1, 0, 0})));
+        page.flush();
+
+        document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "linkAnnotationReference.pdf",
+                sourceFolder + "cmp_linkAnnotationReference.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void linkAnnotationReference2Test() throws Exception {
+        PdfDocument document = new PdfDocument(
+                CompareTool.createTestPdfWriter(destinationFolder + "linkAnnotationReference2.pdf",
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        document.setTagged();
+        document.getTagStructureContext().getAutoTaggingPointer().addTag("P")
+                .setNamespaceForNewTags(PdfNamespace.getDefault(document)).addTag("Reference");
+
+        PdfPage page = document.addNewPage();
+
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.COURIER_BOLD), 14);
+        canvas.moveText(100, 600);
+        canvas.showText("Click here to go to itextpdf site.");
+        canvas.endText();
+        canvas.release();
+
+        page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
+                setAction(PdfAction.createGoTo(PdfExplicitDestination.createFit(page))).
+                setBorder(new PdfArray(new float[] {0, 0, 1})).
+                setColor(new PdfArray(new float[] {1, 0, 0})));
+        page.flush();
+
+        document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "linkAnnotationReference2.pdf",
+                sourceFolder + "cmp_linkAnnotationReference2.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void severalLinkAnnotationsTest() throws Exception {
+        try (PdfDocument document = new PdfDocument(
+                CompareTool.createTestPdfWriter(destinationFolder + "severalLinkAnnotations.pdf"))) {
+            document.setTagged();
+            document.getTagStructureContext().getAutoTaggingPointer();
+
+            PdfPage page = document.addNewPage();
+            page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25))
+                    .setAction(PdfAction.createGoTo(PdfExplicitDestination.createFit(page))));
+
+            page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25))
+                    .setAction(PdfAction.createGoToR(new PdfStringFS("Some fake destination"),
+                            new PdfExplicitDestination(new PdfArray(new PdfNumber(2))))));
+
+            PdfDictionary destinationDictionary = new PdfDictionary();
+            destinationDictionary.put(PdfName.D, PdfExplicitDestination.createFit(page).getPdfObject());
+            PdfDictionary destinationDictionary2 = new PdfDictionary();
+            destinationDictionary2.put(PdfName.SD, PdfExplicitDestination.createFit(page).getPdfObject());
+
+            PdfDictionary dests = new PdfDictionary();
+            dests.put(new PdfName("destination_name"), destinationDictionary);
+            dests.put(new PdfName("destination_name_2"), destinationDictionary2);
+
+            document.getCatalog().put(PdfName.Dests, dests);
+            page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
+                    setDestination(new PdfNamedDestination("destination_name")));
+
+            document.getCatalog().getNameTree(PdfName.Dests).addEntry("destination_name2",
+                    new PdfExplicitRemoteGoToDestination(new PdfArray(new PdfNumber(1))).getPdfObject());
+            page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
+                    setDestination(new PdfStringDestination("destination_name2")));
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "severalLinkAnnotations.pdf",
+                sourceFolder + "cmp_severalLinkAnnotations.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void linkAnnotationWithDictionaryStringDestinationTest() throws Exception {
+        try (PdfDocument document = new PdfDocument(
+                CompareTool.createTestPdfWriter(destinationFolder + "linkAnnotationWithDictionaryStringDestination.pdf"))) {
+            document.setTagged();
+            document.getTagStructureContext().getAutoTaggingPointer();
+
+            PdfPage page = document.addNewPage();
+            PdfDictionary destinationDictionary = new PdfDictionary();
+            destinationDictionary.put(PdfName.D, PdfExplicitDestination.createFit(page).getPdfObject());
+            document.getCatalog().getNameTree(PdfName.Dests)
+                    .addEntry("destination_name", destinationDictionary);
+
+            page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25)).
+                    setDestination(new PdfStringDestination("destination_name")));
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "linkAnnotationWithDictionaryStringDestination.pdf",
+                sourceFolder + "cmp_linkAnnotationWithDictionaryStringDestination.pdf", destinationFolder, "diff_"));
+    }
+
+    @Test
+    public void linkAnnotationWithCyclicReferencesTest() throws Exception {
+        try (PdfDocument document = new PdfDocument(
+                CompareTool.createTestPdfWriter(destinationFolder + "linkAnnotationWithCyclicReferences.pdf"))) {
+            document.setTagged();
+            document.getTagStructureContext().getAutoTaggingPointer();
+            PdfPage page = document.addNewPage();
+
+            PdfDictionary dests = new PdfDictionary();
+            dests.put(new PdfName("destination_name"), new PdfName("destination_name"));
+            document.getCatalog().put(PdfName.Dests, dests);
+
+            page.addAnnotation(new PdfLinkAnnotation(new Rectangle(100, 590, 300, 25))
+                    .setAction(PdfAction.createGoTo(new PdfNamedDestination("destination_name"))));
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "linkAnnotationWithCyclicReferences.pdf",
+                sourceFolder + "cmp_linkAnnotationWithCyclicReferences.pdf", destinationFolder, "diff_"));
     }
 
     @Test
