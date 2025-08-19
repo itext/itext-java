@@ -26,6 +26,7 @@ import com.itextpdf.commons.UseBCWrappersModuleOption;
 
 import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
+import sharpen.config.MemberKind;
 import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
@@ -38,7 +39,7 @@ import java.util.List;
 public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 12;
+        return 100 - 16;
     }
 
     @Override
@@ -137,11 +138,37 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("java.nio.file.Path", "String");
 
 
+        configurator.mapMethod("java.security.cert.X509Certificate.getSerialNumber", "GetSerialNumber");
+        configurator.mapMethod("java.security.cert.X509Certificate.getThisUpdate", "GetThisUpdate");
+        configurator.mapMethod("java.security.cert.X509Certificate.getNotBefore", "GetNotBefore");
+        configurator.mapMethod("java.security.cert.X509CRL.getNextUpdate", "GetNextUpdate");
+        configurator.mapMethod("java.security.cert.X509Certificate.getSubjectDN", "GetSubjectDN");
+        configurator.mapMethod("java.security.cert.X509CRL.getThisUpdate", "GetThisUpdate");
+        configurator.mapType("java.math.BigInteger", "iText.Commons.Bouncycastle.Math.IBigInteger");
+        configurator.mapMemberToInvocationsChain("java.security.MessageDigest.getInstance(java.lang.String)",
+                "iText.Bouncycastleconnector.BouncyCastleFactoryCreator.GetFactory().CreateIDigest",
+                MemberKind.Method);
+        configurator.mapType("java.security.MessageDigest", "iText.Commons.Digest.IMessageDigest");
+        configurator.mapMethod("java.security.MessageDigest.digest(byte[])", "Digest");
+
+        configurator.mapType("java.security.NoSuchProviderException",
+                "Org.BouncyCastle.Security.NoSuchProviderException");
+
+        configurator.mapType("org.bouncycastle.cert.ocsp.SingleResp", "Org.BouncyCastle.Asn1.Ocsp.SingleResponse");
+        configurator.mapType("org.bouncycastle.cert.ocsp.CertificateID", "Org.BouncyCastle.Asn1.Ocsp.CertID");
+        configurator.mapType("org.bouncycastle.cert.ocsp.CertificateStatus", "Org.BouncyCastle.Asn1.Ocsp.CertStatus");
+        configurator.mapType("org.bouncycastle.cert.ocsp.BasicOCSPResp",
+                "Org.BouncyCastle.Asn1.Ocsp.BasicOcspResponse");
+        configurator.mapType("org.bouncycastle.cert.ocsp.OCSPReq", "Org.BouncyCastle.Asn1.Ocsp.OcspRequest");
+        configurator.mapType("org.bouncycastle.asn1.pkcs.RSASSAPSSparams",
+                "Org.BouncyCastle.Asn1.Pkcs.RsassaPssParameters");
+
+        configurator.mapProperty("org.bouncycastle.asn1.x509.AlgorithmIdentifier.getAlgorithm", "Algorithm");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.AlgorithmIdentifier.getParameters", "Parameters");
     }
 
     @Override
     public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
-        modulesConfigurator.setModuleOption(UseBCWrappersModuleOption.getInstance(), true);
     }
 
     @Override

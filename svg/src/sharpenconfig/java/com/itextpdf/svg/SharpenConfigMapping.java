@@ -38,7 +38,7 @@ import sharpen.config.OptionsConfigurator;
 public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 11;
+        return 100 - 17;
     }
 
     @Override
