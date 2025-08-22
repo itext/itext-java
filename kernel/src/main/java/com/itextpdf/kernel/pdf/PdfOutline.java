@@ -324,7 +324,7 @@ public class PdfOutline {
     }
 
     /**
-     * Remove this outline from the document. Outlines that are children of this outline are removed recursively
+     * Remove this outline from the document.
      */
     public void removeOutline() {
         if (!pdfDoc.hasOutlines() || isOutlineRoot()) {
@@ -332,14 +332,30 @@ public class PdfOutline {
             return;
         }
         PdfOutline parent = this.parent;
-        List<PdfOutline> children = parent.children;
-        children.remove(this);
+        List<PdfOutline> parentChildren = parent.children;
         PdfDictionary parentContent = parent.content;
-        if (children.size() > 0) {
-            parentContent.put(PdfName.First, children.get(0).content);
-            parentContent.put(PdfName.Last, children.get(children.size() - 1).content);
-        } else {
+        parentChildren.remove(this);
+
+        if (parentChildren.isEmpty()) {
+            parentContent.remove(PdfName.Count);
+            if (parent.isOutlineRoot()) {
+                pdfDoc.getCatalog().remove(PdfName.Outlines);
+                return;
+            }
+        }
+
+        int count = content.getAsInt(PdfName.Count) == null ? 0 : Math.abs((int) content.getAsInt(PdfName.Count));
+        // Count this outline too
+        count += 1;
+        updateCount(parent, count);
+
+        if (parentChildren.isEmpty()) {
+            parentContent.remove(PdfName.First);
+            parentContent.remove(PdfName.Last);
             return;
+        } else {
+            parentContent.put(PdfName.First, parentChildren.get(0).content);
+            parentContent.put(PdfName.Last, parentChildren.get(parentChildren.size() - 1).content);
         }
 
         PdfDictionary next = content.getAsDictionary(PdfName.Next);
@@ -384,7 +400,6 @@ public class PdfOutline {
         return pdfDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.Outlines);
     }
 
-
     /**
      * Determines if the current {@link PdfOutline} object is the Outline Root.
      *
@@ -393,5 +408,28 @@ public class PdfOutline {
     private boolean isOutlineRoot() {
         PdfDictionary outlineRoot = getOutlineRoot();
         return outlineRoot == content;
+    }
+
+    /**
+     * Recursively traverse parent tree and adjust Count in each visited outline.
+     *
+     * @param outline the current outline to process
+     * @param amountOfRemovedOutlines the amount of removed outlines
+     */
+    private static void updateCount(PdfOutline outline, int amountOfRemovedOutlines) {
+        if (outline == null) {
+            return;
+        }
+        if (outline.content.getAsInt(PdfName.Count) != null) {
+            int currentCount = (int) outline.content.getAsInt(PdfName.Count);
+            // consider a case when count is 0 as impossible, because in that case there shouldn't be Count at all
+            if (currentCount > 0) {
+                currentCount -= amountOfRemovedOutlines;
+            } else {
+                currentCount += amountOfRemovedOutlines;
+            }
+            outline.content.put(PdfName.Count, new PdfNumber(currentCount));
+        }
+        updateCount(outline.parent, amountOfRemovedOutlines);
     }
 }

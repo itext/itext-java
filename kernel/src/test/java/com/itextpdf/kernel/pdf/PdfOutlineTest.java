@@ -501,6 +501,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO: DEVSIX-9313 Update page index destinationgs of outlines while removing page
     public void removePageInDocWithComplexOutlineTreeStructTest() throws IOException, InterruptedException {
         String input = SOURCE_FOLDER + "complexOutlineTreeStructure.pdf";
         String output = DESTINATION_FOLDER + "complexOutlineTreeStructure.pdf";
@@ -845,6 +846,86 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void removeSingleChildTest() throws IOException, InterruptedException {
+        String filename = "removedSingleChild.pdf";
+        String input = SOURCE_FOLDER + "complexOutlineTreeStructure.pdf";
+        String output = DESTINATION_FOLDER + "cmp_" + filename;
+        String cmp = SOURCE_FOLDER + "cmp_" + filename;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
+        PdfOutline root = pdfDocument.getOutlines(true);
+        PdfOutline toRemove = root.getAllChildren().get(0).getAllChildren().get(0);
+        toRemove.removeOutline();
+        pdfDocument.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void removeAllRootChildrenTest() throws IOException, InterruptedException {
+        String filename = "removeAllRootChildren.pdf";
+        String input = SOURCE_FOLDER + "documentWithOutlines.pdf";
+        String output = DESTINATION_FOLDER + "cmp_" + filename;
+        String cmp = SOURCE_FOLDER + "cmp_" + filename;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
+        PdfOutline root = pdfDocument.getOutlines(true);
+        root.getAllChildren().get(0).removeOutline();
+        root.getAllChildren().get(0).removeOutline();
+        pdfDocument.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void removeSingleChildNegativeCountTest() throws IOException, InterruptedException {
+        String filename = "removeSingleChildNegativeCount.pdf";
+        String input = SOURCE_FOLDER + "negativeCount.pdf";
+        String output = DESTINATION_FOLDER + "cmp_" + filename;
+        String cmp = SOURCE_FOLDER + "cmp_" + filename;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
+        PdfOutline root = pdfDocument.getOutlines(true);
+        // remove leaf
+        root.getAllChildren().get(3).getAllChildren().get(2).getAllChildren().get(1).getAllChildren().get(0).removeOutline();
+        pdfDocument.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void removeParentNegativeCountTest() throws IOException, InterruptedException {
+        String filename = "removeParentNegativeCount.pdf";
+        String input = SOURCE_FOLDER + "negativeCount.pdf";
+        String output = DESTINATION_FOLDER + "cmp_" + filename;
+        String cmp = SOURCE_FOLDER + "cmp_" + filename;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
+        PdfOutline root = pdfDocument.getOutlines(true);
+        // remove parent which has 1 child
+        root.getAllChildren().get(3).getAllChildren().get(2).getAllChildren().get(1).removeOutline();
+        pdfDocument.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void removeClosedParentNegativeCountTest() throws IOException, InterruptedException {
+        String filename = "removeClosedParentNegativeCount.pdf";
+        String input = SOURCE_FOLDER + "negativeCount.pdf";
+        String output = DESTINATION_FOLDER + "cmp_" + filename;
+        String cmp = SOURCE_FOLDER + "cmp_" + filename;
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(input), CompareTool.createTestPdfWriter(output));
+        PdfOutline root = pdfDocument.getOutlines(true);
+        // remove parent is closed (count=-3)
+        root.getAllChildren().get(3).getAllChildren().get(2).removeOutline();
+        pdfDocument.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(output, cmp, DESTINATION_FOLDER, "diff_"));
     }
 
     private static final class EmptyNameTree implements IPdfNameTreeAccess {
