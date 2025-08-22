@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 public class ZlibUtilTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/util/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/io/util/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/io/util/";
 
     @BeforeEach
     public void setUp() {

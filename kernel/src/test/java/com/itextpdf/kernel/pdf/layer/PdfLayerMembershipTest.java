@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 public class PdfLayerMembershipTest extends ExtendedITextTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/layer/PdfLayerMembershipTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/layer/PdfLayerMembershipTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/layer/PdfLayerMembershipTest/";
 
     @BeforeAll
     public static void beforeClass() {

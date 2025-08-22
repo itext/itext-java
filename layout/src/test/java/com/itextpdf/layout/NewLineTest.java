@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 public class NewLineTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/NewLineTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/NewLineTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/NewLineTest/";
 
     @BeforeAll
     public static void beforeClass() {

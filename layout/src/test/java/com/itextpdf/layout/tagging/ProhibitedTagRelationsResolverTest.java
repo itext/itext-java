@@ -50,7 +50,6 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -64,7 +63,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout" +
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout" +
             "/ResolveProhibitedRelationsRuleTest/";
 
     public static final String FONT_LOCATION = "./src/test/resources/com/itextpdf/layout/fonts/NotoSans-Regular.ttf";
@@ -209,7 +208,6 @@ public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
         document.add(list);
 
         pdfDocument.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
 
@@ -240,7 +238,6 @@ public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
         document.add(paragraph);
 
         pdfDocument.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
 
@@ -272,7 +269,6 @@ public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
         document.add(paragraph);
 
         pdfDocument.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
 
@@ -299,7 +295,6 @@ public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
         document.add(list);
 
         pdfDocument.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
 
@@ -325,7 +320,6 @@ public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
 
@@ -359,7 +353,6 @@ public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
 
         pdfDocument.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
 
@@ -397,7 +390,6 @@ public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
         document.add(table);
         pdfDocument.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
 
@@ -426,7 +418,6 @@ public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
         }
         pdfDocument.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
 

@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/ClipPathTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/ClipPathTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/ClipPathTest/";
 
     private SvgConverterProperties properties;
 

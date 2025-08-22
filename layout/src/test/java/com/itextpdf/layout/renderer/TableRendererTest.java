@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TableRendererTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/TableRendererTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/TableRendererTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/TableRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

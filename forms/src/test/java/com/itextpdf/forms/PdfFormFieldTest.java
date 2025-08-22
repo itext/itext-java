@@ -81,7 +81,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfFormFieldTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
 
     @BeforeAll

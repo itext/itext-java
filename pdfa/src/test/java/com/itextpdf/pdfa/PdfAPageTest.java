@@ -41,7 +41,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -52,7 +51,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfAPageTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfAPageTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAPageTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -90,7 +89,6 @@ public class PdfAPageTest extends ExtendedITextTest {
         // During the closing event was called on each document page
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -120,7 +118,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -148,7 +145,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -176,7 +172,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -206,7 +201,6 @@ public class PdfAPageTest extends ExtendedITextTest {
 
         Assertions.assertEquals(pageCount, eventHandler.getCounter());
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     static class EndPageEventHandler extends AbstractPdfDocumentEventHandler {

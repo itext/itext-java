@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfABarcodeTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfABarcodeTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfABarcodeTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfABarcodeTest/";
 
     @BeforeAll
     public static void beforeClass() {

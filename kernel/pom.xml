@@ -1,50 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>9.3.0</version>
   </parent>
-
-  <artifactId>kernel</artifactId>
-
+  <artifactId>kernel-android</artifactId>
   <name>iText - kernel</name>
   <url>https://itextpdf.com/</url>
-
   <properties>
-    <sonar.exclusions>
-      **/com/itextpdf/kernel/xmp/**,
-      **com/itextpdf/kernel/pdf/canvas/parser/clipper/**
-    </sonar.exclusions>
+    <sonar.exclusions>**/com/itextpdf/kernel/xmp/**,
+      **com/itextpdf/kernel/pdf/canvas/parser/clipper/**</sonar.exclusions>
   </properties>
-
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>io</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>io-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>bouncy-castle-connector</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>bouncy-castle-connector-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>font-asian</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>font-asian-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdftest-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
@@ -61,18 +54,9 @@
       </resource>
     </resources>
   </build>
-
   <profiles>
     <profile>
       <id>with-sharpen</id>
-      <dependencies>
-        <dependency>
-          <groupId>com.itextpdf</groupId>
-          <artifactId>bouncy-castle-adapter</artifactId>
-          <version>${project.version}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -110,6 +94,14 @@
           </plugin>
         </plugins>
       </build>
+      <dependencies>
+        <dependency>
+          <groupId>com.itextpdf.android</groupId>
+          <artifactId>bouncy-castle-adapter-android</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
     <profile>
       <id>bouncy-castle-test</id>
@@ -118,19 +110,8 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>com.itextpdf</groupId>
-          <artifactId>bouncy-castle-adapter</artifactId>
-          <version>${project.version}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>bouncy-castle-fips-test</id>
-      <dependencies>
-        <dependency>
-          <groupId>com.itextpdf</groupId>
-          <artifactId>bouncy-castle-fips-adapter</artifactId>
+          <groupId>com.itextpdf.android</groupId>
+          <artifactId>bouncy-castle-adapter-android</artifactId>
           <version>${project.version}</version>
           <scope>test</scope>
         </dependency>

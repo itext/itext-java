@@ -66,7 +66,7 @@ public class PdfPadesWithCrlCertificateTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithCrlCertificateTest/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithCrlCertificateTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PdfPadesWithCrlCertificateTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesWithCrlCertificateTest/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 

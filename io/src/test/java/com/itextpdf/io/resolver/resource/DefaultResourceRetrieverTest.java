@@ -41,7 +41,7 @@ import java.net.URL;
 class DefaultResourceRetrieverTest extends ExtendedITextTest {
 
     @Test
-    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    @org.junit.jupiter.api.Disabled
     public void retrieveResourceReadTimeoutTest() throws IOException, InterruptedException {
         URL url = new URL("http://127.0.0.1:8080/");
         Thread thread = new TestResource();
@@ -58,7 +58,7 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    @org.junit.jupiter.api.Disabled
     public void retrieveResourceConnectTimeoutTest() throws IOException {
         URL url = new URL("http://10.255.255.1/");
 
@@ -105,7 +105,7 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    @org.junit.jupiter.api.Disabled
     public void loadGetByteArrayByUrl() throws IOException {
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
         byte[] data = resourceRetriever.getByteArrayByUrl(new URL("https://itextpdf.com/blog/itext-news-technical-notes/get-excited-itext-8-here"));

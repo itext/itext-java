@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 @Tag("UnitTest")
 public class PdfDestinationCopyingTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfDestinationCopyingTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfDestinationCopyingTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf"
             + "/PdfDestinationCopyingTest/";
     public static final String TARGET_DOC = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDestinationCopyingTest"

@@ -68,7 +68,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -95,7 +94,7 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/SignedAppearanceTextTest/";
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/signatures/font/";
     private static final String PDFA_FOLDER = "./src/test/resources/com/itextpdf/signatures/pdfa/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/SignedAppearanceTextTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/SignedAppearanceTextTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
@@ -220,7 +219,6 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
         String srcFile = DESTINATION_FOLDER + "simplePDFADocument.pdf";
         createSimplePDFADocument(srcFile).close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(srcFile));  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         String cmpPdf = SOURCE_FOLDER + "cmp_defaultSignedPDFAAppearanceTextTest.pdf";
         String outPdf = DESTINATION_FOLDER + "defaultSignedPDFAAppearanceTextTest.pdf";
 
@@ -237,7 +235,6 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
 
         sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf));  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assertions.assertNull(new CompareTool().compareVisually(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_",
                 getTestMap(rect)));
 
@@ -281,7 +278,6 @@ public class SignedAppearanceTextTest extends ExtendedITextTest {
 
         sign(srcFile, fieldName, outPdf, "Test 1", "TestCity 1", rect, appearance);
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
