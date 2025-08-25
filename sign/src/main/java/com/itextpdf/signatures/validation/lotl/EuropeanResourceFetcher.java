@@ -73,7 +73,10 @@ public class EuropeanResourceFetcher {
         private final ValidationReport localReport;
         private List<Certificate> certificates;
 
-        Result() {
+        /**
+         * Create a new Instance of {@link Result}.
+         */
+        public Result() {
             this.localReport = new ValidationReport();
             certificates = new ArrayList<>();
         }
