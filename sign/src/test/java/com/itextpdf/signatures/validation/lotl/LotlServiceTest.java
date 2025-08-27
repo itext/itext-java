@@ -51,6 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tag("IntegrationTest")
 public class LotlServiceTest extends ExtendedITextTest {
 
+    private static final String SOURCE_FOLDER_LOTL_FILES = "./src/test/resources/com/itextpdf/signatures/validation" +
+            "/lotl/LotlState2025_08_08/";
+
     @Test
     public void refreshCalculatorZeroThrowsException() {
         LotlFetchingProperties properties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
@@ -297,6 +300,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void initializeCacheWithCountrySpecificFailure() {
         try (LotlService lotlService = new LotlService(new LotlFetchingProperties(new ThrowExceptionOnFailingCountryData()))) {
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             CountrySpecificLotlFetcher countrySpecificLotlFetcher = new CountrySpecificLotlFetcher(lotlService) {
                 @Override
                 public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,

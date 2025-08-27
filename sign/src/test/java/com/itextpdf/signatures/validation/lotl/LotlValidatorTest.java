@@ -172,6 +172,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
 
         LotlValidator validator;
         try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             lotlService.initializeCache();
             validator = lotlService.getLotlValidator();
         }
@@ -191,7 +192,8 @@ public class LotlValidatorTest extends ExtendedITextTest {
         lotlFetchingProperties.setCountryNames("Invalid");
 
         LotlValidator validator;
-        try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties).withCustomResourceRetriever(
+                new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES))) {
             lotlService.initializeCache();
             validator = lotlService.getLotlValidator();
         }
@@ -688,6 +690,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
     @Test
     public void useOwnCountrySpecificLotlFetcher() {
         try (LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             CountrySpecificLotlFetcher lotlFetcher = new CountrySpecificLotlFetcher(service) {
                 @Override
                 public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, LotlService service) {
