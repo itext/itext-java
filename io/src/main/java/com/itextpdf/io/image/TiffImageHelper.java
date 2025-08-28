@@ -266,7 +266,7 @@ class TiffImageHelper {
             if (rotation != 0)
                 tiff.image.setRotation(rotation);
         } catch (Exception e) {
-            throw new IOException(IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE);
+            throw new IOException(IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE, e);
         }
     }
 
