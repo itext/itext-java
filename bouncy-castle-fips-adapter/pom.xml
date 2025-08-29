@@ -18,6 +18,12 @@
     <bouncycastlePkixFips.version>2.0.8</bouncycastlePkixFips.version>
     <sonar.coverage.exclusions>**/*</sonar.coverage.exclusions>
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
+
+    <sharpen.phase>install</sharpen.phase>
+    <sharpen.projectName>bouncy-castle-fips-adapter</sharpen.projectName>
+    <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.bouncy-castle-fips-adapter</sharpen.cSharpSourceCodeDestination>
+    <sharpen.cSharpTestCodeDestination>itext.tests/itext.bouncy-castle-fips-adapter.tests</sharpen.cSharpTestCodeDestination>
   </properties>
 
   <dependencies>
@@ -60,47 +66,4 @@
 
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>with-sharpen</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>sharpen</groupId>
-            <artifactId>sharpen-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>install</phase>
-                <goals>
-                  <goal>sharpen</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>sharpen</groupId>
-                <artifactId>standard-framework-mapping</artifactId>
-                <version>1.0-SNAPSHOT</version>
-              </dependency>
-            </dependencies>
-            <configuration>
-              <projectName>bouncy-castle-fips-adapter</projectName>
-              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
-              <cSharpSourceCodeDestination>itext/itext.bouncy-castle-fips-adapter</cSharpSourceCodeDestination>
-              <cSharpTestCodeDestination>itext.tests/itext.bouncy-castle-fips-adapter.tests</cSharpTestCodeDestination>
-              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
-              <showDiff>${sharpen.showdiff}</showDiff>
-              <sourceCodeFiles>
-                <file>**/src/main/java/**/*.java</file>
-              </sourceCodeFiles>
-              <testCodeFiles>
-                <file>**/src/test/java/**/*.java</file>
-              </testCodeFiles>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

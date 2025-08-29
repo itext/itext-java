@@ -16,6 +16,12 @@
   <properties>
     <sonar.skip>true</sonar.skip>
     <verapdf.version>1.26.2</verapdf.version>
+
+    <sharpen.phase>install</sharpen.phase>
+    <sharpen.projectName>pdftest</sharpen.projectName>
+    <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.pdftest</sharpen.cSharpSourceCodeDestination>
+    <sharpen.cSharpTestCodeDestination>itext.tests/itext.pdftest.tests</sharpen.cSharpTestCodeDestination>
   </properties>
 
   <dependencyManagement>
@@ -80,48 +86,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>with-sharpen</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>sharpen</groupId>
-            <artifactId>sharpen-maven-plugin</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <executions>
-              <execution>
-                <phase>install</phase>
-                <goals>
-                  <goal>sharpen</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>sharpen</groupId>
-                <artifactId>standard-framework-mapping</artifactId>
-                <version>1.0-SNAPSHOT</version>
-              </dependency>
-            </dependencies>
-            <configuration>
-              <projectName>pdftest</projectName>
-              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
-              <cSharpSourceCodeDestination>itext/itext.pdftest</cSharpSourceCodeDestination>
-              <cSharpTestCodeDestination>itext.tests/itext.pdftest.tests</cSharpTestCodeDestination>
-              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
-              <showDiff>${sharpen.showdiff}</showDiff>
-              <sourceCodeFiles>
-                <file>**/src/main/java/**/*.java</file>
-              </sourceCodeFiles>
-              <testCodeFiles>
-                <file>**/src/test/java/**/*.java</file>
-              </testCodeFiles>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

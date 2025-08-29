@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.itextpdf</groupId>
@@ -88,7 +89,7 @@
     <failsafe.version>3.0.0-M3</failsafe.version>
     <jacoco.version>0.8.4</jacoco.version>
     <java.version>1.8</java.version>
-    <javadoc-additionalOptions />
+    <javadoc-additionalOptions/>
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.7.0</javadoc.version>
     <junit.jupiter.version>5.10.2</junit.jupiter.version>
@@ -111,6 +112,13 @@
 
     <sharpen.builddotnet>false</sharpen.builddotnet>
     <sharpen.showdiff>false</sharpen.showdiff>
+    <sharpen.phase>none</sharpen.phase>
+    <sharpen.projectName>empty</sharpen.projectName>
+    <sharpen.cSharpTargetFolder>empty</sharpen.cSharpTargetFolder>
+    <sharpen.cSharpSourceCodeDestination></sharpen.cSharpSourceCodeDestination>
+    <sharpen.cSharpTestCodeDestination></sharpen.cSharpTestCodeDestination>
+    <sharpen.extraDependencies>
+    </sharpen.extraDependencies>
 
     <native.maven.plugin.version>0.10.1</native.maven.plugin.version>
   </properties>
@@ -529,7 +537,7 @@
             <executions>
               <execution>
                 <id>bundle-manifest</id>
-                <phase />
+                <phase/>
               </execution>
             </executions>
           </plugin>
@@ -545,11 +553,11 @@
             <executions>
               <execution>
                 <id>default-resources</id>
-                <phase />
+                <phase/>
               </execution>
               <execution>
                 <id>default-testResources</id>
-                <phase />
+                <phase/>
               </execution>
             </executions>
           </plugin>
@@ -579,10 +587,10 @@
             </dependencies>
             <configuration>
               <autoUpdate>false</autoUpdate>
-              <connectionString />
+              <connectionString/>
               <databaseDriverName>com.mysql.cj.jdbc.Driver</databaseDriverName>
-              <databasePassword />
-              <databaseUser />
+              <databasePassword/>
+              <databaseUser/>
               <format>ALL</format>
             </configuration>
             <executions>
@@ -726,19 +734,19 @@
                   <goal>verify</goal>
                 </goals>
               </execution>
-            <execution>
-              <id>approved-mode</id>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-              <configuration>
-                <systemPropertyVariables>
-                  <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
-                </systemPropertyVariables>
-              </configuration>
-            </execution>
-          </executions>
+              <execution>
+                <id>approved-mode</id>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -810,12 +818,20 @@
       </properties>
     </profile>
     <profile>
-      <id>sharpen-configuration</id>
-      <activation>
-        <file>
-          <missing>noSharpen.txt</missing>
-        </file>
-      </activation>
+      <id>build-sharpen-configs</id>
+      <dependencies>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>sharpen-config</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>standard-framework-mapping</artifactId>
+          <version>1.0-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -849,19 +865,6 @@
             <version>3.4.2</version>
             <executions>
               <execution>
-                <id>default-jar</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-                <phase>package</phase>
-                <configuration>
-                  <excludes>
-                    <exclude>**/SharpenConfig*.class</exclude>
-                    <exclude>**/sharpen.config.MappingConfiguration</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-              <execution>
                 <id>sharpen-config-jar</id>
                 <goals>
                   <goal>jar</goal>
@@ -879,6 +882,10 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <id>with-sharpen</id>
       <dependencies>
         <dependency>
           <groupId>sharpen</groupId>
@@ -886,7 +893,122 @@
           <version>1.0-SNAPSHOT</version>
           <scope>provided</scope>
         </dependency>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>standard-framework-mapping</artifactId>
+          <version>1.0-SNAPSHOT</version>
+        </dependency>
       </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>add-sharpenConfiguration-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-source</goal>
+                  <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>${project.basedir}/src/sharpenconfig/java</source>
+                  </sources>
+                  <resources>
+                    <resource>
+                      <directory>${project.basedir}/src/sharpenconfig/resources</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.4.2</version>
+            <executions>
+              <execution>
+                <id>sharpen-config-jar</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <classifier>sharpen-configuration</classifier>
+                  <includes>
+                    <include>**/SharpenConfig*.class</include>
+                    <include>**/sharpen.config.MappingConfiguration</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>sharpen</groupId>
+              <artifactId>sharpen-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <phase>${sharpen.phase}</phase>
+                  <goals>
+                    <goal>sharpen</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <buildDotnet>${sharpen.builddotnet}</buildDotnet>
+                <showDiff>${sharpen.showdiff}</showDiff>
+                <projectName>${sharpen.projectName}</projectName>
+                <cSharpTargetFolder>${sharpen.cSharpTargetFolder}</cSharpTargetFolder>
+                <cSharpSourceCodeDestination>${sharpen.cSharpSourceCodeDestination}</cSharpSourceCodeDestination>
+                <cSharpTestCodeDestination>${sharpen.cSharpTestCodeDestination}</cSharpTestCodeDestination>
+                <sourceCodeFiles>
+                  <file>**/src/main/java/**/*.java</file>
+                </sourceCodeFiles>
+                <testCodeFiles>
+                  <file>**/src/test/java/**/*.java</file>
+                </testCodeFiles>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+    <profile>
+      <id>sharpen-configuration</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.4.2</version>
+            <executions>
+              <execution>
+                <id>default-jar</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <excludes>
+                    <exclude>**/SharpenConfig*.class</exclude>
+                    <exclude>**/sharpen.config.MappingConfiguration</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>native</id>

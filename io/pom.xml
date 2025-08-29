@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -12,6 +13,14 @@
 
   <name>iText - io</name>
   <url>https://itextpdf.com/</url>
+  <properties>
+
+    <sharpen.phase>install</sharpen.phase>
+    <sharpen.projectName>io</sharpen.projectName>
+    <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.io</sharpen.cSharpSourceCodeDestination>
+    <sharpen.cSharpTestCodeDestination>itext.tests/itext.io.tests</sharpen.cSharpTestCodeDestination>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -62,47 +71,4 @@
       </testResource>
     </testResources>
   </build>
-
-  <profiles>
-    <profile>
-      <id>with-sharpen</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>sharpen</groupId>
-            <artifactId>sharpen-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>install</phase>
-                <goals>
-                  <goal>sharpen</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>sharpen</groupId>
-                <artifactId>standard-framework-mapping</artifactId>
-                <version>1.0-SNAPSHOT</version>
-              </dependency>
-            </dependencies>
-            <configuration>
-              <projectName>io</projectName>
-              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
-              <cSharpSourceCodeDestination>itext/itext.io</cSharpSourceCodeDestination>
-              <cSharpTestCodeDestination>itext.tests/itext.io.tests</cSharpTestCodeDestination>
-              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
-              <showDiff>${sharpen.showdiff}</showDiff>
-              <sourceCodeFiles>
-                <file>**/src/main/java/**/*.java</file>
-              </sourceCodeFiles>
-              <testCodeFiles>
-                <file>**/src/test/java/**/*.java</file>
-              </testCodeFiles>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

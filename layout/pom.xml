@@ -12,6 +12,14 @@
 
   <name>iText - layout</name>
   <url>https://itextpdf.com/</url>
+  <properties>
+
+    <sharpen.phase>install</sharpen.phase>
+    <sharpen.projectName>layout</sharpen.projectName>
+    <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.layout</sharpen.cSharpSourceCodeDestination>
+    <sharpen.cSharpTestCodeDestination>itext.tests/itext.layout.tests</sharpen.cSharpTestCodeDestination>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -57,47 +65,4 @@
     <plugins>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>with-sharpen</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>sharpen</groupId>
-            <artifactId>sharpen-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>install</phase>
-                <goals>
-                  <goal>sharpen</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>sharpen</groupId>
-                <artifactId>standard-framework-mapping</artifactId>
-                <version>1.0-SNAPSHOT</version>
-              </dependency>
-            </dependencies>
-            <configuration>
-              <projectName>layout</projectName>
-              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
-              <cSharpSourceCodeDestination>itext/itext.layout</cSharpSourceCodeDestination>
-              <cSharpTestCodeDestination>itext.tests/itext.layout.tests</cSharpTestCodeDestination>
-              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
-              <showDiff>${sharpen.showdiff}</showDiff>
-              <sourceCodeFiles>
-                <file>**/src/main/java/**/*.java</file>
-              </sourceCodeFiles>
-              <testCodeFiles>
-                <file>**/src/test/java/**/*.java</file>
-              </testCodeFiles>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
