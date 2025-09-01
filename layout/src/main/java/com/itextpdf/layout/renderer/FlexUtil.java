@@ -730,7 +730,7 @@ final class FlexUtil {
             float largestCrossSize = 0;
             for (FlexItemInfo info : line) {
                 // TODO DEVSIX-5002 Flex items whose cross-axis margins are both auto shouldn't be collected
-                // TODO DEVSIX-5038 Support BASELINE as align-self
+                // TODO DEVSIX-5167 Support BASELINE as align-self
                 largestCrossSize = Math.max(largestCrossSize, info.getRectangle().getWidth());
                 flexLinesCrossSize = Math.max(0, largestCrossSize);
             }
@@ -757,7 +757,7 @@ final class FlexUtil {
                     // its hypothetical outer cross-start edge, and the largest of the distances
                     // between each item’s baseline and its hypothetical outer cross-end edge, and sum these two values.
                     // TODO DEVSIX-5002 margin: auto is not supported => "cross-axis margins are both non-auto" is true
-                    // TODO DEVSIX-5038 Support BASELINE as align-self
+                    // TODO DEVSIX-5167 Support BASELINE as align-self
 
                     // 2. Among all the items not collected by the previous step,
                     // find the largest outer hypothetical cross size.
