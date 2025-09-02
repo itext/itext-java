@@ -505,8 +505,10 @@ public class FlexContainerRenderer extends DivRenderer {
         // TODO DEVSIX-5087 Since overflow-fit is an internal iText overflow value, we do not need to support if
         // for html/css objects, such as flex. As for now we will set VISIBLE by default, however, while working
         // on the ticket one may come to some more satifactory approach
-        renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
-        super.addChild(renderer);
+        if (!(renderer instanceof AreaBreakRenderer)) {
+            renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+            super.addChild(renderer);
+        }
     }
 
     private static void addSimulateDiv(AbstractRenderer overflowRenderer, float width) {

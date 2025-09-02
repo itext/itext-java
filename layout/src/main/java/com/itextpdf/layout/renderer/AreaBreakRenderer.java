@@ -27,8 +27,11 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Renderer for the {@link AreaBreak} layout element. Will terminate the
@@ -37,6 +40,8 @@ import java.util.List;
 public class AreaBreakRenderer implements IRenderer {
 
     protected AreaBreak areaBreak;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AreaBreakRenderer.class);
 
     /**
      * Creates an AreaBreakRenderer.
@@ -55,7 +60,7 @@ public class AreaBreakRenderer implements IRenderer {
      */
     @Override
     public void addChild(IRenderer renderer) {
-        throw new UnsupportedOperationException();
+        LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
     }
 
     @Override
@@ -71,7 +76,7 @@ public class AreaBreakRenderer implements IRenderer {
      */
     @Override
     public void draw(DrawContext drawContext) {
-        throw new UnsupportedOperationException();
+        LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
     }
 
     /**
@@ -133,7 +138,7 @@ public class AreaBreakRenderer implements IRenderer {
      */
     @Override
     public void setProperty(int property, Object value) {
-        throw new UnsupportedOperationException();
+        LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
     }
 
     @Override
@@ -172,7 +177,7 @@ public class AreaBreakRenderer implements IRenderer {
      */
     @Override
     public void move(float dx, float dy) {
-        throw new UnsupportedOperationException();
+        LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
     }
 
     @Override

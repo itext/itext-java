@@ -29,32 +29,49 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class AreaBreakRendererUnitTest extends ExtendedITextTest {
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED)
+    })
     public void addChildTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
         Assertions.assertNull(areaBreakRenderer.getChildRenderers());
-        Assertions.assertThrows(Exception.class, () -> areaBreakRenderer.addChild(new TextRenderer(new Text("Test"))));
+        AssertUtil.doesNotThrow(() -> areaBreakRenderer.addChild(new TextRenderer(new Text("Test"))));
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED)
+    })
     public void drawTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> areaBreakRenderer.draw(new DrawContext(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())), null))
-        );
+        AssertUtil.doesNotThrow(() -> areaBreakRenderer.draw(new DrawContext(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())), null)));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED)
+    })
+    public void addChild() {
+        AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
+
+        AssertUtil.doesNotThrow(() -> areaBreakRenderer.addChild(new AreaBreakRenderer(new AreaBreak())));
     }
 
     @Test
@@ -114,12 +131,13 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED)
+    })
     //The BORDER_BOTTOM_LEFT_RADIUS property is chosen without any specific intention. It could be replaced with any other property.
     public void setPropertyTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
-
-        Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> areaBreakRenderer.setProperty(Property.BORDER_BOTTOM_LEFT_RADIUS, 5));
+        AssertUtil.doesNotThrow(() -> areaBreakRenderer.setProperty(Property.BORDER_BOTTOM_LEFT_RADIUS, 5));
     }
 
     @Test
@@ -156,10 +174,13 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED)
+    })
     public void moveTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> areaBreakRenderer.move(2.0f, 2.0f));
+        AssertUtil.doesNotThrow(() -> areaBreakRenderer.move(2.0f, 2.0f));
     }
 
     @Test
