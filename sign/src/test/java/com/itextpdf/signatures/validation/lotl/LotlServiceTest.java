@@ -133,7 +133,7 @@ public class LotlServiceTest extends ExtendedITextTest {
                     }
             );
             f = lotlService.getAndValidatePivotFiles("abc".getBytes(StandardCharsets.UTF_8),
-                    Collections.<Certificate>emptyList());
+                    Collections.<Certificate>emptyList(), null);
         }
         Assertions.assertNotNull(f);
         assertEquals(1, f.getPivotUrls().size());
@@ -215,7 +215,7 @@ public class LotlServiceTest extends ExtendedITextTest {
             }
         }) {
             lotlService.setupTimer();
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         }
         Assertions.assertTrue(refreshCounter.get() >= 8,
                 "Refresh counter should be greater than 8, but was: " + refreshCounter.get());

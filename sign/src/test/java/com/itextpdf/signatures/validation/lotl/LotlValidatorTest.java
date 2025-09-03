@@ -49,10 +49,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.cert.Certificate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -233,7 +230,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 new EuropeanResourceFetcher() {
                     @Override
                     public Result getEUJournalCertificates() {
-                        Result result = new Result();
+                        Result result = super.getEUJournalCertificates();
                         result.setCertificates(Collections.<Certificate>emptyList());
                         return result;
                     }
@@ -242,7 +239,95 @@ public class LotlValidatorTest extends ExtendedITextTest {
             e = assertThrows(PdfException.class, () -> service.initializeCache());
         }
         Assertions.assertEquals(LotlValidator.LOTL_VALIDATION_UNSUCCESSFUL, e.getMessage());
+    }
 
+    @Test
+    public void euJournalEmptyResultTest() {
+        Exception e;
+        try (LotlService service = new LotlService(
+                new LotlFetchingProperties(new RemoveOnFailingCountryData())).withEuropeanResourceFetcher(
+                new EuropeanResourceFetcher() {
+                    @Override
+                    public Result getEUJournalCertificates() {
+                        Result result = new Result();
+                        result.setCertificates(Collections.<Certificate>emptyList());
+                        return result;
+                    }
+                })) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            e = assertThrows(PdfException.class, () -> service.initializeCache());
+        }
+        Assertions.assertEquals(SignExceptionMessageConstant.OFFICIAL_JOURNAL_CERTIFICATES_OUTDATED, e.getMessage());
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.OJ_TRANSITION_PERIOD))
+    public void mainLotlFileContainsTwoJournalsTest() {
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("DE");
+
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+            PivotFetcher customPivotFetcher = new PivotFetcher(lotlService) {
+                @Override
+                protected List<String> getPivotsUrlList(byte[] lotlXml) {
+                    return Arrays.asList(new String[]{
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml",
+                            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-335.xml",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-300.xml",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-282.xml",
+                            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2019.276.01.0001.01.ENG"
+                    });
+                }
+            };
+            lotlService.withPivotFetcher(customPivotFetcher);
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            lotlService.initializeCache();
+
+            LotlValidator validator = lotlService.getLotlValidator();
+            ValidationReport report = validator.validate();
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfFailures(0));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.OJ_TRANSITION_PERIOD))
+    public void mainLotlFileContainsTwoJournalsAndNewOneIsUsedTest() {
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("DE");
+
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+            PivotFetcher customPivotFetcher = new PivotFetcher(lotlService) {
+                @Override
+                protected List<String> getPivotsUrlList(byte[] lotlXml) {
+                    return Arrays.asList(new String[]{
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml",
+                            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-335.xml",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-300.xml",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-282.xml",
+                            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2019.276.01.0001.01.ENG"
+                    });
+                }
+            };
+            EuropeanResourceFetcher customEuropeanResourceFetcher = new EuropeanResourceFetcher() {
+                @Override
+                public Result getEUJournalCertificates() {
+                    Result result = super.getEUJournalCertificates();
+                    result.setCurrentlySupportedPublication("https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test");
+                    return result;
+                }
+            };
+            lotlService.withEuropeanResourceFetcher(customEuropeanResourceFetcher);
+            lotlService.withPivotFetcher(customPivotFetcher);
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            assertThrows(PdfException.class, () -> {
+                // This should throw an exception because only one pivot was fetched and used for validation.
+                lotlService.initializeCache();
+            });
+        }
     }
 
     @Test

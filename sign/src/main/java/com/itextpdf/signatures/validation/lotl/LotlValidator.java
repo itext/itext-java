@@ -75,7 +75,7 @@ public class LotlValidator {
         report.merge(europeanResult.getLocalReport());
 
         PivotFetcher.Result result = service.getAndValidatePivotFiles(lotl.getLotlXml(),
-                europeanResult.getCertificates());
+                europeanResult.getCertificates(), europeanResult.getCurrentlySupportedPublication());
 
         report.merge(result.getLocalReport());
         if (result.getLocalReport().getValidationResult() != ValidationResult.VALID) {

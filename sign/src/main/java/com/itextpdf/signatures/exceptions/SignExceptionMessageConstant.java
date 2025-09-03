@@ -142,6 +142,10 @@ public final class SignExceptionMessageConstant {
     public static final String CACHE_ALREADY_INITIALIZED = "Global LOTL service has already been initialized. " +
             "You cannot initialize it again. If you want to use a different configuration, please create a new " +
             "instance of LotlService with the desired properties and use it in ValidatorChainBuilder.";
+    public static final String OFFICIAL_JOURNAL_CERTIFICATES_OUTDATED =
+            "Trusted certificates from Official Journal of European Union are outdated. " +
+            "LOTL file cannot be validated. " +
+            "Please, provide OJ certificates, which match the ones used to sign European Union List of Trusted Lists.";
 
     private SignExceptionMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly

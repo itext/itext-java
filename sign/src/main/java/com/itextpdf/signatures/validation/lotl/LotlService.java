@@ -160,13 +160,14 @@ public class LotlService implements AutoCloseable {
         setupTimer();
         EuropeanLotlFetcher.Result mainLotlResult = lotlByteFetcher.fetch();
         if (!mainLotlResult.getLocalReport().getFailures().isEmpty()) {
-            //We throw on main Lotl fetch failure, so we don't proceed to pivot and country specific LOTL fetches
+            // We throw on main LOTL fetch failure, so we don't proceed to pivot and country specific LOTL fetches
             final ReportItem reportItem = mainLotlResult.getLocalReport().getFailures().get(0);
             throw new PdfException(reportItem.getMessage(), reportItem.getExceptionCause());
         }
 
         EuropeanResourceFetcher.Result europeanResourceFetcherEUJournalCertificates =
                 europeanResourceFetcher.getEUJournalCertificates();
+        pivotFetcher.setCurrentJournalUri(europeanResourceFetcherEUJournalCertificates.getCurrentlySupportedPublication());
         PivotFetcher.Result pivotsResult = pivotFetcher.downloadAndValidatePivotFiles(mainLotlResult.getLotlXml(),
                 europeanResourceFetcherEUJournalCertificates.getCertificates());
 
@@ -320,9 +321,11 @@ public class LotlService implements AutoCloseable {
         boolean mainLotlFetchSuccessful = false;
         Exception mainLotlFetchException = null;
 
+        String currentJournalUri;
         try {
             EuropeanResourceFetcher.Result europeanResourceFetcherEUJournalCertificates =
                     europeanResourceFetcher.getEUJournalCertificates();
+            currentJournalUri = europeanResourceFetcherEUJournalCertificates.getCurrentlySupportedPublication();
             if (europeanResourceFetcherEUJournalCertificates.getLocalReport().getValidationResult()
                     != ValidationResult.VALID) {
                 throw new PdfException(
@@ -352,6 +355,7 @@ public class LotlService implements AutoCloseable {
         if (mainLotlFetchSuccessful) {
             //Only if the main Lotl was fetched successfully, we proceed to re-fetch the new pivot files.
             try {
+                pivotFetcher.setCurrentJournalUri(currentJournalUri);
                 pivotResult = pivotFetcher.downloadAndValidatePivotFiles(
                         mainLotlResult.getLotlXml(),
                         europeanResourceFetcher.getEUJournalCertificates().getCertificates());
@@ -405,11 +409,13 @@ public class LotlService implements AutoCloseable {
         }
     }
 
-    PivotFetcher.Result getAndValidatePivotFiles(byte[] lotlXml, List<Certificate> certificates) {
+    PivotFetcher.Result getAndValidatePivotFiles(byte[] lotlXml, List<Certificate> certificates,
+                                                 String currentJournalUri) {
         PivotFetcher.Result result = cache.getPivotResult();
         if (result != null) {
             return result;
         }
+        pivotFetcher.setCurrentJournalUri(currentJournalUri);
         PivotFetcher.Result newResult = pivotFetcher.downloadAndValidatePivotFiles(lotlXml, certificates);
         cache.setPivotResult(newResult);
         return newResult;

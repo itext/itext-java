@@ -148,7 +148,7 @@ public class LotlFetchingProperties {
      * Gets the calculation function for the cache refresh interval.
      * <p>
      * This function will be used to determine the refresh interval based on the staleness time.
-     * By default, it takes 70% of the staleness time as the refresh interval.
+     * By default, it takes 23% of the staleness time as the refresh interval.
      *
      * @return a function that takes the staleness time in milliseconds and returns the refresh interval in
      * milliseconds.
