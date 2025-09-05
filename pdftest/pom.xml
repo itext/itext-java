@@ -15,7 +15,7 @@
 
   <properties>
     <sonar.skip>true</sonar.skip>
-    <verapdf.version>1.26.2</verapdf.version>
+    <verapdf.version>1.28.2</verapdf.version>
 
     <sharpen.phase>install</sharpen.phase>
     <sharpen.projectName>pdftest</sharpen.projectName>
