@@ -104,7 +104,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <skipTests>true</skipTests>
-    <slf4j.version>2.0.16</slf4j.version>
+    <slf4j.version>2.0.17</slf4j.version>
     <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
     <surefire.version>3.0.0-M3</surefire.version>
@@ -115,8 +115,8 @@
     <sharpen.phase>none</sharpen.phase>
     <sharpen.projectName>empty</sharpen.projectName>
     <sharpen.cSharpTargetFolder>empty</sharpen.cSharpTargetFolder>
-    <sharpen.cSharpSourceCodeDestination></sharpen.cSharpSourceCodeDestination>
-    <sharpen.cSharpTestCodeDestination></sharpen.cSharpTestCodeDestination>
+    <sharpen.cSharpSourceCodeDestination/>
+    <sharpen.cSharpTestCodeDestination/>
     <sharpen.extraDependencies>
     </sharpen.extraDependencies>
 
