@@ -1068,9 +1068,6 @@
                   --enable-all-security-services
                   --enable-url-protocols=http,https,ftp
 
-                  -H:IncludeLocales=en_US
-                  -H:IncludeResourceBundles=org.apache.xml.security.resource.xmlsecurity
-
                   -H:+AddAllCharsets
                   -H:ReflectionConfigurationFiles=${basedir}/../resources/graalvm/reflect-config.json
                   <!-- Graalvm requires VisualStudio 2022 on Windows but it also works with earlier versions.
