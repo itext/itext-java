@@ -64,7 +64,6 @@ class LtrFlexItemMainDirector implements IFlexItemMainDirector {
         switch (justifyContent) {
             case RIGHT:
             case END:
-            case SELF_END:
             case FLEX_END:
                 line.get(0).xShift = freeSpace;
                 break;
@@ -76,7 +75,6 @@ class LtrFlexItemMainDirector implements IFlexItemMainDirector {
             case STRETCH:
             case START:
             case LEFT:
-            case SELF_START:
             default:
                 // We don't need to do anything in these cases
         }

@@ -68,7 +68,6 @@ class RtlFlexItemMainDirector implements IFlexItemMainDirector {
         switch (justifyContent) {
             case RIGHT:
             case END:
-            case SELF_END:
             case FLEX_START:
                 line.get(line.size() - 1).xShift = freeSpace;
                 break;
@@ -80,7 +79,6 @@ class RtlFlexItemMainDirector implements IFlexItemMainDirector {
             case STRETCH:
             case START:
             case LEFT:
-            case SELF_START:
             default:
                 // We don't need to do anything in these cases
         }

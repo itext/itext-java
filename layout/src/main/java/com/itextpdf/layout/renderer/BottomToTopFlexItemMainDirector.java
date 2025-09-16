@@ -46,9 +46,7 @@ class BottomToTopFlexItemMainDirector extends FlexColumnItemMainDirector {
         switch (justifyContent) {
             case NORMAL:
             case END:
-            case SELF_END:
             case STRETCH:
-            case SELF_START:
             case START:
             case FLEX_START:
                 line.get(line.size() - 1).yShift = freeSpace;

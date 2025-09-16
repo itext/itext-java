@@ -47,7 +47,6 @@ class TopToBottomFlexItemMainDirector extends FlexColumnItemMainDirector {
             float freeSpace) {
         switch (justifyContent) {
             case END:
-            case SELF_END:
             case FLEX_END:
                 line.get(0).yShift = freeSpace;
                 break;
@@ -60,7 +59,6 @@ class TopToBottomFlexItemMainDirector extends FlexColumnItemMainDirector {
             case START:
             case LEFT:
             case RIGHT:
-            case SELF_START:
             default:
                 // We don't need to do anything in these cases
         }

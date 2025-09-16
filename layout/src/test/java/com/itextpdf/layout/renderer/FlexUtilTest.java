@@ -55,10 +55,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class FlexUtilTest extends ExtendedITextTest {
@@ -1651,7 +1650,6 @@ public class FlexUtilTest extends ExtendedITextTest {
                 JustifyContent.START,
                 JustifyContent.STRETCH,
                 JustifyContent.LEFT,
-                JustifyContent.SELF_START,
                 JustifyContent.FLEX_START
         };
         AlignmentPropertyValue[] alignItemsValues = {
@@ -1722,7 +1720,6 @@ public class FlexUtilTest extends ExtendedITextTest {
         JustifyContent[] justifyContentValues = {
                 JustifyContent.END,
                 JustifyContent.RIGHT,
-                JustifyContent.SELF_END,
                 JustifyContent.FLEX_END
         };
         AlignmentPropertyValue[] alignItemsValues = {
