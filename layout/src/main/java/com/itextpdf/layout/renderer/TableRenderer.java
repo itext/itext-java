@@ -37,23 +37,12 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
-import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
-import com.itextpdf.layout.properties.CaptionSide;
-import com.itextpdf.layout.properties.FloatPropertyValue;
-import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.properties.VerticalAlignment;
+import com.itextpdf.layout.properties.*;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -1314,7 +1303,7 @@ public class TableRenderer extends AbstractRenderer {
             float totalColumnWidthInPercent = 0;
             for (int col = 0; col < tableModel.getNumberOfColumns(); col++) {
                 UnitValue columnWidth = tableModel.getColumnWidth(col);
-                if (columnWidth.isPercentValue()) {
+                if (columnWidth != null && columnWidth.isPercentValue()) {
                     totalColumnWidthInPercent += columnWidth.getValue();
                 }
             }

@@ -53,6 +53,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -1087,6 +1088,54 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         flexContainer.add(innerDiv).add(innerDiv2).add(innerDiv3);
         document.add(flexContainer).add(divToCompare);
+        document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void nestedFlexContainersTest() throws IOException, InterruptedException {
+
+        String outFileName = DESTINATION_FOLDER + "nestedFlexContainersTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_nestedFlexContainersTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Div innerFlex = new FlexContainer();
+        Div outerFlex = new FlexContainer();
+
+        Table table = new Table(2);
+        table.setWidth(400);
+
+        innerFlex.add(table);
+        outerFlex.add(innerFlex);
+
+        document.add(outerFlex);
+        document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void nestedFlexContainersPercentValueTest() throws IOException, InterruptedException {
+
+        String outFileName = DESTINATION_FOLDER + "nestedFlexContainersPercentValueTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_nestedFlexContainersPercentValueTest.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Div innerFlex = new FlexContainer();
+        Div outerFlex = new FlexContainer();
+
+        Table table = new Table(2);
+        table.setWidth(new UnitValue(UnitValue.PERCENT, 20));
+
+        innerFlex.add(table);
+        outerFlex.add(innerFlex);
+
+        document.add(outerFlex);
         document.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
