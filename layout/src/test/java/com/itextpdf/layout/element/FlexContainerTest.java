@@ -24,6 +24,7 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -52,17 +53,18 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class FlexContainerTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FlexContainerTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FlexContainerTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FlexContainerTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/FlexContainerTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     public static Iterable<Object[]> alignItemsAndJustifyContentProperties() {
@@ -99,8 +101,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     public void defaultFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
             throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "defaultFlexContainerTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_defaultFlexContainerTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "defaultFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_defaultFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -120,7 +122,7 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -128,8 +130,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     public void flexContainerFixedHeightWidthTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
             throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -151,7 +153,7 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -159,8 +161,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     public void flexContainerDifferentChildrenTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
             throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -183,12 +185,13 @@ public class FlexContainerTest extends ExtendedITextTest {
                 add("One").add("Two").add("Three");
         romanList.setProperty(Property.BACKGROUND, new Background(ColorConstants.MAGENTA));
 
-        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(sourceFolder + "img.jpg")));
+        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(
+                SOURCE_FOLDER + "img.jpg")));
         document.add(flexContainer);
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -198,8 +201,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     public void flexContainerHeightClippedTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
             throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerHeightClippedTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerHeightClippedTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerHeightClippedTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerHeightClippedTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -223,12 +226,13 @@ public class FlexContainerTest extends ExtendedITextTest {
                 add("One").add("Two").add("Three");
         romanList.setProperty(Property.BACKGROUND, new Background(ColorConstants.MAGENTA));
 
-        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(sourceFolder + "img.jpg")));
+        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(
+                SOURCE_FOLDER + "img.jpg")));
         document.add(flexContainer);
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -237,8 +241,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     // TODO DEVSIX-5042 HEIGHT property is ignored when FORCED_PLACEMENT is true
     public void flexContainerDifferentChildrenDontFitHorizontallyTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -261,12 +265,13 @@ public class FlexContainerTest extends ExtendedITextTest {
                 setMarginLeft(25).
                 add("One").add("Two").add("Three");
 
-        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(sourceFolder + "img.jpg")));
+        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(
+                SOURCE_FOLDER + "img.jpg")));
         document.add(flexContainer);
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -274,8 +279,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     // TODO DEVSIX-5042 HEIGHT property is ignored when FORCED_PLACEMENT is true
     public void flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenDontFitHorizontallyForcedPlacementTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -298,12 +303,13 @@ public class FlexContainerTest extends ExtendedITextTest {
                 setMarginLeft(25).
                 add("MuchMoreText").add("MuchMoreText").add("MuchMoreText");
 
-        flexContainer.add(table).add(new Paragraph("MuchMoreText")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(sourceFolder + "img.jpg")));
+        flexContainer.add(table).add(new Paragraph("MuchMoreText")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(
+                SOURCE_FOLDER + "img.jpg")));
         document.add(flexContainer);
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -311,8 +317,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
     public void flexContainerDifferentChildrenDontFitVerticallyTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenDontFitVerticallyTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenDontFitVerticallyTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenDontFitVerticallyTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenDontFitVerticallyTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -334,7 +340,8 @@ public class FlexContainerTest extends ExtendedITextTest {
                 setMarginLeft(25).
                 add("One").add("Two").add("Three");
 
-        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(sourceFolder + "img.jpg")));
+        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(
+                SOURCE_FOLDER + "img.jpg")));
         Div prevDiv = new Div();
         prevDiv.setHeight(480);
         prevDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.RED));
@@ -343,7 +350,7 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -351,8 +358,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT), ignore = true)
     public void flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenFitContainerDoesNotFitVerticallyTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -375,7 +382,8 @@ public class FlexContainerTest extends ExtendedITextTest {
                 setMarginLeft(25).
                 add("One").add("Two").add("Three");
 
-        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(sourceFolder + "img.jpg")));
+        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(
+                SOURCE_FOLDER + "img.jpg")));
         Div prevDiv = new Div();
         prevDiv.setHeight(400);
         prevDiv.setProperty(Property.BACKGROUND, new Background(ColorConstants.RED));
@@ -384,7 +392,7 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -392,8 +400,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     public void flexContainerDifferentChildrenWithGrowTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId)
             throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -419,7 +427,7 @@ public class FlexContainerTest extends ExtendedITextTest {
         romanList.setProperty(Property.FLEX_GROW, 1f);
         romanList.setProperty(Property.BACKGROUND, new Background(ColorConstants.MAGENTA));
 
-        Image img = new Image(ImageDataFactory.create(sourceFolder + "img.jpg"));
+        Image img = new Image(ImageDataFactory.create(SOURCE_FOLDER + "img.jpg"));
         img.setProperty(Property.FLEX_GROW, 1f);
 
         flexContainer.add(table).add(innerDiv).add(romanList).add(img);
@@ -427,15 +435,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerDifferentChildrenWithFlexBasisTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -456,7 +464,7 @@ public class FlexContainerTest extends ExtendedITextTest {
         romanList.setProperty(Property.BACKGROUND, new Background(ColorConstants.MAGENTA));
         romanList.setProperty(Property.FLEX_BASIS, UnitValue.createPointValue(100));
 
-        Image img = new Image(ImageDataFactory.create(sourceFolder + "img.jpg"));
+        Image img = new Image(ImageDataFactory.create(SOURCE_FOLDER + "img.jpg"));
         img.setProperty(Property.FLEX_BASIS, UnitValue.createPointValue(150));
 
         flexContainer.add(table).add(romanList).add(img);
@@ -464,15 +472,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerDifferentChildrenWithFlexShrinkTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -504,15 +512,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -534,15 +542,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerInsideFlexContainerWithHugeBordersTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerInsideFlexContainerWithHugeBordersTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerInsideFlexContainerWithHugeBordersTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerInsideFlexContainerWithHugeBordersTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideFlexContainerWithHugeBordersTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -570,15 +578,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void multipleFlexContainersInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -608,15 +616,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_multipleFlexContainersWithPredefinedPointWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -648,15 +656,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_multipleFlexContainersWithPredefinedPercentWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -688,7 +696,7 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -696,8 +704,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     // TODO DEVSIX-5087 Content should not overflow container by default
     public void multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_multipleFlexContainersWithPredefinedMinWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -729,15 +737,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_multipleFlexContainersWithPredefinedMaxWidthsInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -769,15 +777,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerFillAvailableAreaTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerFillAvailableAreaTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerFillAvailableAreaTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerFillAvailableAreaTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerFillAvailableAreaTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -801,20 +809,21 @@ public class FlexContainerTest extends ExtendedITextTest {
                 add("One").add("Two").add("Three");
         romanList.setProperty(Property.BACKGROUND, new Background(ColorConstants.MAGENTA));
 
-        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(sourceFolder + "img.jpg")));
+        flexContainer.add(table).add(new Paragraph("Test")).add(innerDiv).add(romanList).add(new Image(ImageDataFactory.create(
+                SOURCE_FOLDER + "img.jpg")));
         document.add(flexContainer);
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerRotationAngleTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -834,12 +843,13 @@ public class FlexContainerTest extends ExtendedITextTest {
                 add("One").add("Two").add("Three");
         romanList.setProperty(Property.BACKGROUND, new Background(ColorConstants.MAGENTA));
 
-        flexContainer.add(table).add(new Paragraph("Test")).add(romanList).add(new Image(ImageDataFactory.create(sourceFolder + "img.jpg")));
+        flexContainer.add(table).add(new Paragraph("Test")).add(romanList).add(new Image(ImageDataFactory.create(
+                SOURCE_FOLDER + "img.jpg")));
         document.add(flexContainer);
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
@@ -847,8 +857,8 @@ public class FlexContainerTest extends ExtendedITextTest {
     // TODO DEVSIX-5174 content should overflow bottom
     public void respectFlexContainersHeightTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "respectFlexContainersHeightTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_respectFlexContainersHeightTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "respectFlexContainersHeightTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_respectFlexContainersHeightTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -876,15 +886,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void respectFlexContainersWidthTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "respectFlexContainersWidthTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_respectFlexContainersWidthTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "respectFlexContainersWidthTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_respectFlexContainersWidthTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -917,15 +927,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexItemsMinHeightShouldBeOverriddenTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexItemsMinHeightShouldBeOverriddenTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexItemsMinHeightShouldBeOverriddenTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexItemsMinHeightShouldBeOverriddenTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexItemsMinHeightShouldBeOverriddenTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -938,15 +948,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void linesMinHeightShouldBeRespectedTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "linesMinHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_linesMinHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "linesMinHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_linesMinHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -962,15 +972,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void linesMaxHeightShouldBeRespectedTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "linesMaxHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_linesMaxHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "linesMaxHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_linesMaxHeightShouldBeRespectedTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -986,15 +996,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void collapsingMarginsFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "collapsingMarginsFlexContainerTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_collapsingMarginsFlexContainerTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "collapsingMarginsFlexContainerTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_collapsingMarginsFlexContainerTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -1022,15 +1032,15 @@ public class FlexContainerTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexItemBoxSizingTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -1074,15 +1084,15 @@ public class FlexContainerTest extends ExtendedITextTest {
         document.add(flexContainer).add(divToCompare);
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerBoxSizingTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
-        String cmpFileName = sourceFolder + "cmp_flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
+        String outFileName = DESTINATION_FOLDER + "flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -1107,7 +1117,53 @@ public class FlexContainerTest extends ExtendedITextTest {
         document.add(flexContainer).add(divToCompare);
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
+    @MethodSource("alignItemsAndJustifyContentProperties")
+    public void alignSelfWithAlignItemsEndFlexWrapTest(AlignmentPropertyValue alignSelfValue, JustifyContent justifyContentValue,
+                                         FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "alignSelfWithAlignItemsEndFlexWrapTest"+comparisonPdfId+".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_alignSelfWithAlignItemsEndFlexWrapTest"+comparisonPdfId+".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+
+            Div flexContainer = new FlexContainer();
+            flexContainer.setProperty(Property.FLEX_WRAP, wrapValue);
+            flexContainer.setProperty(Property.FLEX_DIRECTION, directionValue);
+            flexContainer.setProperty(Property.JUSTIFY_CONTENT, justifyContentValue);
+            flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.END);
+            flexContainer.setBackgroundColor(Color.createColorWithColorSpace(new float[] {0.847f, 0.811f, 0.768f}));
+            flexContainer.setWidth(450);
+            flexContainer.setHeight(250);
+
+            for (int i = 0; i < 6; i++) {
+                Div item = new Div();
+                item.setWidth(100);
+                item.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+                item.setMargin(5);
+
+
+                if (i == 0 || i == 3 || i == 5) {
+                    item.setProperty(Property.ALIGN_SELF, alignSelfValue);
+                    item.setBackgroundColor(Color.createColorWithColorSpace(new float[] {0.67f, 0.84f, 0.9f}));
+                    if (i != 5 && !AlignmentPropertyValue.STRETCH.equals(alignSelfValue)) {
+                        item.setHeight(i == 0 ? 25 : 80);
+                    }
+                } else if (i == 4 && !AlignmentPropertyValue.STRETCH.equals(alignSelfValue)) {
+                    item.setHeight(100);
+                }
+
+                item.add(new Paragraph("Item " + i));
+                flexContainer.add(item);
+            }
+
+            document.add(flexContainer);
+
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 
     private Div getFlexContainer(OverflowPropertyValue overflowX, Style style, AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,

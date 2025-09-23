@@ -604,11 +604,9 @@ public class FlexContainerRenderer extends DivRenderer {
 
     private void startContentOnTopOfNewPage(IRenderer overflowChildRenderer, AbstractRenderer overflowRenderer) {
         AlignmentPropertyValue alignItems =
-                (AlignmentPropertyValue) this.<AlignmentPropertyValue>getProperty(
-                        Property.ALIGN_ITEMS, AlignmentPropertyValue.STRETCH);
+                (AlignmentPropertyValue) this.<AlignmentPropertyValue>getProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.STRETCH);
         AlignmentPropertyValue alignSelf =
-                (AlignmentPropertyValue) overflowChildRenderer.<AlignmentPropertyValue>getProperty(
-                        Property.ALIGN_SELF, alignItems);
+                (AlignmentPropertyValue) overflowChildRenderer.<AlignmentPropertyValue>getProperty(Property.ALIGN_SELF, alignItems);
         if (alignSelf != AlignmentPropertyValue.STRETCH) {
             overflowChildRenderer.setProperty(Property.ALIGN_SELF, AlignmentPropertyValue.START);
         }

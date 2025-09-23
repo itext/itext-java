@@ -839,8 +839,7 @@ final class FlexUtil {
                 // Also note that for some reason browsers do not respect such a rule from the specification
                 AbstractRenderer infoRenderer = info.renderer;
                 AlignmentPropertyValue alignSelf =
-                        (AlignmentPropertyValue) infoRenderer.<AlignmentPropertyValue>getProperty(
-                                Property.ALIGN_SELF, alignItems);
+                        (AlignmentPropertyValue) infoRenderer.<AlignmentPropertyValue>getProperty(Property.ALIGN_SELF, alignItems);
                 // TODO DEVSIX-5002 Stretch value shall be ignored if margin auto for cross axis is set
                 boolean definiteCrossSize = isColumnDirection ?
                         info.renderer.hasProperty(Property.WIDTH) : info.renderer.hasProperty(Property.HEIGHT);
@@ -907,8 +906,7 @@ final class FlexUtil {
                 }
 
                 AlignmentPropertyValue selfAlignment =
-                        (AlignmentPropertyValue) itemInfo.renderer.<AlignmentPropertyValue>getProperty(
-                                Property.ALIGN_SELF, itemsAlignment);
+                        (AlignmentPropertyValue) itemInfo.renderer.<AlignmentPropertyValue>getProperty(Property.ALIGN_SELF, itemsAlignment);
 
                 final float freeSpace = lineCrossSize - itemInfo.getOuterCrossSize(itemInfo.crossSize);
                 nextLineShift = Math.min(nextLineShift, freeSpace);
@@ -953,6 +951,7 @@ final class FlexUtil {
                         break;
                     case START:
                     case BASELINE:
+                        // TODO DEVSIX-5167 Support baseline value for align-items and align-self
                     case SELF_START:
                     case STRETCH:
                     case NORMAL:
