@@ -37,6 +37,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrate
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs.Indexed;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject.ImageBytesRetrievalProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -58,6 +59,8 @@ import org.junit.jupiter.api.Test;
 public class InlineImageExtractionTest extends ExtendedITextTest {
     public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/canvas/parser/InlineImageExtractionTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/parser/InlineImageExtractionTest/";
+
+    public static final String pdfASourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf-association/pdf-differences/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -272,6 +275,45 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
 
             Assertions.assertEquals(PdfName.Indexed, actualName);
         }
+    }
+
+    @Test
+    public void extractImagesFromInlineAbbreviationsTest() throws IOException {
+        PdfDocument pdf = new PdfDocument(new PdfReader(pdfASourceFolder + "InlineAbbreviations.pdf"));
+        InlineImageEventListener eventListener = new InlineImageEventListener();
+
+        PdfCanvasProcessor canvasProcessor = new PdfCanvasProcessor(eventListener);
+        try {
+            canvasProcessor.processPageContent(pdf.getFirstPage());
+        } catch (Exception e) {
+            //don't crash without assertions
+        }
+        pdf.close();
+
+        List<PdfStream> inlineImages = eventListener.getInlineImages();
+
+        ImageBytesRetrievalProperties opts = ImageBytesRetrievalProperties.getFullOption();
+        byte[] cmpImgBytes = Files.readAllBytes(Paths.get(pdfASourceFolder, "InlineAbbreviations.png"));
+
+
+        int imagesValidated = 0;
+        for (int i = 0; i < inlineImages.size(); i++) {
+            try {
+                PdfStream im = inlineImages.get(i);
+                PdfImageXObject imXo = new PdfImageXObject(im);
+                String filename = "InlineAbbreviations_" + i + "." + imXo.identifyImageFileExtension(opts);
+                Files.write(Paths.get(destinationFolder, filename)
+                        , imXo.getImageBytes(opts));
+
+                byte[] imgBytes = imXo.getImageBytes(opts);
+                Assertions.assertArrayEquals(cmpImgBytes, imgBytes);
+                imagesValidated++;
+            } catch (Exception e) {
+                System.out.println(i + ": "+ e.getClass().getName()+": " +e.getMessage());
+            }
+        }
+        Assertions.assertEquals(8, inlineImages.size());
+        Assertions.assertEquals(8, imagesValidated);
     }
 
     private static class InlineImageEventListener implements IEventListener {

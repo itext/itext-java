@@ -27,9 +27,11 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfBoolean;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfLiteral;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNull;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfResources;
@@ -182,7 +184,8 @@ public class PdfCanvasParser {
             case StartArray:
                 return readArray();
             case String:
-                PdfString str = new PdfString(tokeniser.getDecodedStringContent()).setHexWriting(tokeniser.isHexString());
+                PdfString str = new PdfString(tokeniser.getDecodedStringContent())
+                        .setHexWriting(tokeniser.isHexString());
                 return str;
             case Name:
                 return new PdfName(tokeniser.getByteContent());
@@ -190,7 +193,15 @@ public class PdfCanvasParser {
                 //use PdfNumber(byte[]) here, as in this case number parsing won't happen until it's needed.
                 return new PdfNumber(tokeniser.getByteContent());
             default:
-                return new PdfLiteral(tokeniser.getByteContent());
+                if (tokeniser.tokenValueEqualsTo(PdfTokenizer.Null)) {
+                    return new PdfNull();
+                } else if (tokeniser.tokenValueEqualsTo(PdfTokenizer.True)) {
+                    return new PdfBoolean(true);
+                } else if (tokeniser.tokenValueEqualsTo(PdfTokenizer.False)) {
+                    return new PdfBoolean(false);
+                } else {
+                    return new PdfLiteral(tokeniser.getByteContent());
+                }
         }
     }
 
