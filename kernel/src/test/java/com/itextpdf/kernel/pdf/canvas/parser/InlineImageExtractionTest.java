@@ -316,6 +316,20 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
         Assertions.assertEquals(8, imagesValidated);
     }
 
+    @Test
+    public void parseInlineImageMaskTest() throws IOException {
+        InlineImageEventListener listener = new InlineImageEventListener();
+        try(PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "inlineMask.pdf"))){
+            PdfCanvasProcessor pdfCanvasProcessor = new PdfCanvasProcessor(listener);
+            pdfCanvasProcessor.processPageContent(pdf.getPage(1));
+
+            PdfImageXObject img = new PdfImageXObject(listener.getInlineImages().get(0));
+            byte[] bytes = img.getImageBytes(ImageBytesRetrievalProperties.getApplyFiltersOnly());
+            byte[] compareBytes = Files.readAllBytes(Paths.get(sourceFolder, "inlineMask.png" ));
+            Assertions.assertArrayEquals(compareBytes, bytes);
+        }
+    }
+
     private static class InlineImageEventListener implements IEventListener {
         private final List<PdfStream> inlineImages = new ArrayList<>();
 

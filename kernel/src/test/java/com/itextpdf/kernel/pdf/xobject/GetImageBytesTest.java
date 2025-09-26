@@ -1172,7 +1172,8 @@ public class GetImageBytesTest extends ExtendedITextTest {
             if (saveResult) {
                 Files.write(Paths.get(
                                 SOURCE_FOLDER,
-                                filename.substring(0, filename.length() - 4) + compareFileMarker + ".new." + expectedImageFormat),
+                                filename.substring(0, filename.length() - 4) + compareFileMarker + ".new."
+                                        + expectedImageFormat),
                         result);
             }
 

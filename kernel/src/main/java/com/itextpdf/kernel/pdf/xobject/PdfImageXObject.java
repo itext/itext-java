@@ -144,8 +144,7 @@ public class PdfImageXObject extends PdfXObject {
             return mask;
         }
         PdfObject val = getPdfObject().get(PdfName.ImageMask);
-        return (val != null && (val.isBoolean() && (((PdfBoolean) val).getValue() ||
-                (val.isLiteral() && "TRUE".equalsIgnoreCase(val.toString())))));
+        return val != null && val.isBoolean() && ((PdfBoolean) val).getValue();
     }
 
     /**
@@ -160,8 +159,7 @@ public class PdfImageXObject extends PdfXObject {
             return softMask;
         }
         PdfObject val = getPdfObject().get(PdfName.SMask);
-        return (val != null && (val.isBoolean() && (((PdfBoolean) val).getValue() ||
-                (val.isLiteral() && "TRUE".equalsIgnoreCase(val.toString())))));
+        return val != null && val.isBoolean() && ((PdfBoolean) val).getValue();
     }
 
     /**
