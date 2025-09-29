@@ -653,7 +653,12 @@ public class FlexContainerRenderer extends DivRenderer {
                                  List<IRenderer> childRenderers) {
         float maxWidth = initialMaxWidth;
         float minWidth = initialMinWidth;
-        for (final IRenderer childRenderer : childRenderers) {
+
+        Float columnGapProp = this.<Float>getProperty(Property.COLUMN_GAP);
+        float columnGap = columnGapProp == null ? 0f : (float) columnGapProp;
+
+        for (int i = 0; i < childRenderers.size(); ++i) {
+            IRenderer childRenderer = childRenderers.get(i);
             MinMaxWidth childMinMaxWidth;
             childRenderer.setParent(this);
             if (childRenderer instanceof AbstractRenderer) {
@@ -665,8 +670,8 @@ public class FlexContainerRenderer extends DivRenderer {
                 maxWidth = Math.max(maxWidth, childMinMaxWidth.getMaxWidth());
                 minWidth = Math.max(minWidth, childMinMaxWidth.getMinWidth());
             } else {
-                maxWidth += childMinMaxWidth.getMaxWidth();
-                minWidth += childMinMaxWidth.getMinWidth();
+                maxWidth += childMinMaxWidth.getMaxWidth() + (i == 0 ? 0 : columnGap);
+                minWidth += childMinMaxWidth.getMinWidth() + (i == 0 ? 0 : columnGap);
             }
         }
         minMaxWidthHandler.updateMaxChildWidth(maxWidth);

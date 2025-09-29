@@ -139,6 +139,11 @@ public class CssDefaults {
 
         defaultValues.put(CommonCssConstants.JUSTIFY_CONTENT, CommonCssConstants.FLEX_START);
         defaultValues.put(CommonCssConstants.ALIGN_ITEMS, CommonCssConstants.STRETCH);
+        defaultValues.put(CommonCssConstants.ALIGN_SELF, CommonCssConstants.AUTO);
+        defaultValues.put(CommonCssConstants.ALIGN_CONTENT, CommonCssConstants.STRETCH);
+
+        defaultValues.put(CommonCssConstants.ROW_GAP, CommonCssConstants.NORMAL);
+        defaultValues.put(CommonCssConstants.COLUMN_GAP, CommonCssConstants.NORMAL);
 
         // Other css properties default values will be added as needed
     }
