@@ -86,7 +86,7 @@ public class EuropeanLotlFetcher {
      * Represents the result of fetching the List of Trusted Lists (Lotl).
      */
     public static class Result {
-        private final ValidationReport validationReport = new ValidationReport();
+        private final ValidationReport localReport = new ValidationReport();
         private byte[] lotlXml;
 
         /**
@@ -101,7 +101,7 @@ public class EuropeanLotlFetcher {
         /**
          * Creates a new instance of {@link Result} with an empty report items list.
          */
-        Result() {
+        public Result() {
             //empty constructor
         }
 
@@ -134,7 +134,7 @@ public class EuropeanLotlFetcher {
          * @return a list of {@link ReportItem} objects containing information about the fetching process
          */
         public ValidationReport getLocalReport() {
-            return validationReport;
+            return localReport;
         }
 
         boolean hasValidXml() {

@@ -271,7 +271,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             PivotFetcher customPivotFetcher = new PivotFetcher(lotlService) {
                 @Override
                 protected List<String> getPivotsUrlList(byte[] lotlXml) {
-                    return Arrays.asList(new String[]{
+                    return Arrays.asList(new String[] {
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml",
                             "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test",
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-335.xml",
@@ -302,7 +302,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             PivotFetcher customPivotFetcher = new PivotFetcher(lotlService) {
                 @Override
                 protected List<String> getPivotsUrlList(byte[] lotlXml) {
-                    return Arrays.asList(new String[]{
+                    return Arrays.asList(new String[] {
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml",
                             "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test",
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-335.xml",

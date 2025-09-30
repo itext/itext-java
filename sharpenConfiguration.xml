@@ -480,6 +480,9 @@
                 <file path="com/itextpdf/signatures/validation/lotl/CertificateSelector.java" />
                 <file path="com/itextpdf/signatures/validation/lotl/xml/XmlSaxProcessor.java" />
             </fileset>
+            <fileset reason="Json handling is different in .NET">
+                <file path="com/itextpdf/signatures/validation/lotl/LotlCacheDataV1.java" />
+            </fileset>
             <fileset reason="uri handeling and certificate handeling is different">
                 <file path="com/itextpdf/signatures/validation/EuropeanTrustedCertificatesResourceLoader.java"/>
                 <file path="com/itextpdf/signatures/validation/LoadFromModuleEuropeanTrustedListConfigurationFactory.java"/>

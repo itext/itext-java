@@ -29,6 +29,11 @@ import java.util.List;
 class SimpleServiceContext implements IServiceContext {
     private List<Certificate> certificates;
 
+    SimpleServiceContext() {
+        //Empty constructor needed for deserialization.
+        this.certificates = new ArrayList<>();
+    }
+
     SimpleServiceContext(Certificate certificate) {
         this.certificates = new ArrayList<>();
         certificates.add(certificate);

@@ -74,6 +74,8 @@ public class LotlValidator {
         EuropeanResourceFetcher.Result europeanResult = service.getEUJournalCertificates();
         report.merge(europeanResult.getLocalReport());
 
+        // get all the data from cache, if it is stale, exception will be thrown
+        // locked and pass to methods
         PivotFetcher.Result result = service.getAndValidatePivotFiles(lotl.getLotlXml(),
                 europeanResult.getCertificates(), europeanResult.getCurrentlySupportedPublication());
 

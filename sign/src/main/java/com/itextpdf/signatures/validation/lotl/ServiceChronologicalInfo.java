@@ -62,7 +62,7 @@ class ServiceChronologicalInfo {
         return validStatuses.contains(status);
     }
 
-    String getServiceStatus() {
+    public String getServiceStatus() {
         return serviceStatus;
     }
 
@@ -70,7 +70,7 @@ class ServiceChronologicalInfo {
         this.serviceStatus = serviceStatus;
     }
 
-    LocalDateTime getServiceStatusStartingTime() {
+    public LocalDateTime getServiceStatusStartingTime() {
         return serviceStatusStartingTime;
     }
 
@@ -86,7 +86,7 @@ class ServiceChronologicalInfo {
         extensions.add(extension);
     }
 
-    List<AdditionalServiceInformationExtension> getExtensions() {
+    public List<AdditionalServiceInformationExtension> getExtensions() {
         return extensions;
     }
 }

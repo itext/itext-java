@@ -28,6 +28,7 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.LongUnaryOperator;
 
@@ -226,4 +227,10 @@ public class LotlFetchingProperties {
         // Process if schema is in the specified list
         return schemaNames.contains(countryName);
     }
+
+    List<String> getSchemaNames() {
+        return Collections.unmodifiableList(Arrays.asList(schemaNames.toArray(new String[0])));
+    }
+
+
 }

@@ -24,7 +24,6 @@ package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-import com.itextpdf.signatures.validation.SafeCallingAvoidantException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ final class InMemoryLotlServiceCache implements LotlServiceCache {
     private static final String CACHE_KEY_EU_JOURNAL_CERTIFICATES = "europeanResourceFetcherCache";
     private final Object lock = new Object();
     private final long maxAllowedStalenessInMillis;
-    private final HashMap<String, Long> staleTracker = new HashMap<>();
+    private final HashMap<String, Long> timeStamps = new HashMap<>();
     private final IOnFailingCountryLotlData strategy;
     private EuropeanLotlFetcher.Result lotlCache = null;
     private PivotFetcher.Result pivotCache = null;
@@ -163,8 +162,28 @@ final class InMemoryLotlServiceCache implements LotlServiceCache {
         }
     }
 
+    HashMap<String, Long> getTimeStamps() {
+        synchronized (lock) {
+            return new HashMap<>(timeStamps);
+        }
+    }
+
+    void setTimeStamps(Map<String, Long> timeStamps) {
+        synchronized (lock) {
+            this.timeStamps.clear();
+            this.timeStamps.putAll(timeStamps);
+        }
+    }
+
+    LotlCacheDataV1 getAllData() {
+        synchronized (lock) {
+            return new LotlCacheDataV1(lotlCache, pivotCache, europeanResourceFetcherCache, countrySpecificLotlCache,
+                    (HashMap<String, Long>) timeStamps);
+        }
+    }
+
     private boolean isObjectStale(String key) {
-        final Long lastUpdated = staleTracker.get(key);
+        final Long lastUpdated = timeStamps.get(key);
         if (lastUpdated == null) {
             return true;
         }
@@ -175,7 +194,7 @@ final class InMemoryLotlServiceCache implements LotlServiceCache {
     }
 
     private void addToStaleTracker(String key) {
-        staleTracker.put(key, SystemUtil.currentTimeMillis());
+        timeStamps.put(key, SystemUtil.currentTimeMillis());
     }
 
     private CountrySpecificLotlFetcher.Result getCountrySpecificLotl(String country) {

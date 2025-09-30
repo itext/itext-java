@@ -55,7 +55,11 @@ class CountryServiceContext implements IServiceContext {
         certificates.add(certificate);
     }
 
-    String getServiceType() {
+    public List<ServiceChronologicalInfo> getServiceChronologicalInfos() {
+        return serviceChronologicalInfos;
+    }
+
+    public String getServiceType() {
         return serviceType;
     }
 

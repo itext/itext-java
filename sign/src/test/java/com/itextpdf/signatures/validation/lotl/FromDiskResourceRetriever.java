@@ -46,9 +46,10 @@ class FromDiskResourceRetriever implements IResourceRetriever {
 
     @Override
     public byte[] getByteArrayByUrl(URL url) throws IOException {
-        System.out.println(url);
         //escape url so it can be used as a complete filename
-        String fileName = url.toString().replaceAll("[^a-zA-Z0-9]", "_");
+        String urlString = url.toString();
+        urlString = urlString.replaceAll(" ", "%20");
+        String fileName = urlString.toString().replaceAll("[^a-zA-Z0-9]", "_");
         String filePath = resourcePath + fileName;
         Path path = Paths.get(filePath);
         if (Files.exists(path)) {

@@ -144,8 +144,23 @@ public final class SignExceptionMessageConstant {
             "instance of LotlService with the desired properties and use it in ValidatorChainBuilder.";
     public static final String OFFICIAL_JOURNAL_CERTIFICATES_OUTDATED =
             "Trusted certificates from Official Journal of European Union are outdated. " +
-            "LOTL file cannot be validated. " +
-            "Please, provide OJ certificates, which match the ones used to sign European Union List of Trusted Lists.";
+                    "LOTL file cannot be validated. " +
+                    "Please, provide OJ certificates, which match the ones used to sign European Union List of "
+                    + "Trusted Lists.";
+    public static final String COULD_NOT_INITIALIZE_FROM_FILE = "Could not initialize LotlService from output stream. "
+            + "Regenerate the file using LotlService#serializeCache method.";
+    public static final String INITIALIZED_CACHE_DOES_NOT_CONTAIN_REQUIRED_COUNTRY =
+            "Initialized cache does not contain data for " +
+                    "required country: {0}. This might happen if the country was not included in the "
+                    + "LotlFetchingProperties when serializing the data.";
+    public static final String CACHE_CANNOT_BE_SERIALIZED =
+            "Cannot serialize cache, timestamp data is not available. This can happen if a"
+                    + " custom implementation of LotlServiceCache is used which does not support stale tracking. You "
+                    + "should override"
+                    + " the serialization method in that case.";
+    public static final String CACHE_INCOMING_DATA_IS_STALER =
+            "Incoming data is older than the data already in cache. " +
+                    "Cache was not updated.";
 
     private SignExceptionMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly
