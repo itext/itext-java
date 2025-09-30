@@ -30,7 +30,11 @@ import com.itextpdf.test.TestUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.BindException;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -130,13 +134,15 @@ public class UrlUtilTest extends ExtendedITextTest {
 
     @Test
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
-    public void openStreamReadTimeoutTest() throws IOException, InterruptedException {
-        URL url = new URL("http://127.0.0.1:8080/");
-        Thread thread = new TestResource();
+    public void openStreamReadTimeoutTest() throws Exception {
+        TestResource thread = new TestResource();
         thread.start();
-
-        Thread.sleep(250);
-
+        while (!thread.isStarted() && !thread.isFailed()) {
+            Thread.sleep(250);
+        }
+        Assertions.assertFalse(thread.failed);
+        Inet4Address.getLocalHost().getHostAddress();
+        URL url = new URL("http://127.0.0.1:" + thread.port + "/");
         Exception e = Assertions.assertThrows(java.net.SocketTimeoutException.class,
                 () -> UrlUtil.getInputStreamOfFinalConnection(url, 0, 500)
         );
@@ -155,18 +161,62 @@ public class UrlUtilTest extends ExtendedITextTest {
     }
 
     private static class TestResource extends Thread {
+        private int port = 8000;
+        private boolean started = false;
+        private boolean failed = false;
         @Override
         public void run() {
             try {
                 startServer();
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
+                failed = true;
+                System.out.println("Error starting ServerSocket: " + e);
                 throw new RuntimeException(e);
             }
         }
 
-        private void startServer() throws IOException {
-            ServerSocket server = new ServerSocket(8080);
-            server.accept();
+        public int getPort() {
+            return port;
+        }
+
+        public boolean isStarted() {
+            return started;
+        }
+
+        public boolean isFailed() {
+            return failed;
+        }
+
+        private void startServer() throws IOException, InterruptedException {
+            int tryCount = 0;
+            while (!started) {
+                try (ServerSocket server = new ServerSocket(port, 10, Inet4Address.getLoopbackAddress())) {
+                    tryCount++;
+                    started = true;
+                    server.setSoTimeout(20000);
+                    started = true;
+                    try (Socket clientSocket = server.accept()) {
+                        Thread.sleep(1000);
+                        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                        String response = "HTTP/1.1 OK OKrnContent-Type: text/html; charset=UTF-8rnrn" +
+                                "<!DOCTYPE html>\n" +
+                                "<html>\n" +
+                                "<body>\n" +
+                                "\n" +
+                                "</body>\n" +
+                                "</html>\n";
+                        out.print(response);
+                        out.flush();
+                        server.accept();
+                    }
+                } catch (BindException ex) {
+                    if (tryCount > 100) {
+                        failed = true;
+                        throw ex;
+                    }
+                    port++;
+                }
+            }
         }
     }
 }

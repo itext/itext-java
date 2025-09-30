@@ -27,6 +27,9 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
+import java.net.BindException;
+import java.net.InetAddress;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -43,11 +46,14 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     @Test
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void retrieveResourceReadTimeoutTest() throws IOException, InterruptedException {
-        URL url = new URL("http://127.0.0.1:8080/");
-        Thread thread = new TestResource();
-        thread.start();
 
-        Thread.sleep(250);
+        TestResource thread = new TestResource();
+        thread.start();
+        while (!thread.isStarted() && !thread.isFailed()) {
+            Thread.sleep(250);
+        }
+        Assertions.assertFalse(thread.failed);
+        URL url = new URL("http://127.0.0.1:" + thread.port + "/");
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
         resourceRetriever.setReadTimeout(500);
 
@@ -123,29 +129,63 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
 
 
     private static class TestResource extends Thread {
+
+        private int port = 8000;
+        private boolean started = false;
+        private boolean failed = false;
         @Override
         public void run() {
             try {
                 startServer();
             } catch (IOException | InterruptedException e) {
+                failed = true;
+                System.out.println("Error starting ServerSocket: " + e);
                 throw new RuntimeException(e);
             }
         }
 
+        public int getPort() {
+            return port;
+        }
+
+        public boolean isStarted() {
+            return started;
+        }
+
+        public boolean isFailed() {
+            return failed;
+        }
+
         private void startServer() throws IOException, InterruptedException {
-            ServerSocket server = new ServerSocket(8080);
-            Socket clientSocket = server.accept();
-            Thread.sleep(1000);
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            String response = "HTTP/1.1 OK OKrnContent-Type: text/html; charset=UTF-8rnrn" +
-                    "<!DOCTYPE html>\n" +
-                    "<html>\n" +
-                    "<body>\n" +
-                    "\n" +
-                    "</body>\n" +
-                    "</html>\n";
-            out.print(response);
-            out.flush();
+            int tryCount = 0;
+            while (!started) {
+                try (ServerSocket server = new ServerSocket(port, 10, InetAddress.getLoopbackAddress())) {
+                    tryCount++;
+                    started = true;
+                    server.setSoTimeout(20000);
+                    started = true;
+                    try (Socket clientSocket = server.accept()){
+                        Thread.sleep(1000);
+                        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                        String response = "HTTP/1.1 OK OKrnContent-Type: text/html; charset=UTF-8rnrn" +
+                                "<!DOCTYPE html>\n" +
+                                "<html>\n" +
+                                "<body>\n" +
+                                "\n" +
+                                "</body>\n" +
+                                "</html>\n";
+                        out.print(response);
+                        out.flush();
+                        server.accept();
+                    }
+                } catch (BindException ex) {
+                    if (tryCount > 100) {
+                        failed = true;
+                        throw ex;
+                    }
+                    port++;
+                }
+            }
         }
     }
 }
