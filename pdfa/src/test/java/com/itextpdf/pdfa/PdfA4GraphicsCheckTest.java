@@ -709,7 +709,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
     @Test
     public void defaultStrokeColorCheckTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "defaultColorCheck.pdf";
+        String outPdf = DESTINATION_FOLDER + "defaultStrokeColorCheck.pdf";
 
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
@@ -1289,7 +1289,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
     @Test
     public void destOutputIntentColorSpaceNotAllowedTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowed.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentCSNotAllowed.pdf";
         String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
@@ -1312,7 +1312,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
     @Test
     public void destOutputIntentColorSpaceNotAllowedInPageTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentProfileNotAllowedInPage.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA4DestOutputIntentCSNotAllowedInPage.pdf";
         String isoFilePath = SOURCE_FOLDER + "ISOcoated_v2_300_bas.icc";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));

@@ -619,7 +619,8 @@
             <fileset reason="Default types of standard output, e.g. Console.Out and System.out, differ between Java and .NET">
                 <file path="com/itextpdf/io/util/StandardOutUtil.java"/>
                 <file path="com/itextpdf/io/font/ResourceTestUtil.java"/>
-	    </fileset>
+            </fileset>
+            <file path="com/itextpdf/io/font/FontProgramMultiThreadedTest.java"/>
 
             <!-- kernel-tests -->
             <fileset reason="The ignore is added here due to java.awt is not expected to be ported">

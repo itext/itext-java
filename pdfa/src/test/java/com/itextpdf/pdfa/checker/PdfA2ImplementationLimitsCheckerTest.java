@@ -152,8 +152,9 @@ public class PdfA2ImplementationLimitsCheckerTest extends ExtendedITextTest {
     }
 
     private void checkColorspace(PdfColorSpace colorSpace) {
+        PdfA2Checker pdfA2LocalChecker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
         PdfDictionary currentColorSpaces = new PdfDictionary();
-        pdfA2Checker.checkColorSpace(colorSpace, null, currentColorSpaces, true, false);
+        pdfA2LocalChecker.checkColorSpace(colorSpace, null, currentColorSpaces, true, false);
     }
 
     private PdfColorSpace buildDeviceNColorspace(int numberOfComponents) {

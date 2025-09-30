@@ -675,7 +675,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                     .put(PdfName.Alt, new PdfArray());
             page.addAnnotation(screen);
         });
-        framework.assertBothValid("screenAnnotationWithValidMediaDataTest", pdfUAConformance);
+        framework.assertBothValid("screenAnnotationAAWithValidMediaDataTest", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -796,10 +796,10 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("screenAnnotationWithMediaDataTest",
+            framework.assertBothFail("screenAnnotationWOAltMediaDataTest",
                     PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("screenAnnotationWithMediaDataTest", pdfUAConformance);
+            framework.assertBothValid("screenAnnotationWOAltMediaDataTest", pdfUAConformance);
         }
     }
 
@@ -819,10 +819,10 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("screenAnnotationWithMediaDataTest",
+            framework.assertBothFail("screenAnnotationAaWoAltMediaDataTest",
                     PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("screenAnnotationWithMediaDataTest", pdfUAConformance);
+            framework.assertBothValid("screenAnnotationAaWoAltMediaDataTest", pdfUAConformance);
         }
     }
 
@@ -845,10 +845,10 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("screenAnnotationWithMediaDataTest",
+            framework.assertBothFail("screenAnnotationWoCtMediaDataTest",
                     PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("screenAnnotationWithMediaDataTest", pdfUAConformance);
+            framework.assertBothValid("screenAnnotationWoCtMediaDataTest", pdfUAConformance);
         }
     }
 

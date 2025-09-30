@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -38,11 +39,13 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class OpenTypeParserTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/OpenTypeParserTest/";
+    private static final String FREESANS_FONT_PATH = "./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf";
 
     @Test
     public void tryToReadFontSubsetWithoutGlyfTableTest() throws IOException {
         byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetWithoutGlyfTable.ttf"));
         OpenTypeParser parser = new OpenTypeParser(fontBytes);
+        parser.loadTables(true);
         Set<Integer> usedGlyphs = new HashSet<Integer>();
         // these GIDs correspond to ABC
         usedGlyphs.add(36);
@@ -53,5 +56,22 @@ public class OpenTypeParserTest extends ExtendedITextTest {
                 parser.getSubset(usedGlyphs, true));
         String exp = MessageFormatUtil.format(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN, "glyf", null);
         Assertions.assertEquals(exp, e.getMessage());
+    }
+
+    @Test
+    public void getFlatGlyphsCompositeTest() throws IOException {
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FREESANS_FONT_PATH));
+        OpenTypeParser parser = new OpenTypeParser(fontBytes);
+        parser.loadTables(true);
+        Set<Integer> usedGlyphs = new HashSet<Integer>();
+        // Å
+        usedGlyphs.add(137);
+
+        List<Integer> glyphs = parser.getFlatGlyphs(usedGlyphs);
+        Assertions.assertEquals(4, glyphs.size());
+        Assertions.assertEquals(137, glyphs.get(0));
+        Assertions.assertEquals(0, glyphs.get(1));
+        Assertions.assertEquals(586, glyphs.get(2));
+        Assertions.assertEquals(38, glyphs.get(3));
     }
 }

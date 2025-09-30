@@ -50,6 +50,8 @@ public class RandomAccessFileOrArray implements DataInput {
      */
     private boolean isBack = false;
 
+    private final Object lockObj = new Object();
+
     /**
      * Creates a RandomAccessFileOrArray that wraps the specified byte source.  The byte source will be closed when
      * this RandomAccessFileOrArray is closed.
@@ -607,8 +609,10 @@ public class RandomAccessFileOrArray implements DataInput {
     }
 
     private void ensureByteSourceIsThreadSafe() {
-        if (!(byteSource instanceof ThreadSafeRandomAccessSource)) {
-            byteSource = new ThreadSafeRandomAccessSource(byteSource);
+        synchronized (lockObj) {
+            if (!(byteSource instanceof ThreadSafeRandomAccessSource)) {
+                byteSource = new ThreadSafeRandomAccessSource(byteSource);
+            }
         }
     }
 }

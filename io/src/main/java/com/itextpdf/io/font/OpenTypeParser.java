@@ -387,9 +387,20 @@ class OpenTypeParser implements Closeable {
         int start = locaTable[gid];
         int len = locaTable[gid + 1] - start;
         byte[] data = new byte[len];
-        raf.seek(glyfOffset + start);
-        raf.readFully(data, 0, len);
-        return data;
+
+        // OpenTypeParser may be shared between different threads.
+        // raf.createView() returns thread safe RandomAccessFileOrArray
+        RandomAccessFileOrArray tmpRaf = raf.createView();
+        try {
+            tmpRaf.seek(glyfOffset + start);
+            tmpRaf.readFully(data, 0, len);
+            return data;
+        } finally {
+            try {
+                tmpRaf.close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     /**
@@ -506,37 +517,48 @@ class OpenTypeParser implements Closeable {
         if (start == locaTable[glyph + 1]) {
             return;
         }
-        raf.seek(glyfOffset + start);
-        int numContours = raf.readShort();
-        if (numContours >= 0) {
-            return;
-        }
-        raf.skipBytes(8);
-        for (; ; ) {
-            int flags = raf.readUnsignedShort();
-            int cGlyph = raf.readUnsignedShort();
-            if (!glyphsUsed.contains(cGlyph)) {
-                glyphsUsed.add(cGlyph);
-                glyphsInList.add(cGlyph);
-            }
-            if ((flags & MORE_COMPONENTS) == 0) {
+
+        // OpenTypeParser may be shared between different threads.
+        // raf.createView() returns thread safe RandomAccessFileOrArray
+        RandomAccessFileOrArray tmpRaf = raf.createView();
+        try {
+            tmpRaf.seek(glyfOffset + start);
+            int numContours = tmpRaf.readShort();
+            if (numContours >= 0) {
                 return;
             }
-            int skip;
-            if ((flags & ARG_1_AND_2_ARE_WORDS) != 0) {
-                skip = 4;
-            } else {
-                skip = 2;
+            tmpRaf.skipBytes(8);
+            for (; ; ) {
+                int flags = tmpRaf.readUnsignedShort();
+                int cGlyph = tmpRaf.readUnsignedShort();
+                if (!glyphsUsed.contains(cGlyph)) {
+                    glyphsUsed.add(cGlyph);
+                    glyphsInList.add(cGlyph);
+                }
+                if ((flags & MORE_COMPONENTS) == 0) {
+                    return;
+                }
+                int skip;
+                if ((flags & ARG_1_AND_2_ARE_WORDS) != 0) {
+                    skip = 4;
+                } else {
+                    skip = 2;
+                }
+                if ((flags & WE_HAVE_A_SCALE) != 0) {
+                    skip += 2;
+                } else if ((flags & WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
+                    skip += 4;
+                }
+                if ((flags & WE_HAVE_A_TWO_BY_TWO) != 0) {
+                    skip += 8;
+                }
+                tmpRaf.skipBytes(skip);
             }
-            if ((flags & WE_HAVE_A_SCALE) != 0) {
-                skip += 2;
-            } else if ((flags & WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
-                skip += 4;
+        } finally {
+            try {
+                tmpRaf.close();
+            } catch (Exception ignored) {
             }
-            if ((flags & WE_HAVE_A_TWO_BY_TWO) != 0) {
-                skip += 8;
-            }
-            raf.skipBytes(skip);
         }
     }
 

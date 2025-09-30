@@ -322,7 +322,7 @@ public class PdfA2GraphicsCheckTest extends ExtendedITextTest {
 
     @Test
     public void defaultStrokeColorCheckTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "defaultColorCheck.pdf";
+        String outPdf = DESTINATION_FOLDER + "defaultStrokeColorCheck.pdf";
 
         PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformance.PDF_A_2B, null);
         PdfPage page = pdfDocument.addNewPage();

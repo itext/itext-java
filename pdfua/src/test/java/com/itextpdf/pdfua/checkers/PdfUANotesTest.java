@@ -100,7 +100,7 @@ public class PdfUANotesTest extends ExtendedITextTest {
         String message = Assertions.assertThrows(PdfException.class,
                 // It doesn't matter what we call here.
                 // Test fails on document creation and verapdf validation isn't triggered anyway.
-                () -> framework.assertOnlyVeraPdfFail("addFENoteWithoutReferences", pdfUAConformance)).getMessage();
+                () -> framework.assertOnlyVeraPdfFail("addNoteForUA2AndFENoteForUA1", pdfUAConformance)).getMessage();
         String expectedExceptionMessage = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
                 MessageFormatUtil.format(
                         KernelExceptionMessageConstant.ROLE_IS_NOT_MAPPED_TO_ANY_STANDARD_ROLE, StandardRoles.FENOTE) :

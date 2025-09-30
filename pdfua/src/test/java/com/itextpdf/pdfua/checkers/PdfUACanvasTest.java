@@ -153,7 +153,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .moveText(200, 200);
             canvas.showText("Hello World!");
         });
-        framework.assertBothFail("01_005_TextArtifactIsNotInTagTree",
+        framework.assertBothFail("01_005_TextContentIsNotInTagTree",
                 PdfUAExceptionMessageConstants.CONTENT_IS_NOT_REAL_CONTENT_AND_NOT_ARTIFACT, false, pdfUAConformance);
     }
 
@@ -1044,7 +1044,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
             framework.assertBothValid("validNoteTagPresent", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothFail("invalidNoteTag02", PdfUAExceptionMessageConstants.DOCUMENT_USES_NOTE_TAG,
+            framework.assertBothFail("validNoteTagPresent", PdfUAExceptionMessageConstants.DOCUMENT_USES_NOTE_TAG,
                     pdfUAConformance);
         }
     }

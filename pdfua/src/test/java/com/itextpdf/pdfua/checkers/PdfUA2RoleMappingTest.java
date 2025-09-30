@@ -63,7 +63,7 @@ import org.junit.jupiter.api.Test;
 public class PdfUA2RoleMappingTest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUARoleMappingTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUA2RoleMappingTest/";
 
     @BeforeAll
     public static void before() {
