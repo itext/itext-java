@@ -173,7 +173,7 @@ public class Barcode39 extends Barcode1D {
      * @return the escaped text
      */
     public static String getCode39Ex(String text) {
-        StringBuilder out = new StringBuilder("");
+        StringBuilder out = new StringBuilder();
         for (int k = 0; k < text.length(); ++k) {
             char c = text.charAt(k);
             if (c > 127) {

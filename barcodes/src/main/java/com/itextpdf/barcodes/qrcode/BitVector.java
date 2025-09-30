@@ -158,7 +158,7 @@ final class BitVector {
      * @return String representation of the bitvector
      */
     public String toString() {
-        StringBuffer result = new StringBuffer(sizeInBits);
+        StringBuilder result = new StringBuilder(sizeInBits);
         for (int i = 0; i < sizeInBits; ++i) {
             if (at(i) == 0) {
                 result.append('0');

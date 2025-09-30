@@ -335,7 +335,7 @@ public class BarcodeDataMatrix extends Barcode2D {
         try {
             t = text.getBytes(encoding);
         } catch (UnsupportedEncodingException exc) {
-            throw new IllegalArgumentException("text has to be encoded in iso-8859-1");
+            throw new IllegalArgumentException("text has to be encoded in iso-8859-1", exc);
         }
         return setCode(t, 0, t.length);
     }
@@ -1090,18 +1090,15 @@ public class BarcodeDataMatrix extends Barcode2D {
                             requiredCapacityForC40orText += 2;
                         }
                         requiredCapacityForC40orText += basic.indexOf((char) c) >= 0 ? 1 : 2;
-                        if (c > 127)
-                            requiredCapacityForASCII += 2;
-                        else {
-                            if (j > 0 && isDigit(c) && isDigit(text[textOffset - j + 1] & 0xff)) {
-                                requiredCapacityForC40orText += basic.indexOf((char) text[textOffset - j + 1]) >= 0 ? 1 : 2;
-                                j--;
-                                dataOffsetNew = requiredCapacityForASCII + 1;
-                            }
-                            requiredCapacityForASCII++;
+                        if (j > 0 && isDigit(c) && isDigit(text[textOffset - j + 1] & 0xff)) {
+                            requiredCapacityForC40orText += basic.indexOf((char) text[textOffset - j + 1]) >= 0 ? 1 : 2;
+                            j--;
+                            dataOffsetNew = requiredCapacityForASCII + 1;
                         }
-                        if (j == 1)
+                        requiredCapacityForASCII++;
+                        if (j == 1) {
                             dataOffsetNew = requiredCapacityForASCII;
+                        }
                     }
                     addLatch = (unlatch < 0) || ((dataOffset - requiredCapacityForASCII) != unlatch);
                     if (requiredCapacityForC40orText % 3 == 0 &&
@@ -1113,8 +1110,9 @@ public class BarcodeDataMatrix extends Barcode2D {
                         dataLength += addLatch ? dataOffsetNew : dataOffsetNew + 1;
                         break;
                     }
-                    if (isDigit(text[textOffset - i] & 0xff) && isDigit(text[textOffset - i + 1] & 0xff))
+                    if (isDigit(text[textOffset - i] & 0xff) && isDigit(text[textOffset - i + 1] & 0xff)) {
                         i--;
+                    }
                 }
             }
         } else if (symbolIndex != -1) {
