@@ -61,7 +61,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.bouncycastle.asn1.DERIA5StringBC", "iText.Bouncycastle.Asn1.DerIA5StringBC");
         configurator.mapType("com.itextpdf.bouncycastle.asn1.ASN1BitStringBC", "iText.Bouncycastle.Asn1.DerBitStringBC");
         configurator.mapType("com.itextpdf.bouncycastle.asn1.ASN1GeneralizedTimeBC", "iText.Bouncycastle.Asn1.DerGeneralizedTimeBC");
-        configurator.mapType("com.itextpdf.bouncycastle.asn1.ASN1OutputStreamBC", "iText.Bouncycastle.Asn1.DerOutputStreamBC");
+        configurator.mapType("com.itextpdf.bouncycastle.asn1.ASN1OutputStreamBC", "iText.Bouncycastle.Asn1.Asn1OutputStreamBC");
         configurator.mapType("com.itextpdf.bouncycastle.asn1.DERNullBC", "iText.Bouncycastle.Asn1.DerNullBC");
         configurator.mapType("com.itextpdf.bouncycastle.asn1.ASN1EnumeratedBC", "iText.Bouncycastle.Asn1.DerEnumeratedBC");
         configurator.mapType("org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiersBC", "iText.Bouncycastle.Asn1.Ocsp.OcspObjectIdentifiersBC");
@@ -94,7 +94,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("com.itextpdf.bouncycastle.asn1.DERNullBC.getDERNull", "GetDerNull");
         configurator.mapMethod("com.itextpdf.bouncycastle.asn1.ASN1ObjectIdentifierBC.getASN1ObjectIdentifier", "GetDerObjectIdentifier");
         configurator.mapMethod("com.itextpdf.bouncycastle.asn1.DEROctetStringBC.getDEROctetString", "GetDerOctetString");
-        configurator.mapMethod("com.itextpdf.bouncycastle.asn1.ASN1OutputStreamBC.getASN1OutputStream", "GetDerOutputStream");
+        configurator.mapMethod("com.itextpdf.bouncycastle.asn1.ASN1OutputStreamBC.getASN1OutputStream", "GetAsn1OutputStream");
         configurator.mapMethod("com.itextpdf.bouncycastle.asn1.DERSequenceBC.getDERSequence", "GetDerSequence");
         configurator.mapMethod("com.itextpdf.bouncycastle.asn1.DERSetBC.getDERSet", "GetDerSet");
         configurator.mapMethod("com.itextpdf.bouncycastle.asn1.DERTaggedObjectBC.getDERTaggedObject", "GetDerTaggedObject");

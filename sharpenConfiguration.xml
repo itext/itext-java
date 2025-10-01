@@ -184,7 +184,6 @@
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1IntegerBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1OctetStringBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1TaggedObjectBC.java"/>
-                <file path="com/itextpdf/bouncycastle/asn1/ASN1OutputStreamBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/BasicOCSPResponseBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/OCSPResponseBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/ResponderIdBC.java"/>

@@ -153,7 +153,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("java.nio.file.Files.newInputStream", "iText.Commons.Utils.FileUtil.GetInputStreamForFile");
 
         configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate", "iText.Commons.Bouncycastle.Asn1.X509.ITbsCertificateStructure");
-        configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream", "iText.Commons.Bouncycastle.Asn1.IDerOutputStream");
+        configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream", "iText.Commons.Bouncycastle.Asn1.IAsn1OutputStream");
         configurator.mapType("com.itextpdf.commons.bouncycastle.cert.IX509CRLHolder", "iText.Commons.Bouncycastle.Cert.IX509Crl");
         configurator.mapType("com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder", "iText.Commons.Bouncycastle.Cert.IX509Certificate");
         configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams", "iText.Commons.Bouncycastle.Asn1.Pkcs.IRsassaPssParameters");
