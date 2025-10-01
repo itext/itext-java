@@ -61,6 +61,13 @@ class LtrFlexItemMainDirector implements IFlexItemMainDirector {
     @Override
     public void applyJustifyContent(List<FlexUtil.FlexItemCalculationInfo> line, JustifyContent justifyContent,
             float freeSpace) {
+
+        if (freeSpace < 0 && (JustifyContent.SPACE_AROUND == justifyContent ||
+                JustifyContent.SPACE_BETWEEN == justifyContent || JustifyContent.SPACE_EVENLY == justifyContent)) {
+            return;
+        }
+
+        float space;
         switch (justifyContent) {
             case RIGHT:
             case END:
@@ -70,9 +77,30 @@ class LtrFlexItemMainDirector implements IFlexItemMainDirector {
             case CENTER:
                 line.get(0).xShift = freeSpace / 2;
                 break;
+            case SPACE_BETWEEN:
+                space = freeSpace / (line.size() - 1);
+                for (int i = 1; i < line.size(); i++) {
+                    FlexUtil.FlexItemCalculationInfo item =  line.get(i);
+                    item.xShift = space;
+                }
+                break;
+            case SPACE_AROUND:
+                space = freeSpace / (line.size() * 2);
+                for (int i = 0; i < line.size(); i++) {
+                    FlexUtil.FlexItemCalculationInfo item =  line.get(i);
+                    item.xShift = i == 0 ? space : space * 2;
+                }
+                break;
+            case SPACE_EVENLY:
+                space = freeSpace / (line.size() + 1);
+                for (FlexUtil.FlexItemCalculationInfo item : line) {
+                    item.xShift = space;
+                }
+                break;
             case FLEX_START:
-            case NORMAL:
+            // stretch in flexbox behaves as flex-start, see https://drafts.csswg.org/css-align/#distribution-flex
             case STRETCH:
+            case NORMAL:
             case START:
             case LEFT:
             default:

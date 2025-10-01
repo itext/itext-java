@@ -78,7 +78,13 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
                 {AlignmentPropertyValue.FLEX_END, JustifyContent.FLEX_END, FlexWrapPropertyValue.WRAP_REVERSE,
                         FlexDirectionPropertyValue.COLUMN, 6},
                 {AlignmentPropertyValue.CENTER, JustifyContent.CENTER, FlexWrapPropertyValue.WRAP_REVERSE,
-                        FlexDirectionPropertyValue.COLUMN_REVERSE, 7}
+                        FlexDirectionPropertyValue.COLUMN_REVERSE, 7},
+                {AlignmentPropertyValue.FLEX_START, JustifyContent.SPACE_AROUND, FlexWrapPropertyValue.NOWRAP,
+                        FlexDirectionPropertyValue.COLUMN, 8},
+                {AlignmentPropertyValue.CENTER, JustifyContent.SPACE_BETWEEN, FlexWrapPropertyValue.WRAP,
+                        FlexDirectionPropertyValue.COLUMN, 9},
+                {AlignmentPropertyValue.FLEX_END, JustifyContent.SPACE_EVENLY, FlexWrapPropertyValue.WRAP_REVERSE,
+                        FlexDirectionPropertyValue.COLUMN_REVERSE, 10}
         });
     }
 

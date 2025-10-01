@@ -426,10 +426,7 @@ public class FlexContainerRenderer extends DivRenderer {
         if (childRenderer instanceof AbstractRenderer) {
             FlexItemInfo childFlexItemInfo = findFlexItemInfo((AbstractRenderer) childRenderer);
             if (childFlexItemInfo != null) {
-                layoutBoxCopy.decreaseWidth(childFlexItemInfo.getRectangle().getX());
-                layoutBoxCopy.moveRight(childFlexItemInfo.getRectangle().getX());
-
-                layoutBoxCopy.decreaseHeight(childFlexItemInfo.getRectangle().getY());
+                adjustLayoutBoxBeforeChildLayout(layoutBoxCopy, childFlexItemInfo, false);
             }
         }
         return layoutBoxCopy;
@@ -560,6 +557,7 @@ public class FlexContainerRenderer extends DivRenderer {
                         getOccupiedAreaBBox().getY(),
                         itemInfo.getRectangle().getWidth(),
                         maxHeightInLine - itemInfo.getRectangle().getY());
+                adjustLayoutBoxBeforeChildLayout(neighbourBbox, itemInfo, true);
                 final LayoutResult neighbourLayoutResult = itemInfo.getRenderer().layout(new LayoutContext(
                         new LayoutArea(childResult.getOccupiedArea().getPageNumber(), neighbourBbox)));
                 restoreHeightForOverflowRenderer(itemInfo.getRenderer(), neighbourLayoutResult.getOverflowRenderer());
@@ -760,5 +758,18 @@ public class FlexContainerRenderer extends DivRenderer {
                 }
             }
         }
+    }
+
+    private static void adjustLayoutBoxBeforeChildLayout(Rectangle layoutBox, FlexItemInfo childFlexItemInfo,
+            boolean adjustOnlyHorizontal) {
+
+        layoutBox.decreaseWidth(childFlexItemInfo.getRectangle().getX());
+        layoutBox.moveRight(childFlexItemInfo.getRectangle().getX());
+        if (adjustOnlyHorizontal) {
+            // skip vertical adjustments
+            return;
+        }
+
+        layoutBox.decreaseHeight(childFlexItemInfo.getRectangle().getY());
     }
 }

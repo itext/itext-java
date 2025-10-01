@@ -53,7 +53,6 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -93,6 +92,12 @@ public class FlexContainerTest extends ExtendedITextTest {
                         FlexDirectionPropertyValue.ROW_REVERSE, 11},
                 {AlignmentPropertyValue.STRETCH, JustifyContent.CENTER, FlexWrapPropertyValue.WRAP_REVERSE,
                         FlexDirectionPropertyValue.ROW, 12},
+                {AlignmentPropertyValue.FLEX_START, JustifyContent.SPACE_BETWEEN, FlexWrapPropertyValue.NOWRAP,
+                        FlexDirectionPropertyValue.ROW, 13},
+                {AlignmentPropertyValue.CENTER, JustifyContent.SPACE_AROUND, FlexWrapPropertyValue.WRAP,
+                        FlexDirectionPropertyValue.ROW_REVERSE, 14},
+                {AlignmentPropertyValue.STRETCH, JustifyContent.SPACE_EVENLY, FlexWrapPropertyValue.WRAP_REVERSE,
+                        FlexDirectionPropertyValue.ROW, 15},
         });
     }
 
