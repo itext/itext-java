@@ -101,7 +101,12 @@ public class FlexContainerRenderer extends DivRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutContextRectangle = layoutContext.getArea().getBBox();
         setThisAsParent(getChildRenderers());
+        // Disable collapsing margins for container before calculating item's rectangles to avoid margin collapsing
+        // between parent and child (flex-container – flex-item) and two children (flex-item – flex-item)
+        this.setProperty(Property.COLLAPSING_MARGINS, Boolean.FALSE);
         lines = FlexUtil.calculateChildrenRectangles(layoutContextRectangle, this);
+        // Return collapsing margins for container to inherited value from ancestors
+        this.deleteProperty(Property.COLLAPSING_MARGINS);
         applyWrapReverse();
         List<IRenderer> renderers = getFlexItemMainDirector().applyDirection(lines);
         removeAllChildRenderers(getChildRenderers());
