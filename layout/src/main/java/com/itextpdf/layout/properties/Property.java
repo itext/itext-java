@@ -172,6 +172,7 @@ public final class Property {
 
     public static final int OBJECT_FIT = 125;
     public static final int OPACITY = 92;
+    public static final int ORDER = 159;
     public static final int ORPHANS_CONTROL = 121;
     public static final int OUTLINE = 106;
     public static final int OUTLINE_OFFSET = 107;

@@ -144,6 +144,7 @@ public class CssDefaults {
 
         defaultValues.put(CommonCssConstants.ROW_GAP, CommonCssConstants.NORMAL);
         defaultValues.put(CommonCssConstants.COLUMN_GAP, CommonCssConstants.NORMAL);
+        defaultValues.put(CommonCssConstants.ORDER, "0");
 
         // Other css properties default values will be added as needed
     }

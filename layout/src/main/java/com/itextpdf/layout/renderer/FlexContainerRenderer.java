@@ -41,6 +41,7 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
+import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -101,6 +102,7 @@ public class FlexContainerRenderer extends DivRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         Rectangle layoutContextRectangle = layoutContext.getArea().getBBox();
         setThisAsParent(getChildRenderers());
+        orderChildRenderers(getChildRenderers());
         // Disable collapsing margins for container before calculating item's rectangles to avoid margin collapsing
         // between parent and child (flex-container – flex-item) and two children (flex-item – flex-item)
         this.setProperty(Property.COLLAPSING_MARGINS, Boolean.FALSE);
@@ -511,6 +513,17 @@ public class FlexContainerRenderer extends DivRenderer {
             renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
             super.addChild(renderer);
         }
+    }
+
+    private static void orderChildRenderers(List<IRenderer> renderers) {
+        Collections.sort(renderers, new Comparator<IRenderer>() {
+            @Override
+            public int compare(IRenderer a, IRenderer b) {
+                Integer orderA = a.<Integer>getProperty(Property.ORDER, 0);
+                Integer orderB = b.<Integer>getProperty(Property.ORDER, 0);
+                return Integer.compare((int) orderA,(int) orderB);
+            }
+        });
     }
 
     private static void addSimulateDiv(AbstractRenderer overflowRenderer, float width) {

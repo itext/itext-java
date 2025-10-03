@@ -231,6 +231,7 @@ public class FlexUtilTest extends ExtendedITextTest {
         }
     }
 
+
     @Test
     public void simpleCentralAlignmentTest() {
         Style stretchStyle = new Style(WRAP_STYLE);

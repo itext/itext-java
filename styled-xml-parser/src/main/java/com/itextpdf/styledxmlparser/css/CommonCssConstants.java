@@ -1416,6 +1416,16 @@ public class CommonCssConstants {
     public static final String REPEAT_Y = "repeat-y";
 
     /**
+     * The Constant REVERT.
+     */
+    public static final String REVERT = "revert";
+
+    /**
+     * The Constant REVERT.
+     */
+    public static final String REVERT_LAYER = "revert-layer";
+
+    /**
      * The Constant RIDGE.
      */
     public static final String RIDGE = "ridge";
