@@ -23,6 +23,9 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PageResizer.HorizontalAnchorPoint;
+import com.itextpdf.kernel.pdf.PageResizer.ResizeType;
+import com.itextpdf.kernel.pdf.PageResizer.VerticalAnchorPoint;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -151,6 +154,7 @@ public class PageResizerTest extends ExtendedITextTest {
     }
 
     @Test
+    //TODO Update when fixing DEVSIX-9448
     public void testGradientsType0Function() throws IOException, InterruptedException {
         String inFileName = "gradientFct0.pdf";
         String outFileName = "gradientFct0.pdf";
@@ -224,4 +228,109 @@ public class PageResizerTest extends ExtendedITextTest {
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
     }
+
+
+    @Test
+    public void testHorizontalAnchoringLeft() throws IOException, InterruptedException {
+        String inFileName = "squareSource.pdf";
+        String outFileName = "haLeft.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            PageResizer resizer = new PageResizer(new PageSize(PageSize.A5.getHeight(), PageSize.A5.getWidth()),
+                    ResizeType.MAINTAIN_ASPECT_RATIO);
+            resizer.setHorizontalAnchorPoint(HorizontalAnchorPoint.LEFT);
+            resizer.resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testHorizontalAnchoringCenter() throws IOException, InterruptedException {
+        String inFileName = "squareSource.pdf";
+        String outFileName = "haCenter.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            PageResizer resizer = new PageResizer(new PageSize(PageSize.A5.getHeight(), PageSize.A5.getWidth()),
+                    ResizeType.MAINTAIN_ASPECT_RATIO);
+            resizer.setHorizontalAnchorPoint(HorizontalAnchorPoint.CENTER);
+            resizer.resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testHorizontalAnchoringRight() throws IOException, InterruptedException {
+        String inFileName = "squareSource.pdf";
+        String outFileName = "haRight.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            PageResizer resizer = new PageResizer(new PageSize(PageSize.A5.getHeight(), PageSize.A5.getWidth()),
+                    ResizeType.MAINTAIN_ASPECT_RATIO);
+            resizer.setHorizontalAnchorPoint(HorizontalAnchorPoint.RIGHT);
+            resizer.resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testVerticalAnchoringTop() throws IOException, InterruptedException {
+        String inFileName = "squareSource.pdf";
+        String outFileName = "vaTop.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            PageResizer resizer = new PageResizer(PageSize.A4,
+                    ResizeType.MAINTAIN_ASPECT_RATIO);
+            resizer.setVerticalAnchorPoint(VerticalAnchorPoint.TOP);
+            resizer.resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testVerticalAnchoringCenter() throws IOException, InterruptedException {
+        String inFileName = "squareSource.pdf";
+        String outFileName = "vaCenter.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            PageResizer resizer = new PageResizer(PageSize.A4,
+                    ResizeType.MAINTAIN_ASPECT_RATIO);
+            resizer.setVerticalAnchorPoint(VerticalAnchorPoint.CENTER);
+            resizer.resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testVerticalAnchoringBottom() throws IOException, InterruptedException {
+        String inFileName = "squareSource.pdf";
+        String outFileName = "vaBottom.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            PageResizer resizer = new PageResizer(PageSize.A4,
+                    ResizeType.MAINTAIN_ASPECT_RATIO);
+            resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
+            resizer.resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+
 }

@@ -43,6 +43,9 @@ class PageResizer {
      * The value is immutable and initialised during the construction of the {@code PageResizer}.
      */
     private final PageSize size;
+
+    private VerticalAnchorPoint verticalAnchorPoint = VerticalAnchorPoint.CENTER;
+    private HorizontalAnchorPoint horizontalAnchorPoint = HorizontalAnchorPoint.CENTER;
     /**
      * Represents the type of resize operation to be applied to a page.
      * This variable specifies the method by which the page resize is performed.
@@ -60,6 +63,23 @@ class PageResizer {
         this.type = type;
     }
 
+    public HorizontalAnchorPoint getHorizontalAnchorPoint() {
+        return horizontalAnchorPoint;
+    }
+
+    public void setHorizontalAnchorPoint(HorizontalAnchorPoint anchorPoint) {
+        this.horizontalAnchorPoint = anchorPoint;
+    }
+
+    public VerticalAnchorPoint getVerticalAnchorPoint() {
+        return verticalAnchorPoint;
+    }
+
+    public void setVerticalAnchorPoint(VerticalAnchorPoint anchorPoint) {
+        this.verticalAnchorPoint = anchorPoint;
+    }
+
+
     /**
      * Resizes a given PDF page based on the specified dimensions and resize type.
      * Depending on the resize type, the aspect ratio may be maintained during scaling.
@@ -71,19 +91,24 @@ class PageResizer {
         Rectangle originalPageSize = page.getMediaBox();
         double horizontalScale = size.getWidth() / originalPageSize.getWidth();
         double verticalScale = size.getHeight() / originalPageSize.getHeight();
-
+        double horizontalFreeSpace = 0;
+        double verticalFreeSpace = 0;
         if (ResizeType.MAINTAIN_ASPECT_RATIO == type) {
             double scale = Math.min(horizontalScale, verticalScale);
             horizontalScale = scale;
             verticalScale = scale;
+            horizontalFreeSpace = size.getWidth() - originalPageSize.getWidth()*scale;
+            verticalFreeSpace = size.getHeight() - originalPageSize.getHeight()*scale;
         }
 
         updateBoxes(page, originalPageSize);
 
-        AffineTransform scalingMatrix = new AffineTransform();
-        scalingMatrix.scale(horizontalScale, verticalScale);
+        AffineTransform scalingMatrix = calculateAffineTransform(horizontalScale, verticalScale,
+                horizontalFreeSpace, verticalFreeSpace);
+
         PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument());
         pdfCanvas.concatMatrix(scalingMatrix);
+
         pdfCanvas.saveState();
 
         for (PdfName resName : page.getResources().getResourceNames())
@@ -103,6 +128,40 @@ class PageResizer {
         {
             resizeAnnotation(annot, scalingMatrix);
         }
+    }
+
+    private AffineTransform calculateAffineTransform(double horizontalScale, double verticalScale,
+            double horizontalFreeSpace, double verticalFreeSpace) {
+        AffineTransform scalingMatrix = new AffineTransform();
+        scalingMatrix.scale(horizontalScale, verticalScale);
+        AffineTransform transformMatrix = new AffineTransform();
+        switch (horizontalAnchorPoint) {
+            case CENTER:
+                transformMatrix.translate(horizontalFreeSpace / 2, 0);
+                break;
+            case RIGHT:
+                transformMatrix.translate(horizontalFreeSpace, 0);
+                break;
+            case LEFT:
+            default:
+                // PDF default nothing to do here
+                break;
+        }
+        switch (verticalAnchorPoint) {
+            case CENTER:
+                transformMatrix.translate(0, verticalFreeSpace / 2);
+                break;
+            case TOP:
+                transformMatrix.translate(0, verticalFreeSpace);
+                break;
+            case BOTTOM:
+            default:
+                // PDF default nothing to do here
+                break;
+        }
+        transformMatrix.concatenate(scalingMatrix);
+        scalingMatrix = transformMatrix;
+        return scalingMatrix;
     }
 
     /**
@@ -225,5 +284,17 @@ class PageResizer {
     enum ResizeType {
         MAINTAIN_ASPECT_RATIO,
         DEFAULT
+    }
+
+    enum VerticalAnchorPoint {
+        TOP,
+        CENTER,
+        BOTTOM
+    }
+
+    enum HorizontalAnchorPoint {
+        LEFT,
+        CENTER,
+        RIGHT
     }
 }
