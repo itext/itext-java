@@ -305,6 +305,10 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
         configurator.mapMemberToInvocationsChain("org.bouncycastle.asn1.esf.SigPolicyQualifiers.SigPolicyQualifiers" + "(org.bouncycastle.asn1.esf.SigPolicyQualifierInfo[])", "", MemberKind.Method);
 
+        configurator.mapMemberToInvocationsChain("java.util.LinkedList.peekLast", "Last.Value", MemberKind.Property);
+        configurator.mapMethod("java.util.LinkedList.add", "AddLast");
+        configurator.mapMethod("java.util.LinkedList.pollLast", "RemoveLast");
+
         if (useBCWrappersConfig) {
             BCWrappersConfigurationUtils.applyMappingConfiguration(configurator);
         }

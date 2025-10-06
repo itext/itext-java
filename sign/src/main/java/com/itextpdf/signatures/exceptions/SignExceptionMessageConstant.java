@@ -161,6 +161,13 @@ public final class SignExceptionMessageConstant {
     public static final String CACHE_INCOMING_DATA_IS_STALER =
             "Incoming data is older than the data already in cache. " +
                     "Cache was not updated.";
+    public static final String QUALIFIED_VALIDATOR_ALREADY_USED =
+            "QualifiedValidator instance has to be created from scratch per each validated document. " +
+                    "Alternatively, one can obtain previous validation results by using " +
+                    "QualifiedValidator#obtainAllSignaturesValidationResults() before running the validation " +
+                    "process for the next document.";
+    public static final String SIGNATURE_NAME_NOT_PROVIDED =
+            "Signature validation name needs to be provided with QualifiedValidator#startSignatureValidation method.";
 
     private SignExceptionMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly

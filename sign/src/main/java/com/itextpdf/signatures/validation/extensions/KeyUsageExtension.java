@@ -76,7 +76,7 @@ public class KeyUsageExtension extends CertificateExtension {
         super(OID.X509Extensions.KEY_USAGE, FACTORY.createKeyUsage(keyUsage).toASN1Primitive());
         this.keyUsage = keyUsage;
         this.resultOnMissingExtension = resultOnMissingExtension;
-        messagePreAmble =MessageFormatUtil.format(EXPECTED_VALUE , convertKeyUsageMaskToString(keyUsage));
+        messagePreAmble = MessageFormatUtil.format(EXPECTED_VALUE, convertKeyUsageMaskToString(keyUsage));
         message = messagePreAmble;
     }
 

@@ -113,6 +113,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.x509.CRLDistPointBCFips", "iText.Bouncycastlefips.Asn1.X509.CrlDistPointBCFips");
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.x509.CRLReasonBCFips", "iText.Bouncycastlefips.Asn1.X509.CrlReasonBCFips");
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.x509.KeyPurposeIdBCFips", "iText.Bouncycastlefips.Asn1.X509.KeyPurposeIDBCFips");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.qualified.QCStatement.getStatementId", "StatementId");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.qualified.QCStatement.getStatementInfo", "StatementInfo");
     }
 
     @Override

@@ -165,6 +165,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
         configurator.mapProperty("org.bouncycastle.asn1.x509.AlgorithmIdentifier.getAlgorithm", "Algorithm");
         configurator.mapProperty("org.bouncycastle.asn1.x509.AlgorithmIdentifier.getParameters", "Parameters");
+        configurator.mapType("com.itextpdf.signatures.validation.lotl.QualifiedValidator.QualificationConclusion", "QualificationConclusion?");
     }
 
     @Override

@@ -91,6 +91,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
+import com.itextpdf.commons.bouncycastle.asn1.x509.qualified.IQCStatement;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
@@ -133,6 +134,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponseGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -1026,6 +1028,16 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
 
     @Override
     public IGCMBlockCipher createGCMBlockCipher() {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public List<String> getPoliciesIds(byte[] policyExtension) throws IOException {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public List<IQCStatement> parseQcStatement(byte[] qcStatementsExtensionValue) throws IOException {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }
 }

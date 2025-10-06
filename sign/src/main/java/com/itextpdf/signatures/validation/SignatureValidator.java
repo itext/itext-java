@@ -156,6 +156,7 @@ public class SignatureValidator {
         if (validationPerformed) {
             throw new PdfException(VALIDATION_PERFORMED);
         }
+        builder.getQualifiedValidator().ensureValidatorIsEmpty();
         validationPerformed = true;
         ValidationReport report = new ValidationReport();
         if (builder.getLotlTrustedStore() != null) {
@@ -185,6 +186,7 @@ public class SignatureValidator {
      * @return {@link ValidationReport} which contains detailed validation results.
      */
     public ValidationReport validateSignature(String signatureName) {
+        builder.getQualifiedValidator().ensureValidatorIsEmpty();
         if (validationPerformed) {
             throw new PdfException(VALIDATION_PERFORMED);
         }
@@ -261,8 +263,10 @@ public class SignatureValidator {
         X509Certificate signingCertificate = pkcs7.getSigningCertificate();
 
         ValidationReport signatureReport = new ValidationReport();
+        ValidationContext localContext = new ValidationContext(validationContext.getValidatorContext(),
+                CertificateSource.SIGNER_CERT, validationContext.getTimeBasedContext());
         onExceptionLog(() ->
-                        certificateChainValidator.validate(signatureReport, validationContext,
+                        certificateChainValidator.validate(signatureReport, localContext,
                                 signingCertificate, lastKnownPoE),
                 validationReport, e -> new CertificateReportItem(signingCertificate, SIGNATURE_VERIFICATION,
                         CHAIN_VALIDATION_FAILED, e, ReportItemStatus.INDETERMINATE));
@@ -355,6 +359,8 @@ public class SignatureValidator {
             builder.getAdESReportAggregator().proofOfExistenceFound(
                     signatureUtil.getSignature(latestSignatureName).getContents().getValueBytes(), true);
         } else {
+            builder.getQualifiedValidator().startSignatureValidation(latestSignatureName);
+
             builder.getAdESReportAggregator().startSignatureValidation(
                     signatureUtil.getSignature(latestSignatureName).getContents().getValueBytes(), latestSignatureName,
                     lastKnownPoE);
@@ -425,8 +431,9 @@ public class SignatureValidator {
                         ReportItemStatus.INFO));
 
         try {
-            certificateChainValidator.validate(validationReport,
-                    validationContext.setCertificateSource(CertificateSource.TIMESTAMP),
+            ValidationContext localContext = new ValidationContext(validationContext.getValidatorContext(),
+                    CertificateSource.TIMESTAMP, validationContext.getTimeBasedContext());
+            certificateChainValidator.validate(validationReport, localContext,
                     signingCert, lastKnownPoE);
         } catch (RuntimeException e) {
             validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, CHAIN_VALIDATION_FAILED, e,

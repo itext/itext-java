@@ -29,12 +29,14 @@ import java.util.Set;
  * Wrapper class for additional service information extension.
  */
 public class AdditionalServiceInformationExtension {
-
-    private static final Set<String> invalidScopes = new HashSet<>();
+    static final String FOR_E_SIGNATURES = "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures";
+    static final String FOR_E_SEALS = "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals";
+    static final String FOR_WSA = "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication";
+    private static final Set<String> INVALID_SCOPES = new HashSet<>();
     private String uri;
 
     static {
-        invalidScopes.add("http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication");
+        INVALID_SCOPES.add(FOR_WSA);
     }
 
     /**
@@ -62,6 +64,6 @@ public class AdditionalServiceInformationExtension {
     }
 
     boolean isScopeValid() {
-        return !invalidScopes.contains(uri);
+        return !INVALID_SCOPES.contains(uri);
     }
 }

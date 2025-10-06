@@ -22,8 +22,15 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.validation.lotl.PivotFetcher.Result;
+import com.itextpdf.signatures.validation.lotl.criteria.CertSubjectDNAttributeCriteria;
+import com.itextpdf.signatures.validation.lotl.criteria.Criteria;
+import com.itextpdf.signatures.validation.lotl.criteria.CriteriaList;
+import com.itextpdf.signatures.validation.lotl.criteria.ExtendedKeyUsageCriteria;
+import com.itextpdf.signatures.validation.lotl.criteria.KeyUsageCriteria;
+import com.itextpdf.signatures.validation.lotl.criteria.PolicySetCriteria;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
@@ -72,8 +79,21 @@ class LotlCacheDataV1 {
     private static final String JSON_KEY_REPORT_STATUS = "status";
     private static final String JSON_KEY_CERTIFICATE = "certificate";
     private static final String JSON_KEY_CERTIFICATES = "certificates";
+    private static final String JSON_KEY_QUALIFIER_EXTENSIONS = "qualifierExtensions";
+    private static final String JSON_KEY_QUALIFIERS = "qualifiers";
+    private static final String JSON_KEY_CRITERIA_LIST = "criteriaList";
+    private static final String JSON_KEY_CRITERIAS = "criterias";
+    private static final String JSON_KEY_CRITERIA_ASSERT_VALUE = "criteriaAssertValue";
+    private static final String JSON_KEY_CRITERIA_CERT_SUBJECT_DN_ATTRIBUTE_CRITERIA = "certSubjectDNAttributeCriteria";
+    private static final String JSON_KEY_CRITERIA_REQUIRED_ATTRIBUTE_IDS = "requiredAttributeIDs";
+    private static final String JSON_KEY_CRITERIA_EXTENDED_KEY_USAGE_CRITERIA = "extendedKeyUsageCriteria";
+    private static final String JSON_KEY_CRITERIA_REQUIRED_EXTENDED_KEY_USAGES = "requiredExtendedKeyUsages";
+    private static final String JSON_KEY_CRITERIA_POLICY_SET_CRITERIA = "policySetCriteria";
+    private static final String JSON_KEY_CRITERIA_REQUIRED_POLICY_IDS = "requiredPolicyIDs";
+    private static final String JSON_KEY_CRITERIA_KEY_USAGE_CRITERIA = "keyUsageCriteria";
+    private static final String JSON_KEY_CRITERIA_KEY_USAGE_BITS = "requiredKeyUsageBits";
     private static final String JSON_KEY_SERVICE_TYPE = "serviceType";
-    private static final String JSON_KEY_EXTENSIONS = "extensions";
+    private static final String JSON_KEY_SERVICE_EXTENSIONS = "serviceExtensions";
     private static final String JSON_KEY_SERVICE_CHRONOLOGICAL_INFOS = "serviceChronologicalInfos";
     private static final String JSON_KEY_SERVICE_STATUS = "serviceStatus";
     private static final String JSON_KEY_SERVICE_STATUS_STARTING_TIME = "serviceStatusStartingTime";
@@ -152,6 +172,9 @@ class LotlCacheDataV1 {
         module.addSerializer(EuropeanResourceFetcher.Result.class, new EuropeanResultFetcherSerializer());
         module.addSerializer(LotlCacheDataV1.class, new LotlCacheDataV1Serializer());
         module.addSerializer(ServiceChronologicalInfo.class, new ServiceChronologicalInfoSerializer());
+
+        objectMapper.configOverride(CountryServiceContext.class)
+                .setIgnorals(JsonIgnoreProperties.Value.forIgnoredProperties("currentChronologicalInfo"));
 
         module.addDeserializer(Certificate.class, new X509CertificateDeserializer());
         module.addDeserializer(X509Certificate.class, new X509CertificateDeserializer());
@@ -304,17 +327,101 @@ class LotlCacheDataV1 {
                 jsonGenerator.writeNullField(JSON_KEY_SERVICE_STATUS_STARTING_TIME);
             }
 
-            if (info.getExtensions() != null) {
-                jsonGenerator.writeArrayFieldStart(JSON_KEY_EXTENSIONS);
-                for (AdditionalServiceInformationExtension extension : info.getExtensions()) {
+            if (info.getServiceExtensions() != null) {
+                jsonGenerator.writeArrayFieldStart(JSON_KEY_SERVICE_EXTENSIONS);
+                for (AdditionalServiceInformationExtension extension : info.getServiceExtensions()) {
                     jsonGenerator.writeStartObject();
                     jsonGenerator.writeStringField(JSON_KEY_URI, extension.getUri());
                     jsonGenerator.writeEndObject();
                 }
                 jsonGenerator.writeEndArray();
             } else {
-                jsonGenerator.writeNullField(JSON_KEY_EXTENSIONS);
+                jsonGenerator.writeNullField(JSON_KEY_SERVICE_EXTENSIONS);
             }
+
+            // Qualifier extensions
+            jsonGenerator.writeArrayFieldStart(JSON_KEY_QUALIFIER_EXTENSIONS);
+            for (QualifierExtension extension : info.getQualifierExtensions()) {
+                jsonGenerator.writeStartObject();
+
+                jsonGenerator.writeArrayFieldStart(JSON_KEY_QUALIFIERS);
+                for (String qualifier : extension.getQualifiers()) {
+                    jsonGenerator.writeString(qualifier);
+                }
+                jsonGenerator.writeEndArray();
+
+                serializeCriteriaList(extension.getCriteriaList(), jsonGenerator);
+
+                jsonGenerator.writeEndObject();
+            }
+            jsonGenerator.writeEndArray();
+
+            jsonGenerator.writeEndObject();
+        }
+
+        private static void serializeCriteriaList(CriteriaList criteriaList, JsonGenerator jsonGenerator)
+                throws IOException {
+            if (criteriaList == null) {
+                return;
+            }
+            jsonGenerator.writeFieldName(JSON_KEY_CRITERIA_LIST);
+
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeStringField(JSON_KEY_CRITERIA_ASSERT_VALUE, criteriaList.getAssertValue());
+
+            jsonGenerator.writeArrayFieldStart(JSON_KEY_CRITERIAS);
+            for (Criteria criteria : criteriaList.getCriteriaList()) {
+                jsonGenerator.writeStartObject();
+
+                if (criteria instanceof CriteriaList) {
+                    serializeCriteriaList((CriteriaList) criteria, jsonGenerator);
+                } else if (criteria instanceof CertSubjectDNAttributeCriteria) {
+                    writeStringList(JSON_KEY_CRITERIA_CERT_SUBJECT_DN_ATTRIBUTE_CRITERIA,
+                            JSON_KEY_CRITERIA_REQUIRED_ATTRIBUTE_IDS,
+                            ((CertSubjectDNAttributeCriteria) criteria).getRequiredAttributeIds(), jsonGenerator);
+                } else if (criteria instanceof ExtendedKeyUsageCriteria) {
+                    writeStringList(JSON_KEY_CRITERIA_EXTENDED_KEY_USAGE_CRITERIA,
+                            JSON_KEY_CRITERIA_REQUIRED_EXTENDED_KEY_USAGES,
+                            ((ExtendedKeyUsageCriteria) criteria).getRequiredExtendedKeyUsages(), jsonGenerator);
+                } else if (criteria instanceof KeyUsageCriteria) {
+                    List<String> keyUsages = new ArrayList<>();
+                    for (Boolean keyUsage : ((KeyUsageCriteria) criteria).getKeyUsageBits()) {
+                        if (keyUsage == null) {
+                            keyUsages.add("null");
+                        } else {
+                            keyUsages.add(keyUsage ? "true" : "false");
+                        }
+                    }
+
+                    writeStringList(JSON_KEY_CRITERIA_KEY_USAGE_CRITERIA,
+                            JSON_KEY_CRITERIA_KEY_USAGE_BITS, keyUsages, jsonGenerator);
+
+                } else if (criteria instanceof PolicySetCriteria) {
+                    writeStringList(JSON_KEY_CRITERIA_POLICY_SET_CRITERIA,
+                            JSON_KEY_CRITERIA_REQUIRED_POLICY_IDS,
+                            ((PolicySetCriteria) criteria).getRequiredPolicyIds(), jsonGenerator);
+                }
+
+                jsonGenerator.writeEndObject();
+            }
+
+            jsonGenerator.writeEndArray();
+
+            jsonGenerator.writeEndObject();
+        }
+
+        private static void writeStringList(String parentFieldName, String arrayFieldName, List<String> stringList,
+                JsonGenerator jsonGenerator)
+                throws IOException {
+            jsonGenerator.writeFieldName(parentFieldName);
+            jsonGenerator.writeStartObject();
+
+            jsonGenerator.writeArrayFieldStart(arrayFieldName);
+            for (String keyUsage : stringList) {
+                jsonGenerator.writeString(keyUsage);
+            }
+            jsonGenerator.writeEndArray();
+
             jsonGenerator.writeEndObject();
         }
     }
@@ -463,17 +570,134 @@ class LotlCacheDataV1 {
             info.setServiceStatus(serviceStatus);
             info.setServiceStatusStartingTime(serviceStatusStartingTime);
 
-            if (node.has(JSON_KEY_EXTENSIONS)) {
-                JsonNode extensionsNode = node.get(JSON_KEY_EXTENSIONS);
+            if (node.has(JSON_KEY_SERVICE_EXTENSIONS)) {
+                JsonNode extensionsNode = node.get(JSON_KEY_SERVICE_EXTENSIONS);
                 if (extensionsNode != null && extensionsNode.isArray()) {
                     for (JsonNode extensionNode : extensionsNode) {
                         AdditionalServiceInformationExtension extension = codec.treeToValue(extensionNode,
                                 AdditionalServiceInformationExtension.class);
-                        info.getExtensions().add(extension);
+                        info.getServiceExtensions().add(extension);
                     }
                 }
             }
+
+            if (node.has(JSON_KEY_QUALIFIER_EXTENSIONS)) {
+                JsonNode extensionsNode = node.get(JSON_KEY_QUALIFIER_EXTENSIONS);
+                if (extensionsNode != null && extensionsNode.isArray()) {
+                    for (JsonNode extensionNode : extensionsNode) {
+                        JsonNode qualifiersNode = extensionNode.get(JSON_KEY_QUALIFIERS);
+                        if (qualifiersNode == null || !qualifiersNode.isArray()) {
+                            continue;
+                        }
+
+                        QualifierExtension qualifierExtension = new QualifierExtension();
+                        for (JsonNode qualifierNode : qualifiersNode) {
+                            if (qualifierNode != null && qualifierNode.isTextual()) {
+                                qualifierExtension.addQualifier(qualifierNode.asText());
+                            }
+                        }
+
+                        JsonNode criteriaListNode = extensionNode.get(JSON_KEY_CRITERIA_LIST);
+                        if (criteriaListNode == null) {
+                            continue;
+                        }
+
+                        CriteriaList criteriaList = readCriteriaListNode(criteriaListNode);
+                        if (criteriaList == null) {
+                            continue;
+                        }
+
+                        qualifierExtension.setCriteriaList(criteriaList);
+                        info.addQualifierExtension(qualifierExtension);
+                    }
+                }
+            }
+
             return info;
+        }
+
+        private static CriteriaList readCriteriaListNode(JsonNode criteriaListNode) {
+            JsonNode assertValueNode = criteriaListNode.get(JSON_KEY_CRITERIA_ASSERT_VALUE);
+            if (assertValueNode == null || !assertValueNode.isTextual()) {
+                return null;
+            }
+
+            CriteriaList criteriaList = new CriteriaList(assertValueNode.asText());
+
+            JsonNode criteriasNode = criteriaListNode.get(JSON_KEY_CRITERIAS);
+            if (criteriasNode == null || !criteriasNode.isArray()) {
+                return null;
+            }
+
+            for (JsonNode criteriaNode : criteriasNode) {
+                JsonNode citeriaNode = criteriaNode.get(JSON_KEY_CRITERIA_LIST);
+                if (citeriaNode != null ) {
+                    Criteria innerCriteriaList = readCriteriaListNode(citeriaNode);
+                    if (innerCriteriaList != null) {
+                        criteriaList.addCriteria(innerCriteriaList);
+                    }
+                    continue;
+                }
+
+                citeriaNode = criteriaNode.get(JSON_KEY_CRITERIA_CERT_SUBJECT_DN_ATTRIBUTE_CRITERIA);
+                if (citeriaNode != null) {
+                    CertSubjectDNAttributeCriteria criteria = new CertSubjectDNAttributeCriteria();
+                    JsonNode requiredAttributeIDsNode = citeriaNode.get(JSON_KEY_CRITERIA_REQUIRED_ATTRIBUTE_IDS);
+                    if (requiredAttributeIDsNode != null && requiredAttributeIDsNode.isArray()) {
+                        for (JsonNode attributeIDNode : requiredAttributeIDsNode) {
+                            criteria.addRequiredAttributeId(attributeIDNode.asText());
+                        }
+                    }
+                    criteriaList.addCriteria(criteria);
+                    continue;
+                }
+                citeriaNode = criteriaNode.get(JSON_KEY_CRITERIA_EXTENDED_KEY_USAGE_CRITERIA);
+                if (citeriaNode != null) {
+                    ExtendedKeyUsageCriteria criteria = new ExtendedKeyUsageCriteria();
+                    JsonNode requiredExtendedKeyUsagesNode = citeriaNode.get(
+                            JSON_KEY_CRITERIA_REQUIRED_EXTENDED_KEY_USAGES);
+                    if (requiredExtendedKeyUsagesNode != null && requiredExtendedKeyUsagesNode.isArray()) {
+                        for (JsonNode extendedKeyUsageNode : requiredExtendedKeyUsagesNode) {
+                            criteria.addRequiredExtendedKeyUsage(extendedKeyUsageNode.asText());
+                        }
+                    }
+                    criteriaList.addCriteria(criteria);
+                    continue;
+                }
+
+                citeriaNode = criteriaNode.get(JSON_KEY_CRITERIA_POLICY_SET_CRITERIA);
+                if (citeriaNode != null) {
+                    PolicySetCriteria criteria = new PolicySetCriteria();
+                    JsonNode requiredPolicyIDsNode = citeriaNode.get(JSON_KEY_CRITERIA_REQUIRED_POLICY_IDS);
+                    if (requiredPolicyIDsNode != null && requiredPolicyIDsNode.isArray()) {
+                        for (JsonNode policyIDNode : requiredPolicyIDsNode) {
+                            criteria.addRequiredPolicyId(policyIDNode.asText());
+                        }
+                    }
+                    criteriaList.addCriteria(criteria);
+                    continue;
+                }
+
+                citeriaNode = criteriaNode.get(JSON_KEY_CRITERIA_KEY_USAGE_CRITERIA);
+                if (citeriaNode != null) {
+                    KeyUsageCriteria criteria = new KeyUsageCriteria();
+                    JsonNode requiredKeyUsageBitsNode = citeriaNode.get(JSON_KEY_CRITERIA_KEY_USAGE_BITS);
+                    if (requiredKeyUsageBitsNode != null && requiredKeyUsageBitsNode.isArray()) {
+                        int counter = 0;
+                        for (JsonNode keyUsageBitNode : requiredKeyUsageBitsNode) {
+                            String text = keyUsageBitNode.asText();
+                            criteria.getKeyUsageBits()[counter] =
+                                    "null".equals(text) ? null : Boolean.parseBoolean(text);
+                            counter++;
+                        }
+                    }
+                    criteriaList.addCriteria(criteria);
+                    continue;
+                }
+                throw new RuntimeException("Unknown criteria type in JSON");
+
+            }
+            return criteriaList;
         }
     }
 }

@@ -42,7 +42,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.*;
 import java.util.Map.Entry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -50,10 +50,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.security.cert.Certificate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -657,7 +653,44 @@ public class LotlServiceTest extends ExtendedITextTest {
                 actual.getEuropeanResourceFetcherCache().getLocalReport().getLogs().size(),
                 "Amount of EU journal logs differs");
 
+        List<AdditionalServiceInformationExtension> expectedASIExtensions = parseAdditionalServiceInformationExtensions(expected);
+        List<QualifierExtension> expectedQualifierExtensions = parseQualifiersExtensions(expected);
 
+        List<AdditionalServiceInformationExtension> actualASIExtensions = parseAdditionalServiceInformationExtensions(actual);
+        List<QualifierExtension> actualQualifierExtensions = parseQualifiersExtensions(actual);
+
+        assertEquals(expectedASIExtensions.size(), actualASIExtensions.size(),
+                "Amount of Additional Service Information Extensions differs");
+        assertEquals(expectedQualifierExtensions.size(), actualQualifierExtensions.size(),
+                "Amount of Qualifier Extensions differs");
+    }
+
+    private static List<AdditionalServiceInformationExtension> parseAdditionalServiceInformationExtensions(LotlCacheDataV1 lotlCache) {
+        List<AdditionalServiceInformationExtension> additionalServiceInformationExtensions = new ArrayList<>();
+        for (CountrySpecificLotlFetcher.Result countrySpecificResult : lotlCache.getCountrySpecificLotlCache().values()) {
+            for (IServiceContext serviceContext : countrySpecificResult.getContexts()) {
+                if (serviceContext instanceof CountryServiceContext) {
+                    for (ServiceChronologicalInfo serviceChronologicalInfo : ((CountryServiceContext) serviceContext).getServiceChronologicalInfos()) {
+                        additionalServiceInformationExtensions.addAll(serviceChronologicalInfo.getServiceExtensions());
+                    }
+                }
+            }
+        }
+        return additionalServiceInformationExtensions;
+    }
+
+    private static List<QualifierExtension> parseQualifiersExtensions(LotlCacheDataV1 lotlCache) {
+        List<QualifierExtension> qualifierExtensions = new ArrayList<>();
+        for (CountrySpecificLotlFetcher.Result countrySpecificResult : lotlCache.getCountrySpecificLotlCache().values()) {
+            for (IServiceContext serviceContext : countrySpecificResult.getContexts()) {
+                if (serviceContext instanceof CountryServiceContext) {
+                    for (ServiceChronologicalInfo serviceChronologicalInfo : ((CountryServiceContext) serviceContext).getServiceChronologicalInfos()) {
+                        qualifierExtensions.addAll(serviceChronologicalInfo.getQualifierExtensions());
+                    }
+                }
+            }
+        }
+        return qualifierExtensions;
     }
 
     static final class CacheReturnsNull implements LotlServiceCache {

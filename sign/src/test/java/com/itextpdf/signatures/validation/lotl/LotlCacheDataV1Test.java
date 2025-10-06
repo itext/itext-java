@@ -23,6 +23,12 @@
 package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.signatures.validation.lotl.CountrySpecificLotlFetcher.Result;
+import com.itextpdf.signatures.validation.lotl.criteria.CertSubjectDNAttributeCriteria;
+import com.itextpdf.signatures.validation.lotl.criteria.Criteria;
+import com.itextpdf.signatures.validation.lotl.criteria.CriteriaList;
+import com.itextpdf.signatures.validation.lotl.criteria.ExtendedKeyUsageCriteria;
+import com.itextpdf.signatures.validation.lotl.criteria.KeyUsageCriteria;
+import com.itextpdf.signatures.validation.lotl.criteria.PolicySetCriteria;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
@@ -41,7 +47,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
 
 @Tag("UnitTest")
 public class LotlCacheDataV1Test extends ExtendedITextTest {
@@ -295,17 +300,51 @@ public class LotlCacheDataV1Test extends ExtendedITextTest {
         countrySpecificCache.setCountrySpecificLotl(be);
         countrySpecificCache.setLocalReport(report);
 
+        CertSubjectDNAttributeCriteria criteria1 = new CertSubjectDNAttributeCriteria();
+        criteria1.addRequiredAttributeId("attr1");
+        criteria1.addRequiredAttributeId("attr2");
+        ExtendedKeyUsageCriteria criteria2 = new ExtendedKeyUsageCriteria();
+        criteria2.addRequiredExtendedKeyUsage("keyUsage1");
+        criteria2.addRequiredExtendedKeyUsage("keyUsage2");
+        PolicySetCriteria criteria3 = new PolicySetCriteria();
+        criteria3.addRequiredPolicyId("policyId1");
+        criteria3.addRequiredPolicyId("policyId2");
+        KeyUsageCriteria criteria4 = new KeyUsageCriteria();
+        criteria4.addKeyUsageBit("nonRepudiation", "true");
+        criteria4.addKeyUsageBit("dataEncipherment", "true");
+        criteria4.addKeyUsageBit("keyCertSign", "true");
+        criteria4.addKeyUsageBit("encipherOnly", "false");
+        CriteriaList innerCriteriaList = new CriteriaList("atLeastOne");
+        innerCriteriaList.addCriteria(criteria1);
+        innerCriteriaList.addCriteria(criteria2);
+        innerCriteriaList.addCriteria(criteria3);
+        innerCriteriaList.addCriteria(criteria4);
+
+        CriteriaList criteriaList = new CriteriaList("all");
+        criteriaList.addCriteria(innerCriteriaList);
+        criteriaList.addCriteria(criteria1);
+
+        QualifierExtension qualifierExtension = new QualifierExtension();
+        qualifierExtension.addQualifier("http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf");
+        qualifierExtension.addQualifier("http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForLegalPerson");
+        qualifierExtension.setCriteriaList(criteriaList);
+
+        ServiceChronologicalInfo chronologicalInfo = new ServiceChronologicalInfo(TEST_SERVICE_STATUS,
+                TEST_DATE_TIME_1);
+        chronologicalInfo.addQualifierExtension(qualifierExtension);
+        chronologicalInfo.addQualifierExtension(qualifierExtension);
+
         CountryServiceContext context = new CountryServiceContext();
         context.addCertificate(null);
         context.setServiceType(TEST_SERVICE_TYPE);
-        context.getServiceChronologicalInfos().add(new ServiceChronologicalInfo(TEST_SERVICE_STATUS, TEST_DATE_TIME_1));
+        context.getServiceChronologicalInfos().add(chronologicalInfo);
 
         ServiceChronologicalInfo ogChronologicalInfo = new ServiceChronologicalInfo(TEST_SERVICE_STATUS,
                 TEST_DATE_TIME_1);
         AdditionalServiceInformationExtension ogChronologicalInfoExtension =
                 new AdditionalServiceInformationExtension();
         ogChronologicalInfoExtension.setUri(EXTENSION_URI);
-        ogChronologicalInfo.addExtension(ogChronologicalInfoExtension);
+        ogChronologicalInfo.addServiceExtension(ogChronologicalInfoExtension);
         context.getServiceChronologicalInfos().add(ogChronologicalInfo);
 
         List<IServiceContext> contexts = new ArrayList<>();
@@ -373,9 +412,107 @@ public class LotlCacheDataV1Test extends ExtendedITextTest {
         assertEquals(firstOriginalChronoInfo.getServiceStatusStartingTime(),
                 firstDeserializedChronoInfo.getServiceStatusStartingTime(),
                 "ServiceStatusStartingTime should match");
-        assertEquals(firstOriginalChronoInfo.getExtensions().size(),
-                firstDeserializedChronoInfo.getExtensions().size(),
+        assertEquals(firstOriginalChronoInfo.getServiceExtensions().size(),
+                firstDeserializedChronoInfo.getServiceExtensions().size(),
                 "Extensions size should match");
+
+        List<QualifierExtension> originalQualifierExtensions = firstOriginalChronoInfo.getQualifierExtensions();
+        List<QualifierExtension> deserializedQualifierExtensions = firstDeserializedChronoInfo.getQualifierExtensions();
+        assertEquals(originalQualifierExtensions.size(), deserializedQualifierExtensions.size(),
+                "QualifierExtensions size should match");
+        QualifierExtension originalQualifierExtension = originalQualifierExtensions.get(0);
+        QualifierExtension deserializedQualifierExtension = deserializedQualifierExtensions.get(0);
+        assertEquals(originalQualifierExtension.getQualifiers().size(),
+                deserializedQualifierExtension.getQualifiers().size(),
+                "Qualifiers size should match");
+        for (int i = 0; i < originalQualifierExtension.getQualifiers().size(); i++) {
+            assertEquals(originalQualifierExtension.getQualifiers().get(i),
+                    deserializedQualifierExtension.getQualifiers().get(i),
+                    "Qualifier at index " + i + " should match");
+        }
+        CriteriaList originalCriteriaList = originalQualifierExtension.getCriteriaList();
+        CriteriaList deserializedCriteriaList = deserializedQualifierExtension.getCriteriaList();
+
+        assertNotNull(deserializedCriteriaList, "Deserialized CriteriaList should not be null");
+        assertEquals(originalCriteriaList.getCriteriaList().size(), deserializedCriteriaList.getCriteriaList().size());
+
+        for (int i = 0; i < originalCriteriaList.getCriteriaList().size(); i++) {
+            Criteria originalCriteria = originalCriteriaList.getCriteriaList().get(i);
+            Criteria deserializedCriteria = deserializedCriteriaList.getCriteriaList().get(i);
+            assertEquals(originalCriteria.getClass(), deserializedCriteria.getClass(),
+                    "Criteria class at index " + i + " should match");
+            if (originalCriteria instanceof CriteriaList) {
+                CriteriaList originalInnerList = (CriteriaList) originalCriteria;
+                CriteriaList deserializedInnerList = (CriteriaList) deserializedCriteria;
+                assertEquals(originalInnerList.getCriteriaList().size(), deserializedInnerList.getCriteriaList().size(),
+                        "Inner CriteriaList size at index " + i + " should match");
+
+                for (int i1 = 0; i1 < originalInnerList.getCriteriaList().size(); i1++) {
+                    Criteria originalInnerCriteria = originalInnerList.getCriteriaList().get(i1);
+                    Criteria deserializedInnerCriteria = deserializedInnerList.getCriteriaList().get(i1);
+                    assertEquals(originalInnerCriteria.getClass(), deserializedInnerCriteria.getClass(),
+                            "Inner Criteria class at index " + i + "," + i1 + " should match");
+                    if (originalInnerCriteria instanceof CertSubjectDNAttributeCriteria) {
+                        CertSubjectDNAttributeCriteria originalCertCriteria =
+                                (CertSubjectDNAttributeCriteria) originalInnerCriteria;
+                        CertSubjectDNAttributeCriteria deserializedCertCriteria =
+                                (CertSubjectDNAttributeCriteria) deserializedInnerCriteria;
+                        assertEquals(originalCertCriteria.getRequiredAttributeIds().size(),
+                                deserializedCertCriteria.getRequiredAttributeIds().size(),
+                                "RequiredAttributeIds size at index " + i + "," + i1 + " should match");
+                        for (int j = 0; j < originalCertCriteria.getRequiredAttributeIds().size(); j++) {
+                            assertEquals(originalCertCriteria.getRequiredAttributeIds().get(j),
+                                    deserializedCertCriteria.getRequiredAttributeIds().get(j),
+                                    "RequiredAttributeId at index " + i + "," + i1 + "," + j + " should match");
+                        }
+                    } else if (originalInnerCriteria instanceof ExtendedKeyUsageCriteria) {
+                        ExtendedKeyUsageCriteria originalExtKeyUsageCriteria =
+                                (ExtendedKeyUsageCriteria) originalInnerCriteria;
+                        ExtendedKeyUsageCriteria deserializedExtKeyUsageCriteria =
+                                (ExtendedKeyUsageCriteria) deserializedInnerCriteria;
+                        assertEquals(originalExtKeyUsageCriteria.getRequiredExtendedKeyUsages().size(),
+                                deserializedExtKeyUsageCriteria.getRequiredExtendedKeyUsages().size(),
+                                "RequiredExtendedKeyUsages size at index " + i + "," + i1 + " should match");
+                        for (int j = 0; j < originalExtKeyUsageCriteria.getRequiredExtendedKeyUsages().size(); j++) {
+                            assertEquals(originalExtKeyUsageCriteria.getRequiredExtendedKeyUsages().get(j),
+                                    deserializedExtKeyUsageCriteria.getRequiredExtendedKeyUsages().get(j),
+                                    "RequiredExtendedKeyUsage at index " + i + "," + i1 + "," + j + " should match");
+                        }
+                    } else if (originalInnerCriteria instanceof PolicySetCriteria) {
+                        PolicySetCriteria originalPolicySetCriteria =
+                                (PolicySetCriteria) originalInnerCriteria;
+                        PolicySetCriteria deserializedPolicySetCriteria =
+                                (PolicySetCriteria) deserializedInnerCriteria;
+                        assertEquals(originalPolicySetCriteria.getRequiredPolicyIds().size(),
+                                deserializedPolicySetCriteria.getRequiredPolicyIds().size(),
+                                "RequiredPolicyIds size at index " + i + "," + i1 + " should match");
+                        for (int j = 0; j < originalPolicySetCriteria.getRequiredPolicyIds().size(); j++) {
+                            assertEquals(originalPolicySetCriteria.getRequiredPolicyIds().get(j),
+                                    deserializedPolicySetCriteria.getRequiredPolicyIds().get(j),
+                                    "RequiredPolicyId at index " + i + "," + i1 + "," + j + " should match");
+                        }
+                    } else if (originalInnerCriteria instanceof KeyUsageCriteria) {
+                        KeyUsageCriteria originalKeyUsageCriteria =
+                                (KeyUsageCriteria) originalInnerCriteria;
+                        KeyUsageCriteria deserializedKeyUsageCriteria =
+                                (KeyUsageCriteria) deserializedInnerCriteria;
+                        assertEquals(originalKeyUsageCriteria.getKeyUsageBits().length,
+                                deserializedKeyUsageCriteria.getKeyUsageBits().length,
+                                "KeyUsageBits size at index " + i + "," + i1 + " should match");
+                        Boolean[] keyUsageBits = originalKeyUsageCriteria.getKeyUsageBits();
+                        Boolean[] deserializedKeyUsageBits = deserializedKeyUsageCriteria.getKeyUsageBits();
+                        for (int j = 0; j < keyUsageBits.length; j++) {
+                            Boolean key = keyUsageBits[j];
+                            Boolean deserializedKey = deserializedKeyUsageBits[j];
+                            assertEquals(key, deserializedKey,
+                                    "KeyUsageBit at index " + i + "," + i1 + "," + j + " should match");
+                        }
+                    } else {
+                        fail("Unexpected Criteria type: " + originalInnerCriteria.getClass().getSimpleName());
+                    }
+                }
+            }
+        }
 
         assertEquals(1, deserializedCountrySpecificCache.getContexts().size(), "Contexts size should match");
         assertNotNull(deserializedContext, "Context should not be null");
@@ -390,8 +527,9 @@ public class LotlCacheDataV1Test extends ExtendedITextTest {
         assertEquals(ogChronologicalInfo.getServiceStatusStartingTime(),
                 deserializedChronoInfo.getServiceStatusStartingTime(),
                 "ServiceStatusStartingTime should match");
-        assertEquals(1, deserializedChronoInfo.getExtensions().size(), "Extensions size should match");
-        AdditionalServiceInformationExtension deserializedExtension = deserializedChronoInfo.getExtensions().get(0);
+        assertEquals(1, deserializedChronoInfo.getServiceExtensions().size(), "Extensions size should match");
+        AdditionalServiceInformationExtension deserializedExtension = deserializedChronoInfo.getServiceExtensions()
+                .get(0);
         assertEquals(ogChronologicalInfoExtension.getUri(), deserializedExtension.getUri(), "URI should match");
 
     }
@@ -413,7 +551,7 @@ public class LotlCacheDataV1Test extends ExtendedITextTest {
         AdditionalServiceInformationExtension ogChronologicalInfoExtension =
                 new AdditionalServiceInformationExtension();
         ogChronologicalInfoExtension.setUri(EXTENSION_URI);
-        ogChronologicalInfo.addExtension(ogChronologicalInfoExtension);
+        ogChronologicalInfo.addServiceExtension(ogChronologicalInfoExtension);
         context.getServiceChronologicalInfos().add(ogChronologicalInfo);
 
         CountrySpecificLotlFetcher.Result countrySpecificCache2 = new CountrySpecificLotlFetcher.Result();

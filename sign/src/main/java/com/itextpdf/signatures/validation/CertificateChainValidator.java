@@ -39,6 +39,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -125,18 +126,19 @@ public class CertificateChainValidator {
      */
     public ValidationReport validate(ValidationReport result, ValidationContext context, X509Certificate certificate,
             Date validationDate) {
-        return validate(result, context, certificate, validationDate, 0);
+        return validate(result, context, certificate, validationDate, new ArrayList<>());
     }
 
     private ValidationReport validate(ValidationReport result, ValidationContext context, X509Certificate certificate,
-            Date validationDate, int certificateChainSize) {
+            Date validationDate, List<X509Certificate> previousCertificates) {
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR);
-        validateRequiredExtensions(result, localContext, certificate, certificateChainSize);
+        validateRequiredExtensions(result, localContext, certificate, previousCertificates.size());
         if (stopValidation(result, localContext)) {
             return result;
         }
 
-        if (onExceptionLog(() -> checkIfCertIsTrusted(result, localContext, certificate, validationDate),
+        if (onExceptionLog(
+                () -> checkIfCertIsTrusted(result, localContext, certificate, validationDate, previousCertificates),
                 Boolean.FALSE, result, e -> new CertificateReportItem(certificate, CERTIFICATE_CHECK,
                         TRUSTSTORE_RETRIEVAL_FAILED, e, ReportItemStatus.INFO))) {
             return result;
@@ -148,12 +150,12 @@ public class CertificateChainValidator {
             return result;
         }
 
-        validateChain(result, localContext, certificate, validationDate, certificateChainSize);
+        validateChain(result, localContext, certificate, validationDate, previousCertificates);
         return result;
     }
 
     private boolean checkIfCertIsTrusted(ValidationReport result, ValidationContext context,
-            X509Certificate certificate, Date validationDate) {
+            X509Certificate certificate, Date validationDate, List<X509Certificate> previousCertificates) {
         if (certificateRetriever.getTrustedCertificatesStore().checkIfCertIsTrusted(result, context, certificate)) {
             result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, CERTIFICATE_RETRIEVER_ORIGIN,
                     ReportItemStatus.INFO));
@@ -164,7 +166,8 @@ public class CertificateChainValidator {
             return false;
         }
 
-        if (lotlTrustedStore.checkIfCertIsTrusted(result, context, certificate, validationDate)) {
+        if (lotlTrustedStore.setPreviousCertificates(previousCertificates)
+                .checkIfCertIsTrusted(result, context, certificate, validationDate)) {
             if (lotlTrustedStore.getClass() == LotlTrustedStore.class){
                 result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, CERTIFICATE_LOTL_ORIGIN,
                         ReportItemStatus.INFO));
@@ -227,7 +230,7 @@ public class CertificateChainValidator {
     }
 
     private void validateChain(ValidationReport result, ValidationContext context, X509Certificate certificate,
-            Date validationDate, int certificateChainSize) {
+            Date validationDate, List<X509Certificate> previousCertificates) {
         List<X509Certificate> issuerCertificates;
         try {
             issuerCertificates = certificateRetriever.retrieveIssuerCertificate(certificate);
@@ -259,8 +262,10 @@ public class CertificateChainValidator {
                                 certificate.getSubjectX500Principal()), e, ReportItemStatus.INVALID));
                 continue;
             }
+            previousCertificates.add(certificate);
             this.validate(candidateReports[i], context.setCertificateSource(CertificateSource.CERT_ISSUER),
-                    issuerCertificates.get(i), validationDate, certificateChainSize + 1);
+                    issuerCertificates.get(i), validationDate, previousCertificates);
+            previousCertificates.remove(previousCertificates.size() - 1);
             if (candidateReports[i].getValidationResult() == ValidationResult.VALID) {
                 // We found valid issuer, no need to try other ones.
                 result.merge(candidateReports[i]);

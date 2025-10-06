@@ -159,7 +159,7 @@ public class LotlCertificateChainValidatorTest extends ExtendedITextTest {
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
         ServiceChronologicalInfo info = new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
                 LocalDateTime.of(1900, 1, 1, 0, 0));
-        info.addExtension(new AdditionalServiceInformationExtension(
+        info.addServiceExtension(new AdditionalServiceInformationExtension(
                 "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication"));
         context.addServiceChronologicalInfo(info);
 
