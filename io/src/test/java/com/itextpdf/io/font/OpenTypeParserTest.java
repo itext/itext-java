@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
@@ -73,5 +74,22 @@ public class OpenTypeParserTest extends ExtendedITextTest {
         Assertions.assertEquals(0, glyphs.get(1));
         Assertions.assertEquals(586, glyphs.get(2));
         Assertions.assertEquals(38, glyphs.get(3));
+    }
+
+    @Test
+    public void smallNumberOfMetricsTest() throws IOException {
+        OpenTypeParser parser = new OpenTypeParser(SOURCE_FOLDER + "NotoSansAndSpaceMono.ttc", 1);
+        parser.loadTables(true);
+        Set<Integer> usedGlyphs = new HashSet<Integer>();
+        usedGlyphs.add(36);
+        usedGlyphs.add(37);
+        usedGlyphs.add(38);
+        Tuple2<Integer, byte[]> subsetData = parser.getSubset(usedGlyphs, true);
+
+        OpenTypeParser resParser = new OpenTypeParser(subsetData.getSecond(), true);
+        resParser.loadTables(true);
+        // 86 == <number of h metrics> * 4 + (<number of glyphs> - <number of h metrics>) * 2
+        // where <number of h metrics> = 4 and <number of glyphs> = 39
+        Assertions.assertEquals(86, resParser.tables.get("hmtx")[1]);
     }
 }

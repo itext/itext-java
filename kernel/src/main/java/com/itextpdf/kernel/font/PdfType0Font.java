@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.exceptions.ITextException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.CFFFontSubset;
@@ -99,7 +100,7 @@ public class PdfType0Font extends PdfFont {
     private final CMapToUnicode embeddedToUnicode;
 
     // A map glyph code -> glyph
-    private final Map<Integer, Glyph> utilizedGlyphs;
+    private final TreeMap<Integer, Glyph> utilizedGlyphs;
 
     PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
@@ -792,6 +793,7 @@ public class PdfType0Font extends PdfFont {
             cidFont.flush();
         } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) getFontProgram();
+            int numOfGlyphs = ttf.getFontMetrics().getNumberOfGlyphs();
             String fontName = updateSubsetPrefix(ttf.getFontNames().getFontName(), subset, embedded);
             PdfDictionary fontDescriptor = getFontDescriptor(fontName);
 
@@ -817,7 +819,9 @@ public class PdfType0Font extends PdfFont {
                 //getDirectoryOffset() > 0 means ttc, which shall be subsetted anyway.
                 if (subset || ttf.getDirectoryOffset() > 0) {
                     try {
-                        ttfBytes = ttf.getSubset(utilizedGlyphs.keySet(), subset);
+                        Tuple2<Integer, byte[]> subsetData = ttf.subset(utilizedGlyphs.keySet(), subset);
+                        numOfGlyphs = subsetData.getFirst();
+                        ttfBytes = subsetData.getSecond();
                     } catch (com.itextpdf.io.exceptions.IOException e) {
                         Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
                         logger.warn(IoLogMessageConstant.FONT_SUBSET_ISSUE);
@@ -834,8 +838,7 @@ public class PdfType0Font extends PdfFont {
 
             // CIDSet shall be based on font.numberOfGlyphs property of the font, it is maxp.numGlyphs for ttf,
             // because technically we convert all unused glyphs to space, e.g. just remove outlines.
-            int numOfGlyphs = ttf.getFontMetrics().getNumberOfGlyphs();
-            byte[] cidSetBytes = new byte[ttf.getFontMetrics().getNumberOfGlyphs() / 8 + 1];
+            byte[] cidSetBytes = new byte[numOfGlyphs / 8 + 1];
             for (int i = 0; i < numOfGlyphs / 8; i++) {
                 cidSetBytes[i] |= 0xff;
             }

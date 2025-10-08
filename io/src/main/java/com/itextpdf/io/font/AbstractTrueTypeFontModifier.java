@@ -22,8 +22,10 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.util.Arrays;
@@ -52,6 +54,10 @@ abstract class AbstractTrueTypeFontModifier {
      * Contains the location of the several tables. The key is the name of the table and the
      * value is an {@code int[3]} where position 0 is the checksum, position 1 is the offset
      * from the start of the file and position 2 is the length of the table.
+     *
+     * The length of the table can be any. But when writing data, it should be aligned to 4 bytes. Say, if table length
+     * is 54 we should write 2 extra zeroes at the end, and it should be taken into account for calculating the start
+     * offset of the next table (but not the length of the current table).
      */
     protected Map<String, int[]> tableDirectory;
     /**
@@ -77,6 +83,9 @@ abstract class AbstractTrueTypeFontModifier {
      */
     protected final String fontName;
 
+    protected Map<Integer, byte[]> horizontalMetricMap;
+    protected int numberOfHMetrics;
+
     private FontRawData outFont;
     private final String[] tableNames;
 
@@ -98,12 +107,12 @@ abstract class AbstractTrueTypeFontModifier {
         this.fontName = fontName;
     }
 
-    byte[] process() throws java.io.IOException {
+    Tuple2<Integer, byte[]> process() throws java.io.IOException {
         try {
             createTableDirectory();
-            mergeTables();
+            final int numberOfGlyphs = mergeTables();
             assembleFont();
-            return outFont.getData();
+            return new Tuple2<>(numberOfGlyphs, outFont.getData());
         } finally {
             try {
                 raf.close();
@@ -112,9 +121,9 @@ abstract class AbstractTrueTypeFontModifier {
         }
     }
 
-    abstract void mergeTables() throws java.io.IOException;
+    abstract int mergeTables() throws java.io.IOException;
 
-    protected void createNewGlyfAndLocaTables() throws java.io.IOException {
+    protected int createModifiedTables() throws java.io.IOException {
         int[] activeGlyphs = new int[glyphDataMap.size()];
         int i = 0;
         int glyfSize = 0;
@@ -123,13 +132,17 @@ abstract class AbstractTrueTypeFontModifier {
             glyfSize += entry.getValue().length;
         }
         Arrays.sort(activeGlyphs);
+        final int maxGlyphId = activeGlyphs[activeGlyphs.length - 1];
+
+        // Update loca and glyf tables
+
         // If the biggest used GID is X, size of loca should be X + 1 (array index starts from 0),
         // plus one extra entry to get size of X element (loca[X + 1] - loca[X]), it's why 2 added
-        int locaSize = activeGlyphs[activeGlyphs.length - 1] + 2;
-        boolean isLocaShortTable = isLocaShortTable();
-        int newLocaTableSize = isLocaShortTable ? locaSize * 2 : locaSize * 4;
-        byte[] newLoca = new byte[newLocaTableSize + 3 & ~3];
-        byte[] newGlyf = new byte[glyfSize + 3 & ~3];
+        final int locaSize = maxGlyphId + 2;
+        final boolean isLocaShortTable = isLocaShortTable();
+        final int newLocaTableSize = isLocaShortTable ? locaSize * 2 : locaSize * 4;
+        byte[] newLoca = new byte[newLocaTableSize];
+        byte[] newGlyf = new byte[glyfSize];
         int glyfPtr = 0;
         int listGlyf = 0;
         for (int k = 0; k < locaSize; ++k) {
@@ -145,6 +158,74 @@ abstract class AbstractTrueTypeFontModifier {
         }
         modifiedTables.put("glyf", newGlyf);
         modifiedTables.put("loca", newLoca);
+
+        // Update maxp table
+        int[] tableLocation = tableDirectory.get("maxp");
+        raf.seek(tableLocation[TABLE_OFFSET]);
+        byte[] maxp = new byte[tableLocation[TABLE_LENGTH]];
+        raf.read(maxp);
+        writeShortToTable(maxp, 2, maxGlyphId + 1);
+        modifiedTables.put("maxp", maxp);
+
+        // Merging vertical fonts aren't supported yet, it's why vmtx and vhea tables ignored
+
+        // Update hhea table
+        // numberOfHMetrics can't be increased because there are no advanced width data. So only
+        // numberOfHMetrics decreasing is allowed. See createNewHorizontalMetricsTable method for more info.
+        if (numberOfHMetrics > maxGlyphId + 1) {
+            int[] hheaTableLocation = tableDirectory.get("hhea");
+            raf.seek(hheaTableLocation[TABLE_OFFSET]);
+            byte[] hhea = new byte[hheaTableLocation[TABLE_LENGTH]];
+            raf.read(hhea);
+            writeShortToTable(hhea, 17, maxGlyphId + 1);
+            modifiedTables.put("hhea", hhea);
+        }
+
+        // Update hmtx table
+        byte[] newHtmx = createNewHorizontalMetricsTable(maxGlyphId);
+        modifiedTables.put("hmtx", newHtmx);
+
+        return maxGlyphId + 1;
+    }
+
+    /**
+     * Creates new hmtx table.
+     *
+     * <p>
+     * hmtx is a "hybrid" table, it has maxp.numGlyphs indices, for (indices <= hhea.numberOfHMetrics) 4 bytes (advanced
+     * width + left side bearing), for (hhea.numberOfHMetrics < indices <= maxp.numGlyphs) 2 bytes (left side bearing).
+     *
+     * @param maxGlyphId the max glyph id
+     * @return raw data of new hmtx table
+     */
+    private byte[] createNewHorizontalMetricsTable(int maxGlyphId) throws java.io.IOException {
+        int[] tableLocation = tableDirectory.get("hmtx");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        raf.seek(tableLocation[TABLE_OFFSET]);
+        for (int k = 0; k < numberOfHMetrics; ++k) {
+            if (k > maxGlyphId) {
+                break;
+            }
+            if (horizontalMetricMap.containsKey(k)) {
+                raf.skipBytes(4);
+                baos.write(horizontalMetricMap.get(k));
+            } else {
+                baos.write(raf.readByte());
+                baos.write(raf.readByte());
+                baos.write(raf.readByte());
+                baos.write(raf.readByte());
+            }
+        }
+
+        // The 2nd part of hmtx. Only left side bearings
+        for (int k = numberOfHMetrics; k <= maxGlyphId; ++k) {
+            if (horizontalMetricMap.containsKey(k)) {
+                baos.write(horizontalMetricMap.get(k));
+            } else {
+                baos.write(new byte[] {0, 0});
+            }
+        }
+        return baos.toByteArray();
     }
 
     private void createTableDirectory() throws java.io.IOException {
@@ -190,10 +271,11 @@ abstract class AbstractTrueTypeFontModifier {
                 continue;
             }
             tablesUsed++;
+            // + 3 & ~3 here and further is to align to 4 bytes
             fullFontSize += tableLocation[TABLE_LENGTH] + 3 & ~3;
         }
         for (byte[] table : modifiedTables.values()) {
-            fullFontSize += table.length;
+            fullFontSize += table.length + 3 & ~3;
         }
         int reference = 16 * tablesUsed + 12;
         fullFontSize += reference;
@@ -266,6 +348,13 @@ abstract class AbstractTrueTypeFontModifier {
         }
     }
 
+    private static void writeShortToTable(byte[] table, int index, int data) {
+        // 2 bytes per field
+        index *= 2;
+        table[index] = (byte) (data >> 8);
+        table[index + 1] = (byte) data;
+    }
+
     private int calculateChecksum(byte[] b) {
         int len = b.length / 4;
         int v0 = 0;
@@ -302,7 +391,7 @@ abstract class AbstractTrueTypeFontModifier {
 
         void writeFontTable(byte[] tableData) {
             System.arraycopy(tableData, 0, data, ptr, tableData.length);
-            ptr += tableData.length;
+            ptr += tableData.length + 3 & ~3;
         }
 
         void writeFontShort(int n) {

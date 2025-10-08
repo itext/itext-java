@@ -49,7 +49,7 @@ public class FontProgramMultiThreadedTest extends ExtendedITextTest {
         }
         for (TestThread thread : threads) {
             Assertions.assertFalse(thread.exceptionCaught, "Exception during font subsetting");
-            Assertions.assertEquals(17848, thread.subsetSize);
+            Assertions.assertEquals(2956, thread.subsetSize);
         }
     }
 
@@ -68,7 +68,7 @@ public class FontProgramMultiThreadedTest extends ExtendedITextTest {
             for (int i = 0; i < 10; ++i) {
                 byte[] bytes = null;
                 try {
-                     bytes = fp.getSubset(new HashSet<>(), true);
+                     bytes = fp.subset(new HashSet<>(), true).getSecond();
                 } catch (Exception e) {
                     exceptionCaught = true;
                 }

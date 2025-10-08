@@ -204,6 +204,7 @@ public final class IoLogMessageConstant {
     public static final String FONT_DICTIONARY_WITH_NO_WIDTHS = "Font dictionary does not contain required /Widths "
             + "entry.";
 
+    @Deprecated
     public static final String FONT_HAS_INVALID_GLYPH = "Font {0} has invalid glyph: {1}";
 
     public static final String FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT =

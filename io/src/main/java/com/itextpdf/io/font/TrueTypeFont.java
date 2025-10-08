@@ -195,7 +195,7 @@ public class TrueTypeFont extends FontProgram {
     }
 
     /**
-     * Gets subset of the current TrueType font based on the passed glyphs.
+     * Gets subset based on the passed glyphs.
      *
      * @param glyphs the glyphs to subset the font
      * @param subsetTables whether subset tables (remove `name` and `post` tables) or not. It's used in case of ttc
@@ -205,6 +205,24 @@ public class TrueTypeFont extends FontProgram {
      * @return the subset font
      */
     public byte[] getSubset(Set<Integer> glyphs, boolean subsetTables) {
+        return subset(glyphs, subsetTables).getSecond();
+    }
+
+    /**
+     * Gets subset and a number of glyphs in it based on the passed glyphs.
+     *
+     * <p>
+     * The number of glyphs in a subset is not just glyphs.size() here. It's the biggest glyph id + 1 (for glyph 0).
+     * It also may include possible composite glyphs.
+     *
+     * @param glyphs the glyphs to subset the font
+     * @param subsetTables whether subset tables (remove `name` and `post` tables) or not. It's used in case of ttc
+     *                       (true type collection) font where single "full" font is needed. Despite the value of that
+     *                       flag, only used glyphs will be left in the font
+     *
+     * @return the subset of the font and the number of glyphs in it
+     */
+    public Tuple2<Integer, byte[]> subset(Set<Integer> glyphs, boolean subsetTables) {
         try {
             return fontParser.getSubset(glyphs, subsetTables);
         } catch (java.io.IOException e) {
@@ -227,7 +245,7 @@ public class TrueTypeFont extends FontProgram {
                 toMergeWithParsers.put(entry.getKey().fontParser, entry.getValue());
             }
             TrueTypeFontMerger trueTypeFontMerger = new TrueTypeFontMerger(fontName, toMergeWithParsers);
-            return trueTypeFontMerger.process();
+            return trueTypeFontMerger.process().getSecond();
         } catch (java.io.IOException e) {
             throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);
         }
@@ -380,9 +398,7 @@ public class TrueTypeFont extends FontProgram {
         for (int charCode : cmap.keySet()) {
             int index = cmap.get(charCode)[0];
             if (index >= numOfGlyphs) {
-                Logger LOGGER = LoggerFactory.getLogger(TrueTypeFont.class);
-                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.FONT_HAS_INVALID_GLYPH,
-                        getFontNames().getFontName(), index));
+                // It seems to be a valid case. If the font is subsetted but cmap table is not, it's a valid case
                 continue;
             }
             int cid;

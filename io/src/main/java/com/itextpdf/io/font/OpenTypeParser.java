@@ -418,11 +418,29 @@ class OpenTypeParser implements Closeable {
             throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("hmtx", fileName);
         }
         int hmtxOffset = tableLocation[0];
-        // 4 bytes per each glyph, 2 bytes for width, 2 bytes for left side bearing
-        raf.seek(hmtxOffset + gid * 4);
-        byte[] metric = new byte[4];
-        raf.read(metric, 0, 4);
-        return metric;
+        // OpenTypeParser may be shared between different threads.
+        // raf.createView() returns thread safe RandomAccessFileOrArray
+        RandomAccessFileOrArray tmpRaf = raf.createView();
+        try {
+            // For first hhea.numberOfHMetrics - 4 bytes per each glyph, 2 bytes for width, 2 bytes for left side bearing
+            if (gid < hhea.numberOfHMetrics) {
+                tmpRaf.seek(hmtxOffset + gid * 4);
+                byte[] metric = new byte[4];
+                tmpRaf.read(metric, 0, 4);
+                return metric;
+            } else {
+                // For the rest - only 2 bytes for left side bearing for the rest
+                tmpRaf.seek(hmtxOffset + hhea.numberOfHMetrics * 4 + (gid - hhea.numberOfHMetrics) * 2);
+                byte[] metric = new byte[2];
+                tmpRaf.read(metric, 0, 2);
+                return metric;
+            }
+        } finally {
+            try {
+                tmpRaf.close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     /**
@@ -454,18 +472,22 @@ class OpenTypeParser implements Closeable {
     }
 
     /**
-     * Gets raw bytes of subset of parsed font.
+     * Gets raw bytes of subset of parsed font and a number of glyphs in a subset.
+     *
+     * <p>
+     * The number of glyphs in a subset is not just glyphs.size() here. It's the biggest glyph id + 1 (for glyph 0).
+     * It also may include possible composite glyphs.
      *
      * @param glyphs the glyphs to subset the font
      * @param subsetTables whether subset tables (remove `name` and `post` tables) or not. It's used in case of ttc
      *                      (true type collection) font where single "full" font is needed. Despite the value of that
      *                      flag, only used glyphs will be left in the font
      *
-     * @return the raw data of subset font
+     * @return a tuple of the number of glyphs and the raw data of subset font
      *
      * @throws java.io.IOException if any input/output issue occurs
      */
-    byte[] getSubset(Set<Integer> glyphs, boolean subsetTables) throws java.io.IOException {
+    Tuple2<Integer, byte[]> getSubset(Set<Integer> glyphs, boolean subsetTables) throws java.io.IOException {
         TrueTypeFontSubsetter sb = new TrueTypeFontSubsetter(fileName, this, glyphs, subsetTables);
         return sb.process();
     }

@@ -98,7 +98,7 @@ public class CompareToolTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_tagged_pdf.pdf";
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println("\nRESULT:\n" + result);
-        Assertions.assertNotNull("CompareTool must return differences found between the files", result);
+        Assertions.assertNotNull(result, "CompareTool must return differences found between the files");
         Assertions.assertTrue(result.contains("Compare by content fails. No visual differences"));
         // Comparing the report to the reference one.
         Assertions.assertTrue(

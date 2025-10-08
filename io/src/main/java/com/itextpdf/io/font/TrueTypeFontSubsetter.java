@@ -30,24 +30,29 @@ import java.util.Set;
  * Subsets a True Type font by removing the unneeded glyphs from the font.
  */
 class TrueTypeFontSubsetter extends AbstractTrueTypeFontModifier {
+
     TrueTypeFontSubsetter(String fontName, OpenTypeParser parser, Set<Integer> glyphs, boolean subsetTables)
             throws java.io.IOException {
-
         super(fontName, subsetTables);
+        horizontalMetricMap = new HashMap<>(glyphs.size());
         glyphDataMap = new HashMap<>(glyphs.size());
         List<Integer> usedGlyphs = parser.getFlatGlyphs(glyphs);
         for (Integer glyph : usedGlyphs) {
             byte[] glyphData = parser.getGlyphDataForGid((int) glyph);
             glyphDataMap.put((int) glyph, glyphData);
+
+            byte[] glyphMetric = parser.getHorizontalMetricForGid((int) glyph);
+            horizontalMetricMap.put((int) glyph, glyphMetric);
         }
 
         this.raf = parser.raf.createView();
         this.directoryOffset = parser.directoryOffset;
+        this.numberOfHMetrics = parser.hhea.numberOfHMetrics;
     }
 
     @Override
-    protected void mergeTables() throws java.io.IOException {
-        super.createNewGlyfAndLocaTables();
+    protected int mergeTables() throws java.io.IOException {
+        return super.createModifiedTables();
         // cmap table subsetting isn't supported yet
     }
 }

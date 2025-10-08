@@ -440,7 +440,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonCustomAppearance", pdfUAConformance);
+        framework.assertBothValid("testRadioButtonCustomAppearanceInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest

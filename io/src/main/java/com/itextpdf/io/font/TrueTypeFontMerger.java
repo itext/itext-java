@@ -24,7 +24,6 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,13 +35,11 @@ import java.util.Set;
  * Merges TrueType fonts and subset merged font by leaving only needed glyphs in the font.
  */
 class TrueTypeFontMerger extends AbstractTrueTypeFontModifier {
-    private final Map<Integer, byte[]> horizontalMetricMap;
-    private final int numberOfHMetrics;
 
     TrueTypeFontMerger(String fontName, Map<OpenTypeParser, Set<Integer>> fontsToMerge) throws java.io.IOException {
         super(fontName, true);
-        horizontalMetricMap = new HashMap<>(fontsToMerge.size());
-        glyphDataMap = new HashMap<>(fontsToMerge.size());
+        horizontalMetricMap = new HashMap<>();
+        glyphDataMap = new HashMap<>();
         OpenTypeParser parserExample = null;
         for (Map.Entry<OpenTypeParser, Set<Integer>> entry : fontsToMerge.entrySet()) {
             OpenTypeParser parser = entry.getKey();
@@ -79,28 +76,8 @@ class TrueTypeFontMerger extends AbstractTrueTypeFontModifier {
     }
 
     @Override
-    protected void mergeTables() throws java.io.IOException {
-        super.createNewGlyfAndLocaTables();
+    protected int mergeTables() throws java.io.IOException {
+        return super.createModifiedTables();
         // cmap table merging isn't supported yet
-        // merging vertical fonts aren't supported yet, it's why vmtx and vhea tables ignored
-        createNewHorizontalMetricsTable();
-    }
-
-    private void createNewHorizontalMetricsTable() throws java.io.IOException {
-        int[] tableLocation = tableDirectory.get("hmtx");
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        raf.seek(tableLocation[1]);
-        for (int k = 0; k < numberOfHMetrics; ++k) {
-            if (horizontalMetricMap.containsKey(k)) {
-                raf.skipBytes(4);
-                baos.write(horizontalMetricMap.get(k));
-            } else {
-                baos.write(raf.readByte());
-                baos.write(raf.readByte());
-                baos.write(raf.readByte());
-                baos.write(raf.readByte());
-            }
-        }
-        modifiedTables.put("hmtx", baos.toByteArray());
     }
 }
