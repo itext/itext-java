@@ -551,7 +551,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("radioBtnCustomAppCheckedInteractive", pdfUAConformance);
+        framework.assertBothValid("radioBtnCustomAppGrCheckedInteractive", pdfUAConformance);
     }
 
 

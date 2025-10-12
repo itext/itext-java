@@ -807,11 +807,11 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
+            framework.assertBothValid("hnInheritedSequenceTest2", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             String message = MessageFormatUtil.format(
                     KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
-            framework.assertBothFail("hnCompareWithLastFromAnotherBranchTest2", message, pdfUAConformance);
+            framework.assertBothFail("hnInheritedSequenceTest2", message, pdfUAConformance);
         }
     }
 

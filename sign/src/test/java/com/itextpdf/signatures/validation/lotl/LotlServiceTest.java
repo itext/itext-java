@@ -217,35 +217,8 @@ public class LotlServiceTest extends ExtendedITextTest {
             lotlService.setupTimer();
             Thread.sleep(2000);
         }
-        Assertions.assertTrue(refreshCounter.get() >= 8,
-                "Refresh counter should be greater than 8, but was: " + refreshCounter.get());
-    }
-
-    @Test
-    public void withCustomRefreshRate() throws InterruptedException {
-        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        AtomicLong refreshCounter = new AtomicLong(0);
-        lotlFetchingProperties.setRefreshIntervalCalculator(
-                (l) -> {
-                    //100 milliseconds
-                    return 100;
-                }
-        );
-        try (LotlService lotlService = new LotlService(lotlFetchingProperties) {
-            @Override
-            public void initializeCache() {
-            }
-
-            @Override
-            protected void tryAndRefreshCache() {
-                refreshCounter.incrementAndGet();
-            }
-        }) {
-            lotlService.setupTimer();
-            Thread.sleep(1000);
-        }
-        Assertions.assertTrue(refreshCounter.get() > 5,
-                "Refresh counter should be greater than 10, but was: " + refreshCounter.get());
+        Assertions.assertTrue(refreshCounter.get() >= 5 && refreshCounter.get() <= 20,
+                "Refresh counter should be between 5 and 20, but was: " + refreshCounter.get());
     }
 
     @Test

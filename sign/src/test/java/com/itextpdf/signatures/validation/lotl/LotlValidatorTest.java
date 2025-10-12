@@ -431,7 +431,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
     public void inMemoryCacheThrowsException() throws InterruptedException {
         LotlFetchingProperties lotlFetchingProperties = getLotlFetchingProperties();
         lotlFetchingProperties.setCountryNames("NL");
-        lotlFetchingProperties.setCacheStalenessInMilliseconds(100);
+        lotlFetchingProperties.setCacheStalenessInMilliseconds(50);
         lotlFetchingProperties.setRefreshIntervalCalculator(f -> 100000);
 
         LotlValidator validator;
@@ -439,17 +439,20 @@ public class LotlValidatorTest extends ExtendedITextTest {
             service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             service.initializeCache();
 
-            Thread.sleep(1000);
+            Thread.sleep(80);
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
+                    lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
 
             validator = service.getLotlValidator();
+            Exception e = assertThrows(PdfException.class, () -> {
+                // This should throw an exception because the cache is stale
+                validator.validate();
+            });
+            Assertions.assertEquals(SignExceptionMessageConstant.STALE_DATA_IS_USED, e.getMessage());
         }
-
-        Exception e = assertThrows(PdfException.class, () -> {
-            // This should throw an exception because the cache is stale
-            validator.validate();
-        });
-        Assertions.assertEquals(SignExceptionMessageConstant.STALE_DATA_IS_USED, e.getMessage());
-
     }
 
     @Test
@@ -586,7 +589,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         lotlFetchingProperties.setCountryNames("NL");
-        lotlFetchingProperties.setCacheStalenessInMilliseconds(100L);
+        lotlFetchingProperties.setCacheStalenessInMilliseconds(50L);
         lotlFetchingProperties.setRefreshIntervalCalculator(f -> 10000L);
 
         try (LotlService service = new LotlService(lotlFetchingProperties)) {
@@ -609,7 +612,12 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 }
             });
             service.tryAndRefreshCache();
-            Thread.sleep(1000); // Wait for the cache refresh to complete
+            Thread.sleep(80); // Wait for the cache refresh to complete
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
+                    lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
 
             Assertions.assertThrows(SafeCallingAvoidantException.class, () -> service.getLotlValidator().validate());
         }
@@ -621,7 +629,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         lotlFetchingProperties.setCountryNames("NL");
-        lotlFetchingProperties.setCacheStalenessInMilliseconds(2000L);
+        lotlFetchingProperties.setCacheStalenessInMilliseconds(50L);
         lotlFetchingProperties.setRefreshIntervalCalculator(f -> 1000000L);
 
         try (LotlService service = new LotlService(lotlFetchingProperties)) {
@@ -644,7 +652,13 @@ public class LotlValidatorTest extends ExtendedITextTest {
                     return result;
                 }
             });
-            Thread.sleep(2100);
+            Thread.sleep(80);
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
+                    lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
+
             service.tryAndRefreshCache();
             AssertUtil.doesNotThrow(() -> service.getLotlValidator().validate());
         }
@@ -662,7 +676,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         LotlFetchingProperties properties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         properties.setCountryNames("NL");
-        properties.setCacheStalenessInMilliseconds(1000);
+        properties.setCacheStalenessInMilliseconds(50);
         properties.setRefreshIntervalCalculator((f) -> Integer.MAX_VALUE);
 
         int originalAmountOfCertificates;
@@ -698,18 +712,29 @@ public class LotlValidatorTest extends ExtendedITextTest {
             LotlValidator validator = service.getLotlValidator();
             validator.validate();
             originalAmountOfCertificates = validator.getNationalTrustedCertificates().size();
-            Thread.sleep(2000);
+            Assertions.assertTrue(originalAmountOfCertificates > 0,
+                    "Expected some certificates to be present after the first validation, but got: "
+                            + originalAmountOfCertificates);
+            Thread.sleep(80);
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            properties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
+                    properties.getOnCountryFetchFailureStrategy()));
+
             service.tryAndRefreshCache();
             validator2 = service.getLotlValidator();
+            ValidationReport report = validator2.validate();
+            Assertions.assertTrue(report.getValidationResult() == ValidationReport.ValidationResult.VALID,
+                    "Expected the validation to be valid, but got: " + report.getValidationResult());
+            int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
+            Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
+                    "Expected the number of certificates to decrease after a failed refresh, but got: " +
+                            originalAmountOfCertificates + " and " + newAmountOfCertificates);
+            Assertions.assertEquals(0, newAmountOfCertificates,
+                    "Expected the number of certificates to be 0 after a failed refresh, but got: "
+                            + newAmountOfCertificates);
         }
-        validator2.validate();
-        int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
-        Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
-                "Expected the number of certificates to decrease after a failed refresh, but got: " +
-                        originalAmountOfCertificates + " and " + newAmountOfCertificates);
-        Assertions.assertEquals(0, newAmountOfCertificates,
-                "Expected the number of certificates to be 0 after a failed refresh, but got: "
-                        + newAmountOfCertificates);
     }
 
 
@@ -724,7 +749,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         LotlFetchingProperties properties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         properties.setCountryNames("NL", "BE");
-        properties.setCacheStalenessInMilliseconds(1800);
+        properties.setCacheStalenessInMilliseconds(50);
         properties.setRefreshIntervalCalculator((f) -> Integer.MAX_VALUE);
 
         int originalAmountOfCertificates;
@@ -761,15 +786,26 @@ public class LotlValidatorTest extends ExtendedITextTest {
             LotlValidator validator = service.getLotlValidator();
             validator.validate();
             originalAmountOfCertificates = validator.getNationalTrustedCertificates().size();
-            Thread.sleep(2000);
+            Assertions.assertTrue(originalAmountOfCertificates > 0,
+                    "Expected some certificates to be present after the first validation, but got: "
+                            + originalAmountOfCertificates);
+            Thread.sleep(80);
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            properties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
+                    properties.getOnCountryFetchFailureStrategy()));
+
             service.tryAndRefreshCache();
             validator2 = service.getLotlValidator();
+            ValidationReport report = validator2.validate();
+            Assertions.assertTrue(report.getValidationResult() == ValidationReport.ValidationResult.VALID,
+                    "Expected the validation to be valid, but got: " + report.getValidationResult());
+            int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
+            Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
+                    "Expected the number of certificates to decrease after a failed refresh, but got: " +
+                            originalAmountOfCertificates + " and " + newAmountOfCertificates);
         }
-        validator2.validate();
-        int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
-        Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
-                "Expected the number of certificates to decrease after a failed refresh, but got: " +
-                        originalAmountOfCertificates + " and " + newAmountOfCertificates);
     }
 
     @Test
