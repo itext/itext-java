@@ -22,6 +22,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -30,6 +32,9 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * The PageResizer class provides functionality to resize PDF pages to a specified
  * target page size using various resizing methods. It adjusts page dimensions,
@@ -37,19 +42,11 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
  * options for maintaining the aspect ratio during the resize operation.
  */
 class PageResizer {
-    /**
-     * Represents the target page size for the {@code PageResizer} functionality.
-     * This variable dictates the dimensions to which a page needs to be resized.
-     * The value is immutable and initialised during the construction of the {@code PageResizer}.
-     */
-    private final PageSize size;
+    private static final float EPSILON = 1e-6f;
 
+    private final PageSize size;
     private VerticalAnchorPoint verticalAnchorPoint = VerticalAnchorPoint.CENTER;
     private HorizontalAnchorPoint horizontalAnchorPoint = HorizontalAnchorPoint.CENTER;
-    /**
-     * Represents the type of resize operation to be applied to a page.
-     * This variable specifies the method by which the page resize is performed.
-     */
     private final ResizeType type;
 
     /**
@@ -63,18 +60,42 @@ class PageResizer {
         this.type = type;
     }
 
+    /**
+     * Retrieves the horizontal anchor point of the PageResizer.
+     *
+     * @return the horizontal anchor point, which determines the horizontal alignment (e.g., LEFT, CENTER, RIGHT).
+     */
     public HorizontalAnchorPoint getHorizontalAnchorPoint() {
         return horizontalAnchorPoint;
     }
 
+    /**
+     * Sets the horizontal anchor point, which determines how the horizontal alignment is handled
+     * (e.g., LEFT, CENTER, RIGHT).
+     *
+     * @param anchorPoint the horizontal anchor point to set; it specifies the horizontal alignment type
+     *                    for resizing operations
+     */
     public void setHorizontalAnchorPoint(HorizontalAnchorPoint anchorPoint) {
         this.horizontalAnchorPoint = anchorPoint;
     }
 
+    /**
+     * Retrieves the vertical anchor point of the PageResizer.
+     *
+     * @return the vertical anchor point, which determines the vertical alignment (e.g., TOP, CENTER, BOTTOM).
+     */
     public VerticalAnchorPoint getVerticalAnchorPoint() {
         return verticalAnchorPoint;
     }
 
+    /**
+     * Sets the vertical anchor point, which determines how the vertical alignment is handled
+     * (e.g., TOP, CENTER, BOTTOM).
+     *
+     * @param anchorPoint the vertical anchor point to set; it specifies the vertical alignment type
+     *                    for resizing operations
+     */
     public void setVerticalAnchorPoint(VerticalAnchorPoint anchorPoint) {
         this.verticalAnchorPoint = anchorPoint;
     }
@@ -88,6 +109,13 @@ class PageResizer {
      * @param page the PDF page to be resized
      */
     public void resize(PdfPage page) {
+        if (size == null || size.getWidth() < EPSILON || size.getHeight() < EPSILON) {
+            throw new IllegalArgumentException(MessageFormatUtil.format(KernelExceptionMessageConstant
+                    .CANNOT_RESIZE_PAGE_WITH_NEGATIVE_OR_INFINITE_SCALE, size));
+        }
+        if (page == null) {
+            return;
+        }
         Rectangle originalPageSize = page.getMediaBox();
         double horizontalScale = size.getWidth() / originalPageSize.getWidth();
         double verticalScale = size.getHeight() / originalPageSize.getHeight();
@@ -106,95 +134,183 @@ class PageResizer {
         AffineTransform scalingMatrix = calculateAffineTransform(horizontalScale, verticalScale,
                 horizontalFreeSpace, verticalFreeSpace);
 
+        // Ensure resources exist to avoid NPEs when creating PdfCanvas or iterating resources
+        PdfResources resources = page.getResources();
+        if (resources == null) {
+            resources = new PdfResources();
+            page.getPdfObject().put(PdfName.Resources, resources.getPdfObject());
+        }
+
         PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument());
         pdfCanvas.concatMatrix(scalingMatrix);
 
-        pdfCanvas.saveState();
-
-        for (PdfName resName : page.getResources().getResourceNames())
-        {
+        for (PdfName resName : page.getResources().getResourceNames()) {
             PdfPattern pattern = page.getResources().getPattern(resName);
-            if (pattern != null)
-            {
-                resizePattern(pattern, scalingMatrix);
-            }
-            PdfFormXObject form = page.getResources().getForm(resName);
-            if (form != null) {
-                resizeForm(form, scalingMatrix);
+            if (pattern != null) {
+                resizePattern(page.getResources(), resName, scalingMatrix);
             }
         }
 
-        for (PdfAnnotation annot : page.getAnnotations())
-        {
+        for (PdfAnnotation annot : page.getAnnotations()) {
             resizeAnnotation(annot, scalingMatrix);
         }
     }
 
-    private AffineTransform calculateAffineTransform(double horizontalScale, double verticalScale,
-            double horizontalFreeSpace, double verticalFreeSpace) {
-        AffineTransform scalingMatrix = new AffineTransform();
-        scalingMatrix.scale(horizontalScale, verticalScale);
-        AffineTransform transformMatrix = new AffineTransform();
-        switch (horizontalAnchorPoint) {
-            case CENTER:
-                transformMatrix.translate(horizontalFreeSpace / 2, 0);
-                break;
-            case RIGHT:
-                transformMatrix.translate(horizontalFreeSpace, 0);
-                break;
-            case LEFT:
-            default:
-                // PDF default nothing to do here
-                break;
+    static String scaleDaString(String daString, double scale) {
+        if (daString == null || daString.trim().isEmpty()) {
+            return daString;
         }
-        switch (verticalAnchorPoint) {
-            case CENTER:
-                transformMatrix.translate(0, verticalFreeSpace / 2);
-                break;
-            case TOP:
-                transformMatrix.translate(0, verticalFreeSpace);
-                break;
-            case BOTTOM:
-            default:
-                // PDF default nothing to do here
-                break;
+
+        // Optimization for identity scaling. Use an epsilon for robust float comparison.
+        if (Math.abs(scale - 1.0) < 1e-9) {
+            return daString;
         }
-        transformMatrix.concatenate(scalingMatrix);
-        scalingMatrix = transformMatrix;
-        return scalingMatrix;
+
+        java.util.List<String> tokens = new ArrayList<>(Arrays.asList(daString.trim().split("\\s+")));
+
+        // Operators we care about in DA:
+        //   Tf  => operands: /FontName <fontSize>  (scale the <fontSize> only)
+        //   TL  => operand: <leading>              (scale)
+        //   Tc  => operand: <charSpacing>          (scale)
+        //   Tw  => operand: <wordSpacing>          (scale)
+        //   Ts  => operand: <textRise>             (scale)
+        //
+        // Operators we intentionally do NOT scale:
+        //   Tz (horizontal scaling, percentage), Tr (rendering mode),
+        //   color ops (g/rg/k/G/RG/K), etc.
+        final java.util.Set<String> scalableOperators = new java.util.HashSet<>(java.util.Arrays.asList(
+                "Tf", "TL", "Tc", "Tw", "Ts"));
+
+        for (int i = 0; i < tokens.size(); i++) {
+            if (scalableOperators.contains(tokens.get(i))) {
+                int operandIdx = i - 1;
+                while (operandIdx >= 0) {
+                    String token = tokens.get(operandIdx);
+                    if (token.startsWith("/")) {
+                        // Skip resource names, e.g., /Helv
+                        operandIdx--;
+                        continue;
+                    }
+                    try {
+                        double value = Double.parseDouble(token);
+                        tokens.set(operandIdx, formatNumber(value * scale));
+                        break;
+                    } catch (NumberFormatException ignore) {
+                        // Not a number, continue searching backwards.
+                        operandIdx--;
+                    }
+                }
+            }
+        }
+        return String.join(" ", tokens);
     }
 
     /**
-     * Scales the transformation matrix of the provided PDF pattern using the given scaling matrix.
+     * Scales the given page box dimensions from the original page size to the new page size.
      *
-     * @param pattern the PDF pattern whose transformation matrix is to be scaled
-     * @param scalingMatrix the affine transformation matrix to be applied for scaling
+     * @param originalPageSize the size of the original page
+     * @param newPageSize the size of the new page to scale to
+     * @param box the rectangular box representing the dimensions to be scaled
+     *
+     * @return a new Rectangle representing the scaled dimensions of the page box
      */
-    private static void resizePattern(PdfPattern pattern, AffineTransform scalingMatrix) {
-        AffineTransform origTrans;
-        if (pattern.getMatrix() == null) {
-            origTrans = new AffineTransform(scalingMatrix);
+    static Rectangle scalePageBox(Rectangle originalPageSize, PageSize newPageSize, Rectangle box) {
+        if (originalPageSize == null || newPageSize == null || box == null) {
+            return box;
+        }
+
+        float origW = originalPageSize.getWidth();
+        float origH = originalPageSize.getHeight();
+        float newW = newPageSize.getWidth();
+        float newH = newPageSize.getHeight();
+
+        if (origW < EPSILON || origH < EPSILON) {
+            return box;
+        }
+
+        float left = box.getLeft() * newW / origW;
+        float bottom = box.getBottom() * newH / origH;
+        float width = box.getWidth() * newW / origW;
+        float height = box.getHeight() * newH / origH;
+
+        return new Rectangle(left, bottom, width, height);
+    }
+
+    /**
+     * Resizes the appearance streams of a given PDF annotation by applying the specified affine transformation matrix.
+     * This involves scaling the content of the appearance streams in the annotation's
+     * appearance dictionary and adjusting their transformation matrices to reflect the scaling.
+     *
+     * @param annot the PDF annotation whose appearance streams are to be resized
+     * @param scalingMatrix the affine transformation matrix used to scale the appearance streams
+     */
+    static void resizeAppearanceStreams(PdfAnnotation annot, AffineTransform scalingMatrix) {
+        PdfDictionary ap = annot.getAppearanceDictionary();
+        if (ap == null) {
+            return;
+        }
+        for (PdfName key : ap.keySet()) {
+            PdfObject apState = ap.get(key);
+            if (apState.isStream()) {
+                resizeAppearanceStream((PdfStream) apState, scalingMatrix);
+            } else if (apState.isDictionary()) {
+                PdfDictionary apStateDict = (PdfDictionary) apState;
+                for (PdfName subKeyState : apStateDict.keySet()) {
+                    PdfObject subApState = apStateDict.get(subKeyState);
+                    if (subApState.isStream()) {
+                        resizeAppearanceStream((PdfStream) subApState, scalingMatrix);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Scales the transformation matrix of the provided pattern using the given scaling matrix,
+     * without mutating the original pattern.
+     *
+     * The method:
+     *  - Locates the pattern object in the provided resources by name.
+     *  - Deep-copies the pattern object into the same document.
+     *  - Updates the /Matrix of the copied pattern.
+     *  - Replaces the entry in the page's /Pattern resources with the copied (resized) pattern,
+     *    so other pages that reference the original pattern remain unaffected.
+     *
+     * @param resources      the resource dictionary that holds the pattern
+     * @param resName        the name of the pattern resource to resize
+     * @param scalingMatrix  the affine transformation matrix to be applied for scaling
+     */
+    private static void resizePattern(PdfResources resources, PdfName resName, AffineTransform scalingMatrix) {
+        if (resources == null || resName == null || scalingMatrix == null) {
+            return;
+        }
+
+        PdfDictionary patternDictContainer = resources.getResource(PdfName.Pattern);
+        if (patternDictContainer == null) {
+            return;
+        }
+
+        PdfObject patternObj = resources.getResourceObject(PdfName.Pattern, resName);
+        if (patternObj == null) {
+            return;
+        }
+
+        PdfObject clonedObj = (PdfObject) patternObj.clone();
+        PdfDictionary clonedPatternDict = (PdfDictionary) clonedObj;
+
+        PdfArray existingMatrix = clonedPatternDict.getAsArray(PdfName.Matrix);
+        AffineTransform newTransform;
+        if (existingMatrix == null) {
+            newTransform = new AffineTransform(scalingMatrix);
         } else {
-            origTrans = new AffineTransform(pattern.getMatrix().toDoubleArray());
-            AffineTransform newMatrix = new AffineTransform(scalingMatrix);
-            newMatrix.concatenate(origTrans);
-            origTrans = newMatrix;
+            newTransform = new AffineTransform(existingMatrix.toDoubleArray());
+            newTransform.preConcatenate(scalingMatrix);
         }
         double[] newMatrixArray = new double[6];
-        origTrans.getMatrix(newMatrixArray);
-        pattern.setMatrix(new PdfArray(newMatrixArray));
-    }
+        newTransform.getMatrix(newMatrixArray);
+        clonedPatternDict.put(PdfName.Matrix, new PdfArray(newMatrixArray));
 
-    /**
-     * Resizes the given PDF form XObject by applying the specified affine transformation matrix.
-     * This method adjusts the content of the form XObject based on the scaling matrix to fit
-     * the desired dimensions or proportions.
-     *
-     * @param form the PDF form XObject to be resized
-     * @param scalingMatrix the affine transformation matrix representing the scaling to be applied
-     */
-    private static void resizeForm(PdfFormXObject form, AffineTransform scalingMatrix) {
-        //TODO DEVSIX-9439 implement this method
+        patternDictContainer.put(resName, clonedPatternDict);
     }
 
     /**
@@ -208,42 +324,186 @@ class PageResizer {
      *                      and translation to be applied
      */
     private static void resizeAnnotation(PdfAnnotation annot, AffineTransform scalingMatrix) {
-        annot.setRectangle(scalePdfRect(annot.getRectangle(), scalingMatrix.getScaleY(), scalingMatrix.getScaleX()));
+        // Transform all geometric coordinate-based properties of the annotation.
+        PdfArray rectArray = annot.getRectangle();
+        if (rectArray != null) {
+            double[] rectPoints = {rectArray.getAsNumber(0).doubleValue(), rectArray.getAsNumber(1).doubleValue(),
+                    rectArray.getAsNumber(2).doubleValue(), rectArray.getAsNumber(3).doubleValue()};
+            // Transform ll
+            scalingMatrix.transform(rectPoints, 0, rectPoints, 0, 1);
+            // Transform ur
+            scalingMatrix.transform(rectPoints, 2, rectPoints, 2, 1);
+            annot.setRectangle(new PdfArray(rectPoints));
+        }
+
+        PdfDictionary annotDict = annot.getPdfObject();
+        transformCoordinateArray(annotDict.getAsArray(PdfName.L), scalingMatrix);
+        transformCoordinateArray(annotDict.getAsArray(PdfName.Vertices), scalingMatrix);
+        transformCoordinateArray(annotDict.getAsArray(PdfName.QuadPoints), scalingMatrix);
+        transformCoordinateArray(annotDict.getAsArray(PdfName.CL), scalingMatrix);
+
+        PdfArray inkList = annotDict.getAsArray(PdfName.InkList);
+        if (inkList != null) {
+            for (int i = 0; i < inkList.size(); i++) {
+                transformCoordinateArray(inkList.getAsArray(i), scalingMatrix);
+            }
+        }
+
+        // Scale all scalar properties of the annotation, such as border widths and font sizes.
+        scaleAnnotationScalarProperties(annot, scalingMatrix.getScaleX(), scalingMatrix.getScaleY());
+
+        // Resize the appearance streams, which define the annotation's visual representation.
+        resizeAppearanceStreams(annot, scalingMatrix);
     }
 
+
     /**
-     * Scales the given page box dimensions from the original page size to the new page size.
+     * Scales an array of coordinates (x1, y1, x2, y2, ...) by applying horizontal and vertical scale factors.
      *
-     * @param originalPageSize the size of the original page
-     * @param newPageSize the size of the new page to scale to
-     * @param box the rectangular box representing the dimensions to be scaled
-     *
-     * @return a new Rectangle representing the scaled dimensions of the page box
+     * @param coordinateArray the array of coordinates to scale
+     * @param transform the transformation to be applied
      */
-    private static Rectangle scalePageBox(Rectangle originalPageSize, PageSize newPageSize, Rectangle box) {
-        float lfr = originalPageSize.getWidth() / box.getLeft();
-        float wfr = originalPageSize.getWidth() / box.getWidth();
-        float tfr = originalPageSize.getHeight() / box.getBottom();
-        float hfr = originalPageSize.getHeight() / box.getHeight();
-        return new Rectangle(newPageSize.getWidth() / lfr , newPageSize.getHeight() / tfr,
-                newPageSize.getWidth() / wfr, newPageSize.getHeight() / hfr);
+    private static void transformCoordinateArray(PdfArray coordinateArray, AffineTransform transform) {
+        if (coordinateArray == null) {
+            return;
+        }
+
+        // Only transform complete pairs.
+        if (coordinateArray.size() % 2 != 0) {
+            return;
+        }
+
+        double[] points = new double[coordinateArray.size()];
+        for (int i = 0; i < coordinateArray.size(); i++) {
+            points[i] = coordinateArray.getAsNumber(i).doubleValue();
+        }
+
+        transform.transform(points, 0, points, 0, points.length / 2);
+
+        for (int i = 0; i < coordinateArray.size(); i++) {
+            coordinateArray.set(i, new PdfNumber(points[i]));
+        }
     }
 
     /**
-     * Scales the dimensions of the given PDF rectangle by applying the specified vertical and horizontal scale factors.
+     * Scales the scalar properties of an annotation based on the provided horizontal and vertical scaling factors.
      *
-     * @param rect the PDF array representing the rectangular dimensions to be scaled
-     * @param verticalScale the factor by which the vertical dimensions should be scaled
+     * @param annot the annotation whose scalar properties are to be scaled
      * @param horizontalScale the factor by which the horizontal dimensions should be scaled
-     *
-     * @return the updated PDF array with the scaled dimensions
+     * @param verticalScale the factor by which the vertical dimensions should be scaled
      */
-    private static PdfArray scalePdfRect(PdfArray rect, double verticalScale, double horizontalScale) {
-        rect.set(0, new PdfNumber(((PdfNumber)rect.get(0)).doubleValue() * horizontalScale));
-        rect.set(1, new PdfNumber(((PdfNumber)rect.get(1)).doubleValue() * verticalScale));
-        rect.set(2, new PdfNumber(((PdfNumber)rect.get(2)).doubleValue() * horizontalScale));
-        rect.set(3, new PdfNumber(((PdfNumber)rect.get(3)).doubleValue() * verticalScale));
-        return rect;
+    private static void scaleAnnotationScalarProperties(PdfAnnotation annot,
+                                                        double horizontalScale, double verticalScale) {
+        PdfDictionary annotDict = annot.getPdfObject();
+
+        // Scale border width in a Border array [horizontal_radius vertical_radius width ...]
+        PdfArray border = annotDict.getAsArray(PdfName.Border);
+        if (border != null && border.size() >= 3) {
+            border.set(0, new PdfNumber(border.getAsNumber(0).doubleValue() * horizontalScale));
+            border.set(1, new PdfNumber(border.getAsNumber(1).doubleValue() * verticalScale));
+            border.set(2, new PdfNumber(border.getAsNumber(2).doubleValue()
+                    * Math.min(horizontalScale, verticalScale)));
+        }
+
+        // Scale border width in a BS (Border Style) dictionary
+        PdfDictionary bs = annotDict.getAsDictionary(PdfName.BS);
+        if (bs != null) {
+            PdfNumber width = bs.getAsNumber(PdfName.W);
+            if (width != null) {
+                bs.put(PdfName.W, new PdfNumber(width.doubleValue() * Math.min(horizontalScale, verticalScale)));
+            }
+        }
+
+        // Scale RD (Rectangle Differences) - defines differences between Rect and actual drawing area
+        // These are lengths/insets, so they should be scaled, not transformed.
+        PdfArray rd = annotDict.getAsArray(PdfName.RD);
+        if (rd != null && rd.size() == 4) {
+            rd.set(0, new PdfNumber(rd.getAsNumber(0).doubleValue() * horizontalScale));
+            rd.set(1, new PdfNumber(rd.getAsNumber(1).doubleValue() * verticalScale));
+            rd.set(2, new PdfNumber(rd.getAsNumber(2).doubleValue() * horizontalScale));
+            rd.set(3, new PdfNumber(rd.getAsNumber(3).doubleValue() * verticalScale));
+        }
+
+        // Scale LeaderLine-related lengths for Line annotations
+        double lengthScale = Math.min(horizontalScale, verticalScale);
+        if (annotDict.getAsNumber(PdfName.LL) != null) {
+            annotDict.put(PdfName.LL, new PdfNumber(annotDict.getAsNumber(PdfName.LL).doubleValue() * lengthScale));
+        }
+        if (annotDict.getAsNumber(PdfName.LLE) != null) {
+            annotDict.put(PdfName.LLE, new PdfNumber(annotDict.getAsNumber(PdfName.LLE).doubleValue() * lengthScale));
+        }
+        if (annotDict.getAsNumber(PdfName.LLO) != null) {
+            annotDict.put(PdfName.LLO, new PdfNumber(annotDict.getAsNumber(PdfName.LLO).doubleValue() * lengthScale));
+        }
+        if (annotDict.getAsString(PdfName.DA) != null) {
+            String da = annotDict.getAsString(PdfName.DA).toUnicodeString();
+            annotDict.put(PdfName.DA, new PdfString(scaleDaString(da, lengthScale)));
+        }
+
+    }
+
+    /**
+     * Formats a given double value to a string representation with reasonable precision
+     *
+     * @param v the double value to be formatted
+     * @return string representation of the formatted number
+     */
+    private static String formatNumber(double v) {
+        if (Double.isNaN(v)) {
+            return Double.toString(v);
+        }
+        // Round to 4 decimal places.
+        long scaled = (long) Math.round(v * 10000.0);
+        if (scaled == 0) {
+            return "0";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (scaled < 0) {
+            sb.append('-');
+            scaled = -scaled;
+        }
+        long wholePart = scaled / 10000;
+        long fractionalPart = scaled % 10000;
+        sb.append(wholePart);
+        if (fractionalPart > 0) {
+            sb.append('.');
+            String fractionalStr = String.valueOf(10000 + fractionalPart).substring(1);
+            sb.append(fractionalStr);
+            while (sb.length() > 0 && sb.charAt(sb.length() - 1) == '0') {
+                sb.setLength(sb.length() - 1);
+            }
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * Resizes a single appearance stream by scaling its bounding box and adjusting its transformation matrix.
+     * The method takes into consideration the existing matrix if present, and applies the scaling transformation.
+     *
+     * @param appearanceStream the appearance stream to be resized
+     * @param scalingMatrix the affine transformation matrix representing the scaling to be applied
+     */
+    private static void resizeAppearanceStream(PdfStream appearanceStream, AffineTransform scalingMatrix) {
+        // The appearance stream's transformation matrix should only handle scaling.
+        // Page-level translations are handled by the annotation's /Rect entry.
+        // We create a new AffineTransform containing only the scaling components.
+        AffineTransform scaleOnlyMatrix = new AffineTransform();
+        scaleOnlyMatrix.scale(scalingMatrix.getScaleX(), scalingMatrix.getScaleY());
+
+        PdfArray existingMatrix = appearanceStream.getAsArray(PdfName.Matrix);
+        AffineTransform newMatrix;
+
+        if (existingMatrix == null) {
+            newMatrix = scaleOnlyMatrix;
+        } else {
+            newMatrix = new AffineTransform(existingMatrix.toDoubleArray());
+            newMatrix.preConcatenate(scaleOnlyMatrix);
+        }
+
+        double[] newMatrixArray = new double[6];
+        newMatrix.getMatrix(newMatrixArray);
+        appearanceStream.put(PdfName.Matrix, new PdfArray(newMatrixArray));
     }
 
     /**
@@ -276,6 +536,39 @@ class PageResizer {
         }
     }
 
+    private AffineTransform calculateAffineTransform(double horizontalScale, double verticalScale,
+                                                     double horizontalFreeSpace, double verticalFreeSpace) {
+        AffineTransform scalingMatrix = new AffineTransform();
+        scalingMatrix.scale(horizontalScale, verticalScale);
+        AffineTransform transformMatrix = new AffineTransform();
+        switch (horizontalAnchorPoint) {
+            case CENTER:
+                transformMatrix.translate(horizontalFreeSpace / 2, 0);
+                break;
+            case RIGHT:
+                transformMatrix.translate(horizontalFreeSpace, 0);
+                break;
+            case LEFT:
+            default:
+                // PDF default nothing to do here
+                break;
+        }
+        switch (verticalAnchorPoint) {
+            case CENTER:
+                transformMatrix.translate(0, verticalFreeSpace / 2);
+                break;
+            case TOP:
+                transformMatrix.translate(0, verticalFreeSpace);
+                break;
+            case BOTTOM:
+            default:
+                // PDF default nothing to do here
+                break;
+        }
+        transformMatrix.concatenate(scalingMatrix);
+        scalingMatrix = transformMatrix;
+        return scalingMatrix;
+    }
 
     /**
      * Enum representing the available types of resizing strategies when modifying the dimensions

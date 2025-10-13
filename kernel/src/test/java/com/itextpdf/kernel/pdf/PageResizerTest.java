@@ -124,6 +124,111 @@ public class PageResizerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void testAnnotationBorder() throws IOException, InterruptedException {
+        String inFileName = "annotationBorderTest.pdf";
+        String outFileName =  "annotationBorderTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testAnnotationCalloutLine() throws IOException, InterruptedException {
+        String inFileName = "annotationCalloutLineTest.pdf";
+        String outFileName =  "annotationCalloutLineTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testAnnotationInkList() throws IOException, InterruptedException {
+        String inFileName = "annotationInkListTest.pdf";
+        String outFileName =  "annotationInkListTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testAnnotationLineEndpoint() throws IOException, InterruptedException {
+        String inFileName = "annotationLineEndpointTest.pdf";
+        String outFileName =  "annotationLineEndpointTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testAnnotationQuadpoints() throws IOException, InterruptedException {
+        String inFileName = "annotationQuadpointsTest.pdf";
+        String outFileName =  "annotationQuadpointsTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testAnnotationRd() throws IOException, InterruptedException {
+        String inFileName = "annotationRdTest.pdf";
+        String outFileName =  "annotationRdTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testAnnotationVertices() throws IOException, InterruptedException {
+        String inFileName = "annotationVerticesTest.pdf";
+        String outFileName =  "annotationVerticesTest.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
     public void testGradientsWithAspectRatio() throws IOException, InterruptedException {
         String inFileName = "gradientTest.pdf";
         String outFileName = "gradientAspectTest.pdf";
@@ -240,6 +345,7 @@ public class PageResizerTest extends ExtendedITextTest {
             PageResizer resizer = new PageResizer(new PageSize(PageSize.A5.getHeight(), PageSize.A5.getWidth()),
                     ResizeType.MAINTAIN_ASPECT_RATIO);
             resizer.setHorizontalAnchorPoint(HorizontalAnchorPoint.LEFT);
+            Assertions.assertEquals(HorizontalAnchorPoint.LEFT, resizer.getHorizontalAnchorPoint());
             resizer.resize(pdfDocument.getPage(1));
         }
         Assertions.assertNull(new CompareTool()
@@ -291,6 +397,7 @@ public class PageResizerTest extends ExtendedITextTest {
             PageResizer resizer = new PageResizer(PageSize.A4,
                     ResizeType.MAINTAIN_ASPECT_RATIO);
             resizer.setVerticalAnchorPoint(VerticalAnchorPoint.TOP);
+            Assertions.assertEquals(VerticalAnchorPoint.TOP, resizer.getVerticalAnchorPoint());
             resizer.resize(pdfDocument.getPage(1));
         }
         Assertions.assertNull(new CompareTool()

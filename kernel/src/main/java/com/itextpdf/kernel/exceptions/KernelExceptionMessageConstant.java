@@ -118,6 +118,8 @@ public final class KernelExceptionMessageConstant {
     public static final String CANNOT_WRITE_OBJECT_AFTER_IT_WAS_RELEASED = "Cannot write object after it was "
             + "released. In normal situation the object must be read once again before being written.";
     public static final String CANNOT_WRITE_TO_PDF_STREAM = "Cannot write to PdfStream.";
+    public static final String CANNOT_RESIZE_PAGE_WITH_NEGATIVE_OR_INFINITE_SCALE
+            = "Can't resize page to the given size {0} because it is negative or zero";
     public static final String CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE =
             "Certificate is not provided. Document is encrypted with public key certificate, it should be passed "
                     + "to PdfReader constructor with properties. See ReaderProperties#setPublicKeySecurityParams() "
