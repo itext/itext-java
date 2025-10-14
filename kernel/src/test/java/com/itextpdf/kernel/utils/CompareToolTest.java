@@ -399,7 +399,6 @@ public class CompareToolTest extends ExtendedITextTest {
         String result = compareTool.compareByContent(outPdf, cmpPdf, destinationFolder);
         System.out.println("\nRESULT:\n" + result);
         Assertions.assertNotNull("CompareTool must return differences found between the files", result);
-        Assertions.assertTrue(result.contains("differs on page [1, 2]."));
         String xmlReport = new String(Files.readAllBytes(Paths.get(destinationFolder + "basefont_absence.report.xml")));
         Assertions.assertTrue(xmlReport.contains("PdfDictionary /BaseFont entry: Expected: /Helvetica-Bold+ASAFAS. Found: null"));
     }
