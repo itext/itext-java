@@ -103,10 +103,30 @@ public class FlexContainerRenderer extends DivRenderer {
         Rectangle layoutContextRectangle = layoutContext.getArea().getBBox();
         setThisAsParent(getChildRenderers());
         orderChildRenderers(getChildRenderers());
+        Rectangle layoutBox = layoutContextRectangle.clone();
+
+        UnitValue marginTop = this.<UnitValue>getProperty(Property.MARGIN_TOP);
+        UnitValue marginBottom = this.<UnitValue>getProperty(Property.MARGIN_BOTTOM);
+        boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
+        if (marginsCollapsingEnabled) {
+            MarginsCollapseInfo marginsCollapseInfo = layoutContext.getMarginsCollapseInfo();
+            MarginsCollapseInfo deepCopy = marginsCollapseInfo == null ? null :
+                    MarginsCollapseInfo.createDeepCopy(marginsCollapseInfo);
+            MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(this, deepCopy);
+            marginsCollapseHandler.startMarginsCollapse(layoutBox);
+        }
         // Disable collapsing margins for container before calculating item's rectangles to avoid margin collapsing
         // between parent and child (flex-container – flex-item) and two children (flex-item – flex-item)
         this.setProperty(Property.COLLAPSING_MARGINS, Boolean.FALSE);
-        lines = FlexUtil.calculateChildrenRectangles(layoutContextRectangle, this);
+        lines = FlexUtil.calculateChildrenRectangles(layoutBox, this);
+        if (marginsCollapsingEnabled) {
+            if(marginTop != null) {
+                this.setProperty(Property.MARGIN_TOP, marginTop);
+            }
+            if(marginBottom != null) {
+                this.setProperty(Property.MARGIN_BOTTOM, marginBottom);
+            }
+        }
         // Return collapsing margins for container to inherited value from ancestors
         this.deleteProperty(Property.COLLAPSING_MARGINS);
         applyWrapReverse();

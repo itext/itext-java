@@ -43,6 +43,7 @@ import com.itextpdf.layout.properties.ListNumberingType;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -160,6 +161,44 @@ public class FlexContainerTest extends ExtendedITextTest {
         document.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void zeroMarginTopAndBottomTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "zeroMarginTopAndBottomTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_zeroMarginTopAndBottomTest.pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div flexContainer = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.BLUE, 1))
+                    .setBackgroundColor(ColorConstants.BLUE, 0.3f);
+            flexContainer.setNextRenderer(new FlexContainerRenderer(flexContainer));
+            flexContainer.setProperty(Property.MARGIN_TOP, new UnitValue(UnitValue.POINT, 0f));
+            flexContainer.setProperty(Property.MARGIN_BOTTOM, new UnitValue(UnitValue.POINT, 0f));
+            flexContainer.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
+            flexContainer.add(new Paragraph("flex container"));
+
+            document.add(flexContainer);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff01_"));
+    }
+
+    @Test
+    public void nullMarginTopAndBottomTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "nullMarginTopAndBottomTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_nullMarginTopAndBottomTest.pdf";
+        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+            Div flexContainer = new Div()
+                    .setBorder(new SolidBorder(ColorConstants.BLUE, 1))
+                    .setBackgroundColor(ColorConstants.BLUE, 0.3f);
+            flexContainer.setNextRenderer(new FlexContainerRenderer(flexContainer));
+            flexContainer.setProperty(Property.MARGIN_TOP, null);
+            flexContainer.setProperty(Property.MARGIN_BOTTOM, null);
+            flexContainer.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
+            flexContainer.add(new Paragraph("flex container"));
+
+            document.add(flexContainer);
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff01_"));
     }
 
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
