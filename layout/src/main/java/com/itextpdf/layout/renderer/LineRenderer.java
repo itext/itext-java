@@ -625,9 +625,10 @@ public class LineRenderer extends AbstractRenderer {
                     split[1].addChildRenderer(childRenderer);
                 } else {
                     boolean forcePlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
-                    boolean isInlineBlockAndFirstOnRootArea = isInlineBlockChild && isFirstOnRootArea();
+                    boolean isInlineBlockAndFirstOnRootAreaOrFlexItem = isInlineBlockChild &&
+                            (isFirstOnRootArea() || isInsideFlexContainer());
                     if ((childResult.getStatus() == LayoutResult.PARTIAL
-                            && (!isInlineBlockChild || forcePlacement || isInlineBlockAndFirstOnRootArea))
+                            && (!isInlineBlockChild || forcePlacement || isInlineBlockAndFirstOnRootAreaOrFlexItem))
                             || childResult.getStatus() == LayoutResult.FULL) {
                         final IRenderer splitRenderer = childResult.getSplitRenderer();
                         split[0].addChild(splitRenderer);
@@ -640,7 +641,7 @@ public class LineRenderer extends AbstractRenderer {
                     }
 
                     if (null != childResult.getOverflowRenderer()) {
-                        if (isInlineBlockChild && !forcePlacement && !isInlineBlockAndFirstOnRootArea) {
+                        if (isInlineBlockChild && !forcePlacement && !isInlineBlockAndFirstOnRootAreaOrFlexItem) {
                             split[1].addChildRenderer(childRenderer);
                         } else if (isInlineBlockChild
                                 && childResult.getOverflowRenderer().getChildRenderers().isEmpty()
@@ -1710,6 +1711,20 @@ public class LineRenderer extends AbstractRenderer {
             default:
                 return 0;
         }
+    }
+
+    // TODO DEVSIX-9509 Move whole flex container to the next page if inline-block flex item is not fit
+    private boolean isInsideFlexContainer() {
+        boolean isInsideFlexContainer = false;
+        IRenderer ancestor = this;
+        while (!isInsideFlexContainer && ancestor.getParent() != null) {
+            IRenderer parent = ancestor.getParent();
+            if (parent instanceof FlexContainerRenderer) {
+                isInsideFlexContainer = true;
+            }
+            ancestor = parent;
+        }
+        return isInsideFlexContainer;
     }
 
     public static class RendererGlyph {

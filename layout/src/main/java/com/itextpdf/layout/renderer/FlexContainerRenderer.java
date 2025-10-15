@@ -628,7 +628,7 @@ public class FlexContainerRenderer extends DivRenderer {
                     addSimulateDiv(overflowRenderer, itemInfo.getRectangle().getWidth());
                 }
             } else {
-                // Process all preceeding renderers in the current line
+                // Process all preceding renderers in the current line
                 // They all were layouted as FULL so add them into split renderer
                 splitRenderer.addChildRenderer(itemInfo.getRenderer());
 
