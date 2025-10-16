@@ -1141,6 +1141,38 @@ public class FlexContainerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
+    @Test
+    public void forcedPlacementInSmallAreaTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "forcedPlacementInSmallArea.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_forcedPlacementInSmallArea.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Div flexContainer = new FlexContainer();
+        flexContainer.setProperty(Property.FORCED_PLACEMENT, true);
+
+        Div child1 = new Div();
+        child1.setBorder(new SolidBorder(1));
+        child1.setProperty(Property.WIDTH, UnitValue.createPointValue(50));
+        child1.setProperty(Property.HEIGHT, UnitValue.createPointValue(1000));
+        child1.add(new Paragraph("First"));
+
+        Div child2 = new Div();
+        child2.setBorder(new SolidBorder(1));
+        child2.setProperty(Property.WIDTH, UnitValue.createPointValue(100));
+        child2.setProperty(Property.HEIGHT, UnitValue.createPointValue(1000));
+        child2.add(new Paragraph("Second"));
+
+        flexContainer.add(child1);
+        flexContainer.add(child2);
+
+        document.add(flexContainer);
+        document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void flexContainerBoxSizingTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,

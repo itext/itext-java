@@ -276,6 +276,13 @@ public class FlexContainerRenderer extends DivRenderer {
         }
 
         overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
+        // childResult.overflowRenderer must have overflowRenderer as a parent, f.e. to disable keep together correctly.
+        // See BlockRenderer.createSplitAndOverflowRenderers.
+        // But we can't add it as a child of overflowRenderer, because flex is layouted by lines, not items.
+        // So even if childResult is PARTIAL, we must move whole child to overflowRenderer.
+        if (childResult.getOverflowRenderer() != null) {
+            childResult.getOverflowRenderer().setParent(overflowRenderer);
+        }
 
         return new AbstractRenderer[]{splitRenderer, overflowRenderer};
     }
