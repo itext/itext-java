@@ -181,8 +181,6 @@ public class LotlTrustedStore {
     public boolean checkIfCertIsTrusted(ValidationReport result, ValidationContext context,
             X509Certificate certificate, Date validationDate) {
         Set<CountryServiceContext> currentContextSet = getCertificateContext(certificate);
-        result.mergeWithDifferentStatus(report, ReportItemStatus.INFO);
-
         List<ReportItem> validationReportItems = new ArrayList<>();
         for (CountryServiceContext currentContext : currentContextSet) {
             ServiceChronologicalInfo chronologicalInfo = getCertificateChronologicalInfoByTime(validationReportItems,
@@ -222,6 +220,15 @@ public class LotlTrustedStore {
         }
 
         return false;
+    }
+
+    /**
+     * Gets lotl validation report.
+     *
+     * @return validation report regarding trusted lists accessibility.
+     */
+    public ValidationReport getLotlValidationReport() {
+        return new ValidationReport(report);
     }
 
     /**

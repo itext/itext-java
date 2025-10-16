@@ -105,7 +105,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(2)
+                .hasNumberOfLogs(3)
                 .hasLogItem(al -> al
                     .withCheckName(RevocationDataValidator.REVOCATION_DATA_CHECK)
                     .withMessage(RevocationDataValidator.TRUSTED_OCSP_RESPONDER)
@@ -132,7 +132,7 @@ public class OCSPValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(2)
+                .hasNumberOfLogs(3)
                 .hasLogItem(al -> al
                     .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                     .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED, l->

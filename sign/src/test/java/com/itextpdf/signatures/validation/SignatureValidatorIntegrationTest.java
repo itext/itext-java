@@ -350,7 +350,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         // Signature1 set access permissions to level 3, Signature2 - to level 1, after that annotation was added.
         AssertValidationReport.assertThat(report1, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasNumberOfLogs(4).hasNumberOfFailures(0)
+                .hasNumberOfLogs(5).hasNumberOfFailures(0)
                 .hasLogItem(al -> al
                         .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
                         .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, i -> 17)
@@ -370,7 +370,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report2, a -> a
                 .hasStatus(ValidationResult.INVALID)
-                .hasNumberOfLogs(4).hasNumberOfFailures(1)
+                .hasNumberOfLogs(5).hasNumberOfFailures(1)
                 .hasLogItem(al -> al
                         .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
                         .withMessage(DocumentRevisionsValidator.PAGE_ANNOTATIONS_MODIFIED)
@@ -460,7 +460,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasNumberOfLogs(4).hasNumberOfFailures(0)
+                .hasNumberOfLogs(6).hasNumberOfFailures(0)
                 .hasLogItem(al -> al
                         .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                         .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "Signature1"))
@@ -502,7 +502,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasNumberOfLogs(6).hasNumberOfFailures(0)
+                .hasNumberOfLogs(10).hasNumberOfFailures(0)
                 .hasLogItem(al -> al
                         .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                         .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "Signature1"))
@@ -553,7 +553,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(3)
+                .hasNumberOfLogs(4)
                 .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -681,7 +681,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
             AssertValidationReport.assertThat(report, r -> r
                     .hasStatus(ValidationResult.VALID)
-                    .hasNumberOfLogs(5).hasNumberOfFailures(0)
+                    .hasNumberOfLogs(7).hasNumberOfFailures(0)
                     .hasLogItem(l -> l
                             .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                             .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "timestampSig1"))

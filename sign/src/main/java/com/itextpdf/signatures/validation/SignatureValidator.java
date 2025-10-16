@@ -158,6 +158,10 @@ public class SignatureValidator {
         }
         validationPerformed = true;
         ValidationReport report = new ValidationReport();
+        if (builder.getLotlTrustedStore() != null) {
+            report.mergeWithDifferentStatus(builder.getLotlTrustedStore().getLotlValidationReport(), ReportItemStatus.INFO);
+        }
+
         onRuntimeExceptionLog(() -> {
             documentRevisionsValidator.setEventCountingMetaInfo(metaInfo);
             ValidationReport revisionsValidationReport =
@@ -186,6 +190,10 @@ public class SignatureValidator {
         }
         validationPerformed = true;
         ValidationReport report = new ValidationReport();
+        if (builder.getLotlTrustedStore() != null) {
+            report.mergeWithDifferentStatus(builder.getLotlTrustedStore().getLotlValidationReport(), ReportItemStatus.INFO);
+        }
+
         onRuntimeExceptionLog(() -> {
             documentRevisionsValidator.setEventCountingMetaInfo(metaInfo);
             ValidationReport revisionsValidationReport =

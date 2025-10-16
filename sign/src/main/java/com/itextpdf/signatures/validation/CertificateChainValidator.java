@@ -79,6 +79,9 @@ public class CertificateChainValidator {
             "Unexpected exception occurred while validating certificate revocation.";
     static final String VALIDITY_PERIOD_CHECK_FAILED =
             "Unexpected exception occurred while validating certificate validity period.";
+    static final String CERTIFICATE_RETRIEVER_ORIGIN = "Trusted Certificate is taken from manually configured Trust List.";
+    static final String CERTIFICATE_LOTL_ORIGIN = "Trusted Certificate is taken from European Union List of Trusted Certificates.";
+    static final String CERTIFICATE_CUSTOM_ORIGIN = "Trusted Certificate is taken from {0}.";
 
     /**
      * Create new instance of {@link CertificateChainValidator}.
@@ -152,12 +155,29 @@ public class CertificateChainValidator {
     private boolean checkIfCertIsTrusted(ValidationReport result, ValidationContext context,
             X509Certificate certificate, Date validationDate) {
         if (certificateRetriever.getTrustedCertificatesStore().checkIfCertIsTrusted(result, context, certificate)) {
+            result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, CERTIFICATE_RETRIEVER_ORIGIN,
+                    ReportItemStatus.INFO));
             return true;
         }
+
         if (lotlTrustedStore == null) {
             return false;
         }
-        return lotlTrustedStore.checkIfCertIsTrusted(result, context, certificate, validationDate);
+
+        if (lotlTrustedStore.checkIfCertIsTrusted(result, context, certificate, validationDate)) {
+            if (lotlTrustedStore.getClass() == LotlTrustedStore.class){
+                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, CERTIFICATE_LOTL_ORIGIN,
+                        ReportItemStatus.INFO));
+            } else {
+                result.addReportItem(new CertificateReportItem(certificate, CERTIFICATE_CHECK, MessageFormatUtil.format(
+                         CERTIFICATE_CUSTOM_ORIGIN, lotlTrustedStore.getClass().getName()),
+                        ReportItemStatus.INFO));
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     private boolean stopValidation(ValidationReport result, ValidationContext context) {
