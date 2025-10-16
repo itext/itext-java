@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -505,6 +504,9 @@ public abstract class RootRenderer extends AbstractRenderer {
         if (toDisableKeepTogether == null) {
             return false;
         }
+        if (result.getOverflowRenderer() != null && !isItemInSubtree(result.getOverflowRenderer(), toDisableKeepTogether)) {
+            return false;
+        }
         
         toDisableKeepTogether.setProperty(Property.KEEP_TOGETHER, false);
         if (LOGGER.isWarnEnabled()) {
@@ -516,5 +518,27 @@ public abstract class RootRenderer extends AbstractRenderer {
             rootRendererStateHandler.attemptGoBackToStoredPreviousStateAndStoreNextState(this);
         }
         return true;
+    }
+
+    private static boolean isItemInSubtree(IRenderer ancestor, IRenderer item) {
+        if (ancestor == item) {
+            return true;
+        }
+        for (IRenderer renderer : ancestor.getChildRenderers()) {
+            if (isItemInSubtree(renderer, item)) {
+                return true;
+            }
+        }
+        if (ancestor instanceof TableRenderer) {
+            TableRenderer tableRenderer = (TableRenderer) ancestor;
+            for (CellRenderer[] row : tableRenderer.rows) {
+                for (CellRenderer cellRenderer : row) {
+                    if (isItemInSubtree(cellRenderer, item)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
