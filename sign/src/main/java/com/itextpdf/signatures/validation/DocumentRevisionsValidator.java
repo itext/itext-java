@@ -59,7 +59,6 @@ import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResu
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -69,6 +68,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import static com.itextpdf.signatures.validation.DocumentRevisionPdfObjectComparator.comparePdfObjects;
+import static com.itextpdf.signatures.validation.DocumentRevisionPdfObjectComparator.isMaxGenerationObject;
+import static com.itextpdf.signatures.validation.DocumentRevisionPdfObjectComparator.isSameReference;
 
 /**
  * Validator, which is responsible for document revisions validation according to doc-MDP and field-MDP rules.
@@ -231,7 +233,7 @@ public class DocumentRevisionsValidator {
      * @return {@link ValidationReport} which contains detailed validation results.
      */
     ValidationReport validateAllDocumentRevisions(ValidationContext context, PdfDocument document,
-                                                  String signatureName) {
+            String signatureName) {
         resetClassFields();
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.DOCUMENT_REVISIONS_VALIDATOR);
         ValidationReport report = new ValidationReport();
@@ -806,7 +808,7 @@ public class DocumentRevisionsValidator {
             return false;
         }
         return compareIndirectReferencesObjNums(previousStructElement.get(PdfName.P),
-                        currentStructElement.get(PdfName.P), report, "Struct tree element parent entry") &&
+                currentStructElement.get(PdfName.P), report, "Struct tree element parent entry") &&
                 compareIndirectReferencesObjNums(previousStructElement.get(PdfName.Ref),
                         currentStructElement.get(PdfName.Ref), report, "Struct tree element ref entry") &&
                 compareIndirectReferencesObjNums(previousStructElement.get(PdfName.Pg),
@@ -1566,129 +1568,6 @@ public class DocumentRevisionsValidator {
                 }
             }
         }
-    }
-
-    //
-    //
-    // Compare PDF objects util section:
-    //
-    //
-
-    private static boolean comparePdfObjects(PdfObject pdfObject1, PdfObject pdfObject2,
-            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
-        return comparePdfObjects(pdfObject1, pdfObject2, new ArrayList<>(), usuallyModifiedObjects);
-    }
-
-    private static boolean comparePdfObjects(PdfObject pdfObject1, PdfObject pdfObject2,
-            List<Tuple2<PdfObject, PdfObject>> visitedObjects,
-            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
-        for (Tuple2<PdfObject, PdfObject> pair : visitedObjects) {
-            if (pair.getFirst() == pdfObject1) {
-                return pair.getSecond() == pdfObject2;
-            }
-        }
-        visitedObjects.add(new Tuple2<>(pdfObject1, pdfObject2));
-        if (Objects.equals(pdfObject1, pdfObject2)) {
-            return true;
-        }
-        if (pdfObject1 == null || pdfObject2 == null) {
-            return false;
-        }
-        if (pdfObject1.getClass() != pdfObject2.getClass()) {
-            return false;
-        }
-        if (pdfObject1.getIndirectReference() != null &&
-                usuallyModifiedObjects.getFirst().stream().anyMatch(
-                        reference -> isSameReference(reference, pdfObject1.getIndirectReference())) &&
-                pdfObject2.getIndirectReference() != null &&
-                usuallyModifiedObjects.getSecond().stream().anyMatch(
-                        reference -> isSameReference(reference, pdfObject2.getIndirectReference()))) {
-            // These two objects are expected to not be completely equal, we check them independently.
-            // However, we still need to make sure those are same instances.
-            return isSameReference(pdfObject1.getIndirectReference(), pdfObject2.getIndirectReference());
-        }
-        // We don't allow objects to change from being direct to indirect and vice versa.
-        // Acrobat allows it, but such change can invalidate the document.
-        if (pdfObject1.getIndirectReference() == null ^ pdfObject2.getIndirectReference() == null) {
-            return false;
-        }
-        switch (pdfObject1.getType()) {
-            case PdfObject.BOOLEAN:
-            case PdfObject.NAME:
-            case PdfObject.NULL:
-            case PdfObject.LITERAL:
-            case PdfObject.NUMBER:
-            case PdfObject.STRING:
-                return pdfObject1.equals(pdfObject2);
-            case PdfObject.INDIRECT_REFERENCE:
-                return comparePdfObjects(((PdfIndirectReference) pdfObject1).getRefersTo(),
-                        ((PdfIndirectReference) pdfObject2).getRefersTo(), visitedObjects, usuallyModifiedObjects);
-            case PdfObject.ARRAY:
-                return comparePdfArrays((PdfArray) pdfObject1, (PdfArray) pdfObject2, visitedObjects,
-                        usuallyModifiedObjects);
-            case PdfObject.DICTIONARY:
-                return comparePdfDictionaries((PdfDictionary) pdfObject1, (PdfDictionary) pdfObject2,
-                        visitedObjects, usuallyModifiedObjects);
-            case PdfObject.STREAM:
-                return comparePdfStreams((PdfStream) pdfObject1, (PdfStream) pdfObject2, visitedObjects,
-                        usuallyModifiedObjects);
-            default:
-                return false;
-        }
-    }
-
-    private static boolean comparePdfArrays(PdfArray array1, PdfArray array2,
-            List<Tuple2<PdfObject, PdfObject>> visitedObjects,
-            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
-        if (array1.size() != array2.size()) {
-            return false;
-        }
-        for (int i = 0; i < array1.size(); i++) {
-            if (!comparePdfObjects(array1.get(i), array2.get(i), visitedObjects, usuallyModifiedObjects)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean comparePdfDictionaries(PdfDictionary dictionary1, PdfDictionary dictionary2,
-            List<Tuple2<PdfObject, PdfObject>> visitedObjects,
-            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
-        Set<Map.Entry<PdfName, PdfObject>> entrySet1 = dictionary1.entrySet();
-        Set<Map.Entry<PdfName, PdfObject>> entrySet2 = dictionary2.entrySet();
-        if (entrySet1.size() != entrySet2.size()) {
-            return false;
-        }
-        for (Map.Entry<PdfName, PdfObject> entry1 : entrySet1) {
-            if (!entrySet2.stream().anyMatch(entry2 -> entry2.getKey().equals(entry1.getKey()) &&
-                    comparePdfObjects(entry2.getValue(), entry1.getValue(), visitedObjects, usuallyModifiedObjects))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean comparePdfStreams(PdfStream stream1, PdfStream stream2,
-            List<Tuple2<PdfObject, PdfObject>> visitedObjects,
-            Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
-        return Arrays.equals(stream1.getBytes(), stream2.getBytes()) &&
-                comparePdfDictionaries(stream1, stream2, visitedObjects, usuallyModifiedObjects);
-    }
-
-    private static boolean isSameReference(PdfIndirectReference indirectReference1,
-            PdfIndirectReference indirectReference2) {
-        if (indirectReference1 == indirectReference2) {
-            return true;
-        }
-        if (indirectReference1 == null || indirectReference2 == null) {
-            return false;
-        }
-        return indirectReference1.getObjNumber() == indirectReference2.getObjNumber() &&
-                indirectReference1.getGenNumber() == indirectReference2.getGenNumber();
-    }
-
-    private static boolean isMaxGenerationObject(PdfIndirectReference indirectReference) {
-        return indirectReference.getObjNumber() == 0 && indirectReference.getGenNumber() == 65535;
     }
 
     //
