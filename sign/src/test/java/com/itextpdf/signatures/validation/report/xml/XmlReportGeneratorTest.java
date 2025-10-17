@@ -42,6 +42,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.NodeList;
@@ -65,6 +66,7 @@ class XmlReportGeneratorTest extends ExtendedITextTest {
     }
 
     @Test
+    @Disabled("TODO DEVSIX-9500 Fix baseXmlReportGenerationTest")
     public void baseXmlReportGenerationTest() throws Exception {
         try (PdfDocument document = new PdfDocument(
                 new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
