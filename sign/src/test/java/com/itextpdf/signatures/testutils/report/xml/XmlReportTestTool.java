@@ -22,6 +22,8 @@
  */
 package com.itextpdf.signatures.testutils.report.xml;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -159,7 +161,10 @@ public class XmlReportTestTool {
             }
             return message;
         } catch (IOException | SAXException e) {
-            return e.getMessage();
+            StringWriter strWriter = new StringWriter();
+            PrintWriter writer = new PrintWriter(strWriter);
+            e.printStackTrace(writer);
+            return e.toString() + '\n' + strWriter;
         }
     }
 }

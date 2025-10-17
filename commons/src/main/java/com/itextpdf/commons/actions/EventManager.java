@@ -34,21 +34,32 @@ import java.util.List;
  * see {@link EventManager#getInstance()}.
  */
 public final class EventManager {
-    private static final EventManager INSTANCE = new EventManager();
+    private static final EventManager INSTANCE = new EventManager(true);
 
     private final ConcurrentHashSet<IEventHandler> handlers = new ConcurrentHashSet<>();
 
-    private EventManager() {
-        handlers.add(ProductEventHandler.INSTANCE);
+    private EventManager(boolean addProductEventHandler) {
+        if (addProductEventHandler) {
+            handlers.add(ProductEventHandler.INSTANCE);
+        }
     }
 
     /**
-     * Allows access to the instance of EventManager.
+     * Allows access to the default instance of EventManager.
      *
-     * @return the instance of the class
+     * @return the default instance of the class
      */
     public static EventManager getInstance() {
         return INSTANCE;
+    }
+
+    /**
+     * Creates a new instance of EventManager, it should be used for dedicated event usage.
+     *
+     * @return a new instance of the class
+     */
+    public static EventManager createNewInstance() {
+        return new EventManager(false);
     }
 
     /**

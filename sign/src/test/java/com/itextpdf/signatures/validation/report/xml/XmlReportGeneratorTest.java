@@ -33,6 +33,7 @@ import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.testutils.report.xml.XmlReportTestTool;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
+import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.StringWriter;
@@ -42,7 +43,6 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.NodeList;
@@ -70,11 +70,64 @@ class XmlReportGeneratorTest extends ExtendedITextTest {
         try (PdfDocument document = new PdfDocument(
                 new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
             AdESReportAggregator reportAggregator = new DefaultAdESReportAggregator();
-            builder.withAdESReportAggregator(reportAggregator).buildSignatureValidator(document).validateSignatures();
+            ValidationReport report = builder.withAdESReportAggregator(
+                    reportAggregator).buildSignatureValidator(document).validateSignatures();
 
             XmlReportGenerator reportGenerator = new XmlReportGenerator(new XmlReportOptions());
             StringWriter stringWriter = new StringWriter();
             reportGenerator.generate(reportAggregator.getReport(), stringWriter);
+
+            XmlReportTestTool testTool = new XmlReportTestTool(stringWriter.toString());
+
+            Assertions.assertEquals("ValidationReport", testTool.getDocumentNode().getNodeName());
+            // There are 5 signatures, but 3 are timestamps
+            Assertions.assertEquals(2, testTool.countElements("//r:SignatureValidationReport"));
+
+            NodeList signatureValueNodes =
+                    testTool.executeXpathAsNodeList("//r:SignatureValidationReport//ds:SignatureValue");
+            List<String> b64ReportedSignatures = new ArrayList<>(signatureValueNodes.getLength());
+            for (int i = 0; i < signatureValueNodes.getLength(); i++) {
+                b64ReportedSignatures.add(signatureValueNodes.item(i).getTextContent());
+            }
+
+            SignatureUtil sigUtil = new SignatureUtil(document);
+            for (String sigName : sigUtil.getSignatureNames()) {
+                PdfSignature signature = sigUtil.getSignature(sigName);
+                if (!PdfName.ETSI_RFC3161.equals(signature.getSubFilter())) {
+                    CMSContainer cms = new CMSContainer(sigUtil.getSignature(sigName).getContents().getValueBytes());
+                    String b64signature = EncodingUtil.toBase64(cms.getSignerInfo().getSignatureData());
+                    Assertions.assertTrue(b64ReportedSignatures.contains(b64signature));
+                }
+            }
+
+            // For each reported signature the certificate is added to the validation objects
+            // We don't use something like
+            // testTool.countElements("//r:ValidationObject[r:ObjectType=\"urn:etsi:019102:validationObject:certificate\"]");
+            // here because it fails in native by not clear reason
+            NodeList objectTypesNodes = testTool.executeXpathAsNodeList("//r:ValidationObject//r:ObjectType");
+            int requiredObjectTypesCount = 0;
+            for (int i = 0; i < objectTypesNodes.getLength(); i++) {
+                if ("urn:etsi:019102:validationObject:certificate".equals(objectTypesNodes.item(i).getTextContent())) {
+                    ++requiredObjectTypesCount;
+                }
+            }
+            Assertions.assertEquals(2, requiredObjectTypesCount);
+
+            Assertions.assertNull(testTool.validateXMLSchema());
+        }
+    }
+
+    @Test
+    public void eventBasedXmlReportGenerationTest() throws Exception {
+        XmlReportAggregator reportEventListener = new XmlReportAggregator();
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
+            builder.withAdESLevelReportGenerator(reportEventListener);
+            builder.buildSignatureValidator(document).validateSignatures();
+
+            XmlReportGenerator reportGenerator = new XmlReportGenerator(new XmlReportOptions());
+            StringWriter stringWriter = new StringWriter();
+            reportGenerator.generate(reportEventListener.getReport(), stringWriter);
 
             XmlReportTestTool testTool = new XmlReportTestTool(stringWriter.toString());
 

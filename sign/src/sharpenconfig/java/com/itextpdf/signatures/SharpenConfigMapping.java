@@ -22,8 +22,6 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.commons.UseBCWrappersModuleOption;
-
 import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
 import sharpen.config.MemberKind;

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.validation;
 
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.ICrlClient;
@@ -32,7 +33,10 @@ import com.itextpdf.signatures.validation.lotl.LotlFetchingProperties;
 import com.itextpdf.signatures.validation.lotl.LotlService;
 import com.itextpdf.signatures.validation.lotl.LotlTrustedStore;
 import com.itextpdf.signatures.validation.lotl.QualifiedValidator;
+import com.itextpdf.signatures.validation.report.pades.PAdESLevelReportGenerator;
+import com.itextpdf.signatures.validation.report.xml.XmlReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.AdESReportAggregator;
+import com.itextpdf.signatures.validation.report.xml.EventsToAdESReportAggratorConvertor;
 import com.itextpdf.signatures.validation.report.xml.NullAdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.PadesValidationReport;
 import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
@@ -65,8 +69,9 @@ public class ValidatorChainBuilder {
 
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
-    private AdESReportAggregator adESReportAggregator = new NullAdESReportAggregator();
     private boolean trustEuropeanLotl = false;
+    private final EventManager eventManager;
+    private AdESReportAggregator adESReportAggregator = new NullAdESReportAggregator();
 
     /**
      * Creates a ValidatorChainBuilder using default implementations
@@ -84,6 +89,7 @@ public class ValidatorChainBuilder {
         crlClientFactory = () -> new CrlClientOnline();
         lotlServiceFactory = () -> buildLotlService();
         qualifiedValidator = new NullQualifiedValidator();
+        eventManager = EventManager.createNewInstance();
     }
 
     /**
@@ -334,10 +340,39 @@ public class ValidatorChainBuilder {
      *
      * @param adESReportAggregator the report aggregator to use
      * @return the current ValidatorChainBuilder
+     *
+     * @deprecated This method will be removed in a later version, use {@link #withAdESLevelReportGenerator} instead.
      */
+    @Deprecated
     public ValidatorChainBuilder withAdESReportAggregator(AdESReportAggregator adESReportAggregator) {
         this.adESReportAggregator = adESReportAggregator;
+        eventManager.register(
+                new EventsToAdESReportAggratorConvertor(adESReportAggregator));
         return this;
+    }
+
+    /**
+     * Use this reportEventListener to generate an AdES xml report.
+     *
+     * <p>
+     * Generated {@link PadesValidationReport} report could be provided to
+     * {@link com.itextpdf.signatures.validation.report.xml.XmlReportGenerator#generate(PadesValidationReport, Writer)}.
+     *
+     * @param reportEventListener the AdESReportEventListener to use
+     * @return the current ValidatorChainBuilder
+     */
+    public ValidatorChainBuilder withAdESLevelReportGenerator(XmlReportAggregator reportEventListener) {
+        eventManager.register(reportEventListener);
+        return this;
+    }
+
+    /**
+     * Use this PAdES level report generator to generate PAdES report.
+     *
+     * @param reportGenerator the PAdESLevelReportGenerator to use
+     */
+    public void withPAdESLevelReportGenerator(PAdESLevelReportGenerator reportGenerator) {
+        eventManager.register(reportGenerator);
     }
 
     /**
@@ -378,11 +413,22 @@ public class ValidatorChainBuilder {
     }
 
     /**
+     * Returns the EventManager to be used for all events fired during validation.
+     *
+     * @return the EventManager to be used for all events fired during validation
+     */
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
+    /**
      * Retrieves the explicitly added or automatically created {@link AdESReportAggregator} instance.
      * Default is the {@link NullAdESReportAggregator}.
      *
      * @return the explicitly added or automatically created {@link AdESReportAggregator} instance.
+     * @deprecated The AdESReportAggregator system is replaced by the {@link XmlReportAggregator} system.
      */
+    @Deprecated
     public AdESReportAggregator getAdESReportAggregator() {
         return adESReportAggregator;
     }

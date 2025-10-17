@@ -32,12 +32,14 @@ import java.util.Set;
  */
 public final class OID {
     public static final String PKCS7_DATA = "1.2.840.113549.1.7.1";
+    public static final String ID_DATA = "1.2.840.113549.1.7.1";
     public static final String PKCS7_SIGNED_DATA = "1.2.840.113549.1.7.2";
     public static final String RSA = "1.2.840.113549.1.1.1";
     public static final String RSASSA_PSS = "1.2.840.113549.1.1.10";
     public static final String RSA_WITH_SHA256 = "1.2.840.113549.1.1.11";
     public static final String AA_SIGNING_CERTIFICATE_V1 = "1.2.840.113549.1.9.16.2.12";
     public static final String AA_SIGNING_CERTIFICATE_V2 = "1.2.840.113549.1.9.16.2.47";
+    public static final String AA_ETS_COMMITMENTTYPE = "1.2.840.113549.1.9.16.2.16";
     public static final String MGF1 = "1.2.840.113549.1.1.8";
     public static final String AA_TIME_STAMP_TOKEN = "1.2.840.113549.1.9.16.2.14";
     public static final String AUTHENTICATED_DATA = "1.2.840.113549.1.9.16.1.2";

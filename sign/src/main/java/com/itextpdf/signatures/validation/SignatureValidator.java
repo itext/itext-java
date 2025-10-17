@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.validation;
 
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
@@ -49,6 +50,10 @@ import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.events.ProofOfExistenceFoundEvent;
+import com.itextpdf.signatures.validation.events.SignatureValidationFailureEvent;
+import com.itextpdf.signatures.validation.events.SignatureValidationSuccessEvent;
+import com.itextpdf.signatures.validation.events.StartSignatureValidationEvent;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
@@ -117,6 +122,8 @@ public class SignatureValidator {
     private ValidationOcspClient validationOcspClient;
     private ValidationCrlClient validationCrlClient;
 
+    private final EventManager eventManager;
+
     private boolean validationPerformed = false;
 
     /**
@@ -132,6 +139,7 @@ public class SignatureValidator {
         this.properties = builder.getProperties();
         this.certificateChainValidator = builder.getCertificateChainValidator();
         this.documentRevisionsValidator = builder.getDocumentRevisionsValidator();
+        this.eventManager = builder.getEventManager();
         findValidationClients();
     }
 
@@ -285,7 +293,7 @@ public class SignatureValidator {
 
     private void reportResult(ValidationReport validationReport) {
         if (validationReport.getValidationResult() == ValidationResult.VALID) {
-            builder.getAdESReportAggregator().reportSignatureValidationSuccess();
+            eventManager.onEvent(new SignatureValidationSuccessEvent());
             return;
         }
         StringBuilder reason = new StringBuilder("[");
@@ -293,8 +301,9 @@ public class SignatureValidator {
             reason.append(reportItem).append("\n");
         }
         reason.append("]");
-        builder.getAdESReportAggregator().reportSignatureValidationFailure(
-                validationReport.getValidationResult() == ValidationResult.INDETERMINATE, reason.toString());
+        eventManager.onEvent(new SignatureValidationFailureEvent(
+                validationReport.getValidationResult() == ValidationResult.INDETERMINATE,
+                reason.toString()));
     }
 
     private ValidationReport validate(String signatureName) {
@@ -355,22 +364,22 @@ public class SignatureValidator {
         }
     }
 
-    private PdfPKCS7 mathematicallyVerifySignature(ValidationReport validationReport, PdfDocument document) {
+    private PdfPKCS7 mathematicallyVerifySignature(ValidationReport validationReport,
+            PdfDocument document) {
         SignatureUtil signatureUtil = new SignatureUtil(document);
         List<String> signatures = signatureUtil.getSignatureNames();
         String latestSignatureName = signatures.get(signatures.size() - 1);
         PdfPKCS7 pkcs7 = signatureUtil.readSignatureData(latestSignatureName);
         validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION,
-                MessageFormatUtil.format(VALIDATING_SIGNATURE_NAME, latestSignatureName), ReportItemStatus.INFO));
+                MessageFormatUtil.format(VALIDATING_SIGNATURE_NAME, latestSignatureName),
+                ReportItemStatus.INFO));
         if (pkcs7.isTsp()) {
-            builder.getAdESReportAggregator().proofOfExistenceFound(
-                    signatureUtil.getSignature(latestSignatureName).getContents().getValueBytes(), true);
+            eventManager.onEvent(new ProofOfExistenceFoundEvent(signatureUtil.getSignature(latestSignatureName),
+                    latestSignatureName));
         } else {
             builder.getQualifiedValidator().startSignatureValidation(latestSignatureName);
-
-            builder.getAdESReportAggregator().startSignatureValidation(
-                    signatureUtil.getSignature(latestSignatureName).getContents().getValueBytes(), latestSignatureName,
-                    lastKnownPoE);
+            eventManager.onEvent(new StartSignatureValidationEvent(signatureUtil.getSignature(latestSignatureName),
+                    latestSignatureName, lastKnownPoE));
         }
         if (!signatureUtil.signatureCoversWholeDocument(latestSignatureName)) {
             validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION,
