@@ -66,7 +66,6 @@ class XmlReportGeneratorTest extends ExtendedITextTest {
     }
 
     @Test
-    @Disabled("TODO DEVSIX-9500 Fix baseXmlReportGenerationTest")
     public void baseXmlReportGenerationTest() throws Exception {
         try (PdfDocument document = new PdfDocument(
                 new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
