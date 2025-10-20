@@ -42,23 +42,17 @@ import com.itextpdf.test.ExtendedITextTest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
 
-    private PdfA2Checker pdfA2Checker;
-
-    @BeforeEach
-    public void before() {
-        pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
-        pdfA2Checker.setFullCheckMode(true);
-    }
-
     @Test
     public void checkPatternWithFormResourceCycle() throws IOException {
+        PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
+        pdfA2Checker.setFullCheckMode(true);
+
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 PdfWriter writer = new PdfWriter(bos);
                 PdfDocument document = new PdfDocument(writer)) {
@@ -83,6 +77,9 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
 
     @Test
     public void checkAppearanceStreamsWithCycle() throws IOException {
+        PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
+        pdfA2Checker.setFullCheckMode(true);
+
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 PdfWriter writer = new PdfWriter(bos);
                 PdfDocument document = new PdfDocument(writer)) {
@@ -107,6 +104,9 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
 
     @Test
     public void checkPatternWithTransparentFormResource() throws IOException {
+        PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
+        pdfA2Checker.setFullCheckMode(true);
+
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 PdfWriter writer = new PdfWriter(bos);
                 PdfDocument document = new PdfDocument(writer)) {
@@ -132,6 +132,9 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
 
     @Test
     public void checkPatternWithoutTransparentFormResource() throws IOException {
+        PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
+        pdfA2Checker.setFullCheckMode(true);
+
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 PdfWriter writer = new PdfWriter(bos);
                 PdfDocument document = new PdfDocument(writer)) {
@@ -155,6 +158,9 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
 
     @Test
     public void checkAppearanceStreamWithTransparencyGroup() throws IOException {
+        PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
+        pdfA2Checker.setFullCheckMode(true);
+
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 PdfWriter writer = new PdfWriter(bos);
                 PdfDocument document = new PdfDocument(writer)) {
@@ -180,6 +186,9 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
 
     @Test
     public void checkAppearanceStreamWithTransparencyGroup2() throws IOException {
+        PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
+        pdfA2Checker.setFullCheckMode(true);
+
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 PdfWriter writer = new PdfWriter(bos);
                 PdfDocument document = new PdfDocument(writer)) {
@@ -208,6 +217,9 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
 
     @Test
     public void checkAppearanceStreamWithoutTransparencyGroup() throws IOException {
+        PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
+        pdfA2Checker.setFullCheckMode(true);
+
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 PdfWriter writer = new PdfWriter(bos);
                 PdfDocument document = new PdfDocument(writer)) {
@@ -230,6 +242,9 @@ public class PdfA2CheckerTransparencyTest extends ExtendedITextTest {
     }
 
     private void ensureTransparencyObjectsNotEmpty() {
+        PdfA2Checker pdfA2Checker = new PdfA2Checker(PdfAConformance.PDF_A_2B);
+        pdfA2Checker.setFullCheckMode(true);
+
         PdfFormXObject formXObject = new PdfFormXObject(new Rectangle(0f, 0f));
         formXObject.setGroup(new PdfTransparencyGroup());
 

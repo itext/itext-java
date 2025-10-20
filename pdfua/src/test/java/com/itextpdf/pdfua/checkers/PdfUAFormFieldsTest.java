@@ -1001,7 +1001,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndPlaceHolder", pdfUAConformance);
     }
 
     @ParameterizedTest
