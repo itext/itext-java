@@ -259,7 +259,6 @@ public class PageResizerTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO Update when fixing DEVSIX-9448
     public void testGradientsType0Function() throws IOException, InterruptedException {
         String inFileName = "gradientFct0.pdf";
         String outFileName = "gradientFct0.pdf";

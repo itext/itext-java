@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Map.Entry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,8 +55,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("IntegrationTest")
@@ -71,6 +73,67 @@ public class LotlServiceTest extends ExtendedITextTest {
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+
+    public static Iterable<Object[]> allCountries() {
+        return Arrays.asList(new Object[][] {
+                {LotlCountryCodeConstants.AUSTRIA},
+                {LotlCountryCodeConstants.BELGIUM},
+                {LotlCountryCodeConstants.BULGARIA},
+                {LotlCountryCodeConstants.CYPRUS},
+                {LotlCountryCodeConstants.CZECHIA},
+                {LotlCountryCodeConstants.GERMANY},
+                {LotlCountryCodeConstants.DENMARK},
+                {LotlCountryCodeConstants.ESTONIA},
+                {LotlCountryCodeConstants.GREECE},
+                {LotlCountryCodeConstants.SPAIN},
+                {LotlCountryCodeConstants.FINLAND},
+                {LotlCountryCodeConstants.FRANCE},
+                {LotlCountryCodeConstants.CROATIA},
+                {LotlCountryCodeConstants.HUNGARY},
+                {LotlCountryCodeConstants.IRELAND},
+                {LotlCountryCodeConstants.ICELAND},
+                {LotlCountryCodeConstants.ITALY},
+                {LotlCountryCodeConstants.LIECHTENSTEIN},
+                {LotlCountryCodeConstants.LITHUANIA},
+                {LotlCountryCodeConstants.LUXEMBOURG},
+                {LotlCountryCodeConstants.LATVIA},
+                {LotlCountryCodeConstants.MALTA},
+                {LotlCountryCodeConstants.NETHERLANDS},
+                {LotlCountryCodeConstants.NORWAY},
+                {LotlCountryCodeConstants.POLAND},
+                {LotlCountryCodeConstants.PORTUGAL},
+                {LotlCountryCodeConstants.ROMANIA},
+                {LotlCountryCodeConstants.SWEDEN},
+                {LotlCountryCodeConstants.SLOVENIA},
+                {LotlCountryCodeConstants.SLOVAKIA},
+                {LotlCountryCodeConstants.UNITED_KINGDOM},
+        });
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("allCountries")
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore )
+    public void serializeIndividualCountry(String country) throws IOException {
+        LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
+        props.setCountryNames(country);
+        try (LotlService lotlService = new LotlService(props)) {
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            lotlService.initializeCache();
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+            lotlService.serializeCache(outputStream);
+            byte[] actual = outputStream.toByteArray();
+
+            String fileName = "single-country-" + country + ".json";
+            byte[] expected = Files.readAllBytes(Paths.get(SOURCE + fileName));
+
+            LotlCacheDataV1 actualData = LotlCacheDataV1.deserialize(new ByteArrayInputStream(actual));
+            LotlCacheDataV1 expectedData = LotlCacheDataV1.deserialize(new ByteArrayInputStream(expected));
+
+            assert2LotlCacheDataV1(expectedData, actualData);
+        }
     }
 
     @Test
@@ -309,25 +372,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     }
 
     @Test
-    public void serializationOneCountryTest() throws IOException {
-        LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        props.setCountryNames("PT");
-        try (LotlService lotlService = new LotlService(props)) {
-            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
-            lotlService.initializeCache();
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            lotlService.serializeCache(outputStream);
-            byte[] expected = Files.readAllBytes(Paths.get(SOURCE + "single-country.json"));
-            byte[] actual = outputStream.toByteArray();
-            LotlCacheDataV1 actualData = LotlCacheDataV1.deserialize(new ByteArrayInputStream(actual));
-            LotlCacheDataV1 expectedData = LotlCacheDataV1.deserialize(new ByteArrayInputStream(expected));
-
-            assert2LotlCacheDataV1(actualData, expectedData);
-        }
-    }
-
-    @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore )
     public void serializationAllCountriesTest() throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         try (LotlService lotlService = new LotlService(props)) {
@@ -341,7 +386,7 @@ public class LotlServiceTest extends ExtendedITextTest {
             LotlCacheDataV1 actualData = LotlCacheDataV1.deserialize(new ByteArrayInputStream(actual));
             LotlCacheDataV1 expectedData = LotlCacheDataV1.deserialize(new ByteArrayInputStream(expected));
 
-            assert2LotlCacheDataV1(actualData, expectedData);
+            assert2LotlCacheDataV1(expectedData, actualData);
         }
     }
 
@@ -475,16 +520,6 @@ public class LotlServiceTest extends ExtendedITextTest {
         }
     }
 
-    @Test
-    public void loadOneCountriesFromValue() {
-        LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new LotlService(props)) {
-            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
-            AssertUtil.doesNotThrow(() -> {
-                lotlService.initializeCache(Files.newInputStream(Paths.get(SOURCE + "single-country.json")));
-            });
-        }
-    }
 
     @Test
     public void serializeDeserializedWithTimestampsToOldThrows() throws IOException, InterruptedException {
