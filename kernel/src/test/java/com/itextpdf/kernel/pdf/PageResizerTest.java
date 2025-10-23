@@ -40,7 +40,7 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @BeforeAll
     public static void setup() {
-        createDestinationFolder(DESTINATION_FOLDER);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @AfterAll
@@ -439,5 +439,47 @@ public class PageResizerTest extends ExtendedITextTest {
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
     }
 
+    @Test
+    public void testFormFieldsDA() throws IOException, InterruptedException {
+        String inFileName = "formFieldsDA.pdf";
+        String outFileName = "formFieldsDA.pdf";
+        String outFileNameReverted = "formFieldsDAReverted.pdf";
 
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            PageResizer resizer = new PageResizer(new PageSize(1200, 1200), ResizeType.DEFAULT);
+            resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
+            resizer.resize(pdfDocument.getPage(1));
+
+            resizer = new PageResizer(new PageSize(1200, 1200), ResizeType.MAINTAIN_ASPECT_RATIO);
+            resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
+            resizer.resize(pdfDocument.getPage(2));
+
+            resizer = new PageResizer(new PageSize(400, 400), ResizeType.DEFAULT);
+            resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
+            resizer.resize(pdfDocument.getPage(3));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+
+        // Reverting
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + outFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileNameReverted))) {
+            PageResizer resizer = new PageResizer(new PageSize(PageSize.A4), ResizeType.DEFAULT);
+            resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
+            resizer.resize(pdfDocument.getPage(1));
+
+            resizer = new PageResizer(new PageSize(PageSize.A4), ResizeType.MAINTAIN_ASPECT_RATIO);
+            resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
+            resizer.resize(pdfDocument.getPage(2));
+
+            resizer = new PageResizer(new PageSize(PageSize.A4), ResizeType.DEFAULT);
+            resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
+            resizer.resize(pdfDocument.getPage(3));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileNameReverted,
+                        SOURCE_FOLDER + "cmp_" + outFileNameReverted, DESTINATION_FOLDER, "diff"));
+    }
 }

@@ -30,7 +30,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -435,11 +434,28 @@ class PageResizer {
         if (annotDict.getAsNumber(PdfName.LLO) != null) {
             annotDict.put(PdfName.LLO, new PdfNumber(annotDict.getAsNumber(PdfName.LLO).doubleValue() * lengthScale));
         }
+
+        // Scale font size in the Default Appearance string
+        String da = null;
         if (annotDict.getAsString(PdfName.DA) != null) {
-            String da = annotDict.getAsString(PdfName.DA).toUnicodeString();
+            da = annotDict.getAsString(PdfName.DA).toUnicodeString();
+        } else {
+            if (PdfName.Widget.equals(annotDict.getAsName(PdfName.Subtype))) {
+                // For widget annotation we should also check parents
+                da = getDaFromParent(annotDict);
+                if (da == null) {
+                    // Nothing in parents - check Acroform
+                    PdfDictionary acroFormDictionary = annot.getPage().getDocument()
+                            .getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm);
+                    if (acroFormDictionary != null && acroFormDictionary.getAsString(PdfName.DA) != null) {
+                        da = acroFormDictionary.getAsString(PdfName.DA).toUnicodeString();
+                    }
+                }
+            }
+        }
+        if (da != null) {
             annotDict.put(PdfName.DA, new PdfString(scaleDaString(da, lengthScale)));
         }
-
     }
 
     /**
@@ -504,6 +520,20 @@ class PageResizer {
         double[] newMatrixArray = new double[6];
         newMatrix.getMatrix(newMatrixArray);
         appearanceStream.put(PdfName.Matrix, new PdfArray(newMatrixArray));
+    }
+
+    private static String getDaFromParent(PdfDictionary dict) {
+        PdfDictionary parentDict = dict.getAsDictionary(PdfName.Parent);
+        if (parentDict == null) {
+            return null;
+        } else {
+            PdfString da = parentDict.getAsString(PdfName.DA);
+            if (da != null) {
+                return da.toUnicodeString();
+            } else {
+                return getDaFromParent(parentDict);
+            }
+        }
     }
 
     /**
