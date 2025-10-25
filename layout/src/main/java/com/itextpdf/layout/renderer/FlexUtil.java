@@ -37,12 +37,12 @@ import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
 import com.itextpdf.layout.properties.JustifyContent;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class FlexUtil {
 
@@ -111,13 +111,9 @@ final class FlexUtil {
         // 9.3. Main Size Determination
 
         // 5. Collect flex items into flex lines:
-        final boolean isSingleLine = !flexContainerRenderer.hasProperty(Property.FLEX_WRAP)
-                || FlexWrapPropertyValue.NOWRAP == flexContainerRenderer.<FlexWrapPropertyValue>getProperty(
-                Property.FLEX_WRAP);
-
-        List<List<FlexItemCalculationInfo>> lines =
-                collectFlexItemsIntoFlexLines(flexItemCalculationInfos, isColumnDirection ? Math.min(mainSize,
-                        layoutBox.getHeight()) : mainSize, isSingleLine, isColumnDirection ? rowGap : columnGap);
+        List<List<FlexItemCalculationInfo>> lines = collectFlexItemsIntoFlexLines(flexItemCalculationInfos,
+                isColumnDirection ? Math.min(mainSize, layoutBox.getHeight()) : mainSize,
+                isSingleLine(flexContainerRenderer), isColumnDirection ? rowGap : columnGap);
 
         // 6. Resolve the flexible lengths of all the flex items to find their used main size.
         // See §9.7 Resolving Flexible Lengths.
@@ -389,6 +385,12 @@ final class FlexUtil {
         return FlexDirectionPropertyValue.COLUMN == flexDir || FlexDirectionPropertyValue.COLUMN_REVERSE == flexDir;
     }
 
+    static boolean isSingleLine(FlexContainerRenderer flexContainerRenderer) {
+        return !flexContainerRenderer.hasProperty(Property.FLEX_WRAP)
+                || FlexWrapPropertyValue.NOWRAP == flexContainerRenderer.<FlexWrapPropertyValue>getProperty(
+                Property.FLEX_WRAP);
+    }
+
     static float getMainSize(FlexContainerRenderer renderer, Rectangle layoutBox) {
         final boolean isColumnDirection = isColumnDirection(renderer);
 
@@ -441,7 +443,7 @@ final class FlexUtil {
     private static Float[] getCrossSizes(FlexContainerRenderer renderer, Rectangle layoutBox) {
         final boolean isColumnDirection = isColumnDirection(renderer);
 
-        return new Float[] {
+        return new Float[]{
                 isColumnDirection ? renderer.retrieveWidth(layoutBox.getWidth()) : renderer.retrieveHeight(),
                 isColumnDirection ? renderer.retrieveMinWidth(layoutBox.getWidth()) : renderer.retrieveMinHeight(),
                 isColumnDirection ? renderer.retrieveMaxWidth(layoutBox.getWidth()) : renderer.retrieveMaxHeight()
@@ -455,7 +457,7 @@ final class FlexUtil {
 
             AbstractRenderer renderer = info.renderer;
 
-            // TODO DEVSIX-5001 content as width are not supported
+            // TODO DEVSIX-5255 Support aspect-ratio property
             // B. If the flex item has ...
             // an intrinsic aspect ratio,
             // a used flex basis of content, and
@@ -473,28 +475,31 @@ final class FlexUtil {
                         (float) definiteCrossSize / aspectRatio : (float) definiteCrossSize * aspectRatio;
             } else {
                 // A. If the item has a definite used flex basis, that’s the flex base size.
+
+                // TODO DEVSIX-5001 width: max-content is not supported
+                // E. Otherwise, size the item into the available space using its used flex basis in place of its main
+                // size, treating a value of content as max-content (calculated during FlexItemCalculationInfo creation).
+                // If a cross size is needed to determine the main size (e.g. when the flex item’s main size is in its
+                // block axis (column direction), or when it has a preferred aspect ratio) and the flex item’s cross
+                // size is auto and not definite, in this calculation use fit-content as the flex item’s cross size.
+                // The flex base size is the item’s resulting main size.
+
                 info.flexBaseSize = info.flexBasis;
+
+                // TODO DEVSIX-5001 width: min-content and max-content are not supported, so we can't check whether
+                //  the flex container is being sized under a min-content or max-content constraint
+                // C. If the used flex basis is content or depends on its available space,
+                // and the flex container is being sized under a min-content or max-content constraint
+                // (e.g. when performing automatic table layout [CSS21]), size the item under that constraint.
+                // The flex base size is the item’s resulting main size. E.g. for flex container parent with
+                // width: max-content flex item should be also layouted with width: max-content.
+
+                // TODO DEVSIX-5001 width: min-content and max-content are not supported
+                // D. Otherwise, if the used flex basis is content or depends on its available space,
+                // the available main size is infinite, and the flex item’s inline axis is parallel to the main axis,
+                // lay the item out using the rules for a box in an orthogonal flow [CSS3-WRITING-MODES].
+                // The flex base size is the item’s max-content main size.
             }
-
-            // TODO DEVSIX-5001 content as width is not supported
-            // C. If the used flex basis is content or depends on its available space,
-            // and the flex container is being sized under a min-content or max-content constraint
-            // (e.g. when performing automatic table layout [CSS21]), size the item under that constraint.
-            // The flex base size is the item’s resulting main size.
-
-            // TODO DEVSIX-5001 content as width is not supported
-            // Otherwise, if the used flex basis is content or depends on its available space,
-            // the available main size is infinite, and the flex item’s inline axis is parallel to the main axis,
-            // lay the item out using the rules for a box in an orthogonal flow [CSS3-WRITING-MODES].
-            // The flex base size is the item’s max-content main size.
-
-            // TODO DEVSIX-5001 max-content as width is not supported
-            // Otherwise, size the item into the available space using its used flex basis in place of its main size,
-            // treating a value of content as max-content. If a cross size is needed to determine the main size
-            // (e.g. when the flex item’s main size is in its block axis)
-            // and the flex item’s cross size is auto and not definite,
-            // in this calculation use fit-content as the flex item’s cross size.
-            // The flex base size is the item’s resulting main size.
 
             // The hypothetical main size is the item’s flex base size clamped
             // according to its used min and max main sizes (and flooring the content box size at zero).
@@ -726,11 +731,17 @@ final class FlexUtil {
             UnitValue prevMainSize = info.renderer.<UnitValue>replaceOwnProperty(Property.WIDTH,
                     UnitValue.createPointValue(info.mainSize));
             UnitValue prevMinMainSize = info.renderer.<UnitValue>replaceOwnProperty(Property.MIN_WIDTH, null);
+            UnitValue prevMaxMainSize = info.renderer.<UnitValue>replaceOwnProperty(Property.MAX_WIDTH, null);
+            Float horizontalScaling = (Float) info.renderer.<Object>replaceOwnProperty(Property.HORIZONTAL_SCALING, 1f);
+            Float verticalScaling = (Float) info.renderer.<Object>replaceOwnProperty(Property.VERTICAL_SCALING, 1f);
             info.renderer.setProperty(Property.INLINE_VERTICAL_ALIGNMENT, InlineVerticalAlignmentType.BOTTOM);
             LayoutResult result = info.renderer.layout(new LayoutContext(
                     new LayoutArea(0, new Rectangle(AbstractRenderer.INF, AbstractRenderer.INF))));
-            info.renderer.returnBackOwnProperty(Property.MIN_WIDTH, prevMinMainSize);
             info.renderer.returnBackOwnProperty(Property.WIDTH, prevMainSize);
+            info.renderer.returnBackOwnProperty(Property.MIN_WIDTH, prevMinMainSize);
+            info.renderer.returnBackOwnProperty(Property.MAX_WIDTH, prevMaxMainSize);
+            info.renderer.returnBackOwnProperty(Property.HORIZONTAL_SCALING, horizontalScaling);
+            info.renderer.returnBackOwnProperty(Property.VERTICAL_SCALING, verticalScaling);
             // Since main size is clamped with min-width, we do expect the result to be full
             if (result.getStatus() == LayoutResult.FULL) {
                 info.hypotheticalCrossSize = info.getInnerCrossSize(result.getOccupiedArea().getBBox().getHeight());
@@ -1115,13 +1126,10 @@ final class FlexUtil {
             if (renderer instanceof AbstractRenderer) {
                 AbstractRenderer abstractRenderer = (AbstractRenderer) renderer;
 
-                // TODO DEVSIX-5091 improve determining of the flex base size when flex-basis: content
-                float maxMainSize = calculateMaxMainSize(abstractRenderer, flexContainerMainSize,
-                        isColumnDirection(flexContainerRenderer), crossSize);
-                float flexBasis;
+                float flexBasis = 0;
                 boolean flexBasisContent = false;
                 if (renderer.<UnitValue>getProperty(Property.FLEX_BASIS) == null) {
-                    flexBasis = maxMainSize;
+                    // Flex base size will be calculated on FlexItemCalculationInfo creation after min/maxContent.
                     flexBasisContent = true;
                 } else {
                     // For column layout layoutBox height should not be taken into account while calculating flexBasis
@@ -1180,22 +1188,16 @@ final class FlexUtil {
                         flexItemRenderer.retrieveMaxWidth(flexContainerMainSize);
             }
             if (maxMainSize == null) {
-                if (flexItemRenderer instanceof ImageRenderer) {
-                    // TODO DEVSIX-5269 getMinMaxWidth doesn't always return the original image width
-                    maxMainSize = isColumnDirection ? ((ImageRenderer) flexItemRenderer).getImageHeight()
-                            : ((ImageRenderer) flexItemRenderer).getImageWidth();
-                } else {
-                    if (isColumnDirection) {
-                        Float height = retrieveMaxHeightForMainDirection(flexItemRenderer);
-                        if (height == null) {
-                            height = calculateHeight(flexItemRenderer, crossSize);
-                        }
-                        maxMainSize = flexItemRenderer.applyMarginsBordersPaddings(
-                                new Rectangle(0, (float) height), false).getHeight();
-                    } else {
-                        maxMainSize = flexItemRenderer.applyMarginsBordersPaddings(
-                                new Rectangle(flexItemRenderer.getMinMaxWidth().getMaxWidth(), 0), false).getWidth();
+                if (isColumnDirection) {
+                    Float height = retrieveMaxHeightForMainDirection(flexItemRenderer);
+                    if (height == null) {
+                        height = calculateHeight(flexItemRenderer, crossSize);
                     }
+                    maxMainSize = flexItemRenderer.applyMarginsBordersPaddings(
+                            new Rectangle(0, (float) height), false).getHeight();
+                } else {
+                    maxMainSize = flexItemRenderer.applyMarginsBordersPaddings(
+                            new Rectangle(flexItemRenderer.getMinMaxWidth().getMaxWidth(), 0), false).getWidth();
                 }
             }
         }
@@ -1269,7 +1271,6 @@ final class FlexUtil {
             this.isColumnDirection = isColumnDirection;
             this.flexBasisContent = flexBasisContent;
             this.renderer = renderer;
-            this.flexBasis = flexBasis;
             if (flexShrink < 0) {
                 throw new IllegalArgumentException(LayoutExceptionMessageConstant.FLEX_SHRINK_CANNOT_BE_NEGATIVE);
             }
@@ -1285,8 +1286,15 @@ final class FlexUtil {
                     calculateMinContentAuto(areaMainSize, crossSize) : (float) definiteMinContent;
             Float maxMainSize = isColumnDirection ?
                     retrieveMaxHeightForMainDirection(this.renderer) : this.renderer.retrieveMaxWidth(areaMainSize);
-            // As for now we assume that max width should be calculated so
-            this.maxContent = maxMainSize == null ? AbstractRenderer.INF : (float) maxMainSize;
+            // As for now we assume that max main size should be calculated. For columnDirection relative min-height is
+            // not taken into account, so we should handle it here.
+            this.maxContent = maxMainSize == null ? AbstractRenderer.INF :
+                    Math.max(this.minContent, (float) maxMainSize);
+            if (this.flexBasisContent) {
+                this.flexBasis = determineFlexBaseSize(areaMainSize, isColumnDirection, crossSize);
+            } else {
+                this.flexBasis = flexBasis;
+            }
         }
 
         public Rectangle toRectangle() {
@@ -1444,6 +1452,34 @@ final class FlexUtil {
             return Math.min(
                     Math.max((float) (minCrossSize * renderer.getAspectRatio()), value),
                     (float) (maxCrossSize * renderer.getAspectRatio()));
+        }
+
+        private float determineFlexBaseSize(float mainSize, boolean isColumnDirection, float crossSize) {
+            // When determining the flex base size, the item’s min and max main sizes are ignored (no clamping occurs).
+            UnitValue minMainSize = null;
+            UnitValue maxMainSize = null;
+            if (isColumnDirection) {
+                minMainSize = this.renderer.<UnitValue>getProperty(Property.MIN_HEIGHT);
+                this.renderer.deleteProperty(Property.MIN_HEIGHT);
+                maxMainSize = this.renderer.<UnitValue>getProperty(Property.MAX_HEIGHT);
+                this.renderer.deleteProperty(Property.MAX_HEIGHT);
+            } else {
+                minMainSize = this.renderer.<UnitValue>getProperty(Property.MIN_WIDTH);
+                this.renderer.deleteProperty(Property.MIN_WIDTH);
+                maxMainSize = this.renderer.<UnitValue>getProperty(Property.MAX_WIDTH);
+                this.renderer.deleteProperty(Property.MAX_WIDTH);
+            }
+            // TODO DEVSIX-5091 improve determining of the flex base size when flex-basis: content
+            float flexBaseSize = calculateMaxMainSize(this.renderer, mainSize, isColumnDirection, crossSize);
+            // Restore min and max main sizes
+            if (isColumnDirection) {
+                this.renderer.returnBackOwnProperty(Property.MIN_HEIGHT, minMainSize);
+                this.renderer.returnBackOwnProperty(Property.MAX_HEIGHT, maxMainSize);
+            } else {
+                this.renderer.returnBackOwnProperty(Property.MIN_WIDTH, minMainSize);
+                this.renderer.returnBackOwnProperty(Property.MAX_WIDTH, maxMainSize);
+            }
+            return flexBaseSize;
         }
     }
 }

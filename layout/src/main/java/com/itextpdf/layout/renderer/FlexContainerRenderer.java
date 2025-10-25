@@ -22,7 +22,6 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
@@ -41,9 +40,10 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
-import java.util.Comparator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,9 +64,14 @@ public class FlexContainerRenderer extends DivRenderer {
     private IFlexItemMainDirector flexItemMainDirector = null;
 
     /**
-     * Child renderers and their heights and min heights before the layout.
+     * Child renderers and their heights and min/max heights before the layout.
      */
-    private final Map<IRenderer, Tuple2<UnitValue, UnitValue>> heights = new HashMap<>();
+    private final Map<IRenderer, List<UnitValue>> heights = new HashMap<>();
+
+    /**
+     * Child renderers and their widths and min/max widths before the layout.
+     */
+    private final Map<IRenderer, List<UnitValue>> widths = new HashMap<>();
 
     /**
      * Creates a FlexContainerRenderer from its corresponding layout object.
@@ -136,7 +141,6 @@ public class FlexContainerRenderer extends DivRenderer {
 
         List<IRenderer> renderersToOverflow = retrieveRenderersToOverflow(layoutContextRectangle);
 
-        final List<UnitValue> previousWidths = new ArrayList<>();
         for (final List<FlexItemInfo> line : lines) {
             for (final FlexItemInfo itemInfo : line) {
                 final Rectangle rectangleWithoutBordersMarginsPaddings;
@@ -148,20 +152,33 @@ public class FlexContainerRenderer extends DivRenderer {
                             itemInfo.getRenderer().applyMarginsBordersPaddings(itemInfo.getRectangle().clone(), false);
                 }
 
-                heights.put(itemInfo.getRenderer(), new Tuple2<UnitValue, UnitValue>(
+                heights.put(itemInfo.getRenderer(), Arrays.asList(
                         itemInfo.getRenderer().<UnitValue>getProperty(Property.HEIGHT),
-                        itemInfo.getRenderer().<UnitValue>getProperty(Property.MIN_HEIGHT)));
-                previousWidths.add(itemInfo.getRenderer().<UnitValue>getProperty(Property.WIDTH));
+                        itemInfo.getRenderer().<UnitValue>getProperty(Property.MIN_HEIGHT),
+                        itemInfo.getRenderer().<UnitValue>getProperty(Property.MAX_HEIGHT)));
+                widths.put(itemInfo.getRenderer(), Arrays.asList(
+                        itemInfo.getRenderer().<UnitValue>getProperty(Property.WIDTH),
+                        itemInfo.getRenderer().<UnitValue>getProperty(Property.MIN_WIDTH),
+                        itemInfo.getRenderer().<UnitValue>getProperty(Property.MAX_WIDTH)));
 
                 itemInfo.getRenderer().setProperty(Property.WIDTH,
                         UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getWidth()));
-                itemInfo.getRenderer().setProperty(Property.HEIGHT,
-                        UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight()));
+
+                UnitValue height = UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight());
+                itemInfo.getRenderer().setProperty(Property.HEIGHT, height);
                 // TODO DEVSIX-1895 Once the ticket is closed, there will be no need in setting min-height
                 // In case element takes less vertical space than expected, we need to make sure
                 // it is extended to the height predicted by the algo
-                itemInfo.getRenderer().setProperty(Property.MIN_HEIGHT,
-                        UnitValue.createPointValue(rectangleWithoutBordersMarginsPaddings.getHeight()));
+                itemInfo.getRenderer().setProperty(Property.MIN_HEIGHT, height);
+
+                if (FlexUtil.isColumnDirection(this)) {
+                    // TODO DEVSIX-1895 Once the ticket is closed, uncomment this line
+                    // itemInfo.getRenderer().deleteProperty(Property.MIN_HEIGHT);
+                    itemInfo.getRenderer().deleteProperty(Property.MAX_HEIGHT);
+                } else {
+                    itemInfo.getRenderer().deleteProperty(Property.MIN_WIDTH);
+                    itemInfo.getRenderer().deleteProperty(Property.MAX_WIDTH);
+                }
 
                 // Property.HORIZONTAL_ALIGNMENT mustn't play, in flex container items are aligned
                 // using justify-content and align-items
@@ -180,10 +197,14 @@ public class FlexContainerRenderer extends DivRenderer {
         int counter = 0;
         for (final List<FlexItemInfo> line : lines) {
             for (final FlexItemInfo itemInfo : line) {
-                itemInfo.getRenderer().setProperty(Property.WIDTH, previousWidths.get(counter));
-                Tuple2<UnitValue, UnitValue> curHeights = heights.get(itemInfo.getRenderer());
-                itemInfo.getRenderer().setProperty(Property.HEIGHT, curHeights.getFirst());
-                itemInfo.getRenderer().setProperty(Property.MIN_HEIGHT, curHeights.getSecond());
+                List<UnitValue> curWidths = widths.get(itemInfo.getRenderer());
+                itemInfo.getRenderer().returnBackOwnProperty(Property.WIDTH, curWidths.get(0));
+                itemInfo.getRenderer().returnBackOwnProperty(Property.MIN_WIDTH, curWidths.get(1));
+                itemInfo.getRenderer().returnBackOwnProperty(Property.MAX_WIDTH, curWidths.get(2));
+                List<UnitValue> curHeights = heights.get(itemInfo.getRenderer());
+                itemInfo.getRenderer().returnBackOwnProperty(Property.HEIGHT, curHeights.get(0));
+                itemInfo.getRenderer().returnBackOwnProperty(Property.MIN_HEIGHT, curHeights.get(1));
+                itemInfo.getRenderer().returnBackOwnProperty(Property.MAX_HEIGHT, curHeights.get(2));
                 ++counter;
             }
         }
@@ -663,12 +684,15 @@ public class FlexContainerRenderer extends DivRenderer {
 
         // childRenderer is the original renderer we set the height for before the layout
         // And we need to remove the height from the corresponding overflow renderer
-        Tuple2<UnitValue, UnitValue> curHeights = heights.get(childRenderer);
-        if (curHeights.getFirst() == null) {
+        List<UnitValue> curHeights = heights.get(childRenderer);
+        if (curHeights.get(0) == null) {
             overflowRenderer.deleteOwnProperty(Property.HEIGHT);
         }
-        if (curHeights.getSecond() == null) {
+        if (curHeights.get(1) == null) {
             overflowRenderer.deleteOwnProperty(Property.MIN_HEIGHT);
+        }
+        if (curHeights.get(2) == null) {
+            overflowRenderer.deleteOwnProperty(Property.MAX_HEIGHT);
         }
     }
 
@@ -711,7 +735,11 @@ public class FlexContainerRenderer extends DivRenderer {
                 minWidth = Math.max(minWidth, childMinMaxWidth.getMinWidth());
             } else {
                 maxWidth += childMinMaxWidth.getMaxWidth() + (i == 0 ? 0 : columnGap);
-                minWidth += childMinMaxWidth.getMinWidth() + (i == 0 ? 0 : columnGap);
+                if (FlexUtil.isSingleLine(this)) {
+                    minWidth += childMinMaxWidth.getMinWidth() + (i == 0 ? 0 : columnGap);
+                } else {
+                    minWidth = Math.max(minWidth, childMinMaxWidth.getMinWidth());
+                }
             }
         }
         minMaxWidthHandler.updateMaxChildWidth(maxWidth);
