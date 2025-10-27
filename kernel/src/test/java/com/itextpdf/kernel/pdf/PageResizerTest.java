@@ -29,6 +29,8 @@ import com.itextpdf.kernel.pdf.PageResizer.VerticalAnchorPoint;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -480,5 +482,244 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileNameReverted,
                         SOURCE_FOLDER + "cmp_" + outFileNameReverted, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    // TODO: DEVSIX-9518 PageResizer breaks PDF/A compliance after page resizing
+    public void testPdfASignatureFieldDefault() throws IOException, InterruptedException {
+        String inFileName = "pdfASignatureFieldDefault.pdf";
+        String outFileName = "pdfASignatureFieldDefault.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    PageResizer.ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    // TODO: DEVSIX-9518 PageResizer breaks PDF/A compliance after page resizing
+    public void testPdfASignatureFieldAspect() throws IOException, InterruptedException {
+        String inFileName = "pdfASignatureFieldAspect.pdf";
+        String outFileName = "pdfASignatureFieldAspect.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    // TODO: DEVSIX-9518 PageResizer breaks PDF/A compliance after page resizing
+    public void testPdfAFormFieldsDefault() throws IOException, InterruptedException {
+        String inFileName = "pdfAFormFieldsDefault.pdf";
+        String outFileName = "pdfAFormFieldsDefault.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    // TODO: DEVSIX-9518 PageResizer breaks PDF/A compliance after page resizing
+    public void testPdfAFormFieldsAspect() throws IOException, InterruptedException {
+        String inFileName = "pdfAFormFieldsAspect.pdf";
+        String outFileName = "pdfAFormFieldsAspect.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void testPdfUA1ButtonDefault() throws IOException, InterruptedException {
+        String inFileName = "pdfUA1ButtonDefault.pdf";
+        String outFileName = "pdfUA1ButtonDefault.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void testPdfUA1ButtonAspect() throws IOException, InterruptedException {
+        String inFileName = "pdfUA1ButtonAspect.pdf";
+        String outFileName = "pdfUA1ButtonAspect.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void testPdfUA2RadioButtonDefault() throws IOException, InterruptedException {
+        String inFileName = "pdfUA2RadioButtonDefault.pdf";
+        String outFileName = "pdfUA2RadioButtonDefault.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void testPdfUA2RadioButtonAspect() throws IOException, InterruptedException {
+        String inFileName = "pdfUA2RadioButtonAspect.pdf";
+        String outFileName = "pdfUA2RadioButtonAspect.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void testPdfUA1SignatureField() throws IOException, InterruptedException {
+        String inFileName = "pdfUA1SignatureField.pdf";
+        String outFileName = "pdfUA1SignatureField.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void testPdfUA2SignatureField() throws IOException, InterruptedException {
+        String inFileName = "pdfUA2SignatureField.pdf";
+        String outFileName = "pdfUA2SignatureField.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+    }
+
+    @Test
+    public void testNestedForms() throws IOException, InterruptedException {
+        String inFileName = "nestedForms.pdf";
+        String outFileName = "nestedForms.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testNestedMixedXObjectsDefault() throws IOException, InterruptedException {
+        String inFileName = "nestedMixedXObjectsDefault.pdf";
+        String outFileName = "nestedMixedXObjectsDefault.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testNestedMixedXObjectsAspect() throws IOException, InterruptedException {
+        String inFileName = "nestedMixedXObjectsAspect.pdf";
+        String outFileName = "nestedMixedXObjectsAspect.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testImageDefault() throws IOException, InterruptedException {
+        String inFileName = "imageDefault.pdf";
+        String outFileName = "imageDefault.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void testImageAspect() throws IOException, InterruptedException {
+        String inFileName = "testImageAspect.pdf";
+        String outFileName = "testImageAspect.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
     }
 }
