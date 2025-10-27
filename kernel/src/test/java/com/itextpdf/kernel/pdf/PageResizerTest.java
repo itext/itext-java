@@ -485,6 +485,49 @@ public class PageResizerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void annotationsRightAnchoringTest() throws IOException, InterruptedException {
+        String[] pdfFiles = new String[]{"annotationVerticesTest.pdf", "annotationBorderTest.pdf",
+                "annotationQuadpointsTest.pdf", "annotationRdTest.pdf"};
+        for (String pdfFileName : pdfFiles) {
+            String outPdf = pdfFileName.substring(0, pdfFileName.length() - 4) + "Right.pdf";
+            try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + pdfFileName),
+                    CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outPdf))) {
+                PageResizer pr = new PageResizer(new PageSize(PageSize.A4.getWidth() * 2, PageSize.A4.getHeight()),
+                        PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO);
+                pr.setVerticalAnchorPoint(VerticalAnchorPoint.CENTER);
+                pr.setHorizontalAnchorPoint(HorizontalAnchorPoint.RIGHT);
+                pr.resize(pdfDocument.getPage(1));
+            }
+
+            Assertions.assertNull(new CompareTool()
+                    .compareByContent(DESTINATION_FOLDER + outPdf,
+                            SOURCE_FOLDER + "cmp_" + outPdf, DESTINATION_FOLDER, "diff"));
+        }
+    }
+
+    @Test
+    public void annotationsTopAnchoringTest() throws IOException, InterruptedException {
+        String[] pdfFiles = new String[]{"annotationVerticesTest.pdf", "annotationBorderTest.pdf",
+                "annotationQuadpointsTest.pdf", "annotationRdTest.pdf"};
+        for (String pdfFileName : pdfFiles) {
+            String outPdf = pdfFileName.substring(0, pdfFileName.length() - 4) + "Top.pdf";
+            try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + pdfFileName),
+                    CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outPdf))) {
+                PageResizer pr = new PageResizer(new PageSize(PageSize.A4.getWidth(), PageSize.A4.getHeight() * 2),
+                        PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO);
+                pr.setVerticalAnchorPoint(VerticalAnchorPoint.TOP);
+                pr.setHorizontalAnchorPoint(HorizontalAnchorPoint.CENTER);
+                pr.resize(pdfDocument.getPage(1));
+            }
+
+            Assertions.assertNull(new CompareTool()
+                    .compareByContent(DESTINATION_FOLDER + outPdf,
+                            SOURCE_FOLDER + "cmp_" + outPdf, DESTINATION_FOLDER, "diff"));
+        }
+    }
+
+
+    @Test
     // TODO: DEVSIX-9518 PageResizer breaks PDF/A compliance after page resizing
     public void testPdfASignatureFieldDefault() throws IOException, InterruptedException {
         String inFileName = "pdfASignatureFieldDefault.pdf";
