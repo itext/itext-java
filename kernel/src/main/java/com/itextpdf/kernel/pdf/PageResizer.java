@@ -33,6 +33,9 @@ import com.itextpdf.kernel.pdf.colorspace.PdfPattern;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The PageResizer class provides functionality to resize PDF pages to a specified
@@ -40,8 +43,31 @@ import java.util.Arrays;
  * content, annotations, and resources accordingly, also supports configuration
  * options for maintaining the aspect ratio during the resize operation.
  */
-class PageResizer {
+public class PageResizer {
     private static final float EPSILON = 1e-6f;
+    private static final int NUMBER_FORMAT_PRECISION = 10000;
+    // Operators we care about in DA:
+    //   Tf  => operands: /FontName <fontSize>  (scale the <fontSize> only)
+    //   TL  => operand: <leading>              (scale)
+    //   Tc  => operand: <charSpacing>          (scale)
+    //   Tw  => operand: <wordSpacing>          (scale)
+    //   Ts  => operand: <textRise>             (scale)
+    //
+    // Operators we intentionally do NOT scale:
+    //   Tz (horizontal scaling, percentage), Tr (rendering mode),
+    //   color ops (g/rg/k/G/RG/K), etc.
+    private static final Set<String> SCALABLE_DA_OPERATORS = new HashSet<>(Arrays.asList(
+            "Tf", "TL", "Tc", "Tw", "Ts"));
+    // A list of single-value CSS properties with length values that should be scaled.
+    // Based on a PDF spec for Rich Text strings 12.7.3.4 (Table 255) plus other common properties from CSS 1/2.
+    // Shorthand properties like "padding" or "margin" seem to be unsupported by Acrobat.
+    private static final Set<String> SCALABLE_RC_PROPERTIES = new HashSet<>(Arrays.asList(
+            "font-size", "line-height", "text-indent",
+            "padding-top", "padding-right", "padding-bottom", "padding-left",
+            "margin-top", "margin-right", "margin-bottom", "margin-left",
+            "border-top-width", "border-right-width", "border-bottom-width", "border-left-width",
+            "width", "height", "letter-spacing", "word-spacing"));
+    private static final Set<String> SCALABLE_UNITS = new HashSet<>(Arrays.asList("pt", "pc", "in", "cm", "mm", "px"));
 
     private final PageSize size;
     private VerticalAnchorPoint verticalAnchorPoint = VerticalAnchorPoint.CENTER;
@@ -156,32 +182,14 @@ class PageResizer {
     }
 
     static String scaleDaString(String daString, double scale) {
-        if (daString == null || daString.trim().isEmpty()) {
+        if (daString == null || daString.trim().isEmpty() || Math.abs(scale - 1.0) < EPSILON) {
             return daString;
         }
 
-        // Optimization for identity scaling. Use an epsilon for robust float comparison.
-        if (Math.abs(scale - 1.0) < 1e-9) {
-            return daString;
-        }
-
-        java.util.List<String> tokens = new ArrayList<>(Arrays.asList(daString.trim().split("\\s+")));
-
-        // Operators we care about in DA:
-        //   Tf  => operands: /FontName <fontSize>  (scale the <fontSize> only)
-        //   TL  => operand: <leading>              (scale)
-        //   Tc  => operand: <charSpacing>          (scale)
-        //   Tw  => operand: <wordSpacing>          (scale)
-        //   Ts  => operand: <textRise>             (scale)
-        //
-        // Operators we intentionally do NOT scale:
-        //   Tz (horizontal scaling, percentage), Tr (rendering mode),
-        //   color ops (g/rg/k/G/RG/K), etc.
-        final java.util.Set<String> scalableOperators = new java.util.HashSet<>(java.util.Arrays.asList(
-                "Tf", "TL", "Tc", "Tw", "Ts"));
+        List<String> tokens = new ArrayList<>(Arrays.asList(daString.trim().split("\\s+")));
 
         for (int i = 0; i < tokens.size(); i++) {
-            if (scalableOperators.contains(tokens.get(i))) {
+            if (SCALABLE_DA_OPERATORS.contains(tokens.get(i))) {
                 int operandIdx = i - 1;
                 while (operandIdx >= 0) {
                     String token = tokens.get(operandIdx);
@@ -202,6 +210,47 @@ class PageResizer {
             }
         }
         return String.join(" ", tokens);
+    }
+
+    static String scaleRcString(String rcString, double scale) {
+        if (isEmpty(rcString) || Math.abs(scale - 1.0) < EPSILON) {
+            return rcString;
+        }
+
+        // Quick pre-check: if none of the property names appear at all, skip additional work.
+        // This is a fast substring scan; false positives are fine.
+        boolean containsScalable = false;
+        for (String p : SCALABLE_RC_PROPERTIES) {
+            if (rcString.contains(p)) {
+                containsScalable = true;
+                break;
+            }
+        }
+        if (!containsScalable) {
+            return rcString;
+        }
+
+        RcPropertyParser parser = new RcPropertyParser(rcString);
+        StringBuilder out = new StringBuilder();
+        int lastWrite = 0;
+
+        while (parser.findNext()) {
+            RcPropertyParserResult result = parser.getResult();
+            double newValue = result.getParsedValue() * scale;
+            String formatted = formatNumber(newValue);
+
+            out.append(rcString.substring(lastWrite, result.getValueStart())).append(formatted);
+            lastWrite = result.getValueEnd();
+        }
+
+
+        if (lastWrite == 0) {
+            // No replacements
+            return rcString;
+        }
+        // Append the remainder
+        out.append(rcString.substring(lastWrite, rcString.length()));
+        return out.toString();
     }
 
     /**
@@ -236,12 +285,14 @@ class PageResizer {
     }
 
     /**
-     * Resizes the appearance streams of a given PDF annotation by applying the specified affine transformation matrix.
-     * This involves scaling the content of the appearance streams in the annotation's
-     * appearance dictionary and adjusting their transformation matrices to reflect the scaling.
+     * Resizes the appearance streams of the given PDF annotation by applying the specified affine transformation.
+     * The method traverses through the annotation's appearance dictionary, locating and resizing the
+     * streams or nested streams within, based on the scaling and transformation defined by the
+     * affine transformation matrix.
      *
      * @param annot the PDF annotation whose appearance streams are to be resized
-     * @param scalingMatrix the affine transformation matrix used to scale the appearance streams
+     * @param scalingMatrix the affine transformation matrix representing the scaling and translation
+     *                      to be applied to the appearance streams
      */
     static void resizeAppearanceStreams(PdfAnnotation annot, AffineTransform scalingMatrix) {
         PdfDictionary ap = annot.getAppearanceDictionary();
@@ -265,9 +316,27 @@ class PageResizer {
     }
 
     /**
+     * Checks if a given string is null, empty, or contains only whitespace characters.
+     *
+     * @param str the string to check for emptiness
+     * @return true if the string is null, empty, or contains only whitespace; false otherwise
+     */
+    private static boolean isEmpty(String str) {
+        if (str == null) {
+            return true;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isWhitespace(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Scales the transformation matrix of the provided pattern using the given scaling matrix,
      * without mutating the original pattern.
-     *
+     * <p>
      * The method:
      *  - Locates the pattern object in the provided resources by name.
      *  - Deep-copies the pattern object into the same document.
@@ -456,6 +525,16 @@ class PageResizer {
         if (da != null) {
             annotDict.put(PdfName.DA, new PdfString(scaleDaString(da, lengthScale)));
         }
+        // Scale font size in Rich Content string
+        if (annotDict.getAsString(PdfName.RC) != null) {
+            String rc = annotDict.getAsString(PdfName.RC).toUnicodeString();
+            annotDict.put(PdfName.RC, new PdfString(scaleRcString(rc, lengthScale)));
+        }
+
+        if (annotDict.getAsString(PdfName.DS) != null) {
+            String ds = annotDict.getAsString(PdfName.DS).toUnicodeString();
+            annotDict.put(PdfName.DS, new PdfString(scaleRcString(ds, lengthScale)));
+        }
     }
 
     /**
@@ -468,8 +547,11 @@ class PageResizer {
         if (Double.isNaN(v)) {
             return Double.toString(v);
         }
+        if (Math.abs(v) < EPSILON) {
+            return "0";
+        }
         // Round to 4 decimal places.
-        long scaled = (long) Math.round(v * 10000.0);
+        long scaled = (long) Math.round(v * NUMBER_FORMAT_PRECISION);
         if (scaled == 0) {
             return "0";
         }
@@ -478,12 +560,12 @@ class PageResizer {
             sb.append('-');
             scaled = -scaled;
         }
-        long wholePart = scaled / 10000;
-        long fractionalPart = scaled % 10000;
+        long wholePart = scaled / NUMBER_FORMAT_PRECISION;
+        long fractionalPart = scaled % NUMBER_FORMAT_PRECISION;
         sb.append(wholePart);
         if (fractionalPart > 0) {
             sb.append('.');
-            String fractionalStr = String.valueOf(10000 + fractionalPart).substring(1);
+            String fractionalStr = String.valueOf(NUMBER_FORMAT_PRECISION + fractionalPart).substring(1);
             sb.append(fractionalStr);
             while (sb.length() > 0 && sb.charAt(sb.length() - 1) == '0') {
                 sb.setLength(sb.length() - 1);
@@ -604,20 +686,295 @@ class PageResizer {
      * Enum representing the available types of resizing strategies when modifying the dimensions
      * of a PDF page. These strategies determine how the content is scaled relative to the new size.
      */
-    enum ResizeType {
+    public enum ResizeType {
         MAINTAIN_ASPECT_RATIO,
         DEFAULT
     }
 
-    enum VerticalAnchorPoint {
+    /**
+     * Represents the vertical alignment points used for resizing or aligning elements,
+     * particularly in the context of page rescaling.
+     *
+     * The available anchor points are:
+     * - TOP: The top edge of the element serves as the reference point for alignment.
+     * - CENTER: The center of the element is used as the alignment reference.
+     * - BOTTOM: The bottom edge of the element serves as the reference point for alignment.
+     *
+     * This enumeration is employed by the PageResizer class to determine the vertical
+     * alignment of content during resizing operations.
+     */
+    public enum VerticalAnchorPoint {
         TOP,
         CENTER,
         BOTTOM
     }
 
-    enum HorizontalAnchorPoint {
+    /**
+     * Enum representing the horizontal anchor point used in the resizing and alignment
+     * of a page or content.
+     *
+     * The horizontal anchor point specifies the horizontal alignment,
+     * determining the reference point for positioning during resizing operations.
+     * Possible values include:
+     * - LEFT*/
+    public enum HorizontalAnchorPoint {
         LEFT,
         CENTER,
         RIGHT
     }
+
+    /**
+     * Represents the result of parsing a property in a scalable RC string. This class encapsulates
+     * the starting and ending indices of the parsed value within the RC property string, along with
+     * the parsed numerical value itself.
+     * <p>
+     * This is a utility class used internally within the PageResizer to help process scalable RC
+     * properties by extracting and interpreting numerical values in the context of resizing operations.
+     */
+    private static class RcPropertyParserResult {
+        private int valueStart;
+        private int valueEnd;
+        private double parsedValue;
+
+        public RcPropertyParserResult(int valueStart, int valueEnd, double parsedValue) {
+            this.valueStart = valueStart;
+            this.valueEnd = valueEnd;
+            this.parsedValue = parsedValue;
+        }
+
+        public int getValueStart() {
+            return valueStart;
+        }
+
+        public int getValueEnd() {
+            return valueEnd;
+        }
+
+        public double getParsedValue() {
+            return parsedValue;
+        }
+    }
+
+    /**
+     * RcPropertyParser is a utility class designed to parse scalable properties
+     * from a given CSS-like source string. Its primary function is to locate a specific
+     * property, extract its numeric value, and verify the associated unit for scaling purposes.
+     * It iterates over the source, attempting to match and parse specific property patterns.
+     */
+    private static class RcPropertyParser {
+        private final String source;
+        private final int length;
+
+        private int cursor;
+        private RcPropertyParserResult result;
+
+
+        RcPropertyParser(String source) {
+            this.source = source;
+            this.length = source.length();
+            this.cursor = 0;
+        }
+
+        /**
+         * Attempts to find the next matching property in the source string and parse its scalable value.
+         * If a match is found, the method updates the cursor position and associated parsed value details.
+         *
+         * @return {@code true} if a matching scalable property is found and its value is successfully parsed,
+         *         {@code false} if no more matching properties can be found in the source string.
+         */
+        public boolean findNext() {
+            while (cursor < length) {
+                int matchedPropEnd = findAndMatchProperty(cursor);
+                if (matchedPropEnd != -1) {
+                    int newCursor = parseAndSetScalableValue(matchedPropEnd);
+                    if (newCursor != -1) {
+                        cursor = newCursor;
+                        return true;
+                    }
+                }
+                cursor++;
+            }
+            return false;
+        }
+
+        public RcPropertyParserResult getResult() {
+            return result;
+        }
+
+        private int findAndMatchProperty(int i) {
+            // Micro-optimization: quick reject by checking the first char is a letter commonly starting properties.
+            char c = source.charAt(i);
+            // Check that the character before (if exists) is not a property name character
+            // E.g., this ensures we don't match "height" in "text-height"
+            boolean validLeadingBoundary = (i == 0) || !isPropertyNameChar(source.charAt(i - 1));
+            if (((c >= 'a' && c <= 'z') || c == '-') && validLeadingBoundary) {
+                for (String p : SCALABLE_RC_PROPERTIES) {
+                    int len = p.length();
+                    if (i + len <= length && compareRegions(source, i, p, 0, len)) {
+                        return i + len;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        private static boolean compareRegions(String first, int firstOffset, String second, int secondOffset, int len) {
+            if (firstOffset < 0 || secondOffset < 0 || len < 0 ||
+                    (firstOffset + len) > first.length() ||
+                    (secondOffset + len) > second.length()) {
+                return false;
+            }
+            for (int i = 0; i < len; i++) {
+                char c1 = first.charAt(firstOffset + i);
+                char c2 = second.charAt(secondOffset + i);
+                if (c1 == c2) {
+                    continue;
+                }
+                return false;
+            }
+            return true;
+        }
+
+        private int parseAndSetScalableValue(int matchedPropEnd) {
+            int k = skipWhitespace(source, matchedPropEnd);
+            if (k >= length || source.charAt(k) != ':') {
+                // Not a property assignment;
+                return -1;
+            }
+            // skip ':'
+            k++;
+            k = skipWhitespace(source, k);
+
+            // Parse number
+            int numStart = k;
+            if (numStart >= length) {
+                // no value;
+                return -1;
+            }
+
+            int numEnd = parseCssNumber(source, numStart);
+            if (numEnd <= numStart) {
+                // Not a number here (e.g., 'inherit' or other values);
+                return -1;
+            }
+
+            // Skip spaces between number and unit
+            int unitStart = skipWhitespace(source, numEnd);
+
+            // Parse unit (letters)
+            int unitEnd = parseCssUnit(source, unitStart);
+
+            if (unitEnd <= unitStart) {
+                // Missing number or unit; not a match we scale.
+                return -1;
+            }
+
+            String unit = source.substring(unitStart, unitEnd).toLowerCase();
+            if (!SCALABLE_UNITS.contains(unit)) {
+                // Do not scale relative or unsupported units
+                return -1;
+            }
+
+            // At this point we have: property matched, colon, number [numStart..numEnd), unit [unitStart..unitEnd)
+            String numStr = source.substring(numStart, numEnd);
+            double value;
+            try {
+                value = Double.parseDouble(numStr);
+            } catch (NumberFormatException ex) {
+                // Shouldn't happen given our parser, but to be safe
+                return -1;
+            }
+
+            this.result = new RcPropertyParserResult(numStart, numEnd, value);
+            return unitEnd;
+        }
+
+
+        private static boolean isPropertyNameChar(char c) {
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '-' || Character.isDigit(c);
+        }
+
+        private static int skipWhitespace(String str, int index) {
+            while (index < str.length() && Character.isWhitespace(str.charAt(index))) {
+                index++;
+            }
+            return index;
+        }
+
+        private static int parseCssNumber(String str, int startIndex) {
+            int n = str.length();
+            if (startIndex >= n) {
+                return startIndex;
+            }
+
+            int i = startIndex;
+
+            // optional sign
+            if (str.charAt(i) == '+' || str.charAt(i) == '-') {
+                i++;
+            }
+
+            int digitsBefore = 0;
+            int digitsAfter = 0;
+
+            // digits before decimal
+            int d = i;
+            while (d < n && Character.isDigit(str.charAt(d))) {
+                d++;
+            }
+            digitsBefore = d - i;
+            i = d;
+
+            // optional decimal part
+            if (i < n && str.charAt(i) == '.') {
+                i++;
+                int a = i;
+                while (a < n && Character.isDigit(str.charAt(a))) {
+                    a++;
+                }
+                digitsAfter = a - i;
+                i = a;
+            }
+
+            if (digitsBefore == 0 && digitsAfter == 0) {
+                return startIndex;
+            }
+
+            i = parseExponent(str, i, n);
+
+            return i;
+        }
+
+        private static int parseExponent(String str, int i, int n) {
+            if (i < n && (str.charAt(i) == 'e' || str.charAt(i) == 'E')) {
+                int expPos = i + 1;
+                if (expPos < n && (str.charAt(expPos) == '+' || str.charAt(expPos) == '-')) {
+                    expPos++;
+                }
+                int expDigitsStart = expPos;
+                while (expPos < n && Character.isDigit(str.charAt(expPos))) {
+                    expPos++;
+                }
+                if (expPos > expDigitsStart) {
+                    // accept exponent only if digits present
+                    return expPos;
+                }
+            }
+            return i;
+        }
+
+        private static int parseCssUnit(String str, int startIndex) {
+            int i = startIndex;
+            while (i < str.length()) {
+                char ch = str.charAt(i);
+                if ((ch >= 'a' && ch <= 'z')  || (ch >= 'A' && ch <= 'Z')) {
+                    i++;
+                } else {
+                    break;
+                }
+            }
+            return i;
+        }
+    }
+
 }

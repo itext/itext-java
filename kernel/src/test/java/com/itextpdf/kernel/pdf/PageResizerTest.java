@@ -156,6 +156,32 @@ public class PageResizerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void testAnnotationRichText() throws IOException, InterruptedException {
+        String inFileName = "annotationRichText.pdf";
+        String outFileName =  "annotationRichText.pdf";
+        String outFileNameReverted = "annotationRichTextReverted.pdf";
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileName))) {
+            new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
+                    PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileName,
+                        SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
+
+        // Reverting
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + outFileName),
+                new PdfWriter(DESTINATION_FOLDER + outFileNameReverted))) {
+            PageResizer resizer = new PageResizer(new PageSize(PageSize.A4), ResizeType.MAINTAIN_ASPECT_RATIO);
+            resizer.resize(pdfDocument.getPage(1));
+        }
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(DESTINATION_FOLDER + outFileNameReverted,
+                        SOURCE_FOLDER + "cmp_" + outFileNameReverted, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
     public void testAnnotationInkList() throws IOException, InterruptedException {
         String inFileName = "annotationInkList.pdf";
         String outFileName =  "annotationInkList.pdf";
