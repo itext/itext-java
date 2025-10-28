@@ -22,10 +22,13 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -33,6 +36,7 @@ import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.FlexWrapPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.splitting.DefaultSplitCharacters;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -40,6 +44,10 @@ import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Tag("UnitTest")
 public class FlexContainerRendererTest extends ExtendedITextTest {
@@ -66,6 +74,59 @@ public class FlexContainerRendererTest extends ExtendedITextTest {
 
         Assertions.assertEquals(50F, flexRenderer.getMinMaxWidth().getMinWidth(), EPS);
         Assertions.assertEquals(50F, flexRenderer.getMinMaxWidth().getMaxWidth(), EPS);
+    }
+
+    @Test
+    public void nestedFlexWrapReverseTest() throws IOException {
+        FlexContainerRenderer flexRenderer = new FlexContainerRenderer(new Div());
+        FlexContainerRenderer flexRendererChild = new FlexContainerRenderer(new Div());
+        FlexContainerRenderer flexRendererChildInner = new FlexContainerRenderer(new Div());
+        flexRenderer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP_REVERSE);
+        flexRendererChild.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP_REVERSE);
+        flexRendererChildInner.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP_REVERSE);
+        flexRendererChildInner.setProperty(Property.WIDTH, new UnitValue(UnitValue.POINT, 100));
+        TextRenderer textRenderer1 = new TextRenderer(new Text("1"));
+        TextRenderer textRenderer2 = new TextRenderer(new Text("2"));
+        TextRenderer textRenderer3 = new TextRenderer(new Text("3"));
+        textRenderer1.setProperty(Property.TEXT_RISE, 20F);
+        textRenderer1.setProperty(Property.CHARACTER_SPACING, 20F);
+        textRenderer1.setProperty(Property.WORD_SPACING, 20F);
+        textRenderer1.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.HELVETICA));
+        textRenderer1.setProperty(Property.FONT_SIZE, new UnitValue(UnitValue.POINT, 20));
+        textRenderer1.setProperty(Property.SPLIT_CHARACTERS, new DefaultSplitCharacters());
+        textRenderer2.setProperty(Property.TEXT_RISE, 20F);
+        textRenderer2.setProperty(Property.CHARACTER_SPACING, 20F);
+        textRenderer2.setProperty(Property.WORD_SPACING, 20F);
+        textRenderer2.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.HELVETICA));
+        textRenderer2.setProperty(Property.FONT_SIZE, new UnitValue(UnitValue.POINT, 20));
+        textRenderer2.setProperty(Property.SPLIT_CHARACTERS, new DefaultSplitCharacters());
+        textRenderer3.setProperty(Property.TEXT_RISE, 20F);
+        textRenderer3.setProperty(Property.CHARACTER_SPACING, 20F);
+        textRenderer3.setProperty(Property.WORD_SPACING, 20F);
+        textRenderer3.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.HELVETICA));
+        textRenderer3.setProperty(Property.FONT_SIZE, new UnitValue(UnitValue.POINT, 20));
+        textRenderer3.setProperty(Property.SPLIT_CHARACTERS, new DefaultSplitCharacters());
+        flexRendererChildInner.addChild(textRenderer1);
+        flexRendererChildInner.addChild(textRenderer1);
+        flexRendererChildInner.addChild(textRenderer2);
+        flexRendererChildInner.addChild(textRenderer2);
+        flexRendererChildInner.addChild(textRenderer3);
+        flexRendererChildInner.addChild(textRenderer3);
+        flexRendererChild.addChild(flexRendererChildInner);
+        flexRenderer.addChild(flexRendererChild);
+        flexRenderer.layout(new LayoutContext(new LayoutArea(0, new Rectangle(100, 100))));
+        List<String> childRenderersLayout1 = new ArrayList<>();
+        for (IRenderer childRenderer : flexRenderer.getChildRenderers().get(0).getChildRenderers().get(0).getChildRenderers()) {
+            childRenderersLayout1.add(((Text)childRenderer.getModelElement()).getText());
+        }
+        flexRenderer.layout(new LayoutContext(new LayoutArea(0, new Rectangle(100, 100))));
+        List<String> childRenderersLayout2 = new ArrayList<>();
+        for (IRenderer childRenderer : flexRenderer.getChildRenderers().get(0).getChildRenderers().get(0).getChildRenderers()) {
+            childRenderersLayout2.add(((Text)childRenderer.getModelElement()).getText());
+        }
+        for (int i = 0; i < childRenderersLayout1.size(); i++) {
+            Assertions.assertEquals(childRenderersLayout1.get(i), childRenderersLayout2.get(i));
+        }
     }
 
     @Test

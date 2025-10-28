@@ -63,6 +63,8 @@ public class FlexContainerRenderer extends DivRenderer {
 
     private IFlexItemMainDirector flexItemMainDirector = null;
 
+    boolean isWrapApplied = false;
+
     /**
      * Child renderers and their heights and min/max heights before the layout.
      */
@@ -109,7 +111,10 @@ public class FlexContainerRenderer extends DivRenderer {
         setThisAsParent(getChildRenderers());
         orderChildRenderers(getChildRenderers());
         Rectangle layoutBox = layoutContextRectangle.clone();
-
+        if (isWrapApplied){
+            applyWrapReverse();
+            isWrapApplied = false;
+        }
         UnitValue marginTop = this.<UnitValue>getProperty(Property.MARGIN_TOP);
         UnitValue marginBottom = this.<UnitValue>getProperty(Property.MARGIN_BOTTOM);
         boolean marginsCollapsingEnabled = Boolean.TRUE.equals(getPropertyAsBoolean(Property.COLLAPSING_MARGINS));
@@ -519,6 +524,7 @@ public class FlexContainerRenderer extends DivRenderer {
 
         removeAllChildRenderers(getChildRenderers());
         addAllChildRenderers(reorderedRendererList);
+        isWrapApplied = true;
     }
 
     private FlexItemInfo findFlexItemInfo(AbstractRenderer renderer) {
