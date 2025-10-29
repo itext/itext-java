@@ -36,17 +36,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 
-class FromDiskResourceRetriever implements IResourceRetriever {
+public class FromDiskResourceRetriever implements IResourceRetriever {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
     private final String resourcePath;
 
-    FromDiskResourceRetriever(String resourcePath) {
+    public FromDiskResourceRetriever(String resourcePath) {
         this.resourcePath = resourcePath;
     }
 
     @Override
-    public InputStream getInputStreamByUrl(URL url) throws IOException {
+    public InputStream getInputStreamByUrl(URL url) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

@@ -92,6 +92,9 @@ public class CRLValidator {
     static final String CERTIFICATE_IN_ISSUER_CHAIN = "Unable to validate CRL response: validated certificate is"
             + " part of issuer certificate chain.";
 
+    static final String CRL_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED = "Unable to validate CRL response: "
+            + "CRL response is signed by the same certificate as being validated.";
+
     // All reasons without unspecified.
     static final int ALL_REASONS = 32895;
 
@@ -315,6 +318,15 @@ public class CRLValidator {
             onExceptionLog(() -> crl.verify(crlIssuer.getPublicKey()), candidateReport,
                     e -> new CertificateReportItem(certificate, CRL_CHECK, CRL_INVALID, e,
                             ReportItemStatus.INDETERMINATE));
+
+            if (certificate.equals(crlIssuer)) {
+                // OCSP response is signed by this same certificate
+                report.addReportItem(new CertificateReportItem((X509Certificate) crlIssuer, CRL_CHECK,
+                        CRL_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED,
+                        ReportItem.ReportItemStatus.INDETERMINATE));
+                continue;
+            }
+
             ValidationReport responderReport = new ValidationReport();
             onExceptionLog(() -> builder.getCertificateChainValidator().validate(responderReport,
                     context.setCertificateSource(CertificateSource.CRL_ISSUER),

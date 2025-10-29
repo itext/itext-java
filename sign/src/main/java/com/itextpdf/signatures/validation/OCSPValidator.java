@@ -64,19 +64,19 @@ public class OCSPValidator {
     static final String ISSUERS_DO_NOT_MATCH = "OCSP: Issuers don't match.";
     static final String ISSUER_MISSING = "Issuer certificate wasn't found.";
     static final String FRESHNESS_CHECK =
-            "OCSP response is not fresh enough: " + "this update: {0}, validation date: {1}, freshness: {2}.";
+            "OCSP response is not fresh enough: this update: {0}, validation date: {1}, freshness: {2}.";
     static final String OCSP_COULD_NOT_BE_VERIFIED = "OCSP response could not be verified: "
             + "it does not contain responder in the certificate chain and response is not signed "
             + "by issuer certificate or any from the trusted store.";
-    static final String OCSP_RESPONDER_NOT_RETRIEVED = "OCSP response could not be verified: \" +\n"
-            + "            \"Unexpected exception occurred retrieving responder.";
-    static final String OCSP_RESPONDER_NOT_VERIFIED = "OCSP response could not be verified: \" +\n"
-            + "            \" Unexpected exception occurred while validating responder certificate.";
+    static final String OCSP_RESPONDER_NOT_RETRIEVED = "OCSP response could not be verified: "
+            + "Unexpected exception occurred retrieving responder.";
+    static final String OCSP_RESPONDER_NOT_VERIFIED = "OCSP response could not be verified: "
+            + "Unexpected exception occurred while validating responder certificate.";
 
     static final String OCSP_RESPONDER_DID_NOT_SIGN = "OCSP response could not be verified against this responder.";
 
-    static final String OCSP_RESPONDER_TRUST_NOT_RETRIEVED = "OCSP response could not be verified: \" +\n"
-            + "            \"responder trust state could not be retrieved.";
+    static final String OCSP_RESPONDER_TRUST_NOT_RETRIEVED = "OCSP response could not be verified: "
+            + "responder trust state could not be retrieved.";
     static final String OCSP_RESPONDER_TRUSTED = "Responder certificate is a trusted certificate.";
     static final String OCSP_RESPONDER_IS_CA = "Responder certificate is the CA certificate.";
     static final String OCSP_IS_NO_LONGER_VALID = "OCSP is no longer valid: {0} after {1}";
@@ -86,6 +86,9 @@ public class OCSPValidator {
 
     static final String UNABLE_TO_RETRIEVE_ISSUER = "OCSP response could not be verified: Unexpected exception "
             + "occurred while retrieving issuer";
+
+    static final String OCSP_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED = "OCSP response could not be validated: "
+            + "OCSP response is signed by the same certificate as being validated.";
 
     static final String OCSP_CHECK = "OCSP response check.";
 
@@ -190,10 +193,10 @@ public class OCSPValidator {
             // Check the status of the certificate:
             ICertificateStatus status = singleResp.getCertStatus();
             IRevokedStatus revokedStatus = BOUNCY_CASTLE_FACTORY.createRevokedStatus(status);
-            boolean isStatusGood = BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(status);
+            boolean isStatusOk = BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(status);
 
             // Check OCSP Archive Cutoff extension in case OCSP response was generated after the certificate is expired.
-            if (isStatusGood && certificate.getNotAfter().before(ocspResp.getProducedAt())) {
+            if (isStatusOk && certificate.getNotAfter().before(ocspResp.getProducedAt())) {
                 Date startExpirationDate = getArchiveCutoffExtension(ocspResp);
                 if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE == startExpirationDate || certificate.getNotAfter()
                         .before(startExpirationDate)) {
@@ -204,11 +207,11 @@ public class OCSPValidator {
                 }
             }
 
-            if (isStatusGood || (revokedStatus != null && validationDate.before(revokedStatus.getRevocationTime()))) {
+            if (isStatusOk || (revokedStatus != null && validationDate.before(revokedStatus.getRevocationTime()))) {
                 // Check if the OCSP response is genuine.
-                verifyOcspResponder(candidateReports[i], localContext, ocspResp, issuerCerts.get(i),
+                verifyOcspResponder(candidateReports[i], localContext, ocspResp, issuerCerts.get(i), certificate,
                         responseGenerationDate);
-                if (!isStatusGood) {
+                if (!isStatusOk) {
                     candidateReports[i].addReportItem(new CertificateReportItem(certificate, OCSP_CHECK,
                             MessageFormatUtil.format(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED,
                                     revokedStatus.getRevocationTime()), ReportItemStatus.INFO));
@@ -241,9 +244,11 @@ public class OCSPValidator {
      * @param context    the context in which to perform the validation
      * @param ocspResp   {@link IBasicOCSPResp} the OCSP response wrapper
      * @param issuerCert the issuer of the certificate for which the OCSP is checked
+     * @param certificate the certificate for which the OCSP is checked
+     * @param responseGenerationDate trusted date at which response is generated
      */
     private void verifyOcspResponder(ValidationReport report, ValidationContext context, IBasicOCSPResp ocspResp,
-            X509Certificate issuerCert, Date responseGenerationDate) {
+            X509Certificate issuerCert, X509Certificate certificate, Date responseGenerationDate) {
         ValidationContext localContext = context.setCertificateSource(CertificateSource.OCSP_ISSUER);
         // OCSP response might be signed by the issuer certificate or
         // the Authorized OCSP responder certificate containing the id-kp-OCSPSigning extended key usage extension.
@@ -309,6 +314,14 @@ public class OCSPValidator {
             } catch (Exception e) {
                 candidateReport.addReportItem(new CertificateReportItem(responderCert, OCSP_CHECK, INVALID_OCSP, e,
                         ReportItemStatus.INVALID));
+                continue;
+            }
+
+            if (certificate.equals(responderCert)) {
+                // OCSP response is signed by this same certificate
+                report.addReportItem(new CertificateReportItem(responderCert, OCSP_CHECK,
+                        OCSP_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED,
+                        ReportItem.ReportItemStatus.INDETERMINATE));
                 continue;
             }
 
