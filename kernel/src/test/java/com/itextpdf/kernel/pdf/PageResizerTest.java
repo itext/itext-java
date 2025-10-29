@@ -53,7 +53,7 @@ public class PageResizerTest extends ExtendedITextTest {
     @Test
     public void testPageResizeForTextOnlyDocumentResizer() throws IOException, InterruptedException {
         String inFileName = "simple_pdf.pdf";
-        String outFileName =  "testPageResizeForTextOnlyDocument.pdf";
+        String outFileName =  "pageResizeForTextOnlyDocument.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -72,7 +72,7 @@ public class PageResizerTest extends ExtendedITextTest {
     @Test
     public void testPageResizeForRotatePage() throws IOException, InterruptedException {
         String inFileName = "singlePageDocumentWithRotation.pdf";
-        String outFileName =  "testPageResizeForRotatePage.pdf";
+        String outFileName =  "pageResizeForRotatePage.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -88,7 +88,7 @@ public class PageResizerTest extends ExtendedITextTest {
     @Test
     public void testPageResizeAspectRatios() throws IOException, InterruptedException {
         String inFileName = "10PagesDocumentWithLeafs.pdf";
-        String outFileName =  "testPageResizeAspectRatios.pdf";
+        String outFileName =  "pageResizeAspectRatios.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -112,8 +112,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testGradients() throws IOException, InterruptedException {
-        String inFileName = "gradientTest.pdf";
-        String outFileName =  "gradientTest.pdf";
+        String inFileName = "gradient.pdf";
+        String outFileName =  "gradient.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -127,8 +127,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testAnnotationBorder() throws IOException, InterruptedException {
-        String inFileName = "annotationBorderTest.pdf";
-        String outFileName =  "annotationBorderTest.pdf";
+        String inFileName = "annotationBorder.pdf";
+        String outFileName =  "annotationBorder.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -142,8 +142,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testAnnotationCalloutLine() throws IOException, InterruptedException {
-        String inFileName = "annotationCalloutLineTest.pdf";
-        String outFileName =  "annotationCalloutLineTest.pdf";
+        String inFileName = "annotationCalloutLine.pdf";
+        String outFileName =  "annotationCalloutLine.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -157,8 +157,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testAnnotationInkList() throws IOException, InterruptedException {
-        String inFileName = "annotationInkListTest.pdf";
-        String outFileName =  "annotationInkListTest.pdf";
+        String inFileName = "annotationInkList.pdf";
+        String outFileName =  "annotationInkList.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -172,8 +172,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testAnnotationLineEndpoint() throws IOException, InterruptedException {
-        String inFileName = "annotationLineEndpointTest.pdf";
-        String outFileName =  "annotationLineEndpointTest.pdf";
+        String inFileName = "annotationLineEndpoint.pdf";
+        String outFileName =  "annotationLineEndpoint.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -187,8 +187,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testAnnotationQuadpoints() throws IOException, InterruptedException {
-        String inFileName = "annotationQuadpointsTest.pdf";
-        String outFileName =  "annotationQuadpointsTest.pdf";
+        String inFileName = "annotationQuadpoints.pdf";
+        String outFileName =  "annotationQuadpoints.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -202,8 +202,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testAnnotationRd() throws IOException, InterruptedException {
-        String inFileName = "annotationRdTest.pdf";
-        String outFileName =  "annotationRdTest.pdf";
+        String inFileName = "annotationRd.pdf";
+        String outFileName =  "annotationRd.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -217,8 +217,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testAnnotationVertices() throws IOException, InterruptedException {
-        String inFileName = "annotationVerticesTest.pdf";
-        String outFileName =  "annotationVerticesTest.pdf";
+        String inFileName = "annotationVertices.pdf";
+        String outFileName =  "annotationVertices.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -232,8 +232,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testGradientsWithAspectRatio() throws IOException, InterruptedException {
-        String inFileName = "gradientTest.pdf";
-        String outFileName = "gradientAspectTest.pdf";
+        String inFileName = "gradient.pdf";
+        String outFileName = "gradientAspect.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -247,8 +247,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testGradientsWithAspect2Ratio() throws IOException, InterruptedException {
-        String inFileName = "gradientTest.pdf";
-        String outFileName = "gradientAspect2Test.pdf";
+        String inFileName = "gradient.pdf";
+        String outFileName = "gradientAspect2.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
@@ -486,8 +486,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void annotationsRightAnchoringTest() throws IOException, InterruptedException {
-        String[] pdfFiles = new String[]{"annotationVerticesTest.pdf", "annotationBorderTest.pdf",
-                "annotationQuadpointsTest.pdf", "annotationRdTest.pdf"};
+        String[] pdfFiles = new String[]{"annotationVertices.pdf", "annotationBorder.pdf",
+                "annotationQuadpoints.pdf", "annotationRd.pdf"};
         for (String pdfFileName : pdfFiles) {
             String outPdf = pdfFileName.substring(0, pdfFileName.length() - 4) + "Right.pdf";
             try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + pdfFileName),
@@ -507,8 +507,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void annotationsTopAnchoringTest() throws IOException, InterruptedException {
-        String[] pdfFiles = new String[]{"annotationVerticesTest.pdf", "annotationBorderTest.pdf",
-                "annotationQuadpointsTest.pdf", "annotationRdTest.pdf"};
+        String[] pdfFiles = new String[]{"annotationVertices.pdf", "annotationBorder.pdf",
+                "annotationQuadpoints.pdf", "annotationRd.pdf"};
         for (String pdfFileName : pdfFiles) {
             String outPdf = pdfFileName.substring(0, pdfFileName.length() - 4) + "Top.pdf";
             try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + pdfFileName),
@@ -541,7 +541,7 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(DESTINATION_FOLDER + outFileName); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -558,7 +558,7 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(DESTINATION_FOLDER + outFileName); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -575,7 +575,7 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(DESTINATION_FOLDER + outFileName); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -592,7 +592,7 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNotNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(DESTINATION_FOLDER + outFileName); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -753,8 +753,8 @@ public class PageResizerTest extends ExtendedITextTest {
 
     @Test
     public void testImageAspect() throws IOException, InterruptedException {
-        String inFileName = "testImageAspect.pdf";
-        String outFileName = "testImageAspect.pdf";
+        String inFileName = "imageAspect.pdf";
+        String outFileName = "imageAspect.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
                 new PdfWriter(DESTINATION_FOLDER + outFileName))) {
