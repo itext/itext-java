@@ -57,14 +57,13 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.tagging.IAccessibleElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.itextpdf.layout.tagging.IAccessibleElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link SelectFieldListBoxRenderer} implementation for select field renderer.
@@ -138,7 +137,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
             optionsContainer.add(option.getElement());
         }
         for (IElement child : optionsContainer.getChildren()) {
-            if (child instanceof IAccessibleElement){
+            if (child instanceof IAccessibleElement) {
                 ((IAccessibleElement) child).getAccessibilityProperties().setRole(StandardRoles.LBL);
             }
         }
@@ -225,7 +224,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         setupBuilderValues(builder, lbModelElement);
         PdfChoiceFormField choiceField = builder.createList();
         choiceField.disableFieldRegeneration();
-        applyAccessibilityProperties(choiceField,drawContext.getDocument());
+        applyAccessibilityProperties(choiceField, drawContext.getDocument());
         choiceField.setFontSize(fontSize.getValue());
         choiceField.setMultiSelect(isMultiple());
         choiceField.setListSelected(selectedOptions.toArray(new String[selectedOptions.size()]));
@@ -263,7 +262,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
             // There is no particular reason for setting specifically 4.
             size = 4;
         } else {
-            size = (int)sizeProp;
+            size = (int) sizeProp;
         }
         float maxOptionActualHeight = getMaxOptionActualHeight(flatRenderer);
         if (maxOptionActualHeight == Float.MIN_VALUE) {
@@ -325,7 +324,7 @@ public class SelectFieldListBoxRenderer extends AbstractSelectFieldRenderer {
         RenderingMode mode = this.<RenderingMode>getProperty(Property.RENDERING_MODE);
         if (RenderingMode.HTML_MODE.equals(mode) && isFlatten() &&
                 selectedOption.<Background>getProperty(Property.BACKGROUND) == null) {
-            selectedOption.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(206,206,206)));
+            selectedOption.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(206, 206, 206)));
         } else {
             selectedOption.setProperty(Property.BACKGROUND, new Background(new DeviceRgb(169, 204, 225)));
         }

@@ -132,7 +132,7 @@ public class ParagraphRenderer extends BlockRenderer {
             floatRendererAreas = new ArrayList<>();
         }
 
-        if (0 == childRenderers.size()) {
+        if (childRenderers.isEmpty()) {
             anythingPlaced = true;
             currentRenderer = null;
         }
@@ -170,7 +170,7 @@ public class ParagraphRenderer extends BlockRenderer {
         applyPaddings(parentBBox, paddings, false);
         float additionalWidth = parentWidth - parentBBox.getWidth();
         applyWidth(parentBBox, blockWidth, overflowX);
-        wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, wasParentsHeightClipped, overflowY);
+        wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, overflowY);
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth);
         AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
@@ -206,7 +206,7 @@ public class ParagraphRenderer extends BlockRenderer {
         // rectangles are compared by instances
         Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas);
 
-        if (marginsCollapsingEnabled && childRenderers.size() > 0) {
+        if (marginsCollapsingEnabled && !childRenderers.isEmpty()) {
             // passing null is sufficient to notify that there is a kid, however we don't care about it and it's margins
             marginsCollapseHandler.startChildMarginsHandling(null, layoutBox);
         }
@@ -263,12 +263,8 @@ public class ParagraphRenderer extends BlockRenderer {
                 inlineFloatsOverflowedToNextPage.addAll(result.getFloatsOverflowedToNextPage());
             }
 
-            float minChildWidth = 0;
-            float maxChildWidth = 0;
-            if (result instanceof MinMaxWidthLayoutResult) {
-                minChildWidth = ((MinMaxWidthLayoutResult)result).getMinMaxWidth().getMinWidth();
-                maxChildWidth = ((MinMaxWidthLayoutResult)result).getMinMaxWidth().getMaxWidth();
-            }
+            float minChildWidth = result.getMinMaxWidth().getMinWidth();
+            float maxChildWidth = result.getMinMaxWidth().getMaxWidth();
 
             widthHandler.updateMinChildWidth(minChildWidth);
             widthHandler.updateMaxChildWidth(maxChildWidth);
@@ -310,7 +306,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
                 // for the first and last line in a paragraph, leading is smaller
                 if (firstLineInBox) {
-                    deltaY = processedRenderer != null && leading != null ? -processedRenderer.getTopLeadingIndent(leading) : 0;
+                    deltaY = leading != null ? -processedRenderer.getTopLeadingIndent(leading) : 0;
                 }
 
                 if (isLastLineReLaidOut) {
@@ -382,7 +378,7 @@ public class ParagraphRenderer extends BlockRenderer {
                         }
 
                         updateHeightsOnSplit(usedHeight, wasHeightClipped, this, split[1], includeFloatsInOccupiedAreaOnSplit);
-                        correctFixedLayout(layoutBox);
+                        correctFixedLayout();
                         applyPaddings(occupiedArea.getBBox(), paddings, true);
                         applyBorderBox(occupiedArea.getBBox(), borders, true);
                         applyMargins(occupiedArea.getBBox(), true);
@@ -460,10 +456,8 @@ public class ParagraphRenderer extends BlockRenderer {
             occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() + moveDown);
         }
 
-        if (marginsCollapsingEnabled) {
-            if (childRenderers.size() > 0 && notAllKidsAreFloats) {
-                marginsCollapseHandler.endChildMarginsHandling(layoutBox);
-            }
+        if (marginsCollapsingEnabled && !childRenderers.isEmpty() && notAllKidsAreFloats) {
+            marginsCollapseHandler.endChildMarginsHandling(layoutBox);
         }
 
         if (includeFloatsInOccupiedArea) {
@@ -493,7 +487,7 @@ public class ParagraphRenderer extends BlockRenderer {
             borders = getBorders();
         }
 
-        correctFixedLayout(layoutBox);
+        correctFixedLayout();
 
         applyPaddings(occupiedArea.getBBox(), paddings, true);
         applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -566,7 +560,7 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (lines != null && lines.size() > 0) {
+        if (lines != null && !lines.isEmpty()) {
             for (int i = 0; i < lines.size(); i++) {
                 if (i > 0) {
                     sb.append("\n");
@@ -623,7 +617,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
     @Override
     protected Float getFirstYLineRecursively() {
-        if (lines == null || lines.size() == 0) {
+        if (lines == null || lines.isEmpty()) {
             return null;
         }
         return lines.get(0).getFirstYLineRecursively();
@@ -634,7 +628,7 @@ public class ParagraphRenderer extends BlockRenderer {
         if (!allowLastYLineRecursiveExtraction()) {
             return null;
         }
-        if (lines == null || lines.size() == 0) {
+        if (lines == null || lines.isEmpty()) {
             return null;
         }
         for (int i = lines.size() - 1; i >= 0; i--) {

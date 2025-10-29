@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.CanvasArtifact;
@@ -32,8 +33,6 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +52,7 @@ public class TabRenderer extends AbstractRenderer {
         Float width = retrieveWidth(area.getBBox().getWidth());
         UnitValue height = this.<UnitValue>getProperty(Property.MIN_HEIGHT);
         occupiedArea = new LayoutArea(area.getPageNumber(),
-                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(),(float)  width, (float) height.getValue()));
+                new Rectangle(area.getBBox().getX(), area.getBBox().getY() + area.getBBox().getHeight(), (float) width, (float) height.getValue()));
 
         TargetCounterHandler.addPageByID(this);
 
@@ -95,6 +94,7 @@ public class TabRenderer extends AbstractRenderer {
      * for the overflow part. So if one wants to extend {@link TabRenderer}, one should override
      * this method: otherwise the default method will be used and thus the default rather than the custom
      * renderer will be created.
+     *
      * @return new renderer instance
      */
     @Override

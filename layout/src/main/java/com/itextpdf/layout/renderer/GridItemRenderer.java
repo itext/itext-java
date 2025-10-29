@@ -133,9 +133,9 @@ class GridItemRenderer extends BlockRenderer {
      */
     @Override
     void updateHeightsOnSplit(float usedHeight, boolean wasHeightClipped, AbstractRenderer splitRenderer,
-            AbstractRenderer overflowRenderer, boolean enlargeOccupiedAreaOnHeightWasClipped) {
-         // If we set the height ourselves during layout, let's remove it while layouting on the next page
-         // so that it is recalculated.
+                              AbstractRenderer overflowRenderer, boolean enlargeOccupiedAreaOnHeightWasClipped) {
+        // If we set the height ourselves during layout, let's remove it while layouting on the next page
+        // so that it is recalculated.
         if (heightSet) {
             // Always 1 child renderer
             overflowRenderer.childRenderers.get(0).deleteOwnProperty(Property.HEIGHT);

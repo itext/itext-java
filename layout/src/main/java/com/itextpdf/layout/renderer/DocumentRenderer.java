@@ -162,6 +162,7 @@ public class DocumentRenderer extends RootRenderer {
      * Adds new page with defined page size to PDF document.
      *
      * @param customPageSize the size of new page, can be null
+     *
      * @return the page size of created page
      */
     protected PageSize addNewPage(PageSize customPageSize) {
@@ -179,6 +180,7 @@ public class DocumentRenderer extends RootRenderer {
      *
      * @param n the expected number of pages if document
      * @param customPageSize the size of created pages, can be null
+     *
      * @return the page size of the last created page, or null if no page was created
      */
     protected PageSize ensureDocumentHasNPages(int n, PageSize customPageSize) {

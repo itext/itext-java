@@ -71,6 +71,7 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
      * Creates a paragraph renderer.
      *
      * @param defaultValue the default value
+     *
      * @return the renderer
      */
     IRenderer createParagraphRenderer(String defaultValue) {
@@ -195,8 +196,8 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
      * Adjust number of content lines.
      *
      * @param lines the lines that need to be rendered
-     * @param bBox  the bounding box
-     * @param rows  the desired number of lines
+     * @param bBox the bounding box
+     * @param rows the desired number of lines
      */
     void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox, int rows) {
         if (lines.size() != rows) {
@@ -208,8 +209,8 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
     /**
      * Adjust number of content lines.
      *
-     * @param lines  the lines that need to be rendered
-     * @param bBox   the bounding box
+     * @param lines the lines that need to be rendered
+     * @param bBox the bounding box
      * @param height the desired height of content
      */
     void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox, float height) {
@@ -238,7 +239,7 @@ public abstract class AbstractTextFieldRenderer extends AbstractFormFieldRendere
     }
 
     private static void adjustNumberOfContentLines(List<LineRenderer> lines, Rectangle bBox,
-            int linesNumber, float height) {
+                                                   int linesNumber, float height) {
         bBox.moveUp(bBox.getHeight() - height);
         bBox.setHeight(height);
         if (lines.size() > linesNumber) {

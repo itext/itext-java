@@ -80,6 +80,8 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.Transform;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,10 +90,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Defines the most common properties and behavior that are shared by most
@@ -100,7 +99,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractRenderer implements IRenderer {
     public static final float OVERLAP_EPSILON = 1e-4f;
-
 
     /**
      * The maximum difference between {@link Rectangle} coordinates to consider rectangles equal
@@ -228,8 +226,10 @@ public abstract class AbstractRenderer implements IRenderer {
             }
         }
 
-        // Fetch positioned renderers from non-positioned child because they might be stuck there because child's parent was null previously
-        if (renderer instanceof AbstractRenderer && !((AbstractRenderer) renderer).isPositioned() && ((AbstractRenderer) renderer).positionedRenderers.size() > 0) {
+        // Fetch positioned renderers from non-positioned child because they might be stuck there
+        // because child's parent was null previously
+        if (renderer instanceof AbstractRenderer && !((AbstractRenderer) renderer).isPositioned() &&
+                !((AbstractRenderer) renderer).positionedRenderers.isEmpty()) {
             // For position=absolute, if none of the top, bottom, left, right properties are provided,
             // the content should be displayed in the flow of the current content, not overlapping it.
             // The behavior is just if it would be statically positioned except it does not affect other elements
@@ -285,6 +285,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * i.e. if it was set to this very element or its very model element earlier.
      *
      * @param property the property to be checked
+     *
      * @return {@code true} if this instance or its model element have given own property, {@code false} otherwise
      */
     public boolean hasOwnOrModelProperty(int property) {
@@ -374,6 +375,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Returns a property with a certain key, as a font object.
      *
      * @param property an {@link Property enum value}
+     *
      * @return a {@link PdfFont}
      */
     public PdfFont getPropertyAsFont(int property) {
@@ -384,6 +386,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Returns a property with a certain key, as a color.
      *
      * @param property an {@link Property enum value}
+     *
      * @return a {@link Color}
      */
     public Color getPropertyAsColor(int property) {
@@ -394,6 +397,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Returns a property with a certain key, as a {@link TransparentColor}.
      *
      * @param property an {@link Property enum value}
+     *
      * @return a {@link TransparentColor}
      */
     public TransparentColor getPropertyAsTransparentColor(int property) {
@@ -404,6 +408,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Returns a property with a certain key, as a floating point value.
      *
      * @param property an {@link Property enum value}
+     *
      * @return a {@link Float}
      */
     public Float getPropertyAsFloat(int property) {
@@ -413,8 +418,9 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Returns a property with a certain key, as a floating point value.
      *
-     * @param property     an {@link Property enum value}
+     * @param property an {@link Property enum value}
      * @param defaultValue default value to be returned if property is not found
+     *
      * @return a {@link Float}
      */
     public Float getPropertyAsFloat(int property, Float defaultValue) {
@@ -425,6 +431,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Returns a property with a certain key, as a boolean value.
      *
      * @param property an {@link Property enum value}
+     *
      * @return a {@link Boolean}
      */
     public Boolean getPropertyAsBoolean(int property) {
@@ -435,6 +442,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Returns a property with a certain key, as a unit value.
      *
      * @param property an {@link Property enum value}
+     *
      * @return a {@link UnitValue}
      */
     public UnitValue getPropertyAsUnitValue(int property) {
@@ -445,6 +453,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Returns a property with a certain key, as an integer value.
      *
      * @param property an {@link Property enum value}
+     *
      * @return a {@link Integer}
      */
     public Integer getPropertyAsInteger(int property) {
@@ -455,6 +464,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Returns a string representation of the renderer.
      *
      * @return a {@link String}
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -503,9 +513,9 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Apply {@code Property.OPACITY} property if specified by setting corresponding values in graphic state dictionary
      * opacity will be applied to all elements drawn after calling this method and before
-     * calling {@link AbstractRenderer#endElementOpacityApplying(DrawContext)} ()}.
+     * calling {@link AbstractRenderer#endElementOpacityApplying(DrawContext)}.
      *
-     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     * @param drawContext the context (canvas, document, etc.) of this drawing operation.
      */
     protected void beginElementOpacityApplying(DrawContext drawContext) {
         Float opacity = this.getPropertyAsFloat(Property.OPACITY);
@@ -523,7 +533,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * {@link AbstractRenderer#beginElementOpacityApplying(DrawContext)}.
      *
-     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     * @param drawContext the context (canvas, document, etc.) of this drawing operation.
      */
     protected void endElementOpacityApplying(DrawContext drawContext) {
         Float opacity = this.getPropertyAsFloat(Property.OPACITY);
@@ -536,11 +546,11 @@ public abstract class AbstractRenderer implements IRenderer {
      * Draws a background layer if it is defined by a key {@link Property#BACKGROUND}
      * in either the layout element or this {@link IRenderer} itself.
      *
-     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     * @param drawContext the context (canvas, document, etc.) of this drawing operation.
      */
     public void drawBackground(DrawContext drawContext) {
         final Background background = this.<Background>getProperty(Property.BACKGROUND);
-        final List<BackgroundImage>  backgroundImagesList = this.<List<BackgroundImage>>getProperty(Property.BACKGROUND_IMAGE);
+        final List<BackgroundImage> backgroundImagesList = this.<List<BackgroundImage>>getProperty(Property.BACKGROUND_IMAGE);
 
         if (background != null || backgroundImagesList != null) {
             Rectangle bBox = getOccupiedAreaBBox();
@@ -616,7 +626,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     private void drawBackgroundImage(BackgroundImage backgroundImage,
-            DrawContext drawContext, Rectangle backgroundArea) {
+                                     DrawContext drawContext, Rectangle backgroundArea) {
         Rectangle originBackgroundArea = applyBackgroundBoxProperty(backgroundArea.clone(),
                 backgroundImage.getBackgroundOrigin());
         float[] imageWidthAndHeight = backgroundImage.calculateBackgroundImageSize(originBackgroundArea.getWidth(),
@@ -637,17 +647,14 @@ public abstract class AbstractRenderer implements IRenderer {
             // fullWidth and fullHeight is 0 because percentage shifts are ignored for linear-gradients
             backgroundImage.getBackgroundPosition().calculatePositionValues(0, 0, xPosition, yPosition);
             backgroundXObject = createXObject(gradientBuilder, originBackgroundArea, drawContext.getDocument());
-            imageRectangle = new Rectangle(originBackgroundArea.getLeft() + xPosition.getValue(),
-                    originBackgroundArea.getTop() - imageWidthAndHeight[1] - yPosition.getValue(),
-                    imageWidthAndHeight[0], imageWidthAndHeight[1]);
         } else {
             backgroundImage.getBackgroundPosition().calculatePositionValues(
                     originBackgroundArea.getWidth() - imageWidthAndHeight[0],
                     originBackgroundArea.getHeight() - imageWidthAndHeight[1], xPosition, yPosition);
-            imageRectangle = new Rectangle(originBackgroundArea.getLeft() + xPosition.getValue(),
-                    originBackgroundArea.getTop() - imageWidthAndHeight[1] - yPosition.getValue(),
-                    imageWidthAndHeight[0], imageWidthAndHeight[1]);
         }
+        imageRectangle = new Rectangle(originBackgroundArea.getLeft() + xPosition.getValue(),
+                originBackgroundArea.getTop() - imageWidthAndHeight[1] - yPosition.getValue(),
+                imageWidthAndHeight[0], imageWidthAndHeight[1]);
         if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.info(MessageFormatUtil.format(
@@ -668,8 +675,8 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     private static void drawPdfXObject(final Rectangle imageRectangle, final BackgroundImage backgroundImage,
-            final DrawContext drawContext, final PdfXObject backgroundXObject,
-            final Rectangle backgroundArea, Rectangle originBackgroundArea) {
+                                       final DrawContext drawContext, final PdfXObject backgroundXObject,
+                                       final Rectangle backgroundArea, Rectangle originBackgroundArea) {
         BlendMode blendMode = backgroundImage.getBlendMode();
         if (blendMode != BlendMode.NORMAL) {
             drawContext.getCanvas().setExtGState(new PdfExtGState().setBlendMode(blendMode.getPdfRepresentation()));
@@ -730,8 +737,9 @@ public abstract class AbstractRenderer implements IRenderer {
      * Create a {@link PdfFormXObject} with the given area and containing a linear gradient inside.
      *
      * @param linearGradientBuilder the linear gradient builder
-     * @param xObjectArea           the result object area
-     * @param document              the pdf document
+     * @param xObjectArea the result object area
+     * @param document the pdf document
+     *
      * @return the xObject with a specified area and a linear gradient
      */
     public static PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
@@ -754,6 +762,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Evaluate the actual background
      *
      * @param occupiedAreaWithMargins the current occupied area with applied margins
+     *
      * @return the actual background area
      */
     protected Rectangle getBackgroundArea(Rectangle occupiedAreaWithMargins) {
@@ -761,20 +770,22 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected boolean clipBorderArea(DrawContext drawContext, Rectangle outerBorderBox) {
-        return clipArea(drawContext, outerBorderBox, true, true, false, true);
+        return clipArea(drawContext, outerBorderBox, true, false, true);
     }
 
     protected boolean clipBackgroundArea(DrawContext drawContext, Rectangle outerBorderBox) {
-        return clipArea(drawContext, outerBorderBox, true, false, false, false);
+        return clipArea(drawContext, outerBorderBox, false, false, false);
     }
 
-    protected boolean clipBackgroundArea(DrawContext drawContext, Rectangle outerBorderBox, boolean considerBordersBeforeClipping) {
-        return clipArea(drawContext, outerBorderBox, true, false, considerBordersBeforeClipping, false);
+    protected boolean clipBackgroundArea(DrawContext drawContext, Rectangle outerBorderBox,
+                                         boolean considerBordersBeforeClipping) {
+        return clipArea(drawContext, outerBorderBox, false, considerBordersBeforeClipping, false);
     }
 
-    private boolean clipArea(DrawContext drawContext, Rectangle outerBorderBox, boolean clipOuter, boolean clipInner, boolean considerBordersBeforeOuterClipping, boolean considerBordersBeforeInnerClipping) {
+    private boolean clipArea(DrawContext drawContext, Rectangle outerBorderBox, boolean clipInner,
+                             boolean considerBordersBeforeOuterClipping, boolean considerBordersBeforeInnerClipping) {
         // border widths should be considered only once
-        assert false == considerBordersBeforeOuterClipping || false == considerBordersBeforeInnerClipping;
+        assert !considerBordersBeforeOuterClipping || !considerBordersBeforeInnerClipping;
 
         // border widths
         float[] borderWidths = {0, 0, 0, 0};
@@ -811,9 +822,7 @@ public abstract class AbstractRenderer implements IRenderer {
             }
 
             // clip border area outside
-            if (clipOuter) {
-                clipOuterArea(canvas, horizontalRadii, verticalRadii, outerBox, cornersX, cornersY);
-            }
+            clipOuterArea(canvas, horizontalRadii, verticalRadii, outerBox, cornersX, cornersY);
 
             if (considerBordersBeforeInnerClipping) {
                 borderWidths = decreaseBorderRadiiWithBorders(horizontalRadii, verticalRadii, outerBox, cornersX, cornersY);
@@ -828,7 +837,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     private void clipOuterArea(PdfCanvas canvas, float[] horizontalRadii, float[] verticalRadii,
-            float[] outerBox, float[] cornersX, float[] cornersY) {
+                               float[] outerBox, float[] cornersX, float[] cornersY) {
         final double top = outerBox[TOP_SIDE];
         final double right = outerBox[RIGHT_SIDE];
         final double bottom = outerBox[BOTTOM_SIDE];
@@ -889,7 +898,7 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     private void clipInnerArea(PdfCanvas canvas, float[] horizontalRadii, float[] verticalRadii,
-            float[] outerBox, float[] cornersX, float[] cornersY, float[] borderWidths) {
+                               float[] outerBox, float[] cornersX, float[] cornersY, float[] borderWidths) {
         final double top = outerBox[TOP_SIDE];
         final double right = outerBox[RIGHT_SIDE];
         final double bottom = outerBox[BOTTOM_SIDE];
@@ -1053,7 +1062,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Performs the drawing operation for all {@link IRenderer children}
      * of this renderer.
      *
-     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     * @param drawContext the context (canvas, document, etc.) of this drawing operation.
      */
     public void drawChildren(DrawContext drawContext) {
         List<IRenderer> waitingRenderers = new ArrayList<>();
@@ -1162,6 +1171,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * been called.
      *
      * @return whether the renderer has been flushed
+     *
      * @see #draw
      */
     @Override
@@ -1211,6 +1221,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Gets all rectangles that this {@link IRenderer} can draw upon in the given area.
      *
      * @param area a physical area on the {@link DrawContext}
+     *
      * @return a list of {@link Rectangle rectangles}
      */
     public List<Rectangle> initElementAreas(LayoutArea area) {
@@ -1251,9 +1262,10 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies margins, borders and paddings of the renderer on the given rectangle.
      *
-     * @param rect    a rectangle margins, borders and paddings will be applied on.
+     * @param rect a rectangle margins, borders and paddings will be applied on.
      * @param reverse indicates whether margins, borders and paddings will be applied
-     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * inside (in case of false) or outside (in case of true) the rectangle.
+     *
      * @return a {@link Rectangle border box} of the renderer
      */
     Rectangle applyMarginsBordersPaddings(Rectangle rect, boolean reverse) {
@@ -1266,10 +1278,12 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies margins of the renderer on the given rectangle
      *
-     * @param rect    a rectangle margins will be applied on.
+     * @param rect a rectangle margins will be applied on.
      * @param reverse indicates whether margins will be applied
-     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * inside (in case of false) or outside (in case of true) the rectangle.
+     *
      * @return a {@link Rectangle border box} of the renderer
+     *
      * @see #getMargins
      */
     public Rectangle applyMargins(Rectangle rect, boolean reverse) {
@@ -1280,10 +1294,12 @@ public abstract class AbstractRenderer implements IRenderer {
      * Applies the border box of the renderer on the given rectangle
      * If the border of a certain side is null, the side will remain as it was.
      *
-     * @param rect    a rectangle the border box will be applied on.
+     * @param rect a rectangle the border box will be applied on.
      * @param reverse indicates whether the border box will be applied
-     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * inside (in case of false) or outside (in case of true) the rectangle.
+     *
      * @return a {@link Rectangle border box} of the renderer
+     *
      * @see #getBorders
      */
     public Rectangle applyBorderBox(Rectangle rect, boolean reverse) {
@@ -1294,10 +1310,12 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies paddings of the renderer on the given rectangle
      *
-     * @param rect    a rectangle paddings will be applied on.
+     * @param rect a rectangle paddings will be applied on.
      * @param reverse indicates whether paddings will be applied
-     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * inside (in case of false) or outside (in case of true) the rectangle.
+     *
      * @return a {@link Rectangle border box} of the renderer
+     *
      * @see #getPaddings
      */
     public Rectangle applyPaddings(Rectangle rect, boolean reverse) {
@@ -1341,6 +1359,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * @param property the property to be replaced
      * @param replacementValue the value with which property will be replaced
      * @param <T> the type associated with the property
+     *
      * @return previous property value
      */
     <T> T replaceOwnProperty(int property, T replacementValue) {
@@ -1424,9 +1443,11 @@ public abstract class AbstractRenderer implements IRenderer {
      * and {@link Property#MAX_WIDTH} properties.
      *
      * @param parentBoxWidth width of the parent element content box.
-     *                       If element has relative width, it will be
-     *                       calculated relatively to this parameter.
+     * If element has relative width, it will be
+     * calculated relatively to this parameter.
+     *
      * @return element's fixed content box width or null if it's not set.
+     *
      * @see AbstractRenderer#hasAbsoluteUnitValue(int)
      */
     protected Float retrieveWidth(float parentBoxWidth) {
@@ -1461,9 +1482,11 @@ public abstract class AbstractRenderer implements IRenderer {
      * Takes into account {@link Property#BOX_SIZING} and {@link Property#MIN_WIDTH} properties.
      *
      * @param parentBoxWidth width of the parent element content box.
-     *                       If element has relative width, it will be
-     *                       calculated relatively to this parameter.
+     * If element has relative width, it will be
+     * calculated relatively to this parameter.
+     *
      * @return element's fixed content box max width or null if it's not set.
+     *
      * @see AbstractRenderer#hasAbsoluteUnitValue(int)
      */
     protected Float retrieveMaxWidth(float parentBoxWidth) {
@@ -1488,9 +1511,11 @@ public abstract class AbstractRenderer implements IRenderer {
      * Takes into account {@link Property#BOX_SIZING} property value.
      *
      * @param parentBoxWidth width of the parent element content box.
-     *                       If element has relative width, it will be
-     *                       calculated relatively to this parameter.
+     * If element has relative width, it will be
+     * calculated relatively to this parameter.
+     *
      * @return element's fixed content box max width or null if it's not set.
+     *
      * @see AbstractRenderer#hasAbsoluteUnitValue(int)
      */
     protected Float retrieveMinWidth(float parentBoxWidth) {
@@ -1577,9 +1602,10 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Calculates the element corner's border radii.
      *
-     * @param radii      defines border radii of the element
-     * @param area       defines the area of the element
+     * @param radii defines border radii of the element
+     * @param area defines the area of the element
      * @param horizontal defines whether horizontal or vertical radii should be calculated
+     *
      * @return the element corner's border radii.
      */
     private float[] calculateRadii(BorderRadius[] radii, Rectangle area, boolean horizontal) {
@@ -1620,10 +1646,10 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Retrieve element's content box max-ehight, if it's set.
+     * Retrieve element's content box max-height, if it's set.
      * Takes into account {@link Property#BOX_SIZING} property value.
      *
-     * @return element's content box max-height or null if it's not set.
+     * @return element's content box max-height or null if it's not set
      */
     protected Float retrieveMaxHeight() {
         Float maxHeight = null, minHeight = null;
@@ -1745,7 +1771,7 @@ public abstract class AbstractRenderer implements IRenderer {
             return null;
         }
     }
-    
+
     protected Map<Integer, Object> getOwnProperties() {
         return properties;
     }
@@ -1757,12 +1783,12 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Gets the first yLine of the nested children recursively. E.g. for a list, this will be the yLine of the
      * first item (if the first item is indeed a paragraph).
-     * NOTE: this method will no go further than the first child.
+     * NOTE: this method will not go further than the first child.
      *
-     * @return the first yline of the nested children, null if there is no text found
+     * @return the first y line of the nested children, null if there is no text found
      */
     protected Float getFirstYLineRecursively() {
-        if (childRenderers.size() == 0) {
+        if (childRenderers.isEmpty()) {
             return null;
         }
         return ((AbstractRenderer) childRenderers.get(0)).getFirstYLineRecursively();
@@ -1792,10 +1818,11 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies given margins on the given rectangle
      *
-     * @param rect    a rectangle margins will be applied on.
+     * @param rect a rectangle margins will be applied on.
      * @param margins the margins to be applied on the given rectangle
      * @param reverse indicates whether margins will be applied
-     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * inside (in case of false) or outside (in case of true) the rectangle.
+     *
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
@@ -1849,10 +1876,11 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies given paddings to the given rectangle.
      *
-     * @param rect     a rectangle paddings will be applied on.
+     * @param rect a rectangle paddings will be applied on.
      * @param paddings the paddings to be applied on the given rectangle
-     * @param reverse  indicates whether paddings will be applied
-     *                 inside (in case of false) or outside (in case of true) the rectangle.
+     * @param reverse indicates whether paddings will be applied
+     * inside (in case of false) or outside (in case of true) the rectangle.
+     *
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
@@ -1886,10 +1914,11 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Applies the given border box (borders) on the given rectangle
      *
-     * @param rect    a rectangle paddings will be applied on.
+     * @param rect a rectangle paddings will be applied on.
      * @param borders the {@link Border borders} to be applied on the given rectangle
      * @param reverse indicates whether the border box will be applied
-     *                inside (in case of false) or outside (in case of false) the rectangle.
+     * inside (in case of false) or outside (in case of false) the rectangle.
+     *
      * @return a {@link Rectangle border box} of the renderer
      */
     protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
@@ -2143,8 +2172,8 @@ public abstract class AbstractRenderer implements IRenderer {
         if (minHeightUV != null) {
             if (minHeightUV.isPointValue()) {
                 Float minHeight = retrieveMinHeight();
-                UnitValue updateminHeight = UnitValue.createPointValue((float) (minHeight - usedHeight));
-                overflowRenderer.updateMinHeight(updateminHeight);
+                UnitValue updateMinHeight = UnitValue.createPointValue((float) (minHeight - usedHeight));
+                overflowRenderer.updateMinHeight(updateMinHeight);
             } else if (parentResolvedHeightPropertyValue != null) {
                 // Calculate occupied fraction and update overflow renderer
                 float currentOccupiedFraction = usedHeight / (float) parentResolvedHeightPropertyValue * 100;
@@ -2339,7 +2368,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * element.
      *
      * @return a {@link Rectangle} which is a bbox of the content not relative to the parent's layout area but rather to
-     * the some pdf entity coordinate system.
+     * some pdf entity coordinate system.
      */
     protected Rectangle calculateAbsolutePdfBBox() {
         Rectangle contentBox = getOccupiedAreaBBox();
@@ -2371,6 +2400,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Calculates bounding box around points.
      *
      * @param points list of the points calculated bbox will enclose.
+     *
      * @return array of float values which denote left, bottom, right, top lines of bbox in this specific order
      */
     protected Rectangle calculateBBox(List<Point> points) {
@@ -2393,9 +2423,10 @@ public abstract class AbstractRenderer implements IRenderer {
      * This method calculates the shift needed to be applied to the points in order to position
      * upper and left borders of their bounding box at the given lines.
      *
-     * @param left   x coordinate at which points bbox left border is to be aligned
-     * @param top    y coordinate at which points bbox upper border is to be aligned
+     * @param left x coordinate at which points bbox left border is to be aligned
+     * @param top y coordinate at which points bbox upper border is to be aligned
      * @param points the points, which bbox will be aligned at the given position
+     *
      * @return array of two floats, where first element denotes x-coordinate shift and the second
      * element denotes y-coordinate shift which are needed to align points bbox at the given lines.
      */
@@ -2416,6 +2447,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Check if corresponding property has point value.
      *
      * @param property {@link Property}
+     *
      * @return false if property value either null, or percent, otherwise true.
      */
     protected boolean hasAbsoluteUnitValue(int property) {
@@ -2427,6 +2459,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Check if corresponding property has relative value.
      *
      * @param property {@link Property}
+     *
      * @return false if property value either null, or point, otherwise true.
      */
     protected boolean hasRelativeUnitValue(int property) {
@@ -2496,16 +2529,15 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Returns the property of the renderer as a UnitValue if it exists and is a UnitValue, null otherwise
+     * Returns the property of the renderer as a UnitValue if it exists and is a UnitValue, {@code null} otherwise.
      *
      * @param renderer renderer to retrieve the property from
      * @param property key for the property to retrieve
-     * @return A UnitValue if the property is present and is a UnitValue, null otherwise
+     *
+     * @return UnitValue if the property is present and is a UnitValue, {@code null} otherwise
      */
     static UnitValue getPropertyAsUnitValue(IRenderer renderer, int property) {
-        UnitValue result = renderer.<UnitValue>getProperty(property);
-        return result;
-
+        return renderer.<UnitValue>getProperty(property);
     }
 
     void shrinkOccupiedAreaForAbsolutePosition() {
@@ -2541,7 +2573,7 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Gets any valid {@link PdfFont} for this renderer, based on {@link Property#FONT}, {@link Property#FONT_PROVIDER} and
      * {@link Property#FONT_SET} properties.
-     * This method will not change font property of renderer. Also it is not guarantied that returned font will contain
+     * This method will not change font property of renderer. Also, it is not guarantied that returned font will contain
      * all glyphs used in renderer or its children.
      * <p>
      * This method is usually needed for evaluating some layout characteristics like ascender or descender.
@@ -2572,7 +2604,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Get first valid {@link PdfFont} for this renderer, based on given font-families, font provider and font characteristics.
-     * This method will not change font property of renderer. Also it is not guarantied that returned font will contain
+     * This method will not change font property of renderer. Also, it is not guarantied that returned font will contain
      * all glyphs used in renderer or its children.
      * <p>
      * This method is usually needed for evaluating some layout characteristics like ascender or descender.
@@ -2706,7 +2738,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Add the specified {@link IRenderer renderer} to the end of children list and update its
      * parent link to {@code this}.
      *
-     * @param child the {@link IRenderer child renderer} to be add
+     * @param child the {@link IRenderer child renderer} to add
      */
     void addChildRenderer(IRenderer child) {
         child.setParent(this);
@@ -2717,7 +2749,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * Add the specified collection of {@link IRenderer renderers} to the end of children list and
      * update their parent links to {@code this}.
      *
-     * @param children the collection of {@link IRenderer child renderers} to be add
+     * @param children the collection of {@link IRenderer child renderers} to add
      */
     void addAllChildRenderers(List<IRenderer> children) {
         if (children == null) {
@@ -2732,7 +2764,7 @@ public abstract class AbstractRenderer implements IRenderer {
      * children list and update their parent links to {@code this}.
      *
      * @param index index at which to insert the first element from the specified collection
-     * @param children the collection of {@link IRenderer child renderers} to be add
+     * @param children the collection of {@link IRenderer child renderers} to add
      */
     void addAllChildRenderers(int index, List<IRenderer> children) {
         setThisAsParent(children);
@@ -2745,7 +2777,6 @@ public abstract class AbstractRenderer implements IRenderer {
      * children to {@code this} would be erased (i.e. set to {@code null}) and then the specified
      * list of children would be added similar to {@link AbstractRenderer#addAllChildRenderers(List)}.
      *
-     *
      * @param children the collection of children {@link IRenderer renderers} to be set
      */
     void setChildRenderers(List<IRenderer> children) {
@@ -2757,9 +2788,10 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Remove the child {@link IRenderer renderer} at the specified place. If the removed renderer has
      * the parent link set to {@code this} and it would not present in the children list after
-     * removal, then the parent link of the removed renderer would be erased (i.e. set to {@code null}.
+     * removal, then the parent link of the removed renderer would be erased (i.e. set to {@code null}).
      *
      * @param index the index of the renderer to be removed
+     *
      * @return the removed renderer
      */
     IRenderer removeChildRenderer(int index) {
@@ -2771,9 +2803,10 @@ public abstract class AbstractRenderer implements IRenderer {
     /**
      * Remove the children {@link IRenderer renderers} which are contains in the specified collection.
      * If some of the removed renderers has the parent link set to {@code this}, then
-     * the parent link of the removed renderer would be erased (i.e. set to {@code null}.
+     * the parent link of the removed renderer would be erased (i.e. set to {@code null}).
      *
      * @param children the collections of renderers to be removed from children list
+     *
      * @return {@code true} if the children list has been changed
      */
     boolean removeAllChildRenderers(Collection<IRenderer> children) {
@@ -2788,6 +2821,7 @@ public abstract class AbstractRenderer implements IRenderer {
      *
      * @param index the index of the renderer to be updated
      * @param child the renderer to be set
+     *
      * @return the removed renderer
      */
     IRenderer setChildRenderer(int index, IRenderer child) {
@@ -2801,6 +2835,7 @@ public abstract class AbstractRenderer implements IRenderer {
 
     /**
      * Sets current {@link AbstractRenderer} as parent to renderers in specified collection.
+     *
      * @param children the collection of renderers to set the parent renderer on
      */
     void setThisAsParent(Collection<IRenderer> children) {

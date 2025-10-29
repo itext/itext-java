@@ -74,6 +74,8 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.splitting.BreakAllSplitCharacters;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,8 +83,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -137,7 +137,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * text to replace the contents of the {@link Text}.
      *
      * @param textElement the {@link Text} which this object should manage
-     * @param text        the replacement text
+     * @param text the replacement text
      */
     public TextRenderer(Text textElement, String text) {
         super(textElement);
@@ -278,7 +278,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         HyphenationConfig hyphenationConfig = this.<HyphenationConfig>getProperty(Property.HYPHENATION);
 
-        // For example, if a first character is a RTL mark (U+200F), and the second is a newline, we need to break anyway
+        // For example, if a first character is an RTL mark (U+200F), and the second is a newline, we need to break anyway
         int firstPrintPos = currentTextPos;
         while (firstPrintPos < text.getEnd() && noPrint(text.get(firstPrintPos))) {
             firstPrintPos++;
@@ -304,7 +304,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             float nonBreakingHyphenRelatedChunkWidth = 0;
             int nonBreakingHyphenRelatedChunkStart = -1;
             float beforeNonBreakingHyphenRelatedChunkMaxAscender = 0;
-            float beforeNonBreakingHyphenRelatedChunkMaxDescender = 0;
 
             for (int ind = currentTextPos; ind < text.getEnd(); ind++) {
                 if (TextUtil.isNewLine(text.get(ind))) {
@@ -345,11 +344,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                             || (ind + 1 >= indexOfFirstCharacterToBeForcedToOverflow)) {
                         if (ind + 1 >= indexOfFirstCharacterToBeForcedToOverflow) {
                             firstCharacterWhichExceedsAllowedWidth = currentTextPos;
-                            break;
                         } else {
                             nonBreakablePartEnd = ind;
-                            break;
                         }
+                        break;
                     }
                     continue;
                 }
@@ -391,7 +389,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                     if (glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind)) {
                         if (-1 == nonBreakingHyphenRelatedChunkStart) {
                             beforeNonBreakingHyphenRelatedChunkMaxAscender = nonBreakablePartMaxAscender;
-                            beforeNonBreakingHyphenRelatedChunkMaxDescender = nonBreakablePartMaxDescender;
                             nonBreakingHyphenRelatedChunkStart = ind;
                         }
                         nonBreakingHyphenRelatedChunkWidth += glyphWidth + xAdvance;
@@ -416,7 +413,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         && (0 == nonBreakingHyphenRelatedChunkWidth || ind + 1 == text.getEnd() ||
                         !glyphBelongsToNonBreakingHyphenRelatedChunk(text, ind + 1))) {
                     if (isOverflowFit(overflowX)) {
-                        // we have extracted all the information we wanted and we do not want to continue.
+                        // we have extracted all the information we wanted, and we do not want to continue.
                         // we will have to split the word anyway.
                         break;
                     }
@@ -545,7 +542,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                                             // TODO DEVSIX-7010 recalculate line properties in case of word hyphenation.
                                             // These values are based on whole word. Recalculate properly based on hyphenated part.
                                             currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
-                                            currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
 
                                             currentLineWidth += currentHyphenationChoicePreTextWidth;
@@ -570,13 +566,11 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                             }
                         } else {
                             if (text.getStart() == nonBreakingHyphenRelatedChunkStart) {
-                                nonBreakingHyphenRelatedChunkWidth = 0;
                                 firstCharacterWhichExceedsAllowedWidth = previousCharPos + 1;
                             } else {
                                 firstCharacterWhichExceedsAllowedWidth = nonBreakingHyphenRelatedChunkStart;
                                 nonBreakablePartFullWidth -= nonBreakingHyphenRelatedChunkWidth;
                                 nonBreakablePartMaxAscender = beforeNonBreakingHyphenRelatedChunkMaxAscender;
-                                nonBreakablePartMaxDescender = beforeNonBreakingHyphenRelatedChunkMaxDescender;
                             }
                         }
                     }
@@ -605,7 +599,6 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         wordSplit = !forcePartialSplitOnFirstChar && (text.getEnd() != currentTextPos);
                         if (wordSplit || !(forcePartialSplitOnFirstChar || isOverflowFit(overflowX))) {
                             currentLineAscender = Math.max(currentLineAscender, nonBreakablePartMaxAscender);
-                            currentLineDescender = Math.min(currentLineDescender, nonBreakablePartMaxDescender);
                             currentLineHeight = Math.max(currentLineHeight, nonBreakablePartMaxHeight);
                             currentLineWidth += nonBreakablePartWidthWhichDoesNotExceedAllowedWidth;
                             if (OverflowWrapPropertyValue.ANYWHERE == overflowWrap) {
@@ -744,14 +737,14 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
         boolean[] startsEnds = isStartsWithSplitCharWhiteSpaceAndEndsWithSplitChar(splitCharacters);
         result.setStartsWithSplitCharacterWhiteSpace(startsEnds[0])
-              .setEndsWithSplitCharacter(startsEnds[1]);
+                .setEndsWithSplitCharacter(startsEnds[1]);
         return result;
     }
 
     private void increaseYLineOffset(UnitValue[] paddings, Border[] borders, UnitValue[] margins) {
         yLineOffset += paddings[0] != null ? paddings[0].getValue() : 0;
-        yLineOffset += borders[0] != null ?borders[0].getWidth() : 0;
-        yLineOffset +=  margins[0] != null ? margins[0].getValue() : 0;
+        yLineOffset += borders[0] != null ? borders[0].getWidth() : 0;
+        yLineOffset += margins[0] != null ? margins[0].getValue() : 0;
     }
 
     public void applyOtf() {
@@ -765,12 +758,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             if (hasOtfFont()) {
                 Object typographyConfig = this.<Object>getProperty(Property.TYPOGRAPHY_CONFIG);
                 Collection<Character.UnicodeScript> supportedScripts = null;
-        	    if (typographyConfig != null) {
-    	            supportedScripts = TypographyUtils.getSupportedScripts(typographyConfig);
-	            }
-	            if (supportedScripts == null) {
-	                supportedScripts = TypographyUtils.getSupportedScripts();
-	            }
+                if (typographyConfig != null) {
+                    supportedScripts = TypographyUtils.getSupportedScripts(typographyConfig);
+                }
+                if (supportedScripts == null) {
+                    supportedScripts = TypographyUtils.getSupportedScripts();
+                }
                 List<ScriptRange> scriptsRanges = new ArrayList<>();
                 if (script != null) {
                     scriptsRanges.add(new ScriptRange(script, text.getEnd()));
@@ -972,13 +965,13 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             Glyph glyph;
             while (text.getStart() < text.getEnd()
                     && TextUtil.isWhitespace(glyph = text.get(text.getStart())) && !TextUtil.isNewLine(glyph)) {
-                text.setStart(text.getStart() +1);
+                text.setStart(text.getStart() + 1);
             }
         }
 
         /*  Between two sentences separated by one or more whitespaces,
             icu allows to break right after the last whitespace.
-            Therefore we need to carefully edit specialScriptsWordBreakPoints list after trimming:
+            Therefore, we need to carefully edit specialScriptsWordBreakPoints list after trimming:
             if a break is allowed to happen right before the first glyph of an already trimmed text,
             we need to remove this point from the list
             (or replace it with -1 thus marking that text contains special scripts,
@@ -1034,7 +1027,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     /**
-     * Gets the maximum offset above the base line that this Text extends to.
+     * Gets the maximum offset above the baseline that this Text extends to.
      *
      * @return the upwards vertical offset of this {@link Text}
      */
@@ -1044,7 +1037,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     /**
-     * Gets the maximum offset below the base line that this Text extends to.
+     * Gets the maximum offset below the baseline that this Text extends to.
      *
      * @return the downwards vertical offset of this {@link Text}
      */
@@ -1121,6 +1114,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * Gets char code at given position for the text belonging to this renderer.
      *
      * @param pos the position in range [0; length())
+     *
      * @return Unicode char code
      */
     public int charAt(int pos) {
@@ -1142,6 +1136,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * renderer will be created. Another method that should be overridden in case of
      * {@link TextRenderer}'s extension is {@link #createCopy(GlyphLine, PdfFont)}. This method is responsible
      * for creation of {@link TextRenderer}'s copies, which represent its parts of specific font.
+     *
      * @return new renderer instance
      */
     @Override
@@ -1155,6 +1150,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * If these values are obtained from typo metrics they are normalized with a scale coefficient.
      *
      * @param font from which metrics will be extracted
+     *
      * @return array in which the first element is an ascender and the second is a descender
      */
     public static float[] calculateAscenderDescender(PdfFont font) {
@@ -1167,6 +1163,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      *
      * @param font from which metrics will be extracted
      * @param mode mode in which metrics will be obtained. Impact on the use of scale coefficient
+     *
      * @return array in which the first element is an ascender and the second is a descender
      */
     public static float[] calculateAscenderDescender(PdfFont font, RenderingMode mode) {
@@ -1186,7 +1183,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             ascender = fontMetrics.getWinAscender();
             descender = fontMetrics.getWinDescender();
         }
-        return new float[] {ascender, descender};
+        return new float[]{ascender, descender};
     }
 
     List<int[]> getReversedRanges() {
@@ -1224,18 +1221,20 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     /**
      * Analyzes/checks whether {@link TextRenderer#text}, bounded by start and end,
      * contains glyphs belonging to special script.
-     *
+     * <p>
      * Mind that the behavior of this method depends on the analyzeSpecialScriptsWordBreakPointsOnly parameter:
      * - pass {@code false} if you need to analyze the {@link TextRenderer#text} by checking each of its glyphs
-     * AND to fill {@link TextRenderer#specialScriptsWordBreakPoints} list afterwards,
+     * AND to fill {@link TextRenderer#specialScriptsWordBreakPoints} list afterward,
      * i.e. when analyzing a sequence of TextRenderers prior to layouting;
      * - pass {@code true} if you want to check if text contains glyphs belonging to special scripts,
      * according to the already filled {@link TextRenderer#specialScriptsWordBreakPoints} list.
      *
      * @param analyzeSpecialScriptsWordBreakPointsOnly false if analysis of each glyph is required,
-     *                                                 true if analysis has already been performed earlier
-     *                                                 and the results are stored in {@link TextRenderer#specialScriptsWordBreakPoints}
+     * true if analysis has already been performed earlier
+     * and the results are stored in {@link TextRenderer#specialScriptsWordBreakPoints}
+     *
      * @return true if {@link TextRenderer#text}, bounded by start and end, contains glyphs belonging to special script, otherwise false
+     *
      * @see TextRenderer#specialScriptsWordBreakPoints
      */
     boolean textContainsSpecialScriptGlyphs(boolean analyzeSpecialScriptsWordBreakPointsOnly) {
@@ -1466,10 +1465,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
             float yLine = getYLine();
             float underlineYPosition = underline.getYPosition(fontSize) + yLine;
-            float italicWidthSubstraction = .5f * fontSize * italicAngleTan;
+            float italicWidthSubtraction = .5f * fontSize * italicAngleTan;
             Rectangle innerAreaBbox = getInnerAreaBBox();
             Rectangle underlineBBox = new Rectangle(innerAreaBbox.getX(), underlineYPosition - underlineThickness / 2,
-                    innerAreaBbox.getWidth() - italicWidthSubstraction, underlineThickness);
+                    innerAreaBbox.getWidth() - italicWidthSubtraction, underlineThickness);
             canvas.rectangle(underlineBBox);
 
             if (isClippingMode) {
@@ -1517,6 +1516,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * Resolve {@link Property#FONT} String[] value.
      *
      * @param addTo add all processed renderers to.
+     *
      * @return true, if new {@link TextRenderer} has been created.
      */
     protected boolean resolveFonts(List<IRenderer> addTo) {
@@ -1536,7 +1536,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 addTo.add(this);
             } else {
                 FontCharacteristics fc = createFontCharacteristics();
-                IFontSelectorStrategy strategy = provider.createFontSelectorStrategy(Arrays.asList((String[])font), fc, fontSet);
+                IFontSelectorStrategy strategy = provider.createFontSelectorStrategy(Arrays.asList((String[]) font), fc, fontSet);
                 List<Tuple2<GlyphLine, PdfFont>> subTextWithFont = strategy.getGlyphLines(strToBeConverted);
                 for (Tuple2<GlyphLine, PdfFont> subText : subTextWithFont) {
                     TextRenderer textRenderer = createCopy(subText.getFirst(), subText.getSecond());
@@ -1567,8 +1567,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * {@link TextRenderer}, one should override this method, otherwise if {@link com.itextpdf.layout.font.FontSelector}
      * related logic is triggered, copies of this {@link TextRenderer} will have the default behavior rather than
      * the custom one.
+     *
      * @param gl a {@link GlyphLine} which represents some of this {@link TextRenderer}'s content
      * @param font a {@link PdfFont} for this part of the {@link TextRenderer}'s content
+     *
      * @return copy of this {@link TextRenderer}, which correspond to the passed {@link GlyphLine} with {@link PdfFont}
      */
     protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
@@ -1587,14 +1589,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         shift = numberOfElementsLessThanOrEqual(removedIds, range[1]);
         range[1] -= shift;
     }
+
     // if amongPresentOnly is true,
-    // returns the index of lists's element which equals textStartBasedInitialOverflowTextPos
+    // returns the index of list element which equals textStartBasedInitialOverflowTextPos
     // or -1 if textStartBasedInitialOverflowTextPos wasn't found in the list.
     // if amongPresentOnly is false, returns the index of list's element
     // that is not greater than textStartBasedInitialOverflowTextPos
     // if there's no such element in the list, -1 is returned
     static int findPossibleBreaksSplitPosition(List<Integer> list, int textStartBasedInitialOverflowTextPos,
-            boolean amongPresentOnly) {
+                                               boolean amongPresentOnly) {
         int low = 0;
         int high = list.size() - 1;
 
@@ -1643,8 +1646,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * after them.
      *
      * @param splitCharacters current renderer {@link ISplitCharacters} property value
+     *
      * @return a boolean array of two elements, where first element identifies start break possibility, and second - end
-     *         break possibility.
+     * break possibility.
      */
     boolean[] isStartsWithSplitCharWhiteSpaceAndEndsWithSplitChar(ISplitCharacters splitCharacters) {
         boolean startsWithBreak = line.getStart() < line.getEnd()
@@ -1652,14 +1656,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 && TextUtil.isSpaceOrWhitespace(text.get(line.getStart()));
         boolean endsWithBreak = line.getStart() < line.getEnd()
                 && splitCharacters.isSplitCharacter(text, line.getEnd() - 1);
-        if (specialScriptsWordBreakPoints == null || specialScriptsWordBreakPoints.isEmpty()) {
-            return new boolean[]{startsWithBreak, endsWithBreak};
-        } else {
+        if (specialScriptsWordBreakPoints != null && !specialScriptsWordBreakPoints.isEmpty()) {
             if (!endsWithBreak) {
                 endsWithBreak = specialScriptsWordBreakPoints.contains(line.getEnd());
             }
-            return new boolean[]{startsWithBreak, endsWithBreak};
         }
+        return new boolean[]{startsWithBreak, endsWithBreak};
     }
 
     private void drawText(PdfCanvas canvas, UnitValue fontSize, boolean italicSimulation, Integer textRenderingMode,
@@ -1911,9 +1913,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     private static class ReversedCharsIterator implements Iterator<GlyphLine.GlyphLinePart> {
-        private List<Integer> outStart;
-        private List<Integer> outEnd;
-        private List<Boolean> reversed;
+        private final List<Integer> outStart;
+        private final List<Integer> outEnd;
+        private final List<Boolean> reversed;
         private int currentInd = 0;
         private boolean useReversed;
 

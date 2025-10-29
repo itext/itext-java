@@ -32,10 +32,10 @@ import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.layout.LayoutContext;
 
 /**
  * Represents a renderer for the {@link Cell} layout element.
@@ -161,9 +161,9 @@ public class CellRenderer extends BlockRenderer {
     /**
      * Applies spacings on the given rectangle.
      *
-     * @param rect    a rectangle spacings will be applied on
+     * @param rect a rectangle spacings will be applied on
      * @param reverse indicates whether spacings will be applied
-     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * inside (in case of false) or outside (in case of true) the rectangle.
      *
      * @return a {@link Rectangle border box} of the renderer
      */
@@ -187,10 +187,10 @@ public class CellRenderer extends BlockRenderer {
     /**
      * Applies given spacings on the given rectangle.
      *
-     * @param rect    a rectangle spacings will be applied on
+     * @param rect a rectangle spacings will be applied on
      * @param spacings the spacings to be applied on the given rectangle
      * @param reverse indicates whether spacings will be applied
-     *                inside (in case of false) or outside (in case of true) the rectangle.
+     * inside (in case of false) or outside (in case of true) the rectangle.
      *
      * @return a {@link Rectangle border box} of the renderer
      */
@@ -212,6 +212,7 @@ public class CellRenderer extends BlockRenderer {
      * for the overflow part. So if one wants to extend {@link CellRenderer}, one should override
      * this method: otherwise the default method will be used and thus the default rather than the custom
      * renderer will be created.
+     *
      * @return new renderer instance
      */
     @Override

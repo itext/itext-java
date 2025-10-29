@@ -36,6 +36,7 @@ public class LineSeparatorRenderer extends BlockRenderer {
 
     /**
      * Creates a LineSeparatorRenderer from its corresponding layout object.
+     *
      * @param lineSeparator the {@link com.itextpdf.layout.element.LineSeparator} which this object should manage
      */
     public LineSeparatorRenderer(LineSeparator lineSeparator) {
@@ -102,11 +103,11 @@ public class LineSeparatorRenderer extends BlockRenderer {
             if (isTagged) {
                 canvas.openTag(new CanvasArtifact());
             }
-            
+
             Rectangle area = getOccupiedAreaBBox();
             applyMargins(area, false);
             lineDrawer.draw(canvas, area);
-            
+
             if (isTagged) {
                 canvas.closeTag();
             }

@@ -185,10 +185,10 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
      * Checkboxes don't support setting of paddings as they are always centered.
      * So that this method returns the rectangle as is.
      *
-     * @param rect     a rectangle paddings will be applied on.
+     * @param rect a rectangle paddings will be applied on.
      * @param paddings the paddings to be applied on the given rectangle
-     * @param reverse  indicates whether paddings will be applied
-     *                 inside (in case of false) or outside (in case of true) the rectangle.
+     * @param reverse indicates whether paddings will be applied
+     * inside (in case of false) or outside (in case of true) the rectangle.
      *
      * @return The rectangle NOT modified by the paddings.
      */
@@ -207,7 +207,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         final UnitValue heightUV = getPropertyAsUnitValue(Property.HEIGHT);
         final UnitValue widthUV = getPropertyAsUnitValue(Property.WIDTH);
 
-        // if it is a percentage value, we need to calculate the actual value but we
+        // if it is a percentage value, we need to calculate the actual value, but we
         // don't have the parent's width yet, so we will take the default value
         float height = DEFAULT_SIZE;
         if (heightUV != null && heightUV.isPointValue()) {

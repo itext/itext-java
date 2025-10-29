@@ -236,7 +236,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * to the form field builder.
      *
      * @param builder {@link ChoiceFormFieldBuilder} to set options to
-     * @param field   {@link AbstractSelectField} to retrieve the options from
+     * @param field {@link AbstractSelectField} to retrieve the options from
      */
     protected void setupBuilderValues(ChoiceFormFieldBuilder builder, AbstractSelectField field) {
         List<SelectFieldItem> options = field.getOptions();
@@ -272,8 +272,9 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * Returns final height of the select field.
      *
      * @param availableHeight available height of the layout area
-     * @param actualHeight    actual occupied height of the select field
+     * @param actualHeight actual occupied height of the select field
      * @param isClippedHeight indicates whether the layout area's height is clipped or not
+     *
      * @return final height of the select field.
      */
     protected float getFinalSelectFieldHeight(float availableHeight, float actualHeight, boolean isClippedHeight) {
@@ -291,6 +292,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * Gets the conformance. If the conformance is not set, the conformance of the document is used.
      *
      * @param document the document
+     *
      * @return the conformance or null if the conformance is not set.
      */
     protected PdfConformance getConformance(PdfDocument document) {
@@ -308,6 +310,7 @@ public abstract class AbstractSelectFieldRenderer extends BlockRenderer {
      * Gets options that are marked as selected from the select field options subtree.
      *
      * @param optionsSubTree options subtree to get selected options
+     *
      * @return selected options list.
      */
     protected List<IRenderer> getOptionsMarkedSelected(IRenderer optionsSubTree) {

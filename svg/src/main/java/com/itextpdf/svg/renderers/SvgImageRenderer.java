@@ -68,14 +68,14 @@ public class SvgImageRenderer extends ImageRenderer {
                 imageWidth = (float) retrievedArea.width;
                 imageHeight = (float) retrievedArea.height;
             } else if (retrievedArea.width != null) {
-                Area bboxArea = new Area(((PdfNumber)bbox.get(2)).floatValue(), ((PdfNumber)bbox.get(3)).floatValue());
+                Area bboxArea = new Area(((PdfNumber) bbox.get(2)).floatValue(), ((PdfNumber) bbox.get(3)).floatValue());
                 double verticalScaling = (double) retrievedArea.width / bboxArea.width;
                 bbox.set(2, new PdfNumber((double) retrievedArea.width));
                 bbox.set(3, new PdfNumber(bboxArea.height * verticalScaling));
                 imageWidth = (float) retrievedArea.width;
                 imageHeight = imageHeight * (float) verticalScaling;
             } else if (retrievedArea.height != null) {
-                Area bboxArea = new Area(((PdfNumber)bbox.get(2)).floatValue(), ((PdfNumber)bbox.get(3)).floatValue());
+                Area bboxArea = new Area(((PdfNumber) bbox.get(2)).floatValue(), ((PdfNumber) bbox.get(3)).floatValue());
                 double horizontalScaling = (double) retrievedArea.height / bboxArea.height;
                 bbox.set(2, new PdfNumber(bboxArea.width * horizontalScaling));
                 bbox.set(3, new PdfNumber((double) retrievedArea.height));
@@ -177,7 +177,7 @@ public class SvgImageRenderer extends ImageRenderer {
     }
 
     private static boolean tryToApplyAspectRatio(NullableArea retrievedArea, Area inputArea, Area resultArea,
-            Float aspectRatio) {
+                                                 Float aspectRatio) {
 
         if (aspectRatio == null) {
             return false;
@@ -193,7 +193,7 @@ public class SvgImageRenderer extends ImageRenderer {
         }
         return false;
     }
-    
+
     private static class NullableArea {
         public Float width;
         public Float height;
@@ -212,6 +212,7 @@ public class SvgImageRenderer extends ImageRenderer {
             width = 0.0f;
             height = 0.0f;
         }
+
         public Area(float width, float height) {
             this.width = width;
             this.height = height;

@@ -55,8 +55,6 @@ public class MulticolRenderer extends AbstractRenderer {
     private float columnGap;
     private float containerWidth;
 
-    private boolean isFirstLayout = true;
-
     /**
      * Creates a DivRenderer from its corresponding layout object.
      *
@@ -144,7 +142,7 @@ public class MulticolRenderer extends AbstractRenderer {
      * {@link Property#BORDER_RIGHT}, {@link Property#BORDER_BOTTOM} and {@link Property#BORDER_LEFT} values in either
      * the layout element or this {@link IRenderer} itself.
      *
-     * @param drawContext the context (canvas, document, etc) of this drawing operation.
+     * @param drawContext the context (canvas, document, etc.) of this drawing operation.
      */
     @Override
     public void drawBorder(DrawContext drawContext) {
@@ -174,7 +172,7 @@ public class MulticolRenderer extends AbstractRenderer {
     }
 
     /**
-     * Layouts multicol in the passed area.
+     * Layouts multicol in the provided area.
      *
      * @param layoutContext the layout context
      * @param actualBBox the area to layout multicol on
@@ -203,7 +201,6 @@ public class MulticolRenderer extends AbstractRenderer {
      */
     protected AbstractRenderer createOverflowRenderer(IRenderer overflowedContentRenderer) {
         MulticolRenderer overflowRenderer = (MulticolRenderer) getNextRenderer();
-        overflowRenderer.isFirstLayout = false;
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
@@ -223,6 +220,7 @@ public class MulticolRenderer extends AbstractRenderer {
             setOverflowForAllChildren(child);
         }
     }
+
     private void drawTaggedWhenNeeded(DrawContext drawContext, Consumer<PdfCanvas> action) {
         PdfCanvas canvas = drawContext.getCanvas();
         if (drawContext.isTaggingEnabled()) {
@@ -262,7 +260,7 @@ public class MulticolRenderer extends AbstractRenderer {
     }
 
     private MulticolLayoutResult balanceContentAndLayoutColumns(LayoutContext prelayoutContext,
-            Rectangle actualBbox) {
+                                                                Rectangle actualBbox) {
         float additionalHeightPerIteration;
         MulticolLayoutResult result = new MulticolLayoutResult();
         int counter = heightCalculator.maxAmountOfRelayouts() + 1;
@@ -297,10 +295,10 @@ public class MulticolRenderer extends AbstractRenderer {
 
     // Algorithm is based on pseudo algorithm from https://www.w3.org/TR/css-multicol-1/#propdef-column-span
     private void calculateColumnCountAndWidth(float initialWidth) {
-        final Integer columnCountTemp = (Integer)this.<Integer>getProperty(Property.COLUMN_COUNT);
-        final Float columnWidthTemp = (Float)this.<Float>getProperty(Property.COLUMN_WIDTH);
+        final Integer columnCountTemp = (Integer) this.<Integer>getProperty(Property.COLUMN_COUNT);
+        final Float columnWidthTemp = (Float) this.<Float>getProperty(Property.COLUMN_WIDTH);
 
-        final Float columnGapTemp = (Float)this.<Float>getProperty(Property.COLUMN_GAP);
+        final Float columnGapTemp = (Float) this.<Float>getProperty(Property.COLUMN_GAP);
         this.columnGap = columnGapTemp == null ? 0f : columnGapTemp.floatValue();
         if ((columnCountTemp == null && columnWidthTemp == null)
                 || (columnCountTemp != null && columnCountTemp.intValue() < 0)
@@ -372,7 +370,7 @@ public class MulticolRenderer extends AbstractRenderer {
     }
 
     private MulticolLayoutResult layoutColumnsAndReturnOverflowRenderer(LayoutContext preLayoutContext,
-            Rectangle actualBBox, float workingHeight) {
+                                                                        Rectangle actualBBox, float workingHeight) {
         MulticolLayoutResult result = new MulticolLayoutResult();
         IRenderer renderer = elementRenderer;
 
@@ -413,7 +411,7 @@ public class MulticolRenderer extends AbstractRenderer {
          * {@code MulticolLayoutResult#getOverflowRenderer} could be lauded
          *
          * @param renderer multicol renderer for which height needs to be increased
-         * @param result   result of one iteration of {@code MulticolRenderer} layouting
+         * @param result result of one iteration of {@code MulticolRenderer} layouting
          *
          * @return height by which current height of given multicol renderer should be increased
          */
@@ -431,7 +429,7 @@ public class MulticolRenderer extends AbstractRenderer {
      * for which height should be increased, so it can be lauded.
      */
     public static class MulticolLayoutResult {
-        private List<IRenderer> splitRenderers = new ArrayList<>();
+        private final List<IRenderer> splitRenderers = new ArrayList<>();
         private AbstractRenderer overflowRenderer;
         private IRenderer causeOfNothing;
 

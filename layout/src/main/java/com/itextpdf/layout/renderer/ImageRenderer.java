@@ -49,10 +49,10 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitApplyingResult;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitCalculator;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class ImageRenderer extends AbstractRenderer implements ILeafElementRenderer {
 
@@ -180,7 +180,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
             } else {
                 isPlacingForced = true;
                 if (width > layoutBox.getWidth() + EPS) {
-                    isPlacingForced &= processOverflowX;
+                    isPlacingForced = processOverflowX;
                 }
                 if (height > layoutBox.getHeight() + EPS) {
                     isPlacingForced &= processOverflowY;
@@ -447,7 +447,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // if rotation was applied, width would be equal to the width of rectangle bounding the rotated image
         float angleScaleCoef = imageWidth / (float) width;
         if (width > angleScaleCoef * area.getWidth()) {
-            updateHeight(UnitValue.createPointValue(area.getWidth() / (float)width * imageHeight));
+            updateHeight(UnitValue.createPointValue(area.getWidth() / (float) width * imageHeight));
             updateWidth(UnitValue.createPointValue(angleScaleCoef * area.getWidth()));
         }
 
@@ -589,7 +589,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
         // So let's find scaling coefficient
         float scaleCoeff = 1;
         if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.AUTO_SCALE))) {
-            if (maxWidth / (float) width <  maxHeight / (float) height) {
+            if (maxWidth / (float) width < maxHeight / (float) height) {
                 scaleCoeff = maxWidth / (float) width;
                 height *= maxWidth / (float) width;
                 width = maxWidth;

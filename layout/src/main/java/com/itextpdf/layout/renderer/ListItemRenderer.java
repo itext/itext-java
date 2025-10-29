@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
@@ -36,11 +37,9 @@ import com.itextpdf.layout.properties.ListSymbolAlignment;
 import com.itextpdf.layout.properties.ListSymbolPosition;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.tagging.TaggingDummyElement;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import com.itextpdf.layout.tagging.TaggingDummyElement;
 import com.itextpdf.layout.tagging.TaggingHintKey;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +115,7 @@ public class ListItemRenderer extends DivRenderer {
 
         super.draw(drawContext);
 
-        // It will be null in case of overflow (only the "split" part will contain symbol renderer.
+        // It will be null in case of overflow (only the "split" part will contain symbol renderer).
         if (symbolRenderer != null && !symbolAddedInside) {
             boolean isRtl = BaseDirection.RIGHT_TO_LEFT == this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
             symbolRenderer.setParent(this);
@@ -153,11 +152,11 @@ public class ListItemRenderer extends DivRenderer {
             }
             applyMargins(occupiedArea.getBBox(), false);
             applyBorderBox(occupiedArea.getBBox(), false);
-            if (childRenderers.size() > 0) {
+            if (!childRenderers.isEmpty()) {
                 Float yLine = null;
-                for (int i = 0; i < childRenderers.size(); i++) {
-                    if (childRenderers.get(i).getOccupiedArea().getBBox().getHeight() > 0) {
-                        yLine = ((AbstractRenderer) childRenderers.get(i)).getFirstYLineRecursively();
+                for (IRenderer childRenderer : childRenderers) {
+                    if (childRenderer.getOccupiedArea().getBBox().getHeight() > 0) {
+                        yLine = ((AbstractRenderer) childRenderer).getFirstYLineRecursively();
                         if (yLine != null) {
                             break;
                         }
@@ -261,11 +260,11 @@ public class ListItemRenderer extends DivRenderer {
 
         ListSymbolPosition symbolPosition = (ListSymbolPosition) ListRenderer.getListItemOrListProperty(this, parent, Property.LIST_SYMBOL_POSITION);
         if (symbolPosition == ListSymbolPosition.INSIDE) {
-            if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ParagraphRenderer) {
+            if (!childRenderers.isEmpty() && childRenderers.get(0) instanceof ParagraphRenderer) {
                 ParagraphRenderer paragraphRenderer = (ParagraphRenderer) childRenderers.get(0);
                 injectSymbolRendererIntoParagraphRenderer(paragraphRenderer);
                 symbolAddedInside = true;
-            } else if (childRenderers.size() > 0 && childRenderers.get(0) instanceof ImageRenderer) {
+            } else if (!childRenderers.isEmpty() && childRenderers.get(0) instanceof ImageRenderer) {
                 IRenderer paragraphRenderer = renderSymbolInNeutralParagraph();
                 paragraphRenderer.addChild(childRenderers.get(0));
                 childRenderers.set(0, paragraphRenderer);
@@ -312,9 +311,9 @@ public class ListItemRenderer extends DivRenderer {
 
     private boolean isListSymbolEmpty(IRenderer listSymbolRenderer) {
         if (listSymbolRenderer instanceof TextRenderer) {
-            return ((TextRenderer) listSymbolRenderer).getText().toString().length() == 0;
+            return ((TextRenderer) listSymbolRenderer).getText().toString().isEmpty();
         } else if (listSymbolRenderer instanceof LineRenderer) {
-            return ((TextRenderer) listSymbolRenderer.getChildRenderers().get(1)).getText().toString().length() == 0;
+            return ((TextRenderer) listSymbolRenderer.getChildRenderers().get(1)).getText().toString().isEmpty();
         }
         return false;
     }
