@@ -55,6 +55,7 @@ abstract class AbstractTrueTypeFontModifier {
      * value is an {@code int[3]} where position 0 is the checksum, position 1 is the offset
      * from the start of the file and position 2 is the length of the table.
      *
+     * <p>
      * The length of the table can be any. But when writing data, it should be aligned to 4 bytes. Say, if table length
      * is 54 we should write 2 extra zeroes at the end, and it should be taken into account for calculating the start
      * offset of the next table (but not the length of the current table).

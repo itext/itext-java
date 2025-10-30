@@ -57,6 +57,7 @@ public final class IoExceptionMessageConstant {
     public static final String CCITT_COMPRESSION_TYPE_MUST_BE_CCITTG4_CCITTG3_1D_OR_CCITTG3_2D =
             "CCITT compression type must be CCITTG4, CCITTG3_1D or CCITTG3_2D.";
     public static final String CHARACTER_CODE_EXCEPTION = "Character code exception.";
+    public static final String CMAP_TABLE_MERGING_IS_NOT_SUPPORTED = "cmap table merging isn't supported.";
     public static final String CMAP_WAS_NOT_FOUND = "The CMap {0} was not found.";
     @Deprecated
     public static final String COLOR_DEPTH_IS_NOT_SUPPORTED = "The color depth {0} is not supported.";

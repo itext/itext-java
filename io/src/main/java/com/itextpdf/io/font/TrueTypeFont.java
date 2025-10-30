@@ -23,7 +23,6 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.commons.datastructures.Tuple2;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.TrueTypeCodePages;
@@ -31,20 +30,18 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
 import com.itextpdf.io.font.otf.OpenTypeGdefTableReader;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TrueTypeFont extends FontProgram {
 
@@ -127,8 +124,8 @@ public class TrueTypeFont extends FontProgram {
 
     public Map<Integer, int[]> getActiveCmap() {
         OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
-        if (cmaps.cmapExt != null) {
-            return cmaps.cmapExt;
+        if (cmaps.cmap310 != null) {
+            return cmaps.cmap310;
         } else if (!cmaps.fontSpecific && cmaps.cmap31 != null) {
             return cmaps.cmap31;
         } else if (cmaps.fontSpecific && cmaps.cmap10 != null) {
@@ -237,14 +234,31 @@ public class TrueTypeFont extends FontProgram {
      * @param fontName the name of fonts to merge
      *
      * @return the raw data of merged font
+     *
+     * @deprecated in favour of {@link #merge(Map, String, boolean)}
      */
+    @Deprecated
     public static byte[] merge(Map<TrueTypeFont, Set<Integer>> toMerge, String fontName) {
+        return merge(toMerge, fontName, true);
+    }
+
+    /**
+     * Merges the passed font into one. Used glyphs per each font are applied to subset the merged font.
+     *
+     * @param toMerge the fonts to merge with used glyphs per each font
+     * @param fontName the name of fonts to merge
+     * @param isCmapCheckRequired the flag which specifies whether 'cmap' table should be checked while merging or not
+     *
+     * @return the raw data of merged font
+     */
+    public static byte[] merge(Map<TrueTypeFont, Set<Integer>> toMerge, String fontName, boolean isCmapCheckRequired) {
         try {
             Map<OpenTypeParser, Set<Integer>> toMergeWithParsers = new LinkedHashMap<>();
             for (Map.Entry<TrueTypeFont, Set<Integer>> entry : toMerge.entrySet()) {
                 toMergeWithParsers.put(entry.getKey().fontParser, entry.getValue());
             }
-            TrueTypeFontMerger trueTypeFontMerger = new TrueTypeFontMerger(fontName, toMergeWithParsers);
+            TrueTypeFontMerger trueTypeFontMerger = new TrueTypeFontMerger(fontName, toMergeWithParsers,
+                    isCmapCheckRequired);
             return trueTypeFontMerger.process().getSecond();
         } catch (java.io.IOException e) {
             throw new IOException(IoExceptionMessageConstant.IO_EXCEPTION, e);

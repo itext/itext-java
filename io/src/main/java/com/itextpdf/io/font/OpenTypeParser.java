@@ -136,6 +136,7 @@ class OpenTypeParser implements Closeable {
          * present in the font program.
          */
         List<Tuple2<Integer, Integer>> cmapEncodings = new ArrayList<>();
+        Map<Integer, int[]> cmap03;
         /**
          * The map containing the code information for the table 'cmap', encoding 1.0.
          * The key is the code and the value is an {@code int[2]} where position 0
@@ -144,6 +145,7 @@ class OpenTypeParser implements Closeable {
          * @see TrueTypeFont#UNITS_NORMALIZATION
          */
         Map<Integer, int[]> cmap10;
+        Map<Integer, int[]> cmap30;
         /**
          * The map containing the code information for the table 'cmap', encoding 3.1 in Unicode.
          * The key is the code and the value is an {@code int[2]} where position 0
@@ -152,7 +154,7 @@ class OpenTypeParser implements Closeable {
          * @see TrueTypeFont#UNITS_NORMALIZATION
          */
         Map<Integer, int[]> cmap31;
-        Map<Integer, int[]> cmapExt;
+        Map<Integer, int[]> cmap310;
         boolean fontSpecific = false;
     }
 
@@ -1050,29 +1052,49 @@ class OpenTypeParser implements Closeable {
         raf.seek(table_location[0]);
         raf.skipBytes(2);
         int num_tables = raf.readUnsignedShort();
-        int map10 = 0;
-        int map31 = 0;
-        int map30 = 0;
-        int mapExt = 0;
         int map03 = 0;
+        int map10 = 0;
+        int map30 = 0;
+        int map31 = 0;
+        int map310 = 0;
         cmaps = new CmapTable();
         for (int k = 0; k < num_tables; ++k) {
             int platId = raf.readUnsignedShort();
             int platSpecId = raf.readUnsignedShort();
             cmaps.cmapEncodings.add(new Tuple2<>(platId, platSpecId));
             int offset = raf.readInt();
-            if (platId == 3 && platSpecId == 0) {
+
+            if (platId == 0 && platSpecId == 3) {
+                map03 = offset;
+            } else if (platId == 1 && platSpecId == 0) {
+                map10 = offset;
+            } else if (platId == 3 && platSpecId == 0) {
                 cmaps.fontSpecific = true;
                 map30 = offset;
             } else if (platId == 3 && platSpecId == 1) {
                 map31 = offset;
             } else if (platId == 3 && platSpecId == 10) {
-                mapExt = offset;
-            } else if (platId == 1 && platSpecId == 0) {
-                map10 = offset;
-            } else if (platId == 0 && platSpecId == 3) {
-                map03 = offset;
+                map310 = offset;
             }
+        }
+        if (map03 > 0) {
+            // Unicode platform, Unicode >2.0 semantics, expect format 4 or 6 subtable
+            raf.seek(table_location[0] + map03);
+            int format = raf.readUnsignedShort();
+
+            switch (format) {
+                case 4:
+                    cmaps.cmap03 = readFormat4(false);
+                    break;
+                case 6:
+                    cmaps.cmap03 = readFormat6();
+                    break;
+            }
+            // We treat this table as equivalent to (platformId = 3, encodingId = 1)
+            // for downstream processing, since both are intended to address the Unicode BMP.
+            // Note that only one of these encoding subtables is used at a time. If multiple encoding subtables
+            // are found, the ‘cmap’ parsing software determines which one to use.
+            cmaps.cmap31 = cmaps.cmap03;
         }
         if (map10 > 0) {
             raf.seek(table_location[0] + map10);
@@ -1089,22 +1111,14 @@ class OpenTypeParser implements Closeable {
                     break;
             }
         }
-        if (map03 > 0) {
-            // Unicode platform, Unicode >2.0 semantics, expect format 4 or 6 subtable
-            raf.seek(table_location[0] + map03);
+        if (map30 > 0) {
+            raf.seek(table_location[0] + map30);
             int format = raf.readUnsignedShort();
-
-            // We treat this table as equivalent to (platformId = 3, encodingId = 1)
-            // for downstream processing, since both are intended to address the Unicode BMP.
-            // Note that only one of these encoding subtables is used at a time. If multiple encoding subtables
-            // are found, the ‘cmap’ parsing software determines which one to use.
-            switch (format) {
-                case 4:
-                    cmaps.cmap31 = readFormat4(false);
-                    break;
-                case 6:
-                    cmaps.cmap31 = readFormat6();
-                    break;
+            if (format == 4) {
+                cmaps.cmap30 = readFormat4(cmaps.fontSpecific);
+                cmaps.cmap10 = cmaps.cmap30;
+            } else {
+                cmaps.fontSpecific = false;
             }
         }
         if (map31 > 0) {
@@ -1114,30 +1128,21 @@ class OpenTypeParser implements Closeable {
                 cmaps.cmap31 = readFormat4(false);
             }
         }
-        if (map30 > 0) {
-            raf.seek(table_location[0] + map30);
-            int format = raf.readUnsignedShort();
-            if (format == 4) {
-                cmaps.cmap10 = readFormat4(cmaps.fontSpecific);
-            } else {
-                cmaps.fontSpecific = false;
-            }
-        }
-        if (mapExt > 0) {
-            raf.seek(table_location[0] + mapExt);
+        if (map310 > 0) {
+            raf.seek(table_location[0] + map310);
             int format = raf.readUnsignedShort();
             switch (format) {
                 case 0:
-                    cmaps.cmapExt = readFormat0();
+                    cmaps.cmap310 = readFormat0();
                     break;
                 case 4:
-                    cmaps.cmapExt = readFormat4(false);
+                    cmaps.cmap310 = readFormat4(false);
                     break;
                 case 6:
-                    cmaps.cmapExt = readFormat6();
+                    cmaps.cmap310 = readFormat6();
                     break;
                 case 12:
-                    cmaps.cmapExt = readFormat12();
+                    cmaps.cmap310 = readFormat12();
                     break;
             }
         }

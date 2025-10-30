@@ -101,13 +101,191 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
         usedGlyphs.add(36);
         toMerge.put(subset2, usedGlyphs);
 
-        byte[] mergeFontBytes = TrueTypeFont.merge(toMerge, "NotoSans-Regular");
+        byte[] mergeFontBytes = TrueTypeFont.merge(toMerge, "NotoSans-Regular", false);
         TrueTypeFont mergeFont = FontProgramFactory.createTrueTypeFont(mergeFontBytes, true);
 
         // C glyphs wasn't used, it's why it was cut from merge font
         Assertions.assertNotNull(subset1.bBoxes[38]);
         Assertions.assertNotNull(subset2.bBoxes[38]);
         Assertions.assertEquals(38, mergeFont.bBoxes.length);
+    }
+
+    @Test
+    public void noCommonCmapPdfTrueTypeMergeTest() throws IOException {
+        // subsets are created using fonttools Python lib with the following command
+        // fonttools subset ./NotoSans-Regular.ttf --text="ABC" --retain-gids --layout-features='*' --notdef-glyph --output-file=subset_abc.ttf
+        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc.ttf"));
+        TrueTypeFont subsetAbc = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_def.ttf"));
+        TrueTypeFont subsetDef = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_xyz.ttf"));
+        TrueTypeFont subsetXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        Map<TrueTypeFont, Set<Integer>> toMerge = new HashMap<TrueTypeFont, Set<Integer>>();
+        Set<Integer> usedGlyphs = new HashSet<Integer>();
+        // GID correspond to ABC
+        usedGlyphs.add(36);
+        usedGlyphs.add(37);
+        usedGlyphs.add(38);
+        toMerge.put(subsetAbc, usedGlyphs);
+        usedGlyphs = new HashSet<>();
+        // GID correspond to DEF
+        usedGlyphs.add(39);
+        usedGlyphs.add(40);
+        usedGlyphs.add(41);
+        toMerge.put(subsetDef, usedGlyphs);
+        usedGlyphs = new HashSet<>();
+        // GID correspond to XYZ
+        usedGlyphs.add(59);
+        usedGlyphs.add(60);
+        usedGlyphs.add(61);
+        toMerge.put(subsetXyz, usedGlyphs);
+
+        Exception e = Assertions.assertThrows(
+                com.itextpdf.io.exceptions.IOException.class,
+                () -> TrueTypeFont.merge(toMerge, "NotoSans-Regular", true));
+        Assertions.assertEquals(IoExceptionMessageConstant.CMAP_TABLE_MERGING_IS_NOT_SUPPORTED, e.getMessage());
+    }
+
+    @Test
+    public void commonCmapPdfTrueTypeMergeTest() throws IOException {
+        // subsets are created using fonttools Python lib with the following command
+        // fonttools subset ./NotoSans-Regular.ttf --text="ABC" --retain-gids --layout-features='*' --notdef-glyph --output-file=subset_abc.ttf
+        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc.ttf"));
+        TrueTypeFont subsetAbc = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc_def_xyz.ttf"));
+        TrueTypeFont subsetAbcDefXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_def.ttf"));
+        TrueTypeFont subsetDef = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_xyz.ttf"));
+        TrueTypeFont subsetXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        Map<TrueTypeFont, Set<Integer>> toMerge = new HashMap<TrueTypeFont, Set<Integer>>();
+        Set<Integer> usedGlyphs = new HashSet<Integer>();
+        // GID correspond to ABC
+        usedGlyphs.add(36);
+        usedGlyphs.add(37);
+        usedGlyphs.add(38);
+        toMerge.put(subsetAbc, usedGlyphs);
+        usedGlyphs = new HashSet<>();
+        // GID correspond to ADX
+        usedGlyphs.add(36);
+        usedGlyphs.add(39);
+        usedGlyphs.add(59);
+        toMerge.put(subsetAbcDefXyz, usedGlyphs);
+        usedGlyphs = new HashSet<>();
+        // GID correspond to DEF
+        usedGlyphs.add(39);
+        usedGlyphs.add(40);
+        usedGlyphs.add(41);
+        toMerge.put(subsetDef, usedGlyphs);
+        usedGlyphs = new HashSet<>();
+        // GID correspond to XYZ
+        usedGlyphs.add(59);
+        usedGlyphs.add(60);
+        usedGlyphs.add(61);
+        toMerge.put(subsetXyz, usedGlyphs);
+
+        byte[] mergeFontBytes = TrueTypeFont.merge(toMerge, "NotoSans-Regular", true);
+        TrueTypeFont mergeFont = FontProgramFactory.createTrueTypeFont(mergeFontBytes, true);
+
+        // `cmap` table contains mapping for all used glyphs
+        Assertions.assertEquals(9, mergeFont.getActiveCmap().size());
+        // `glyf` table contains data for all used glyphs
+        Assertions.assertEquals(62, mergeFont.bBoxes.length);
+        Assertions.assertNotNull(mergeFont.bBoxes[36]);
+        Assertions.assertNotNull(mergeFont.bBoxes[39]);
+        Assertions.assertNotNull(mergeFont.bBoxes[59]);
+    }
+
+    @Test
+    public void noCommonCmapPdfType0MergeTest() throws IOException {
+        // subsets are created using fonttools Python lib with the following command
+        // fonttools subset ./NotoSans-Regular.ttf --text="ABC" --retain-gids --layout-features='*' --notdef-glyph --output-file=subset_abc.ttf
+        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc.ttf"));
+        TrueTypeFont subsetAbc = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_def.ttf"));
+        TrueTypeFont subsetDef = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_xyz.ttf"));
+        TrueTypeFont subsetXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        Map<TrueTypeFont, Set<Integer>> toMerge = new HashMap<TrueTypeFont, Set<Integer>>();
+        Set<Integer> usedGlyphs = new HashSet<Integer>();
+        // GID correspond to ABC
+        usedGlyphs.add(36);
+        usedGlyphs.add(37);
+        usedGlyphs.add(38);
+        toMerge.put(subsetAbc, usedGlyphs);
+        usedGlyphs = new HashSet<>();
+        // GID correspond to DEF
+        usedGlyphs.add(39);
+        usedGlyphs.add(40);
+        usedGlyphs.add(41);
+        toMerge.put(subsetDef, usedGlyphs);
+        usedGlyphs = new HashSet<>();
+        // GID correspond to XYZ
+        usedGlyphs.add(59);
+        usedGlyphs.add(60);
+        usedGlyphs.add(61);
+        toMerge.put(subsetXyz, usedGlyphs);
+
+        byte[] mergeFontBytes = TrueTypeFont.merge(toMerge, "NotoSans-Regular", false);
+        TrueTypeFont mergeFont = FontProgramFactory.createTrueTypeFont(mergeFontBytes, true);
+
+        // `cmap` table doesn't contain mapping for all used glyphs, but for PDF
+        // Type0 CIDFontType2 it isn't required because of CIDToGIDMap presence
+        Assertions.assertEquals(3, mergeFont.getActiveCmap().size());
+        // `glyf` table contains data for all used glyphs
+        Assertions.assertEquals(62, mergeFont.bBoxes.length);
+        Assertions.assertNotNull(mergeFont.bBoxes[36]);
+        Assertions.assertNotNull(mergeFont.bBoxes[39]);
+        Assertions.assertNotNull(mergeFont.bBoxes[59]);
+    }
+
+    @Test
+    public void noCommonCmapUnknownPdfTypeMergeTest() throws IOException {
+        // subsets are created using fonttools Python lib with the following command
+        // fonttools subset ./NotoSans-Regular.ttf --text="ABC" --retain-gids --layout-features='*' --notdef-glyph --output-file=subset_abc.ttf
+        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc.ttf"));
+        TrueTypeFont subsetAbc = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_def.ttf"));
+        TrueTypeFont subsetDef = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_xyz.ttf"));
+        TrueTypeFont subsetXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
+
+        Map<TrueTypeFont, Set<Integer>> toMerge = new HashMap<TrueTypeFont, Set<Integer>>();
+        Set<Integer> usedGlyphs = new HashSet<Integer>();
+        // GID correspond to ABC
+        usedGlyphs.add(36);
+        usedGlyphs.add(37);
+        usedGlyphs.add(38);
+        toMerge.put(subsetAbc, usedGlyphs);
+        usedGlyphs = new HashSet<>();
+        // GID correspond to DEF
+        usedGlyphs.add(39);
+        usedGlyphs.add(40);
+        usedGlyphs.add(41);
+        toMerge.put(subsetDef, usedGlyphs);
+        usedGlyphs = new HashSet<>();
+        // GID correspond to XYZ
+        usedGlyphs.add(59);
+        usedGlyphs.add(60);
+        usedGlyphs.add(61);
+        toMerge.put(subsetXyz, usedGlyphs);
+
+        Exception e = Assertions.assertThrows(
+                com.itextpdf.io.exceptions.IOException.class,
+                () -> TrueTypeFont.merge(toMerge, "NotoSans-Regular"));
+        Assertions.assertEquals(IoExceptionMessageConstant.CMAP_TABLE_MERGING_IS_NOT_SUPPORTED, e.getMessage());
     }
 
     @Test

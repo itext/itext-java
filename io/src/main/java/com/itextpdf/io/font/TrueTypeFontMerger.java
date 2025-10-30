@@ -24,9 +24,13 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
+import com.itextpdf.io.font.OpenTypeParser.CmapTable;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,29 +39,40 @@ import java.util.Set;
  * Merges TrueType fonts and subset merged font by leaving only needed glyphs in the font.
  */
 class TrueTypeFontMerger extends AbstractTrueTypeFontModifier {
+    private OpenTypeParser cmapSourceParser = null;
 
-    TrueTypeFontMerger(String fontName, Map<OpenTypeParser, Set<Integer>> fontsToMerge) throws java.io.IOException {
+    TrueTypeFontMerger(String fontName, Map<OpenTypeParser, Set<Integer>> fontsToMerge,
+            boolean isCmapCheckRequired) throws java.io.IOException {
+
         super(fontName, true);
         horizontalMetricMap = new HashMap<>();
         glyphDataMap = new HashMap<>();
         OpenTypeParser parserExample = null;
+        Set<Integer> allGids = new HashSet<>();
+        Map<OpenTypeParser, List<Integer>> fontsToMergeWithFlatGlyphs = new LinkedHashMap<>();
         for (Map.Entry<OpenTypeParser, Set<Integer>> entry : fontsToMerge.entrySet()) {
             OpenTypeParser parser = entry.getKey();
+            List<Integer> usedFlatGlyphs = parser.getFlatGlyphs(entry.getValue());
+            fontsToMergeWithFlatGlyphs.put(parser, usedFlatGlyphs);
+            allGids.addAll(usedFlatGlyphs);
+        }
+        // 'cmap' table shouldn't contain mapping for .notdef glyph
+        allGids.remove(0);
+        for (Map.Entry<OpenTypeParser, List<Integer>> entry : fontsToMergeWithFlatGlyphs.entrySet()) {
+            OpenTypeParser parser = entry.getKey();
 
-            List<Integer> usedGlyphs = parser.getFlatGlyphs(entry.getValue());
-            for (Integer glyphObj : usedGlyphs) {
+            List<Integer> usedFlatGlyphs = entry.getValue();
+            for (Integer glyphObj : usedFlatGlyphs) {
                 int glyph = (int) glyphObj;
                 byte[] glyphData = parser.getGlyphDataForGid((int)glyph);
                 if (glyphDataMap.containsKey((int)glyph) && !Arrays.equals(glyphDataMap.get((int)glyph), glyphData)) {
-                    throw new IOException(IoExceptionMessageConstant.INCOMPATIBLE_GLYPH_DATA_DURING_FONT_MERGING)
-                            .setMessageParams(fontName);
+                    throw new IOException(IoExceptionMessageConstant.INCOMPATIBLE_GLYPH_DATA_DURING_FONT_MERGING);
                 }
                 glyphDataMap.put(glyph, glyphData);
 
                 byte[] glyphMetric = parser.getHorizontalMetricForGid(glyph);
                 if (horizontalMetricMap.containsKey(glyph) && !Arrays.equals(horizontalMetricMap.get(glyph), glyphMetric)) {
-                    throw new IOException(IoExceptionMessageConstant.INCOMPATIBLE_GLYPH_DATA_DURING_FONT_MERGING)
-                            .setMessageParams(fontName);
+                    throw new IOException(IoExceptionMessageConstant.INCOMPATIBLE_GLYPH_DATA_DURING_FONT_MERGING);
                 }
                 horizontalMetricMap.put(glyph, glyphMetric);
             }
@@ -68,6 +83,14 @@ class TrueTypeFontMerger extends AbstractTrueTypeFontModifier {
             if (parserExample == null || parser.hhea.numberOfHMetrics > parserExample.hhea.numberOfHMetrics) {
                 parserExample = parser;
             }
+
+            if (isCmapCheckRequired && cmapSourceParser == null && isCmapContainsGids(parser, allGids)) {
+                cmapSourceParser = parser;
+            }
+        }
+
+        if (isCmapCheckRequired && cmapSourceParser == null) {
+            throw new IOException(IoExceptionMessageConstant.CMAP_TABLE_MERGING_IS_NOT_SUPPORTED);
         }
 
         this.raf = parserExample.raf.createView();
@@ -77,7 +100,38 @@ class TrueTypeFontMerger extends AbstractTrueTypeFontModifier {
 
     @Override
     protected int mergeTables() throws java.io.IOException {
-        return super.createModifiedTables();
-        // cmap table merging isn't supported yet
+        final int numOfGlyphs = super.createModifiedTables();
+        // cmap table merging isn't supported yet, so cmap which
+        // contains all CID will be taken (if there is such)
+        if (cmapSourceParser != null) {
+            final RandomAccessFileOrArray cmapSourceRaf = cmapSourceParser.raf.createView();
+            final int[] tableLocation = cmapSourceParser.tables.get("cmap");
+            byte[] cmap = new byte[tableLocation[1]];
+            cmapSourceRaf.seek(tableLocation[0]);
+            cmapSourceRaf.read(cmap);
+            modifiedTables.put("cmap", cmap);
+        }
+
+        return numOfGlyphs;
+    }
+
+    private static boolean isCmapContainsGids(OpenTypeParser parser, Set<Integer> gids) {
+        final CmapTable cmapTable = parser.getCmapTable();
+        return isEncodingContainsGids(cmapTable.cmap03, gids)
+                && isEncodingContainsGids(cmapTable.cmap10, gids)
+                && isEncodingContainsGids(cmapTable.cmap30, gids)
+                && isEncodingContainsGids(cmapTable.cmap31, gids)
+                && isEncodingContainsGids(cmapTable.cmap310, gids);
+    }
+
+    private static boolean isEncodingContainsGids(Map<Integer, int[]> encoding, Set<Integer> gids) {
+        if (encoding == null) {
+            return true;
+        }
+        Set<Integer> encodingGids = new HashSet<>();
+        for (int[] mapping : encoding.values()) {
+            encodingGids.add(mapping[0]);
+        }
+        return encodingGids.containsAll(gids);
     }
 }
