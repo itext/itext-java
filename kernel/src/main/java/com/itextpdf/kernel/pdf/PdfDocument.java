@@ -160,7 +160,7 @@ public class PdfDocument implements Closeable {
     protected boolean flushUnusedObjects = false;
     protected TagStructureContext tagStructureContext;
     @Deprecated
-    protected DocumentInfoHelper documentInfoHelper;
+    protected DocumentInfoHelper documentInfoHelper = new DocumentInfoHelper();
     protected DefaultFontStrategy defaultFontStrategy = new DefaultFontStrategy(this);
     protected IPdfPageFactory pdfPageFactory = new PdfPageFactory();
     /**
