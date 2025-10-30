@@ -1692,7 +1692,6 @@ public class PdfSigner {
                 }
                 getDiContainer().register(ValidationContainer.class, validationContainer);
                 this.pdfPageFactory = new PdfAPageFactory(pdfAChecker);
-                this.documentInfoHelper = new PdfADocumentInfoHelper(this);
                 this.defaultFontStrategy = new PdfADefaultFontStrategy(this);
                 setFlushUnusedObjects(true);
             }

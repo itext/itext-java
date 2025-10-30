@@ -24,7 +24,9 @@ package com.itextpdf.kernel.pdf;
 
 /**
  * The class is helper which used inside {@link PdfDocument} to properly configure PDF document's info dictionary.
+ * @deprecated functionality moved to pdfDocument.
  */
+@Deprecated
 public class DocumentInfoHelper {
     /**
      * If document info dictionary should be added to the trailer.

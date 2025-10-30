@@ -29,7 +29,9 @@ import com.itextpdf.kernel.pdf.PdfName;
 
 /**
  * The class is helper which used for PDF/A document to properly configure PDF document's info dictionary.
+ * @deprecated functionality moved to pdfDocument.
  */
+@Deprecated
 public class PdfADocumentInfoHelper extends DocumentInfoHelper {
     private final PdfDocument pdfDocument;
 

@@ -528,7 +528,6 @@ public class PageResizerTest extends ExtendedITextTest {
 
 
     @Test
-    // TODO: DEVSIX-9518 PageResizer breaks PDF/A compliance after page resizing
     public void testPdfASignatureFieldDefault() throws IOException, InterruptedException {
         String inFileName = "pdfASignatureFieldDefault.pdf";
         String outFileName = "pdfASignatureFieldDefault.pdf";
@@ -541,11 +540,10 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        new VeraPdfValidator().validateFailure(DESTINATION_FOLDER + outFileName); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
-    // TODO: DEVSIX-9518 PageResizer breaks PDF/A compliance after page resizing
     public void testPdfASignatureFieldAspect() throws IOException, InterruptedException {
         String inFileName = "pdfASignatureFieldAspect.pdf";
         String outFileName = "pdfASignatureFieldAspect.pdf";
@@ -558,11 +556,10 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        new VeraPdfValidator().validateFailure(DESTINATION_FOLDER + outFileName); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
-    // TODO: DEVSIX-9518 PageResizer breaks PDF/A compliance after page resizing
     public void testPdfAFormFieldsDefault() throws IOException, InterruptedException {
         String inFileName = "pdfAFormFieldsDefault.pdf";
         String outFileName = "pdfAFormFieldsDefault.pdf";
@@ -575,11 +572,10 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        new VeraPdfValidator().validateFailure(DESTINATION_FOLDER + outFileName); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
-    // TODO: DEVSIX-9518 PageResizer breaks PDF/A compliance after page resizing
     public void testPdfAFormFieldsAspect() throws IOException, InterruptedException {
         String inFileName = "pdfAFormFieldsAspect.pdf";
         String outFileName = "pdfAFormFieldsAspect.pdf";
@@ -592,7 +588,7 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        new VeraPdfValidator().validateFailure(DESTINATION_FOLDER + outFileName); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
