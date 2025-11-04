@@ -221,7 +221,7 @@ final class FlexUtil {
                 boxSize = Math.min(layoutBox.getHeight(), (float) crossSize);
             }
 
-            float lineCrossSize = (lines.size() - 1) * gap;
+            float lineCrossSize = 0;
             int columnsOnPage = 0;
 
             for (List<FlexItemCalculationInfo> line : lines) {
@@ -238,11 +238,11 @@ final class FlexUtil {
                 }
             }
 
-            freeSpace = boxSize - lineCrossSize;
-            applyAlignContent(lines, isColumnDirection(renderer) ? columnsOnPage : lines.size(),
-                    alignContent, freeSpace < 0 ? 0 : freeSpace,
-                    isColumnDirection(renderer),
-                    isFirstFlexStart, renderer.isWrapReverse());
+            int linesOnPage = isColumnDirection(renderer) ? columnsOnPage : lines.size();
+            float gapSize = (linesOnPage - 1) * gap;
+            freeSpace = boxSize - lineCrossSize - gapSize;
+            applyAlignContent(lines, linesOnPage, alignContent, freeSpace < 0 ? 0 : freeSpace,
+                    isColumnDirection(renderer), isFirstFlexStart, renderer.isWrapReverse());
 
             if (renderer.isWrapReverse()) {
                 Collections.reverse(lines);
