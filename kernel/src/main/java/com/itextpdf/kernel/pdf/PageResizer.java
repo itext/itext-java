@@ -80,7 +80,7 @@ public class PageResizer {
      * @param size the target page size to which the content should be resized
      * @param type the resizing method to be applied, such as maintaining the aspect ratio
      */
-    PageResizer(PageSize size, ResizeType type) {
+    public PageResizer(PageSize size, ResizeType type) {
         this.size = size;
         this.type = type;
     }
@@ -179,6 +179,47 @@ public class PageResizer {
         for (PdfAnnotation annot : page.getAnnotations()) {
             resizeAnnotation(annot, scalingMatrix);
         }
+    }
+
+    /**
+     * Enum representing the available types of resizing strategies when modifying the dimensions
+     * of a PDF page. These strategies determine how the content is scaled relative to the new size.
+     */
+    public enum ResizeType {
+        MAINTAIN_ASPECT_RATIO,
+        DEFAULT
+    }
+
+    /**
+     * Represents the vertical alignment points used for resizing or aligning elements,
+     * particularly in the context of page rescaling.
+     * <p>
+     * The available anchor points are:
+     * - TOP: The top edge of the element serves as the reference point for alignment.
+     * - CENTER: The center of the element is used as the alignment reference.
+     * - BOTTOM: The bottom edge of the element serves as the reference point for alignment.
+     * <p>
+     * This enumeration is employed by the PageResizer class to determine the vertical
+     * alignment of content during resizing operations.
+     */
+    public enum VerticalAnchorPoint {
+        TOP,
+        CENTER,
+        BOTTOM
+    }
+
+    /**
+     * Enum representing the horizontal anchor point used in the resizing and alignment
+     * of a page or content.
+     * <p>
+     * The horizontal anchor point specifies the horizontal alignment,
+     * determining the reference point for positioning during resizing operations.
+     * Possible values include:
+     * - LEFT*/
+    public enum HorizontalAnchorPoint {
+        LEFT,
+        CENTER,
+        RIGHT
     }
 
     static String scaleDaString(String daString, double scale) {
@@ -680,47 +721,6 @@ public class PageResizer {
         transformMatrix.concatenate(scalingMatrix);
         scalingMatrix = transformMatrix;
         return scalingMatrix;
-    }
-
-    /**
-     * Enum representing the available types of resizing strategies when modifying the dimensions
-     * of a PDF page. These strategies determine how the content is scaled relative to the new size.
-     */
-    public enum ResizeType {
-        MAINTAIN_ASPECT_RATIO,
-        DEFAULT
-    }
-
-    /**
-     * Represents the vertical alignment points used for resizing or aligning elements,
-     * particularly in the context of page rescaling.
-     *
-     * The available anchor points are:
-     * - TOP: The top edge of the element serves as the reference point for alignment.
-     * - CENTER: The center of the element is used as the alignment reference.
-     * - BOTTOM: The bottom edge of the element serves as the reference point for alignment.
-     *
-     * This enumeration is employed by the PageResizer class to determine the vertical
-     * alignment of content during resizing operations.
-     */
-    public enum VerticalAnchorPoint {
-        TOP,
-        CENTER,
-        BOTTOM
-    }
-
-    /**
-     * Enum representing the horizontal anchor point used in the resizing and alignment
-     * of a page or content.
-     *
-     * The horizontal anchor point specifies the horizontal alignment,
-     * determining the reference point for positioning during resizing operations.
-     * Possible values include:
-     * - LEFT*/
-    public enum HorizontalAnchorPoint {
-        LEFT,
-        CENTER,
-        RIGHT
     }
 
     /**
