@@ -149,6 +149,9 @@ public class CssRuleSet extends CssStatement {
      */
     private static void splitDeclarationsIntoNormalAndImportant(List<CssDeclaration> declarations, List<CssDeclaration> normalDeclarations, List<CssDeclaration> importantDeclarations) {
         for (CssDeclaration declaration : declarations) {
+            if (declaration == null || declaration.getExpression() == null) {
+                continue;
+            }
             int exclIndex = declaration.getExpression().indexOf('!');
             if (exclIndex > 0 && IMPORTANT_MATCHER.matcher(declaration.getExpression()).matches()) {
                 importantDeclarations.add(new CssDeclaration(declaration.getProperty(), declaration.getExpression().substring(0, exclIndex).trim()));
