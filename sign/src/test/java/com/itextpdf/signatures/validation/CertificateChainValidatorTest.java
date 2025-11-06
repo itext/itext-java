@@ -97,7 +97,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(la -> la
                     .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                     .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
@@ -127,7 +127,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
@@ -157,7 +157,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.INVALID)
                 .hasNumberOfFailures(2)
-                .hasNumberOfLogs(3)
+                .hasNumberOfLogs(4)
                 .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage("Certificate {0} is trusted, revocation data checks are not required.",
@@ -293,7 +293,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
 
         Assertions.assertEquals(ValidationResult.INVALID, report.getValidationResult());
         Assertions.assertEquals(2, report.getFailures().size());
-        Assertions.assertEquals(3, report.getLogs().size());
+        Assertions.assertEquals(4, report.getLogs().size());
         Assertions.assertEquals(report.getFailures().get(0), report.getLogs().get(0));
         Assertions.assertEquals(report.getFailures().get(1), report.getLogs().get(1));
 
@@ -369,7 +369,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         ValidationReport report = validator.validateCertificate(baseContext, signingCert, DateTimeUtil.getCurrentTimeDate());
 
         Assertions.assertEquals(ValidationResult.VALID, report.getValidationResult());
-        Assertions.assertEquals(1, report.getLogs().size());
+        Assertions.assertEquals(2, report.getLogs().size());
     }
 
     @Test
@@ -390,7 +390,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
             .hasNumberOfFailures(0)
-            .hasNumberOfLogs(1)
+            .hasNumberOfLogs(2)
             .hasLogItem(la -> la
                 .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                 .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -419,7 +419,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(la -> la
                     .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                     .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -449,7 +449,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(1)
-                .hasNumberOfLogs(2)
+                .hasNumberOfLogs(3)
                 .hasLogItem(la -> la
                     .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                     .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -513,7 +513,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(1)
-                .hasNumberOfLogs(2)
+                .hasNumberOfLogs(3)
                 .hasLogItem(la -> la
                     .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                     .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -551,7 +551,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.INVALID)
                 .hasNumberOfFailures(1)
-                .hasNumberOfLogs(2)
+                .hasNumberOfLogs(3)
                 .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -590,7 +590,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report1, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                             i-> rootCert.getSubjectX500Principal())
@@ -603,7 +603,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report2, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 i-> rootCert.getSubjectX500Principal())
@@ -616,7 +616,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report3, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                     .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                             i -> rootCert.getSubjectX500Principal())
@@ -648,7 +648,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report1, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                         i->rootCert.getSubjectX500Principal())
@@ -661,7 +661,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report2, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                         i->rootCert.getSubjectX500Principal())
@@ -674,7 +674,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report3, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                         i->rootCert.getSubjectX500Principal())
@@ -707,7 +707,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report1, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                      i-> signingCert.getSubjectX500Principal())
@@ -758,7 +758,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report1, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                        i-> rootCert.getSubjectX500Principal())
@@ -810,7 +810,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report1, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                         i-> rootCert.getSubjectX500Principal())
@@ -862,7 +862,7 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report1, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                        i-> rootCert.getSubjectX500Principal())
@@ -1059,10 +1059,35 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report, a-> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
                                 i-> rootCert.getSubjectX500Principal())
+                        .withCertificate(rootCert))
+        );
+    }
+
+    @Test
+    public void certificateRetrieverOriginTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        String chainName = CERTS_SRC + "chain.pem";
+
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(chainName)[0];
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        ValidationReport report =
+                validator.validateCertificate(baseContext, rootCert, TimeTestUtil.TEST_DATE_TIME);
+        AssertValidationReport.assertThat(report, a-> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(2)
+                .hasLogItem(l -> l.withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
+                        .withMessage(CertificateChainValidator.CERTIFICATE_RETRIEVER_ORIGIN)
                         .withCertificate(rootCert))
         );
     }

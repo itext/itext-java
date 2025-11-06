@@ -88,6 +88,7 @@ import com.itextpdf.bouncycastle.asn1.x509.ReasonFlagsBC;
 import com.itextpdf.bouncycastle.asn1.x509.SubjectPublicKeyInfoBC;
 import com.itextpdf.bouncycastle.asn1.x509.TBSCertificateBC;
 import com.itextpdf.bouncycastle.asn1.x509.TimeBC;
+import com.itextpdf.bouncycastle.asn1.x509.qualified.QCStatementBC;
 import com.itextpdf.bouncycastle.cert.X509CertificateHolderBC;
 import com.itextpdf.bouncycastle.cert.X509ExtensionUtilsBC;
 import com.itextpdf.bouncycastle.cert.X509v2CRLBuilderBC;
@@ -197,6 +198,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
+import com.itextpdf.commons.bouncycastle.asn1.x509.qualified.IQCStatement;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
@@ -240,6 +242,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponseGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -257,15 +260,19 @@ import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
 import org.bouncycastle.asn1.ASN1BitString;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -292,6 +299,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.CertificatePolicies;
 import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
@@ -299,9 +307,11 @@ import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.asn1.x509.Time;
+import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
@@ -1934,5 +1944,50 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     public IGCMBlockCipher createGCMBlockCipher() {
         GCMBlockCipher cipher = (GCMBlockCipher) GCMBlockCipher.newInstance(AESEngine.newInstance());
         return new GCMBlockCipherBC(cipher);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getPoliciesIds(byte[] policyExtension) throws IOException {
+        try (ASN1InputStream inputStream = new ASN1InputStream(policyExtension)) {
+            ASN1OctetString octetString = (ASN1OctetString) inputStream.readObject();
+            try (ASN1InputStream innerInputStream = new ASN1InputStream(octetString.getOctets())) {
+                CertificatePolicies certificatePolicies =
+                        CertificatePolicies.getInstance(innerInputStream.readObject());
+
+                PolicyInformation[] policies = certificatePolicies.getPolicyInformation();
+                List<String> policyIds = new ArrayList<>(policies.length);
+                for (PolicyInformation policy : policies) {
+                    policyIds.add(policy.getPolicyIdentifier().getId());
+                }
+                return policyIds;
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<IQCStatement> parseQcStatement(byte[] qcStatementsExtensionValue) throws IOException {
+        List<IQCStatement> qcStatements = new ArrayList<>();
+        if (qcStatementsExtensionValue != null) {
+            ASN1OctetString octs;
+            try (ASN1InputStream aIn = new ASN1InputStream(qcStatementsExtensionValue)) {
+                octs = (ASN1OctetString) aIn.readObject();
+            }
+            ASN1Primitive primitive;
+            try (ASN1InputStream aIn = new ASN1InputStream(octs.getOctets())) {
+                primitive = aIn.readObject();
+            }
+            ASN1Sequence qcStatementsSequence = ASN1Sequence.getInstance(primitive);
+            for (ASN1Encodable qcStatementEncodable : qcStatementsSequence) {
+                QCStatement qcStatement = QCStatement.getInstance(qcStatementEncodable);
+                qcStatements.add(new QCStatementBC(qcStatement));
+            }
+        }
+        return qcStatements;
     }
 }

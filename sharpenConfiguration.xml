@@ -184,7 +184,6 @@
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1IntegerBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1OctetStringBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1TaggedObjectBC.java"/>
-                <file path="com/itextpdf/bouncycastle/asn1/ASN1OutputStreamBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/BasicOCSPResponseBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/OCSPResponseBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ocsp/ResponderIdBC.java"/>
@@ -481,6 +480,9 @@
                 <file path="com/itextpdf/signatures/validation/lotl/CertificateSelector.java" />
                 <file path="com/itextpdf/signatures/validation/lotl/xml/XmlSaxProcessor.java" />
             </fileset>
+            <fileset reason="Json handling is different in .NET">
+                <file path="com/itextpdf/signatures/validation/lotl/LotlCacheDataV1.java" />
+            </fileset>
             <fileset reason="uri handeling and certificate handeling is different">
                 <file path="com/itextpdf/signatures/validation/EuropeanTrustedCertificatesResourceLoader.java"/>
                 <file path="com/itextpdf/signatures/validation/LoadFromModuleEuropeanTrustedListConfigurationFactory.java"/>
@@ -620,7 +622,8 @@
             <fileset reason="Default types of standard output, e.g. Console.Out and System.out, differ between Java and .NET">
                 <file path="com/itextpdf/io/util/StandardOutUtil.java"/>
                 <file path="com/itextpdf/io/font/ResourceTestUtil.java"/>
-	    </fileset>
+            </fileset>
+            <file path="com/itextpdf/io/font/FontProgramMultiThreadedTest.java"/>
 
             <!-- kernel-tests -->
             <fileset reason="The ignore is added here due to java.awt is not expected to be ported">

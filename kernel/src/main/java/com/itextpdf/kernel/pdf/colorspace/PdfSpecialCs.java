@@ -81,6 +81,14 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
             return makeColorSpace(((PdfArray)getPdfObject()).get(1));
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public PdfName getName() {
+            return ((PdfArray)getPdfObject()).getAsName(0);
+        }
+
         private static PdfArray getIndexedCsArray(PdfObject base, int hival, PdfString lookup) {
             PdfArray indexed = new PdfArray();
             indexed.add(PdfName.Indexed);
@@ -127,10 +135,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
         public PdfColorSpace getBaseCs() {
             return makeColorSpace(((PdfArray)getPdfObject()).get(2));
-        }
-
-        public PdfName getName() {
-            return ((PdfArray)getPdfObject()).getAsName(1);
         }
 
         /**

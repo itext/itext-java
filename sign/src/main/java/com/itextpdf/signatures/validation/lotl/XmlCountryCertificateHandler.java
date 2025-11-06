@@ -24,21 +24,32 @@ package com.itextpdf.signatures.validation.lotl;
 
 
 import com.itextpdf.signatures.CertificateUtil;
+import com.itextpdf.signatures.validation.lotl.criteria.CertSubjectDNAttributeCriteria;
+import com.itextpdf.signatures.validation.lotl.criteria.CriteriaList;
+import com.itextpdf.signatures.validation.lotl.criteria.ExtendedKeyUsageCriteria;
+import com.itextpdf.signatures.validation.lotl.criteria.KeyUsageCriteria;
+import com.itextpdf.signatures.validation.lotl.criteria.PolicySetCriteria;
 
 import java.security.cert.Certificate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Set;
 
 class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
-    private static final List<String> INFORMATION_TAGS = new ArrayList<>();
+    private static final Set<String> INFORMATION_TAGS = new HashSet<>();
     private final Set<String> serviceTypes;
     private StringBuilder information;
     private CountryServiceContext currentServiceContext = null;
     private ServiceChronologicalInfo currentServiceChronologicalInfo = null;
-    private AdditionalServiceInformationExtension currentExtension = null;
+    private AdditionalServiceInformationExtension currentServiceExtension = null;
+    private QualifierExtension currentQualifierExtension = null;
+    private final LinkedList<CriteriaList> criteriaListQueue = new LinkedList<>();
+    private PolicySetCriteria currentPolicySetCriteria = null;
+    private CertSubjectDNAttributeCriteria currentCertSubjectDNAttributeCriteria = null;
+    private ExtendedKeyUsageCriteria currentExtendedKeyUsageCriteria = null;
+    private KeyUsageCriteria currentKeyUsageCriteria = null;
+    private String currentKeyUsageBitName = null;
 
     static {
         INFORMATION_TAGS.add(XmlTagConstants.SERVICE_TYPE);
@@ -46,6 +57,9 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
         INFORMATION_TAGS.add(XmlTagConstants.X509CERTIFICATE);
         INFORMATION_TAGS.add(XmlTagConstants.SERVICE_STATUS_STARTING_TIME);
         INFORMATION_TAGS.add(XmlTagConstants.URI);
+        INFORMATION_TAGS.add(XmlTagConstants.IDENTIFIER);
+        INFORMATION_TAGS.add(XmlTagConstants.KEY_PURPOSE_ID);
+        INFORMATION_TAGS.add(XmlTagConstants.KEY_USAGE_BIT);
     }
 
     XmlCountryCertificateHandler(Set<String> serviceTypes) {
@@ -57,15 +71,38 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
      */
     @Override
     public void startElement(String uri, String localName, String qName, HashMap<String, String> attributes) {
+        if (INFORMATION_TAGS.contains(localName)) {
+            information = new StringBuilder();
+        }
         if (XmlTagConstants.TSP_SERVICE.equals(localName)) {
             startProvider();
         } else if (XmlTagConstants.SERVICE_HISTORY_INSTANCE.equals(localName)
                 || XmlTagConstants.SERVICE_INFORMATION.equals(localName)) {
             currentServiceChronologicalInfo = new ServiceChronologicalInfo();
         } else if (XmlTagConstants.ADDITIONAL_INFORMATION_EXTENSION.equals(localName)) {
-            currentExtension = new AdditionalServiceInformationExtension();
-        } else if (INFORMATION_TAGS.contains(localName)) {
-            information = new StringBuilder();
+            currentServiceExtension = new AdditionalServiceInformationExtension();
+        } else if (XmlTagConstants.QUALIFICATION_ELEMENT.equals(localName)) {
+            currentQualifierExtension = new QualifierExtension();
+        } else if (XmlTagConstants.QUALIFIER.equals(localName)) {
+            currentQualifierExtension.addQualifier(attributes.get(XmlTagConstants.URI_ATTRIBUTE));
+        } else if (XmlTagConstants.CRITERIA_LIST.equals(localName)) {
+            CriteriaList criteriaList = new CriteriaList(attributes.get(XmlTagConstants.ASSERT));
+            if (criteriaListQueue.isEmpty()) {
+                currentQualifierExtension.setCriteriaList(criteriaList);
+            } else {
+                criteriaListQueue.peekLast().addCriteria(criteriaList);
+            }
+            criteriaListQueue.add(criteriaList);
+        } else if (XmlTagConstants.POLICY_SET.equals(localName)) {
+            currentPolicySetCriteria = new PolicySetCriteria();
+        } else if (XmlTagConstants.CERT_SUBJECT_DN_ATTRIBUTE.equals(localName)) {
+            currentCertSubjectDNAttributeCriteria = new CertSubjectDNAttributeCriteria();
+        } else if (XmlTagConstants.EXTENDED_KEY_USAGE.equals(localName)) {
+            currentExtendedKeyUsageCriteria = new ExtendedKeyUsageCriteria();
+        } else if (XmlTagConstants.KEY_USAGE.equals(localName)) {
+            currentKeyUsageCriteria = new KeyUsageCriteria();
+        } else if (XmlTagConstants.KEY_USAGE_BIT.equals(localName)) {
+            currentKeyUsageBitName = attributes.get(XmlTagConstants.NAME);
         }
     }
 
@@ -117,17 +154,67 @@ class XmlCountryCertificateHandler extends AbstractXmlCertificateHandler {
                 currentServiceChronologicalInfo = null;
                 break;
             case XmlTagConstants.URI:
-                if (currentExtension != null) {
-                    currentExtension.setUri(information.toString());
+                if (currentServiceExtension != null) {
+                    currentServiceExtension.setUri(information.toString());
                 }
-
                 break;
             case XmlTagConstants.ADDITIONAL_INFORMATION_EXTENSION:
                 if (currentServiceChronologicalInfo != null) {
-                    currentServiceChronologicalInfo.addExtension(currentExtension);
+                    currentServiceChronologicalInfo.addServiceExtension(currentServiceExtension);
                 }
-
-                currentExtension = null;
+                currentServiceExtension = null;
+                break;
+            case XmlTagConstants.QUALIFICATION_ELEMENT:
+                if (currentServiceChronologicalInfo != null) {
+                    currentServiceChronologicalInfo.addQualifierExtension(currentQualifierExtension);
+                }
+                currentQualifierExtension = null;
+                break;
+            case XmlTagConstants.CRITERIA_LIST:
+                criteriaListQueue.pollLast();
+                break;
+            case XmlTagConstants.POLICY_SET:
+                if (criteriaListQueue.peekLast() != null) {
+                    criteriaListQueue.peekLast().addCriteria(currentPolicySetCriteria);
+                }
+                currentPolicySetCriteria = null;
+                break;
+            case XmlTagConstants.CERT_SUBJECT_DN_ATTRIBUTE:
+                if (criteriaListQueue.peekLast() != null) {
+                    criteriaListQueue.peekLast().addCriteria(currentCertSubjectDNAttributeCriteria);
+                }
+                currentCertSubjectDNAttributeCriteria = null;
+                break;
+            case XmlTagConstants.EXTENDED_KEY_USAGE:
+                if (criteriaListQueue.peekLast() != null) {
+                    criteriaListQueue.peekLast().addCriteria(currentExtendedKeyUsageCriteria);
+                }
+                currentExtendedKeyUsageCriteria = null;
+                break;
+            case XmlTagConstants.KEY_USAGE:
+                if (criteriaListQueue.peekLast() != null) {
+                    criteriaListQueue.peekLast().addCriteria(currentKeyUsageCriteria);
+                }
+                currentKeyUsageCriteria = null;
+                break;
+            case XmlTagConstants.IDENTIFIER:
+                if (currentPolicySetCriteria != null) {
+                    currentPolicySetCriteria.addRequiredPolicyId(information.toString());
+                } else if (currentCertSubjectDNAttributeCriteria != null) {
+                    currentCertSubjectDNAttributeCriteria.addRequiredAttributeId(information.toString());
+                }
+                break;
+            case XmlTagConstants.KEY_PURPOSE_ID:
+                if (currentExtendedKeyUsageCriteria != null) {
+                    currentExtendedKeyUsageCriteria.addRequiredExtendedKeyUsage(information.toString());
+                }
+                break;
+            case XmlTagConstants.KEY_USAGE_BIT:
+                if (currentKeyUsageCriteria != null) {
+                    currentKeyUsageCriteria.addKeyUsageBit(currentKeyUsageBitName, information.toString());
+                }
+                currentKeyUsageBitName = null;
+                break;
         }
     }
 

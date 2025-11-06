@@ -521,7 +521,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
             flexContainer.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.WRAP);
             flexContainer.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.ROW_REVERSE);
             flexContainer.setProperty(Property.ALIGN_ITEMS, AlignmentPropertyValue.CENTER);
-            flexContainer.add(new Image(ImageDataFactory.create(SOURCE_FOLDER + "1.png")).scale(0.1f, 0.3f)
+            flexContainer.add(new Image(ImageDataFactory.create(SOURCE_FOLDER + "1.png")).scale(0.5f, 0.5f)
                     .setPadding(10)).add(new List()
                     .add(new ListItem("Flex container with").setListSymbol(ListNumberingType.ZAPF_DINGBATS_1))
                     .add(new ListItem("image and list,").setListSymbol(ListNumberingType.ZAPF_DINGBATS_2))

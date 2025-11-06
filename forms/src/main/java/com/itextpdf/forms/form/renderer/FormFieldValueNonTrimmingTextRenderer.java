@@ -32,7 +32,6 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TextRenderer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 
 class FormFieldValueNonTrimmingTextRenderer extends TextRenderer {
-    // Determines whether we want to trim leading space. In particular we don't want to trim
+    // Determines whether we want to trim leading space. In particular, we don't want to trim
     // the very first leading spaces of the text value. When text overflows to the next lines,
     // whether we should trim the text depends on why the overflow happened
     private boolean callTrimFirst = false;
@@ -64,16 +63,16 @@ class FormFieldValueNonTrimmingTextRenderer extends TextRenderer {
                 !((TextLayoutResult) baseLayoutResult).isSplitForcedByNewline()) {
             // In case the overflow to the next line happened naturally (without a forced line break),
             // we don't want to preserve the extra spaces at the beginning of the next line
-            ((FormFieldValueNonTrimmingTextRenderer) baseLayoutResult.getOverflowRenderer()).setCallTrimFirst(true);
+            ((FormFieldValueNonTrimmingTextRenderer) baseLayoutResult.getOverflowRenderer()).setCallTrimFirst();
         }
         return baseLayoutResult;
     }
 
     @Override
     public void trimFirst() {
-       if (callTrimFirst) {
-           super.trimFirst();
-       }
+        if (callTrimFirst) {
+            super.trimFirst();
+        }
     }
 
     /**
@@ -85,12 +84,12 @@ class FormFieldValueNonTrimmingTextRenderer extends TextRenderer {
             Logger logger = LoggerFactory.getLogger(FormFieldValueNonTrimmingTextRenderer.class);
             logger.error(MessageFormatUtil.format(IoLogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN));
         }
-        FormFieldValueNonTrimmingTextRenderer copy = new FormFieldValueNonTrimmingTextRenderer((Text)this.modelElement);
+        FormFieldValueNonTrimmingTextRenderer copy = new FormFieldValueNonTrimmingTextRenderer((Text) this.modelElement);
         copy.setProcessedGlyphLineAndFont(gl, font);
         return copy;
     }
 
-    private void setCallTrimFirst(boolean callTrimFirst) {
-        this.callTrimFirst = callTrimFirst;
+    private void setCallTrimFirst() {
+        this.callTrimFirst = true;
     }
 }

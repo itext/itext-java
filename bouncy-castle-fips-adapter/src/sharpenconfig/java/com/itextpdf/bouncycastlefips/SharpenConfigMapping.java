@@ -36,7 +36,7 @@ import java.util.List;
 public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 12;
+        return 100 - 7;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.DERIA5StringBCFips", "iText.Bouncycastlefips.Asn1.DerIA5StringBCFips");
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.ASN1BitStringBCFips", "iText.Bouncycastlefips.Asn1.DerBitStringBCFips");
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.ASN1GeneralizedTimeBCFips", "iText.Bouncycastlefips.Asn1.DerGeneralizedTimeBCFips");
-        configurator.mapType("com.itextpdf.bouncycastlefips.asn1.ASN1OutputStreamBCFips", "iText.Bouncycastlefips.Asn1.DerOutputStreamBCFips");
+        configurator.mapType("com.itextpdf.bouncycastlefips.asn1.ASN1OutputStreamBCFips", "iText.Bouncycastlefips.Asn1.Asn1OutputStreamBCFips");
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.DERNullBCFips", "iText.Bouncycastlefips.Asn1.DerNullBCFips");
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.ASN1EnumeratedBCFips", "iText.Bouncycastlefips.Asn1.DerEnumeratedBCFips");
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.ocsp.OCSPObjectIdentifiersBCFips", "iText.Bouncycastlefips.Asn1.Ocsp.OcspObjectIdentifiersBCFips");
@@ -87,7 +87,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("com.itextpdf.bouncycastlefips.asn1.DERNullBCFips.getDERNull", "GetDerNull");
         configurator.mapMethod("com.itextpdf.bouncycastlefips.asn1.ASN1ObjectIdentifierBCFips.getASN1ObjectIdentifier", "GetDerObjectIdentifier");
         configurator.mapMethod("com.itextpdf.bouncycastlefips.asn1.DEROctetStringBCFips.getDEROctetString", "GetDerOctetString");
-        configurator.mapMethod("com.itextpdf.bouncycastlefips.asn1.ASN1OutputStreamBCFips.getASN1OutputStream", "GetDerOutputStream");
+        configurator.mapMethod("com.itextpdf.bouncycastlefips.asn1.ASN1OutputStreamBCFips.getASN1OutputStream", "GetAsn1OutputStream");
         configurator.mapMethod("com.itextpdf.bouncycastlefips.asn1.DERSequenceBCFips.getDERSequence", "GetDerSequence");
         configurator.mapMethod("com.itextpdf.bouncycastlefips.asn1.DERSetBCFips.getDERSet", "GetDerSet");
         configurator.mapMethod("com.itextpdf.bouncycastlefips.asn1.DERTaggedObjectBCFips.getDERTaggedObject", "GetDerTaggedObject");
@@ -113,6 +113,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.x509.CRLDistPointBCFips", "iText.Bouncycastlefips.Asn1.X509.CrlDistPointBCFips");
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.x509.CRLReasonBCFips", "iText.Bouncycastlefips.Asn1.X509.CrlReasonBCFips");
         configurator.mapType("com.itextpdf.bouncycastlefips.asn1.x509.KeyPurposeIdBCFips", "iText.Bouncycastlefips.Asn1.X509.KeyPurposeIDBCFips");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.qualified.QCStatement.getStatementId", "StatementId");
+        configurator.mapProperty("org.bouncycastle.asn1.x509.qualified.QCStatement.getStatementInfo", "StatementInfo");
     }
 
     @Override

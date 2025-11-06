@@ -45,15 +45,11 @@ import org.junit.jupiter.api.Test;
 @Tag("UnitTest")
 public class PdfA1CheckerTest extends ExtendedITextTest {
 
-    private PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
-
-    @BeforeEach
-    public void before() {
-        pdfA1Checker.setFullCheckMode(true);
-    }
-
     @Test
     public void checkCatalogDictionaryWithoutAAEntry() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.AA, new PdfDictionary());
 
@@ -65,6 +61,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkCatalogDictionaryWithoutOCPropertiesEntry() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.OCProperties, new PdfDictionary());
 
@@ -76,6 +75,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkCatalogDictionaryWithoutEmbeddedFiles() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfDictionary names = new PdfDictionary();
         names.put(PdfName.EmbeddedFiles, new PdfDictionary());
 
@@ -90,6 +92,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkValidCatalog() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         pdfA1Checker.checkCatalogValidEntries(new PdfDictionary());
 
         // checkCatalogValidEntries doesn't change the state of any object
@@ -100,6 +105,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void deprecatedCheckColorShadingTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfDictionary patternDict = new PdfDictionary();
         patternDict.put(PdfName.ExtGState, new PdfDictionary());
         PdfPattern.Shading pattern = new PdfPattern.Shading(patternDict);
@@ -117,6 +125,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkSignatureTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfDictionary dict = new PdfDictionary();
         pdfA1Checker.checkSignature(dict);
         Assertions.assertTrue(pdfA1Checker.isPdfObjectReadyToFlush(dict));
@@ -124,12 +135,18 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkSignatureTypeTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         pdfA1Checker.checkSignatureType(true);
         //nothing to check, only for coverage
     }
 
     @Test
     public void checkLZWDecodeInInlineImage() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream stream = new PdfStream();
         stream.put(PdfName.Filter, PdfName.LZWDecode);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -140,6 +157,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkLZWDecodeArrayInInlineImage() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream stream = new PdfStream();
         PdfArray array = new PdfArray();
         array.add(PdfName.LZWDecode);
@@ -152,6 +172,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkEmptyImageTwiceTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream image = new PdfStream();
         pdfA1Checker.checkImage(image, null);
         pdfA1Checker.checkImage(image, null);
@@ -160,6 +183,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkImageWithAlternateTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream image = new PdfStream();
         image.put(PdfName.Alternates, PdfName.Identity);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -170,6 +196,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkImageWithOPITest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream image = new PdfStream();
         image.put(PdfName.OPI, PdfName.Identity);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -180,6 +209,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkImageWithInterpolateTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream image = new PdfStream();
         image.put(PdfName.Interpolate, new PdfBoolean(true));
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -190,6 +222,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkImageWithSMaskTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream image = new PdfStream();
         image.put(PdfName.SMask, PdfName.Identity);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -200,6 +235,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkFormXObjectWithOPITest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream form = new PdfStream();
         form.put(PdfName.OPI, PdfName.Identity);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -210,6 +248,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkFormXObjectWithPSTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream form = new PdfStream();
         form.put(PdfName.PS, PdfName.Identity);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -220,6 +261,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkFormXObjectWithSubtype2PSTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream form = new PdfStream();
         form.put(PdfName.Subtype2, PdfName.PS);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -230,6 +274,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkFormXObjectWithSMaskTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream form = new PdfStream();
         form.put(PdfName.SMask, PdfName.Identity);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -240,6 +287,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkCatalogContainsMetadataTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfDictionary catalog = new PdfDictionary();
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkMetaData(catalog)
@@ -249,6 +299,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkOutputIntentsTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfDictionary catalog = new PdfDictionary();
         PdfArray array = new PdfArray();
         PdfDictionary dictionary = new PdfDictionary();
@@ -267,6 +320,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkLZWDecodeInPdfStreamTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream stream = new PdfStream();
         stream.put(PdfName.Filter, PdfName.LZWDecode);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -277,6 +333,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkLZWDecodeInPdfStreamArrayTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfStream stream = new PdfStream();
         PdfArray array = new PdfArray();
         array.add(PdfName.LZWDecode);
@@ -289,12 +348,18 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkFileSpecTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         pdfA1Checker.checkFileSpec(new PdfDictionary());
         //nothing to check, only for coverage
     }
 
     @Test
     public void checkEmptyAnnotationTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfDictionary annotation = new PdfDictionary();
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> pdfA1Checker.checkAnnotation(annotation)
@@ -304,6 +369,9 @@ public class PdfA1CheckerTest extends ExtendedITextTest {
 
     @Test
     public void checkAnnotationWithoutFKeyTest() {
+        PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+        pdfA1Checker.setFullCheckMode(true);
+
         PdfDictionary annotation = new PdfDictionary();
         annotation.put(PdfName.Subtype, PdfName.Identity);
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,

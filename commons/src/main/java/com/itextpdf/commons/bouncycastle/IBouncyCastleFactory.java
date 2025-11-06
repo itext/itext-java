@@ -88,6 +88,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
+import com.itextpdf.commons.bouncycastle.asn1.x509.qualified.IQCStatement;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
@@ -1753,4 +1754,26 @@ public interface IBouncyCastleFactory {
      * @return {@link IGCMBlockCipher} instance with provider specific implementation
      */
     IGCMBlockCipher createGCMBlockCipher();
+
+    /**
+     * Gets list of policies IDs from the provided certificate policy extension.
+     *
+     * @param policyExtension certificate policy extension as {@code byte[]}
+     *
+     * @return list of policies IDs
+     *
+     * @throws IOException in case of I/O exceptions
+     */
+    List<String> getPoliciesIds(byte[] policyExtension) throws IOException;
+
+    /**
+     * Parses list of {@link IQCStatement} from the provided certificate QC Statements Extension value.
+     *
+     * @param qcStatementsExtensionValue certificate QC Statements Extension value as {@code byte[]}
+     *
+     * @return list of {@link IQCStatement}
+     *
+     * @throws IOException in case of Input-Output exceptions
+     */
+    List<IQCStatement> parseQcStatement(byte[] qcStatementsExtensionValue) throws IOException;
 }

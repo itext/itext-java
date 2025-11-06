@@ -157,8 +157,15 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return name;
     }
 
+    /**
+     * Retrieves a PdfFormXObject by its name from XObject resources.
+     *
+     * @param name the name of the PdfFormXObject to retrieve
+     * @return a PdfFormXObject if found and valid; null otherwise
+     */
     public PdfFormXObject getForm(PdfName name) {
-        PdfStream form = getResource(PdfName.XObject).getAsStream(name);
+        PdfDictionary resource = getResource(PdfName.XObject);
+        PdfStream form = resource != null ? resource.getAsStream(name) : null;
         return form != null && PdfName.Form.equals(form.getAsName(PdfName.Subtype)) ? new PdfFormXObject(form) : null;
     }
 

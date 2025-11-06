@@ -95,7 +95,6 @@ public class PdfADocument extends PdfDocument {
         validationContainer.addChecker(checker);
         getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfAPageFactory(checker);
-        this.documentInfoHelper = new PdfADocumentInfoHelper(this);
         this.defaultFontStrategy = new PdfADefaultFontStrategy(this);
         addOutputIntent(outputIntent);
     }
@@ -135,7 +134,6 @@ public class PdfADocument extends PdfDocument {
         }
         getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfAPageFactory(pdfAChecker);
-        this.documentInfoHelper = new PdfADocumentInfoHelper(this);
         this.defaultFontStrategy = new PdfADefaultFontStrategy(this);
     }
 

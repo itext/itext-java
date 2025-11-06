@@ -47,6 +47,14 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 1;
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public PdfName getName() {
+            return PdfName.DeviceGray;
+        }
     }
 
     public static class Rgb extends PdfDeviceCs {
@@ -60,6 +68,14 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
         public int getNumberOfComponents() {
             return 3;
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public PdfName getName() {
+            return PdfName.DeviceRGB;
+        }
     }
 
     public static class Cmyk extends PdfDeviceCs {
@@ -72,6 +88,14 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
         @Override
         public int getNumberOfComponents() {
             return 4;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public PdfName getName() {
+            return PdfName.DeviceCMYK;
         }
     }
 }

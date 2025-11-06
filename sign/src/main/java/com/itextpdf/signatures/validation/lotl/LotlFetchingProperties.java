@@ -28,6 +28,7 @@ import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.LongUnaryOperator;
 
@@ -148,7 +149,7 @@ public class LotlFetchingProperties {
      * Gets the calculation function for the cache refresh interval.
      * <p>
      * This function will be used to determine the refresh interval based on the staleness time.
-     * By default, it takes 70% of the staleness time as the refresh interval.
+     * By default, it takes 23% of the staleness time as the refresh interval.
      *
      * @return a function that takes the staleness time in milliseconds and returns the refresh interval in
      * milliseconds.
@@ -226,4 +227,10 @@ public class LotlFetchingProperties {
         // Process if schema is in the specified list
         return schemaNames.contains(countryName);
     }
+
+    List<String> getSchemaNames() {
+        return Collections.unmodifiableList(Arrays.asList(schemaNames.toArray(new String[0])));
+    }
+
+
 }

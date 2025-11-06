@@ -57,6 +57,13 @@ public class ReportItem {
         this.status = status;
     }
 
+    ReportItem() {
+        //Empty constructor needed for deserialization.
+        this.checkName = null;
+        this.message = null;
+        this.cause = null;
+    }
+
     /**
      * Create report item from another report item.
      *

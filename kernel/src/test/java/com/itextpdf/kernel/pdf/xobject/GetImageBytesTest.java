@@ -25,7 +25,6 @@ package com.itextpdf.kernel.pdf.xobject;
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.commons.utils.Pair;
 import com.itextpdf.io.codec.TIFFConstants;
 import com.itextpdf.io.codec.TIFFDirectory;
 import com.itextpdf.io.codec.TIFFField;
@@ -46,10 +45,10 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.ImageRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject.ImageBytesRetrievalProperties;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -99,7 +98,6 @@ public class GetImageBytesTest extends ExtendedITextTest {
     @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testFlateDecodeFilters() throws Exception {
-        // TODO DEVSIX-2941: extracted indexed devicegray RunLengthDecode gets color inverted
         testFile("flatedecode_runlengthdecode.pdf", "Im9", "png");
     }
 
@@ -146,10 +144,20 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void testFlateCalRgb() throws Exception {
         testFile("img_calrgb.pdf", "Im1", "png");
     }
-
-    @Test
+   @Test
     public void testJPXDecode() throws Exception {
         testFile("JPXDecode.pdf", "Im1", "jp2");
+    }
+
+    @Test
+    public void testSeparationCSWithICCBasedAsAlternativeWithColorTrans() {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> testFile("separationCSWithICCBasedAsAlternative.pdf", "Im1", "png",".ColorTrans", properties));
+        Assertions.assertEquals(KernelExceptionMessageConstant
+                        .GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB,
+                e.getMessage());
     }
 
     @Test
@@ -160,11 +168,20 @@ public class GetImageBytesTest extends ExtendedITextTest {
     @Test
     // TODO: DEVSIX-6757 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
-    public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
+    public void testSeparationCSWithDeviceCMYKAsAlternativeWithColorTrans() {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
         Assertions.assertThrows(UnsupportedOperationException.class, () ->
         {
-            testFile("separationCSWithDeviceCMYKAsAlternative.pdf", "Im1", "png");
+            testFile("separationCSWithDeviceCMYKAsAlternative.pdf", "Im1", "png",".ColorTrans", properties);
         });
+    }
+
+    @Test
+    // TODO: DEVSIX-6757 (update test after fix)
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
+            testFile("separationCSWithDeviceCMYKAsAlternative.pdf", "Im1", "png");
     }
 
     @Test
@@ -182,8 +199,26 @@ public class GetImageBytesTest extends ExtendedITextTest {
     @Test
     // TODO: DEVSIX-6757 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void testSeparationCSWithDeviceRGBAsAlternativeWithColorTrans() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        testFile("separationCSWithDeviceRgbAsAlternative.pdf", "Im1", "png", ".ColorTrans", properties);
+    }
+
+    @Test
+    // TODO: DEVSIX-6757 (update test after fix)
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceRGBAsAlternative2() throws Exception {
         testFile("spotColorImagesSmall.pdf", "Im1", "png");
+    }
+
+    @Test
+    // TODO: DEVSIX-6757 (update test after fix)
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void testSeparationCSWithDeviceRGBAsAlternative2WithColorTrans() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        testFile("spotColorImagesSmall.pdf", "Im1", "png", ".ColorTrans", properties);
     }
 
     @Test
@@ -200,6 +235,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testRGBSeparationCSWithFlateDecoderAndFunctionType0() throws Exception {
         testFile("RGBFlateF0.pdf", "Im1", "png");
+    }
+
+  @Test
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void testRGBSeparationCSWithFlateDecoderAndFunctionType0WithColorTrans() throws Exception {
+      ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+      properties.setApplyTintTransformations(true);
+        testFile("RGBFlateF0.pdf", "Im1", "png", ".ColorTrans", properties);
     }
 
     @Test
@@ -223,8 +266,10 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testRGBSeparationCSWithFlateDecoderAndFunctionType2() throws Exception {
-        testFile("RGBFlateF2.pdf", "Im1", "png");
+    public void testRGBSeparationCSWithFlateDecoderAndFunctionType2WithColorTrans() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        testFile("RGBFlateF2.pdf", "Im1", "png", ".ColorTrans", properties);
     }
 
     @Test
@@ -320,14 +365,35 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-7015 Support decoding images with Decode array and BitsPerComponent more than 1
+    public void deviceGray1bitFlateDecodeInvertedWithDecodeTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyDecodeArray(true);
+        testFile("deviceGray1bitFlateDecodeInverted.pdf", "Im0", "png", ".decode", properties);
+    }
+
+
+    @Test
     public void deviceGray4bitFlateDecodeInvertedTest() throws Exception {
         testFile("deviceGray4bitFlateDecodeInverted.pdf", "Im1", "png");
     }
 
     @Test
+    public void deviceGray4bitFlateDecodeInvertedWithDecodeTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyDecodeArray(true);
+        testFile("deviceGray4bitFlateDecodeInverted.pdf", "Im1", "png", ".decode", properties);
+    }
+
+    @Test
     public void deviceGray8bitFlateDecodeWithMaskTest() throws Exception {
         testFile("deviceGray8bitFlateDecodeWithMask.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void deviceGray8bitFlateDecodeWithMaskTransparencyTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTransparency(true);
+        testFile("deviceGray8bitFlateDecodeWithMask.pdf", "Im1", "png", ".trans", properties);
     }
 
     @Test
@@ -351,6 +417,13 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void deviceGray8bitFlateDecodeMaskRotatedWithTransparencyTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTransparency(true);
+        testFile("deviceGray8bitFlateDecodeMaskRotated.pdf", "Im1", "png", ".trans", properties);
+    }
+
+    @Test
     public void deviceGray8bitFlateDecodeScaledTest() throws Exception {
         testFile("deviceGray8bitFlateDecodeScaled.pdf", "Im1", "png");
     }
@@ -362,44 +435,56 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     public void dRgb1BitDecodeInvertTest() {
-        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb1BitDecodeInvert.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                1), e.getMessage());
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("dRgb1BitDecodeInvert.pdf", "Im1", "png"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                1, PdfName.DeviceRGB), e.getMessage());
     }
 
     @Test
     public void dRgb1BitDecodeTest() {
-        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb1BitDecode.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                1), e.getMessage());
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("dRgb1BitDecode.pdf", "Im1", "png"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                1, PdfName.DeviceRGB), e.getMessage());
     }
 
     @Test
     public void dRgb1BitTest() {
-        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb1Bit.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                1), e.getMessage());
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("dRgb1Bit.pdf", "Im1", "png"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                1, PdfName.DeviceRGB), e.getMessage());
     }
 
     @Test
     public void dRgb4BitDecodeInvertTest() {
-        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb4BitDecodeInvert.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                4), e.getMessage());
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("dRgb4BitDecodeInvert.pdf", "Im1", "png"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                4, PdfName.DeviceRGB), e.getMessage());
     }
 
     @Test
     public void dRgb4BitDecodeTest() {
-        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb4BitDecode.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                4), e.getMessage());
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("dRgb4BitDecode.pdf", "Im1", "png"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                4, PdfName.DeviceRGB), e.getMessage());
     }
 
     @Test
     public void dRgb4BitTest() {
-        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () -> testFile("dRgb4Bit.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                4), e.getMessage());
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                () -> testFile("dRgb4Bit.pdf", "Im1", "png"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                4, PdfName.DeviceRGB), e.getMessage());
     }
 
     @Test
@@ -528,6 +613,13 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void dRgbFlateInvertedWithDecodeTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyDecodeArray(true);
+        testFile("dRgbFlateInverted.pdf", "Im0", "png", ".decode", properties);
+    }
+
+    @Test
     public void dRgbFlateRotatedTest() throws Exception {
         testFile("dRgbFlateRotated.pdf", "Im0", "png");
     }
@@ -538,19 +630,28 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void dRgbFlateRotatedInvertedWithDecodeTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyDecodeArray(true);
+        testFile("dRgbFlateRotatedInverted.pdf", "Im0", "png", ".decode", properties);
+    }
+
+    @Test
     public void dRgbFlate1bitTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                () -> testFile("dRgbFlate1bit.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                1), e.getMessage());
+                () -> testFile("dRgbFlate1bit.pdf", "Im0", "png"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                1, PdfName.DeviceRGB), e.getMessage());
     }
 
     @Test
     public void dRgbFlate4bitTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                () -> testFile("dRgbFlate4bit.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                4), e.getMessage());
+                () -> testFile("dRgbFlate4bit.pdf", "Im0", "png"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                4, PdfName.DeviceRGB), e.getMessage());
     }
     
     @Test
@@ -589,6 +690,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void deviceCMYKFlateDecodeInvertedWithDecodeTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyDecodeArray(true);
+        testFile("deviceCMYKFlateDecodeInverted.pdf", "Im1", "tif");
+    }
+
+
+    @Test
     public void calGray8bitTest() throws Exception {
         testFile("calGray8bit.pdf", "Im1", "png");
     }
@@ -604,6 +713,13 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void calGray8bitGamma18InvertedWithDecodeTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyDecodeArray(true);
+        testFile("calGray8bitGamma18Inverted.pdf", "Im1", "png",".decode", properties);
+    }
+
+    @Test
     public void calGray1bitTest() throws Exception {
         testFile("calGray1bit.pdf", "Im1", "png");
     }
@@ -611,6 +727,13 @@ public class GetImageBytesTest extends ExtendedITextTest {
     @Test
     public void calGray1bitInvertedTest() throws Exception {
         testFile("calGray1bitInverted.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calGray1bitInvertedWithDecodingTest() throws Exception {
+        ImageBytesRetrievalProperties properties =  ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyDecodeArray(true);
+        testFile("calGray1bitInverted.pdf", "Im1", "png", ".decode", properties);
     }
 
     @Test
@@ -622,6 +745,15 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void calGray4bitGamma10InvertedTest() throws Exception {
         testFile("calGray4bitGamma10Inverted.pdf", "Im1", "png");
     }
+
+    @Test
+    public void calGray4bitGamma10InvertedWithDecodingTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyDecodeArray(true);
+        testFile("calGray4bitGamma10Inverted.pdf", "Im1", "png", ".decode", properties);
+    }
+
+
 
     @Test
     public void calGray8bitExtGStateTest() throws Exception {
@@ -640,15 +772,18 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     public void calRGB8bitInvertedTest() throws Exception {
-        testFile("calRGB8bitInverted.pdf", "Im1", "png");
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyDecodeArray(true);
+        testFile("calRGB8bitInverted.pdf", "Im1", "png", ".decode", properties);
     }
 
     @Test
     public void calRGB4bitTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                () -> testFile("calRGB4bit.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                "4"), e.getMessage());
+                () -> testFile("calRGB4bit.pdf", "Im1", "png"));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                "4", PdfName.CalRGB), e.getMessage());
     }
 
     @Test
@@ -659,6 +794,13 @@ public class GetImageBytesTest extends ExtendedITextTest {
     @Test
     public void calRGB8bitSMaskTest() throws Exception {
         testFile("calRGB8bitSMask.pdf", "Im1", "png");
+    }
+
+    @Test
+    public void calRGB8bitSMaskWithTransparencyTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTransparency(true);
+        testFile("calRGB8bitSMask.pdf", "Im1", "png",".trans", properties);
     }
 
     @Test
@@ -675,24 +817,26 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void calRGB1bitTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("calRGB1bit.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                "1"), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                "1", PdfName.CalRGB), e.getMessage());
     }
 
     @Test
     public void calRGB2bitTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("calRGB2bit.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                "2"), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
+                "2", PdfName.CalRGB), e.getMessage());
     }
 
     @Test
     public void lab8bitTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("lab8bit.pdf", "Im1", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
-                "/Lab"), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                PdfName.Lab), e.getMessage());
     }
 
     @Test
@@ -756,20 +900,40 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
-    public void separation1bitDeviceCMYKTest() {
-        Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> testFile("separation1bitDeviceCMYK.pdf", "Im0", "png"));
-        Assertions.assertEquals(KernelExceptionMessageConstant.GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB,
-                e.getMessage());
-
+    public void indexed8bitSMaskWithTransparencyTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTransparency(true);
+        testFile("indexed8bitSMask.pdf", "Im0", "png", ".trans", properties);
     }
 
     @Test
-    public void separation8bitDeviceCMYKTest() {
+    public void separation1bitDeviceCMYKTest() throws Exception {
+        testFile("separation1bitDeviceCMYK.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void separation1bitDeviceCMYKWithColorTransTest() {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
         Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> testFile("separation8bitDeviceCMYK.pdf", "Im0", "png"));
+                () -> testFile("separation1bitDeviceCMYK.pdf", "Im0", "png", ".ColorTrans", properties));
         Assertions.assertEquals(KernelExceptionMessageConstant.GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB,
                 e.getMessage());
+    }
+
+    @Test
+    public void separation8bitDeviceCMYKWithColorTransTest() {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> testFile("separation8bitDeviceCMYK.pdf", "Im0", "png", ".ColorTrans", properties));
+        Assertions.assertEquals(KernelExceptionMessageConstant.GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB,
+                e.getMessage());
+    }
+
+    @Test
+    public void separation8bitDeviceCMYKTest() throws Exception {
+        testFile("separation8bitDeviceCMYK.pdf", "Im0", "png");
     }
 
     @Test
@@ -778,21 +942,60 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void separation8bitDeviceRGBWithColorTransTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        testFile("separation8bitDeviceRGB.pdf", "Im0", "png", ".ColorTrans", properties);
+    }
+
+    @Test
+    public void separation8bitLabTestWithColorTransTest() {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
+                () -> testFile("separation8bitLab.pdf", "Im0", "png",".ColorTrans", properties));
+        Assertions.assertEquals(KernelExceptionMessageConstant
+                        .GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB,
+                e.getMessage());
+    }
+
+    @Test
     public void separation8bitLabTest() throws Exception {
         testFile("separation8bitLab.pdf", "Im0", "png");
     }
 
     @Test
-    public void separation8bitDeviceCMYKExtGStateTest() {
+    public void separation8bitDeviceCMYKExtGStateWithColorTransTest() {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
         Exception e = Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> testFile("separation8bitDeviceCMYKExtGState.pdf", "Im0", "png"));
+                () -> testFile("separation8bitDeviceCMYKExtGState.pdf", "Im0", "png",".ColorTrans", properties));
         Assertions.assertEquals(KernelExceptionMessageConstant.GET_IMAGEBYTES_FOR_SEPARATION_COLOR_ONLY_SUPPORTS_RGB,
                 e.getMessage());
     }
 
     @Test
+    public void separation8bitDeviceCMYKExtGStateTest() throws Exception {
+        testFile("separation8bitDeviceCMYKExtGState.pdf", "Im0", "png");
+    }
+
+    @Test
     public void separation8bitDeviceRGBTransparencyTest() throws Exception {
         testFile("separation8bitDeviceRGBTransparency.pdf", "Im0", "png");
+    }
+
+    @Test
+    // transparency is set trough graphic state and is not determinable from the xobject
+    public void separation8bitDeviceRGBTransparencyFullTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getFullOption();
+        testFile("separation8bitDeviceRGBTransparency.pdf", "Im0", "png", ".Full", properties);
+    }
+
+    @Test
+    public void separation8bitDeviceRGBTransparencyWithColorTransTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        testFile("separation8bitDeviceRGBTransparency.pdf", "Im0", "png", ".ColorTrans", properties);
     }
 
     @Test
@@ -806,13 +1009,59 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void separation8bitDeviceRGBCustomDecodeRangeAllOptionsTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getFullOption();
+        testFile("separation8bitDeviceRGBCustomDecodeRange.pdf", "Im0", "png", ".AllOptions", properties);
+    }
+
+    @Test
+    public void separation8bitDeviceRGBCustomDecodeRangeWithColorTransTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        testFile("separation8bitDeviceRGBCustomDecodeRange.pdf", "Im0", "png", ".ColorTrans", properties);
+    }
+
+    @Test
+    public void separation1bitDeviceRGBWithColorTransTest() {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, ()->
+            testFile("separation1bitDeviceRGB.pdf", "Im0", "png",".ColorTrans", properties));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_SEPARATION_ALTERNATE_COLORSPACE,
+                "1", PdfName.DeviceRGB), e.getMessage());
+    }
+
+    @Test
     public void separation1bitDeviceRGBTest() throws Exception {
         testFile("separation1bitDeviceRGB.pdf", "Im0", "png");
     }
 
     @Test
+    public void separation2bitDeviceRGBWithColorTransformTest(){
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, ()->
+                testFile("separation2bitDeviceRGB.pdf", "Im0", "png",".ColorTrans", properties));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_SEPARATION_ALTERNATE_COLORSPACE,
+                "2", PdfName.DeviceRGB), e.getMessage());
+    }
+
+    @Test
     public void separation2bitDeviceRGBTest() throws Exception {
         testFile("separation2bitDeviceRGB.pdf", "Im0", "png");
+    }
+
+    @Test
+    public void separation4bitDeviceRGBWithColorTransTest(){
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
+        Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, ()->
+                testFile("separation4bitDeviceRGB.pdf", "Im0", "png",".ColorTrans", properties));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_SEPARATION_ALTERNATE_COLORSPACE,
+                "4", PdfName.DeviceRGB), e.getMessage());
     }
 
     @Test
@@ -824,7 +1073,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void deviceN8bitDeviceCMYKTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("deviceN8bitDeviceCMYK.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
                 "/DeviceN"), e.getMessage());
     }
 
@@ -832,7 +1081,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void deviceN8bitDeviceRGBTransparencyTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("deviceN8bitDeviceRGBTransparency.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
                 "/DeviceN"), e.getMessage());
     }
 
@@ -840,7 +1089,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void deviceN8bitDeviceRGBSpotASpotBTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("deviceN8bitDeviceRGBSpotASpotB.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
                 "/DeviceN"), e.getMessage());
     }
 
@@ -848,8 +1097,8 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void deviceN4bitDeviceCMYKTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("deviceN4bitDeviceCMYKTest.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED,
-                "4"), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+                "/DeviceN"), e.getMessage());
     }
 
     @Test
@@ -861,7 +1110,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void deviceN8bit5ChannelsTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("deviceN8bit5Channels.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
                 "/DeviceN"), e.getMessage());
     }
 
@@ -869,7 +1118,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void deviceN8bitDeviceRGBCustomDecodeTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("deviceN8bitDeviceRGBCustomDecode.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
                 "/DeviceN"), e.getMessage());
     }
 
@@ -877,7 +1126,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void deviceN8bitDeviceCMYKFunctionType0Test() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("deviceN8bitDeviceCMYKFunctionType0.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
                 "/DeviceN"), e.getMessage());
     }
 
@@ -885,15 +1134,22 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void deviceN8bitDeviceRGBRotatedTest() {
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
                 () -> testFile("deviceN8bitDeviceRGBRotated.pdf", "Im0", "tif"));
-        Assertions.assertEquals(MessageFormatUtil.format(IoExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
+        Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
                 "/DeviceN"), e.getMessage());
     }
 
     private void testFile(String filename, String objectid, String expectedImageFormat) throws Exception {
-        testFile(filename, objectid, expectedImageFormat, false);
+        testFile(filename, objectid, expectedImageFormat,
+                "", ImageBytesRetrievalProperties.getApplyFiltersOnly());
     }
 
-    private void testFile(String filename, String objectid, String expectedImageFormat, boolean saveResult)
+    private void testFile(String filename, String objectid, String expectedImageFormat,
+            String compareFileMarker, PdfImageXObject.ImageBytesRetrievalProperties properties ) throws Exception {
+        testFile(filename, objectid, expectedImageFormat, false, compareFileMarker, properties);
+    }
+
+    private void testFile(String filename, String objectid, String expectedImageFormat, boolean saveResult,
+            String compareFileMarker, PdfImageXObject.ImageBytesRetrievalProperties properties)
             throws Exception {
         try (PdfReader reader = new PdfReader(SOURCE_FOLDER + filename);
                 PdfDocument pdfDocument = new PdfDocument(reader)) {
@@ -907,18 +1163,21 @@ public class GetImageBytesTest extends ExtendedITextTest {
                         + " not found - Available keys are " + xobjects.keySet());
             }
 
-            Assertions.assertEquals(expectedImageFormat, img.identifyImageFileExtension());
 
-            byte[] result = img.getImageBytes(true);
+            byte[] result = img.getImageBytes(properties);
+
+            Assertions.assertEquals(expectedImageFormat, img.identifyImageFileExtension(properties));
+
             if (saveResult) {
                 Files.write(Paths.get(
                                 SOURCE_FOLDER,
-                                filename.substring(0, filename.length() - 4) + ".new." + expectedImageFormat),
+                                filename.substring(0, filename.length() - 4) + compareFileMarker + ".new."
+                                        + expectedImageFormat),
                         result);
             }
 
             byte[] cmpBytes = Files.readAllBytes(Paths.get(
-                    SOURCE_FOLDER, filename.substring(0, filename.length() - 4) + "." + expectedImageFormat));
+                    SOURCE_FOLDER, filename.substring(0, filename.length() - 4) + compareFileMarker + "." + expectedImageFormat));
             if (img.identifyImageFileExtension().equals("tif")) {
                 compareTiffImages(cmpBytes, result);
             } else {

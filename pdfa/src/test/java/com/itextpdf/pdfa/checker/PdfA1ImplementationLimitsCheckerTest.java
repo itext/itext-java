@@ -51,30 +51,31 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
-    private PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+    private final static PdfA1Checker pdfA1Checker = new PdfA1Checker(PdfAConformance.PDF_A_1B);
+    private final static PdfA1Checker pdfA1CheckerFull = new PdfA1Checker(PdfAConformance.PDF_A_1B);
     private final static int MAX_ARRAY_CAPACITY = 8191;
     private final static int MAX_DICTIONARY_CAPACITY = 4095;
 
-    @BeforeEach
-    public void before() {
-        pdfA1Checker.setFullCheckMode(true);
+    @BeforeAll
+    public static void beforeAll() {
+        pdfA1CheckerFull.setFullCheckMode(true);
     }
 
     @Test
     public void validObjectsTest() {
-        final int maxNameLength = pdfA1Checker.getMaxNameLength();
-        final int maxStringLength = pdfA1Checker.getMaxStringLength();
+        final int maxNameLength = pdfA1CheckerFull.getMaxNameLength();
+        final int maxStringLength = pdfA1CheckerFull.getMaxStringLength();
         final int maxArrayCapacity = MAX_ARRAY_CAPACITY;
         final int maxDictionaryCapacity = MAX_DICTIONARY_CAPACITY;
-        final long maxIntegerValue = pdfA1Checker.getMaxIntegerValue();
-        final long minIntegerValue = pdfA1Checker.getMinIntegerValue();
-        final double maxRealValue = pdfA1Checker.getMaxRealValue();
+        final long maxIntegerValue = pdfA1CheckerFull.getMaxIntegerValue();
+        final long minIntegerValue = pdfA1CheckerFull.getMinIntegerValue();
+        final double maxRealValue = pdfA1CheckerFull.getMaxRealValue();
 
         Assertions.assertEquals(65535, maxStringLength);
         Assertions.assertEquals(127, maxNameLength);
@@ -97,7 +98,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // No exceptions should not be thrown as all values match the
         // limitations provided in specification
         for (PdfObject largeObject: largeObjects) {
-            pdfA1Checker.checkPdfObject(largeObject);
+            pdfA1CheckerFull.checkPdfObject(largeObject);
             checkInArray(largeObject);
             checkInDictionary(largeObject);
             checkInComplexStructure(largeObject);
@@ -116,7 +117,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         // No exceptions should not be thrown as the stream match the
         // limitations provided in specification
-        pdfA1Checker.checkPdfObject(longStream);
+        pdfA1CheckerFull.checkPdfObject(longStream);
     }
 
     @Test
@@ -126,7 +127,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as provided String is longer then
         // it is allowed per specification
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA1Checker.checkPdfObject(longString)
+                () -> pdfA1CheckerFull.checkPdfObject(longString)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_STRING_IS_TOO_LONG, e.getMessage());
     }
@@ -138,42 +139,42 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as provided name is longer then
         // it is allowed per specification
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA1Checker.checkPdfObject(longName)
+                () -> pdfA1CheckerFull.checkPdfObject(longName)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
 
     @Test
     public void independentLargeIntegerTest() {
-        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxIntegerValue() + 1L);
+        PdfNumber largeNumber = new PdfNumber(pdfA1CheckerFull.getMaxIntegerValue() + 1L);
 
         // An exception should be thrown as provided integer is larger then
         // it is allowed per specification
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA1Checker.checkPdfObject(largeNumber)
+                () -> pdfA1CheckerFull.checkPdfObject(largeNumber)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
     public void independentLargeNegativeIntegerTest() {
-        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMinIntegerValue() - 1L);
+        PdfNumber largeNumber = new PdfNumber(pdfA1CheckerFull.getMinIntegerValue() - 1L);
 
         // An exception should be thrown as provided integer is smaller then
         // it is allowed per specification
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA1Checker.checkPdfObject(largeNumber)
+                () -> pdfA1CheckerFull.checkPdfObject(largeNumber)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.INTEGER_NUMBER_IS_OUT_OF_RANGE, e.getMessage());
     }
 
     @Test
     public void independentLargeRealTest() {
-        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxRealValue() + 1.0);
+        PdfNumber largeNumber = new PdfNumber(pdfA1CheckerFull.getMaxRealValue() + 1.0);
 
         // TODO DEVSIX-4182
         // An exception is not thrown as any number greater then 32767 is considered as Integer
-        pdfA1Checker.checkPdfObject(largeNumber);
+        pdfA1CheckerFull.checkPdfObject(largeNumber);
     }
 
     @Test
@@ -183,7 +184,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as provided array has more elements then
         // it is allowed per specification
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA1Checker.checkPdfObject(longArray)
+                () -> pdfA1CheckerFull.checkPdfObject(longArray)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_ARRAY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
@@ -195,7 +196,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as provided dictionary has more entries
         // then it is allowed per specification
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA1Checker.checkPdfObject(longDictionary)
+                () -> pdfA1CheckerFull.checkPdfObject(longDictionary)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
@@ -207,7 +208,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as dictionary of the stream has more entries
         // then it is allowed per specification
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA1Checker.checkPdfObject(longStream)
+                () -> pdfA1CheckerFull.checkPdfObject(longStream)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.MAXIMUM_DICTIONARY_CAPACITY_IS_EXCEEDED, e.getMessage());
     }
@@ -236,7 +237,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         // An exception should be thrown as dictionary contains key which is longer then
         // it is allowed per specification
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> pdfA1Checker.checkPdfObject(dict)
+                () -> pdfA1CheckerFull.checkPdfObject(dict)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.PDF_NAME_IS_TOO_LONG, e.getMessage());
     }
@@ -278,7 +279,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void largeIntegerInContentStreamTest() {
-        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxIntegerValue() + 1L);
+        PdfNumber largeNumber = new PdfNumber(pdfA1CheckerFull.getMaxIntegerValue() + 1L);
 
         // An exception should be thrown as provided integer is larger then
         // it is allowed per specification
@@ -290,7 +291,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void largeNegativeIntegerInContentStreamTest() {
-        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMinIntegerValue() - 1L);
+        PdfNumber largeNumber = new PdfNumber(pdfA1CheckerFull.getMinIntegerValue() - 1L);
 
         // An exception should be thrown as provided integer is smaller then
         // it is allowed per specification
@@ -303,7 +304,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
     @Test
     public void largeRealInContentStreamTest() {
 
-        PdfNumber largeNumber = new PdfNumber(pdfA1Checker.getMaxRealValue() + 1.0);
+        PdfNumber largeNumber = new PdfNumber(pdfA1CheckerFull.getMaxRealValue() + 1.0);
 
         // TODO DEVSIX-4182
         // An exception is not thrown as any number greater then 32767 is considered as Integer
@@ -337,29 +338,25 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     @Test
     public void contentStreamIsNotCheckedForNotModifiedObjectTest() {
-        pdfA1Checker.setFullCheckMode(false);
-
         PdfString longString = buildLongString();
         PdfArray longArray = buildLongArray();
         PdfDictionary longDictionary = buildLongDictionary();
 
         // An exception should not be thrown as content stream considered as not modified
         // and won't be tested
-        checkInContentStream(longString);
-        checkInContentStream(longArray);
-        checkInContentStream(longDictionary);
+        checkInContentStream(longString, pdfA1Checker);
+        checkInContentStream(longArray, pdfA1Checker);
+        checkInContentStream(longDictionary, pdfA1Checker);
     }
 
     @Test
     public void indirectObjectIsNotCheckTest() {
-        pdfA1Checker.setFullCheckMode(false);
-
         PdfStream longStream = buildStreamWithLongDictionary();
 
         // An exception should not be thrown as pdf stream is an indirect object
         // it is ignored during array / dictionary validation as it is expected
         // to be validated and flushed independently
-        checkInArray(longStream);
+        checkInArray(longStream, pdfA1Checker);
     }
 
     @Test
@@ -503,7 +500,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
     private PdfString buildLongString() {
 
-        final int maxAllowedLength = pdfA1Checker.getMaxStringLength();
+        final int maxAllowedLength = pdfA1CheckerFull.getMaxStringLength();
         final int testLength = maxAllowedLength + 1;
 
         Assertions.assertEquals(65536, testLength);
@@ -512,8 +509,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
     }
 
     private PdfName buildLongName() {
-
-        final int maxAllowedLength = pdfA1Checker.getMaxNameLength();
+        final int maxAllowedLength = pdfA1CheckerFull.getMaxNameLength();
         final int testLength = maxAllowedLength + 1;
 
         Assertions.assertEquals(128, testLength);
@@ -549,26 +545,34 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         dict.put(new PdfName("Key2"), new PdfString("value2"));
         dict.put(new PdfName("Key3"), object);
 
-        pdfA1Checker.checkPdfObject(dict);
+        pdfA1CheckerFull.checkPdfObject(dict);
 
     }
 
     private void checkInArray(PdfObject object) {
+        checkInArray(object, pdfA1CheckerFull);
+    }
+
+    private void checkInArray(PdfObject object, PdfA1Checker checker) {
         PdfArray array = new PdfArray();
         array.add(new PdfString("value1"));
         array.add(new PdfString("value2"));
         array.add(object);
 
-        pdfA1Checker.checkPdfObject(array);
+        checker.checkPdfObject(array);
     }
 
     private void checkInContentStream(PdfObject object) {
+        checkInContentStream(object, pdfA1CheckerFull);
+    }
+
+    private void checkInContentStream(PdfObject object, PdfA1Checker checker) {
         String byteContent =  PdfACheckerTestUtils.getStreamWithValue(object);
 
         byte[] newContent = byteContent.getBytes(StandardCharsets.UTF_8);
         PdfStream stream = new PdfStream(newContent);
 
-        pdfA1Checker.checkContentStream(stream);
+        checker.checkContentStream(stream);
     }
 
     private void checkInArrayInContentStream(PdfObject object) {
@@ -598,7 +602,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         dict.put(new PdfName("Key5"), new PdfString("value6"));
         dict.put(new PdfName("Key6"), array);
 
-        pdfA1Checker.checkPdfObject(array);
+        pdfA1CheckerFull.checkPdfObject(array);
     }
 
     private void checkInFormXObject(PdfObject object) {
@@ -608,7 +612,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         PdfStream stream = new PdfStream(newContent);
         PdfXObject xobject = new PdfFormXObject(stream);
 
-        pdfA1Checker.checkFormXObject(xobject.getPdfObject());
+        pdfA1CheckerFull.checkFormXObject(xobject.getPdfObject());
     }
 
     private void checkInTilingPattern(PdfObject object) {
@@ -620,7 +624,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
 
         Color color = new PatternColor(pattern);
 
-        pdfA1Checker.checkColor(null, color, new PdfDictionary(), true, null);
+        pdfA1CheckerFull.checkColor(null, color, new PdfDictionary(), true, null);
     }
 
     private void checkInShadingPattern(PdfObject object) {
@@ -630,7 +634,7 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         PdfStream stream = new PdfStream(newContent);
         PdfPattern pattern = new Shading(stream);
 
-        pdfA1Checker.checkPdfObject(pattern.getPdfObject());
+        pdfA1CheckerFull.checkPdfObject(pattern.getPdfObject());
     }
 
     private void checkInType3Font(PdfObject object) {
@@ -646,12 +650,12 @@ public class PdfA1ImplementationLimitsCheckerTest extends ExtendedITextTest {
         PdfDictionary dictionary = font.getPdfObject();
         dictionary.put(PdfName.Subtype, PdfName.Type3);
         dictionary.put(PdfName.CharProcs, charProcs);
-        pdfA1Checker.checkFont(font);
+        pdfA1CheckerFull.checkFont(font);
     }
 
     private void checkColorspace(PdfColorSpace colorSpace) {
         PdfDictionary currentColorSpaces = new PdfDictionary();
-        pdfA1Checker.checkColorSpace(colorSpace, null, currentColorSpaces, false, false);
+        pdfA1CheckerFull.checkColorSpace(colorSpace, null, currentColorSpaces, false, false);
     }
 
     private PdfColorSpace buildDeviceNColorspace(int numberOfComponents) {

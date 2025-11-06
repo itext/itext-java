@@ -136,6 +136,7 @@ class OpenTypeParser implements Closeable {
          * present in the font program.
          */
         List<Tuple2<Integer, Integer>> cmapEncodings = new ArrayList<>();
+        Map<Integer, int[]> cmap03;
         /**
          * The map containing the code information for the table 'cmap', encoding 1.0.
          * The key is the code and the value is an {@code int[2]} where position 0
@@ -144,6 +145,7 @@ class OpenTypeParser implements Closeable {
          * @see TrueTypeFont#UNITS_NORMALIZATION
          */
         Map<Integer, int[]> cmap10;
+        Map<Integer, int[]> cmap30;
         /**
          * The map containing the code information for the table 'cmap', encoding 3.1 in Unicode.
          * The key is the code and the value is an {@code int[2]} where position 0
@@ -152,7 +154,7 @@ class OpenTypeParser implements Closeable {
          * @see TrueTypeFont#UNITS_NORMALIZATION
          */
         Map<Integer, int[]> cmap31;
-        Map<Integer, int[]> cmapExt;
+        Map<Integer, int[]> cmap310;
         boolean fontSpecific = false;
     }
 
@@ -387,9 +389,20 @@ class OpenTypeParser implements Closeable {
         int start = locaTable[gid];
         int len = locaTable[gid + 1] - start;
         byte[] data = new byte[len];
-        raf.seek(glyfOffset + start);
-        raf.readFully(data, 0, len);
-        return data;
+
+        // OpenTypeParser may be shared between different threads.
+        // raf.createView() returns thread safe RandomAccessFileOrArray
+        RandomAccessFileOrArray tmpRaf = raf.createView();
+        try {
+            tmpRaf.seek(glyfOffset + start);
+            tmpRaf.readFully(data, 0, len);
+            return data;
+        } finally {
+            try {
+                tmpRaf.close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     /**
@@ -407,11 +420,29 @@ class OpenTypeParser implements Closeable {
             throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("hmtx", fileName);
         }
         int hmtxOffset = tableLocation[0];
-        // 4 bytes per each glyph, 2 bytes for width, 2 bytes for left side bearing
-        raf.seek(hmtxOffset + gid * 4);
-        byte[] metric = new byte[4];
-        raf.read(metric, 0, 4);
-        return metric;
+        // OpenTypeParser may be shared between different threads.
+        // raf.createView() returns thread safe RandomAccessFileOrArray
+        RandomAccessFileOrArray tmpRaf = raf.createView();
+        try {
+            // For first hhea.numberOfHMetrics - 4 bytes per each glyph, 2 bytes for width, 2 bytes for left side bearing
+            if (gid < hhea.numberOfHMetrics) {
+                tmpRaf.seek(hmtxOffset + gid * 4);
+                byte[] metric = new byte[4];
+                tmpRaf.read(metric, 0, 4);
+                return metric;
+            } else {
+                // For the rest - only 2 bytes for left side bearing for the rest
+                tmpRaf.seek(hmtxOffset + hhea.numberOfHMetrics * 4 + (gid - hhea.numberOfHMetrics) * 2);
+                byte[] metric = new byte[2];
+                tmpRaf.read(metric, 0, 2);
+                return metric;
+            }
+        } finally {
+            try {
+                tmpRaf.close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     /**
@@ -443,18 +474,22 @@ class OpenTypeParser implements Closeable {
     }
 
     /**
-     * Gets raw bytes of subset of parsed font.
+     * Gets raw bytes of subset of parsed font and a number of glyphs in a subset.
+     *
+     * <p>
+     * The number of glyphs in a subset is not just glyphs.size() here. It's the biggest glyph id + 1 (for glyph 0).
+     * It also may include possible composite glyphs.
      *
      * @param glyphs the glyphs to subset the font
      * @param subsetTables whether subset tables (remove `name` and `post` tables) or not. It's used in case of ttc
      *                      (true type collection) font where single "full" font is needed. Despite the value of that
      *                      flag, only used glyphs will be left in the font
      *
-     * @return the raw data of subset font
+     * @return a tuple of the number of glyphs and the raw data of subset font
      *
      * @throws java.io.IOException if any input/output issue occurs
      */
-    byte[] getSubset(Set<Integer> glyphs, boolean subsetTables) throws java.io.IOException {
+    Tuple2<Integer, byte[]> getSubset(Set<Integer> glyphs, boolean subsetTables) throws java.io.IOException {
         TrueTypeFontSubsetter sb = new TrueTypeFontSubsetter(fileName, this, glyphs, subsetTables);
         return sb.process();
     }
@@ -506,37 +541,48 @@ class OpenTypeParser implements Closeable {
         if (start == locaTable[glyph + 1]) {
             return;
         }
-        raf.seek(glyfOffset + start);
-        int numContours = raf.readShort();
-        if (numContours >= 0) {
-            return;
-        }
-        raf.skipBytes(8);
-        for (; ; ) {
-            int flags = raf.readUnsignedShort();
-            int cGlyph = raf.readUnsignedShort();
-            if (!glyphsUsed.contains(cGlyph)) {
-                glyphsUsed.add(cGlyph);
-                glyphsInList.add(cGlyph);
-            }
-            if ((flags & MORE_COMPONENTS) == 0) {
+
+        // OpenTypeParser may be shared between different threads.
+        // raf.createView() returns thread safe RandomAccessFileOrArray
+        RandomAccessFileOrArray tmpRaf = raf.createView();
+        try {
+            tmpRaf.seek(glyfOffset + start);
+            int numContours = tmpRaf.readShort();
+            if (numContours >= 0) {
                 return;
             }
-            int skip;
-            if ((flags & ARG_1_AND_2_ARE_WORDS) != 0) {
-                skip = 4;
-            } else {
-                skip = 2;
+            tmpRaf.skipBytes(8);
+            for (; ; ) {
+                int flags = tmpRaf.readUnsignedShort();
+                int cGlyph = tmpRaf.readUnsignedShort();
+                if (!glyphsUsed.contains(cGlyph)) {
+                    glyphsUsed.add(cGlyph);
+                    glyphsInList.add(cGlyph);
+                }
+                if ((flags & MORE_COMPONENTS) == 0) {
+                    return;
+                }
+                int skip;
+                if ((flags & ARG_1_AND_2_ARE_WORDS) != 0) {
+                    skip = 4;
+                } else {
+                    skip = 2;
+                }
+                if ((flags & WE_HAVE_A_SCALE) != 0) {
+                    skip += 2;
+                } else if ((flags & WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
+                    skip += 4;
+                }
+                if ((flags & WE_HAVE_A_TWO_BY_TWO) != 0) {
+                    skip += 8;
+                }
+                tmpRaf.skipBytes(skip);
             }
-            if ((flags & WE_HAVE_A_SCALE) != 0) {
-                skip += 2;
-            } else if ((flags & WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
-                skip += 4;
+        } finally {
+            try {
+                tmpRaf.close();
+            } catch (Exception ignored) {
             }
-            if ((flags & WE_HAVE_A_TWO_BY_TWO) != 0) {
-                skip += 8;
-            }
-            raf.skipBytes(skip);
         }
     }
 
@@ -1006,29 +1052,49 @@ class OpenTypeParser implements Closeable {
         raf.seek(table_location[0]);
         raf.skipBytes(2);
         int num_tables = raf.readUnsignedShort();
-        int map10 = 0;
-        int map31 = 0;
-        int map30 = 0;
-        int mapExt = 0;
         int map03 = 0;
+        int map10 = 0;
+        int map30 = 0;
+        int map31 = 0;
+        int map310 = 0;
         cmaps = new CmapTable();
         for (int k = 0; k < num_tables; ++k) {
             int platId = raf.readUnsignedShort();
             int platSpecId = raf.readUnsignedShort();
             cmaps.cmapEncodings.add(new Tuple2<>(platId, platSpecId));
             int offset = raf.readInt();
-            if (platId == 3 && platSpecId == 0) {
+
+            if (platId == 0 && platSpecId == 3) {
+                map03 = offset;
+            } else if (platId == 1 && platSpecId == 0) {
+                map10 = offset;
+            } else if (platId == 3 && platSpecId == 0) {
                 cmaps.fontSpecific = true;
                 map30 = offset;
             } else if (platId == 3 && platSpecId == 1) {
                 map31 = offset;
             } else if (platId == 3 && platSpecId == 10) {
-                mapExt = offset;
-            } else if (platId == 1 && platSpecId == 0) {
-                map10 = offset;
-            } else if (platId == 0 && platSpecId == 3) {
-                map03 = offset;
+                map310 = offset;
             }
+        }
+        if (map03 > 0) {
+            // Unicode platform, Unicode >2.0 semantics, expect format 4 or 6 subtable
+            raf.seek(table_location[0] + map03);
+            int format = raf.readUnsignedShort();
+
+            switch (format) {
+                case 4:
+                    cmaps.cmap03 = readFormat4(false);
+                    break;
+                case 6:
+                    cmaps.cmap03 = readFormat6();
+                    break;
+            }
+            // We treat this table as equivalent to (platformId = 3, encodingId = 1)
+            // for downstream processing, since both are intended to address the Unicode BMP.
+            // Note that only one of these encoding subtables is used at a time. If multiple encoding subtables
+            // are found, the ‘cmap’ parsing software determines which one to use.
+            cmaps.cmap31 = cmaps.cmap03;
         }
         if (map10 > 0) {
             raf.seek(table_location[0] + map10);
@@ -1045,22 +1111,14 @@ class OpenTypeParser implements Closeable {
                     break;
             }
         }
-        if (map03 > 0) {
-            // Unicode platform, Unicode >2.0 semantics, expect format 4 or 6 subtable
-            raf.seek(table_location[0] + map03);
+        if (map30 > 0) {
+            raf.seek(table_location[0] + map30);
             int format = raf.readUnsignedShort();
-
-            // We treat this table as equivalent to (platformId = 3, encodingId = 1)
-            // for downstream processing, since both are intended to address the Unicode BMP.
-            // Note that only one of these encoding subtables is used at a time. If multiple encoding subtables
-            // are found, the ‘cmap’ parsing software determines which one to use.
-            switch (format) {
-                case 4:
-                    cmaps.cmap31 = readFormat4(false);
-                    break;
-                case 6:
-                    cmaps.cmap31 = readFormat6();
-                    break;
+            if (format == 4) {
+                cmaps.cmap30 = readFormat4(cmaps.fontSpecific);
+                cmaps.cmap10 = cmaps.cmap30;
+            } else {
+                cmaps.fontSpecific = false;
             }
         }
         if (map31 > 0) {
@@ -1070,30 +1128,21 @@ class OpenTypeParser implements Closeable {
                 cmaps.cmap31 = readFormat4(false);
             }
         }
-        if (map30 > 0) {
-            raf.seek(table_location[0] + map30);
-            int format = raf.readUnsignedShort();
-            if (format == 4) {
-                cmaps.cmap10 = readFormat4(cmaps.fontSpecific);
-            } else {
-                cmaps.fontSpecific = false;
-            }
-        }
-        if (mapExt > 0) {
-            raf.seek(table_location[0] + mapExt);
+        if (map310 > 0) {
+            raf.seek(table_location[0] + map310);
             int format = raf.readUnsignedShort();
             switch (format) {
                 case 0:
-                    cmaps.cmapExt = readFormat0();
+                    cmaps.cmap310 = readFormat0();
                     break;
                 case 4:
-                    cmaps.cmapExt = readFormat4(false);
+                    cmaps.cmap310 = readFormat4(false);
                     break;
                 case 6:
-                    cmaps.cmapExt = readFormat6();
+                    cmaps.cmap310 = readFormat6();
                     break;
                 case 12:
-                    cmaps.cmapExt = readFormat12();
+                    cmaps.cmap310 = readFormat12();
                     break;
             }
         }

@@ -159,7 +159,7 @@ public class PdfDocument implements Closeable {
      */
     protected boolean flushUnusedObjects = false;
     protected TagStructureContext tagStructureContext;
-
+    @Deprecated
     protected DocumentInfoHelper documentInfoHelper = new DocumentInfoHelper();
     protected DefaultFontStrategy defaultFontStrategy = new DefaultFontStrategy(this);
     protected IPdfPageFactory pdfPageFactory = new PdfPageFactory();
@@ -994,13 +994,20 @@ public class PdfDocument implements Closeable {
 
                 PdfObject crypto = null;
                 final Set<PdfIndirectReference> forbiddenToFlush = new HashSet<>();
-                documentInfoHelper.adjustDocumentInfo(getDocumentInfo());
                 // The following 2 operators prevent the possible inconsistency between root and info
                 // entries existing in the trailer object and corresponding fields. This inconsistency
                 // may appear when user gets trailer and explicitly sets new root or info dictionaries.
-                if (documentInfoHelper.shouldAddDocumentInfoToTrailer()) {
+                PdfAConformance pdfAConformance = this.getConformance().getAConformance();
+                if (pdfAConformance != null && "4".equals(pdfAConformance.getPart())) {
+                    if (this.getCatalog().getPdfObject().get(PdfName.PieceInfo) != null) {
+                        // Leave only ModDate as required by 6.1.3 File trailer of pdf/a-4 spec
+                        getDocumentInfo().removeCreationDate();
+                        trailer.put(PdfName.Info, getDocumentInfo().getPdfObject());
+                    }
+                } else {
                     trailer.put(PdfName.Info, getDocumentInfo().getPdfObject());
                 }
+
                 trailer.put(PdfName.Root, catalog.getPdfObject());
                 if (properties.appendMode) {
                     if (structTreeRoot != null) {

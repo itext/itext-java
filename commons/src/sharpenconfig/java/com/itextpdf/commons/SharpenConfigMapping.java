@@ -38,7 +38,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
     private boolean useBCWrappersConfig = false;
     @Override
     public int getMappingPriority() {
-        return 15;
+        return 100 - 3;
     }
 
     @Override
@@ -153,7 +153,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("java.nio.file.Files.newInputStream", "iText.Commons.Utils.FileUtil.GetInputStreamForFile");
 
         configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate", "iText.Commons.Bouncycastle.Asn1.X509.ITbsCertificateStructure");
-        configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream", "iText.Commons.Bouncycastle.Asn1.IDerOutputStream");
+        configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.IASN1OutputStream", "iText.Commons.Bouncycastle.Asn1.IAsn1OutputStream");
         configurator.mapType("com.itextpdf.commons.bouncycastle.cert.IX509CRLHolder", "iText.Commons.Bouncycastle.Cert.IX509Crl");
         configurator.mapType("com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder", "iText.Commons.Bouncycastle.Cert.IX509Certificate");
         configurator.mapType("com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams", "iText.Commons.Bouncycastle.Asn1.Pkcs.IRsassaPssParameters");
@@ -304,6 +304,11 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapStringLiteral("com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT", "Either itext7.bouncy-castle-adapter or itext7.bouncy-castle-fips-adapter dependency must be added in order to use BouncyCastleFactoryCreator");
 
         configurator.mapMemberToInvocationsChain("org.bouncycastle.asn1.esf.SigPolicyQualifiers.SigPolicyQualifiers" + "(org.bouncycastle.asn1.esf.SigPolicyQualifierInfo[])", "", MemberKind.Method);
+
+        configurator.mapMemberToInvocationsChain("java.util.LinkedList.peekLast", "Last.Value", MemberKind.Property);
+        configurator.mapMethod("java.util.LinkedList.add", "AddLast");
+        configurator.mapMethod("java.util.LinkedList.pollLast", "RemoveLast");
+
         if (useBCWrappersConfig) {
             BCWrappersConfigurationUtils.applyMappingConfiguration(configurator);
         }

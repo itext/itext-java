@@ -30,7 +30,6 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.Transform;
-
 import org.slf4j.LoggerFactory;
 
 /**
@@ -54,7 +53,7 @@ public class CanvasRenderer extends RootRenderer {
      * Creates a CanvasRenderer from its corresponding layout object.
      * Defines whether the content should be flushed immediately after addition {@link #addChild(IRenderer)} or not
      *
-     * @param canvas         the {@link com.itextpdf.layout.Canvas} which this object should manage
+     * @param canvas the {@link com.itextpdf.layout.Canvas} which this object should manage
      * @param immediateFlush the value which stands for immediate flushing
      */
     public CanvasRenderer(Canvas canvas, boolean immediateFlush) {

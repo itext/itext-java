@@ -29,12 +29,17 @@ public enum JustifyContent {
     CENTER,
     START,
     END,
+    @Deprecated
     SELF_START,
+    @Deprecated
     SELF_END,
     FLEX_START,
     FLEX_END,
     LEFT,
     RIGHT,
     NORMAL,
-    STRETCH
+    STRETCH,
+    SPACE_BETWEEN,
+    SPACE_AROUND,
+    SPACE_EVENLY
 }

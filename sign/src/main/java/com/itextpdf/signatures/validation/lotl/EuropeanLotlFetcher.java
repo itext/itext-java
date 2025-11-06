@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.validation.EuropeanTrustedListConfigurationFactory;
@@ -66,13 +67,17 @@ public class EuropeanLotlFetcher {
                     result.setLotlXml(service.getResourceRetriever().getByteArrayByUrl(url));
                     if (result.getLotlXml() == null || result.getLotlXml().length == 0) {
                         ReportItem reportItem = new ReportItem(LotlValidator.LOTL_VALIDATION,
-                                SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL,
+                                MessageFormatUtil.format(
+                                        SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL,
+                                        factory.getTrustedListUri()),
                                 ReportItem.ReportItemStatus.INVALID);
                         result.getLocalReport().addReportItem(reportItem);
                     }
                 },
                 result.getLocalReport(),
-                e -> new ReportItem(LotlValidator.LOTL_VALIDATION, SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL,
+                e -> new ReportItem(LotlValidator.LOTL_VALIDATION,
+                        MessageFormatUtil.format(
+                                SignExceptionMessageConstant.FAILED_TO_GET_EU_LOTL, factory.getTrustedListUri()),
                         e, ReportItem.ReportItemStatus.INVALID));
         return result;
     }
@@ -81,7 +86,7 @@ public class EuropeanLotlFetcher {
      * Represents the result of fetching the List of Trusted Lists (Lotl).
      */
     public static class Result {
-        private final ValidationReport validationReport = new ValidationReport();
+        private final ValidationReport localReport = new ValidationReport();
         private byte[] lotlXml;
 
         /**
@@ -96,7 +101,7 @@ public class EuropeanLotlFetcher {
         /**
          * Creates a new instance of {@link Result} with an empty report items list.
          */
-        Result() {
+        public Result() {
             //empty constructor
         }
 
@@ -129,7 +134,7 @@ public class EuropeanLotlFetcher {
          * @return a list of {@link ReportItem} objects containing information about the fetching process
          */
         public ValidationReport getLocalReport() {
-            return validationReport;
+            return localReport;
         }
 
         boolean hasValidXml() {

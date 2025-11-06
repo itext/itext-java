@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -38,11 +40,13 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class OpenTypeParserTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/OpenTypeParserTest/";
+    private static final String FREESANS_FONT_PATH = "./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf";
 
     @Test
     public void tryToReadFontSubsetWithoutGlyfTableTest() throws IOException {
         byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetWithoutGlyfTable.ttf"));
         OpenTypeParser parser = new OpenTypeParser(fontBytes);
+        parser.loadTables(true);
         Set<Integer> usedGlyphs = new HashSet<Integer>();
         // these GIDs correspond to ABC
         usedGlyphs.add(36);
@@ -53,5 +57,39 @@ public class OpenTypeParserTest extends ExtendedITextTest {
                 parser.getSubset(usedGlyphs, true));
         String exp = MessageFormatUtil.format(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN, "glyf", null);
         Assertions.assertEquals(exp, e.getMessage());
+    }
+
+    @Test
+    public void getFlatGlyphsCompositeTest() throws IOException {
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FREESANS_FONT_PATH));
+        OpenTypeParser parser = new OpenTypeParser(fontBytes);
+        parser.loadTables(true);
+        Set<Integer> usedGlyphs = new HashSet<Integer>();
+        // Å
+        usedGlyphs.add(137);
+
+        List<Integer> glyphs = parser.getFlatGlyphs(usedGlyphs);
+        Assertions.assertEquals(4, glyphs.size());
+        Assertions.assertEquals(137, glyphs.get(0));
+        Assertions.assertEquals(0, glyphs.get(1));
+        Assertions.assertEquals(586, glyphs.get(2));
+        Assertions.assertEquals(38, glyphs.get(3));
+    }
+
+    @Test
+    public void smallNumberOfMetricsTest() throws IOException {
+        OpenTypeParser parser = new OpenTypeParser(SOURCE_FOLDER + "NotoSansAndSpaceMono.ttc", 1);
+        parser.loadTables(true);
+        Set<Integer> usedGlyphs = new HashSet<Integer>();
+        usedGlyphs.add(36);
+        usedGlyphs.add(37);
+        usedGlyphs.add(38);
+        Tuple2<Integer, byte[]> subsetData = parser.getSubset(usedGlyphs, true);
+
+        OpenTypeParser resParser = new OpenTypeParser(subsetData.getSecond(), true);
+        resParser.loadTables(true);
+        // 86 == <number of h metrics> * 4 + (<number of glyphs> - <number of h metrics>) * 2
+        // where <number of h metrics> = 4 and <number of glyphs> = 39
+        Assertions.assertEquals(86, resParser.tables.get("hmtx")[1]);
     }
 }

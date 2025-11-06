@@ -196,7 +196,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         tableBuilder.addFooterCell(new DataCellSupplier("Footer 1", 3, 1, null));
 
         framework.addSuppliers(tableBuilder);
-        framework.assertBothFail("tableWithHeaderScopeColumn04", MessageFormatUtil.format(
+        framework.assertBothFail("notRegularRowGroupingsInTable", MessageFormatUtil.format(
                 PdfUAExceptionMessageConstants.ROWS_SPAN_DIFFERENT_NUMBER_OF_COLUMNS, 1, 2), false, pdfUAConformance);
     }
 

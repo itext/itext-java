@@ -24,12 +24,16 @@ package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.SafeCalling;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
 import com.itextpdf.signatures.validation.lotl.xml.XmlSaxProcessor;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -37,6 +41,7 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.itextpdf.signatures.validation.lotl.LotlValidator.LOTL_VALIDATION;
 import static com.itextpdf.signatures.validation.lotl.LotlValidator.LOTL_VALIDATION_UNSUCCESSFUL;
@@ -46,8 +51,10 @@ import static com.itextpdf.signatures.validation.lotl.LotlValidator.UNABLE_TO_RE
  * This class fetches and validates pivot files from a List of Trusted Lists (Lotl) XML.
  */
 public class PivotFetcher {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PivotFetcher.class);
 
     private final LotlService service;
+    private String currentJournalUri;
     
     /**
      * Constructs a PivotFetcher with the specified LotlService and ValidatorChainBuilder.
@@ -56,6 +63,15 @@ public class PivotFetcher {
      */
     public PivotFetcher(LotlService service) {
         this.service = service;
+    }
+
+    /**
+     * Sets {@link String} constant representing currently used Official Journal publication.
+     *
+     * @param currentJournalUri {@link String} constant representing currently used Official Journal publication
+     */
+    public void setCurrentJournalUri(String currentJournalUri) {
+        this.currentJournalUri = currentJournalUri;
     }
 
     /**
@@ -70,24 +86,36 @@ public class PivotFetcher {
         if (lotlXml == null) {
             throw new PdfException(LotlValidator.UNABLE_TO_RETRIEVE_LOTL);
         }
-        XmlPivotsHandler pivotsHandler = new XmlPivotsHandler();
-        new XmlSaxProcessor().process(new ByteArrayInputStream(lotlXml), pivotsHandler);
         Result result = new Result();
 
-        List<String> pivotsUrlList = pivotsHandler.getPivots();
+        List<String> pivotsUrlList = getPivotsUrlList(lotlXml);
+        List<String> ojUris = pivotsUrlList.stream()
+                .filter(url -> XmlPivotsHandler.isOfficialJournal(url)).collect(Collectors.toList());
+        if (ojUris.size() > 1) {
+            LOGGER.warn(SignLogMessageConstant.OJ_TRANSITION_PERIOD);
+        }
         result.setPivotUrls(pivotsUrlList);
         List<byte[]> pivotFiles = new ArrayList<>();
 
+        // If we weren't able to find any OJ links, or current OJ uri is null, we process all the pivots.
+        boolean startProcessing = ojUris.isEmpty() || currentJournalUri == null;
         // We need to process pivots backwards.
         for (int i = pivotsUrlList.size() - 1; i >= 0; i--) {
             String pivotUrl = pivotsUrlList.get(i);
-            SafeCalling.onExceptionLog(
-                    () -> pivotFiles.add(service.getResourceRetriever().getByteArrayByUrl(new URL(pivotUrl))),
-                    result.getLocalReport(),
-                    e -> new ReportItem(LOTL_VALIDATION, MessageFormatUtil.format(
-                            UNABLE_TO_RETRIEVE_PIVOT, pivotUrl), e, ReportItem.ReportItemStatus.INVALID));
-            if (result.getLocalReport().getValidationResult() != ValidationResult.VALID) {
-                return result;
+            if (pivotUrl.equals(currentJournalUri)) {
+                // We only need to process pivots which, were created after OJ entry was added.
+                startProcessing = true;
+                continue;
+            }
+            if (startProcessing && !XmlPivotsHandler.isOfficialJournal(pivotUrl)) {
+                SafeCalling.onExceptionLog(
+                        () -> pivotFiles.add(service.getResourceRetriever().getByteArrayByUrl(new URL(pivotUrl))),
+                        result.getLocalReport(),
+                        e -> new ReportItem(LOTL_VALIDATION, MessageFormatUtil.format(
+                                UNABLE_TO_RETRIEVE_PIVOT, pivotUrl), e, ReportItem.ReportItemStatus.INVALID));
+                if (result.getLocalReport().getValidationResult() != ValidationResult.VALID) {
+                    return result;
+                }
             }
         }
 
@@ -107,6 +135,9 @@ public class PivotFetcher {
                 result.getLocalReport().addReportItem(new ReportItem(LOTL_VALIDATION, LOTL_VALIDATION_UNSUCCESSFUL,
                         ReportItem.ReportItemStatus.INVALID));
                 result.getLocalReport().merge(localReport);
+                if (!ojUris.stream().anyMatch(ojUri -> ojUri.equals(currentJournalUri))) {
+                    throw new PdfException(SignExceptionMessageConstant.OFFICIAL_JOURNAL_CERTIFICATES_OUTDATED);
+                }
                 return result;
             }
             XmlCertificateRetriever certificateRetriever = new XmlCertificateRetriever(
@@ -114,6 +145,19 @@ public class PivotFetcher {
             trustedCertificates = certificateRetriever.getCertificates(new ByteArrayInputStream(pivotFile));
         }
         return result;
+    }
+
+    /**
+     * Gets list of pivots xml files, including OJ entries.
+     *
+     * @param lotlXml {@code byte} array representing main LOTL file
+     *
+     * @return list of pivots xml files, including OJ entries
+     */
+    protected List<String> getPivotsUrlList(byte[] lotlXml) {
+        XmlPivotsHandler pivotsHandler = new XmlPivotsHandler();
+        new XmlSaxProcessor().process(new ByteArrayInputStream(lotlXml), pivotsHandler);
+        return pivotsHandler.getPivots();
     }
 
     /**

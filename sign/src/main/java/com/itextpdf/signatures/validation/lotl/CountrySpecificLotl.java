@@ -39,6 +39,16 @@ public final class CountrySpecificLotl {
     }
 
     /**
+     * Creates an empty instance of {@link CountrySpecificLotl}.
+     */
+    CountrySpecificLotl() {
+        //Empty constructor needed for deserialization.
+        this.schemeTerritory = null;
+        this.tslLocation = null;
+        this.mimeType = null;
+    }
+
+    /**
      * Returns the scheme territory of this country-specific TSL.
      *
      * @return The scheme territory

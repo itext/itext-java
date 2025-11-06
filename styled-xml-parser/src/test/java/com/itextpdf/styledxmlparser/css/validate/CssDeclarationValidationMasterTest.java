@@ -27,9 +27,10 @@ import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.validate.impl.CssDefaultValidator;
 import com.itextpdf.styledxmlparser.css.validate.impl.CssDeviceCmykAwareValidator;
 import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
@@ -342,16 +343,20 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
         Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "space-between")));
         Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "self-end")));
-        Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
-                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "unsafe self-end")));
-        Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "stretch")));
         Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "space-evenly")));
         Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "flex-start")));
+        Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "end")));
+        Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "unsafe end")));
 
+        Assertions.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "self-end")));
+        Assertions.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "unsafe self-end")));
         Assertions.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.JUSTIFY_CONTENT, "baseline")));
         Assertions.assertFalse(CssDeclarationValidationMaster.checkDeclaration(

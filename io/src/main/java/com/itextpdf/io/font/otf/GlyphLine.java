@@ -310,7 +310,7 @@ public class GlyphLine {
         }
         char[] newChars = new char[chars.length()];
         chars.getChars(0, chars.length(), newChars, 0);
-        Glyph newGlyph = tableReader.getGlyph(substitutionGlyphIndex);
+        Glyph newGlyph = new Glyph(tableReader.getGlyph(substitutionGlyphIndex));
         newGlyph.setChars(newChars);
         glyphs.set(idx, newGlyph);
         end -= rightPartLen;
@@ -318,7 +318,7 @@ public class GlyphLine {
 
     public void substituteOneToOne(OpenTypeFontTableReader tableReader, int substitutionGlyphIndex) {
         Glyph oldGlyph = glyphs.get(idx);
-        Glyph newGlyph = tableReader.getGlyph(substitutionGlyphIndex);
+        Glyph newGlyph = new Glyph(tableReader.getGlyph(substitutionGlyphIndex));
         if (oldGlyph.getChars() != null) {
             newGlyph.setChars(oldGlyph.getChars());
         } else if (newGlyph.hasValidUnicode()) {
@@ -333,15 +333,17 @@ public class GlyphLine {
         //sequence length shall be at least 1
         int substCode = substGlyphIds[0];
         Glyph oldGlyph = glyphs.get(idx);
-        Glyph glyph = tableReader.getGlyph(substCode);
-        glyphs.set(idx, glyph);
+        // Here we don't use old chars for new glyphs like in other substitutions. It may be fixed as part of
+        // TODO: DEVSIX-9434 - Use CIDToGIDMap for Type 2 CID fonts
+        Glyph newGlyph = new Glyph(tableReader.getGlyph(substCode));
+        glyphs.set(idx, newGlyph);
 
         if (substGlyphIds.length > 1) {
             List<Glyph> additionalGlyphs = new ArrayList<>(substGlyphIds.length - 1);
             for (int i = 1; i < substGlyphIds.length; ++i) {
                 substCode = substGlyphIds[i];
-                glyph = tableReader.getGlyph(substCode);
-                additionalGlyphs.add(glyph);
+                newGlyph = new Glyph(tableReader.getGlyph(substCode));
+                additionalGlyphs.add(newGlyph);
             }
             addAllGlyphs(idx + 1, additionalGlyphs);
             if (null != actualText) {

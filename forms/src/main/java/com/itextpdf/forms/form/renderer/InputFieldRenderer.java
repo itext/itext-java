@@ -50,13 +50,12 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
-
-import java.util.List;
-import java.util.Map;
-
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * The {@link AbstractOneLineTextFieldRenderer} implementation for input fields.
@@ -244,12 +243,12 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
             inputField.setComb(true);
             inputField.setMaxLen(getMaxLen());
         }
-        final int rotation = ((InputField)modelElement).getRotation();
+        final int rotation = ((InputField) modelElement).getRotation();
         if (rotation != 0) {
             inputField.getFirstFormAnnotation().setRotation(rotation);
         }
         applyDefaultFieldProperties(inputField);
-        applyAccessibilityProperties(inputField,doc);
+        applyAccessibilityProperties(inputField, doc);
         inputField.getFirstFormAnnotation().setFormFieldElement((InputField) modelElement);
         inputField.enableFieldRegeneration();
         PdfFormCreator.getAcroForm(doc, true).addField(inputField, page);
@@ -292,7 +291,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
             setProperty(Property.WIDTH, null);
             Float width = retrieveWidth(0);
             if (width != null) {
-                // the field can be shrinked if necessary so only max width is set here
+                // the field can be shrunk if necessary so only max width is set here
                 minMaxWidth.setChildrenMaxWidth((float) width);
                 result = true;
             }
@@ -341,6 +340,7 @@ public class InputFieldRenderer extends AbstractOneLineTextFieldRenderer {
      * Obfuscates the content of a password input field.
      *
      * @param text the password
+     *
      * @return a string consisting of '*' characters.
      */
     private String obfuscatePassword(String text) {

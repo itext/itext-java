@@ -194,7 +194,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             final String expectedMessage = MessageFormatUtil.format(
                     KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
-            framework.assertBothFail("brokenHnInheritedSequenceTest1", expectedMessage, pdfUAConformance);
+            framework.assertBothFail("brokenHnMixedSequenceTest", expectedMessage, pdfUAConformance);
         }
     }
 
@@ -722,11 +722,11 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("hnInheritedSequenceTest", pdfUAConformance);
+            framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             String message = MessageFormatUtil.format(
                     KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
-            framework.assertBothFail("hnInheritedSequenceTest", message, pdfUAConformance);
+            framework.assertBothFail("hnCompareWithLastFromAnotherBranchTest", message, pdfUAConformance);
         }
     }
 
@@ -807,11 +807,11 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("hnCompareWithLastFromAnotherBranchTest2", pdfUAConformance);
+            framework.assertBothValid("hnInheritedSequenceTest2", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
             String message = MessageFormatUtil.format(
                     KernelExceptionMessageConstant.PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED, "H1", "H2");
-            framework.assertBothFail("hnCompareWithLastFromAnotherBranchTest2", message, pdfUAConformance);
+            framework.assertBothFail("hnInheritedSequenceTest2", message, pdfUAConformance);
         }
     }
 
@@ -914,9 +914,9 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         });
 
         if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("hnParallelSequenceTest", pdfUAConformance);
+            framework.assertBothValid("usualHTest2", pdfUAConformance);
         } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothFail("hnParallelSequenceTest",
+            framework.assertBothFail("usualHTest2",
                     PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG, pdfUAConformance);
         }
     }

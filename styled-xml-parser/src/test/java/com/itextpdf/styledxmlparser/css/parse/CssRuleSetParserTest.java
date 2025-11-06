@@ -108,7 +108,7 @@ public class CssRuleSetParserTest extends ExtendedITextTest {
         String properties = "color: darkmagenta;";
 
         String[] expected = new String[] {
-                "p > :not(strong) asd {\n"
+                "p > :not(strong) \"asd\" {\n"
                         + "    color: darkmagenta\n"
                         + "}"
         };
@@ -126,7 +126,7 @@ public class CssRuleSetParserTest extends ExtendedITextTest {
         String properties = "color: darkmagenta;";
 
         String[] expected = new String[] {
-                "p > :not(strong) a {\n"
+                "p > :not(strong) 'a' {\n"
                         + "    color: darkmagenta\n"
                         + "}"
         };
@@ -197,7 +197,7 @@ public class CssRuleSetParserTest extends ExtendedITextTest {
         String properties = "background-color: lightyellow;";
 
         String[] expected = new String[] {
-                "article:not(.archived) section.highlight + aside:not(.hidden [data-disabled=\"true\"]) {\n"
+                "article:not(.archived) section.highlight + aside:not(.hidden , [data-disabled=\"true\"]) {\n"
                         + "    background-color: lightyellow\n"
                         + "}"
         };
@@ -215,7 +215,7 @@ public class CssRuleSetParserTest extends ExtendedITextTest {
         String properties = "color: darkmagenta;";
 
         String[] expected = new String[] {
-                "div:not([data-role=\"admin\"] :nth-of-type(2n)):not(:empty)::before {\n"
+                "div:not([data-role=\"admin\"] , :nth-of-type(2n)):not(:empty)::before {\n"
                         + "    color: darkmagenta\n"
                         + "}"
         };
@@ -251,7 +251,7 @@ public class CssRuleSetParserTest extends ExtendedITextTest {
         String properties = "color: darkmagenta;";
 
         String[] expected = new String[] {
-                "strong:not([data-time=\"37\"] :empty b.warning) {\n"
+                "strong:not([data-time=\"37\"] , :empty , b.warning) {\n"
                         + "    color: darkmagenta\n"
                         + "}"
         };

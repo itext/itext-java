@@ -29,24 +29,33 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-class ServiceChronologicalInfo {
+/**
+ * Class representing ServiceHistory entry in a country specific Trusted List.
+ */
+public class ServiceChronologicalInfo {
     static final String GRANTED = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted";
     static final String GRANTED_NATIONALLY =
             "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel";
     static final String ACCREDITED = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited";
     static final String SET_BY_NATIONAL_LAW = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/setbynationallaw";
-    private static final Set<String> validStatuses = new HashSet<>();
-    private final List<AdditionalServiceInformationExtension> extensions = new ArrayList<>();
+    static final String UNDER_SUPERVISION = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision";
+    static final String SUPERVISION_IN_CESSATION =
+            "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionincessation";
+    private static final Set<String> VALID_STATUSES = new HashSet<>();
+    private final List<AdditionalServiceInformationExtension> serviceExtensions = new ArrayList<>();
+    private final List<QualifierExtension> qualifierExtensions = new ArrayList<>();
     private final DateTimeFormatter statusStartDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private String serviceStatus;
     //Local time is used here because it is required to use UTC in a trusted lists, so no offset shall be presented.
     private LocalDateTime serviceStatusStartingTime;
 
     static {
-        validStatuses.add(GRANTED);
-        validStatuses.add(GRANTED_NATIONALLY);
-        validStatuses.add(ACCREDITED);
-        validStatuses.add(SET_BY_NATIONAL_LAW);
+        VALID_STATUSES.add(GRANTED);
+        VALID_STATUSES.add(GRANTED_NATIONALLY);
+        VALID_STATUSES.add(ACCREDITED);
+        VALID_STATUSES.add(SET_BY_NATIONAL_LAW);
+        VALID_STATUSES.add(UNDER_SUPERVISION);
+        VALID_STATUSES.add(SUPERVISION_IN_CESSATION);
     }
 
     ServiceChronologicalInfo() {
@@ -58,20 +67,48 @@ class ServiceChronologicalInfo {
         this.serviceStatusStartingTime = serviceStatusStartingTime;
     }
 
-    static boolean isStatusValid(String status) {
-        return validStatuses.contains(status);
+    /**
+     * Gets service status corresponding to this Service Chronological Info instance.
+     *
+     * @return service status
+     */
+    public String getServiceStatus() {
+        return serviceStatus;
     }
 
-    String getServiceStatus() {
-        return serviceStatus;
+    /**
+     * Gets service status starting time corresponding to this Service Chronological Info instance.
+     *
+     * @return service status starting time
+     */
+    public LocalDateTime getServiceStatusStartingTime() {
+        return serviceStatusStartingTime;
+    }
+
+    /**
+     * Gets list of {@link AdditionalServiceInformationExtension} corresponding to this Service Chronological Info.
+     *
+     * @return list of {@link AdditionalServiceInformationExtension}
+     */
+    public List<AdditionalServiceInformationExtension> getServiceExtensions() {
+        return serviceExtensions;
+    }
+
+    /**
+     * Gets list of {@link QualifierExtension} corresponding to this Service Chronological Info.
+     *
+     * @return list of {@link QualifierExtension}
+     */
+    public List<QualifierExtension> getQualifierExtensions() {
+        return qualifierExtensions;
+    }
+
+    static boolean isStatusValid(String status) {
+        return VALID_STATUSES.contains(status);
     }
 
     void setServiceStatus(String serviceStatus) {
         this.serviceStatus = serviceStatus;
-    }
-
-    LocalDateTime getServiceStatusStartingTime() {
-        return serviceStatusStartingTime;
     }
 
     void setServiceStatusStartingTime(String timeString) {
@@ -82,11 +119,11 @@ class ServiceChronologicalInfo {
         this.serviceStatusStartingTime = serviceStatusStartingTime;
     }
 
-    void addExtension(AdditionalServiceInformationExtension extension) {
-        extensions.add(extension);
+    void addServiceExtension(AdditionalServiceInformationExtension extension) {
+        serviceExtensions.add(extension);
     }
 
-    List<AdditionalServiceInformationExtension> getExtensions() {
-        return extensions;
+    void addQualifierExtension(QualifierExtension qualifierExtension) {
+        qualifierExtensions.add(qualifierExtension);
     }
 }

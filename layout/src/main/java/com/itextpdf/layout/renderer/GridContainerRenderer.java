@@ -42,11 +42,12 @@ import java.util.List;
  * Represents a renderer for a grid.
  */
 public class GridContainerRenderer extends BlockRenderer {
-    private boolean isFirstLayout = true;
     private float containerHeight = 0.0f;
     private float containerWidth = 0.0f;
+
     /**
      * Creates a Grid renderer from its corresponding layout object.
+     *
      * @param modelElement the {@link GridContainer} which this object should manage
      */
     public GridContainerRenderer(GridContainer modelElement) {
@@ -148,7 +149,6 @@ public class GridContainerRenderer extends BlockRenderer {
 
     private AbstractRenderer createOverflowRenderer(List<IRenderer> children) {
         GridContainerRenderer overflowRenderer = (GridContainerRenderer) getNextRenderer();
-        overflowRenderer.isFirstLayout = false;
         overflowRenderer.parent = parent;
         overflowRenderer.modelElement = modelElement;
         overflowRenderer.addAllProperties(getOwnProperties());
@@ -179,7 +179,7 @@ public class GridContainerRenderer extends BlockRenderer {
             // Adjust cell BBox to the remaining part of the layout bbox
             // This way we can lay out elements partially
             cellBBox.setHeight(cellBBox.getTop() - layoutContext.getArea().getBBox().getBottom())
-                  .setY(layoutContext.getArea().getBBox().getY());
+                    .setY(layoutContext.getArea().getBBox().getY());
 
             cellToRender.setProperty(Property.FILL_AVAILABLE_AREA_ON_SPLIT, Boolean.TRUE);
             LayoutResult cellResult = cellToRender.layout(cellContext);
@@ -311,9 +311,9 @@ public class GridContainerRenderer extends BlockRenderer {
 
         // 8. Placing Grid Items
         Grid grid = Grid.Builder.forItems(renderer.getChildRenderers())
-                        .columns(templateColumns == null ? 0 : templateColumns.size())
-                        .rows(templateRows == null ? 0 : templateRows.size())
-                        .flow(flow).build();
+                .columns(templateColumns == null ? 0 : templateColumns.size())
+                .rows(templateRows == null ? 0 : templateRows.size())
+                .flow(flow).build();
 
         // Collapse any empty repeated tracks if auto-fit was used
         if (rowRepeatResolver.isCollapseNullLines()) {

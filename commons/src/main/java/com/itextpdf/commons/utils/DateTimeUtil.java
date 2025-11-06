@@ -260,6 +260,24 @@ public final class DateTimeUtil {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneOffset.ofHours(0));
     }
 
+    /**
+     * Creates UTC Date based on provided parameters.
+     *
+     * @param year as {@code int} to be created
+     * @param month as {@code int} to be created
+     * @param day as {@code int} to be created
+     * @param hour as {@code int} to be created
+     * @param minute as {@code int} to be created
+     * @param second as {@code int} to be created
+     *
+     * @return UTC date
+     */
+    public static Date createUtcDateTime(int year, int month, int day, int hour, int minute, int second) {
+        GregorianCalendar calendar = new GregorianCalendar(year, month, day, hour, minute, second);
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return calendar.getTime();
+    }
+
     private static DateFormat initParserSDF(String pattern) {
         final SimpleDateFormat parserSDF = new SimpleDateFormat(pattern);
         parserSDF.setCalendar(new GregorianCalendar());

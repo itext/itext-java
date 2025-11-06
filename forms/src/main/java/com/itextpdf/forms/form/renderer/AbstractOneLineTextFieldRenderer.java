@@ -24,7 +24,6 @@ package com.itextpdf.forms.form.renderer;
 
 import com.itextpdf.forms.form.element.IFormField;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.renderer.BlockRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 
@@ -48,7 +47,7 @@ public abstract class AbstractOneLineTextFieldRenderer extends AbstractTextField
      * Crops the content lines.
      *
      * @param lines a list of lines
-     * @param bBox  the bounding box
+     * @param bBox the bounding box
      */
     void cropContentLines(List<LineRenderer> lines, Rectangle bBox) {
         adjustNumberOfContentLines(lines, bBox, 1);
@@ -75,8 +74,8 @@ public abstract class AbstractOneLineTextFieldRenderer extends AbstractTextField
     /**
      * Sets the content height.
      *
-     * @param flatRenderer  the flat renderer
-     * @param height        the height
+     * @param flatRenderer the flat renderer
+     * @param height the height
      */
     void setContentHeight(IRenderer flatRenderer, float height) {
         Rectangle bBox = flatRenderer.getOccupiedArea().getBBox();

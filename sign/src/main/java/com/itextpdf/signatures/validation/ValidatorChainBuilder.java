@@ -31,6 +31,7 @@ import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.validation.lotl.LotlFetchingProperties;
 import com.itextpdf.signatures.validation.lotl.LotlService;
 import com.itextpdf.signatures.validation.lotl.LotlTrustedStore;
+import com.itextpdf.signatures.validation.lotl.QualifiedValidator;
 import com.itextpdf.signatures.validation.report.xml.AdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.NullAdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.PadesValidationReport;
@@ -60,6 +61,7 @@ public class ValidatorChainBuilder {
     private Supplier<ICrlClient> crlClientFactory;
     private Supplier<LotlTrustedStore> lotlTrustedStoreFactory;
     private Supplier<LotlService> lotlServiceFactory;
+    private QualifiedValidator qualifiedValidator;
 
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
@@ -81,6 +83,7 @@ public class ValidatorChainBuilder {
         ocspClientFactory = () -> new OcspClientBouncyCastle();
         crlClientFactory = () -> new CrlClientOnline();
         lotlServiceFactory = () -> buildLotlService();
+        qualifiedValidator = new NullQualifiedValidator();
     }
 
     /**
@@ -338,6 +341,25 @@ public class ValidatorChainBuilder {
     }
 
     /**
+     * Sets {@link QualifiedValidator} instance to be used during signature qualification validation.
+     * The results of this validation can be obtained from this same instance.
+     * The feature is only executed if European LOTL is used. See {@link #trustEuropeanLotl(boolean)}.
+     * <p>
+     * This validator needs to be updated per each document validation, or the results need to be obtained.
+     * Otherwise, the exception will be thrown.
+     * <p>
+     * If no instance is provided, the qualification validation is not executed.
+     *
+     * @param qualifiedValidator {@link QualifiedValidator} instance which performs the validation.
+     *
+     * @return current ValidatorChainBuilder
+     */
+    public ValidatorChainBuilder withQualifiedValidator(QualifiedValidator qualifiedValidator) {
+        this.qualifiedValidator = qualifiedValidator;
+        return this;
+    }
+
+    /**
      * Retrieves the explicitly added or automatically created {@link IssuingCertificateRetriever} instance.
      *
      * @return the explicitly added or automatically created {@link IssuingCertificateRetriever} instance.
@@ -372,6 +394,15 @@ public class ValidatorChainBuilder {
      */
     public IResourceRetriever getResourceRetriever() {
         return resourceRetrieverFactory.get();
+    }
+
+    /**
+     * Gets {@link QualifiedValidator} instance.
+     *
+     * @return {@link QualifiedValidator} instance
+     */
+    public QualifiedValidator getQualifiedValidator() {
+        return qualifiedValidator;
     }
 
     /**

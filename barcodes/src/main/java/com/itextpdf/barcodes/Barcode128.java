@@ -299,7 +299,7 @@ public class Barcode128 extends Barcode1D {
                 if (code.length() < k)
                     break;
                 int subcode = Integer.parseInt(code.substring(0, k));
-                n = ais.containsKey(subcode) ? (int)ais.get(subcode) : 0;
+                n = (int) ais.getOrDefault(subcode, 0);
                 if (n != 0) {
                     idlen = k;
                     break;
@@ -679,7 +679,7 @@ public class Barcode128 extends Barcode1D {
     public void setCode(String code) {
         if (getCodeType() == Barcode128.CODE128_UCC && code.startsWith("(")) {
             int idx = 0;
-            StringBuilder ret = new StringBuilder("");
+            StringBuilder ret = new StringBuilder();
             while (idx >= 0) {
                 int end = code.indexOf(')', idx);
                 if (end < 0) {
@@ -694,7 +694,7 @@ public class Barcode128 extends Barcode1D {
                 if (len == 0) {
                     throw new IllegalArgumentException("AI not found");
                 }
-                sai = Integer.valueOf(ai).toString();
+                sai = Integer.toString(ai);
                 if (sai.length() == 1) {
                     sai = "0" + sai;
                 }
@@ -884,7 +884,7 @@ public class Barcode128 extends Barcode1D {
      * @return the packed digits, two digits per character
      */
     static String getPackedRawDigits(String text, int textIndex, int numDigits) {
-        StringBuilder out = new StringBuilder("");
+        StringBuilder out = new StringBuilder();
         int start = textIndex;
         while (numDigits > 0) {
             if (text.charAt(textIndex) == FNC1) {
@@ -897,6 +897,7 @@ public class Barcode128 extends Barcode1D {
             int c2 = text.charAt(textIndex++) - '0';
             out.append((char) (c1 * 10 + c2));
         }
-        return (char) (textIndex - start) + out.toString();
+        out.insert(0, (char) (textIndex - start));
+        return out.toString();
     }
 }

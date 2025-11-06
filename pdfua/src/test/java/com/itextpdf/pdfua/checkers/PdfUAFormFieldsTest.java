@@ -155,7 +155,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return cb;
             }
         });
-        framework.assertBothValid("testCheckBox", pdfUAConformance);
+        framework.assertBothValid("testCheckBoxChecked", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -421,7 +421,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonChecked", pdfUAConformance);
+        framework.assertBothValid("testRadioButtonCheckedInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -440,7 +440,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return radio;
             }
         });
-        framework.assertBothValid("testRadioButtonCustomAppearance", pdfUAConformance);
+        framework.assertBothValid("testRadioButtonCustomAppearanceInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -518,7 +518,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("testRadioButtonGroupInteractive", pdfUAConformance);
+        framework.assertBothValid("radioBtnCustomAppInteractive", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -551,7 +551,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return r;
             }
         });
-        framework.assertBothValid("radioBtnCustomAppCheckedInteractive", pdfUAConformance);
+        framework.assertBothValid("radioBtnCustomAppGrCheckedInteractive", pdfUAConformance);
     }
 
 
@@ -821,7 +821,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return inputField;
             }
         });
-        framework.assertBothValid("testInputFieldWithCustomAppearanceAndValue", pdfUAConformance);
+        framework.assertBothValid("testInputFieldWithCustomAppearanceAndPlaceHolder", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1001,7 +1001,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return textArea;
             }
         });
-        framework.assertBothValid("testTextAreaWithCustomAppearanceAndValue", pdfUAConformance);
+        framework.assertBothValid("testTextAreaWithCustomAppearanceAndPlaceHolder", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1274,7 +1274,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return list;
             }
         });
-        framework.assertBothValid("testListBoxCustomAppearanceSelected", pdfUAConformance);
+        framework.assertBothValid("testComboBoxCustomAppearanceSelected", pdfUAConformance);
     }
 
     @ParameterizedTest
@@ -1392,7 +1392,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
                 return appearance;
             }
         });
-        framework.assertBothValid("signatureAppearanceSignedAppearanceText", pdfUAConformance);
+        framework.assertBothValid("signatureAppearanceWithCustomContent", pdfUAConformance);
     }
 
     @ParameterizedTest

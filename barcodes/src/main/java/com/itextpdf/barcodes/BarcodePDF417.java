@@ -1375,7 +1375,10 @@ public class BarcodePDF417 extends Barcode2D {
 
     /**
      * Prints the segments to standard output.
+     *
+     * @deprecated Test method for printing a segment list to std out, to be removed
      */
+    @Deprecated
     protected void dumpList() {
         if (segmentList.size() == 0)
             return;
@@ -1388,7 +1391,7 @@ public class BarcodePDF417 extends Barcode2D {
                 if (c[j] == '\r')
                     c[j] = '\n';
             }
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(v.getType());
             sb.append(c);
             System.out.println(sb.toString());
@@ -1636,7 +1639,7 @@ public class BarcodePDF417 extends Barcode2D {
     }
 
     private void append(int in, int len) {
-        StringBuffer sb = new StringBuffer(len + 1);
+        StringBuilder sb = new StringBuilder(len + 1);
         sb.append(Integer.toString(in));
         for (int i = sb.length(); i < len; i++) {
             sb.insert(0, "0");

@@ -22,38 +22,63 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.io.resolver.resource.IResourceRetriever;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
 
-class FromDiskResourceRetriever implements IResourceRetriever {
+public class FromDiskResourceRetriever implements IResourceRetriever {
 
+    private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
     private final String resourcePath;
 
-    FromDiskResourceRetriever(String resourcePath) {
+    public FromDiskResourceRetriever(String resourcePath) {
         this.resourcePath = resourcePath;
     }
 
     @Override
-    public InputStream getInputStreamByUrl(URL url) throws IOException {
+    public InputStream getInputStreamByUrl(URL url) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public byte[] getByteArrayByUrl(URL url) throws IOException {
-        System.out.println(url);
         //escape url so it can be used as a complete filename
-        String fileName = url.toString().replaceAll("[^a-zA-Z0-9]", "_");
-        String filePath = resourcePath + fileName;
-        Path path = Paths.get(filePath);
-        if (Files.exists(path)) {
-            return Files.readAllBytes(path);
+        String urlString = url.toString();
+        urlString = urlString.replaceAll(" ", "%20");
+        String fileName = urlString.toString().replaceAll("[^a-zA-Z0-9]", "_");
+
+        String fileNameHash = createHash(fileName);
+        String filePath = resourcePath + fileNameHash;
+        if (Files.exists(Paths.get(filePath))) {
+            return Files.readAllBytes(Paths.get(filePath));
         }
+
         return null;
+    }
+
+    private static String createHash(String input) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+            byte[] hash = DigestAlgorithms.digest(bais, DigestAlgorithms.SHA256, BOUNCY_CASTLE_FACTORY.getProviderName());
+            StringBuilder stringBuilder = new StringBuilder();
+            for (byte b : hash) {
+                char c = (char) ('a' + (b & 0x0F) % 26);
+                stringBuilder.append(c);
+            }
+            return stringBuilder.toString();
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 }

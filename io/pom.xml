@@ -5,13 +5,21 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>9.3.0</version>
+    <version>9.4.0</version>
   </parent>
 
   <artifactId>io</artifactId>
 
   <name>iText - io</name>
   <url>https://itextpdf.com/</url>
+  <properties>
+
+    <sharpen.phase>install</sharpen.phase>
+    <sharpen.projectName>io</sharpen.projectName>
+    <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.io</sharpen.cSharpSourceCodeDestination>
+    <sharpen.cSharpTestCodeDestination>itext.tests/itext.io.tests</sharpen.cSharpTestCodeDestination>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -62,47 +70,4 @@
       </testResource>
     </testResources>
   </build>
-
-  <profiles>
-    <profile>
-      <id>with-sharpen</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>sharpen</groupId>
-            <artifactId>sharpen-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>install</phase>
-                <goals>
-                  <goal>sharpen</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>sharpen</groupId>
-                <artifactId>standard-framework-mapping</artifactId>
-                <version>1.0-SNAPSHOT</version>
-              </dependency>
-            </dependencies>
-            <configuration>
-              <projectName>io</projectName>
-              <cSharpTargetFolder>./../../../sharp/itextcore</cSharpTargetFolder>
-              <cSharpSourceCodeDestination>itext/itext.io</cSharpSourceCodeDestination>
-              <cSharpTestCodeDestination>itext.tests/itext.io.tests</cSharpTestCodeDestination>
-              <buildDotnet>${sharpen.builddotnet}</buildDotnet>
-              <showDiff>${sharpen.showdiff}</showDiff>
-              <sourceCodeFiles>
-                <file>**/src/main/java/**/*.java</file>
-              </sourceCodeFiles>
-              <testCodeFiles>
-                <file>**/src/test/java/**/*.java</file>
-              </testCodeFiles>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

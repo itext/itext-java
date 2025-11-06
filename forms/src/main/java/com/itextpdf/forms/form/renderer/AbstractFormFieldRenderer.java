@@ -261,7 +261,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
     /**
      * Checks if the renderer fits a certain width and height.
      *
-     * @param availableWidth  the available width
+     * @param availableWidth the available width
      * @param availableHeight the available height
      *
      * @return true, if the renderer fits.
@@ -338,14 +338,14 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
 
 
     private void processLangAttribute() {
-         IPropertyContainer propertyContainer = flatRenderer.getModelElement();
-         String lang = getLang();
-         if (propertyContainer instanceof IAccessibleElement && lang != null) {
-             AccessibilityProperties properties = ((IAccessibleElement) propertyContainer)
-             .getAccessibilityProperties();
-             if (properties.getLanguage() == null) {
-                 properties.setLanguage(lang);
-             }
-         }
+        IPropertyContainer propertyContainer = flatRenderer.getModelElement();
+        String lang = getLang();
+        if (propertyContainer instanceof IAccessibleElement && lang != null) {
+            AccessibilityProperties properties = ((IAccessibleElement) propertyContainer)
+                    .getAccessibilityProperties();
+            if (properties.getLanguage() == null) {
+                properties.setLanguage(lang);
+            }
+        }
     }
 }

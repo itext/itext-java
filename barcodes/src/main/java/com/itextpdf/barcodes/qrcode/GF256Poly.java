@@ -31,9 +31,9 @@ final class GF256Poly {
      * @param field the {@link GF256} instance representing the field to use
      * to perform computations
      * @param coefficients coefficients as ints representing elements of GF(256), arranged
-     * from most significant (highest-power term) coefficient to least significant
-     * @throws IllegalArgumentException if argument is null or empty,
-     * or if leading coefficient is 0 and this is not a
+     * from the most significant (highest-power term) coefficient to the least significant
+     * @throws IllegalArgumentException if the argument is null or empty,
+     * or if the leading coefficient is 0, and this is not a
      * constant polynomial (that is, it is not the monomial "0")
      */
     GF256Poly(GF256 field, int[] coefficients) {
@@ -240,7 +240,7 @@ final class GF256Poly {
      * @return String representation of the Galois Field polynomial.
      */
     public String toString() {
-        StringBuffer result = new StringBuffer(8 * getDegree());
+        StringBuilder result = new StringBuilder(8 * getDegree());
         for (int degree = getDegree(); degree >= 0; degree--) {
             int coefficient = getCoefficient(degree);
             if (coefficient != 0) {

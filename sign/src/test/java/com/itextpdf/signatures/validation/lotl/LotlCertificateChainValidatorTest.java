@@ -22,8 +22,12 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
+import com.itextpdf.signatures.validation.SignatureValidator;
 import com.itextpdf.signatures.validation.AssertValidationReport;
 import com.itextpdf.signatures.validation.CertificateChainValidator;
 import com.itextpdf.signatures.validation.SignatureValidationProperties;
@@ -45,21 +49,24 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class LotlCertificateChainValidatorTest extends ExtendedITextTest {
-    private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/validation/lotl"
+    private static final String SOURCE_FOULDER = "./src/test/resources/com/itextpdf/signatures/validation/lotl"
             + "/LotlCertificateChainValidatorTest/";
     private final ValidationContext baseContext = new ValidationContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR,
             CertificateSource.SIGNER_CERT, TimeBasedContext.PRESENT);
+    private static final String SOURCE_FOLDER_LOTL_FILES = "./src/test/resources/com/itextpdf/signatures/validation" +
+            "/lotl/LotlState2025_08_08/";
 
     @Test
     public void lotlTrustedStoreTest() throws CertificateException, IOException {
         MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
         SignatureValidationProperties properties = new SignatureValidationProperties();
-        String chainName = CERTS_SRC + "chain.pem";
+        String chainName = SOURCE_FOULDER + "chain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
@@ -87,7 +94,7 @@ public class LotlCertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report1, a -> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(LotlTrustedStore.CERTIFICATE_TRUSTED,
                                 i -> rootCert.getSubjectX500Principal())
@@ -100,7 +107,7 @@ public class LotlCertificateChainValidatorTest extends ExtendedITextTest {
         MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
         SignatureValidationProperties properties = new SignatureValidationProperties();
 
-        String chainName = CERTS_SRC + "chain.pem";
+        String chainName = SOURCE_FOULDER + "chain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate signingCert = (X509Certificate) certificateChain[0];
         X509Certificate intermediateCert = (X509Certificate) certificateChain[1];
@@ -131,7 +138,7 @@ public class LotlCertificateChainValidatorTest extends ExtendedITextTest {
         AssertValidationReport.assertThat(report1, a -> a
                 .hasStatus(ValidationResult.VALID)
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(1)
+                .hasNumberOfLogs(2)
                 .hasLogItem(l -> l.withCheckName("Certificate check.")
                         .withMessage(LotlTrustedStore.CERTIFICATE_TRUSTED,
                                 i -> rootCert.getSubjectX500Principal())
@@ -143,7 +150,7 @@ public class LotlCertificateChainValidatorTest extends ExtendedITextTest {
     public void lotlTrustedStoreExtensionTest() throws CertificateException, IOException {
         MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
         SignatureValidationProperties properties = new SignatureValidationProperties();
-        String chainName = CERTS_SRC + "chain.pem";
+        String chainName = SOURCE_FOULDER + "chain.pem";
         Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
         X509Certificate rootCert = (X509Certificate) certificateChain[2];
 
@@ -152,7 +159,7 @@ public class LotlCertificateChainValidatorTest extends ExtendedITextTest {
         context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
         ServiceChronologicalInfo info = new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
                 LocalDateTime.of(1900, 1, 1, 0, 0));
-        info.addExtension(new AdditionalServiceInformationExtension(
+        info.addServiceExtension(new AdditionalServiceInformationExtension(
                 "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication"));
         context.addServiceChronologicalInfo(info);
 
@@ -181,5 +188,118 @@ public class LotlCertificateChainValidatorTest extends ExtendedITextTest {
                                 k -> "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication")
                         .withCertificate(rootCert))
         );
+    }
+
+    @Test
+    public void lotlOriginTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        String chainName = SOURCE_FOULDER + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CountryServiceContext context = new CountryServiceContext();
+        context.addCertificate(rootCert);
+        context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+        ServiceChronologicalInfo info = new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
+                LocalDateTime.of(1900, 1, 1, 0, 0));
+        context.addServiceChronologicalInfo(info);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        LotlTrustedStore lotlTrustedStore = new LotlTrustedStore(validatorChainBuilder);
+        validatorChainBuilder
+                .withSignatureValidationProperties(properties)
+                .withRevocationDataValidatorFactory(() -> mockRevocationDataValidator)
+                .withLotlTrustedStoreFactory(() -> lotlTrustedStore);
+        lotlTrustedStore.addCertificatesWithContext(Collections.singletonList(context));
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report = validator.validateCertificate(
+                baseContext.setCertificateSource(CertificateSource.CRL_ISSUER),
+                rootCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(2)
+                .hasLogItem(l -> l.withCheckName("Certificate check.")
+                        .withMessage("Trusted Certificate is taken from European Union List of Trusted Certificates.")
+                        .withCertificate(rootCert))
+        );
+    }
+
+    @Test
+    public void lotlReportItemsTest() throws IOException {
+        LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()));
+        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+        service.withLotlValidator(() -> new LotlValidator(service));
+        service.initializeCache();
+        IssuingCertificateRetriever retriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties param = new SignatureValidationProperties();
+        ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder()
+                .withSignatureValidationProperties(param)
+                .withIssuingCertificateRetrieverFactory(() -> retriever)
+                .withLotlService(() -> service)
+                .trustEuropeanLotl(true);
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOULDER + "docWithMultipleSignatures.pdf"))) {
+            SignatureValidator signatureValidator = chainBuilder.buildSignatureValidator(document);
+            report = signatureValidator.validateSignatures();
+        }
+
+
+        //It is expected to have only 32 lotl validation messages as there 32 countries in lotl.
+        long logs = report.getLogs().stream().filter( reportItem -> XmlSignatureValidator.XML_SIGNATURE_VERIFICATION
+                .equals(reportItem.getCheckName())).count();
+        Assertions.assertTrue(logs <= 32);
+    }
+
+    @Test
+    public void customOriginTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        String chainName = SOURCE_FOULDER + "chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate rootCert = (X509Certificate) certificateChain[2];
+
+        CountryServiceContext context = new CountryServiceContext();
+        context.addCertificate(rootCert);
+        context.setServiceType("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
+        ServiceChronologicalInfo info = new ServiceChronologicalInfo(ServiceChronologicalInfo.GRANTED,
+                LocalDateTime.of(1900, 1, 1, 0, 0));
+        context.addServiceChronologicalInfo(info);
+
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder();
+        LotlTrustedStore lotlTrustedStore = new CustomTrustedStore(validatorChainBuilder);
+        validatorChainBuilder
+                .withSignatureValidationProperties(properties)
+                .withRevocationDataValidatorFactory(() -> mockRevocationDataValidator)
+                .withLotlTrustedStoreFactory(() -> lotlTrustedStore);
+        lotlTrustedStore.addCertificatesWithContext(Collections.singletonList(context));
+
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        properties.setRequiredExtensions(CertificateSources.all(), Collections.<CertificateExtension>emptyList());
+
+        ValidationReport report = validator.validateCertificate(
+                baseContext.setCertificateSource(CertificateSource.CRL_ISSUER),
+                rootCert, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                .hasStatus(ValidationResult.VALID)
+                .hasNumberOfFailures(0)
+                .hasNumberOfLogs(2)
+                .hasLogItem(l -> l.withCheckName("Certificate check.")
+                        .withMessage("Trusted Certificate is taken from {0}.",
+                                k -> CustomTrustedStore.class.getName())
+                        .withCertificate(rootCert))
+        );
+    }
+
+    private class CustomTrustedStore extends LotlTrustedStore {
+        public CustomTrustedStore(ValidatorChainBuilder builder) {
+            super(builder);
+        }
     }
 }

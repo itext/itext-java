@@ -40,7 +40,7 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
 
     /**
      * Creates a ColumnDocumentRenderer. Sets {@link #immediateFlush} to true.
-     * 
+     *
      * @param document the {@link Document} on which this Renderer will calculate
      * and execute element placements
      * @param columns an array of {@link Rectangle} specifying the acceptable
@@ -52,14 +52,11 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
     }
 
     /**
-     * Creates a ColumnDocumentRenderer whose elements need not be flushed
-     * immediately.
-     * 
-     * @param document the {@link Document} on which this Renderer will calculate
-     * and execute element placements
-     * @param immediateFlush whether or not to flush contents as soon as possible
-     * @param columns an array of {@link Rectangle} specifying the acceptable
-     * positions for elements on a page
+     * Creates a ColumnDocumentRenderer whose elements need not be flushed immediately.
+     *
+     * @param document the {@link Document} on which this Renderer will calculate and execute element placements
+     * @param immediateFlush whether to flush contents as soon as possible
+     * @param columns an array of {@link Rectangle} specifying the acceptable positions for elements on a page
      */
     public ColumnDocumentRenderer(Document document, boolean immediateFlush, Rectangle[] columns) {
         super(document, immediateFlush);
@@ -67,8 +64,8 @@ public class ColumnDocumentRenderer extends DocumentRenderer {
     }
 
     /**
-     * Gets the array index of the next area that will be written on after the
-     * current one is full (overflowed).
+     * Gets the array index of the next area that will be written on after the current one is full (overflowed).
+     *
      * @return the array index of the next area that will be written on
      */
     public int getNextAreaNumber() {

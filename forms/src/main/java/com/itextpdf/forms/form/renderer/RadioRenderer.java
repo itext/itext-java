@@ -114,6 +114,7 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
      * @param rect {@inheritDoc}
      * @param borders {@inheritDoc}
      * @param reverse {@inheritDoc}
+     *
      * @return {@inheritDoc}
      */
     @Override
@@ -306,14 +307,14 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
                 final boolean isTaggingEnabled = drawContext.isTaggingEnabled();
                 final PdfCanvas canvas = drawContext.getCanvas();
 
-                if (isTaggingEnabled){
+                if (isTaggingEnabled) {
                     canvas.openTag(new CanvasArtifact());
                 }
                 canvas.setStrokeColor(border.getColor())
                         .setLineWidth(borderWidth)
                         .circle(cx, cy, r)
                         .stroke();
-                if (isTaggingEnabled){
+                if (isTaggingEnabled) {
                     canvas.closeTag();
                 }
             }
@@ -349,13 +350,13 @@ public class RadioRenderer extends AbstractFormFieldRenderer {
                 final boolean isTaggingEnabled = drawContext.isTaggingEnabled();
                 final PdfCanvas canvas = drawContext.getCanvas();
 
-                if (isTaggingEnabled){
+                if (isTaggingEnabled) {
                     canvas.openTag(new CanvasArtifact());
                 }
                 canvas.setFillColor(backgroundColor)
                         .circle(cx, cy, r)
                         .fill();
-                if (isTaggingEnabled){
+                if (isTaggingEnabled) {
                     canvas.closeTag();
                 }
             }

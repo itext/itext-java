@@ -152,7 +152,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 ? OverflowPropertyValue.FIT
                 : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
         applyWidth(parentBBox, blockWidth, overflowX);
-        wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, isCellRenderer, wasParentsHeightClipped, overflowY);
+        wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, isCellRenderer, overflowY);
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -311,7 +311,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         childPos--;
                     }
                     layoutBox = areas.get(++currentAreaPos).clone();
-                    break;
                 } else {
                     final LayoutResult layoutResult = processNotFullChildResult(
                             layoutContext, waitingFloatsSplitRenderers, waitingOverflowFloatRenderers, wasHeightClipped,
@@ -326,8 +325,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         return layoutResult;
                     }
                     result = layoutResult;
-                    break;
                 }
+                break;
             }
             anythingPlaced = anythingPlaced || result.getStatus() != LayoutResult.NOTHING;
             handleForcedPlacement(anythingPlaced);
@@ -408,7 +407,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             }
         }
         AbstractRenderer splitRenderer = this;
-        if (waitingFloatsSplitRenderers.size() > 0 && layoutResult != LayoutResult.NOTHING) {
+        if (!waitingFloatsSplitRenderers.isEmpty() && layoutResult != LayoutResult.NOTHING) {
             splitRenderer = createSplitRenderer(layoutResult);
             splitRenderer.childRenderers = new ArrayList<>(childRenderers);
             replaceSplitRendererKidFloats(waitingFloatsSplitRenderers, splitRenderer);
@@ -422,7 +421,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             updateHeightsOnSplit(usedHeight, wasHeightClipped, splitRenderer, overflowRenderer, includeFloatsInOccupiedArea);
         }
 
-        if (positionedRenderers.size() > 0) {
+        if (!positionedRenderers.isEmpty()) {
             for (IRenderer childPositionedRenderer : positionedRenderers) {
                 Rectangle fullBbox = occupiedArea.getBBox().clone();
 
@@ -441,7 +440,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         if (isPositioned) {
-            correctFixedLayout(layoutBox);
+            correctFixedLayout();
         }
         final ContinuousContainer continuousContainer = this.<ContinuousContainer>getProperty(
                 Property.TREAT_AS_CONTINUOUS_CONTAINER_RESULT);
@@ -481,7 +480,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     bfcHeightCorrection, marginsCollapsingEnabled);
             return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, causeOfNothing);
         } else {
-            if (positionedRenderers.size() > 0) {
+            if (!positionedRenderers.isEmpty()) {
                 overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
             }
             floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
@@ -909,7 +908,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 applyBorderBox(occupiedArea.getBBox(), borders, true);
                 applyMargins(occupiedArea.getBBox(), true);
 
-                correctFixedLayout(layoutBox);
+                correctFixedLayout();
 
                 LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                 if (wasHeightClipped) {
@@ -932,7 +931,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             AbstractRenderer splitRenderer = splitAndOverflowRenderers[0];
             AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
 
-            if (isRelativePosition() && positionedRenderers.size() > 0) {
+            if (isRelativePosition() && !positionedRenderers.isEmpty()) {
                 overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
             }
 
@@ -944,7 +943,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 overflowRenderer.addAllChildRenderers(childRenderers);
             }
 
-            correctFixedLayout(layoutBox);
+            correctFixedLayout();
 
             applyPaddings(occupiedArea.getBBox(), paddings, true);
             applyBorderBox(occupiedArea.getBBox(), borders, true);
@@ -972,7 +971,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         layoutBox.setHeight(result.getOccupiedArea().getBBox().getY() - layoutBox.getY());
     }
 
-    void correctFixedLayout(Rectangle layoutBox) {
+    void correctFixedLayout() {
         if (isFixedLayout()) {
             float y = (float) this.getPropertyAsFloat(Property.BOTTOM);
             move(0, y - occupiedArea.getBBox().getY());
@@ -1000,14 +999,11 @@ public abstract class BlockRenderer extends AbstractRenderer {
     }
 
     boolean applyMaxHeight(Rectangle parentBBox, Float blockMaxHeight, MarginsCollapseHandler marginsCollapseHandler,
-                           boolean isCellRenderer, boolean wasParentsHeightClipped, OverflowPropertyValue overflowY) {
+                           boolean isCellRenderer, OverflowPropertyValue overflowY) {
         if (null == blockMaxHeight || (blockMaxHeight >= parentBBox.getHeight() && (isOverflowFit(overflowY)))) {
             return false;
         }
-        boolean wasHeightClipped = false;
-        if (blockMaxHeight <= parentBBox.getHeight()) {
-            wasHeightClipped = true;
-        }
+        boolean wasHeightClipped = blockMaxHeight <= parentBBox.getHeight();
         float heightDelta = parentBBox.getHeight() - (float) blockMaxHeight;
         if (marginsCollapseHandler != null && !isCellRenderer) {
             marginsCollapseHandler.processFixedHeightAdjustment(heightDelta);
@@ -1185,62 +1181,5 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 canvas.restoreState().endVariableText();
             }
         }
-    }
-
-    private List<Point> clipPolygon(List<Point> points, Point clipLineBeg, Point clipLineEnd) {
-        List<Point> filteredPoints = new ArrayList<>();
-
-        boolean prevOnRightSide = false;
-        Point filteringPoint = points.get(0);
-        if (checkPointSide(filteringPoint, clipLineBeg, clipLineEnd) >= 0) {
-            filteredPoints.add(filteringPoint);
-            prevOnRightSide = true;
-        }
-
-        Point prevPoint = filteringPoint;
-        for (int i = 1; i < points.size() + 1; ++i) {
-            filteringPoint = points.get(i % points.size());
-            if (checkPointSide(filteringPoint, clipLineBeg, clipLineEnd) >= 0) {
-                if (!prevOnRightSide) {
-                    filteredPoints.add(getIntersectionPoint(prevPoint, filteringPoint, clipLineBeg, clipLineEnd));
-                }
-                filteredPoints.add(filteringPoint);
-                prevOnRightSide = true;
-            } else if (prevOnRightSide) {
-                filteredPoints.add(getIntersectionPoint(prevPoint, filteringPoint, clipLineBeg, clipLineEnd));
-            }
-
-            prevPoint = filteringPoint;
-        }
-
-        return filteredPoints;
-    }
-
-    private int checkPointSide(Point filteredPoint, Point clipLineBeg, Point clipLineEnd) {
-        double x1, x2, y1, y2;
-        x1 = filteredPoint.getX() - clipLineBeg.getX();
-        y2 = clipLineEnd.getY() - clipLineBeg.getY();
-
-        x2 = clipLineEnd.getX() - clipLineBeg.getX();
-        y1 = filteredPoint.getY() - clipLineBeg.getY();
-
-        double sgn = x1 * y2 - x2 * y1;
-
-        if (Math.abs(sgn) < 0.001) return 0;
-        if (sgn > 0) return 1;
-        if (sgn < 0) return -1;
-
-        return 0;
-    }
-
-    private Point getIntersectionPoint(Point lineBeg, Point lineEnd, Point clipLineBeg, Point clipLineEnd) {
-        double A1 = lineBeg.getY() - lineEnd.getY(), A2 = clipLineBeg.getY() - clipLineEnd.getY();
-        double B1 = lineEnd.getX() - lineBeg.getX(), B2 = clipLineEnd.getX() - clipLineBeg.getX();
-        double C1 = lineBeg.getX() * lineEnd.getY() - lineBeg.getY() * lineEnd.getX();
-        double C2 = clipLineBeg.getX() * clipLineEnd.getY() - clipLineBeg.getY() * clipLineEnd.getX();
-
-        double M = B1 * A2 - B2 * A1;
-
-        return new Point((B2 * C1 - B1 * C2) / M, (C2 * A1 - C1 * A2) / M);
     }
 }

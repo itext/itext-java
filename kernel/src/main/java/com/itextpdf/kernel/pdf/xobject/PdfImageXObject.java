@@ -22,18 +22,18 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageType;
 import com.itextpdf.io.image.PngChromaticities;
-import com.itextpdf.io.image.PngImageHelperConstants;
 import com.itextpdf.io.image.PngImageData;
+import com.itextpdf.io.image.PngImageHelperConstants;
 import com.itextpdf.io.image.RawImageData;
 import com.itextpdf.io.image.RawImageHelper;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfBoolean;
@@ -53,20 +53,21 @@ import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
 import com.itextpdf.kernel.pdf.filters.DoNothingFilter;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
+import com.itextpdf.kernel.pdf.xobject.ImagePdfBytesInfo.OutputFileType;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper for Image XObject. ISO 32000-1, 8.9 Images.
  */
 public class PdfImageXObject extends PdfXObject {
+
+    private boolean newImage = false;
 
     private float width;
     private float height;
@@ -90,6 +91,7 @@ public class PdfImageXObject extends PdfXObject {
      */
     public PdfImageXObject(ImageData image, PdfImageXObject imageMask) {
         this(createPdfStream(checkImageType(image), imageMask));
+        newImage = true;
         mask = image.isMask();
         softMask = image.isSoftMask();
     }
@@ -129,6 +131,36 @@ public class PdfImageXObject extends PdfXObject {
         return height;
     }
 
+    /**
+     * Returns whether this image is a mask that can be used for other images.
+     *
+     * <p>
+     * A mask can hide parts of an image by making those parts fully transparent.
+     *
+     * @return whether this image is a mask that can be used for other images
+     */
+    public boolean isMask() {
+        if (newImage) {
+            return mask;
+        }
+        PdfObject val = getPdfObject().get(PdfName.ImageMask);
+        return val != null && val.isBoolean() && ((PdfBoolean) val).getValue();
+    }
+
+    /**
+     * Returns whether this image is a soft mask that can be used for other images.
+     *
+     * <p>
+     * A soft mask sets the transparency for an image.
+     * @return whether this image is a soft mask.
+     */
+    public boolean isSoftMask() {
+        if (newImage) {
+            return softMask;
+        }
+        PdfObject val = getPdfObject().get(PdfName.SMask);
+        return val != null && val.isBoolean() && ((PdfBoolean) val).getValue();
+    }
 
     /**
      * To manually flush a {@code PdfObject} behind this wrapper, you have to ensure
@@ -156,6 +188,7 @@ public class PdfImageXObject extends PdfXObject {
     }
 
     // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
+
     /**
      * Gets image bytes, wrapped with buffered image.
      *
@@ -174,7 +207,7 @@ public class PdfImageXObject extends PdfXObject {
      * @return byte array.
      */
     public byte[] getImageBytes() {
-        return getImageBytes(true);
+        return getImageBytes(ImageBytesRetrievalProperties.getApplyFiltersOnly());
     }
 
     /**
@@ -186,23 +219,27 @@ public class PdfImageXObject extends PdfXObject {
      * @return byte array.
      */
     public byte[] getImageBytes(boolean decoded) {
+        ImageBytesRetrievalProperties props = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        props.setApplyFilters(decoded);
+        return getImageBytes(props);
+    }
+
+    /**
+     * Gets image bytes.
+     * Note, {@link PdfName#DCTDecode}, {@link PdfName#JBIG2Decode} and {@link PdfName#JPXDecode}
+     * filters will be ignored.
+     *
+     * @param properties an instance of {@link  ImageBytesRetrievalProperties} to configure the options.
+     * @return byte array.
+     */
+    public byte[] getImageBytes(ImageBytesRetrievalProperties properties) {
         // TODO: DEVSIX-1792 replace `.getBytes(false)` with `getBytes(true) and remove manual decoding
         byte[] bytes = getPdfObject().getBytes(false);
-        if (decoded) {
-            Map<PdfName, IFilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
-            filters.put(PdfName.JBIG2Decode, new DoNothingFilter());
-            bytes = PdfReader.decodeBytes(bytes, getPdfObject(), filters);
-
-            ImageType imageType = identifyImageType();
-            if (imageType == ImageType.TIFF || imageType == ImageType.PNG) {
-                try {
-                    bytes = new ImagePdfBytesInfo((int)width, (int)height,
-                            getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
-                            getPdfObject().get(PdfName.ColorSpace),
-                            getPdfObject().getAsArray(PdfName.Decode)).decodeTiffAndPngBytes(bytes);
-                } catch (IOException e) {
-                    throw new RuntimeException("IO exception in PdfImageXObject", e);
-                }
+        if (properties.isApplyFilters()) {
+            try {
+                return getImageBytesDecoded(bytes, properties);
+            } catch (IOException e) {
+                throw new PdfException(e);
             }
         }
         return bytes;
@@ -219,6 +256,22 @@ public class PdfImageXObject extends PdfXObject {
      * @return the identified type of image
      */
     public ImageType identifyImageType() {
+        return identifyImageType(ImageBytesRetrievalProperties.getApplyFiltersOnly());
+    }
+
+    /**
+     * Identifies the type of the image that is stored in the bytes of this {@link PdfImageXObject}.
+     * Note that this has nothing to do with the original type of the image. For instance, the return value
+     * of this method will never be {@link ImageType#PNG} as we lose this information when converting a
+     * PNG image into something that can be put into a PDF file.
+     * The possible values are: {@link ImageType#JPEG}, {@link ImageType#JPEG2000}, {@link ImageType#JBIG2},
+     * {@link ImageType#TIFF}, {@link ImageType#PNG}
+     *
+     * @param properties  an instance of {@link  ImageBytesRetrievalProperties} to configure the options,
+     *                    these options can influence the type
+     * @return the identified type of image
+     */
+    public ImageType identifyImageType(ImageBytesRetrievalProperties properties) {
         PdfObject filter = getPdfObject().get(PdfName.Filter);
         PdfArray filters = new PdfArray();
         if (filter != null) {
@@ -238,16 +291,13 @@ public class PdfImageXObject extends PdfXObject {
                 return ImageType.JPEG2000;
             }
         }
+
         // None of the previous types match
-        ImagePdfBytesInfo imageInfo = new ImagePdfBytesInfo((int)width, (int)height,
-                getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue(),
-                getPdfObject().get(PdfName.ColorSpace),
-                getPdfObject().getAsArray(PdfName.Decode));
-        if (imageInfo.getPngColorType() < 0) {
+        ImagePdfBytesInfo imageInfo = new ImagePdfBytesInfo(this, properties);
+        if (imageInfo.getImageType() == OutputFileType.TIFF) {
             return ImageType.TIFF;
-        } else {
-            return ImageType.PNG;
         }
+        return ImageType.PNG;
     }
 
     /**
@@ -256,10 +306,24 @@ public class PdfImageXObject extends PdfXObject {
      * This extension can later be used together with the result of {@link #getImageBytes()}.
      *
      * @return a {@link String} with recommended file extension
-     * @see #identifyImageType()
+     * @see #identifyImageType(ImageBytesRetrievalProperties)
      */
     public String identifyImageFileExtension() {
-        ImageType bytesType = identifyImageType();
+        return identifyImageFileExtension(ImageBytesRetrievalProperties.getApplyFiltersOnly());
+    }
+
+    /**
+     * Identifies recommended file extension to store the bytes of this {@link PdfImageXObject}.
+     * Possible values are: 'png', 'jpg', 'jp2', 'tif', 'jbig2'.
+     * This extension can later be used together with the result of {@link #getImageBytes()}.
+     *
+     * @param properties an instance of {@link  ImageBytesRetrievalProperties} to configure the options,
+     *      *                    these options can influence the file extension
+     * @return a {@link String} with recommended file extension
+     *
+     */
+    public String identifyImageFileExtension(ImageBytesRetrievalProperties properties) {
+        ImageType bytesType = identifyImageType(properties);
         switch (bytesType) {
             case PNG:
                 return "png";
@@ -272,7 +336,8 @@ public class PdfImageXObject extends PdfXObject {
             case JBIG2:
                 return "jbig2";
             default:
-                throw new IllegalStateException("Should have never happened. This type of image is not allowed for ImageXObject");
+                throw new IllegalStateException(
+                        "Should have never happened. This type of image is not allowed for ImageXObject");
         }
     }
 
@@ -287,6 +352,19 @@ public class PdfImageXObject extends PdfXObject {
     public PdfImageXObject put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
         return this;
+    }
+
+    private byte[] getImageBytesDecoded(byte[] bytes, ImageBytesRetrievalProperties properties) throws IOException {
+        ImageType imageType = identifyImageType(properties);
+        if (imageType == ImageType.TIFF || imageType == ImageType.PNG) {
+            ImagePdfBytesInfo ibi = new ImagePdfBytesInfo(this, properties);
+            return ibi.getProcessedImageData(bytes);
+        } else {
+
+            Map<PdfName, IFilterHandler> filters = new HashMap<>(FilterHandlers.getDefaultFilterHandlers());
+            filters.put(PdfName.JBIG2Decode, new DoNothingFilter());
+            return PdfReader.decodeBytes(bytes, getPdfObject(), filters);
+        }
     }
 
     private float initWidthField() {
@@ -312,7 +390,7 @@ public class PdfImageXObject extends PdfXObject {
         }
         stream = new PdfStream(image.getData());
         String filter = image.getFilter();
-        if (filter != null && "JPXDecode".equals(filter) && image.getColorEncodingComponentsNumber() <= 0) {
+        if ("JPXDecode".equals(filter) && image.getColorEncodingComponentsNumber() <= 0) {
             stream.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
             image.setBpc(0);
         }
@@ -361,7 +439,8 @@ public class PdfImageXObject extends PdfXObject {
 
                 if ((pngImage.getColorPalette() != null) && (pngImage.getColorPalette().length > 0)) {
                     //Each palette entry is a three-byte series, so the number of entries is calculated as the length
-                    //of the stream divided by 3. The number below specifies the maximum valid index value (starting from 0 up)
+                    //of the stream divided by 3. The number below specifies the maximum valid index value (starting
+                    // from 0 up)
                     colorspace.add(new PdfNumber(pngImage.getColorPalette().length / 3 - 1));
                 }
 
@@ -584,6 +663,159 @@ public class PdfImageXObject extends PdfXObject {
             array.add(map);
             return array;
         }
+    }
+
+    /**
+     * Manages the steps taken in extracting the image.
+     *
+     * <p>
+     * Use getApplyFiltersOnly to get the image as close to the stored state as possible.
+     * No pixels will be manipulated.
+     *
+     * <p>
+     * Use getFullOption to get an image as displayed in the document.
+     * The full options will be extended in the future to support more color spaces
+     * and can lead to different outcomes for some image types.
+     */
+    public static final class ImageBytesRetrievalProperties {
+        private boolean applyTransparency;
+        private boolean applyDecodeArray;
+        private boolean applyTintTransformations;
+        private boolean applyFilters;
+
+        private ImageBytesRetrievalProperties() {
+            //empty contructor
+        }
+
+        /**
+         * Create a property set with only the options applyFilters activates.
+         *
+         * <p>
+         * Use this to retrieve images as close to the stored state as possible.
+         * No pixels will be manipulated.
+         *
+         * @return A property set with only the options applyFilters activated.
+         */
+        public static ImageBytesRetrievalProperties getApplyFiltersOnly() {
+            ImageBytesRetrievalProperties props = new ImageBytesRetrievalProperties();
+            props.applyFilters = true;
+            return props;
+        }
+
+        /**
+         * Create a property set with all options activated.
+         *
+         * <p>
+         * Use this to retrieve images as closely as possible
+         * to how they are being displayed in the document.
+         *
+         * @return A property set with all options activated.
+         */
+        public static ImageBytesRetrievalProperties getFullOption() {
+            ImageBytesRetrievalProperties props = new ImageBytesRetrievalProperties();
+            props.applyFilters = true;
+            props.applyTintTransformations = true;
+            props.applyDecodeArray = true;
+            props.applyTransparency = true;
+            return props;
+        }
+
+        /**
+         * Returns whether transparency will be applied to the result.
+         *
+         * @return Whether transparency will be applied to the result
+         */
+        public boolean isApplyTransparency() {
+            return applyTransparency;
+        }
+
+        /**
+         * Sets whether transparency will be applied to the result.
+         *
+         * @param applyTransparency set to true to apply transparency.
+         */
+        public void setApplyTransparency(boolean applyTransparency) {
+            this.applyTransparency = applyTransparency;
+        }
+
+        /**
+         * Returns whether to apply an images decode transformation or not.
+         *
+         * <p>
+         * An image’s Decode array specifies a linear mapping
+         * of each integer component.
+         *
+         * @return whether to apply an images decode transformation or not
+         */
+        public boolean isApplyDecodeArray() {
+            return applyDecodeArray;
+        }
+
+        /**
+         * Sets whether to apply an image's decode transformation.
+         *
+         * <p>
+         * An image’s Decode array specifies a linear mapping
+         * of each integer component.
+         *
+         * @param applyDecodeArray whether to apply an images decode transformation
+         */
+        public void setApplyDecodeArray(boolean applyDecodeArray) {
+            this.applyDecodeArray = applyDecodeArray;
+        }
+
+        /**
+         * Returns whether tint transformations will be applied.
+         *
+         * <p>
+         * Some color spaces define application-specific colors.
+         * To be able to display these images in an rgb or cmyk color space,
+         * there can be tint transformations defined to translate these colors.
+         *
+         * @return whether any tint transformations will be applied.
+         */
+        public boolean isApplyTintTransformations() {
+            return applyTintTransformations;
+        }
+
+        /**
+         * Sets whether tint transformations will be applied.
+         *
+         * <p>
+         * Some color spaces define application-specific colors.
+         * To be able to display these images in an rgb or cmyk color space,
+         * there can be tint transformations defined to translate these colors.
+         *
+         * @param applyTintTransformations whether to apply tint transformations
+         */
+        public void setApplyTintTransformations(boolean applyTintTransformations) {
+            this.applyTintTransformations = applyTintTransformations;
+        }
+
+        /**
+         * Returns whether to apply the bytestreams filters.
+         *
+         * <p>
+         * Without this option, the other options are disregarded.
+         *
+         * @return whether to apply the filters to the byte stream.
+         */
+        public boolean isApplyFilters() {
+            return applyFilters;
+        }
+
+        /**
+         * Sets whether to apply the bytestreams filters.
+         *
+         * <p>
+         * Without this option, the other options are disregarded.
+         *
+         * @param applyFilters whether to apply the bytestreams filters
+         */
+        public void setApplyFilters(boolean applyFilters) {
+            this.applyFilters = applyFilters;
+        }
+
     }
 
     private static class PngChromaticitiesHelper {

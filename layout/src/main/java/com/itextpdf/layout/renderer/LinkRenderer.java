@@ -22,23 +22,22 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.layout.LayoutContext;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class LinkRenderer extends TextRenderer {
 
     /**
      * Creates a LinkRenderer from its corresponding layout object.
+     *
      * @param link the {@link com.itextpdf.layout.element.Link} which this object should manage
      */
     public LinkRenderer(Link link) {
-        this (link, link.getText());
+        this(link, link.getText());
     }
 
     /**
@@ -79,6 +78,7 @@ public class LinkRenderer extends TextRenderer {
      * for the overflow part. So if one wants to extend {@link LinkRenderer}, one should override
      * this method: otherwise the default method will be used and thus the default rather than the custom
      * renderer will be created.
+     *
      * @return new renderer instance
      */
     @Override

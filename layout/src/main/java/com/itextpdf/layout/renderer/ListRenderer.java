@@ -47,12 +47,12 @@ import com.itextpdf.layout.properties.ListSymbolPosition;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ListRenderer extends BlockRenderer {
 
@@ -92,6 +92,7 @@ public class ListRenderer extends BlockRenderer {
      * for the overflow part. So if one wants to extend {@link ListRenderer}, one should override
      * this method: otherwise the default method will be used and thus the default rather than the custom
      * renderer will be created.
+     *
      * @return new renderer instance
      */
     @Override
@@ -207,7 +208,7 @@ public class ListRenderer extends BlockRenderer {
             } else {
                 textRenderer = new TextRenderer(textElement);
             }
-           return surroundTextBullet(textRenderer);
+            return surroundTextBullet(textRenderer);
         } else if (defaultListSymbol instanceof IListSymbolFactory) {
             return surroundTextBullet(((IListSymbolFactory) defaultListSymbol).createSymbol(index, this, renderer).createRendererSubTree());
         } else if (defaultListSymbol == null) {
@@ -243,14 +244,15 @@ public class ListRenderer extends BlockRenderer {
      * if we can render the first item renderer and strongly recommend not to set
      * {@link com.itextpdf.layout.properties.Property#FORCED_PLACEMENT} manually.
      *
-     * @param splitRenderer    the {@link IRenderer split renderer} before correction
+     * @param splitRenderer the {@link IRenderer split renderer} before correction
      * @param overflowRenderer the {@link IRenderer overflow renderer} before correction
-     * @param causeOfNothing   the renderer which has produced {@link LayoutResult#NOTHING}
-     * @param occupiedArea     the area occupied by layout before correction
+     * @param causeOfNothing the renderer which has produced {@link LayoutResult#NOTHING}
+     * @param occupiedArea the area occupied by layout before correction
+     *
      * @return corrected {@link com.itextpdf.layout.layout.LayoutResult layout result}
      */
     private LayoutResult correctListSplitting(IRenderer splitRenderer, IRenderer overflowRenderer,
-            IRenderer causeOfNothing, LayoutArea occupiedArea) {
+                                              IRenderer causeOfNothing, LayoutArea occupiedArea) {
         // the first not rendered child
         int firstNotRendered = splitRenderer.getChildRenderers().get(0).getChildRenderers().indexOf(causeOfNothing);
 
@@ -279,7 +281,7 @@ public class ListRenderer extends BlockRenderer {
         splitRenderer.getChildRenderers().removeAll(splitRenderer.getChildRenderers().
                 subList(1, splitRenderer.getChildRenderers().size()));
 
-        if (0 != childrenStillRemainingToRender.size()) {
+        if (!childrenStillRemainingToRender.isEmpty()) {
             newOverflowRenderer.getChildRenderers().get(0).getChildRenderers().addAll(childrenStillRemainingToRender);
             splitRenderer.getChildRenderers().get(0).getChildRenderers().removeAll(childrenStillRemainingToRender);
             newOverflowRenderer.getChildRenderers().get(0).setProperty(Property.MARGIN_LEFT,
@@ -292,7 +294,7 @@ public class ListRenderer extends BlockRenderer {
             newOverflowRenderer.childRenderers.addAll(overflowRenderer.getChildRenderers());
         }
 
-        if (0 != newOverflowRenderer.childRenderers.size()) {
+        if (!newOverflowRenderer.childRenderers.isEmpty()) {
             return new LayoutResult(LayoutResult.PARTIAL, occupiedArea, splitRenderer, newOverflowRenderer, this);
         } else {
             return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this);
@@ -302,13 +304,13 @@ public class ListRenderer extends BlockRenderer {
     private LayoutResult initializeListSymbols(LayoutContext layoutContext) {
         if (!hasOwnProperty(Property.LIST_SYMBOLS_INITIALIZED)) {
             List<IRenderer> symbolRenderers = new ArrayList<>();
-            int listItemNum = (int)this.<Integer>getProperty(Property.LIST_START, 1);
-            for (int i = 0; i < childRenderers.size(); i++) {
-                childRenderers.get(i).setParent(this);
-                listItemNum = (childRenderers.get(i).<Integer>getProperty(Property.LIST_SYMBOL_ORDINAL_VALUE) != null) ?
-                        (int) childRenderers.get(i).<Integer>getProperty(Property.LIST_SYMBOL_ORDINAL_VALUE) :
+            int listItemNum = (int) this.<Integer>getProperty(Property.LIST_START, 1);
+            for (IRenderer renderer : childRenderers) {
+                renderer.setParent(this);
+                listItemNum = (renderer.<Integer>getProperty(Property.LIST_SYMBOL_ORDINAL_VALUE) != null) ?
+                        (int) renderer.<Integer>getProperty(Property.LIST_SYMBOL_ORDINAL_VALUE) :
                         listItemNum;
-                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum, childRenderers.get(i));
+                IRenderer currentSymbolRenderer = makeListSymbolRenderer(listItemNum, renderer);
                 if (currentSymbolRenderer != null &&
                         BaseDirection.RIGHT_TO_LEFT == this.<BaseDirection>getProperty(Property.BASE_DIRECTION)) {
                     currentSymbolRenderer.setProperty(Property.BASE_DIRECTION, BaseDirection.RIGHT_TO_LEFT);
@@ -316,7 +318,7 @@ public class ListRenderer extends BlockRenderer {
                 LayoutResult listSymbolLayoutResult = null;
                 if (currentSymbolRenderer != null) {
                     ++listItemNum;
-                    currentSymbolRenderer.setParent(childRenderers.get(i));
+                    currentSymbolRenderer.setParent(renderer);
                     listSymbolLayoutResult = currentSymbolRenderer.layout(layoutContext);
                     currentSymbolRenderer.setParent(null);
                 }
@@ -388,7 +390,7 @@ public class ListRenderer extends BlockRenderer {
     }
 
     private static final class ConstantFontTextRenderer extends TextRenderer {
-        private String constantFontName;
+        private final String constantFontName;
 
         public ConstantFontTextRenderer(Text textElement, String font) {
             super(textElement);

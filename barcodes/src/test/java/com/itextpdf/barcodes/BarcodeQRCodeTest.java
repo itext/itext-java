@@ -68,8 +68,6 @@ public class BarcodeQRCodeTest extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
-        Map<EncodeHintType, Object> hints = new HashMap<>();
-        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
         BarcodeQRCode barcode = new BarcodeQRCode("some specific text 239214 hello world");
         barcode.placeBarcode(canvas, ColorConstants.GRAY, 12);
         document.close();

@@ -60,6 +60,15 @@ public abstract class PdfCieBasedCs extends PdfColorSpace {
         super(pdfObject);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PdfName getName() {
+        return ((PdfArray)getPdfObject()).getAsName(0);
+        }
+
+
     public static class CalGray extends PdfCieBasedCs {
         
 

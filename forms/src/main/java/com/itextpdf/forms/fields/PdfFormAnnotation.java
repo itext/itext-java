@@ -23,7 +23,6 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.datastructures.NullableContainer;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
@@ -241,7 +240,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             if (extractedBorderColor != null) {
                 borderColor = extractedBorderColor;
             }
-            if (parent != null) {
+            // We take into account CA only for buttons according to specification
+            if (parent != null && PdfName.Btn.equals(parent.getFormType())) {
                 parent.text = appearancePropToCaption(appearanceCharacteristics);
             }
         }
@@ -887,7 +887,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             // the selected item. We also need to clear background property for not selected items in case field
             // is regenerated with modified indices list.
             if (selected && (multiselect || index == indices.getAsNumber(indices.size() - 1).intValue())) {
-                existingItem.getElement().setProperty(Property.BACKGROUND, new Background(new DeviceRgb(169, 204, 225)));
+                existingItem.getElement()
+                        .setProperty(Property.BACKGROUND, new Background(new DeviceRgb(169, 204, 225)));
             } else {
                 existingItem.getElement().setProperty(Property.BACKGROUND, null);
             }
@@ -957,8 +958,8 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             value = value.replaceAll(LINE_ENDINGS_REGEXP, " ");
             ((InputField) formFieldElement).setComb(this.isCombTextFormField());
             ((InputField) formFieldElement).setMaxLen((parent instanceof PdfTextFormField ? (PdfTextFormField) parent :
-                            PdfFormCreator.createTextFormField(parent.getPdfObject())).getMaxLen());
-            ((InputField)formFieldElement).useAsPassword(parent.isPassword());
+                    PdfFormCreator.createTextFormField(parent.getPdfObject())).getMaxLen());
+            ((InputField) formFieldElement).useAsPassword(parent.isPassword());
         }
         formFieldElement.setValue(value);
         formFieldElement.setProperty(Property.FONT, getFont());
@@ -968,7 +969,6 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         if (getColor() != null) {
             formFieldElement.setProperty(Property.FONT_COLOR, new TransparentColor(getColor()));
         }
-
 
         setModelElementProperties(rectangle);
 
@@ -1370,11 +1370,11 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             case 0:
                 return null;
             case 90:
-                return new PdfArray(new float[]{0, 1, -1, 0, height, 0});
+                return new PdfArray(new float[] {0, 1, -1, 0, height, 0});
             case 180:
-                return new PdfArray(new float[]{-1, 0, 0, -1, width, height});
+                return new PdfArray(new float[] {-1, 0, 0, -1, width, height});
             case 270:
-                return new PdfArray(new float[]{0, -1, 1, 0, 0, width});
+                return new PdfArray(new float[] {0, -1, 1, 0, 0, width});
             default:
                 Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
                 logger.error(FormsLogMessageConstants.INCORRECT_WIDGET_ROTATION);
@@ -1520,11 +1520,13 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         int rotation = page == null ? 0 : page.getRotation();
         float squeezeTransformation = height / width;
         if (rotation == 90) {
-            n2LayerCanvas.getPdfCanvas().concatMatrix(0, squeezeTransformation, -1 / squeezeTransformation, 0, width, 0);
+            n2LayerCanvas.getPdfCanvas()
+                    .concatMatrix(0, squeezeTransformation, -1 / squeezeTransformation, 0, width, 0);
         } else if (rotation == 180) {
             n2LayerCanvas.getPdfCanvas().concatMatrix(-1, 0, 0, -1, width, height);
         } else if (rotation == 270) {
-            n2LayerCanvas.getPdfCanvas().concatMatrix(0, -squeezeTransformation, 1 / squeezeTransformation, 0, 0, height);
+            n2LayerCanvas.getPdfCanvas()
+                    .concatMatrix(0, -squeezeTransformation, 1 / squeezeTransformation, 0, 0, height);
         }
         n2LayerCanvas.add(formFieldElement);
         // We need to draw waitingDrawingElements (drawn inside close method), but the close method

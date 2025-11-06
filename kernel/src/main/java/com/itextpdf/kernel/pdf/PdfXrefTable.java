@@ -46,8 +46,8 @@ import org.slf4j.LoggerFactory;
 public class PdfXrefTable {
 
 
+    public static final int MAX_GENERATION = 65535;
     private static final int INITIAL_CAPACITY = 32;
-    private static final int MAX_GENERATION = 65535;
 
     /**
      * The maximum offset in a cross-reference stream. This is a limitation of the PDF specification.

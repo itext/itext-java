@@ -50,8 +50,11 @@ class XmlPivotsHandler implements IDefaultXmlHandler {
     public void endElement(String uri, String localName, String qName) {
         if (XmlTagConstants.SCHEME_INFORMATION_URI.equals(localName)) {
             schemeInformationContext = false;
-        } else if (XmlTagConstants.URI.equals(localName) && isPivot(uriLink.toString())) {
-            pivots.add(uriLink.toString());
+        } else if (XmlTagConstants.URI.equals(localName)) {
+            String uriLinkString = uriLink.toString();
+            if (isPivot(uriLinkString) || isOfficialJournal(uriLinkString)) {
+                pivots.add(uriLinkString);
+            }
         }
     }
 
@@ -64,6 +67,10 @@ class XmlPivotsHandler implements IDefaultXmlHandler {
 
     public List<String> getPivots() {
         return new ArrayList<>(pivots);
+    }
+
+    static boolean isOfficialJournal(String uriLink) {
+        return uriLink.contains("eur-lex.europa.eu");
     }
 
     private static boolean isPivot(String uriLink) {

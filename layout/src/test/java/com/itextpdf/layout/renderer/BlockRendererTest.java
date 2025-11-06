@@ -33,11 +33,17 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.AnonymousInlineBox;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.WrongParentTreeDiv;
 import com.itextpdf.layout.font.FontProvider;
 import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -49,6 +55,9 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -207,6 +216,73 @@ public class BlockRendererTest extends ExtendedITextTest {
         Assertions.assertNull(font);
     }
 
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
+    public void enableForcePlacementIfCauseOfNothingNotInOverflowTreeTest() throws IOException, InterruptedException {
+        String cmpFileName = SOURCE_FOLDER + "cmp_enableForcePlacementIfCauseOfNothingNotInOverflowTree.pdf";
+        String outFile = DESTINATION_FOLDER + "enableForcePlacementIfCauseOfNothingNotInOverflowTree.pdf";
+
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        Document doc = new Document(pdfDoc);
+
+        // In this test we use custom DivRenderer implementation to break parent tree of cause of nothing element to
+        // check that RootRenderer.tryDisableKeepTogether catches that case and switches to enabling forced placement
+        WrongParentTreeDiv parentWrongParentTreeDiv = new WrongParentTreeDiv();
+        parentWrongParentTreeDiv.setKeepTogether(true);
+        WrongParentTreeDiv wrongParentTreeDiv = new WrongParentTreeDiv();
+
+        AnonymousInlineBox longParagraph = new AnonymousInlineBox();
+        longParagraph.add("Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! "
+                + "Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! Hello, iText! ");
+        longParagraph.setFontSize(35);
+
+        wrongParentTreeDiv.add(longParagraph);
+        parentWrongParentTreeDiv.add(wrongParentTreeDiv);
+        doc.add(parentWrongParentTreeDiv);
+
+
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    public static class WrongParentTreeDivRenderer extends DivRenderer {
+        public WrongParentTreeDivRenderer(Div modelElement) {
+            super(modelElement);
+        }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return new WrongParentTreeDivRenderer((Div) modelElement);
+        }
+
+        @Override
+        LayoutResult processNotFullChildResult(LayoutContext layoutContext,
+                Map<Integer, IRenderer> waitingFloatsSplitRenderers, List<IRenderer> waitingOverflowFloatRenderers,
+                boolean wasHeightClipped, List<Rectangle> floatRendererAreas, boolean marginsCollapsingEnabled,
+                float clearHeightCorrection, Border[] borders, UnitValue[] paddings, List<Rectangle> areas,
+                int currentAreaPos, Rectangle layoutBox, Set<Rectangle> nonChildFloatingRendererAreas,
+                IRenderer causeOfNothing, boolean anythingPlaced, int childPos, LayoutResult result) {
+
+            LayoutResult layoutResult = super.processNotFullChildResult(layoutContext, waitingFloatsSplitRenderers,
+                    waitingOverflowFloatRenderers, wasHeightClipped, floatRendererAreas, marginsCollapsingEnabled,
+                    clearHeightCorrection, borders, paddings, areas, currentAreaPos, layoutBox,
+                    nonChildFloatingRendererAreas, causeOfNothing, anythingPlaced, childPos, result);
+
+            boolean keepTogether = isKeepTogether(causeOfNothing);
+            if (keepTogether && this.getParent() instanceof DocumentRenderer) {
+                result.getCauseOfNothing().getParent().setParent(this);
+            }
+
+            return layoutResult;
+        }
+    }
 }
 
 

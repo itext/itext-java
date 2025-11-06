@@ -7,6 +7,6 @@ p > strong {
 p > b.important {
     color: crimson
 }
-p > :not(strong b.important) {
+p > :not(strong , b.important) {
     color: darkmagenta
 }

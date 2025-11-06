@@ -49,7 +49,7 @@ public class BarcodeMultiThreadingTest extends ExtendedITextTest {
     @Timeout(unit = TimeUnit.MILLISECONDS, value = 10000)
     @Test
     public void test() throws InterruptedException {
-        Thread[] threads = new DataMatrixThread[20];
+        DataMatrixThread[] threads = new DataMatrixThread[20];
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new DataMatrixThread();
             threads[i].start();

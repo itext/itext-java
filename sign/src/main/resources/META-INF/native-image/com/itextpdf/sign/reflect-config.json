@@ -1,0 +1,286 @@
+[
+  {
+    "name": "com.sun.org.apache.xpath.internal.functions.FuncNormalizeSpace",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA256",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA512",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.c14n.implementations.Canonicalizer20010315ExclOmitComments",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA1",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA384",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSAMD5",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureECDSA",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureDSA",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.c14n.implementations.Canonicalizer20010315OmitComments",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.c14n.implementations.Canonicalizer20010315WithComments",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.c14n.implementations.Canonicalizer20010315ExclWithComments",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA1MGF1",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA224MGF1",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA256MGF1",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA384MGF1",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA512MGF1",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureECDSA$SignatureECDSASHA1",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureECDSA$SignatureECDSASHA224",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureECDSA$SignatureECDSASHA256",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureECDSA$SignatureECDSASHA384",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureECDSA$SignatureECDSASHA512",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA224",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureHMAC",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureHMAC$SignatureHMACSHA1",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureHMAC$SignatureHMACSHA256",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureHMAC$SignatureHMACSHA384",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.algorithms.implementations.SignatureHMAC$SignatureHMACSHA512",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.transforms.implementations.TransformEnvelopedSignature",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.transforms.implementations.TransformXPath",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.transforms.implementations.TransformBase64",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.transforms.implementations.TransformC14NExclusive",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.transforms.implementations.TransformC14NInclusive",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.encryption.XMLCipher",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.encryption.EncryptedKey",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.apache.xml.security.Init",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.lotl.LotlCacheDataV1",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.lotl.EuropeanLotlFetcher$Result",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.lotl.CountrySpecificLotlFetcher$Result",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.lotl.PivotFetcher$Result",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.report.ReportItem",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.lotl.CountryServiceContext",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.lotl.EuropeanResourceFetcher$Result",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.lotl.CountrySpecificLotl",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.lotl.SimpleServiceContext",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.report.ValidationReport",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.itextpdf.signatures.validation.lotl.AdditionalServiceInformationExtension",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "java.lang.IllegalArgumentException",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "java.lang.StackTraceElement",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "java.lang.Exception",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "com.fasterxml.jackson.databind.deser.std.StackTraceElementDeserializer$Adapter",
+    "allDeclaredConstructors": true,
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true,
+    "allPublicFields": true
+  }
+]

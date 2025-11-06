@@ -29,14 +29,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-class CountryServiceContext implements IServiceContext {
+/**
+ * Class representing TSPService entry in a country specific Trusted List.
+ */
+public class CountryServiceContext implements IServiceContext {
     private final List<Certificate> certificates = new ArrayList<>();
     //It is expected that service statuses are ordered starting from the newest one.
     private final List<ServiceChronologicalInfo> serviceChronologicalInfos = new ArrayList<>();
     private String serviceType;
 
     CountryServiceContext() {
-        // Empty constructor
+        // Empty constructor.
     }
 
     /**
@@ -55,8 +58,59 @@ class CountryServiceContext implements IServiceContext {
         certificates.add(certificate);
     }
 
-    String getServiceType() {
+    /**
+     * Gets list of {@link ServiceChronologicalInfo} objects corresponding to this country service context.
+     *
+     * @return list of {@link ServiceChronologicalInfo} objects
+     */
+    public List<ServiceChronologicalInfo> getServiceChronologicalInfos() {
+        return serviceChronologicalInfos;
+    }
+
+    /**
+     * Gets service type {@link String} corresponding to this country service context.
+     *
+     * @return service type {@link String}
+     */
+    public String getServiceType() {
         return serviceType;
+    }
+
+    /**
+     * Gets {@link ServiceChronologicalInfo} corresponding to this country service context and DateTime in milliseconds.
+     *
+     * @param milliseconds DateTime in milliseconds
+     *
+     * @return corresponding {@link ServiceChronologicalInfo} instance
+     */
+    public ServiceChronologicalInfo getServiceChronologicalInfoByDate(long milliseconds) {
+        return getServiceChronologicalInfoByDate(DateTimeUtil.getTimeFromMillis(milliseconds));
+    }
+
+    /**
+     * Gets {@link ServiceChronologicalInfo} corresponding to this country service context and {@link LocalDateTime}.
+     *
+     * @param time {@link LocalDateTime} date time
+     *
+     * @return corresponding {@link ServiceChronologicalInfo} instance
+     */
+    public ServiceChronologicalInfo getServiceChronologicalInfoByDate(LocalDateTime time) {
+        for (ServiceChronologicalInfo serviceChronologicalInfo : serviceChronologicalInfos) {
+            if (!time.isBefore(serviceChronologicalInfo.getServiceStatusStartingTime())) {
+                return serviceChronologicalInfo;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the latest {@link ServiceChronologicalInfo} instance.
+     *
+     * @return the latest {@link ServiceChronologicalInfo} instance
+     */
+    public ServiceChronologicalInfo getCurrentChronologicalInfo() {
+        return serviceChronologicalInfos.get(0);
     }
 
     void setServiceType(String serviceType) {
@@ -65,24 +119,6 @@ class CountryServiceContext implements IServiceContext {
 
     void addServiceChronologicalInfo(ServiceChronologicalInfo serviceChronologicalInfo) {
         serviceChronologicalInfos.add(serviceChronologicalInfo);
-    }
-
-    ServiceChronologicalInfo getServiceChronologicalInfoByDate(long milliseconds) {
-        return getServiceChronologicalInfoByDate(DateTimeUtil.getTimeFromMillis(milliseconds));
-    }
-
-    ServiceChronologicalInfo getServiceChronologicalInfoByDate(LocalDateTime time) {
-        for (ServiceChronologicalInfo serviceChronologicalInfo : serviceChronologicalInfos) {
-            if (serviceChronologicalInfo.getServiceStatusStartingTime().isBefore(time)) {
-                return serviceChronologicalInfo;
-            }
-        }
-
-        return null;
-    }
-
-    ServiceChronologicalInfo getCurrentChronologicalInfo() {
-        return serviceChronologicalInfos.get(0);
     }
 
     int getServiceChronologicalInfosSize() {

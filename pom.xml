@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>9.3.0</version>
+  <version>9.4.0</version>
   <packaging>pom</packaging>
 
   <name>iText</name>
@@ -111,6 +111,13 @@
 
     <sharpen.builddotnet>false</sharpen.builddotnet>
     <sharpen.showdiff>false</sharpen.showdiff>
+    <sharpen.phase>none</sharpen.phase>
+    <sharpen.projectName>empty</sharpen.projectName>
+    <sharpen.cSharpTargetFolder>empty</sharpen.cSharpTargetFolder>
+    <sharpen.cSharpSourceCodeDestination />
+    <sharpen.cSharpTestCodeDestination />
+    <sharpen.extraDependencies>
+    </sharpen.extraDependencies>
 
     <native.maven.plugin.version>0.10.1</native.maven.plugin.version>
   </properties>
@@ -507,12 +514,6 @@
                 <excludes>
                   <!-- Contains interfaces for bouncycastle wrappers which can be changes in any time -->
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
-                  <!--
-                   Temporary exclude to be able to cleanup code.
-                   This class is not intended to be used by our users directly.
-                   TODO: DEVSIX-9096 - remove after 9.3.0 release
-                  -->
-                  <exclude>com.itextpdf.kernel.xmp.impl.FixASCIIControlsReader</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
@@ -726,19 +727,19 @@
                   <goal>verify</goal>
                 </goals>
               </execution>
-            <execution>
-              <id>approved-mode</id>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-              <configuration>
-                <systemPropertyVariables>
-                  <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
-                </systemPropertyVariables>
-              </configuration>
-            </execution>
-          </executions>
+              <execution>
+                <id>approved-mode</id>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -810,12 +811,20 @@
       </properties>
     </profile>
     <profile>
-      <id>sharpen-configuration</id>
-      <activation>
-        <file>
-          <missing>noSharpen.txt</missing>
-        </file>
-      </activation>
+      <id>build-sharpen-configs</id>
+      <dependencies>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>sharpen-config</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>standard-framework-mapping</artifactId>
+          <version>1.0-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -849,19 +858,6 @@
             <version>3.4.2</version>
             <executions>
               <execution>
-                <id>default-jar</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-                <phase>package</phase>
-                <configuration>
-                  <excludes>
-                    <exclude>**/SharpenConfig*.class</exclude>
-                    <exclude>**/sharpen.config.MappingConfiguration</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-              <execution>
                 <id>sharpen-config-jar</id>
                 <goals>
                   <goal>jar</goal>
@@ -879,6 +875,10 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <id>with-sharpen</id>
       <dependencies>
         <dependency>
           <groupId>sharpen</groupId>
@@ -886,7 +886,122 @@
           <version>1.0-SNAPSHOT</version>
           <scope>provided</scope>
         </dependency>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>standard-framework-mapping</artifactId>
+          <version>1.0-SNAPSHOT</version>
+        </dependency>
       </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>add-sharpenConfiguration-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-source</goal>
+                  <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>${project.basedir}/src/sharpenconfig/java</source>
+                  </sources>
+                  <resources>
+                    <resource>
+                      <directory>${project.basedir}/src/sharpenconfig/resources</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.4.2</version>
+            <executions>
+              <execution>
+                <id>sharpen-config-jar</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <classifier>sharpen-configuration</classifier>
+                  <includes>
+                    <include>**/SharpenConfig*.class</include>
+                    <include>**/sharpen.config.MappingConfiguration</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>sharpen</groupId>
+              <artifactId>sharpen-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <phase>${sharpen.phase}</phase>
+                  <goals>
+                    <goal>sharpen</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <buildDotnet>${sharpen.builddotnet}</buildDotnet>
+                <showDiff>${sharpen.showdiff}</showDiff>
+                <projectName>${sharpen.projectName}</projectName>
+                <cSharpTargetFolder>${sharpen.cSharpTargetFolder}</cSharpTargetFolder>
+                <cSharpSourceCodeDestination>${sharpen.cSharpSourceCodeDestination}</cSharpSourceCodeDestination>
+                <cSharpTestCodeDestination>${sharpen.cSharpTestCodeDestination}</cSharpTestCodeDestination>
+                <sourceCodeFiles>
+                  <file>**/src/main/java/**/*.java</file>
+                </sourceCodeFiles>
+                <testCodeFiles>
+                  <file>**/src/test/java/**/*.java</file>
+                </testCodeFiles>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+    <profile>
+      <id>sharpen-configuration</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.4.2</version>
+            <executions>
+              <execution>
+                <id>default-jar</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <excludes>
+                    <exclude>**/SharpenConfig*.class</exclude>
+                    <exclude>**/sharpen.config.MappingConfiguration</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>native</id>
@@ -951,9 +1066,6 @@
 
                   --enable-all-security-services
                   --enable-url-protocols=http,https,ftp
-
-                  -H:IncludeLocales=en_US
-                  -H:IncludeResourceBundles=org.apache.xml.security.resource.xmlsecurity
 
                   -H:+AddAllCharsets
                   -H:ReflectionConfigurationFiles=${basedir}/../resources/graalvm/reflect-config.json

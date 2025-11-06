@@ -532,7 +532,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
     @Test
     public void pdfA4DocumentPageMetaDataIsNotUTF8Encoded() throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "encodedXmp.xmp"));
-        String outPdf = DESTINATION_FOLDER + "metadataNotUTF8.pdf";
+        String outPdf = DESTINATION_FOLDER + "pageMetadataNotUTF8.pdf";
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1",

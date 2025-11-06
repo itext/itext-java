@@ -65,22 +65,52 @@ class RtlFlexItemMainDirector implements IFlexItemMainDirector {
     @Override
     public void applyJustifyContent(List<FlexUtil.FlexItemCalculationInfo> line, JustifyContent justifyContent,
             float freeSpace) {
+
+        if (freeSpace < 0 && (JustifyContent.SPACE_AROUND == justifyContent ||
+                JustifyContent.SPACE_BETWEEN == justifyContent || JustifyContent.SPACE_EVENLY == justifyContent)) {
+            return;
+        }
+
+        float space;
         switch (justifyContent) {
             case RIGHT:
             case END:
-            case SELF_END:
+            // stretch in flexbox behaves as flex-start, see https://drafts.csswg.org/css-align/#distribution-flex
+            case STRETCH:
+            case NORMAL:
             case FLEX_START:
                 line.get(line.size() - 1).xShift = freeSpace;
                 break;
             case CENTER:
                 line.get(line.size() - 1).xShift = freeSpace / 2;
                 break;
+            case SPACE_BETWEEN:
+                if (line.size() == 1) {
+                    line.get(0).xShift = freeSpace;
+                } else {
+                    space = freeSpace / (line.size() - 1);
+                    for (int i = 0; i < line.size() - 1; i++) {
+                        FlexUtil.FlexItemCalculationInfo item = line.get(i);
+                        item.xShift = space;
+                    }
+                }
+                break;
+            case SPACE_AROUND:
+                space = freeSpace / (line.size() * 2);
+                for (int i = 0; i < line.size(); i++) {
+                    FlexUtil.FlexItemCalculationInfo item =  line.get(i);
+                    item.xShift = i == (line.size() - 1) ? space : space * 2;
+                }
+                break;
+            case SPACE_EVENLY:
+                space = freeSpace / (line.size() + 1);
+                for (FlexUtil.FlexItemCalculationInfo item : line) {
+                    item.xShift = space;
+                }
+                break;
             case FLEX_END:
-            case NORMAL:
-            case STRETCH:
             case START:
             case LEFT:
-            case SELF_START:
             default:
                 // We don't need to do anything in these cases
         }

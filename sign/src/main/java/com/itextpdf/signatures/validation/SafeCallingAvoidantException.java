@@ -31,6 +31,9 @@ import com.itextpdf.kernel.exceptions.PdfException;
  * but an underlying process might be affected.
  */
 public class SafeCallingAvoidantException extends PdfException {
+    // Needed to be able to modify class, which implements serializable.
+    // Otherwise, japi-cmp won't allow any modifications.
+    private static final long serialVersionUID = -660602896592130700L;
 
     /**
      * Creates a new instance of {@link SafeCallingAvoidantException} with the specified detail message.
@@ -39,6 +42,15 @@ public class SafeCallingAvoidantException extends PdfException {
      */
     public SafeCallingAvoidantException(String message) {
         super(message);
+    }
+
+    /**
+     * Creates a new instance of {@link SafeCallingAvoidantException} with the specified underlying cause.
+     *
+     * @param cause {@link Throwable} which caused the exception
+     */
+    public SafeCallingAvoidantException(Throwable cause) {
+        super(cause);
     }
 
 

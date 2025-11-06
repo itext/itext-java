@@ -59,7 +59,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
      * Enables ByteBuffer memory unmapping hack
      */
     public static void enableByteBufferMemoryUnmapping() {
-        allowUnmapping = false;
+        allowUnmapping = true;
     }
 
     /**

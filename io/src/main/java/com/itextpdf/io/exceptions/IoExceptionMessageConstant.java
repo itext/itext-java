@@ -57,8 +57,11 @@ public final class IoExceptionMessageConstant {
     public static final String CCITT_COMPRESSION_TYPE_MUST_BE_CCITTG4_CCITTG3_1D_OR_CCITTG3_2D =
             "CCITT compression type must be CCITTG4, CCITTG3_1D or CCITTG3_2D.";
     public static final String CHARACTER_CODE_EXCEPTION = "Character code exception.";
+    public static final String CMAP_TABLE_MERGING_IS_NOT_SUPPORTED = "cmap table merging isn't supported.";
     public static final String CMAP_WAS_NOT_FOUND = "The CMap {0} was not found.";
+    @Deprecated
     public static final String COLOR_DEPTH_IS_NOT_SUPPORTED = "The color depth {0} is not supported.";
+    @Deprecated
     public static final String COLOR_SPACE_IS_NOT_SUPPORTED = "The color space {0} is not supported.";
     public static final String COMPARE_COMMAND_IS_NOT_SPECIFIED =
             "ImageMagick comparison command is not specified. Set the "
@@ -137,6 +140,7 @@ public final class IoExceptionMessageConstant {
     public static final String MUST_HAVE_8_BITS_PER_COMPONENT = "{0} must have 8 bits per component.";
     public static final String NOT_AT_TRUE_TYPE_FILE = "{0} is not a true type file";
     public static final String NOT_FOUND_AS_FILE_OR_RESOURCE = "{0} not found as file or resource.";
+    @Deprecated
     public static final String N_VALUE_IS_NOT_SUPPORTED = "N value {0} is not supported.";
     public static final String PADDING_OVERFLOW = "woff2 padding overflow exception";
     public static final String PAGE_NUMBER_MUST_BE_GT_EQ_1 = "Page number must be >= 1.";

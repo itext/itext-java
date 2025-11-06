@@ -55,12 +55,12 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link SelectFieldComboBoxRenderer} implementation for select field renderer.
@@ -121,7 +121,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
                 .setConformance(getConformance(doc));
 
         applyMargins(area, false);
-        final Map<Integer, Object> properties =  FormFieldRendererUtil.removeProperties(this.modelElement);
+        final Map<Integer, Object> properties = FormFieldRendererUtil.removeProperties(this.modelElement);
 
         modelElement.setProperty(Property.FONT_PROVIDER, this.<FontProvider>getProperty(Property.FONT_PROVIDER));
         modelElement.setProperty(Property.RENDERING_MODE, this.<RenderingMode>getProperty(Property.RENDERING_MODE));

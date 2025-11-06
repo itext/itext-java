@@ -56,6 +56,8 @@ import com.itextpdf.layout.properties.TextAnchor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.LastFittingChildRendererData;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRendererSequenceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,9 +68,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LineRenderer extends AbstractRenderer {
 
@@ -105,7 +104,7 @@ public class LineRenderer extends AbstractRenderer {
             float layoutWidth = layoutBox.getWidth();
             float layoutHeight = layoutBox.getHeight();
             // consider returning some value to check if layoutBox has been changed due to floats,
-            // than reuse on non-float layout: kind of not first piece of content on the line
+            // then reuse on non-float layout: kind of not first piece of content on the line
             FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, layoutBox);
             if (layoutWidth > layoutBox.getWidth() || layoutHeight > layoutBox.getHeight()) {
                 floatsPlacedBeforeLine = true;
@@ -625,9 +624,10 @@ public class LineRenderer extends AbstractRenderer {
                     split[1].addChildRenderer(childRenderer);
                 } else {
                     boolean forcePlacement = Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT));
-                    boolean isInlineBlockAndFirstOnRootArea = isInlineBlockChild && isFirstOnRootArea();
+                    boolean isInlineBlockAndFirstOnRootAreaOrFlexItem = isInlineBlockChild &&
+                            (isFirstOnRootArea() || isInsideFlexContainer());
                     if ((childResult.getStatus() == LayoutResult.PARTIAL
-                            && (!isInlineBlockChild || forcePlacement || isInlineBlockAndFirstOnRootArea))
+                            && (!isInlineBlockChild || forcePlacement || isInlineBlockAndFirstOnRootAreaOrFlexItem))
                             || childResult.getStatus() == LayoutResult.FULL) {
                         final IRenderer splitRenderer = childResult.getSplitRenderer();
                         split[0].addChild(splitRenderer);
@@ -640,7 +640,7 @@ public class LineRenderer extends AbstractRenderer {
                     }
 
                     if (null != childResult.getOverflowRenderer()) {
-                        if (isInlineBlockChild && !forcePlacement && !isInlineBlockAndFirstOnRootArea) {
+                        if (isInlineBlockChild && !forcePlacement && !isInlineBlockAndFirstOnRootAreaOrFlexItem) {
                             split[1].addChildRenderer(childRenderer);
                         } else if (isInlineBlockChild
                                 && childResult.getOverflowRenderer().getChildRenderers().isEmpty()
@@ -955,7 +955,7 @@ public class LineRenderer extends AbstractRenderer {
         overflowRenderer.parent = parent;
         overflowRenderer.addAllProperties(getOwnProperties());
 
-        return new LineRenderer[] {splitRenderer, overflowRenderer};
+        return new LineRenderer[]{splitRenderer, overflowRenderer};
     }
 
     protected LineRenderer adjustChildrenYLine() {
@@ -1136,7 +1136,7 @@ public class LineRenderer extends AbstractRenderer {
                     continue;
                 }
                 if (reversed) {
-                    newRenderer.initReversedRanges().add(new int[] {initialPos - offset, pos - offset});
+                    newRenderer.initReversedRanges().add(new int[]{initialPos - offset, pos - offset});
                     reversed = false;
                 }
                 initialPos = pos + 1;
@@ -1194,7 +1194,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     private void adjustLineOnFloatPlaced(Rectangle layoutBox, int childPos, FloatPropertyValue kidFloatPropertyVal,
-            Rectangle justPlacedFloatBox) {
+                                         Rectangle justPlacedFloatBox) {
         if (justPlacedFloatBox.getBottom() >= layoutBox.getTop() || justPlacedFloatBox.getTop() < layoutBox.getTop()) {
             return;
         }
@@ -1216,7 +1216,7 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     private void replaceSplitRendererKidFloats(Map<Integer, IRenderer> floatsToNextPageSplitRenderers,
-            LineRenderer splitRenderer) {
+                                               LineRenderer splitRenderer) {
         for (Map.Entry<Integer, IRenderer> splitFloat : floatsToNextPageSplitRenderers.entrySet()) {
             if (splitFloat.getValue() != null) {
                 splitRenderer.setChildRenderer(splitFloat.getKey(), splitFloat.getValue());
@@ -1289,7 +1289,7 @@ public class LineRenderer extends AbstractRenderer {
      * Returns resulting width of the tab.
      */
     private float calculateTab(Rectangle layoutBox, float curWidth, TabStop tabStop, List<IRenderer> affectedRenderers,
-            IRenderer tabRenderer) {
+                               IRenderer tabRenderer) {
         float sumOfAffectedRendererWidths = 0;
         for (IRenderer renderer : affectedRenderers) {
             sumOfAffectedRendererWidths += renderer.getOccupiedArea().getBBox().getWidth();
@@ -1413,18 +1413,19 @@ public class LineRenderer extends AbstractRenderer {
      *
      * @param childRenderer the childRenderer containing the split word
      * @param wasXOverflowChanged true if {@link Property#OVERFLOW_X} has been changed
-     *                            during layouting of {@link LineRenderer}
+     * during layouting of {@link LineRenderer}
      * @param oldXOverflow the value of {@link Property#OVERFLOW_X} before it's been changed
-     *                     during layouting of {@link LineRenderer}
-     *                     or null if {@link Property#OVERFLOW_X} hasn't been changed
+     * during layouting of {@link LineRenderer}
+     * or null if {@link Property#OVERFLOW_X} hasn't been changed
      * @param layoutContext {@link LayoutContext}
      * @param layoutBox current layoutBox
      * @param wasParentsHeightClipped true if layoutBox's height has been clipped
+     *
      * @return true if the split word can fit the next line without splitting
      */
     boolean isForceOverflowForTextRendererPartialResult(IRenderer childRenderer, boolean wasXOverflowChanged,
-            OverflowPropertyValue oldXOverflow, LayoutContext layoutContext,
-            Rectangle layoutBox, boolean wasParentsHeightClipped) {
+                                                        OverflowPropertyValue oldXOverflow, LayoutContext layoutContext,
+                                                        Rectangle layoutBox, boolean wasParentsHeightClipped) {
         if (wasXOverflowChanged) {
             setProperty(Property.OVERFLOW_X, oldXOverflow);
         }
@@ -1441,14 +1442,15 @@ public class LineRenderer extends AbstractRenderer {
     /**
      * Extracts ascender and descender of an already layouted {@link IRenderer childRenderer}.
      *
-     * @param childRenderer an already layouted child who's ascender and descender are to be extracted
+     * @param childRenderer an already layouted child whose ascender and descender are to be extracted
      * @param childResult {@link LayoutResult} of the childRenderer based on which ascender and descender are defined
      * @param childRenderingMode {@link RenderingMode rendering mode}
      * @param isInlineBlockChild true if childRenderer {@link #isInlineBlockChild(IRenderer)}
+     *
      * @return a two-element float array where first element is ascender value and second element is descender value
      */
     float[] getAscentDescentOfLayoutedChildRenderer(IRenderer childRenderer, LayoutResult childResult,
-            RenderingMode childRenderingMode, boolean isInlineBlockChild) {
+                                                    RenderingMode childRenderingMode, boolean isInlineBlockChild) {
         float childAscent = 0;
         float childDescent = 0;
         if (childRenderer instanceof ILeafElementRenderer
@@ -1473,27 +1475,28 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
-        return new float[] {childAscent, childDescent};
+        return new float[]{childAscent, childDescent};
     }
 
     /**
      * Updates {@link LineRenderer#maxAscent}, {@link LineRenderer#maxDescent}, {@link LineRenderer#maxTextAscent} and
      * {@link LineRenderer#maxTextDescent} after a {@link TextRenderer} sequence has been fully processed.
      *
-     * @param newChildPos                                      position of the last {@link TextRenderer} child of the
-     *                                                         sequence to remain on the line
+     * @param newChildPos position of the last {@link TextRenderer} child of the
+     * sequence to remain on the line
      * @param lineAscentDescentStateBeforeTextRendererSequence a {@link LineAscentDescentState} containing
-     *                                                         {@link LineRenderer}'s maxAscent, maxDescent,
-     *                                                         maxTextAscent, maxTextDescent before
-     *                                                         {@link TextRenderer} sequence start
-     * @param textRendererSequenceAscentDescent                a {@link Map} with {@link TextRenderer} children's
-     *                                                         positions as keys
-     *                                                         and float arrays consisting of maxAscent, maxDescent,
-     *                                                         maxTextAscent,
-     *                                                         maxTextDescent of the corresponding {@link TextRenderer}
-     *                                                         children.
+     * {@link LineRenderer}'s maxAscent, maxDescent,
+     * maxTextAscent, maxTextDescent before
+     * {@link TextRenderer} sequence start
+     * @param textRendererSequenceAscentDescent a {@link Map} with {@link TextRenderer} children's
+     * positions as keys
+     * and float arrays consisting of maxAscent, maxDescent,
+     * maxTextAscent,
+     * maxTextDescent of the corresponding {@link TextRenderer}
+     * children.
+     *
      * @return a two-element float array where first element is a new {@link LineRenderer}'s ascender
-     *         and second element is a new {@link LineRenderer}'s descender
+     * and second element is a new {@link LineRenderer}'s descender
      */
     float[] updateAscentDescentAfterTextRendererSequenceProcessing(
             int newChildPos, LineAscentDescentState lineAscentDescentStateBeforeTextRendererSequence,
@@ -1516,7 +1519,7 @@ public class LineRenderer extends AbstractRenderer {
         this.maxTextAscent = maxTextAscentUpdated;
         this.maxTextDescent = maxTextDescentUpdated;
 
-        return new float[] {this.maxAscent, this.maxDescent};
+        return new float[]{this.maxAscent, this.maxDescent};
     }
 
     /**
@@ -1525,12 +1528,12 @@ public class LineRenderer extends AbstractRenderer {
      * after child's layout.
      *
      * @param childAscentDescent a two-element float array where first element is ascender of a layouted child
-     *                           and second element is descender of a layouted child
+     * and second element is descender of a layouted child
      * @param childRenderer the layouted {@link IRenderer childRenderer} of current {@link LineRenderer}
      * @param isChildFloating true if {@link #isChildFloating(IRenderer)}
      */
     void updateAscentDescentAfterChildLayout(float[] childAscentDescent, IRenderer childRenderer,
-            boolean isChildFloating) {
+                                             boolean isChildFloating) {
         float childAscent = childAscentDescent[0];
         float childDescent = childAscentDescent[1];
         this.maxAscent = Math.max(this.maxAscent, childAscent);
@@ -1575,7 +1578,7 @@ public class LineRenderer extends AbstractRenderer {
                     }
                 }
             }
-            if (unicodeIdsReorderingList.size() > 0) {
+            if (!unicodeIdsReorderingList.isEmpty()) {
                 final PdfDocument pdfDocument = getPdfDocument();
                 final SequenceId sequenceId = pdfDocument == null ? null : pdfDocument.getDocumentIdWrapper();
                 final MetaInfoContainer metaInfoContainer = this.<MetaInfoContainer>getProperty(Property.META_INFO);
@@ -1604,7 +1607,7 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
 
-        // this mean, that some TextRenderer has been replaced.
+        // This means that some TextRenderer has been replaced.
         if (updateChildRenderers) {
             setChildRenderers(newChildRenderers);
         }
@@ -1647,7 +1650,7 @@ public class LineRenderer extends AbstractRenderer {
     private boolean hasInlineBlocksWithVerticalAlignment() {
         for (IRenderer child : getChildRenderers()) {
             if (child.hasProperty(Property.INLINE_VERTICAL_ALIGNMENT) &&
-                    InlineVerticalAlignmentType.BASELINE != ((InlineVerticalAlignment)child.
+                    InlineVerticalAlignmentType.BASELINE != ((InlineVerticalAlignment) child.
                             <InlineVerticalAlignment>getProperty(Property.INLINE_VERTICAL_ALIGNMENT)).getType()) {
                 return true;
             }
@@ -1710,6 +1713,20 @@ public class LineRenderer extends AbstractRenderer {
             default:
                 return 0;
         }
+    }
+
+    // TODO DEVSIX-9509 Move whole flex container to the next page if inline-block flex item is not fit
+    private boolean isInsideFlexContainer() {
+        boolean isInsideFlexContainer = false;
+        IRenderer ancestor = this;
+        while (!isInsideFlexContainer && ancestor.getParent() != null) {
+            IRenderer parent = ancestor.getParent();
+            if (parent instanceof FlexContainerRenderer) {
+                isInsideFlexContainer = true;
+            }
+            ancestor = parent;
+        }
+        return isInsideFlexContainer;
     }
 
     public static class RendererGlyph {

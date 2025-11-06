@@ -35,7 +35,7 @@ import sharpen.config.OptionsConfigurator;
 public class SharpenConfigMapping implements MappingConfiguration {
     @Override
     public int getMappingPriority() {
-        return 17;
+        return 100 - 6;
     }
 
     @Override
@@ -62,7 +62,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapStringLiteral("com.itextpdf.io.font.constants.FontResources.CMAPS", "iText.IO.Font.Cmap.");
         configurator.addFullName("com.itextpdf.io.image.Image");
         configurator.removeField("com.itextpdf.io.logs.IoLogMessageConstant.FILE_CHANNEL_CLOSING_FAILED");
-        configurator.mapMethod("com.itextpdf.io.util.ArrayUtil.indexOf", "System.Array.IndexOf");
         configurator.mapMethod("com.itextpdf.io.source.HighPrecisionOutputStream.close", "Dispose");
         configurator.mapMethod("com.itextpdf.io.source.DeflaterOutputStream.close", "Dispose");
         configurator.addCustomUsingDeclaration("com.itextpdf.io.font.woff2.w3c.W3CWoff2DecodeTest", Collections.singletonList("System.IO"));
@@ -71,7 +70,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
         configurator.addFullName("iText.IO.Logs.IoLogMessageConstant");
         configurator.addFullName("iText.IO.Util.TextUtil");
-        configurator.mapType("java.util.LinkedHashSet<>", "iText.IO.Util.LinkedHashSet");
         configurator.mapMethod("java.lang.Math.toRadians", "iText.IO.Util.MathUtil.ToRadians", false);
         configurator.addFullName("iText.IO.IOException");
         configurator.addFullName("iText.IO.Exceptions.IOException");

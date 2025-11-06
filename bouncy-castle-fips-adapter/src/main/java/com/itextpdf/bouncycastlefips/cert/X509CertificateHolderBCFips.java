@@ -22,13 +22,16 @@
  */
 package com.itextpdf.bouncycastlefips.cert;
 
+import com.itextpdf.bouncycastlefips.asn1.ASN1ObjectIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.AlgorithmIdentifierBCFips;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 
 import java.io.IOException;
 import java.util.Objects;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.cert.X509CertificateHolder;
 
 /**
@@ -73,6 +76,21 @@ public class X509CertificateHolderBCFips implements IX509CertificateHolder {
     @Override
     public IAlgorithmIdentifier getSignatureAlgorithm() {
         return new AlgorithmIdentifierBCFips(certificateHolder.getSignatureAlgorithm());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public IASN1ObjectIdentifier[] getSubjectAttributeTypes() {
+        ASN1ObjectIdentifier[] subjectAttributeTypes = certificateHolder.getSubject().getAttributeTypes();
+        IASN1ObjectIdentifier[] subjectAttributeTypesWrapper = new IASN1ObjectIdentifier[subjectAttributeTypes.length];
+        for (int i = 0; i < subjectAttributeTypes.length; ++i) {
+            subjectAttributeTypesWrapper[i] = new ASN1ObjectIdentifierBCFips(subjectAttributeTypes[i]);
+        }
+        return subjectAttributeTypesWrapper;
     }
 
     /**

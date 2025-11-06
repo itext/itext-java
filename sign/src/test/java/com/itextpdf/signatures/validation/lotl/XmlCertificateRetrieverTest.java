@@ -146,7 +146,7 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
         Assertions.assertEquals(2, serviceContext.getServiceChronologicalInfosSize());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
                 serviceContext.getCurrentChronologicalInfo().getServiceStatus());
-        Assertions.assertEquals("http://uri.etsi.org/TrstSvc/Svctype/CA/QC",
+        Assertions.assertEquals(ServiceTypeIdentifiersConstants.CA_QC,
                 serviceContext.getServiceType());
         Assertions.assertEquals(LocalDateTime.of(2021, 12, 16, 6, 0, 18),
                 serviceContext.getCurrentChronologicalInfo().getServiceStatusStartingTime());
@@ -166,13 +166,13 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
         Assertions.assertEquals(3, serviceContext.getServiceChronologicalInfosSize());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
                 serviceContext.getCurrentChronologicalInfo().getServiceStatus());
-        Assertions.assertEquals("http://uri.etsi.org/TrstSvc/Svctype/CA/QC",
+        Assertions.assertEquals(ServiceTypeIdentifiersConstants.CA_QC,
                 serviceContext.getServiceType());
         Assertions.assertEquals(LocalDateTime.of(2017, 6, 30, 22, 0),
                 serviceContext.getCurrentChronologicalInfo().getServiceStatusStartingTime());
-        LocalDateTime previousStatusTime = LocalDateTime.of(2016, 6, 30, 22, 0);
+        LocalDateTime previousStatusTime = LocalDateTime.of(2017, 6, 30, 21, 59);
         String previousStatus = serviceContext.getServiceChronologicalInfoByDate(previousStatusTime).getServiceStatus();
-        Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision",
+        Assertions.assertEquals(ServiceChronologicalInfo.GRANTED,
                 previousStatus);
     }
 
@@ -190,7 +190,7 @@ public class XmlCertificateRetrieverTest extends ExtendedITextTest {
         Assertions.assertEquals(3, serviceContext.getServiceChronologicalInfosSize());
         Assertions.assertEquals("http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn",
                 serviceContext.getCurrentChronologicalInfo().getServiceStatus());
-        Assertions.assertEquals("http://uri.etsi.org/TrstSvc/Svctype/CA/QC",
+        Assertions.assertEquals(ServiceTypeIdentifiersConstants.CA_QC,
                 serviceContext.getServiceType());
         Assertions.assertEquals(LocalDateTime.of(2016, 6, 30, 22, 0),
                 serviceContext.getCurrentChronologicalInfo().getServiceStatusStartingTime());

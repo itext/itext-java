@@ -34,6 +34,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.renderer.DivRenderer;
+import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.ProhibitedTagRelationsResolver;
 import com.itextpdf.test.ExtendedITextTest;
@@ -69,6 +70,21 @@ public class AreaBreakTest extends ExtendedITextTest {
 
         document.close();
 
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    public void areaBreakInsideFlexContainerTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "areaBreakInsideFlexContainer.pdf";
+        String cmpFileName = sourceFolder + "cmp_areaBreakInsideFlexContainer.pdf";
+        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Div div = new Div()
+                .add(new Div().add(new Paragraph("test1")))
+                .add(new AreaBreak())
+                .add(new Div().add(new Paragraph("test2")));
+        div.setNextRenderer(new FlexContainerRenderer(div));
+        document.add(div);
+        document.close();
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
 

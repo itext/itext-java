@@ -42,6 +42,18 @@ public class ValidationReport {
         // Declaring default constructor explicitly to avoid removing it unintentionally.
     }
 
+
+    /**
+     * Create a copy of another validation report.
+     *
+     * @param report to be copied
+     */
+    public ValidationReport(ValidationReport report) {
+        for (ReportItem item : report.reportItems){
+            this.addReportItem(new ReportItem(item));
+        }
+    }
+
     /**
      * Get the result of a validation process.
      *

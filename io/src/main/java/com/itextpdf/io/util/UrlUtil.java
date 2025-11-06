@@ -29,6 +29,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 
 /**
  * This file is a helper class for internal usage only.
@@ -124,9 +126,8 @@ public final class UrlUtil {
      * @throws IOException signals that an I/O exception has occurred.
      */
     public static InputStream getInputStreamOfFinalConnection(URL initialUrl) throws IOException {
-        final URLConnection finalConnection = getFinalConnection(initialUrl, DEFAULT_CONNECT_TIMEOUT,
+        return getInputStreamOfFinalConnection(initialUrl, DEFAULT_CONNECT_TIMEOUT,
                 DEFAULT_READ_TIMEOUT);
-        return finalConnection.getInputStream();
     }
 
     /**
@@ -143,7 +144,25 @@ public final class UrlUtil {
      */
     public static InputStream getInputStreamOfFinalConnection(URL initialUrl, int connectTimeout, int readTimeout)
             throws IOException {
-        final URLConnection finalConnection = getFinalConnection(initialUrl, connectTimeout, readTimeout);
+        return getInputStreamOfFinalConnection(initialUrl, connectTimeout, readTimeout, null);
+    }
+
+    /**
+     * Gets the input stream of connection related to last redirected url. You should manually close input stream after
+     * calling this method to not hold any open resources.
+     *
+     * @param initialUrl an initial URL.
+     * @param connectTimeout a connect timeout in milliseconds.
+     * @param readTimeout a read timeout in milliseconds.
+     * @param sslContext {@link SSLContext} to configure ssl connection.
+     *
+     * @return an input stream of connection related to the last redirected url.
+     *
+     * @throws IOException signals that an I/O exception has occurred.
+     */
+    public static InputStream getInputStreamOfFinalConnection(URL initialUrl, int connectTimeout, int readTimeout,
+                                                              SSLContext sslContext) throws IOException {
+        final URLConnection finalConnection = getFinalConnection(initialUrl, connectTimeout, readTimeout, sslContext);
         return finalConnection.getInputStream();
     }
 
@@ -159,11 +178,15 @@ public final class UrlUtil {
      *
      * @throws IOException signals that an I/O exception has occurred.
      */
-    static URLConnection getFinalConnection(URL initialUrl, int connectTimeout, int readTimeout) throws IOException {
+    static URLConnection getFinalConnection(URL initialUrl, int connectTimeout, int readTimeout,
+                                            SSLContext sslContext) throws IOException {
         URL nextUrl = initialUrl;
         URLConnection connection = null;
         while (nextUrl != null) {
             connection = nextUrl.openConnection();
+            if (sslContext != null && connection instanceof HttpsURLConnection) {
+                ((HttpsURLConnection) connection).setSSLSocketFactory(sslContext.getSocketFactory());
+            }
             connection.setConnectTimeout(connectTimeout);
             connection.setReadTimeout(readTimeout);
             final String location = connection.getHeaderField("location");

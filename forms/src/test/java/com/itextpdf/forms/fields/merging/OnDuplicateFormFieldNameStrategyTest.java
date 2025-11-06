@@ -30,11 +30,13 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormFactory;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.form.element.CheckBox;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -273,6 +275,24 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
             Assertions.assertNotNull(form.getField("bingbong"));
             Assertions.assertNotNull(form.getField("bingbong_1"));
             Assertions.assertNotNull(form.getField("bingbong_2"));
+        }
+    }
+
+    @Test
+    public void mergeFieldsStrategyTest() throws IOException {
+        String destination = SOURCE_FOLDER + "mergeFieldsStrategyTest.pdf";
+        try(PdfDocument pdfDocument = new PdfDocument(new PdfReader(destination), new PdfWriter(new ByteArrayOutputStream()))){
+            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true, new MergeFieldsStrategy());
+
+            PdfTextFormField firstField = new TextFormFieldBuilder(pdfDocument, "samplefield")
+                    .setWidgetRectangle(new com.itextpdf.kernel.geom.Rectangle(30, 850, 100, 30))
+                    .createText();
+            PdfFont pdfFont = pdfDocument.getDefaultFont();
+            firstField.setValue("text")
+                    .setFont(pdfFont)
+                    .setFontSize(20f);
+            form.addField(firstField);
+            Assertions.assertEquals(1, form.getAllFormFields().size());
         }
     }
 

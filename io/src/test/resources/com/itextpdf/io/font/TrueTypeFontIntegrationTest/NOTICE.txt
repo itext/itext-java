@@ -1,0 +1,10 @@
+Please notice that the following fonts are used with the mentioned below licenses.
+
+* subset_abc (NotoSans-Regular subset) - SIL Open Font License v1.1
+* subset_abc_def_xyz (NotoSans-Regular subset) - SIL Open Font License v1.1
+* subset_def (NotoSans-Regular subset) - SIL Open Font License v1.1
+* subset_xyz (NotoSans-Regular subset) - SIL Open Font License v1.1
+* subset1 (NotoSans-Regular subset) - SIL Open Font License v1.1
+* subset2 (NotoSans-Regular subset) - SIL Open Font License v1.1
+* subsetWithoutGlyfTable (NotoSans-Regular subset) - SIL Open Font License v1.1
+* subsetWithoutOsTable (NotoSans-Regular subset) - SIL Open Font License v1.1

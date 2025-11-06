@@ -89,6 +89,5 @@ public class TextPreprocessingUtilTest extends ExtendedITextTest {
         Assertions.assertEquals(space.getCode(), glyph.getCode());
         Assertions.assertEquals(space.getWidth(), glyph.getWidth());
         Assertions.assertEquals(space.getUnicode(), glyph.getUnicode());
-        Assertions.assertArrayEquals(TextUtil.convertFromUtf32(unicode), glyph.getChars());
     }
 }

@@ -187,8 +187,7 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
                         CommonCssConstants.LEFT, CommonCssConstants.RIGHT)),
                 new CssEnumValidator(Arrays.asList(
                         CommonCssConstants.CENTER, CommonCssConstants.START, CommonCssConstants.FLEX_START,
-                        CommonCssConstants.SELF_START, CommonCssConstants.END, CommonCssConstants.FLEX_END,
-                        CommonCssConstants.SELF_END),
+                        CommonCssConstants.END, CommonCssConstants.FLEX_END),
                         Arrays.asList(CommonCssConstants.SAFE, CommonCssConstants.UNSAFE)),
                 inheritInitialUnsetValidator
         ));

@@ -57,6 +57,7 @@ public class EuropeanResourceFetcher {
         Result result = new Result();
         EuropeanTrustedListConfigurationFactory factory =
                 EuropeanTrustedListConfigurationFactory.getFactory().get();
+        result.setCurrentlySupportedPublication(factory.getCurrentlySupportedPublication());
 
         SafeCalling.onExceptionLog(
                 () -> result.setCertificates(factory.getCertificates()),
@@ -72,8 +73,12 @@ public class EuropeanResourceFetcher {
     public static class Result {
         private final ValidationReport localReport;
         private List<Certificate> certificates;
+        private String currentlySupportedPublication;
 
-        Result() {
+        /**
+         * Create a new Instance of {@link Result}.
+         */
+        public Result() {
             this.localReport = new ValidationReport();
             certificates = new ArrayList<>();
         }
@@ -97,12 +102,31 @@ public class EuropeanResourceFetcher {
         }
 
         /**
+         * Gets string constant representing currently used Official Journal publication.
+         *
+         * @return {@link String} constant representing currently used Official Journal publication
+         */
+        public String getCurrentlySupportedPublication() {
+            return currentlySupportedPublication;
+        }
+
+        /**
          * Sets the list of certificates.
          *
          * @param certificates a list of Certificate objects to set
          */
         public void setCertificates(List<Certificate> certificates) {
             this.certificates = certificates;
+        }
+
+        /**
+         * Sets string constant representing currently used Official Journal publication.
+         *
+         * @param currentlySuppostedPublication {@link String}
+         * constant representing currently used Official Journal publication
+         */
+        public void setCurrentlySupportedPublication(String currentlySuppostedPublication) {
+            this.currentlySupportedPublication = currentlySuppostedPublication;
         }
     }
 

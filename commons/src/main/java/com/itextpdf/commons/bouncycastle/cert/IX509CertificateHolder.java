@@ -22,6 +22,7 @@
  */
 package com.itextpdf.commons.bouncycastle.cert;
 
+import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 
 /**
@@ -36,4 +37,11 @@ public interface IX509CertificateHolder {
      * @return signature algorithm.
      */
     IAlgorithmIdentifier getSignatureAlgorithm();
+
+    /**
+     * Retrieves an array of {@link IASN1ObjectIdentifier} representing subject attribute types.
+     *
+     * @return array of {@link IASN1ObjectIdentifier} representing subject attribute types
+     */
+    IASN1ObjectIdentifier[] getSubjectAttributeTypes();
 }

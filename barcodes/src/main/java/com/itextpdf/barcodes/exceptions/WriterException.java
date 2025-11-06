@@ -30,6 +30,8 @@ import com.itextpdf.commons.exceptions.ITextException;
  */
 public final class WriterException extends ITextException {
 
+    private static final long serialVersionUID = -9185997341735096449L;
+
 
     /**
      * Creates a WriterException.
@@ -45,6 +47,16 @@ public final class WriterException extends ITextException {
      */
     public WriterException(String message) {
         super(message);
+    }
+
+    /**
+     * Creates a WriterException with a specified detail message and a cause.
+     *
+     * @param message the detail message, which provides additional information about the exception
+     * @param cause the cause of the exception
+     */
+    public WriterException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
 

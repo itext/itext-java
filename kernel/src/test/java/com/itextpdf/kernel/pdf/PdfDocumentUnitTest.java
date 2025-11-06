@@ -412,6 +412,19 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void documentInfoHelperTest() {
+        AssertUtil.doesNotThrow(() -> new CheckDocumentInfoHelperPdfDocument(
+                new PdfWriter(new ByteArrayOutputStream())));
+    }
+
+    private static class CheckDocumentInfoHelperPdfDocument extends PdfDocument {
+        public CheckDocumentInfoHelperPdfDocument(PdfWriter writer) {
+            super(writer);
+            documentInfoHelper.shouldAddDocumentInfoToTrailer();
+        }
+    }
+
     private static class CustomValidationChecker implements IValidationChecker {
         public boolean documentValidationPerformed = false;
 

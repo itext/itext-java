@@ -45,11 +45,17 @@ import com.itextpdf.signatures.validation.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.lotl.FromDiskResourceRetriever;
+import com.itextpdf.signatures.validation.lotl.LotlFetchingProperties;
+import com.itextpdf.signatures.validation.lotl.LotlService;
+import com.itextpdf.signatures.validation.lotl.LotlValidator;
+import com.itextpdf.signatures.validation.lotl.RemoveOnFailingCountryData;
 import com.itextpdf.signatures.validation.mocks.MockRevocationDataValidator;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -79,7 +85,10 @@ import org.junit.jupiter.api.Tag;
 @Tag("BouncyCastleIntegrationTest")
 public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/validation/SignatureValidatorIntegrationTest/certs/";
+    private static final String COMMON_CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/SignatureValidatorIntegrationTest/";
+    private static final String SOURCE_FOLDER_LOTL_FILES = "./src/test/resources/com/itextpdf/signatures/validation" +
+            "/lotl/LotlState2025_08_08/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
@@ -350,7 +359,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
         // Signature1 set access permissions to level 3, Signature2 - to level 1, after that annotation was added.
         AssertValidationReport.assertThat(report1, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasNumberOfLogs(4).hasNumberOfFailures(0)
+                .hasNumberOfLogs(5).hasNumberOfFailures(0)
                 .hasLogItem(al -> al
                         .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
                         .withMessage(DocumentRevisionsValidator.UNEXPECTED_ENTRY_IN_XREF, i -> 17)
@@ -370,7 +379,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report2, a -> a
                 .hasStatus(ValidationResult.INVALID)
-                .hasNumberOfLogs(4).hasNumberOfFailures(1)
+                .hasNumberOfLogs(5).hasNumberOfFailures(1)
                 .hasLogItem(al -> al
                         .withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
                         .withMessage(DocumentRevisionsValidator.PAGE_ANNOTATIONS_MODIFIED)
@@ -460,7 +469,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasNumberOfLogs(4).hasNumberOfFailures(0)
+                .hasNumberOfLogs(6).hasNumberOfFailures(0)
                 .hasLogItem(al -> al
                         .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                         .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "Signature1"))
@@ -502,7 +511,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationResult.VALID)
-                .hasNumberOfLogs(6).hasNumberOfFailures(0)
+                .hasNumberOfLogs(10).hasNumberOfFailures(0)
                 .hasLogItem(al -> al
                         .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                         .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, i -> "Signature1"))
@@ -553,7 +562,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(0)
-                .hasNumberOfLogs(3)
+                .hasNumberOfLogs(4)
                 .hasLogItem(la -> la
                         .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                         .withMessage(CertificateChainValidator.CERTIFICATE_TRUSTED,
@@ -681,7 +690,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
             AssertValidationReport.assertThat(report, r -> r
                     .hasStatus(ValidationResult.VALID)
-                    .hasNumberOfLogs(5).hasNumberOfFailures(0)
+                    .hasNumberOfLogs(7).hasNumberOfFailures(0)
                     .hasLogItem(l -> l
                             .withCheckName(SignatureValidator.SIGNATURE_VERIFICATION)
                             .withMessage(SignatureValidator.VALIDATING_SIGNATURE_NAME, p -> "timestampSig1"))
@@ -718,6 +727,37 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                             .withCheckName(CertificateChainValidator.CERTIFICATE_CHECK)
                             .withStatus(ReportItem.ReportItemStatus.INDETERMINATE))
             );
+        }
+    }
+
+    @Test
+    public void infiniteRecursionTest() throws IOException, CertificateException {
+        String trustedCertsFileName = COMMON_CERTS_SRC + "tsCertRsa.pem";
+        Certificate[] trustedCerts = PemFileHelper.readFirstChain(trustedCertsFileName);
+
+        LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()));
+        service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+        service.withLotlValidator(() -> new LotlValidator(service));
+        service.initializeCache();
+        SignatureValidationProperties param = new SignatureValidationProperties()
+                .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
+                        Duration.ofDays(1000000));
+        ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder()
+                .withSignatureValidationProperties(param)
+                .withLotlService(() -> service)
+                .trustEuropeanLotl(true)
+                // Trust self signed certificate used for timestamping
+                .withTrustedCertificates(Arrays.asList(trustedCerts));
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "ocspResponseSignedByCertToCheck.pdf"))) {
+            SignatureValidator signatureValidator = chainBuilder.buildSignatureValidator(document);
+            ValidationReport report = signatureValidator.validateSignatures();
+
+            AssertValidationReport.assertThat(report, a -> a
+                    .hasStatus(ValidationReport.ValidationResult.VALID)
+                    .hasNumberOfFailures(0)
+                    .hasLogItem(l -> l.withCheckName(OCSPValidator.OCSP_CHECK)
+                            .withMessage(OCSPValidator.OCSP_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED)));
         }
     }
 

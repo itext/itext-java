@@ -49,6 +49,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -172,6 +173,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
 
         LotlValidator validator;
         try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             lotlService.initializeCache();
             validator = lotlService.getLotlValidator();
         }
@@ -191,7 +193,8 @@ public class LotlValidatorTest extends ExtendedITextTest {
         lotlFetchingProperties.setCountryNames("Invalid");
 
         LotlValidator validator;
-        try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties).withCustomResourceRetriever(
+                new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES))) {
             lotlService.initializeCache();
             validator = lotlService.getLotlValidator();
         }
@@ -231,7 +234,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 new EuropeanResourceFetcher() {
                     @Override
                     public Result getEUJournalCertificates() {
-                        Result result = new Result();
+                        Result result = super.getEUJournalCertificates();
                         result.setCertificates(Collections.<Certificate>emptyList());
                         return result;
                     }
@@ -240,7 +243,95 @@ public class LotlValidatorTest extends ExtendedITextTest {
             e = assertThrows(PdfException.class, () -> service.initializeCache());
         }
         Assertions.assertEquals(LotlValidator.LOTL_VALIDATION_UNSUCCESSFUL, e.getMessage());
+    }
 
+    @Test
+    public void euJournalEmptyResultTest() {
+        Exception e;
+        try (LotlService service = new LotlService(
+                new LotlFetchingProperties(new RemoveOnFailingCountryData())).withEuropeanResourceFetcher(
+                new EuropeanResourceFetcher() {
+                    @Override
+                    public Result getEUJournalCertificates() {
+                        Result result = new Result();
+                        result.setCertificates(Collections.<Certificate>emptyList());
+                        return result;
+                    }
+                })) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            e = assertThrows(PdfException.class, () -> service.initializeCache());
+        }
+        Assertions.assertEquals(SignExceptionMessageConstant.OFFICIAL_JOURNAL_CERTIFICATES_OUTDATED, e.getMessage());
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.OJ_TRANSITION_PERIOD))
+    public void mainLotlFileContainsTwoJournalsTest() {
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("DE");
+
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+            PivotFetcher customPivotFetcher = new PivotFetcher(lotlService) {
+                @Override
+                protected List<String> getPivotsUrlList(byte[] lotlXml) {
+                    return Arrays.asList(new String[] {
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml",
+                            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-335.xml",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-300.xml",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-282.xml",
+                            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2019.276.01.0001.01.ENG"
+                    });
+                }
+            };
+            lotlService.withPivotFetcher(customPivotFetcher);
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            lotlService.initializeCache();
+
+            LotlValidator validator = lotlService.getLotlValidator();
+            ValidationReport report = validator.validate();
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID).hasNumberOfFailures(0));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.OJ_TRANSITION_PERIOD))
+    public void mainLotlFileContainsTwoJournalsAndNewOneIsUsedTest() {
+        LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
+                new RemoveOnFailingCountryData());
+        lotlFetchingProperties.setCountryNames("DE");
+
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties)) {
+            PivotFetcher customPivotFetcher = new PivotFetcher(lotlService) {
+                @Override
+                protected List<String> getPivotsUrlList(byte[] lotlXml) {
+                    return Arrays.asList(new String[] {
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml",
+                            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-335.xml",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-300.xml",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-282.xml",
+                            "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2019.276.01.0001.01.ENG"
+                    });
+                }
+            };
+            EuropeanResourceFetcher customEuropeanResourceFetcher = new EuropeanResourceFetcher() {
+                @Override
+                public Result getEUJournalCertificates() {
+                    Result result = super.getEUJournalCertificates();
+                    result.setCurrentlySupportedPublication("https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test");
+                    return result;
+                }
+            };
+            lotlService.withEuropeanResourceFetcher(customEuropeanResourceFetcher);
+            lotlService.withPivotFetcher(customPivotFetcher);
+            lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            assertThrows(PdfException.class, () -> {
+                // This should throw an exception because only one pivot was fetched and used for validation.
+                lotlService.initializeCache();
+            });
+        }
     }
 
     @Test
@@ -344,7 +435,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
     public void inMemoryCacheThrowsException() throws InterruptedException {
         LotlFetchingProperties lotlFetchingProperties = getLotlFetchingProperties();
         lotlFetchingProperties.setCountryNames("NL");
-        lotlFetchingProperties.setCacheStalenessInMilliseconds(100);
+        lotlFetchingProperties.setCacheStalenessInMilliseconds(50);
         lotlFetchingProperties.setRefreshIntervalCalculator(f -> 100000);
 
         LotlValidator validator;
@@ -352,17 +443,20 @@ public class LotlValidatorTest extends ExtendedITextTest {
             service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             service.initializeCache();
 
-            Thread.sleep(1000);
+            Thread.sleep(80);
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
+                    lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
 
             validator = service.getLotlValidator();
+            Exception e = assertThrows(PdfException.class, () -> {
+                // This should throw an exception because the cache is stale
+                validator.validate();
+            });
+            Assertions.assertEquals(SignExceptionMessageConstant.STALE_DATA_IS_USED, e.getMessage());
         }
-
-        Exception e = assertThrows(PdfException.class, () -> {
-            // This should throw an exception because the cache is stale
-            validator.validate();
-        });
-        Assertions.assertEquals(SignExceptionMessageConstant.STALE_DATA_IS_USED, e.getMessage());
-
     }
 
     @Test
@@ -499,7 +593,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         lotlFetchingProperties.setCountryNames("NL");
-        lotlFetchingProperties.setCacheStalenessInMilliseconds(100L);
+        lotlFetchingProperties.setCacheStalenessInMilliseconds(50L);
         lotlFetchingProperties.setRefreshIntervalCalculator(f -> 10000L);
 
         try (LotlService service = new LotlService(lotlFetchingProperties)) {
@@ -522,7 +616,12 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 }
             });
             service.tryAndRefreshCache();
-            Thread.sleep(1000); // Wait for the cache refresh to complete
+            Thread.sleep(80); // Wait for the cache refresh to complete
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
+                    lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
 
             Assertions.assertThrows(SafeCallingAvoidantException.class, () -> service.getLotlValidator().validate());
         }
@@ -534,7 +633,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         lotlFetchingProperties.setCountryNames("NL");
-        lotlFetchingProperties.setCacheStalenessInMilliseconds(2000L);
+        lotlFetchingProperties.setCacheStalenessInMilliseconds(50L);
         lotlFetchingProperties.setRefreshIntervalCalculator(f -> 1000000L);
 
         try (LotlService service = new LotlService(lotlFetchingProperties)) {
@@ -557,7 +656,13 @@ public class LotlValidatorTest extends ExtendedITextTest {
                     return result;
                 }
             });
-            Thread.sleep(2100);
+            Thread.sleep(80);
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
+                    lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
+
             service.tryAndRefreshCache();
             AssertUtil.doesNotThrow(() -> service.getLotlValidator().validate());
         }
@@ -575,7 +680,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         LotlFetchingProperties properties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         properties.setCountryNames("NL");
-        properties.setCacheStalenessInMilliseconds(1000);
+        properties.setCacheStalenessInMilliseconds(50);
         properties.setRefreshIntervalCalculator((f) -> Integer.MAX_VALUE);
 
         int originalAmountOfCertificates;
@@ -611,18 +716,29 @@ public class LotlValidatorTest extends ExtendedITextTest {
             LotlValidator validator = service.getLotlValidator();
             validator.validate();
             originalAmountOfCertificates = validator.getNationalTrustedCertificates().size();
-            Thread.sleep(2000);
+            Assertions.assertTrue(originalAmountOfCertificates > 0,
+                    "Expected some certificates to be present after the first validation, but got: "
+                            + originalAmountOfCertificates);
+            Thread.sleep(80);
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            properties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
+                    properties.getOnCountryFetchFailureStrategy()));
+
             service.tryAndRefreshCache();
             validator2 = service.getLotlValidator();
+            ValidationReport report = validator2.validate();
+            Assertions.assertTrue(report.getValidationResult() == ValidationReport.ValidationResult.VALID,
+                    "Expected the validation to be valid, but got: " + report.getValidationResult());
+            int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
+            Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
+                    "Expected the number of certificates to decrease after a failed refresh, but got: " +
+                            originalAmountOfCertificates + " and " + newAmountOfCertificates);
+            Assertions.assertEquals(0, newAmountOfCertificates,
+                    "Expected the number of certificates to be 0 after a failed refresh, but got: "
+                            + newAmountOfCertificates);
         }
-        validator2.validate();
-        int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
-        Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
-                "Expected the number of certificates to decrease after a failed refresh, but got: " +
-                        originalAmountOfCertificates + " and " + newAmountOfCertificates);
-        Assertions.assertEquals(0, newAmountOfCertificates,
-                "Expected the number of certificates to be 0 after a failed refresh, but got: "
-                        + newAmountOfCertificates);
     }
 
 
@@ -637,7 +753,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         LotlFetchingProperties properties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         properties.setCountryNames("NL", "BE");
-        properties.setCacheStalenessInMilliseconds(1800);
+        properties.setCacheStalenessInMilliseconds(50);
         properties.setRefreshIntervalCalculator((f) -> Integer.MAX_VALUE);
 
         int originalAmountOfCertificates;
@@ -674,20 +790,32 @@ public class LotlValidatorTest extends ExtendedITextTest {
             LotlValidator validator = service.getLotlValidator();
             validator.validate();
             originalAmountOfCertificates = validator.getNationalTrustedCertificates().size();
-            Thread.sleep(2000);
+            Assertions.assertTrue(originalAmountOfCertificates > 0,
+                    "Expected some certificates to be present after the first validation, but got: "
+                            + originalAmountOfCertificates);
+            Thread.sleep(80);
+
+            // Increase cache staleness to stabilize the refresh during the simulated failure
+            properties.setCacheStalenessInMilliseconds(10000);
+            service.withLotlServiceCache(new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
+                    properties.getOnCountryFetchFailureStrategy()));
+
             service.tryAndRefreshCache();
             validator2 = service.getLotlValidator();
+            ValidationReport report = validator2.validate();
+            Assertions.assertTrue(report.getValidationResult() == ValidationReport.ValidationResult.VALID,
+                    "Expected the validation to be valid, but got: " + report.getValidationResult());
+            int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
+            Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
+                    "Expected the number of certificates to decrease after a failed refresh, but got: " +
+                            originalAmountOfCertificates + " and " + newAmountOfCertificates);
         }
-        validator2.validate();
-        int newAmountOfCertificates = validator2.getNationalTrustedCertificates().size();
-        Assertions.assertTrue(originalAmountOfCertificates > newAmountOfCertificates,
-                "Expected the number of certificates to decrease after a failed refresh, but got: " +
-                        originalAmountOfCertificates + " and " + newAmountOfCertificates);
     }
 
     @Test
     public void useOwnCountrySpecificLotlFetcher() {
         try (LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             CountrySpecificLotlFetcher lotlFetcher = new CountrySpecificLotlFetcher(service) {
                 @Override
                 public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, LotlService service) {

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.exceptions.ITextException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.CFFFontSubset;
@@ -60,9 +61,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,11 +91,16 @@ public class PdfType0Font extends PdfFont {
 
     protected boolean vertical;
     protected CMapEncoding cmapEncoding;
+    @Deprecated
     protected Set<Integer> usedGlyphs;
+
     protected int cidFontType;
     protected char[] specificUnicodeDifferences;
 
     private final CMapToUnicode embeddedToUnicode;
+
+    // A map glyph code -> glyph
+    private final TreeMap<Integer, Glyph> utilizedGlyphs;
 
     PdfType0Font(TrueTypeFont ttf, String cmap) {
         super();
@@ -110,7 +116,7 @@ public class PdfType0Font extends PdfFont {
         this.embedded = true;
         vertical = cmap.endsWith("V");
         cmapEncoding = new CMapEncoding(cmap);
-        usedGlyphs = new TreeSet<>();
+        utilizedGlyphs = new TreeMap<>();
         cidFontType = CID_FONT_TYPE_2;
         embeddedToUnicode = null;
         if (ttf.isFontSpecific()) {
@@ -139,7 +145,7 @@ public class PdfType0Font extends PdfFont {
         vertical = cmap.endsWith("V");
         String uniMap = getCompatibleUniMap(fontProgram.getRegistry());
         cmapEncoding = new CMapEncoding(cmap, uniMap);
-        usedGlyphs = new TreeSet<>();
+        utilizedGlyphs = new TreeMap<>();
         cidFontType = CID_FONT_TYPE_0;
         embeddedToUnicode = null;
     }
@@ -217,7 +223,7 @@ public class PdfType0Font extends PdfFont {
         } else {
             LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.FAILED_TO_DETERMINE_CID_FONT_SUBTYPE);
         }
-        usedGlyphs = new TreeSet<>();
+        utilizedGlyphs = new TreeMap<>();
         subset = false;
     }
 
@@ -344,7 +350,7 @@ public class PdfType0Font extends PdfFont {
                 stream.write(encoder.encodeUnicodeCodePoint(cp));
                 Glyph glyph = getGlyph(cp);
                 if (glyph.getCode() > 0) {
-                    usedGlyphs.add(glyph.getCode());
+                    utilizedGlyphs.put(glyph.getCode(), glyph);
                 }
             } catch (IOException e) {
                 // can only be thrown when stream is closed
@@ -372,7 +378,7 @@ public class PdfType0Font extends PdfFont {
             byte[] bytes = new byte[totalByteCount];
             int offset = 0;
             for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
-                usedGlyphs.add(glyphLine.get(i).getCode());
+                utilizedGlyphs.put(glyphLine.get(i).getCode(), glyphLine.get(i));
                 offset = cmapEncoding.fillCmapBytes(glyphLine.get(i).getCode(), bytes, offset);
             }
             return bytes;
@@ -380,7 +386,7 @@ public class PdfType0Font extends PdfFont {
             java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
             for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
                 Glyph g = glyphLine.get(i);
-                usedGlyphs.add(g.getCode());
+                utilizedGlyphs.put(g.getCode(), glyphLine.get(i));
                 byte[] encodedBit = encoder.encodeUnicodeCodePoint(g.getUnicode());
                 try {
                     baos.write(encodedBit);
@@ -395,7 +401,7 @@ public class PdfType0Font extends PdfFont {
 
     @Override
     public byte[] convertToBytes(Glyph glyph) {
-        usedGlyphs.add(glyph.getCode());
+        utilizedGlyphs.put(glyph.getCode(), glyph);
         CMapCharsetEncoder encoder = StandardCMapCharsets.getEncoder(cmapEncoding.getCmapName());
         if (encoder == null) {
             return cmapEncoding.getCmapBytes(glyph.getCode());
@@ -730,7 +736,7 @@ public class PdfType0Font extends PdfFont {
     private void convertToBytes(Glyph glyph, ByteBuffer result) {
         // NOTE: this should only ever be called with the identity CMap in RES-403
         int code = glyph.getCode();
-        usedGlyphs.add(code);
+        utilizedGlyphs.put(code, glyph);
         cmapEncoding.fillCmapBytes(code, result);
     }
 
@@ -787,16 +793,17 @@ public class PdfType0Font extends PdfFont {
             cidFont.flush();
         } else if (cidFontType == CID_FONT_TYPE_2) {
             TrueTypeFont ttf = (TrueTypeFont) getFontProgram();
+            int numOfGlyphs = ttf.getFontMetrics().getNumberOfGlyphs();
             String fontName = updateSubsetPrefix(ttf.getFontNames().getFontName(), subset, embedded);
             PdfDictionary fontDescriptor = getFontDescriptor(fontName);
 
             PdfStream fontStream;
-            ttf.updateUsedGlyphs((SortedSet<Integer>) usedGlyphs, subset, subsetRanges);
+            ttf.updateUsedGlyphs(utilizedGlyphs, subset, subsetRanges);
             if (ttf.isCff()) {
                 byte[] cffBytes;
                 if (subset) {
                     byte[] bytes = ttf.getFontStreamBytes();
-                    Set<Integer> usedGids = ttf.mapGlyphsCidsToGids(usedGlyphs);
+                    Set<Integer> usedGids = ttf.mapGlyphsCidsToGids(utilizedGlyphs.keySet());
                     cffBytes = new CFFFontSubset(bytes, usedGids).Process();
                 } else {
                     cffBytes = ttf.getFontStreamBytes();
@@ -812,7 +819,9 @@ public class PdfType0Font extends PdfFont {
                 //getDirectoryOffset() > 0 means ttc, which shall be subsetted anyway.
                 if (subset || ttf.getDirectoryOffset() > 0) {
                     try {
-                        ttfBytes = ttf.getSubset(usedGlyphs, subset);
+                        Tuple2<Integer, byte[]> subsetData = ttf.subset(utilizedGlyphs.keySet(), subset);
+                        numOfGlyphs = subsetData.getFirst();
+                        ttfBytes = subsetData.getSecond();
                     } catch (com.itextpdf.io.exceptions.IOException e) {
                         Logger logger = LoggerFactory.getLogger(PdfType0Font.class);
                         logger.warn(IoLogMessageConstant.FONT_SUBSET_ISSUE);
@@ -829,8 +838,7 @@ public class PdfType0Font extends PdfFont {
 
             // CIDSet shall be based on font.numberOfGlyphs property of the font, it is maxp.numGlyphs for ttf,
             // because technically we convert all unused glyphs to space, e.g. just remove outlines.
-            int numOfGlyphs = ttf.getFontMetrics().getNumberOfGlyphs();
-            byte[] cidSetBytes = new byte[ttf.getFontMetrics().getNumberOfGlyphs() / 8 + 1];
+            byte[] cidSetBytes = new byte[numOfGlyphs / 8 + 1];
             for (int i = 0; i < numOfGlyphs / 8; i++) {
                 cidSetBytes[i] |= 0xff;
             }
@@ -914,8 +922,7 @@ public class PdfType0Font extends PdfFont {
         stream.writeByte('[');
         int lastNumber = -10;
         boolean firstTime = true;
-        for (int code : usedGlyphs) {
-            Glyph glyph = fontProgram.getGlyphByCode(code);
+        for (Glyph glyph : utilizedGlyphs.values()) {
             if (glyph.getWidth() == FontProgram.DEFAULT_WIDTH) {
                 continue;
             }
@@ -946,10 +953,12 @@ public class PdfType0Font extends PdfFont {
      */
     public PdfStream getToUnicode() {
         Set<Glyph> toUnicodeGlyphs = new LinkedHashSet<>();
-        for (Integer glyphId : usedGlyphs) {
-            Glyph glyph = fontProgram.getGlyphByCode((int) glyphId);
-            toUnicodeGlyphs.add(glyph);
+        for (Map.Entry<Integer, Glyph> glyphEntry : utilizedGlyphs.entrySet()) {
+            if (glyphEntry.getKey() > 0) {
+                toUnicodeGlyphs.add(glyphEntry.getValue());
+            }
         }
+
         return FontUtil.getToUnicodeStream(toUnicodeGlyphs);
     }
 

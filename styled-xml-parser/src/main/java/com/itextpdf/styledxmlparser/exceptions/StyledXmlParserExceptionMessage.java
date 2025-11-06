@@ -26,6 +26,9 @@ package com.itextpdf.styledxmlparser.exceptions;
  * Class containing constants to be used in exceptions in the SXP module.
  */
 public final class StyledXmlParserExceptionMessage {
+    public static final String INVALID_SELECTOR_STRING
+            = "Invalid token encountered in the selector string: \"{0}\"";
+    @Deprecated
     public static final String INVALID_TOKEN_AT_THE_BEGINNING_OF_SELECTOR
             = "Invalid token detected at the beginning of the selector string: \"{0}\"";
     @Deprecated

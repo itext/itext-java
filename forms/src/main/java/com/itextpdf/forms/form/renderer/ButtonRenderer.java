@@ -54,12 +54,11 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link AbstractTextFieldRenderer} implementation for buttons.
@@ -281,7 +280,7 @@ public class ButtonRenderer extends AbstractOneLineTextFieldRenderer {
         button.setFontSize(fontSizeValue);
         button.getFirstFormAnnotation().setBackgroundColor(backgroundColor);
         applyDefaultFieldProperties(button);
-        applyAccessibilityProperties(button,doc);
+        applyAccessibilityProperties(button, doc);
         button.getFirstFormAnnotation().setFormFieldElement((Button) modelElement);
         button.enableFieldRegeneration();
         PdfAcroForm forms = PdfFormCreator.getAcroForm(doc, true);

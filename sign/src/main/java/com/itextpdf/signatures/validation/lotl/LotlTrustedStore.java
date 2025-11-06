@@ -31,7 +31,6 @@ import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
-import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 
@@ -66,7 +65,9 @@ public class LotlTrustedStore {
 
     private static final Map<String, Set<CertificateSource>> serviceTypeIdentifiersScope;
     private final Set<CountryServiceContext> contexts = new HashSet<>();
+    private final QualifiedValidator qualifiedValidator;
     private final ValidationReport report;
+    private List<X509Certificate> previousCertificates = new ArrayList<>();
 
     static {
         Set<CertificateSource> crlOcspSignScope = new HashSet<>();
@@ -152,6 +153,7 @@ public class LotlTrustedStore {
         } else {
             this.report = new ValidationReport();
         }
+        qualifiedValidator = builder.getQualifiedValidator();
     }
 
     /**
@@ -169,6 +171,18 @@ public class LotlTrustedStore {
     }
 
     /**
+     * Sets the certificate chain, corresponding to the certificate we are about to check.
+     *
+     * @param previousCertificates list of {@link X509Certificate} certificates
+     *
+     * @return same instance of {@link LotlTrustedStore}
+     */
+    public LotlTrustedStore setPreviousCertificates(List<X509Certificate> previousCertificates) {
+        this.previousCertificates = Collections.unmodifiableList(previousCertificates);
+        return this;
+    }
+
+    /**
      * Checks if given certificate is trusted according to context and time in which it is used.
      *
      * @param result         {@link ValidationReport} which stores check results
@@ -181,14 +195,28 @@ public class LotlTrustedStore {
     public boolean checkIfCertIsTrusted(ValidationReport result, ValidationContext context,
             X509Certificate certificate, Date validationDate) {
         Set<CountryServiceContext> currentContextSet = getCertificateContext(certificate);
-        result.mergeWithDifferentStatus(report, ReportItemStatus.INFO);
 
+        checkQualification(context, certificate, validationDate, currentContextSet);
+        return checkTrustworthiness(result, context, certificate, validationDate, currentContextSet);
+    }
+
+    private void checkQualification(ValidationContext context, X509Certificate certificate, Date validationDate,
+                                    Set<CountryServiceContext> currentContextSet) {
+        for (CountryServiceContext currentContext : currentContextSet) {
+            qualifiedValidator.checkSignatureQualification(previousCertificates, currentContext, certificate,
+                    validationDate, context);
+        }
+    }
+
+    private boolean checkTrustworthiness(ValidationReport result, ValidationContext context,
+                                         X509Certificate certificate, Date validationDate,
+                                         Set<CountryServiceContext> currentContextSet) {
         List<ReportItem> validationReportItems = new ArrayList<>();
         for (CountryServiceContext currentContext : currentContextSet) {
             ServiceChronologicalInfo chronologicalInfo = getCertificateChronologicalInfoByTime(validationReportItems,
                     certificate, currentContext, validationDate);
-            if (chronologicalInfo == null ||
-                    !isScopeCorrectlySpecified(validationReportItems, certificate, chronologicalInfo.getExtensions())) {
+            if (chronologicalInfo == null || !isScopeCorrectlySpecified(
+                    validationReportItems, certificate, chronologicalInfo.getServiceExtensions())) {
                 continue;
             }
 
@@ -222,6 +250,15 @@ public class LotlTrustedStore {
         }
 
         return false;
+    }
+
+    /**
+     * Gets lotl validation report.
+     *
+     * @return validation report regarding trusted lists accessibility.
+     */
+    public ValidationReport getLotlValidationReport() {
+        return new ValidationReport(report);
     }
 
     /**

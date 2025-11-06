@@ -107,7 +107,7 @@ final class XmlCountryRetriever {
                 case XmlTagConstants.SCHEME_TERRITORY:
                     schemeTerritory = value;
                     break;
-                case XmlTagConstants.TSLLOCATION:
+                case XmlTagConstants.TSL_LOCATION:
                     tslLocation = value;
                     break;
                 case XmlTagConstants.MIME_TYPE:

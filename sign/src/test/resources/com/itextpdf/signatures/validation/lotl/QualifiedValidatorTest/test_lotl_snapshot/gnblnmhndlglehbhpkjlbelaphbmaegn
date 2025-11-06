@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns4="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" Id="TL12345" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>5</TSLVersionIdentifier>
+        <TSLSequenceNumber>1</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUgeneric</TSLType>
+        <SchemeOperatorName>
+            <Name xml:lang="en">BG Operator name</Name>
+        </SchemeOperatorName>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>TEST</StreetAddress>
+                    <Locality>TEST</Locality>
+                    <PostalCode>TEST</PostalCode>
+                    <CountryName>EU</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="en">mailto:test@test.test</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeName>
+            <Name xml:lang="en">BG: TEST</Name>
+        </SchemeName>
+        <SchemeInformationURI>
+            <URI xml:lang="en">https://eidas.ec.europa.eu/efda/api/v2/validation-tests/testcase/test-disclaimer/</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>https://eidas.ec.europa.eu/efda/api/v2/validation-tests/testcase/test-disclaimer/</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/EUcommon</URI>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/BG</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>BG</SchemeTerritory>
+        <PolicyOrLegalNotice>
+            <TSLLegalNotice xml:lang="en">TEST</TSLLegalNotice>
+        </PolicyOrLegalNotice>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <PointersToOtherTSL>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIDPDCCAiSgAwIBAgIBATANBgkqhkiG9w0BAQ0FADBQMRQwEgYDVQQDDAtDRVJULUxPVEwtMzEYMBYGA1UECgwPRVUgT3JnYW5pemF0aW9uMREwDwYDVQQLDAhQS0ktVEVTVDELMAkGA1UEBhMCTFUwHhcNMjQxMDI1MjMwMDAzWhcNMjYxMDI2MDAwMDAzWjBQMRQwEgYDVQQDDAtDRVJULUxPVEwtMzEYMBYGA1UECgwPRVUgT3JnYW5pemF0aW9uMREwDwYDVQQLDAhQS0ktVEVTVDELMAkGA1UEBhMCTFUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeU/iKtAqrfGrHB1N6gFh+d56+W46IxUFEWiS+Q+zER1/6hZEKVk0IWhCw2yS5p43Z5h9H3LSMfexTLqSbwhve5+accma+Q6It0vg3rrBGnMPGOqta7Zc5zZ3kv83jJCQ8EU6FnCp7OqQY2ymiqgIWHwbDWooNUsYnu+wvbcYx/AYweMZLdWSogt3iu5Sh1zNhubU4tasn/A5x0pDV97BSGIvs5mmqIndF8uDcmmxmjn105LGEQqwT6GN1r99kwd2UZewbVztlbvDoI6eTDkZ1ffomDHnNjEIBhcgGTlI3zpRmIVcj6Vckh8zGmewTt6FJhGlIb83iqB9ah8ki03NzAgMBAAGjITAfMB0GA1UdDgQWBBRJ79BepQX9cyVvwvG/Xp1yxwYvnTANBgkqhkiG9w0BAQ0FAAOCAQEAPQJNKkMNUGO5gM/CC6D7e4EBvkCBwgjtIhAFoXEzmqij/0Da+dNY1xk6hPMR8jd3YFpwsBP3h72hSoq8wZhJ3erP0uIo4qmOPDeJsmkpRsKqDFmTg04bE3bGV1pBI06oAqwQr5JAoQAIrMFDobxXsTXC1abUKO9BId72rUy5Mxv227aVNx8nWcZoKeg37FVkbLgd+mjfh8LzxM02i3WIM+Z2wdq/h8SVlupPPkrJr2edBv/CzCf1VFa8L7tDMpxP9HdHBJz+nUfTe5mXzqHS0MxogW5sBUk8Rj9KCvNO5wdPZhfg8nGrEnGWXj8gl9KmMwsoJseoWfQ6GjmQCv0kpQ==</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://eidas.ec.europa.eu/efda/api/v2/validation-tests/testcase/tl/LOTL-3.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>EU</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUlistofthelists</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="en">EU Operator name</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns3:MimeType>application/vnd.etsi.tsl+xml</ns3:MimeType>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+        </PointersToOtherTSL>
+        <ListIssueDateTime>2025-10-24T23:00:00Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2025-11-26T00:00:00Z</dateTime>
+        </NextUpdate>
+    </SchemeInformation>
+    <TrustServiceProviderList>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">TSP-7.1 Name</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">TSP-7.1 Trade name</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Street address</StreetAddress>
+                            <Locality>Locality</Locality>
+                            <StateOrProvince>Province</StateOrProvince>
+                            <PostalCode>123</PostalCode>
+                            <CountryName>LU</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:test@test.test</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://tsp.information.uri/test</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">TS-7.1.1 Name</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDUzCCAjugAwIBAgIBAjANBgkqhkiG9w0BAQsFADBLMRIwEAYDVQQDDAlTREktNy4xLjExFTATBgNVBAoMDFRTUC03LjEgTmFtZTERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkJHMB4XDTEwMTAyNTIzMDAxMloXDTMwMTAyNTIzMDAxMlowSzESMBAGA1UEAwwJU0RJLTcuMS4xMRUwEwYDVQQKDAxUU1AtNy4xIE5hbWUxETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJCRzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK2ZAo5VYL94p0bsNVW1PGamUZb7DZLupZcZ1GUIKQHJ8chg+LgK7qCk3bRg6OarVD2YSYGPJJ9lRAlmlVym6QeE3jK6R2YO1+ZJEl80RH7j7A+Ov/FFnF/5cXwYmZLh1adbCUokYEWDWBZgaXRU0QOUH1/x84iYnfZQuoPI8Gz3onW3k3/1npjwcofgwiJ5f6FLlAS0c6vjX7UUgPhDyqnw1cD9ai7g38w8TsKgxomlyBTZOFPUP+aL7xVfo7kiLfhsRwZRhlNY/yJ/9Y4jp32GcPQUi4YvMCzQT29lG16kNHuXoguog5CYh5ezSDveBgqYBa7VwKxyZ8Hf13mvD1UCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBSLt9LCsA8JAV8xuluVNaQ3zcFB8zAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBddSRyIhKZUcNvrXuNNLFsgfQZ0WBsHCbR15Bsor1UuDF/X+FB9fSRUoL7KKMTW9ZvbfwMrIcs2DnIWHzKKtcWk3jKSDdaLwjNtPnRbnen7GDeoye33KRgzVIX3o0d02E+e/x75Am9ISYUe7u7cZvhD89q78ImEgVn+wNdx4DhIEuWTEtJzT53EbXx96647wcLDaYmo2RYw37p62WzWWltfFLThUMUecinc9h7RSP0Nb0RfNT3w5R1AJ3/25Gm0D6CJfTqjt5SIlzyfA3dZ7xq4+ceu5H6gtH/rPsSVBuLQUXhC5y6kWEy6EeDVAkm1TzsBXpP/UcMVfuhw98fEK+y</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.1 Name,CN=SDI-7.1.1</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2020-01-09T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">HISTORY-7.1.1.1 Name</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.1 Name,CN=SDI-7.1.1</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>i7fSwrAPCQFfMbpblTWkN83BQfM=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">TS-7.1.2 Name</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDUzCCAjugAwIBAgIBBDANBgkqhkiG9w0BAQsFADBLMRIwEAYDVQQDDAlTREktNy4xLjIxFTATBgNVBAoMDFRTUC03LjEgTmFtZTERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkJHMB4XDTEwMTAyNTIzMDAxM1oXDTMwMTAyNTIzMDAxM1owSzESMBAGA1UEAwwJU0RJLTcuMS4yMRUwEwYDVQQKDAxUU1AtNy4xIE5hbWUxETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJCRzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKsO+ddQPIFGl80xAJ2HwkAEuBFQOm3Egudn31SKecNtLm48KtzxB2QpR9Jj/dL3rWf/8bDFepEjj7RX5bwjzfNiIxRADxutD0T52NesJ9OuCXWPOLTsQJB7Zr/FPqfDUbjg39/5J5RGRaPvf6LwHZKvBk/Frjl1kYAmaodLmKxJvMeZ8TFdGoNeVYJjFGMCuJrcutwB4QpmuMRK/cmoCtTqYzUgasp98bUBewlZl+g2M9UNsZpoSmm41LOjAwaZhIfRuFhdbRDBVKZiUWvwdckQ7K7tfarsEyktS+ervpQTSOPooIDWp5w+obWB5m4ju35eQsgSGE65isbkaEYg29sCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBTxBFVeFDAeDCga96oLdCw32FiJkDAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQASwEIbP12tlhPVb8yV6327sA5OXpPJcZhN/bNFEot5A+mg/QR7l0HR5oUH2qyqppjxP/OTMbi0dfeEEiVyxrbHIshMFJZmS06MA/kug994zzlT2xHhd8Vr/OZvzIssaeibV0zsCoKBhqnIzKhDdUsnd0AzfY9PdQxoJ1u3w6nZcmkMFuyg5rqH5EvLwQkwvkT+SHn2rUDOQa/NMXN7c7J7JiP/7ANwXfnSfaN77fFU4ObZ7mZqRvfozVFKzrf+KcNdIRf+KDouLsSLPsy5UcOHza7x/XgpAJXtmeDHRwHI74Kkzw5XThg0VqnVwf0lfgbGR06iNittHH4QU0bMqOey</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.1 Name,CN=SDI-7.1.2</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2020-01-09T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">HISTORY-7.1.2.1 Name</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.1 Name,CN=SDI-7.1.2</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>8QRVXhQwHgwoGveqC3QsN9hYiZA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                            <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">TSP-7.2 Name</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">TSP-7.2 Trade name</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Street address</StreetAddress>
+                            <Locality>Locality</Locality>
+                            <StateOrProvince>Province</StateOrProvince>
+                            <PostalCode>123</PostalCode>
+                            <CountryName>LU</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:test@test.test</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://tsp.information.uri/test</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">TS-7.2.1 Name</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDUzCCAjugAwIBAgIBBjANBgkqhkiG9w0BAQsFADBLMRIwEAYDVQQDDAlTREktNy4yLjExFTATBgNVBAoMDFRTUC03LjIgTmFtZTERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkJHMB4XDTEwMTAyNTIzMDAxM1oXDTMwMTAyNTIzMDAxM1owSzESMBAGA1UEAwwJU0RJLTcuMi4xMRUwEwYDVQQKDAxUU1AtNy4yIE5hbWUxETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJCRzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKfYNNlteY2HVblBFgkCc1/VHdMJQbcIUxLnmktYKpcHj74T7BTqdTORod4deIu4Y47N3GVquKURA+Mxe4ZwNrPzAEThN3g/6YWon5e65XFjLmkIAFQRAAfNwcxZIfd5pnFLGVJWcu5aR53n2lljwPcGp/Accwnk3Mp3bdcScUQ1U444oR/X4CFN3Dr0TyHEGZhhpPZg8rZA07Z3Q/IjBfM+roLntxDosnpP/5/QFS5UCv+gps/SPsIf7ctljyeoKUxDs57QkL9b7+7lmw/mHUE5jvj2z5znZkyWo5B/TyW5BaOXVb2oMeBIgWFwEh0hZlonXDuAL+7lo4GbLQGnc10CAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBRzThQt8zfXqzT6cZZqCNiscNDQCTAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAT7r90KGRnchgrApM3HFvhhY5gv98Uj19sffB0UewOmMotLi/MB+mMegG2PeRQ/S4Cyo4CG9t4hdWZA/lQXe76UsrGF+fEr8yRuqL2/40lPAmJwV86rcPnEpp/78cbGMqf1cQy6YIUpGqoWqExRRWUbX9O52y7eGhGCzotZe2V3y2cbjtFT55mK0AIZWR+R8ugHaxymyfyPPSpSCqCxNxJ9UdByE+usedT056gkximaBsIFEHLQVRII/sMYoQQo3JUg1ZROo1NmMULN+8eY1ghdCKza/uhGfPl1wNanUf2uaDrKqfJfYXNl/1OKpJEM8huCo/Y4hVpHXlYVjOBJXp0</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.2 Name,CN=SDI-7.2.1</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2020-01-01T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="all">
+            <ns5:KeyUsage>
+                <ns5:KeyUsageBit name="nonRepudiation">true</ns5:KeyUsageBit>
+            </ns5:KeyUsage>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">HISTORY-7.2.1.1 Name</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.2 Name,CN=SDI-7.2.1</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>c04ULfM316s0+nGWagjYrHDQ0Ak=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2017-01-09T23:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">TSP-7.3 Name</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">TSP-7.3 Trade name</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Street address</StreetAddress>
+                            <Locality>Locality</Locality>
+                            <StateOrProvince>Province</StateOrProvince>
+                            <PostalCode>123</PostalCode>
+                            <CountryName>LU</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:test@test.test</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://tsp.information.uri/test</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">TS-7.3.1 Name</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDUzCCAjugAwIBAgIBCDANBgkqhkiG9w0BAQsFADBLMRIwEAYDVQQDDAlTREktNy4zLjExFTATBgNVBAoMDFRTUC03LjMgTmFtZTERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkJHMB4XDTIwMTAyNjAwMDAxNFoXDTMwMTAyNTIzMDAxNFowSzESMBAGA1UEAwwJU0RJLTcuMy4xMRUwEwYDVQQKDAxUU1AtNy4zIE5hbWUxETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJCRzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAITw2erjIn+weOUEsgRQUS6TuIkfztVzgesQ93uDC9A8D+ZIqs9ZIvh/l/w4/jtyMM7tyNsVwKtwY9sCj+OPd+tyg9TGbVpxKHC8RwomUKx163MzZb5QtThKKISTc4VXU5wQZclnHIoV/O1lchyH4Iq6RkXQs1FvahteMM9sCjkt+ltkOx91tJ4cTVrw/21XlYlztCfJQt/JZK+6tPCMfw2bmsoLE0g5tZYXzRi8ag631Mq3QF6xgDL0uqdJ198H/DUhIl4y4mP2kM9fWmci3Kz8JPmm08JhCJV6vuCjSlTzJHLv3EZ34q6yHDpLhoa9eiL3GyPnGyqLQVhN/gYOnR0CAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBS5UYwHFwZ2PYt8v3j41IlsyJlaWzAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQAqxky3qvxlFzgZK+lwgjagWVsLkaUnPzHIWGVH9GtsW7YUFYQtvoXdkq8Q7RgJnaWsNN3kBjqGAHT+NnM1Qi3vscn0kkPSu4pu8arebFaP6lOXjQ8silCwZhYz+ct0lCT+F4/ZEfIf/MA81FrI8UPTue4mwBUut4SxWcyyZaY0ZsU155SUeNPNBOGpYBLnKIcBli9Gslxpm7eUt0UxzgENKf/Zl3L0WcxBl87js8qa39ef8+VlJ+XhbckIjJ2g0szI3k6VGKZK/jAmudZNnAzDm14Lji6CH4QBkgunlG0z1c9xPuwiWS/JyAPcsbNtbbfNnFRwtqT2zyg8+kVQFFS2</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.3 Name,CN=SDI-7.3.1</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2018-01-09T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="all">
+            <ns5:KeyUsage>
+                <ns5:KeyUsageBit name="nonRepudiation">true</ns5:KeyUsageBit>
+            </ns5:KeyUsage>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">HISTORY-7.3.1.1 Name</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.3 Name,CN=SDI-7.3.1</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>uVGMBxcGdj2LfL94+NSJbMiZWls=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">TS-7.3.2 Name</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDUzCCAjugAwIBAgIBCjANBgkqhkiG9w0BAQsFADBLMRIwEAYDVQQDDAlTREktNy4zLjIxFTATBgNVBAoMDFRTUC03LjMgTmFtZTERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkJHMB4XDTIwMTAyNjAwMDAxNFoXDTMwMTAyNTIzMDAxNFowSzESMBAGA1UEAwwJU0RJLTcuMy4yMRUwEwYDVQQKDAxUU1AtNy4zIE5hbWUxETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJCRzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOwQi5/HriuRRsYUgvIHf9e3JBux+7vu9lE/46XB8uliSULr3rNBkudyRUwfc/v0MuB+8MLjusoaoG3Z39EsljHppWJrQxPLxiyuWakq8rwRrPOC4uYHrqIB4LR3U06MI6hfTBFXnYWLhqsMbAlvmd6TMCZ2FlA1TjD6Arg9FRMHYQMZmDyxxtwioJh+Kh7lRmxeMMfX2RjXLg5FzzuM7LJg7TpJghCii/bY3sT1kDAr9cYzH1WpNpzzQBoUHrboXkuGWu+Frdj3BBGhf9O3eRdiAsBaCDIivGkUKFWYZvSZLb5UQ1GjxT0TAIYLn4BVXuhPSOCt8tzuVg+t0w13m48CAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBTI6331/ZVOlqeFiHDhFgjUg+kC2jAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBLsuwIeA16Wne1KCX7MfhMWiNtq5AYaCbIGmD9K23D/Ol0EagbaJqXsosu4qBELgo9yaZkr3NJorihCSMUvt3r8RY3bOMIwQQtxONSS389RVNCrvswIphZu/ZsxUYk9d/GkZmpuTby0xw1ASaM/8rZoTTJPK0wgEWgzuOhs8p9KKy2S9LcFr+tZPZlASkODNCR5qRa/9zwbQSUV/GLiCwzOfWJPioA98uAYAcBjZZAH1uyu3sIrq1fKcmLiwD21+9yFYSYd+H3Rkq5J367Rz87lbA2b8F86PHO769cPXWoH//+bq31SWpBX4LD9fhxFNtE6GTpzxn95Hup+TbHSlpH</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.3 Name,CN=SDI-7.3.2</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2018-01-09T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="all">
+            <ns5:KeyUsage>
+                <ns5:KeyUsageBit name="nonRepudiation">true</ns5:KeyUsageBit>
+            </ns5:KeyUsage>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">HISTORY-7.3.2.1 Name</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.3 Name,CN=SDI-7.3.2</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>yOt99f2VTpanhYhw4RYI1IPpAto=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">TSP-7.4 Name</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">TSP-7.4 Trade name</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Street address</StreetAddress>
+                            <Locality>Locality</Locality>
+                            <StateOrProvince>Province</StateOrProvince>
+                            <PostalCode>123</PostalCode>
+                            <CountryName>LU</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:test@test.test</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://tsp.information.uri/test</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">TS-7.4.1 Name</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDUzCCAjugAwIBAgIBDDANBgkqhkiG9w0BAQsFADBLMRIwEAYDVQQDDAlTREktNy40LjExFTATBgNVBAoMDFRTUC03LjQgTmFtZTERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkJHMB4XDTEwMTAyNTIzMDAxNVoXDTMwMTAyNTIzMDAxNVowSzESMBAGA1UEAwwJU0RJLTcuNC4xMRUwEwYDVQQKDAxUU1AtNy40IE5hbWUxETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJCRzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALLulLtSRAM3hCU4QmcYZLKDTp7BEFWDwJIMYX2e/TUQaihH4WPuZMD+yEkiV7huL675u0QANt7I+vNlBL3qWzPMdyRFbxTGL9U7lHxa8Ee75bjzTEnxInPe+8rv9wN1jpJi1lF1lNAHz6eLUDqc7YGcwzpbIQCBR2SeB2301ibWWFFqC7sbrZ6/jOT77Dn8wqongUzqNpCeMCYUgTf+r9ydhhOICib9RLiu1GeAv0zDPluUCuVAIum7nhHDccww7EUNZx6Js93ob1rW62cd3uH0ZAF4H0HdbdbCeYghYeSWFiXmiFxKTEslaLZRuPhLVsmgC5AifRfI+xZuXuSENmcCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBS4NVzmVOBjdBQmZm+h1DngpIEn4zAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQCIxkRr4jC7yPd2lDNtEIyC144OegS7NZ+TBjlET8lNpIaPTFkZmaV833jsM2pST+AAqGt9zzrgrMo9DtKvqwb+MaYX+4L4bo2JYClElV+6kKFYsfR6Qga1L+3Qo/PqMKnjwyrfzKksvAXAIo3Clebmf4jb9QmaiKxhPo4DeQW2oj4+Bob3O8BwzbK0ha5NeKK3jzcbTNshZD0x72uviOwNakBumxF/cHfzMDsJ82d0FW0+RPwAwt0EQzafK4HaBKoe2i6+7I+Fo/OCD7SNETIGA+sC1/gbSCKe4R/4cdI0R2Vo21JyoU659vH7Q1b9FTweizw5RmhMmggr4MexNIlD</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.4 Name,CN=SDI-7.4.1</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">HISTORY-7.4.1.1 Name</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>C=BG,OU=PKI-TEST,O=TSP-7.4 Name,CN=SDI-7.4.1</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>uDVc5lTgY3QUJmZvodQ54KSBJ+M=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision</ServiceStatus>
+                            <StatusStartingTime>2012-01-09T23:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+    </TrustServiceProviderList>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="id-10fc7f3ac8aaf5f56beff6289d66291a"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512"/><ds:Reference Id="xml_ref_id" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>f2HxHKaUD6kSZR6K3dzwvBVWe4DipinsOvRhPH7Fj3U6EAyEcRgI8AtlVEw+IlFDo30ItviEGCeQLkz8kBtfyA==</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xades-id-10fc7f3ac8aaf5f56beff6289d66291a"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>essWJ/KtJV+4sPVv7q7HHRfsgNNBi2bb4z7jBtJHktnKLr8csBskLAHFppaUZB04yCFChy6ZGT27GRnj3pflGg==</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="value-id-10fc7f3ac8aaf5f56beff6289d66291a">L4bLagKkeQ6vXaqL7g+fsYVUZxfomLIc6SD3rIdg0FiUQBJlebtuc6k9RduVRZSIey0Vsqco9HS3Ts2jHXYtf7TrMS6CJxG/bmktfaazrc580+TK8dZSrfhJCDnXCGRrpiENQWfMmh3emxnRf5/Rl6+sb9H3XA1NtpguHr+8oEHjBWsgoRseIcyVuA6s16rWw7L4lC7Sv2FO7Xaj7A5KTl4smAg5jJai6HxQp/I2wM7rxRoLwakH3BQHgTzhbnoazwzgRGjkg5SYdCogvmtB2VczCaDVOway0ls68f7UO7w7bMQCm+OxG4NBihtoDOXtSnvog2H6r7BqBR6np4+jPA==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIDOjCCAiKgAwIBAgIBATANBgkqhkiG9w0BAQ0FADBPMRIwEAYDVQQDDAlDRVJULVRMLTcxGTAXBgNVBAoMEFRMNyBPcmdhbml6YXRpb24xETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJCRzAeFw0yNDEwMjUyMzAwMTJaFw0yNjEwMjYwMDAwMTJaME8xEjAQBgNVBAMMCUNFUlQtVEwtNzEZMBcGA1UECgwQVEw3IE9yZ2FuaXphdGlvbjERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkJHMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsPwMRWOI51nuk/iszRVa3EBDZT81ysZrjSP1mdNtFO018R/+szCZCDU3tH2Zn7qo/y4t2IRz07WieaCjiQxu5BESXj3dvFDtfVPnR/4GTW4jQUDcS/rDj1oEw1esaT1eK+FuqGqm/oI/1NI9kreDffDAXEtF8TlqrU9Y9ChnNGiNUxmx/wyRyYKeo/Un/s3zLjOgKfjXQANnn5iVvYZP02EyH7xZiaL2Y/D3FEk4ybyNLFFkc25WIhGmeqEyWp4Xb0lhrIU7QJN5NXpSBeOTx3OMlwr4xuzzTZGoCBwRiGLfy+vMMuBX8UU7pteaeA3HB4M90emdXvP4pOFS/KVSxwIDAQABoyEwHzAdBgNVHQ4EFgQUkz/A4Agbsj+8fBwWoq+gNMvVJwAwDQYJKoZIhvcNAQENBQADggEBAAPjUJx5wQI6jwwPEkOeI2sJ7vIGyNGA4hU78c2aJGH8Ug/RgjMtgggAaECjVC9nT0U/FSHwAgM5LvYkxOMM9bzOb96nSvqSLKbouH6xvwNPp/dTAcUUbM3ZkAfwY8Yt3PJjZ96/IfW18KEZilpUzOWyg1CxafmZQvt/tbMqsptnVlhghJ02/nvsP4Oc7jzA02sjaCtIlz9o7R8cGeaCbv1TMhIoHNPw1OV4ZbB2kASPOH3wu9nS8LdNldv+fIUKN+mGahFNHoguUzz/WXgYl9ReAO3GXAC9uUlKUbdVjQjxDgzY6fNcJggrCElaKXcOVx2EnLlZESkhv7BogjJqx9g=</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#id-10fc7f3ac8aaf5f56beff6289d66291a"><xades:SignedProperties Id="xades-id-10fc7f3ac8aaf5f56beff6289d66291a"><xades:SignedSignatureProperties><xades:SigningTime>2025-10-25T23:00:55Z</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>9SrNf1dBY0qIXiYvaYLe2uaVZri3tUSfyBKVPF4NX5B/dEsc6DE4HufKhOaUND++9OIz/mCDBTMj1asWOPSPuw==</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>C=BG,OU=PKI-TEST,O=TL7 Organization,CN=CERT-TL-7</ds:X509IssuerName><ds:X509SerialNumber>1</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#xml_ref_id"><xades:MimeType>application/octet-stream</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></TrustServiceStatusList>

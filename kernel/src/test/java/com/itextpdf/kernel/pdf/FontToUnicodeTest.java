@@ -58,8 +58,6 @@ public class FontToUnicodeTest extends ExtendedITextTest {
     }
     
     @Test
-    // TODO DEVSIX-3634. In the output now we don't expect the \u2F46 unicode range.
-    // TODO DEVSIX-3634. SUBSTITUTE "Assertions.assertEquals("\u2F46"..." to "Assertions.assertEquals("\u65E0"..." after the fix
     public void severalUnicodesWithinOneGlyphTest() throws IOException {
         String outFileName = destinationFolder + "severalUnicodesWithinOneGlyphTest.pdf";
 
@@ -85,6 +83,6 @@ public class FontToUnicodeTest extends ExtendedITextTest {
         PdfDocument resultantPdfAsFile = new PdfDocument(CompareTool.createOutputReader(outFileName));
         String actualUnicode = PdfTextExtractor.getTextFromPage(resultantPdfAsFile.getFirstPage());
 
-        Assertions.assertEquals("\u2F46", actualUnicode);
+        Assertions.assertEquals("\u65E0", actualUnicode);
     }
 }
