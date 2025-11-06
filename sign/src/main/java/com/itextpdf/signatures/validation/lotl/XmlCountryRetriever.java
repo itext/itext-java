@@ -28,7 +28,9 @@ import com.itextpdf.signatures.validation.lotl.xml.XmlSaxProcessor;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -67,12 +69,19 @@ final class XmlCountryRetriever {
     }
 
     private static final class TSLLocationExtractor implements IDefaultXmlHandler {
+        private static final Set<String> INFORMATION_TAGS = new HashSet<>();
         private static final String MIME_TYPE_ETSI_TSL = "application/vnd.etsi.tsl+xml";
         final List<CountrySpecificLotl> tslLocations = new ArrayList<>();
-        String parsingState = null;
-        String schemeTerritory = null;
-        String tslLocation = null;
-        String mimeType = null;
+        private String schemeTerritory;
+        private String tslLocation;
+        private String mimeType;
+        private StringBuilder information;
+
+        static {
+            INFORMATION_TAGS.add(XmlTagConstants.SCHEME_TERRITORY);
+            INFORMATION_TAGS.add(XmlTagConstants.TSL_LOCATION);
+            INFORMATION_TAGS.add(XmlTagConstants.MIME_TYPE);
+        }
 
         TSLLocationExtractor() {
             //Empty constructor
@@ -80,47 +89,51 @@ final class XmlCountryRetriever {
 
         @Override
         public void startElement(String uri, String localName, String qName, HashMap<String, String> attributes) {
-            parsingState = localName;
+            if (INFORMATION_TAGS.contains(localName)) {
+                information = new StringBuilder();
+            }
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) {
-            if (XmlTagConstants.OTHER_TSL_POINTER.equals(localName)) {
-                CountrySpecificLotl data = new CountrySpecificLotl(schemeTerritory, tslLocation, mimeType);
-                if (isXmlLink(data)) {
-                    tslLocations.add(data);
-                }
-                resetState();
+            switch (localName) {
+                case XmlTagConstants.OTHER_TSL_POINTER:
+                    CountrySpecificLotl data = new CountrySpecificLotl(schemeTerritory, tslLocation, mimeType);
+                    if (isXmlLink(data)) {
+                        tslLocations.add(data);
+                    }
+                    resetState();
+                    break;
+                case XmlTagConstants.SCHEME_TERRITORY:
+                    schemeTerritory = information.toString();
+                    break;
+                case XmlTagConstants.TSL_LOCATION:
+                    tslLocation = information.toString();
+                    break;
+                case XmlTagConstants.MIME_TYPE:
+                    mimeType = information.toString();
+                    break;
+                default:
             }
+
+            information = null;
         }
 
         @Override
         public void characters(char[] ch, int start, int length) {
-            if (parsingState == null) {
-                return;
-            }
             String value = new String(ch, start, length).trim();
             if (value.isEmpty()) {
                 return;
             }
-            switch (parsingState) {
-                case XmlTagConstants.SCHEME_TERRITORY:
-                    schemeTerritory = value;
-                    break;
-                case XmlTagConstants.TSL_LOCATION:
-                    tslLocation = value;
-                    break;
-                case XmlTagConstants.MIME_TYPE:
-                    mimeType = value;
-                    break;
-                default:
+
+            if (information != null) {
+                information.append(ch, start, length);
             }
         }
 
         private void resetState() {
             schemeTerritory = null;
             tslLocation = null;
-            parsingState = null;
             mimeType = null;
         }
 
