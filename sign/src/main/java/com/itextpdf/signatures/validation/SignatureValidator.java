@@ -305,6 +305,13 @@ public class SignatureValidator {
         List<String> signatureNames = util.getSignatureNames();
         Collections.reverse(signatureNames);
 
+        // Get OCSP/CRL responses and certificates from DSS
+        updateValidationClients(null, validationReport, validationContext, originalDocument);
+        List<Certificate> certificatesFromDss = getCertificatesFromDss(validationReport, originalDocument);
+        onRuntimeExceptionLog(() -> certificateRetriever.addKnownCertificates(certificatesFromDss),
+                validationReport, e -> new ReportItem(SIGNATURE_VERIFICATION, ADD_KNOWN_CERTIFICATES_FAILED, e,
+                        ReportItemStatus.INFO));
+
         for (String fieldName : signatureNames) {
             ValidationReport subReport = new ValidationReport();
             try (PdfDocument doc = new PdfDocument(
@@ -461,7 +468,9 @@ public class SignatureValidator {
                                          ValidationContext validationContext, PdfDocument document) {
         retrieveOcspResponsesFromDss(validationReport, validationContext, document);
         retrieveCrlResponsesFromDss(validationReport, validationContext, document);
-        retrieveSignedRevocationInfoFromSignatureContainer(pkcs7, validationContext);
+        if (pkcs7 != null) {
+            retrieveSignedRevocationInfoFromSignatureContainer(pkcs7, validationContext);
+        }
     }
 
     private void retrieveSignedRevocationInfoFromSignatureContainer(PdfPKCS7 pkcs7,
