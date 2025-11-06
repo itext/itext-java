@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>9.4.0-SNAPSHOT</version>
+  <version>9.5.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>iText</name>
@@ -89,7 +88,7 @@
     <failsafe.version>3.0.0-M3</failsafe.version>
     <jacoco.version>0.8.4</jacoco.version>
     <java.version>1.8</java.version>
-    <javadoc-additionalOptions/>
+    <javadoc-additionalOptions />
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.7.0</javadoc.version>
     <junit.jupiter.version>5.10.2</junit.jupiter.version>
@@ -115,8 +114,8 @@
     <sharpen.phase>none</sharpen.phase>
     <sharpen.projectName>empty</sharpen.projectName>
     <sharpen.cSharpTargetFolder>empty</sharpen.cSharpTargetFolder>
-    <sharpen.cSharpSourceCodeDestination></sharpen.cSharpSourceCodeDestination>
-    <sharpen.cSharpTestCodeDestination></sharpen.cSharpTestCodeDestination>
+    <sharpen.cSharpSourceCodeDestination />
+    <sharpen.cSharpTestCodeDestination />
     <sharpen.extraDependencies>
     </sharpen.extraDependencies>
 
@@ -531,7 +530,7 @@
             <executions>
               <execution>
                 <id>bundle-manifest</id>
-                <phase/>
+                <phase />
               </execution>
             </executions>
           </plugin>
@@ -547,11 +546,11 @@
             <executions>
               <execution>
                 <id>default-resources</id>
-                <phase/>
+                <phase />
               </execution>
               <execution>
                 <id>default-testResources</id>
-                <phase/>
+                <phase />
               </execution>
             </executions>
           </plugin>
@@ -581,10 +580,10 @@
             </dependencies>
             <configuration>
               <autoUpdate>false</autoUpdate>
-              <connectionString/>
+              <connectionString />
               <databaseDriverName>com.mysql.cj.jdbc.Driver</databaseDriverName>
-              <databasePassword/>
-              <databaseUser/>
+              <databasePassword />
+              <databaseUser />
               <format>ALL</format>
             </configuration>
             <executions>
