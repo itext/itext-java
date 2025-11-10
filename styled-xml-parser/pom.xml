@@ -1,51 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>9.4.0</version>
   </parent>
-
-  <artifactId>styled-xml-parser</artifactId>
-
+  <artifactId>styled-xml-parser-android</artifactId>
   <name>iText - Styled XML Parser</name>
   <description>Styled XML parser is used by iText modules to parse HTML and XML</description>
   <url>https://itextpdf.com/</url>
-
   <properties>
     <sharpen.phase>install</sharpen.phase>
-    <sharpen.projectName>styled-xml-parser</sharpen.projectName>
     <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
-    <sharpen.cSharpSourceCodeDestination>itext/itext.styledxmlparser</sharpen.cSharpSourceCodeDestination>
     <sharpen.cSharpTestCodeDestination>itext.tests/itext.styledxmlparser.tests</sharpen.cSharpTestCodeDestination>
+    <sharpen.projectName>styled-xml-parser</sharpen.projectName>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.styledxmlparser</sharpen.cSharpSourceCodeDestination>
   </properties>
-
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>io</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>io-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>kernel</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>kernel-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>layout</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>layout-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdftest-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>

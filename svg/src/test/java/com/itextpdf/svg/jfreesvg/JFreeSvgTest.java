@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 public class JFreeSvgTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/JFreeSvgTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/JFreeSvgTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/JFreeSvgTest/";
 
     @BeforeAll
     public static void beforeClass() {

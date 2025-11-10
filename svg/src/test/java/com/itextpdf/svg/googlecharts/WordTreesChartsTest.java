@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 public class WordTreesChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/WordTreesChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/WordTreesChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/WordTreesChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

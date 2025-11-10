@@ -1,51 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>9.4.0</version>
   </parent>
-
-  <artifactId>bouncy-castle-adapter</artifactId>
-
+  <artifactId>bouncy-castle-adapter-android</artifactId>
   <name>iText - Bouncy Castle Adapter</name>
   <url>https://itextpdf.com/</url>
-
   <properties>
-    <sonar.coverage.exclusions>**/*</sonar.coverage.exclusions>
     <sonar.cpd.exclusions>**/*</sonar.cpd.exclusions>
     <sharpen.phase>install</sharpen.phase>
-
-    <sharpen.projectName>bouncy-castle-adapter</sharpen.projectName>
     <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
-    <sharpen.cSharpSourceCodeDestination>itext/itext.bouncy-castle-adapter</sharpen.cSharpSourceCodeDestination>
     <sharpen.cSharpTestCodeDestination>itext.tests/itext.bouncy-castle-adapter.tests</sharpen.cSharpTestCodeDestination>
+    <sharpen.projectName>bouncy-castle-adapter</sharpen.projectName>
+    <sonar.coverage.exclusions>**/*</sonar.coverage.exclusions>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.bouncy-castle-adapter</sharpen.cSharpSourceCodeDestination>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk18on</artifactId>
+      <artifactId>bcpkix-jdk15to18</artifactId>
       <version>${bouncycastle.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk18on</artifactId>
+      <artifactId>bcprov-jdk15to18</artifactId>
       <version>${bouncycastle.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>commons</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>commons-android</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <includes>
@@ -55,7 +48,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <groups>${unittests}</groups>

@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 public class AnimationSvgTest extends SvgIntegrationTest {
 
   private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/AnimationSvgTest/";
-  private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/AnimationSvgTest/";
+  private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/AnimationSvgTest/";
 
   private ISvgConverterProperties properties;
 

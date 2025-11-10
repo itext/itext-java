@@ -55,7 +55,6 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -70,7 +69,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Tag("IntegrationTest")
 public class PdfUA2FormTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/PdfUA2FormTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms//PdfUA2FormTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms//PdfUA2FormTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -219,7 +218,6 @@ public class PdfUA2FormTest extends ExtendedITextTest {
     }
 
     private void compareAndValidate(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);

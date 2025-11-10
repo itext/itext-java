@@ -53,7 +53,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class FieldsRotationTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/fields/FieldsRotationTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/fields/FieldsRotationTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/fields/FieldsRotationTest/";
 
     @BeforeAll
     public static void beforeClass() {

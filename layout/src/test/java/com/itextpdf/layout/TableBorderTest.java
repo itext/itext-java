@@ -56,7 +56,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TableBorderTest extends AbstractTableTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableBorderTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/TableBorderTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TableBorderTest/";
     public static final String cmpPrefix = "cmp_";
 
     @BeforeAll

@@ -79,7 +79,7 @@ public class SignDeferredTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/SignDeferredTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/SignDeferredTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/SignDeferredTest/";
 
     private static final char[] password = "testpassphrase".toCharArray();
     private static final String HASH_ALGORITHM = DigestAlgorithms.SHA256;

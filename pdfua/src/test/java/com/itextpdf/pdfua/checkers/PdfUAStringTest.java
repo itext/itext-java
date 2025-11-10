@@ -46,7 +46,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUAStringTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAStringTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAStringTest/";
     private static final Rectangle RECTANGLE = new Rectangle(100, 100, 100, 100);
 
     @BeforeAll

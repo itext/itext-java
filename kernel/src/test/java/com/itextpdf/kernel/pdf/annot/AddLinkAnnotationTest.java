@@ -62,7 +62,7 @@ import java.util.List;
 public class AddLinkAnnotationTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/annot/AddLinkAnnotationTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/annot/AddLinkAnnotationTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/annot/AddLinkAnnotationTest/";
 
     @BeforeAll
     public static void beforeClass() {

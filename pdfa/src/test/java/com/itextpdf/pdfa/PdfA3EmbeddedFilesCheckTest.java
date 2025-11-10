@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfA3EmbeddedFilesCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA3EmbeddedFilesCheckTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA3EmbeddedFilesCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA3EmbeddedFilesCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

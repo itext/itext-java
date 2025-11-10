@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class NonBreakableSpaceTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/NonBreakableSpaceTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/NonBreakableSpaceTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/NonBreakableSpaceTest/";
 
     @BeforeAll
     public static void beforeClass() {

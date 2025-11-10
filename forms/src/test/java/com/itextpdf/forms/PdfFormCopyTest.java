@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 public class PdfFormCopyTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormCopyTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormCopyTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormCopyTest/";
 
     @BeforeAll
     public static void beforeClass() {

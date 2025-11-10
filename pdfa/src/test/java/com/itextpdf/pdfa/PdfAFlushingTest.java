@@ -51,7 +51,6 @@ import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Tag("IntegrationTest")
 public class PdfAFlushingTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfAFlushingTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAFlushingTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -171,7 +170,6 @@ public class PdfAFlushingTest extends ExtendedITextTest {
         document.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test

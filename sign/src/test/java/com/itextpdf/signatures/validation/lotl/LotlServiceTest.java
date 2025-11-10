@@ -64,7 +64,7 @@ public class LotlServiceTest extends ExtendedITextTest {
             "./src/test/resources/com/itextpdf/signatures/validation" + "/lotl/LotlState2025_08_08/";
     private static final String SOURCE =
             "./src/test/resources/com/itextpdf/signatures/validation" + "/lotl/LotlServiceTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/LotlTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/LotlTest/";
 
     @BeforeAll
     public static void before() {
@@ -110,7 +110,7 @@ public class LotlServiceTest extends ExtendedITextTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("allCountries")
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore )
+    @org.junit.jupiter.api.Disabled
     public void serializeIndividualCountry(String country) throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         props.setCountryNames(country);
@@ -368,7 +368,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore )
+    @org.junit.jupiter.api.Disabled
     public void serializationAllCountriesTest() throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         try (LotlService lotlService = new LotlService(props)) {

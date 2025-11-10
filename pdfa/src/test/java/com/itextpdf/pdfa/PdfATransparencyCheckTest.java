@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfATransparencyCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfATransparencyCheckTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfATransparencyCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfATransparencyCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

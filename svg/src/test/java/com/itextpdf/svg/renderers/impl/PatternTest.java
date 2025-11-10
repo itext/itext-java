@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PatternTest extends SvgIntegrationTest {
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/PatternTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/PatternTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/PatternTest/";
 
     @BeforeAll

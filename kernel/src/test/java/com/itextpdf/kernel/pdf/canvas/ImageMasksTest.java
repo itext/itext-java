@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ImageMasksTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/ImageMasksTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/canvas/ImageMasksTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/ImageMasksTest/";
 
     @BeforeAll
     public static void beforeClass() {

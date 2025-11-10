@@ -64,7 +64,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfA4MetaDataTest extends ExtendedITextTest {
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4MetaDataTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4MetaDataTest/";
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
 

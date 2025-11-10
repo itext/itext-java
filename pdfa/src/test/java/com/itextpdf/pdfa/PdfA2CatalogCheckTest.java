@@ -36,7 +36,6 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfA2CatalogCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA2CatalogCheckTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2CatalogCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2CatalogCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -82,7 +81,6 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         compareResult(outPdf, cmpPdf);
     }
 
@@ -149,7 +147,6 @@ public class PdfA2CatalogCheckTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         compareResult(outPdf, cmpPdf);
     }
 

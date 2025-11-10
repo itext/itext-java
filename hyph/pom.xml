@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>9.4.0</version>
   </parent>
-
-  <artifactId>hyph</artifactId>
-
+  <artifactId>hyph-android</artifactId>
   <name>iText - hyph</name>
   <description>XML files that can be used for hyphenation</description>
   <url>https://itextpdf.com/</url>
@@ -18,17 +16,14 @@
       <name>Various licenses (see individual files)</name>
     </license>
   </licenses>
-
   <properties>
-    <sonar.skip>true</sonar.skip>
-
     <sharpen.phase>install</sharpen.phase>
-    <sharpen.projectName>hyph</sharpen.projectName>
     <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
-    <sharpen.cSharpSourceCodeDestination>itext/itext.hyph</sharpen.cSharpSourceCodeDestination>
     <sharpen.cSharpTestCodeDestination>itext.tests/itext.hyph.tests</sharpen.cSharpTestCodeDestination>
+    <sonar.skip>true</sonar.skip>
+    <sharpen.projectName>hyph</sharpen.projectName>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.hyph</sharpen.cSharpSourceCodeDestination>
   </properties>
-
   <build>
     <plugins>
       <plugin>

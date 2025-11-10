@@ -56,7 +56,7 @@ import org.junit.jupiter.api.Test;
 public class FloatExampleTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatExampleTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FloatExampleTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatExampleTest/";
     private static final Color imageBorderColor = ColorConstants.LIGHT_GRAY;
     private static final float BORDER_MARGIN = 5f;
     private static final float IMAGE_BORDER_WIDTH = 15f;

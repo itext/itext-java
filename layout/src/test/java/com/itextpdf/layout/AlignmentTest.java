@@ -70,7 +70,7 @@ import org.junit.jupiter.api.Test;
 public class AlignmentTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/AlignmentTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/AlignmentTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/AlignmentTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

@@ -57,7 +57,7 @@ import java.io.IOException;
 public class FormFieldsTaggingTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldsTaggingTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/FormFieldsTaggingTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/FormFieldsTaggingTest/";
 
     @BeforeAll
     public static void beforeClass() {
