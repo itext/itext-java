@@ -15,7 +15,8 @@
 
   <properties>
     <sonar.skip>true</sonar.skip>
-    <verapdf.version>1.26.2</verapdf.version>
+    <!-- Latest version for now, but still needs to be updated later in order to fix VeraPdf issues -->
+    <verapdf.version>1.28.2</verapdf.version>
 
     <sharpen.phase>install</sharpen.phase>
     <sharpen.projectName>pdftest</sharpen.projectName>
@@ -24,16 +25,7 @@
     <sharpen.cSharpTestCodeDestination>itext.tests/itext.pdftest.tests</sharpen.cSharpTestCodeDestination>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <!-- remove when VeraPdf uses the same or a newer version -->
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson.core.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.verapdf</groupId>

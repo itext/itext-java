@@ -914,7 +914,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .closeTag();
         });
 
-        framework.assertBothValid("validRoleAddedInsideMarkedContentMCR_IN_MCR", pdfUAConformance);
+        framework.assertOnlyVeraPdfFail("validRoleAddedInsideMarkedContentMCR_IN_MCR", pdfUAConformance);
     }
 
     @ParameterizedTest

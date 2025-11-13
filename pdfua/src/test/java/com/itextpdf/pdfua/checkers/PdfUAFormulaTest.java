@@ -326,9 +326,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
 
-        // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
-        //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertOnlyITextFail("mathStructureElementInvalidUA2Test",
+        framework.assertBothFail("mathStructureElementInvalidUA2Test",
                 PdfUAExceptionMessageConstants.MATH_NOT_CHILD_OF_FORMULA, PdfUAConformance.PDF_UA_2);
     }
 

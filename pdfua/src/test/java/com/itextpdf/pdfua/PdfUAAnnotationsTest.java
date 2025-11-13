@@ -1092,9 +1092,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
             framework.assertBothValid("noViewAnnotation", pdfUAConformance);
         } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
-            // TODO DEVSIX-9036. VeraPDF claims the document to be invalid, although it is valid.
-            //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-            framework.assertOnlyVeraPdfFail("toggleNoViewAnnotation", pdfUAConformance);
+            framework.assertBothValid("toggleNoViewAnnotation", pdfUAConformance);
         }
     }
 

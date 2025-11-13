@@ -153,8 +153,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
             addLinkAnnotations(destLocation, pdfDoc, dest1, dest2, false);
         });
         String filename = "differentStructureDestinations_";
-        String expectedMessage = PdfUAExceptionMessageConstants.DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM;
-        validate(filename, expectedMessage, destLocation, framework);
+        framework.assertBothFail(filename + destLocation.getValue(), PdfUAConformance.PDF_UA_2);
     }
 
     @ParameterizedTest
@@ -170,9 +169,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
 
             addLinkAnnotations(destLocation, pdfDoc, namedDestination1, namedDestination2, false);
         });
-        // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
-        //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertOnlyITextFail("differentNamedDestinations_" + destLocation.getValue(),
+        framework.assertBothFail("differentNamedDestinations_" + destLocation.getValue(),
                 PdfUAExceptionMessageConstants.DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM, PdfUAConformance.PDF_UA_2);
     }
 
@@ -189,9 +186,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
 
             addLinkAnnotations(destLocation, pdfDoc, namedDestination1, namedDestination2, false);
         });
-        // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
-        //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
-        framework.assertOnlyITextFail("differentStringDestinations_" + destLocation.getValue(),
+        framework.assertBothFail("differentStringDestinations_" + destLocation.getValue(),
                 PdfUAExceptionMessageConstants.DIFFERENT_LINKS_IN_SINGLE_STRUCT_ELEM, PdfUAConformance.PDF_UA_2);
     }
 
@@ -266,7 +261,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
     }
 
     private void validate(String filename, String expectedMessage, PdfName destLocation, UaValidationTestFramework framework) throws IOException {
-        // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
+        // TODO DEVSIX-9580. VeraPDF claims the document to be valid, although it's not.
         //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
         if (PdfName.D.equals(destLocation)) {
             // In case PdfName.D equals destLocation, VeraPDF doesn't allow actions with structure destination being
