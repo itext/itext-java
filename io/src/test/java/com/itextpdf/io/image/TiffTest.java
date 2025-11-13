@@ -139,9 +139,10 @@ public class TiffTest extends ExtendedITextTest {
 
         Assertions.assertEquals(MessageFormatUtil.format(
                 IoExceptionMessageConstant.CANNOT_READ_TIFF_IMAGE), e.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(
+                IoExceptionMessageConstant.ALL_FILL_BITS_PRECEDING_EOL_CODE_MUST_BE_0), e.getCause().getMessage());
     }
-
-
+    
     @Test
     public void group3CompressionCreateImageDataTest() throws MalformedURLException {
         String sourceFile = SOURCE_FOLDER + "group3CompressionImage.tif";
