@@ -446,7 +446,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             Thread.sleep(80);
 
             // Increase cache staleness to stabilize the refresh during the simulated failure
-            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000);
+            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000000);
             service.withLotlServiceCache(new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
                     lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
 
@@ -619,7 +619,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             Thread.sleep(80); // Wait for the cache refresh to complete
 
             // Increase cache staleness to stabilize the refresh during the simulated failure
-            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000);
+            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000000);
             service.withLotlServiceCache(new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
                     lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
 
@@ -659,7 +659,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             Thread.sleep(80);
 
             // Increase cache staleness to stabilize the refresh during the simulated failure
-            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000);
+            lotlFetchingProperties.setCacheStalenessInMilliseconds(10000000);
             service.withLotlServiceCache(new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
                     lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
 
@@ -722,7 +722,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             Thread.sleep(80);
 
             // Increase cache staleness to stabilize the refresh during the simulated failure
-            properties.setCacheStalenessInMilliseconds(10000);
+            properties.setCacheStalenessInMilliseconds(10000000);
             service.withLotlServiceCache(new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
                     properties.getOnCountryFetchFailureStrategy()));
 
@@ -796,7 +796,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             Thread.sleep(80);
 
             // Increase cache staleness to stabilize the refresh during the simulated failure
-            properties.setCacheStalenessInMilliseconds(10000);
+            properties.setCacheStalenessInMilliseconds(10000000);
             service.withLotlServiceCache(new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
                     properties.getOnCountryFetchFailureStrategy()));
 

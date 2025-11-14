@@ -332,7 +332,7 @@ public class PdfUATest extends ExtendedITextTest {
 
     @Test
     public void documentWithInvalidViewerPreferencesTest() throws IOException {
-        final String outPdf = DESTINATION_FOLDER + "documentWithEmptyViewerPreferencesTest.pdf";
+        final String outPdf = DESTINATION_FOLDER + "documentWithInvalidViewerPreferencesTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf,
                 new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1).setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDoc.setTagged();
