@@ -667,6 +667,7 @@
         <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/ccittfaxdecode.png" />
         <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/flatedecode_runlengthdecode.png" />
         <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/img_calrgb.png" />
+        <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/dRGBFlateSmask.trans.png" />
         <file path="com/itextpdf/forms/xfa/XFAFormTest/cmp_createEmptyXFAFormTest02.pdf" />
         <file path="com/itextpdf/forms/xfa/XFAFormTest/cmp_createXFAFormTest.pdf" />
          <!-- TODO DEVSIX-6115 Remove this files from ignored -->

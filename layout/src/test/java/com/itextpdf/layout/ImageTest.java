@@ -972,4 +972,23 @@ public class ImageTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_"));
     }
+
+    @Test
+    //TODO DEVSIX-5751: Update after fixing
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    public void pngImageDistortedTest() throws IOException, InterruptedException {
+        String outFileName = destinationFolder + "distortedPngStream.pdf";
+        String cmpFileName = sourceFolder + "cmp_distortedPngStream.pdf";
+        String imgPath = sourceFolder + "bee.png";
+
+        ImageData imgData = ImageDataFactory.create(imgPath);
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        Document doc = new Document(pdfDocument).add(new Image(imgData));
+
+        doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff02_"));
+    }
 }
