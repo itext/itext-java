@@ -425,6 +425,8 @@ public final class KernelExceptionMessageConstant {
     public static final String TRAILER_NOT_FOUND = "Trailer not found.";
     public static final String TRAILER_PREV_ENTRY_POINTS_TO_ITS_OWN_CROSS_REFERENCE_SECTION = "Trailer prev entry "
             + "points to its own cross reference section.";
+    public static final String TRANSFORMATION_MATRIX_ARRAY_SIZE_SHOULD_BE_EQUAL_TO_6 =
+            "Transformation matrix array size shuold be equal to 6";
     public static final String TYPE4_EXECUTION_NOT_SUPPORTED =
             "Type 4 functions are not yet supported for separation color image extraction.";
     public static final String TYPE_SHOULD_NOT_BE_NULL = "ClassArgument type should not be null";

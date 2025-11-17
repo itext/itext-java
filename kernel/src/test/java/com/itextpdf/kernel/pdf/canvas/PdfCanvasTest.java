@@ -24,6 +24,7 @@ package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.ActualTextIterator;
@@ -1342,29 +1343,21 @@ public class PdfCanvasTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-6486 Transformation matrix of wrong length are processed without any warning
-    public void wrongLengthOfTransMatrixTest() throws IOException, PdfException, InterruptedException {
-        String cmpPdf = SOURCE_FOLDER + "cmp_wrongLengthOfTransMatrix.pdf";
+    public void wrongLengthOfTransMatrixTest() throws IOException, PdfException {
         String outPdf = DESTINATION_FOLDER + "wrongLengthOfTransMatrix.pdf";
 
-        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
-        PdfPage documentPage = document.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(documentPage);
-        PdfArray wrongNumberOfTransMatrix = new PdfArray(new int[] {1, 0, 0, 1, 100});
+        try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
+            PdfPage documentPage = document.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(documentPage);
+            PdfArray wrongNumberOfTransMatrix = new PdfArray(new int[]{1, 0, 0, 1, 100});
+            canvas.saveState()
+                    .beginText();
 
-        canvas.saveState()
-                .beginText()
-                .concatMatrix(wrongNumberOfTransMatrix)
-                .setFontAndSize(PdfFontFactory.createFont(), 14)
-                .showText("Hello World")
-                .endText()
-                .restoreState();
-
-        canvas.release();
-
-        document.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+            Exception e = Assertions.assertThrows(PdfException.class,
+                    () -> canvas
+                            .concatMatrix(wrongNumberOfTransMatrix));
+            Assertions.assertEquals(KernelExceptionMessageConstant.TRANSFORMATION_MATRIX_ARRAY_SIZE_SHOULD_BE_EQUAL_TO_6, e.getMessage());
+        }
     }
 
     @Test
