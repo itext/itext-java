@@ -32,9 +32,11 @@ public interface ISplitCharacters {
 
     /**
      * The splitting implementation is free to look ahead or look behind characters to make a decision.
+     *
      * @param glyphPos the position of {@link Glyph} in the {@link GlyphLine}
      * @param text an array of unicode char codes which represent current text
-     * @return true if the character can split a line.
+     *
+     * @return true if the line can be split after the character
      */
     boolean isSplitCharacter(GlyphLine text, int glyphPos);
 

@@ -6,6 +6,7 @@ Please notice that the following fonts are used with the mentioned below license
 * NotoSansCJKjp-Bold - SIL Open Font License v1.1
 * NotoSansCJKsc-Regular - SIL Open Font License v1.1
 * NotoSansCJKtc-Regular - SIL Open Font License v1.1
+* NotoSansJP-Regular - SIL Open Font License v1.1
 * NotoSans-Regular - SIL Open Font License v1.1
 * NotoSansThai-Regular - SIL Open Font License v1.1
 * Puritan2 - SIL Open Font License v1.1
