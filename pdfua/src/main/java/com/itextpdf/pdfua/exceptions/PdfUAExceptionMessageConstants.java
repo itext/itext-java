@@ -172,6 +172,7 @@ public final class PdfUAExceptionMessageConstants {
             "Tagged content is present inside content marked as Artifact or vice versa.";
     public static final String ROWS_SPAN_DIFFERENT_NUMBER_OF_COLUMNS =
             "Table rows {0} and {1} span different number of columns.";
+    @Deprecated
     public static final String SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS = "Multiple link annotations targeting the same " +
             "location shall be included in a single Link or Reference structure element instead of separate ones.";
     public static final String STAMP_ANNOT_SHALL_SPECIFY_NAME_OR_CONTENTS = "Stamp annotation shall contain either " +
