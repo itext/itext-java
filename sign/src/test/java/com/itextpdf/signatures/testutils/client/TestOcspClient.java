@@ -29,7 +29,6 @@ import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.PrivateKey;
@@ -43,8 +42,15 @@ public class TestOcspClient implements IOcspClient {
 
     private final Map<String, TestOcspResponseBuilder> issuerIdToResponseBuilder = new LinkedHashMap<>();
 
+    public TestOcspClient addBuilderForCertIssuer(X509Certificate cert, PrivateKey privateKey, String signatureAlgo)
+            throws CertificateEncodingException {
+        issuerIdToResponseBuilder.put(cert.getSerialNumber().toString(16),
+                new TestOcspResponseBuilder(cert, privateKey, signatureAlgo));
+        return this;
+    }
+
     public TestOcspClient addBuilderForCertIssuer(X509Certificate cert, PrivateKey privateKey)
-            throws CertificateEncodingException, IOException {
+            throws CertificateEncodingException {
         issuerIdToResponseBuilder.put(cert.getSerialNumber().toString(16), new TestOcspResponseBuilder(cert, privateKey));
         return this;
     }

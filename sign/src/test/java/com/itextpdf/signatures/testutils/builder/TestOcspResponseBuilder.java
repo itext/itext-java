@@ -56,9 +56,10 @@ public class TestOcspResponseBuilder {
 
     private static final String SIGN_ALG = "SHA256withRSA";
 
-    private IBasicOCSPRespBuilder responseBuilder;
-    private X509Certificate issuerCert;
-    private PrivateKey issuerPrivateKey;
+    private final String signatureAlgorithm;
+    private final IBasicOCSPRespBuilder responseBuilder;
+    private final X509Certificate issuerCert;
+    private final PrivateKey issuerPrivateKey;
     private ICertificateStatus certificateStatus;
     private Calendar thisUpdate = DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME);
     private Calendar nextUpdate = DateTimeUtil.getCalendar(TimeTestUtil.TEST_DATE_TIME);
@@ -68,7 +69,8 @@ public class TestOcspResponseBuilder {
     private final Set<IExtension> extensions = new HashSet<>();
 
     public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey,
-            ICertificateStatus certificateStatus) throws CertificateEncodingException, IOException {
+                                   ICertificateStatus certificateStatus, String signatureAlgorithm)
+            throws CertificateEncodingException {
         this.issuerCert = issuerCert;
         this.issuerPrivateKey = issuerPrivateKey;
         this.certificateStatus = certificateStatus;
@@ -76,10 +78,21 @@ public class TestOcspResponseBuilder {
         thisUpdate = DateTimeUtil.addDaysToCalendar(thisUpdate, -1);
         nextUpdate = DateTimeUtil.addDaysToCalendar(nextUpdate, 30);
         responseBuilder = FACTORY.createBasicOCSPRespBuilder(FACTORY.createRespID(subjectDN));
+        this.signatureAlgorithm = signatureAlgorithm;
+    }
+
+    public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey,
+                                   ICertificateStatus certificateStatus) throws CertificateEncodingException {
+        this(issuerCert, issuerPrivateKey, certificateStatus, SIGN_ALG);
+    }
+
+    public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey, String signatureAlgorithm)
+            throws CertificateEncodingException {
+        this(issuerCert, issuerPrivateKey, FACTORY.createCertificateStatus().getGood(), signatureAlgorithm);
     }
 
     public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey)
-            throws CertificateEncodingException, IOException {
+            throws CertificateEncodingException {
         this(issuerCert, issuerPrivateKey, FACTORY.createCertificateStatus().getGood());
     }
 
@@ -134,8 +147,8 @@ public class TestOcspResponseBuilder {
         if (!chainSet) {
             chain = new IX509CertificateHolder[]{FACTORY.createJcaX509CertificateHolder(issuerCert)};
         }
-        IContentSigner signer = FACTORY.createJcaContentSignerBuilder(SIGN_ALG).setProvider(FACTORY.getProviderName())
-                .build(issuerPrivateKey);
+        IContentSigner signer = FACTORY.createJcaContentSignerBuilder(signatureAlgorithm)
+                .setProvider(FACTORY.getProviderName()).build(issuerPrivateKey);
         return responseBuilder.build(signer, chain, producedAt);
     }
 

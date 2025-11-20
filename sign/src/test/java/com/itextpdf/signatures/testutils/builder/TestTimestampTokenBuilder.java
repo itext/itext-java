@@ -59,8 +59,10 @@ public class TestTimestampTokenBuilder {
     // just a more or less random oid of timestamp policy
     private static final String POLICY_OID = "1.3.6.1.4.1.45794.1.1";
 
-    private List<Certificate> tsaCertificateChain;
-    private PrivateKey tsaPrivateKey;
+    private final List<Certificate> tsaCertificateChain;
+    private final PrivateKey tsaPrivateKey;
+    private String signatureAlgo = SIGN_ALG;
+    private String digestAlgo = "SHA1";
 
     public TestTimestampTokenBuilder(List<Certificate> tsaCertificateChain, PrivateKey tsaPrivateKey) {
         if (tsaCertificateChain.isEmpty()) {
@@ -70,10 +72,21 @@ public class TestTimestampTokenBuilder {
         this.tsaPrivateKey = tsaPrivateKey;
     }
 
+    public TestTimestampTokenBuilder(List<Certificate> tsaCertificateChain, PrivateKey tsaPrivateKey,
+                                     String signatureAlgo, String digestAlgo) {
+        if (tsaCertificateChain.isEmpty()) {
+            throw new IllegalArgumentException("tsaCertificateChain shall not be empty");
+        }
+        this.tsaCertificateChain = tsaCertificateChain;
+        this.tsaPrivateKey = tsaPrivateKey;
+        this.signatureAlgo = signatureAlgo;
+        this.digestAlgo = digestAlgo;
+    }
+
     public byte[] createTimeStampToken(ITimeStampRequest request)
             throws AbstractOperatorCreationException, AbstractTSPException, IOException, CertificateEncodingException {
-        ITimeStampTokenGenerator tsTokGen = createTimeStampTokenGenerator(tsaPrivateKey,
-                tsaCertificateChain.get(0), SIGN_ALG, "SHA1", POLICY_OID);
+        ITimeStampTokenGenerator tsTokGen = createTimeStampTokenGenerator(tsaPrivateKey, tsaCertificateChain.get(0),
+                signatureAlgo, digestAlgo, POLICY_OID);
         tsTokGen.setAccuracySeconds(1);
 
         tsTokGen.addCertificates(FACTORY.createJcaCertStore(tsaCertificateChain));

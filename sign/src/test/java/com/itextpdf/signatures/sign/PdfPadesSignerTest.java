@@ -78,8 +78,6 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
     private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PdfPadesSignerTest/";
     private static final char[] password = "testpassphrase".toCharArray();
 
-    private static final boolean FIPS_MODE = "BCFIPS".equals(FACTORY.getProviderName());
-
     @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());

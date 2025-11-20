@@ -72,6 +72,21 @@ public final class OID {
     public static final String KDF_PDF_MAC_WRAP_KDF = "1.0.32004.1.1";
     public static final String CT_PDF_MAC_INTEGRITY_INFO = "1.0.32004.1.0";
 
+    public static final String ML_DSA_44 = "2.16.840.1.101.3.4.3.17";
+    public static final String ML_DSA_65 = "2.16.840.1.101.3.4.3.18";
+    public static final String ML_DSA_87 = "2.16.840.1.101.3.4.3.19";
+    public static final String SLH_DSA_SHA2_128S = "2.16.840.1.101.3.4.3.20";
+    public static final String SLH_DSA_SHA2_128F = "2.16.840.1.101.3.4.3.21";
+    public static final String SLH_DSA_SHA2_192S = "2.16.840.1.101.3.4.3.22";
+    public static final String SLH_DSA_SHA2_192F = "2.16.840.1.101.3.4.3.23";
+    public static final String SLH_DSA_SHA2_256S = "2.16.840.1.101.3.4.3.24";
+    public static final String SLH_DSA_SHA2_256F = "2.16.840.1.101.3.4.3.25";
+    public static final String SLH_DSA_SHAKE_128S = "2.16.840.1.101.3.4.3.26";
+    public static final String SLH_DSA_SHAKE_128F = "2.16.840.1.101.3.4.3.27";
+    public static final String SLH_DSA_SHAKE_192S = "2.16.840.1.101.3.4.3.28";
+    public static final String SLH_DSA_SHAKE_192F = "2.16.840.1.101.3.4.3.29";
+    public static final String SLH_DSA_SHAKE_256S = "2.16.840.1.101.3.4.3.30";
+    public static final String SLH_DSA_SHAKE_256F = "2.16.840.1.101.3.4.3.31";
 
     private OID() {
         // Empty on purpose. Avoiding instantiation of this class.

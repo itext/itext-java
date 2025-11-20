@@ -534,7 +534,8 @@
             <fileset reason="Some of the algorithms are not supported on .NET and the result is thus different. The tests with the identical result are in PdfPKCS7Test.">
                 <file path="com/itextpdf/signatures/PdfPKCS7ManuallyPortedTest.java"/>
             </fileset>
-            <fileset reason="Different implementation on .NET and java">
+            <!-- TODO DEVSIX-6115 Try to remove this files from ignored -->
+            <fileset reason="Related to timestamp signatures comparing, they are different in Java and .NET">
                 <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest.java"/>
@@ -542,6 +543,7 @@
                 <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerTest.java"/>
                 <file path="com/itextpdf/signatures/sign/TimestampSigTest.java"/>
+                <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest.java"/>
             </fileset>
             <fileset reason=".pem files reading logic is different in java and .net">
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
@@ -656,8 +658,8 @@
         <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/img_calrgb.png" />
         <file path="com/itextpdf/forms/xfa/XFAFormTest/cmp_createEmptyXFAFormTest02.pdf" />
         <file path="com/itextpdf/forms/xfa/XFAFormTest/cmp_createXFAFormTest.pdf" />
-                <!-- TODO: Remove this files from ignored after completing DEVSIX-6115 -->
-        <fileset reason="Files related to timestamp signatures comparing shall be ignored since they are different in java and .Net">
+         <!-- TODO DEVSIX-6115 Remove this files from ignored -->
+        <fileset reason="Files related to timestamp signatures comparing shall be ignored since they are different in java and .NET">
             <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledTsTest01.pdf"/>
             <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_secondLtvOriginalHasNoVriTs01.pdf"/>
             <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledSingleSignatureNoOcspDataTest.pdf"/>
