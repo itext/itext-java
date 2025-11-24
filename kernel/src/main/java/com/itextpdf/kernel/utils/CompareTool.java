@@ -1345,6 +1345,16 @@ public class CompareTool {
         }
     }
 
+    private static boolean isSignatureDictionary(PdfDictionary dict) {
+        PdfName type = dict.getAsName(PdfName.Type);
+        if (PdfName.Sig.equals(type)) {
+            return true;
+        }
+        // Some signature dictionaries might miss explicit /Type but still have typical signature fields.
+        return dict.containsKey(PdfName.ByteRange) && dict.containsKey(PdfName.SubFilter);
+    }
+
+
     private String compareVisuallyAndCombineReports(String compareByFailContentReason, String outPath, String differenceImagePrefix,
                                                     Map<Integer, List<Rectangle>> ignoredAreas,
                                                     List<Integer> equalPages) throws IOException, InterruptedException {
@@ -1548,6 +1558,15 @@ public class CompareTool {
                 continue;
             }
 
+            // Mark signature /Contents as unencrypted before comparing strings to avoid decryption attempts.
+            // Per PDF spec, the signature dictionary's /Contents entry must not be encrypted.
+            if (PdfName.Contents.equals(key) && isSignatureDictionary(cmpDict) && isSignatureDictionary(outDict)) {
+                PdfString outContents = outDict.getAsString(PdfName.Contents);
+                outContents.markAsUnencryptedObject();
+                PdfString cmpContents = cmpDict.getAsString(PdfName.Contents);
+                cmpContents.markAsUnencryptedObject();
+            }
+
             if (currentPath != null) {
                 currentPath.pushDictItemToPath(key);
             }
@@ -1558,6 +1577,7 @@ public class CompareTool {
         }
         return dictsAreSame;
     }
+
 
     private PdfNumber flattenNumTree(PdfDictionary dictionary, PdfNumber leftOver, LinkedList<PdfObject> items /*Map<PdfNumber, PdfObject> items*/) {
         PdfArray nums = dictionary.getAsArray(PdfName.Nums);

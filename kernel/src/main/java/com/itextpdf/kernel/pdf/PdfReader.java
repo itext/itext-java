@@ -428,6 +428,10 @@ public class PdfReader implements Closeable {
                     }
                     filter.release();
                 }
+                // Skip decryption for document-level metadata stream if EncryptMetadata is false
+                if (!skip && !decrypt.isMetadataEncrypted() && PdfName.Metadata.equals(type)) {
+                    skip = true;
+                }
                 if (!skip) {
                     decrypt.setHashKeyForNextObject(stream.getIndirectReference().getObjNumber(), stream.getIndirectReference().getGenNumber());
                     bytes = decrypt.decryptByteArray(bytes);

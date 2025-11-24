@@ -87,9 +87,6 @@ public class ReadSignedMacProtectedDocumentTest extends ExtendedITextTest {
             // Do nothing.
         }
 
-        // This call produces INFO log from AESCipher caused by exception while decrypting. The reason is that,
-        // while comparing encrypted signed documents, CompareTool needs to mark signature value as unencrypted.
-        // Instead, it tries to decrypt not encrypted value which results in exception.
         Assertions.assertNull(new CompareTool().compareByContent(
                 outputFileName, cmpFileName, DESTINATION_FOLDER, "diff", ENCRYPTION_PASSWORD, ENCRYPTION_PASSWORD));
     }

@@ -2998,6 +2998,29 @@ public class PdfReaderTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    public void unencryptedMetadataInEncryptedDocumentIsReadable() throws Exception {
+        byte[] user = "userpass".getBytes(StandardCharsets.UTF_8);
+
+        InputStream pdf = Files.newInputStream(Paths.get(SOURCE_FOLDER + "unencryptedMetadataAes256.pdf"));
+        try (PdfReader reader = new PdfReader(pdf, new ReaderProperties().setPassword(user));
+             PdfDocument readDoc = new PdfDocument(reader)) {
+
+            byte[] xmpBytes = readDoc.getXmpMetadataBytes();
+            Assertions.assertNotNull(xmpBytes, "XMP metadata bytes should be present");
+
+            // Should be readable XML; parse using XMPMetaFactory to be strict
+            XMPMeta parsed = XMPMetaFactory.parseFromBuffer(xmpBytes);
+            Assertions.assertNotNull(parsed, "Parsed XMP metadata should not be null");
+
+            String xmpXml = new String(xmpBytes, StandardCharsets.UTF_8);
+            // Sanity checks that it looks like RDF/XML
+            Assertions.assertTrue(xmpXml.contains("<rdf:RDF") || xmpXml.contains("<x:xmpmeta"));
+            // XMP metadata should contain the title we set
+            Assertions.assertTrue(xmpXml.contains("UnitTest Title"));
+        }
+    }
+
     private static PdfDictionary getTestPdfDictionary() {
         HashMap<PdfName, PdfObject> tmpMap = new HashMap<PdfName, PdfObject>();
         tmpMap.put(new PdfName("b"), new PdfName("c"));

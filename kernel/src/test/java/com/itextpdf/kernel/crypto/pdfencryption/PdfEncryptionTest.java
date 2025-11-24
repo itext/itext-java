@@ -630,6 +630,20 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         doc.close();
     }
 
+    //TODO DEVSIX-9588: this test logs ERROR_WHILE_FINALIZING_AES_CIPHER under FIPS mode
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    @Test
+    public void readPdfWithEmptyStreamTest() throws IOException, InterruptedException {
+        String inFileName = sourceFolder + "empty-aes256.pdf";
+        String outFileName = destinationFolder + "empty-aes256.pdf";
+        PdfReader pdfReader = new PdfReader(inFileName).setUnethicalReading(true);
+        try(PdfDocument pdfDocument = new PdfDocument(pdfReader, CompareTool.createTestPdfWriter(outFileName),
+                new StampingProperties().useAppendMode().preserveEncryption())) {
+        }
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, inFileName, destinationFolder));
+    }
+
     public void encryptWithPassword2(String filename, int encryptionType, int compression)
             throws IOException, InterruptedException {
         encryptWithPassword2(filename, encryptionType, compression, false);
