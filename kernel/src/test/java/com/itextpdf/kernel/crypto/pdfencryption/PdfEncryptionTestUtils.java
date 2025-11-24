@@ -80,6 +80,9 @@ public class PdfEncryptionTestUtils {
                                                      boolean expectError) throws IOException {
         PdfReader reader = CompareTool.createOutputReader(src, new ReaderProperties().setPassword(password));
         PdfDocument document = new PdfDocument(reader);
+
+
+
         PdfPage page = document.getPage(1);
 
         boolean expectedContentFound = new String(page.getStreamBytes(0)).contains(pageContent);

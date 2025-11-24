@@ -43,7 +43,7 @@ public abstract class MemoryLimitsAwareFilter implements IFilterHandler {
         MemoryLimitsAwareOutputStream outputStream = new MemoryLimitsAwareOutputStream();
         MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
         if (null != streamDictionary.getIndirectReference()) {
-            memoryLimitsAwareHandler = streamDictionary.getIndirectReference().getDocument().memoryLimitsAwareHandler;
+            memoryLimitsAwareHandler = streamDictionary.getIndirectReference().getDocument().getMemoryLimitsAwareHandler();
         } else {
             // We do not reuse some static instance because one can process pdfs in different threads.
             memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();

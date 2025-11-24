@@ -498,7 +498,7 @@ public class PdfReader implements Closeable {
 
         MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
         if (null != streamDictionary.getIndirectReference()) {
-            memoryLimitsAwareHandler = streamDictionary.getIndirectReference().getDocument().memoryLimitsAwareHandler;
+            memoryLimitsAwareHandler = streamDictionary.getIndirectReference().getDocument().getMemoryLimitsAwareHandler();
         }
 
         final boolean memoryLimitsAwarenessRequired = null != memoryLimitsAwareHandler &&

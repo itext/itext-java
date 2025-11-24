@@ -40,6 +40,7 @@ public final class KernelExceptionMessageConstant {
     public static final String BAD_USER_PASSWORD =
             "Bad user password. Password is not provided or wrong password provided. Correct password should be passed "
                     + "to PdfReader constructor with properties. See ReaderProperties#setPassword() method.";
+    public static final String BROTLI_DICTIONARY_IS_NOT_A_STREAM = "Brotli dictionary is not a stream.";
     public static final String CANNOT_ADD_KID_TO_THE_FLUSHED_ELEMENT = "Cannot add kid to the flushed element.";
     public static final String CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS =
             "{0} cannot be embedded due to licensing restrictions.";
@@ -191,6 +192,7 @@ public final class KernelExceptionMessageConstant {
     public static final String ERROR_WHILE_READING_OBJECT_STREAM = "Error while reading Object Stream.";
     public static final String EXTERNAL_ENTITY_ELEMENT_FOUND_IN_XML =
             "External entity element found in XML. This entity will not be parsed to prevent XML attacks.";
+    public static final String FAILED_TO_DECODE_BROTLI_STREAM = "Failed to decode Brotli stream.";
     public static final String FILE_POSITION_0_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "file position 0 cross "
             + "reference entry in this xref subsection.";
     public static final String FILTER_CCITTFAXDECODE_IS_ONLY_SUPPORTED_FOR_IMAGES = "Filter CCITTFaxDecode is only "
