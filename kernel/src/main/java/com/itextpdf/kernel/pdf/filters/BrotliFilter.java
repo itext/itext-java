@@ -35,14 +35,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 
 /**
  * Filter implementation for decoding Brotli-compressed PDF streams.
  * This filter supports optional Brotli dictionary streams and memory limits awareness.
  */
 public class BrotliFilter extends MemoryLimitsAwareFilter {
-    public static final int DEFAULT_INTERNAL_BUFFER_SIZE = 16384;
+    private static final int DEFAULT_INTERNAL_BUFFER_SIZE = 16384;
     /**
      * Default buffer size for Brotli decompression (64 KiB).
      */
@@ -84,7 +83,7 @@ public class BrotliFilter extends MemoryLimitsAwareFilter {
                 output.write(buffer, 0, len);
             }
             brotliInput.close();
-            return output.toByteArray();
+            return FlateDecodeFilter.decodePredictor(output.toByteArray(), decodeParams);
         } catch (IOException e) {
             throw new PdfException(KernelExceptionMessageConstant.FAILED_TO_DECODE_BROTLI_STREAM, e);
         }
@@ -100,7 +99,7 @@ public class BrotliFilter extends MemoryLimitsAwareFilter {
      *
      * @throws RuntimeException if the dictionary is present but not a stream
      */
-    private PdfStream getBrotliDictionaryStream(PdfObject decodeParams) {
+    private static PdfStream getBrotliDictionaryStream(PdfObject decodeParams) {
         if (!(decodeParams instanceof PdfDictionary)) {
             return null;
         }
@@ -110,7 +109,7 @@ public class BrotliFilter extends MemoryLimitsAwareFilter {
             // Brotli dictionary stream found
             return (PdfStream) brotliDecompressionDictionary;
         } else if (brotliDecompressionDictionary != null) {
-            throw new RuntimeException(KernelExceptionMessageConstant.BROTLI_DICTIONARY_IS_NOT_A_STREAM);
+            throw new PdfException(KernelExceptionMessageConstant.BROTLI_DICTIONARY_IS_NOT_A_STREAM);
         } else {
             return null;
         }

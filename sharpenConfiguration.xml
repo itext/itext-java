@@ -646,6 +646,10 @@
             </fileset>
 
 
+          <fileset reason="Brotli implementations differ in Java and .Net">
+            <file path="com/itextpdf/brotlicompressor/BrotliStreamCompressionStrategy.java" />
+          </fileset>
+
         </java>
     </ignored>
      <resource>

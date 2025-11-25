@@ -39,6 +39,7 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
@@ -186,7 +187,7 @@ public class BrotliFilterTest extends ExtendedITextTest {
             protected void open(PdfVersion newPdfVersion) {
                 // No need to open the pdf for this test
             }
-           
+
         }) {
             PdfStream stream = new PdfStream(bytes);
             stream.put(PdfName.Filter, PdfName.BrotliDecode);
@@ -235,7 +236,7 @@ public class BrotliFilterTest extends ExtendedITextTest {
         NoOpPdfReader() throws java.io.IOException {
             super(new ByteArrayInputStream(
                             ("%PDF-1.7\n%âãÏÓ\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<< /Root 1 0 R "
-                                    + ">>\n%%EOF").getBytes()),
+                                    + ">>\n%%EOF").getBytes(StandardCharsets.UTF_8)),
                     new ReaderProperties());
         }
     }

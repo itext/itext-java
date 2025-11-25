@@ -31,6 +31,8 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+
+import java.io.OutputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -53,16 +55,18 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
     @Test
     public void invalidDecodeParamsTest() {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(),
-                new WriterProperties().setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER, 0,
+                new WriterProperties().setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER,
+                        0,
                         EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.EMBEDDED_FILES_ONLY));
         PdfDocument document = new CustomPdfDocument1(writer);
 
         document.addFileAttachment("descripton",
-                PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton", "test.txt", null, null));
+                PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton",
+                        "test.txt", null, null));
 
         Exception e = Assertions.assertThrows(PdfException.class, () -> document.close());
         Assertions.assertEquals(MessageFormatUtil.format(
-                KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED,
+                        KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED,
                         PdfName.class),
                 e.getMessage());
     }
@@ -71,12 +75,14 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
     public void arrayDecodeParamsTest() throws IOException {
         final String fileName = "arrayDecodeParamsTest.pdf";
         PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName,
-                new WriterProperties().setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER, 0,
+                new WriterProperties().setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER,
+                        0,
                         EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.EMBEDDED_FILES_ONLY));
         PdfDocument document = new CustomPdfDocument2(writer);
 
         document.addFileAttachment("descripton",
-                PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton", "test.txt", null, null));
+                PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton",
+                        "test.txt", null, null));
 
         AssertUtil.doesNotThrow(() -> document.close());
     }
@@ -85,14 +91,121 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
     public void dictDecodeParamsTest() throws IOException {
         final String fileName = "dictDecodeParamsTest.pdf";
         PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName,
-                new WriterProperties().setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER, 0,
+                new WriterProperties().setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER,
+                        0,
                         EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.EMBEDDED_FILES_ONLY));
         PdfDocument document = new CustomPdfDocument3(writer);
 
         document.addFileAttachment("descripton",
-                PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton", "test.txt", null, null));
+                PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton",
+                        "test.txt", null, null));
 
         AssertUtil.doesNotThrow(() -> document.close());
+    }
+
+    @Test
+    public void singleFilterNoDecodeChangesNothing() {
+        CustomPdfStream stream = new CustomPdfStream(new ByteArrayOutputStream(10));
+        PdfStream pdfStream = new PdfStream();
+
+        stream.updateCompressionFilter(pdfStream);
+        Assertions.assertEquals(PdfName.FlateDecode, pdfStream.getAsName(PdfName.Filter));
+        Assertions.assertNull(pdfStream.get(PdfName.DecodeParms));
+    }
+
+
+    @Test
+    public void withoutFilterAndWithDecodeParamsRemovesDecodeParamsAndAddsFilter() {
+        CustomPdfStream stream = new CustomPdfStream(new ByteArrayOutputStream(10));
+        PdfStream pdfStream = new PdfStream();
+
+        PdfDictionary decodeParms = new PdfDictionary();
+        decodeParms.put(PdfName.Predictor, new PdfNumber(12));
+        pdfStream.put(PdfName.DecodeParms, decodeParms);
+        stream.updateCompressionFilter(pdfStream);
+        Assertions.assertEquals(PdfName.FlateDecode, pdfStream.getAsName(PdfName.Filter));
+        Assertions.assertNull(pdfStream.get(PdfName.DecodeParms));
+    }
+
+
+    @Test
+    public void filterAlreadyExistsAddItConvertsItToArray() {
+        CustomPdfStream stream = new CustomPdfStream(new ByteArrayOutputStream(10));
+        PdfStream pdfStream = new PdfStream();
+        pdfStream.put(PdfName.Filter, PdfName.FlateDecode);
+
+        stream.updateCompressionFilter(pdfStream);
+
+        PdfArray filterArray = pdfStream.getAsArray(PdfName.Filter);
+        Assertions.assertEquals(2, filterArray.size());
+        Assertions.assertEquals(PdfName.FlateDecode, filterArray.getAsName(0));
+        Assertions.assertEquals(PdfName.FlateDecode, filterArray.getAsName(1));
+
+        PdfArray decodeParmsArray = pdfStream.getAsArray(PdfName.DecodeParms);
+        Assertions.assertNull(decodeParmsArray);
+
+    }
+
+    @Test
+    public void filterArrayExistsAddsNewFilterAtTheEnd() {
+        CustomPdfStream stream = new CustomPdfStream(new ByteArrayOutputStream(10));
+        PdfStream pdfStream = new PdfStream();
+        PdfArray filterArray = new PdfArray();
+        filterArray.add(PdfName.LZWDecode);
+        pdfStream.put(PdfName.Filter, filterArray);
+
+        PdfArray decodeParmsArray = new PdfArray();
+        decodeParmsArray.add(new PdfNumber(20));
+        pdfStream.put(PdfName.DecodeParms, decodeParmsArray);
+
+        stream.updateCompressionFilter(pdfStream);
+
+        PdfArray updatedFilterArray = pdfStream.getAsArray(PdfName.Filter);
+        Assertions.assertEquals(2, updatedFilterArray.size());
+        //new filter should be added at the beginning
+        Assertions.assertEquals(PdfName.FlateDecode, updatedFilterArray.getAsName(0));
+        Assertions.assertEquals(PdfName.LZWDecode, updatedFilterArray.getAsName(1));
+
+        PdfArray updatedDecodeParmsArray = pdfStream.getAsArray(PdfName.DecodeParms);
+        Assertions.assertEquals(2, updatedDecodeParmsArray.size());
+        //new decode parms should be added at the beginning
+        Assertions.assertTrue(updatedDecodeParmsArray.get(0) instanceof PdfNull);
+        Assertions.assertEquals(new PdfNumber(20), updatedDecodeParmsArray.getAsNumber(1));
+    }
+
+
+
+    @Test
+    public void filterWith3AlreadyExistingFiltersButNoDecodeBackFillsDecodeParams() {
+        CustomPdfStream stream = new CustomPdfStream(new ByteArrayOutputStream(10));
+        PdfStream pdfStream = new PdfStream();
+        PdfArray filterArray = new PdfArray();
+
+        filterArray.add(PdfName.LZWDecode);
+        filterArray.add(PdfName.FlateDecode);
+        filterArray.add(PdfName.ASCII85Decode);
+        pdfStream.put(PdfName.Filter, filterArray);
+
+        stream.updateCompressionFilter(pdfStream);
+        PdfArray updatedFilterArray = pdfStream.getAsArray(PdfName.Filter);
+        Assertions.assertEquals(4, updatedFilterArray.size());
+        //new filter should be added at the beginning
+        Assertions.assertEquals(PdfName.FlateDecode, updatedFilterArray.getAsName(0));
+        Assertions.assertEquals(PdfName.LZWDecode, updatedFilterArray.getAsName(1));
+        Assertions.assertEquals(PdfName.FlateDecode, updatedFilterArray.getAsName(2));
+        Assertions.assertEquals(PdfName.ASCII85Decode, updatedFilterArray.getAsName(3));
+
+
+        PdfArray updatedDecodeParmsArray = pdfStream.getAsArray(PdfName.DecodeParms);
+        Assertions.assertNull(updatedDecodeParmsArray);
+    }
+
+
+    private static final class CustomPdfStream extends PdfOutputStream {
+
+        public CustomPdfStream(OutputStream outputStream) {
+            super(outputStream);
+        }
     }
 
     private static final class CustomPdfDocument1 extends PdfDocument {
