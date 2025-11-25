@@ -119,4 +119,14 @@ public class FontSelectorTestsUtil {
 
         return fontProvider.createFontSelectorStrategy(fontFamilies, new FontCharacteristics(), null);
     }
+
+    public static IFontSelectorStrategy createStrategyWithSymbolFont(IFontSelectorStrategyFactory factory) {
+        final FontProvider fontProvider = new FontProvider();
+        // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
+        fontProvider.addFont(FONTS_FOLDER + "Symbols1.ttf");
+        fontProvider.setFontSelectorStrategyFactory(factory);
+        List<String> fontFamilies = new ArrayList<>();
+        fontFamilies.add("Symbols1");
+        return fontProvider.createFontSelectorStrategy(fontFamilies, new FontCharacteristics(), null);
+    }
 }

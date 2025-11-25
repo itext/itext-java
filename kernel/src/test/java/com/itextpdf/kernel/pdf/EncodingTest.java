@@ -271,6 +271,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
+        // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.WINANSI,
                 EmbeddingStrategy.PREFER_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
@@ -319,6 +320,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
+        // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         StringBuilder builder = new StringBuilder();
@@ -370,6 +372,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
+        // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
         PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         String line = "AABBCCDDEEFFGGHHIIJJ";

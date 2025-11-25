@@ -27,11 +27,11 @@ import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.font.selectorstrategy.BestMatchFontSelectorStrategy.BestMatchFontSelectorStrategyFactory;
 import com.itextpdf.test.ExtendedITextTest;
-
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 @Tag("UnitTest")
 public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
@@ -150,6 +150,20 @@ public class BestMatchFontSelectorStrategyTest extends ExtendedITextTest {
         final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines("Hello\r\n   World!\r\n ");
         Assertions.assertEquals(1, result.size());
         Assertions.assertEquals("Hello\r\n   World!\r\n ", result.get(0).getFirst().toString());
+    }
+
+    @Test
+    public void chineseNotSymbolTest() {
+        IFontSelectorStrategy strategy = FontSelectorTestsUtil.createStrategyWithSymbolFont(
+                new BestMatchFontSelectorStrategyFactory());
+        final String chinese = "佗";
+
+        final List<Tuple2<GlyphLine, PdfFont>> result = strategy.getGlyphLines(chinese);
+        Assertions.assertEquals(1, result.size());
+
+        final String resultedString = result.get(0).getFirst().toString();
+        Assertions.assertNotEquals(chinese, resultedString);
+        Assertions.assertEquals("", resultedString);
     }
 
     @Test

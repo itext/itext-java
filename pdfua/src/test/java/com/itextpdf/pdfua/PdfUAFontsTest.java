@@ -290,6 +290,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
+                // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
                 font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf", PdfEncodings.MACROMAN,
                         EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
@@ -311,6 +312,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
+                // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
                 font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf", PdfEncodings.MACROMAN,
                         EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
@@ -385,6 +387,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
 
     @Test
     // TODO DEVSIX-9076 NPE when cmap of True Type Font doesn't contain Microsoft Unicode or Macintosh Roman encodings
+    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfWithChangedCmapTest() {
         Assertions.assertThrows(NullPointerException.class,
                 () -> PdfFontFactory.createFont(FONT_FOLDER + "Symbols1_changed_cmap.ttf",

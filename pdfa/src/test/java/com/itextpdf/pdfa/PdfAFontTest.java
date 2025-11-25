@@ -278,6 +278,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test01() {
         // encoding must not be specified
         // Here we produced valid pdfa files in the past by silently removing not valid symbols
@@ -290,6 +291,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test02() {
         // if you specify encoding, symbolic font is treated as non-symbolic
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -300,6 +302,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test03() {
         // if you specify encoding, symbolic font is treated as non-symbolic
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
@@ -310,6 +313,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test04() {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test04.pdf", "Symbols1.ttf", PdfEncodings.WINANSI, PdfAConformance.PDF_A_1B)
@@ -319,6 +323,7 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test05() {
         // Identity-H behaviour should be the same as the default one, starting from 7.2
         // Here we produced valid pdfa files in the past by silently removing not valid symbols
