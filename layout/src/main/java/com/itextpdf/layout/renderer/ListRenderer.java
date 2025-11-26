@@ -332,7 +332,7 @@ public class ListRenderer extends BlockRenderer {
                 symbolRenderers.add(currentSymbolRenderer);
                 if (listSymbolNotFit && !isForcedPlacement) {
                     return new LayoutResult(LayoutResult.NOTHING, null, null, this,
-                            listSymbolLayoutResult.getCauseOfNothing());
+                            listSymbolLayoutResult.getCauseOfNothing() == null ? this : listSymbolLayoutResult.getCauseOfNothing());
                 }
             }
 

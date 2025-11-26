@@ -26,6 +26,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
@@ -122,6 +123,22 @@ public class ListRendererUnitTest extends RendererUnitTest {
         Assertions.assertEquals(0, childRenderers.stream()
                 .filter(listitem -> regex.matcher(listitem.toString()).matches()).count());
     }
+
+    @Test
+    public void symbolRendererNullCauseOfNothingTest() {
+        List modelElement = new List();
+        modelElement.setListSymbol(new Text("-"));
+        modelElement.add((ListItem) new ListItem().add(new Paragraph("Lorem ipsum dolor sit amet")));
+
+        BlockRenderer listRenderer = (BlockRenderer) modelElement.createRendererSubTree();
+        Document document = createDummyDocument();
+        listRenderer.setParent(document.getRenderer());
+        LayoutResult result = listRenderer.layout(createLayoutContext(100, -10));
+
+        Assertions.assertEquals(LayoutResult.NOTHING, result.getStatus());
+        Assertions.assertNotNull(result.getCauseOfNothing());
+    }
+
 
     private static class ListRendererCreatingNotifyingListSymbols extends ListRenderer {
         private InvocationsCounter counter;
