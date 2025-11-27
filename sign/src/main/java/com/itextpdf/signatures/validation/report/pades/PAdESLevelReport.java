@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.validation.report.pades;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -34,19 +35,17 @@ public class PAdESLevelReport {
 
     private final String signatureName;
     private final PAdESLevel highestAchievedLevel;
-    private final Map<PAdESLevel, List<String>> nonConformaties;
-    private final Map<PAdESLevel, List<String>> warnings;
+    private final Map<PAdESLevel, Collection<String>> nonConformaties;
+    private final Map<PAdESLevel, Collection<String>> warnings;
 
     /**
      * Creates new instance.
      *
-     * @param signatureName    the signature name
      * @param reqs             the requirements gathered for this signature
      * @param timestampReports the timestamp reports gathered before for this signature
      */
-    PAdESLevelReport(String signatureName, AbstractPadesLevelRequirements reqs,
-            Iterable<PAdESLevelReport> timestampReports) {
-        this.signatureName = signatureName;
+    PAdESLevelReport(AbstractPadesLevelRequirements reqs, Iterable<PAdESLevelReport> timestampReports) {
+        this.signatureName = reqs.getSignatureName();
         this.highestAchievedLevel = reqs.getHighestAchievedPadesLevel(timestampReports);
 
         this.nonConformaties = reqs.getNonConformaties();
@@ -76,7 +75,7 @@ public class PAdESLevelReport {
      *
      * @return non-conformaties, violated must have rules, per PAdES level
      */
-    public Map<PAdESLevel, List<String>> getNonConformaties() {
+    public Map<PAdESLevel, Collection<String>> getNonConformaties() {
         return nonConformaties;
     }
 
@@ -85,7 +84,7 @@ public class PAdESLevelReport {
      *
      * @return warnings, violated should have rules, per PAdES level
      */
-    public Map<PAdESLevel, List<String>> getWarnings() {
+    public Map<PAdESLevel, Collection<String>> getWarnings() {
         return warnings;
     }
 

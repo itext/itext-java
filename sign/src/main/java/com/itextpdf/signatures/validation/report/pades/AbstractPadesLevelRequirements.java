@@ -24,9 +24,12 @@ package com.itextpdf.signatures.validation.report.pades;
 
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -77,6 +80,7 @@ abstract class AbstractPadesLevelRequirements {
             "The singing certificate should be added as a singing-certificate-v2 signed attribute";
     public static final String THERE_MUST_BE_A_SIGNATURE_OR_DOCUMENT_TIMESTAMP_AVAILABLE = "There must be a signature "
             + "or document timestamp available";
+    public static final String DSS_DICTIONARY_IS_MISSING = "A DSS dictionary is missing";
     public static final String ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING = "Issuer for the following certificates is "
             + "missing:\n";
     public static final String ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS = "Issuer for the following certificates is "
@@ -91,8 +95,9 @@ abstract class AbstractPadesLevelRequirements {
     private static final Map<PAdESLevel, LevelChecks> CHECKS = new HashMap<>();
     private static final PAdESLevel[] PADES_LEVELS =
             new PAdESLevel[] {PAdESLevel.B_B, PAdESLevel.B_T, PAdESLevel.B_LT, PAdESLevel.B_LTA};
-    private final Map<PAdESLevel, List<String>> nonConformaties = new HashMap<>();
-    private final Map<PAdESLevel, List<String>> warnings = new HashMap<>();
+    private final Map<PAdESLevel, Collection<String>> nonConformaties = new HashMap<>();
+    private final Map<PAdESLevel, Collection<String>> warnings = new HashMap<>();
+    private final String name;
     //section 6.2.1
     protected List<String> discouragedAlgorithmUsage = new ArrayList<String>();
     protected List<String> forbiddenAlgorithmUsage = new ArrayList<String>();
@@ -144,7 +149,7 @@ abstract class AbstractPadesLevelRequirements {
     protected boolean poeDssPresent;
     // Table 1 row 30 note x
     protected List<X509Certificate> certificateIssuerMissing = new ArrayList<>();
-    protected List<X509Certificate> certificateIssuerNotInDss = new ArrayList<>();
+    protected List<X509Certificate> certificatesIssuerNotInDSS = new ArrayList<>();
     protected List<X509Certificate> revocationDataNotInDSS = new ArrayList<>();
     protected List<X509Certificate> revocationDataNotTimestamped = new ArrayList<>();
     // Table 1 row 30 note y
@@ -233,50 +238,26 @@ abstract class AbstractPadesLevelRequirements {
 
         LevelChecks bltChecks = new LevelChecks();
         CHECKS.put(PAdESLevel.B_LT, bltChecks);
-
-        bltChecks.shalls.add(new CheckAndMessage(
-                r -> r.certificateIssuerMissing.isEmpty()
-                        && r.revocationDataNotInDSS.isEmpty(),
-                r -> {
-                    StringBuilder message = new StringBuilder();
-                    if (!r.certificateIssuerMissing.isEmpty()) {
-                        message.append(ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING);
-                        for (X509Certificate cert : r.certificateIssuerMissing) {
-                            message.append('\t').append(cert).append('\n');
-                        }
-                    }
-                    if (!r.revocationDataNotInDSS.isEmpty()) {
-                        message.append(REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING);
-                        for (X509Certificate cert : r.revocationDataNotInDSS) {
-                            message.append('\t').append(cert).append('\n');
-                        }
-                    }
-                    return message.toString();
-                }));
-        bltChecks.shoulds.add(new CheckAndMessage(
-                r -> r.certificateIssuerNotInDss.isEmpty(),
-                r -> {
-                    StringBuilder message = new StringBuilder();
-                    message.append(ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS);
-                    for (X509Certificate cert : r.certificateIssuerNotInDss) {
-                        message.append('\t').append(cert).append('\n');
-                    }
-                    return message.toString();
-                }));
+        bltChecks.shalls.add(createRevocationDssUsageCheck());
+        bltChecks.shalls.add(createCertificateExternalRetrievalCheck());
+        bltChecks.shoulds.add(createCertificatesDssUsageCheck());
 
         LevelChecks bltaChecks = new LevelChecks();
-        bltaChecks.shalls.add(new CheckAndMessage(r -> r.revocationDataNotTimestamped.isEmpty(), r -> {
-            StringBuilder message = new StringBuilder();
-            if (!r.revocationDataNotTimestamped.isEmpty()) {
-                message.append(REVOCATION_DATA_FOR_THESE_CERTIFICATES_NOT_TIMESTAMPED);
-                for (X509Certificate cert : r.revocationDataNotTimestamped) {
-                    message.append('\t').append(cert).append('\n');
-                }
-            }
-            return message.toString();
-        }));
 
         CHECKS.put(PAdESLevel.B_LTA, bltaChecks);
+    }
+
+    protected AbstractPadesLevelRequirements(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns the signature name.
+     *
+     * @return the signature name
+     */
+    public String getSignatureName() {
+        return name;
     }
 
     /**
@@ -288,7 +269,7 @@ abstract class AbstractPadesLevelRequirements {
      */
     public PAdESLevel getHighestAchievedPadesLevel(Iterable<PAdESLevelReport> timestampReports) {
         for (PAdESLevel level : PADES_LEVELS) {
-            ArrayList<String> messages = new ArrayList<>();
+            Set<String> messages = new HashSet<>();
             this.nonConformaties.put(level, messages);
             for (CheckAndMessage check : CHECKS.get(level).shalls) {
                 if (!check.getCheck().test(this)) {
@@ -301,10 +282,11 @@ abstract class AbstractPadesLevelRequirements {
                 }
             }
             for (PAdESLevelReport tsReport : timestampReports) {
+
                 messages.addAll(tsReport.getNonConformaties().get(level));
             }
 
-            messages = new ArrayList<>();
+            messages = new HashSet<>();
             this.warnings.put(level, messages);
             for (CheckAndMessage check : CHECKS.get(level).shoulds) {
                 if (!check.getCheck().test(this)) {
@@ -586,12 +568,12 @@ abstract class AbstractPadesLevelRequirements {
     }
 
     /**
-     * Adds a certificate for which the issuer cannot be found anywhere in the document.
+     * Adds a certificate for which the issuer missing in the DSS.
      *
-     * @param certificateUnderInvestigation a certificate for which the issuer cannot be found anywhere in the document
+     * @param certificateUnderInvestigation a certificate for which the issuer missing in the DSS
      */
-    public void addCertificateIssuerMissing(X509Certificate certificateUnderInvestigation) {
-        certificateIssuerMissing.add(certificateUnderInvestigation);
+    public void addCertificateIssuerNotInDSS(X509Certificate certificateUnderInvestigation) {
+        certificatesIssuerNotInDSS.add(certificateUnderInvestigation);
     }
 
     /**
@@ -599,8 +581,8 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param certificateUnderInvestigation a certificate for which the issuer missing in the DSS
      */
-    public void addCertificateIssuerNotInDSS(X509Certificate certificateUnderInvestigation) {
-        certificateIssuerNotInDss.add(certificateUnderInvestigation);
+    public void addCertificateIssuerMissing(X509Certificate certificateUnderInvestigation) {
+        certificateIssuerMissing.add(certificateUnderInvestigation);
     }
 
     /**
@@ -613,21 +595,21 @@ abstract class AbstractPadesLevelRequirements {
     }
 
     /**
-     * Adds a certificate for which no revocation data was available in a timestamped DSS.
-     *
-     * @param certificateUnderInvestigation a certificate for which no revocation data was available in the DSS
-     */
-    public void addRevocationDataNotTimestamped(X509Certificate certificateUnderInvestigation) {
-        revocationDataNotTimestamped.add(certificateUnderInvestigation);
-    }
-
-    /**
      * Sets whether there is a Proof of Existence covering the DSS.
      *
      * @param poeDssPresent whether there is a Proof of Existence covering the DSS
      */
     public void setPoeDssPresent(boolean poeDssPresent) {
         this.poeDssPresent = poeDssPresent;
+    }
+
+    /**
+     * Adds a certificate for which no revocation data was available in a timestamped DSS.
+     *
+     * @param certificateUnderInvestigation a certificate for which no revocation data was available in the DSS
+     */
+    public void addRevocationDataNotTimestamped(X509Certificate certificateUnderInvestigation) {
+        revocationDataNotTimestamped.add(certificateUnderInvestigation);
     }
 
     /**
@@ -644,7 +626,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @return all non conformaties per level, the SHALL HAVE rules that were broken, per PAdES level
      */
-    public Map<PAdESLevel, List<String>> getNonConformaties() {
+    public Map<PAdESLevel, Collection<String>> getNonConformaties() {
         return nonConformaties;
     }
 
@@ -653,7 +635,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @return all warnings, the SHOULD HAVE rules that were broken, per PAdES level
      */
-    public Map<PAdESLevel, List<String>> getWarnings() {
+    public Map<PAdESLevel, Collection<String>> getWarnings() {
         return warnings;
     }
 
@@ -663,6 +645,69 @@ abstract class AbstractPadesLevelRequirements {
      * @return the specific rules sets from the implementors
      */
     protected abstract Map<PAdESLevel, LevelChecks> getChecks();
+
+    protected static CheckAndMessage createRevocationDssUsageCheck() {
+        return new CheckAndMessage(
+                // is DSS is not present, there will be a non conformity reported fot it.
+                // Reporting on all missing data makes no sense in this case.
+                r -> !r.isDSSPresent || r.revocationDataNotInDSS.isEmpty(),
+                r -> {
+                    StringBuilder message = new StringBuilder();
+                    if (!r.revocationDataNotInDSS.isEmpty()) {
+                        message.append(REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING);
+                        for (X509Certificate cert : r.revocationDataNotInDSS) {
+                            message.append('\t').append(cert).append('\n');
+                        }
+                    }
+                    return message.toString();
+                });
+    }
+
+    protected static CheckAndMessage createCertificatesDssUsageCheck() {
+        return new CheckAndMessage(
+                // if DSS is not present, there will be a non conformity reported fot it.
+                // Reporting on all missing data makes no sense in this case.
+                r -> !r.isDSSPresent || r.certificatesIssuerNotInDSS.isEmpty(),
+                r -> {
+                    StringBuilder message = new StringBuilder();
+                    if (!r.certificatesIssuerNotInDSS.isEmpty()) {
+                        message.append(ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS);
+                        for (X509Certificate cert : r.certificatesIssuerNotInDSS) {
+                            message.append('\t').append(cert).append('\n');
+                        }
+                    }
+                    return message.toString();
+                });
+    }
+
+    protected static CheckAndMessage createRevocationDssPoECoverage() {
+        return new CheckAndMessage(r -> r.revocationDataNotTimestamped.isEmpty(), r -> {
+            StringBuilder message = new StringBuilder();
+            if (!r.revocationDataNotTimestamped.isEmpty()) {
+                message.append(REVOCATION_DATA_FOR_THESE_CERTIFICATES_NOT_TIMESTAMPED);
+                for (X509Certificate cert : r.revocationDataNotTimestamped) {
+                    message.append('\t').append(cert).append('\n');
+                }
+            }
+            return message.toString();
+        });
+    }
+
+    protected static CheckAndMessage createCertificateExternalRetrievalCheck() {
+        return new CheckAndMessage(
+                r -> r.certificateIssuerMissing.isEmpty(),
+                r -> {
+                    StringBuilder message = new StringBuilder();
+                    if (!r.certificateIssuerMissing.isEmpty()) {
+                        message.append(ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING);
+                        for (X509Certificate cert : r.certificateIssuerMissing) {
+                            message.append('\t').append(cert).append('\n');
+                        }
+                    }
+                    return message.toString();
+                });
+    }
+
 
     /**
      * A class to hold all rules for a level

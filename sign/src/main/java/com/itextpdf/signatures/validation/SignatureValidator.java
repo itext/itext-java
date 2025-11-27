@@ -44,6 +44,7 @@ import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
+import com.itextpdf.signatures.PdfDSS;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.validation.context.CertificateSource;
@@ -53,6 +54,7 @@ import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.events.AlgorithmUsageEvent;
 import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
 import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
+import com.itextpdf.signatures.validation.events.DSSProcessedEvent;
 import com.itextpdf.signatures.validation.events.ProofOfExistenceFoundEvent;
 import com.itextpdf.signatures.validation.events.SignatureValidationFailureEvent;
 import com.itextpdf.signatures.validation.events.SignatureValidationSuccessEvent;
@@ -311,6 +313,11 @@ public class SignatureValidator {
     }
 
     private ValidationReport validate(String signatureName) {
+        PdfDictionary dss = originalDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
+        int previousDssHash = 0;
+        if (dss != null) {
+            previousDssHash = new PdfDSS(dss).hashCode();
+        }
         ValidationReport validationReport = new ValidationReport();
         boolean validateSingleSignature = signatureName != null;
 
@@ -332,6 +339,7 @@ public class SignatureValidator {
                     new PdfReader(util.extractRevision(fieldName), originalDocument.getReader().getPropertiesCopy())
                             .setStrictnessLevel(PdfReader.StrictnessLevel.CONSERVATIVE),
                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+                previousDssHash = readAndCompareDss(doc, previousDssHash);
                 subReport.merge(validateLatestSignature(doc));
             } catch (IOException | RuntimeException e) {
                 subReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, REVISIONS_RETRIEVAL_FAILED,
@@ -346,12 +354,25 @@ public class SignatureValidator {
                 return subReport;
             }
         }
-        if (validateSingleSignature) {
+         if (validateSingleSignature) {
             validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION,
                     MessageFormatUtil.format(SIGNATURE_NOT_FOUND, signatureName),
                     ReportItemStatus.INDETERMINATE));
         }
         return validationReport;
+    }
+
+    private int readAndCompareDss(PdfDocument doc, int previousDssHash) {
+        int dssHash = 0;
+        PdfDictionary dss = doc.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
+        if (dss != null) {
+            dssHash = new PdfDSS(dss).hashCode();
+        }
+        if (dssHash != previousDssHash) {
+            eventManager.onEvent(new DSSProcessedEvent());
+            return dssHash;
+        }
+        return previousDssHash;
     }
 
     private void findValidationClients() {

@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation.events;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.actions.IEvent;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -37,6 +38,9 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
 import java.security.Security;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -87,5 +91,40 @@ public class SignatureValidatorEventTriggeringTest extends ExtendedITextTest {
                         e instanceof AlgorithmUsageEvent &&
                                 "Signature verification check.".equals(((AlgorithmUsageEvent)e)
                                 .getUsageLocation())).count());
+    }
+
+    @Test
+    public void dssEventIssuingTest() throws IOException {
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "docWithMultipleSignaturesAndTimeStamp.pdf"))) {
+            MockChainValidator mockCertificateChainValidator = new MockChainValidator();
+            SignatureValidationProperties parameters = new SignatureValidationProperties();
+            MockIssuingCertificateRetriever mockCertificateRetriever = new MockIssuingCertificateRetriever();
+            MockDocumentRevisionsValidator mockDocumentRevisionsValidator = new MockDocumentRevisionsValidator();
+            ValidatorChainBuilder builder = createValidatorChainBuilder(mockCertificateRetriever, parameters,
+                    mockCertificateChainValidator, mockDocumentRevisionsValidator);
+            MockEventListener testEventHandler = new MockEventListener();
+            builder.getEventManager().register(testEventHandler);
+            SignatureValidator signatureValidator = builder.buildSignatureValidator(document);
+            signatureValidator.validateSignatures();
+
+            Assertions.assertEquals(2,
+                    testEventHandler.getEvents().stream().filter(e -> e instanceof DSSProcessedEvent).count());
+            //structure
+            // R1
+            // R2  signer1 (8.0)
+            // R3 TS1 (23.0) DSSv1
+            // R4 signer 2 (30.0)
+            // R5 TS2 (42.0) DSSv2
+            // R6 TD3 (51.0)
+            List<IEvent> filtered = testEventHandler.getEvents().stream()
+                    .filter(e -> e instanceof ProofOfExistenceFoundEvent
+                            || e instanceof DSSProcessedEvent).collect(Collectors.toList());
+            Assertions.assertEquals(ProofOfExistenceFoundEvent.class, filtered.get(0).getClass());
+            Assertions.assertEquals(ProofOfExistenceFoundEvent.class, filtered.get(1).getClass());
+
+            Assertions.assertEquals(DSSProcessedEvent.class, filtered.get(2).getClass());
+            Assertions.assertEquals(ProofOfExistenceFoundEvent.class, filtered.get(3).getClass());
+            Assertions.assertEquals(DSSProcessedEvent.class, filtered.get(4).getClass());
+        }
     }
 }

@@ -42,6 +42,6 @@ public class CertificateIssuerExternalRetrievalEvent extends AbstractCertificate
      */
     @Override
     public EventType getEventType() {
-        return EventType.CERTIFICATE_ISSUER_EXTERNAL_RETRIEVAL;
+        return EventType.CERTIFICATE_ISSUER_NOT_FROM_DOCUMENT;
     }
 }

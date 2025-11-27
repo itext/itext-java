@@ -67,21 +67,33 @@ class SignatureRequirements extends AbstractPadesLevelRequirements {
         LevelChecks bltChecks = new LevelChecks();
         CHECKS.put(PAdESLevel.B_LT, bltChecks);
 
+        bltChecks.shalls.add(new CheckAndMessage(
+                r -> r.isDSSPresent,
+                DSS_DICTIONARY_IS_MISSING));
+        bltChecks.shalls.add(createRevocationDssUsageCheck());
+        bltChecks.shalls.add(createCertificateExternalRetrievalCheck());
+        bltChecks.shoulds.add(createCertificatesDssUsageCheck());
         LevelChecks bltaChecks = new LevelChecks();
         CHECKS.put(PAdESLevel.B_LTA, bltaChecks);
 
         bltaChecks.shalls.add(new CheckAndMessage(
                 r -> r.documentTimestampPresent,
                 DOCUMENT_TIMESTAMP_IS_MISSING));
+
         bltaChecks.shalls.add(new CheckAndMessage(r-> r.poeDssPresent,
                 DSS_IS_NOT_COVERED_BY_TIMESTAMP));
+        bltaChecks.shalls.add(createRevocationDssPoECoverage());
+
+
     }
 
     /**
      * Creates a new instance.
+     *
+     * @param name the signature name
      */
-    public SignatureRequirements() {
-        super();
+    public SignatureRequirements(String name) {
+        super(name);
     }
 
     @Override

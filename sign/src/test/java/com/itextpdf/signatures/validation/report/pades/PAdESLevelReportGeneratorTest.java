@@ -132,7 +132,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         signatureDict.put(PdfName.M, new PdfString("D:20231204144752+01'00'"));
         PdfSignature sig = new PdfSignature(signatureDict);
 
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -160,7 +160,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -187,7 +187,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
-        event = new RevocationNotFromDssEvent((X509Certificate) chain[0]);
+        event = new CertificateIssuerExternalRetrievalEvent((X509Certificate) chain[0]);
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
         eventManager.onEvent(event);
@@ -199,7 +199,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
         Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LT).stream()
                 .anyMatch(nc -> nc.contains(
-                        AbstractPadesLevelRequirements.REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING)));
+                        AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING)));
     }
 
     @Test
@@ -363,7 +363,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -391,7 +391,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -419,7 +419,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -451,7 +451,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -482,7 +482,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -518,7 +518,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -546,7 +546,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature sig = new PdfSignature(signatureDict);
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -577,7 +577,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature sig = new PdfSignature(signatureDict);
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -606,7 +606,8 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
+
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -653,21 +654,21 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
-        event = new CertificateIssuerExternalRetrievalEvent((X509Certificate) chain[0]);
+        event = new CertificateIssuerRetrievedOutsideDSSEvent((X509Certificate) chain[0]);
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
         eventManager.onEvent(event);
 
         DocumentPAdESLevelReport report = sut.getReport();
         System.out.println(report);
-        Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("test").getLevel());
-        Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
-        Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LT).stream()
-                .anyMatch(nc -> nc.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING)));
+        Assertions.assertEquals(PAdESLevel.B_LTA, report.getSignatureReport("test").getLevel());
+        Assertions.assertEquals(PAdESLevel.B_LTA, report.getDocumentLevel());
+        Assertions.assertTrue(report.getSignatureReport("test").getWarnings().get(PAdESLevel.B_LT).stream()
+                .anyMatch(w -> w.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS)));
     }
 
     @Test
@@ -685,7 +686,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
@@ -701,12 +702,12 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         Assertions.assertEquals(PAdESLevel.B_LTA, report.getDocumentLevel());
         Assertions.assertTrue(report.getSignatureReport("test").getWarnings().get(PAdESLevel.B_LT)
                 .stream()
-                .anyMatch(nc ->
-                        nc.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS)));
+                .anyMatch(w ->
+                        w.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS)));
     }
 
     @Test
-    public void testB_DSSMissingRevData() throws CertificateException, IOException {
+    public void testB_DSSMissingCrlResponse() throws CertificateException, IOException {
         PdfDictionary signatureDict = new PdfDictionary();
         PdfString contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.B_LTA_1_B64));
         contents.setHexWriting(true);
@@ -721,7 +722,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
@@ -755,7 +756,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
@@ -816,7 +817,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         timestampDict.put(PdfName.SubFilter, PdfName.ETSI_CAdES_DETACHED);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
@@ -829,7 +830,93 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
 
         Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LTA).stream()
                 .anyMatch(nc -> nc.contains(DocumentTimestampRequirements.SUBFILTER_NOT_ETSI_RFC3161)));
+    }
 
+
+    @Test
+    public void testB_LTAOlderTimestampNotCoveredInDSS() {
+        PdfDictionary signatureDict = new PdfDictionary();
+        PdfString contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.B_LTA_1_B64));
+        contents.setHexWriting(true);
+        signatureDict.put(PdfName.Contents, contents);
+        signatureDict.put(PdfName.Filter, PdfName.Sig);
+        signatureDict.put(PdfName.SubFilter, PdfName.ETSI_CAdES_DETACHED);
+        signatureDict.put(PdfName.ByteRange, new PdfString("1 2 3 4"));
+        signatureDict.put(PdfName.M, new PdfString("D:20231204144752+01'00'"));
+        PdfSignature sig = new PdfSignature(signatureDict);
+
+        contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.LTA_1_TS_B64));
+        PdfSignature timestampDict = getTimestampPdfDictionary(contents);
+        eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
+        eventManager.onEvent(new SignatureValidationSuccessEvent());
+        eventManager.onEvent(new DSSProcessedEvent());
+
+        timestampDict = getTimestampPdfDictionary(contents);
+        eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
+        eventManager.onEvent(new RevocationNotFromDssEvent(new X509MockCertificate()));
+        eventManager.onEvent(new SignatureValidationSuccessEvent());
+
+        IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
+        eventManager.onEvent(event);
+        event = new SignatureValidationSuccessEvent();
+        eventManager.onEvent(event);
+
+        DocumentPAdESLevelReport report = sut.getReport();
+        System.out.println(report);
+        Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("test")
+                .getLevel());
+        Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
+    }
+
+
+    @Test
+    public void testB_LTAMultipleTimestampsBeforeDSS() {
+        PdfDictionary signatureDict = new PdfDictionary();
+        PdfString contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.B_LTA_1_B64));
+        contents.setHexWriting(true);
+        signatureDict.put(PdfName.Contents, contents);
+        signatureDict.put(PdfName.Filter, PdfName.Sig);
+        signatureDict.put(PdfName.SubFilter, PdfName.ETSI_CAdES_DETACHED);
+        signatureDict.put(PdfName.ByteRange, new PdfString("1 2 3 4"));
+        signatureDict.put(PdfName.M, new PdfString("D:20231204144752+01'00'"));
+        PdfSignature sig = new PdfSignature(signatureDict);
+
+        contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.LTA_1_TS_B64));
+        PdfSignature timestampDict = getTimestampPdfDictionary(contents);
+        eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig4"));
+        eventManager.onEvent(new RevocationNotFromDssEvent(new X509MockCertificate()));
+        eventManager.onEvent(new SignatureValidationSuccessEvent());
+
+        timestampDict = getTimestampPdfDictionary(contents);
+        eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig3"));
+        eventManager.onEvent(new RevocationNotFromDssEvent(new X509MockCertificate()));
+        eventManager.onEvent(new SignatureValidationSuccessEvent());
+
+        timestampDict = getTimestampPdfDictionary(contents);
+        eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig2"));
+        eventManager.onEvent(new RevocationNotFromDssEvent(new X509MockCertificate()));
+        eventManager.onEvent(new SignatureValidationSuccessEvent());
+
+        eventManager.onEvent(new DSSProcessedEvent());
+
+
+        timestampDict = getTimestampPdfDictionary(contents);
+        eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
+        eventManager.onEvent(new SignatureValidationSuccessEvent());
+
+        eventManager.onEvent(new DSSProcessedEvent());
+
+
+        IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
+        eventManager.onEvent(event);
+        event = new SignatureValidationSuccessEvent();
+        eventManager.onEvent(event);
+
+        DocumentPAdESLevelReport report = sut.getReport();
+        System.out.println(report);
+        Assertions.assertEquals(PAdESLevel.B_LTA, report.getSignatureReport("test")
+                .getLevel());
+        Assertions.assertEquals(PAdESLevel.B_LTA, report.getDocumentLevel());
     }
 
     @Test
@@ -848,7 +935,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
 
@@ -893,7 +980,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
 
@@ -930,7 +1017,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         eventManager.onEvent(new AlgorithmUsageEvent("MD5", OID.MD5, SignatureValidator.VALIDATING_SIGNATURE_NAME));
@@ -965,7 +1052,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
 
         eventManager.onEvent(new SignatureValidationSuccessEvent());
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
@@ -996,7 +1083,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
 
         eventManager.onEvent(new SignatureValidationFailureEvent(true, "test"));
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
@@ -1027,7 +1114,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
 
         eventManager.onEvent(new CertificateIssuerRetrievedOutsideDSSEvent(new X509MockCertificate()));
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
@@ -1058,7 +1145,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
 
         eventManager.onEvent(new CertificateIssuerExternalRetrievalEvent(new X509MockCertificate()));
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
@@ -1089,7 +1176,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature timestampDict = getTimestampPdfDictionary(contents);
         eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
         eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
+        eventManager.onEvent(new DSSProcessedEvent());
 
         eventManager.onEvent(new RevocationNotFromDssEvent(new X509MockCertificate()));
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
@@ -1126,7 +1213,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
                 .getLevel());
         Assertions.assertEquals(PAdESLevel.B_B, report.getDocumentLevel());
     }
-    
+
     private static PdfSignature getTimestampPdfDictionary(PdfString contents) {
         PdfDictionary timestampDict = new PdfDictionary();
         timestampDict.put(PdfName.Contents, contents);
@@ -1136,4 +1223,8 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         timestampDict.put(PdfName.M, new PdfString("D:20231204144752+01'00'"));
         return new PdfSignature(timestampDict);
     }
+
+    //missing checks
+    //SIGNED_DATA_CERTIFICATES_SHOULD_INCLUDE_THE_ENTIRE_CERTIFICATE_CHAIN
+
 }

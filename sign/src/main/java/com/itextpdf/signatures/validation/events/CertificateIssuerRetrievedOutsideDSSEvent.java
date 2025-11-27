@@ -44,6 +44,6 @@ public class CertificateIssuerRetrievedOutsideDSSEvent extends AbstractCertifica
      */
     @Override
     public EventType getEventType() {
-        return EventType.CERTIFICATE_ISSUER_OTHER_INTERNAL_SOURCE_USED;
+        return EventType.CERTIFICATE_ISSUER_NOT_FROM_DSS;
     }
 }

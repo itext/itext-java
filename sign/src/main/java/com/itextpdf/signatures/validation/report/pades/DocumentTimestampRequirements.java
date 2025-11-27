@@ -32,50 +32,66 @@ class DocumentTimestampRequirements extends AbstractPadesLevelRequirements {
 
     public static final String SUBFILTER_NOT_ETSI_RFC3161 = "Timestamp SubFilter entry value is not ETSI.RFC3161";
 
-    private static Map<PAdESLevel, LevelChecks> checks = new HashMap<PAdESLevel, LevelChecks>();
-    private static Map<PAdESLevel, LevelChecks> dssCoveredTsChecks = new HashMap<PAdESLevel, LevelChecks>();
-    private final boolean firstTimestamp;
+    private static final Map<PAdESLevel, LevelChecks> CHECKS = new HashMap<PAdESLevel, LevelChecks>();
+    private static final Map<PAdESLevel, LevelChecks> DSS_COVERED_TS_CHECKS = new HashMap<PAdESLevel, LevelChecks>();
+    private final boolean coveredByDss;
 
     static {
         LevelChecks bbChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_B, bbChecks);
+        CHECKS.put(PAdESLevel.B_B, bbChecks);
 
         LevelChecks btChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_T, btChecks);
+        CHECKS.put(PAdESLevel.B_T, btChecks);
 
         LevelChecks bltChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_LT, bltChecks);
+        CHECKS.put(PAdESLevel.B_LT, bltChecks);
 
         LevelChecks bltaChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_LTA, bltaChecks);
+        CHECKS.put(PAdESLevel.B_LTA, bltaChecks);
 
         bltaChecks.shalls.add(new CheckAndMessage(
                 r -> r.timestampDictionaryEntrySubFilterValueEtsiRfc3161,
                 SUBFILTER_NOT_ETSI_RFC3161));
 
-        bbChecks = new LevelChecks();
-        dssCoveredTsChecks.put(PAdESLevel.B_B, bbChecks);
+        LevelChecks dssBbChecks = new LevelChecks();
+        dssBbChecks.shalls.addAll(bbChecks.shalls);
+        dssBbChecks.shoulds.addAll(bbChecks.shoulds);
+        DSS_COVERED_TS_CHECKS.put(PAdESLevel.B_B, dssBbChecks);
 
-        btChecks = new LevelChecks();
-        dssCoveredTsChecks.put(PAdESLevel.B_T, btChecks);
+        LevelChecks dssBtChecks = new LevelChecks();
+        dssBtChecks.shalls.addAll(btChecks.shalls);
+        dssBtChecks.shoulds.addAll(btChecks.shoulds);
+        DSS_COVERED_TS_CHECKS.put(PAdESLevel.B_T, dssBtChecks);
 
-        bltChecks = new LevelChecks();
-        dssCoveredTsChecks.put(PAdESLevel.B_LT, bltChecks);
+        LevelChecks dssBltChecks = new LevelChecks();
+        dssBltChecks.shalls.addAll(bltChecks.shalls);
+        dssBltChecks.shoulds.addAll(bltChecks.shoulds);
+        DSS_COVERED_TS_CHECKS.put(PAdESLevel.B_LT, dssBltChecks);
 
-        bltaChecks = new LevelChecks();
-        dssCoveredTsChecks.put(PAdESLevel.B_LTA, bltaChecks);
+        dssBltChecks.shalls.add(createRevocationDssUsageCheck());
+        bltChecks.shalls.add(createCertificateExternalRetrievalCheck());
+        dssBltChecks.shoulds.add(createCertificatesDssUsageCheck());
+
+        LevelChecks dssBltaChecks = new LevelChecks();
+        dssBltaChecks.shalls.addAll(bltaChecks.shalls);
+        dssBltaChecks.shoulds.addAll(bltaChecks.shoulds);
+        dssBltaChecks.shalls.add(createRevocationDssPoECoverage());
+        DSS_COVERED_TS_CHECKS.put(PAdESLevel.B_LTA, dssBltaChecks);
     }
 
     /**
      * Creates a new instance.
      */
-    public DocumentTimestampRequirements(boolean firstTimestamp) {
-        super();
-        this.firstTimestamp = firstTimestamp;
+    public DocumentTimestampRequirements(String name, boolean coveredByDss) {
+        super(name);
+        this.coveredByDss = coveredByDss;
     }
 
     @Override
     protected Map<PAdESLevel, LevelChecks> getChecks() {
-        return checks;
+        if (coveredByDss) {
+            return DSS_COVERED_TS_CHECKS;
+        }
+        return CHECKS;
     }
 }

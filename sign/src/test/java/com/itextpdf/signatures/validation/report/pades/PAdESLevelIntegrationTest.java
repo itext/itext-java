@@ -40,6 +40,7 @@ import com.itextpdf.signatures.validation.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
 import com.itextpdf.test.ExtendedITextTest;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
@@ -95,7 +96,7 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
         builder.withPAdESLevelReportGenerator(reportGenerator);
         SignatureValidationProperties properties = new SignatureValidationProperties();
         properties.setFreshness(ValidatorContexts.all(), CertificateSources.all(),
-                TimeBasedContexts.of(TimeBasedContext.PRESENT), Duration.ofDays(99999));
+                TimeBasedContexts.all(), Duration.ofDays(99999));
         builder.withSignatureValidationProperties(properties);
     }
 
@@ -107,6 +108,17 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
             Assertions.assertEquals(PAdESLevel.B_B, report.getDocumentLevel());
+            Assertions.assertTrue(report.getSignatureReport("Signature1").getNonConformaties()
+                    .get(PAdESLevel.B_T).stream().anyMatch(
+                    nc -> AbstractPadesLevelRequirements.
+                            THERE_MUST_BE_A_SIGNATURE_OR_DOCUMENT_TIMESTAMP_AVAILABLE.equals(nc)
+            ));
+            Assertions.assertTrue(report.getSignatureReport("Signature1").getWarnings().
+                    get(PAdESLevel.B_B).stream().anyMatch(
+                    w->  AbstractPadesLevelRequirements.
+                            SIGNED_DATA_CERTIFICATES_SHOULD_INCLUDE_THE_ENTIRE_CERTIFICATE_CHAIN_AND_INCLUDE_CA
+                            .equals(w)
+            ));
         }
     }
 
@@ -118,6 +130,18 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
             Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LT).stream()
+                    .filter(nc-> AbstractPadesLevelRequirements.DSS_DICTIONARY_IS_MISSING.equals(nc))
+                    .count());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LT).size());
+
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_T).size());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_B).size());
+
         }
     }
 
@@ -129,6 +153,21 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
             Assertions.assertEquals(PAdESLevel.B_LT, report.getDocumentLevel());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LTA).stream()
+                    .filter(nc -> AbstractPadesLevelRequirements.DSS_IS_NOT_COVERED_BY_TIMESTAMP.equals(nc))
+                    .count());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LTA).stream()
+                    .filter(nc -> AbstractPadesLevelRequirements.DOCUMENT_TIMESTAMP_IS_MISSING.equals(nc))
+                    .count());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_LT).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_T).size());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_B).size());
+
         }
     }
 
@@ -141,8 +180,35 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             SignatureValidator validator = builder.buildSignatureValidator(doc);
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
-            Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("Signature1").getLevel());
+            Assertions.assertEquals(PAdESLevel.B_LT, report.getSignatureReport("Signature1").getLevel());
             Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("Signature2").getLevel());
+
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LTA).stream()
+                    .filter(nc -> AbstractPadesLevelRequirements.DSS_IS_NOT_COVERED_BY_TIMESTAMP.equals(nc))
+                    .count());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LTA).stream()
+                    .filter(nc -> AbstractPadesLevelRequirements.DOCUMENT_TIMESTAMP_IS_MISSING.equals(nc)).count());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_LT).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_T).size());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_B).size());
+
+            Assertions.assertEquals(1, report.getSignatureReport("Signature2")
+                    .getNonConformaties().get(PAdESLevel.B_LT).stream()
+                    .filter(nc-> AbstractPadesLevelRequirements.DSS_DICTIONARY_IS_MISSING.equals(nc))
+                    .count());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature2")
+                    .getNonConformaties().get(PAdESLevel.B_LT).size());
+
+            Assertions.assertEquals(0, report.getSignatureReport("Signature2")
+                    .getWarnings().get(PAdESLevel.B_T).size());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature2")
+                    .getWarnings().get(PAdESLevel.B_B).size());
+
         }
     }
 
@@ -155,8 +221,26 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             SignatureValidator validator = builder.buildSignatureValidator(doc);
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
-            Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("Signature1").getLevel());
-            Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("Signature2").getLevel());
+            Assertions.assertEquals(PAdESLevel.B_LTA, report.getSignatureReport("Signature1").getLevel());
+            Assertions.assertEquals(PAdESLevel.B_LTA, report.getSignatureReport("Signature2").getLevel());
+
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_LTA).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_LT).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_T).size());
+            Assertions.assertEquals(2, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_B).size());
+
+            Assertions.assertEquals(0, report.getSignatureReport("Signature2")
+                    .getWarnings().get(PAdESLevel.B_LTA).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature2")
+                    .getWarnings().get(PAdESLevel.B_LT).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature2")
+                    .getWarnings().get(PAdESLevel.B_T).size());
+            Assertions.assertEquals(2, report.getSignatureReport("Signature2")
+                    .getWarnings().get(PAdESLevel.B_B).size());
         }
     }
 
@@ -169,6 +253,21 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
             Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("Signature1").getLevel());
+
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LT).stream().filter(nc->
+                            nc.contains(
+                                    AbstractPadesLevelRequirements.REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING))
+                    .count());
+            // There should be only one certificate listed
+            // each listed certificate contains a SerialNumber
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LT).stream().filter(nc-> nc.contains("SerialNumber"))
+                    .count());
+            // it should be the correct certificate
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LT).stream()
+                    .filter(nc-> nc.contains("iTextAdvancedTSTest")).count());
         }
     }
 
@@ -179,8 +278,15 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             SignatureValidator validator = builder.buildSignatureValidator(doc);
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
-            // TODO DEVSIX-9591 The level is T because there is no logic to distinguish between last timestamp and everything else.
-            Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
+            Assertions.assertEquals(PAdESLevel.B_LTA, report.getDocumentLevel());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_LTA).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_LT).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_T).size());
+            Assertions.assertEquals(2, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_B).size());
         }
     }
 
@@ -193,6 +299,20 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
             Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LT).stream().filter(nc->
+                            nc.contains(
+                                    AbstractPadesLevelRequirements.REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING))
+                    .count());
+            // There should be only one certificated listed
+            // each listed certificate contains a SerialNumber
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LT).stream().filter(nc-> nc.contains("SerialNumber"))
+                    .count());
+            // it should be the correct certificate
+            Assertions.assertEquals(1, report.getSignatureReport("Signature1")
+                    .getNonConformaties().get(PAdESLevel.B_LT).stream()
+                    .filter(nc-> nc.contains("iTextAdvancedTSTest")).count());
         }
     }
 
@@ -218,8 +338,7 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             SignatureValidator validator = builder.buildSignatureValidator(doc);
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
-            // TODO DEVSIX-9591 The level is T because there is no logic to distinguish between last timestamp and everything else.
-            Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
+            Assertions.assertEquals(PAdESLevel.B_LTA, report.getDocumentLevel());
         }
     }
 
@@ -231,8 +350,15 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
             SignatureValidator validator = builder.buildSignatureValidator(doc);
             validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
-            // TODO DEVSIX-9591 The level is T because there is no logic to distinguish between last timestamp and everything else.
-            Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
+            Assertions.assertEquals(PAdESLevel.B_LTA, report.getDocumentLevel());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_LTA).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_LT).size());
+            Assertions.assertEquals(0, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_T).size());
+            Assertions.assertEquals(2, report.getSignatureReport("Signature1")
+                    .getWarnings().get(PAdESLevel.B_B).size());
         }
     }
 }
