@@ -33,20 +33,22 @@ public final class NamespaceConstant {
     
     public static final String ITEXT = "com.itextpdf";
 
-    //Core
+    // Core
+    public static final String CORE_BARCODES = ITEXT + ".barcodes";
+    public static final String CORE_COMMONS = ITEXT + ".commons";
+    @Deprecated
     public static final String CORE_EVENTS = ITEXT + ".events";
+    public static final String CORE_FORMS = ITEXT + ".forms";
     public static final String CORE_IO = ITEXT + ".io";
     public static final String CORE_KERNEL = ITEXT + ".kernel";
     public static final String CORE_LAYOUT = ITEXT + ".layout";
-    public static final String CORE_BARCODES = ITEXT + ".barcodes";
     public static final String CORE_PDFA = ITEXT + ".pdfa";
     public static final String CORE_PDFUA = ITEXT + ".pdfua";
     public static final String CORE_SIGN = ITEXT + ".signatures";
-    public static final String CORE_FORMS = ITEXT + ".forms";
     public static final String CORE_SXP = ITEXT + ".styledxmlparser";
     public static final String CORE_SVG = ITEXT + ".svg";
     
-    //Addons
+    // Addons
     public static final String PDF_HTML = ITEXT + ".html2pdf";
     public static final String PDF_SWEEP = ITEXT + ".pdfcleanup";
     public static final String PDF_OCR = ITEXT + ".pdfocr";
@@ -54,7 +56,7 @@ public final class NamespaceConstant {
     public static final String PDF_OCR_ONNXTR = PDF_OCR + ".onnxtr";
 
     public static final List<String> ITEXT_CORE_NAMESPACES = Collections.unmodifiableList(Arrays.asList(
-            NamespaceConstant.CORE_EVENTS,
+            NamespaceConstant.CORE_COMMONS,
             NamespaceConstant.CORE_IO,
             NamespaceConstant.CORE_KERNEL,
             NamespaceConstant.CORE_LAYOUT,
