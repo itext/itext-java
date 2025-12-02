@@ -75,6 +75,11 @@
             <fileset reason="Different implementation of thread-safe set on Java and .NET">
                 <file path="com/itextpdf/commons/datastructures/ConcurrentHashSet.java"/>
             </fileset>
+            <fileset reason="Different implementation JSON serialization/deserialization Java and .NET">
+                <file path="com/itextpdf/commons/json/JsonValueConverter.java"/>
+                <file path="com/itextpdf/commons/json/JsonValueDeserializer.java"/>
+                <file path="com/itextpdf/commons/json/JsonValueSerializer.java"/>
+            </fileset>
             <!-- io -->
             <fileset reason="LimitedInputStream extends InputStream, which has different interfaces in Java and .NET">
                 <file path="com/itextpdf/io/resolver/resource/LimitedInputStream.java" />

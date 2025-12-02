@@ -57,6 +57,8 @@ public final class CommonsExceptionMessageConstant {
 
     public static final String ZIP_ENTRY_NOT_FOUND = "Zip entry not found for name: {0}";
     public static final String UNSUPPORTED_OPERATION = "This operation is not supported.";
+    public static final String JSON_PARSE_FAILED = "Failed to parse json string: {0}";
+    public static final String JSON_SERIALIZATION_FAILED = "Failed to serialize json into string: {0}";
 
     private CommonsExceptionMessageConstant() {
         // Empty constructor.

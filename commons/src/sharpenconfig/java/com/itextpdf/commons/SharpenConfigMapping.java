@@ -70,6 +70,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("java.util.EnumSet<>", "iText.Commons.Utils.Collections.EnumSet");
         configurator.addCustomUsingForMethodInvocation("java.util.Map.computeIfAbsent",  Collections.singletonList("iText.Commons.Utils.Collections"));
         configurator.addCustomUsingForMethodInvocation("java.util.Map.getOrDefault",  Collections.singletonList("iText.Commons.Utils.Collections"));
+        configurator.mapMethod("java.util.Map.equals", "System.Linq.Enumerable.SequenceEqual", false);
         configurator.mapMethod("java.lang.Integer.toHexString", "iText.Commons.Utils.JavaUtil.IntegerToHexString", false);
         configurator.mapMethod("java.lang.Integer.toOctalString", "iText.Commons.Utils.JavaUtil.IntegerToOctalString", false);
         configurator.mapMethod("java.lang.Integer.toString", "iText.Commons.Utils.JavaUtil.IntegerToString", false);
@@ -308,6 +309,12 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMemberToInvocationsChain("java.util.LinkedList.peekLast", "Last.Value", MemberKind.Property);
         configurator.mapMethod("java.util.LinkedList.add", "AddLast");
         configurator.mapMethod("java.util.LinkedList.pollLast", "RemoveLast");
+
+        // More lenient behaviour in net461
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.leadingZerosInNumbersTest()", "NETSTANDARD2_0");
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.malformedJsonSingleQuotesTest()", "NETSTANDARD2_0");
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.malformedJsonTrailingCommaTest()", "NETSTANDARD2_0");
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.malformedJsonUnescapedNewlineInStringTest()", "NETSTANDARD2_0");
 
         if (useBCWrappersConfig) {
             BCWrappersConfigurationUtils.applyMappingConfiguration(configurator);
