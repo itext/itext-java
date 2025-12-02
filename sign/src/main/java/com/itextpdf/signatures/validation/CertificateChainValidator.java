@@ -31,6 +31,7 @@ import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
 import com.itextpdf.signatures.validation.events.CertificateIssuerExternalRetrievalEvent;
 import com.itextpdf.signatures.validation.events.CertificateIssuerRetrievedOutsideDSSEvent;
+import com.itextpdf.signatures.validation.events.AlgorithmUsageEvent;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.DynamicCertificateExtension;
 import com.itextpdf.signatures.validation.lotl.LotlTrustedStore;
@@ -138,6 +139,7 @@ public class CertificateChainValidator {
 
     private ValidationReport validate(ValidationReport result, ValidationContext context, X509Certificate certificate,
             Date validationDate, List<X509Certificate> previousCertificates) {
+        reportAlgorithmUsage(certificate);
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.CERTIFICATE_CHAIN_VALIDATOR);
         validateRequiredExtensions(result, localContext, certificate, previousCertificates.size());
         if (stopValidation(result, localContext)) {
@@ -160,6 +162,11 @@ public class CertificateChainValidator {
 
         validateChain(result, localContext, certificate, validationDate, previousCertificates);
         return result;
+    }
+
+    private void reportAlgorithmUsage(X509Certificate certificate) {
+        eventManager.onEvent(new AlgorithmUsageEvent(
+                certificate.getSigAlgName(), certificate.getSigAlgOID(), CERTIFICATE_CHECK));
     }
 
     private void handlePadesEvents(X509Certificate certificate) {

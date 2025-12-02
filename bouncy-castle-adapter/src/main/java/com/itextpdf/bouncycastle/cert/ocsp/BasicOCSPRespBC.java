@@ -24,10 +24,12 @@ package com.itextpdf.bouncycastle.cert.ocsp;
 
 import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
 import com.itextpdf.bouncycastle.asn1.ASN1ObjectIdentifierBC;
+import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
 import com.itextpdf.bouncycastle.cert.X509CertificateHolderBC;
 import com.itextpdf.bouncycastle.operator.ContentVerifierProviderBC;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRespID;
@@ -173,5 +175,13 @@ public class BasicOCSPRespBC implements IBasicOCSPResp {
     @Override
     public String toString() {
         return basicOCSPResp.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IAlgorithmIdentifier getSignatureAlgorithmID() {
+        return new AlgorithmIdentifierBC(basicOCSPResp.getSignatureAlgorithmID());
     }
 }

@@ -85,7 +85,8 @@ public class CertificateEventsFiredTest extends ExtendedITextTest {
         CertificateChainValidator validator = builder.buildCertificateChainValidator();
         validator.validateCertificate(VALIDATION_CONTEXT, dummyCertificate, CURRENT_DATE);
 
-        Assertions.assertEquals(0, customReportGenerator.firedEvents.size());
+        Assertions.assertEquals(0, customReportGenerator.firedEvents.stream()
+                .filter(e -> e instanceof CertificateIssuerExternalRetrievalEvent).count());
     }
 
     @Test
@@ -96,8 +97,8 @@ public class CertificateEventsFiredTest extends ExtendedITextTest {
         CertificateChainValidator validator = builder.buildCertificateChainValidator();
         validator.validateCertificate(VALIDATION_CONTEXT, dummyCertificate, CURRENT_DATE);
 
-        Assertions.assertEquals(1, customReportGenerator.firedEvents.size());
-        Assertions.assertTrue(customReportGenerator.firedEvents.get(0) instanceof CertificateIssuerRetrievedOutsideDSSEvent);
+        Assertions.assertEquals(1, customReportGenerator.firedEvents.stream()
+                .filter(e -> e instanceof CertificateIssuerRetrievedOutsideDSSEvent).count());
     }
 
     @Test
@@ -108,9 +109,10 @@ public class CertificateEventsFiredTest extends ExtendedITextTest {
         CertificateChainValidator validator = builder.buildCertificateChainValidator();
         validator.validateCertificate(VALIDATION_CONTEXT, dummyCertificate, CURRENT_DATE);
 
-        Assertions.assertEquals(2, customReportGenerator.firedEvents.size());
-        Assertions.assertTrue(customReportGenerator.firedEvents.get(0) instanceof CertificateIssuerExternalRetrievalEvent);
-        Assertions.assertTrue(customReportGenerator.firedEvents.get(1) instanceof CertificateIssuerRetrievedOutsideDSSEvent);
+        Assertions.assertEquals(1, customReportGenerator.firedEvents.stream()
+                .filter(e -> e instanceof CertificateIssuerExternalRetrievalEvent).count());
+        Assertions.assertEquals(1, customReportGenerator.firedEvents.stream()
+                .filter(e -> e instanceof CertificateIssuerRetrievedOutsideDSSEvent).count());
     }
 
     @Test
@@ -120,8 +122,8 @@ public class CertificateEventsFiredTest extends ExtendedITextTest {
         CertificateChainValidator validator = builder.buildCertificateChainValidator();
         validator.validateCertificate(VALIDATION_CONTEXT, dummyCertificate, CURRENT_DATE);
 
-        Assertions.assertEquals(1, customReportGenerator.firedEvents.size());
-        Assertions.assertTrue(customReportGenerator.firedEvents.get(0) instanceof CertificateIssuerExternalRetrievalEvent);
+        Assertions.assertEquals(1, customReportGenerator.firedEvents.stream()
+                .filter(e -> e instanceof CertificateIssuerExternalRetrievalEvent).count());
     }
 
     @Test
@@ -134,6 +136,7 @@ public class CertificateEventsFiredTest extends ExtendedITextTest {
         CertificateChainValidator validator = builder.buildCertificateChainValidator();
         validator.validateCertificate(VALIDATION_CONTEXT, dummyCertificate, CURRENT_DATE);
 
-        Assertions.assertEquals(0, customReportGenerator.firedEvents.size());
+        Assertions.assertEquals(0, customReportGenerator.firedEvents.stream()
+                .filter(e -> e instanceof CertificateIssuerExternalRetrievalEvent).count());
     }
 }

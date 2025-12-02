@@ -67,8 +67,10 @@ abstract class AbstractPadesLevelRequirements {
             + "from the signature dictionary";
     public static final String CERT_ENTRY_IS_ADDED_TO_THE_SIGNATURE_DICTIONARY = "Cert entry is added to the "
             + "signature dictionary";
-    public static final String AN_UNSUPPORTED_HASH_OR_SIGNING_ALGORITHM_WAS_USED = "An unsupported hash or signing "
-            + "algorithm was used:\n";
+    public static final String A_DISCOURAGED_HASH_OR_SIGNING_ALGORITHM_WAS_USED = "A hash or signing "
+            + "algorithm was used that is not allowed according to ETSI 119 312 :\n";
+    public static final String A_FORBIDDEN_HASH_OR_SIGNING_ALGORITHM_WAS_USED = "A hash or signing "
+            + "algorithm was used that is not allowed according to ETSI 319 142-1 :\n";
     public static final String SIGNED_ATTRIBUTES_MUST_CONTAIN_SINGING_CERTIFICATE =
             "The singing certificate must be added as a signed attribute";
     public static final String SIGNED_ATTRIBUTES_SHOULD_CONTAIN_SIGNING_CERTIFICATE_V2 =
@@ -84,6 +86,7 @@ abstract class AbstractPadesLevelRequirements {
     public static final String REVOCATION_DATA_FOR_THESE_CERTIFICATES_NOT_TIMESTAMPED = "Revocation data for the "
             + "following certificates is not timestamped:\n";
     public static final String DOCUMENT_TIMESTAMP_IS_MISSING = "A document timestamp is missing";
+    public static final String DSS_IS_NOT_COVERED_BY_TIMESTAMP = "The DSS entry is not covered by a document timestamp";
 
     private static final Map<PAdESLevel, LevelChecks> CHECKS = new HashMap<>();
     private static final PAdESLevel[] PADES_LEVELS =
@@ -91,7 +94,8 @@ abstract class AbstractPadesLevelRequirements {
     private final Map<PAdESLevel, List<String>> nonConformaties = new HashMap<>();
     private final Map<PAdESLevel, List<String>> warnings = new HashMap<>();
     //section 6.2.1
-    protected List<String> algorithmUsage = new ArrayList<>();
+    protected List<String> discouragedAlgorithmUsage = new ArrayList<String>();
+    protected List<String> forbiddenAlgorithmUsage = new ArrayList<String>();
     // Table 1 row 1
     protected boolean signedDataCertificatesPresent;
     // Table 1 row 1 note a
@@ -134,6 +138,10 @@ abstract class AbstractPadesLevelRequirements {
     protected boolean poeSignaturePresent;
     // Table 1 row 25
     protected boolean documentTimestampPresent;
+    // Table 1 row 27
+    protected boolean isDSSPresent;
+    // Table 1 row 29
+    protected boolean poeDssPresent;
     // Table 1 row 30 note x
     protected List<X509Certificate> certificateIssuerMissing = new ArrayList<>();
     protected List<X509Certificate> certificateIssuerNotInDss = new ArrayList<>();
@@ -190,15 +198,26 @@ abstract class AbstractPadesLevelRequirements {
                 r -> !r.dictionaryEntryCertPresent,
                 CERT_ENTRY_IS_ADDED_TO_THE_SIGNATURE_DICTIONARY));
 
-        bbChecks.shalls.add(new CheckAndMessage(
-                r -> r.algorithmUsage.isEmpty(),
+        bbChecks.shoulds.add(new CheckAndMessage(
+                r -> r.discouragedAlgorithmUsage.isEmpty(),
                 r -> {
-                    StringBuilder message = new StringBuilder(AN_UNSUPPORTED_HASH_OR_SIGNING_ALGORITHM_WAS_USED);
-                    for (String usage : r.algorithmUsage) {
+                    StringBuilder message = new StringBuilder(A_DISCOURAGED_HASH_OR_SIGNING_ALGORITHM_WAS_USED);
+                    for (String usage : r.discouragedAlgorithmUsage) {
                         message.append('\t').append(usage).append('\n');
                     }
                     return message.toString();
                 }));
+
+        bbChecks.shalls.add(new CheckAndMessage(
+                r -> r.forbiddenAlgorithmUsage.isEmpty(),
+                r -> {
+                    StringBuilder message = new StringBuilder(A_FORBIDDEN_HASH_OR_SIGNING_ALGORITHM_WAS_USED);
+                    for (String usage : r.forbiddenAlgorithmUsage) {
+                        message.append('\t').append(usage).append('\n');
+                    }
+                    return message.toString();
+                }));
+
 
         bbChecks.shalls.add(new CheckAndMessage(
                 r -> r.essSigningCertificateV1Present
@@ -316,13 +335,23 @@ abstract class AbstractPadesLevelRequirements {
     }
 
     /**
-     * Adds a message about a non-approved algorithm being used.
+     * Adds a message about a non-approved algorithm, according to ETSI TS 119 312,  being used.
      *
-     * @param message a message about a non-approved algorithm being used
+     * @param message a message about a non-approved, according to ETSI TS 119 312, algorithm being used
      */
-    public void addAlgorithmUsage(String message) {
-        this.algorithmUsage.add(message);
+    public void addDiscouragedAlgorithmUsage(String message) {
+        this.discouragedAlgorithmUsage.add(message);
     }
+
+    /**
+     * Adds a message about a forbidden algorithm, according to ETSI TS 319 142,  being used.
+     *
+     * @param message a message about a forbidden, according to ETSI TS 319 142, algorithm being used
+     */
+    public void addForbiddenAlgorithmUsage(String message) {
+        this.forbiddenAlgorithmUsage.add(message);
+    }
+
 
     /**
      * Sets whether the signatures container contains the certificate entry.
@@ -548,6 +577,15 @@ abstract class AbstractPadesLevelRequirements {
     }
 
     /**
+     * Sets whether there is a DSS covering the signature.
+     *
+     * @param isDSSPresent whether there is a DSS covering the signature
+     */
+    public void setDSSPresent(boolean isDSSPresent) {
+        this.isDSSPresent = isDSSPresent;
+    }
+
+    /**
      * Adds a certificate for which the issuer cannot be found anywhere in the document.
      *
      * @param certificateUnderInvestigation a certificate for which the issuer cannot be found anywhere in the document
@@ -581,6 +619,15 @@ abstract class AbstractPadesLevelRequirements {
      */
     public void addRevocationDataNotTimestamped(X509Certificate certificateUnderInvestigation) {
         revocationDataNotTimestamped.add(certificateUnderInvestigation);
+    }
+
+    /**
+     * Sets whether there is a Proof of Existence covering the DSS.
+     *
+     * @param poeDssPresent whether there is a Proof of Existence covering the DSS
+     */
+    public void setPoeDssPresent(boolean poeDssPresent) {
+        this.poeDssPresent = poeDssPresent;
     }
 
     /**

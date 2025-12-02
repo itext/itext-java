@@ -52,11 +52,14 @@ public final class OID {
     public static final String ADBE_REVOCATION = "1.2.840.113583.1.1.8";
     public static final String TSA = "1.2.840.113583.1.1.9.1";
 
+    public static final String MD5 = "1.2.840.113549.2.5";
+
     public static final String RSA_WITH_SHA3_512 = "2.16.840.1.101.3.4.3.16";
     public static final String SHA_224 = "2.16.840.1.101.3.4.2.4";
     public static final String SHA_256 = "2.16.840.1.101.3.4.2.1";
     public static final String SHA_384 = "2.16.840.1.101.3.4.2.2";
     public static final String SHA_512 = "2.16.840.1.101.3.4.2.3";
+    public static final String SHA_512_256 = "2.16.840.1.101.3.4.2.6";
     public static final String SHA3_224 = "2.16.840.1.101.3.4.2.7";
     public static final String SHA3_256 = "2.16.840.1.101.3.4.2.8";
     public static final String SHA3_384 = "2.16.840.1.101.3.4.2.9";

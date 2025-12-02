@@ -24,10 +24,12 @@ package com.itextpdf.bouncycastlefips.cert.ocsp;
 
 import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableBCFips;
 import com.itextpdf.bouncycastlefips.asn1.ASN1ObjectIdentifierBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.AlgorithmIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.cert.X509CertificateHolderBCFips;
 import com.itextpdf.bouncycastlefips.operator.ContentVerifierProviderBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRespID;
@@ -140,6 +142,14 @@ public class BasicOCSPRespBCFips implements IBasicOCSPResp {
     @Override
     public IRespID getResponderId() {
         return new RespIDBCFips(basicOCSPResp.getResponderId());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IAlgorithmIdentifier getSignatureAlgorithmID() {
+        return new AlgorithmIdentifierBCFips(basicOCSPResp.getSignatureAlgorithmID());
     }
 
     /**

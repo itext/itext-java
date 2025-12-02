@@ -73,6 +73,8 @@ class SignatureRequirements extends AbstractPadesLevelRequirements {
         bltaChecks.shalls.add(new CheckAndMessage(
                 r -> r.documentTimestampPresent,
                 DOCUMENT_TIMESTAMP_IS_MISSING));
+        bltaChecks.shalls.add(new CheckAndMessage(r-> r.poeDssPresent,
+                DSS_IS_NOT_COVERED_BY_TIMESTAMP));
     }
 
     /**

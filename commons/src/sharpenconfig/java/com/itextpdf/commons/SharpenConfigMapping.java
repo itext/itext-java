@@ -71,6 +71,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.addCustomUsingForMethodInvocation("java.util.Map.computeIfAbsent",  Collections.singletonList("iText.Commons.Utils.Collections"));
         configurator.addCustomUsingForMethodInvocation("java.util.Map.getOrDefault",  Collections.singletonList("iText.Commons.Utils.Collections"));
         configurator.mapMethod("java.util.Map.equals", "System.Linq.Enumerable.SequenceEqual", false);
+        configurator.mapMemberToInvocationsChain ("java.util.Map.containsValue", "Values.Contains", MemberKind.Method);
         configurator.mapMethod("java.lang.Integer.toHexString", "iText.Commons.Utils.JavaUtil.IntegerToHexString", false);
         configurator.mapMethod("java.lang.Integer.toOctalString", "iText.Commons.Utils.JavaUtil.IntegerToOctalString", false);
         configurator.mapMethod("java.lang.Integer.toString", "iText.Commons.Utils.JavaUtil.IntegerToString", false);

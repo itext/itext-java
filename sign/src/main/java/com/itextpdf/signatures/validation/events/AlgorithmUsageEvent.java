@@ -39,49 +39,70 @@ public class AlgorithmUsageEvent implements IValidationEvent {
     private final String usageLocation;
 
     static {
-        allowedDigests.put(OID.SHA_224, "SHA224");
-        allowedDigests.put(OID.SHA_224, "SHA-224");
-        allowedDigests.put(OID.SHA_256, "SHA256");
-        allowedDigests.put(OID.SHA_256, "SHA-256");
-        allowedDigests.put(OID.SHA_384, "SHA384");
-        allowedDigests.put(OID.SHA_384, "SHA-384");
-        allowedDigests.put(OID.SHA_512, "SHA512");
-        allowedDigests.put(OID.SHA_512, "SHA-512");
-        allowedDigests.put(OID.SHA3_224, "SHA3-224");
-        allowedDigests.put(OID.SHA3_256, "SHA3-256");
-        allowedDigests.put(OID.SHA3_384, "SHA3-384");
-        allowedDigests.put(OID.SHA3_512, "SHA3-512");
-        allowedDigests.put(OID.SHAKE_256, "SHAKE256");
+        allowedDigests.put("SHA224", OID.SHA_224);
+        allowedDigests.put("SHA-224", OID.SHA_224);
+        allowedDigests.put("SHA256", OID.SHA_256);
+        allowedDigests.put("SHA-256", OID.SHA_256);
+        allowedDigests.put("SHA384", OID.SHA_384);
+        allowedDigests.put("SHA-384", OID.SHA_384);
+        allowedDigests.put("SHA-512", OID.SHA_512);
+        allowedDigests.put("SHA512", OID.SHA_512);
+        allowedDigests.put("SHA-512/256", OID.SHA_512_256);
+        allowedDigests.put("SHA512/256", OID.SHA_512_256);
+        allowedDigests.put("SHA3-256", OID.SHA3_256);
+        allowedDigests.put("SHA3-384", OID.SHA3_384);
+        allowedDigests.put("SHA3-512", OID.SHA3_512);
 
-        allowedSignatureAlgorithms.put("1.2.840.113549.1.1.1", "RSAES-PKCS1-v1_5");
-        allowedSignatureAlgorithms.put("1.2.840.10040.4.1", "DSA");
-        allowedSignatureAlgorithms.put("1.2.840.113549.1.1.11", "sha256WithRsaEncryption");
-        allowedSignatureAlgorithms.put("1.2.840.113549.1.1.12", "sha384WithRsaEncryption");
-        allowedSignatureAlgorithms.put("1.2.840.113549.1.1.13", "sha512WithRsaEncryption");
-        allowedSignatureAlgorithms.put("1.2.840.113549.1.1.14", "sha224WithRsaEncryption  ");
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.1", "dsaWithSha224");
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.2", "dsaWithSha256");
+        //Elliptical curve
 
-        allowedSignatureAlgorithms.put("1.2.840.10045.2.1", "ECDSA");
-        allowedSignatureAlgorithms.put("1.2.840.10045.4.3.1", "ecdsaWithSha224");
-        allowedSignatureAlgorithms.put("1.2.840.10045.4.3.2", "ecdsaWithSha256");
-        allowedSignatureAlgorithms.put("1.2.840.10045.4.3.3", "ecdsaWithSha384");
-        allowedSignatureAlgorithms.put("1.2.840.10045.4.3.4", "ecdsaWithSha512");
+        allowedSignatureAlgorithms.put("FRP256v1", "1.2.250.1.223.101.256.1");
 
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.9", "id_ecdsa_with_sha3_244");
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.10", "id_ecdsa_with_sha3_256");
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.11", "id_ecdsa_with_sha3_384");
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.12", "id_ecdsa_with_sha3_512");
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.13", "id_rsassa_pkcs1_v1_5_with_sha3_224");
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.14", "id_rsassa_pkcs1_v1_5_with_sha3_256");
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.15", "id_rsassa_pkcs1_v1_5_with_sha3_384");
-        allowedSignatureAlgorithms.put("2.16.840.1.101.3.4.3.16", "id_rsassa_pkcs1_v1_5_with_sha3_512");
+        allowedSignatureAlgorithms.put("brainpoolP256r1", "1.3.36.3.3.2.8.1.1.7" );
+        allowedSignatureAlgorithms.put("brainpoolP384r1", "1.3.36.3.3.2.8.1.1.11" );
+        allowedSignatureAlgorithms.put("brainpoolP512r1", "1.3.36.3.3.2.8.1.1.13" );
 
-        allowedSignatureAlgorithms.put(OID.RSASSA_PSS, "RSASSA-PSS");
+        allowedSignatureAlgorithms.put("P-256", "1.2.840.10045.3.1.7" );
+        allowedSignatureAlgorithms.put("secp256r1", "1.2.840.10045.3.1.7" );
+        allowedSignatureAlgorithms.put("P-384", "1.3.132.0.34" );
+        allowedSignatureAlgorithms.put("secp384r1", "1.3.132.0.34" );
+        allowedSignatureAlgorithms.put("P-521", "1.3.132.0.35" );
+        allowedSignatureAlgorithms.put("secp521r1", "1.3.132.0.35" );
 
-        // EdDSA
-        allowedSignatureAlgorithms.put(OID.ED25519, "Ed25519");
-        allowedSignatureAlgorithms.put(OID.ED448, "Ed448");
+        // signature algorithms
+        allowedSignatureAlgorithms.put( "RSAES-PKCS1-v1_5", "1.2.840.113549.1.1.1");
+        allowedSignatureAlgorithms.put( "rsaEncryption", "1.2.840.113549.1.1.1");
+
+        allowedSignatureAlgorithms.put( "DSA", "1.2.840.10040.4.1");
+        allowedSignatureAlgorithms.put( "id-dsa", "1.2.840.10040.4.1");
+        allowedSignatureAlgorithms.put( "ECDSA", "1.2.840.10045.2.1");
+
+        //signature suites
+        allowedSignatureAlgorithms.put( "sha224WithRsaEncryption", "1.2.840.113549.1.1.14");
+        allowedSignatureAlgorithms.put( "sha256WithRsaEncryption", "1.2.840.113549.1.1.11");
+        allowedSignatureAlgorithms.put( "sha384WithRsaEncryption", "1.2.840.113549.1.1.13");
+        allowedSignatureAlgorithms.put( "sha512WithRsaEncryption", "1.2.840.113549.1.1.12");
+        // IETF RFC 4055 [8] defined a hash-independent OID for the RSASSA-PSS signature algorithm. The OID for the
+        // specific hash function used in these algorithms is included in the algorithm parameters.
+        // So it is applicable for SHA2 and SHA3.
+        allowedSignatureAlgorithms.put( "id-RSASSA-PSS", "1.2.840.113549.1.1.10");
+
+        //SHA
+        allowedSignatureAlgorithms.put( "id-dsa-with-sha224", "2.16.840.1.101.3.4.3.1");
+        allowedSignatureAlgorithms.put( "id-dsa-with-sha256", "2.16.840.1.101.3.4.3.2");
+        //SHA-2
+        allowedSignatureAlgorithms.put( "ecdsa-with-SHA224", "1.2.840.10045.4.3.1");
+        allowedSignatureAlgorithms.put( "ecdsa-with-SHA256", "1.2.840.10045.4.3.2");
+        allowedSignatureAlgorithms.put( "ecdsa-with-SHA384", "1.2.840.10045.4.3.3");
+        allowedSignatureAlgorithms.put( "ecdsa-with-SHA512", "1.2.840.10045.4.3.4");
+        //SHA3
+        allowedSignatureAlgorithms.put( "id-ecdsa-with-sha3-224", "2.16.840.1.101.3.4.3.9");
+        allowedSignatureAlgorithms.put( "id-ecdsa-with-sha3-256", "2.16.840.1.101.3.4.3.10");
+        allowedSignatureAlgorithms.put( "id-ecdsa-with-sha3-384", "2.16.840.1.101.3.4.3.11");
+        allowedSignatureAlgorithms.put( "id-ecdsa-with-sha3-512", "2.16.840.1.101.3.4.3.12");
+        //ISO/IEC 14888-3 [4] defined hash-independent OIDs for the EC-XDSA algorithms. So the OID for
+        //EC-SDSA-opt algorithm is applicable for SHA2 and SHA3.
+        allowedSignatureAlgorithms.put("id-dswa-dl-EC-SDSA-opt", "1.0.14888.3.0.13" );
+
     }
 
     /**
@@ -112,10 +133,22 @@ public class AlgorithmUsageEvent implements IValidationEvent {
      */
     public boolean isAllowedAccordingToEtsiTs119_312() {
         if (oid != null) {
-            return allowedDigests.containsKey(oid) || allowedSignatureAlgorithms.containsKey(oid);
+            return allowedDigests.containsValue(oid) || allowedSignatureAlgorithms.containsValue(oid);
         }
-        return allowedDigests.values().contains(name)
-                || allowedSignatureAlgorithms.values().contains(name);
+        return allowedDigests.containsKey(name)
+                || allowedSignatureAlgorithms.containsKey(name);
+    }
+
+   /**
+     * Returns whether the algorithm is allowed according to ETSI TS 319 142-1.
+     *
+     * @return whether the algorithm is allowed according to ETSI TS 319 142-1
+     */
+    public boolean isAllowedAccordingToAdES() {
+        if (oid != null) {
+            return !OID.MD5.equals(oid);
+        }
+        return !"MD5".equals(name.toUpperCase());
     }
 
     /**

@@ -53,8 +53,6 @@ class DocumentTimestampRequirements extends AbstractPadesLevelRequirements {
                 r -> r.timestampDictionaryEntrySubFilterValueEtsiRfc3161,
                 SUBFILTER_NOT_ETSI_RFC3161));
 
-
-
         bbChecks = new LevelChecks();
         dssCoveredTsChecks.put(PAdESLevel.B_B, bbChecks);
 

@@ -50,12 +50,15 @@ import java.util.Map.Entry;
  * IValidation events triggered during validation.
  */
 public class PAdESLevelReportGenerator implements IEventHandler {
+
     private static final IBouncyCastleFactory BC_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private final Map<String, AbstractPadesLevelRequirements> signatureInfos = new HashMap<>();
 
     private int timestampCount = 0;
     private boolean poeFound;
+    private boolean DssFound;
+    private boolean DssHasPoe;
     private String currentSignature;
 
     private final List<PAdESLevelReport> timestampReports = new ArrayList<PAdESLevelReport>();
@@ -121,10 +124,18 @@ public class PAdESLevelReportGenerator implements IEventHandler {
                     case DSS_NOT_TIMESTAMPED:
                         processNotTimestampedRevocation((AbstractCertificateChainEvent) event);
                         break;
+                    case DSS_ENTRY_PROCESSED:
+                        DssFound = true;
+                        DssHasPoe = poeFound;
+                        break;
                     case ALGORITHM_USAGE:
                         AlgorithmUsageEvent ae = (AlgorithmUsageEvent) event;
-                        if (!ae.isAllowedAccordingToEtsiTs119_312()) {
-                            this.signatureInfos.get(currentSignature).addAlgorithmUsage(ae.toString());
+                        if (currentSignature != null) {
+                            if (!ae.isAllowedAccordingToAdES()) {
+                                this.signatureInfos.get(currentSignature).addForbiddenAlgorithmUsage(ae.toString());
+                            } else if (!ae.isAllowedAccordingToEtsiTs119_312()) {
+                                this.signatureInfos.get(currentSignature).addDiscouragedAlgorithmUsage(ae.toString());
+                            }
                         }
                         break;
                 }
@@ -166,21 +177,21 @@ public class PAdESLevelReportGenerator implements IEventHandler {
         currentSignature = null;
     }
 
-    private void processSignature(StartSignatureValidationEvent event) {
+    private void processSignature(StartSignatureValidationEvent start) {
         SignatureRequirements sReqs = new SignatureRequirements();
 
-        getDictionaryInfo(event.getPdfSignature(), sReqs);
-        getCmsInfo(event.getPdfSignature(), sReqs);
-        signatureInfos.put(event.getSignatureName(), sReqs);
-        currentSignature = event.getSignatureName();
+        getDictionaryInfo(start.getPdfSignature(), sReqs);
+        getCmsInfo(start.getPdfSignature(), sReqs);
+        signatureInfos.put(start.getSignatureName(), sReqs);
+        currentSignature = start.getSignatureName();
     }
 
-    private void processPoE(ProofOfExistenceFoundEvent event) {
+    private void processPoE(ProofOfExistenceFoundEvent poe) {
         timestampCount++;
-        if (event.isDocumentTimestamp()) {
+        if (poe.isDocumentTimestamp()) {
             DocumentTimestampRequirements tsReqs = new DocumentTimestampRequirements(timestampCount == 0);
-            getDictionaryInfo(event.getPdfSignature(), tsReqs);
-            getCmsInfo(event.getPdfSignature(), tsReqs);
+            getDictionaryInfo(poe.getPdfSignature(), tsReqs);
+            getCmsInfo(poe.getPdfSignature(), tsReqs);
             currentSignature = "timestamp" + timestampCount;
             signatureInfos.put(currentSignature, tsReqs);
         }
@@ -266,6 +277,9 @@ public class PAdESLevelReportGenerator implements IEventHandler {
                     poeFound ||
                             cms.getSignerInfo().getUnSignedAttributes().stream().anyMatch(
                                     a -> OID.AA_TIME_STAMP_TOKEN.equals(a.getType())));
+
+            reqs.setDSSPresent(DssFound);
+            reqs.setPoeDssPresent(DssHasPoe);
 
         } catch (Exception e) {
             // do nothing

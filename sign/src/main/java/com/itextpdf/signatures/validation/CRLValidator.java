@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
@@ -38,6 +39,7 @@ import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.events.AlgorithmUsageEvent;
 import com.itextpdf.signatures.validation.extensions.DynamicBasicConstraintsExtension;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
@@ -104,6 +106,7 @@ public class CRLValidator {
     private final IssuingCertificateRetriever certificateRetriever;
     private final SignatureValidationProperties properties;
     private final ValidatorChainBuilder builder;
+    private final EventManager eventManager;
 
     /**
      * Creates new {@link CRLValidator} instance.
@@ -113,6 +116,7 @@ public class CRLValidator {
     protected CRLValidator(ValidatorChainBuilder builder) {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
+        this.eventManager = builder.getEventManager();
         this.builder = builder;
     }
 
@@ -128,6 +132,7 @@ public class CRLValidator {
      */
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate, X509CRL crl,
             Date validationDate, Date responseGenerationDate) {
+        reportAlgortihmUsage(crl);
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.CRL_VALIDATOR);
 
         if (CertificateUtil.isSelfSigned(certificate)) {
@@ -209,6 +214,11 @@ public class CRLValidator {
             report.addReportItem(new CertificateReportItem(certificate, CRL_CHECK,
                     ONLY_SOME_REASONS_CHECKED, ReportItemStatus.INDETERMINATE));
         }
+    }
+
+    private void reportAlgortihmUsage(X509CRL crl) {
+        eventManager.onEvent(
+                new AlgorithmUsageEvent(crl.getSigAlgName(), crl.getSigAlgOID(), CRL_CHECK));
     }
 
     private static void verifyRevocation(ValidationReport report, X509Certificate certificate,

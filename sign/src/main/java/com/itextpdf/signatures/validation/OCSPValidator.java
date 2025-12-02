@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
@@ -38,6 +39,7 @@ import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.events.AlgorithmUsageEvent;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
@@ -99,6 +101,7 @@ public class OCSPValidator {
     private final IssuingCertificateRetriever certificateRetriever;
     private final SignatureValidationProperties properties;
     private final ValidatorChainBuilder builder;
+    private final EventManager eventManager;
 
     /**
      * Creates new {@link OCSPValidator} instance.
@@ -108,6 +111,7 @@ public class OCSPValidator {
     protected OCSPValidator(ValidatorChainBuilder builder) {
         this.certificateRetriever = builder.getCertificateRetriever();
         this.properties = builder.getProperties();
+        this.eventManager =  builder.getEventManager();
         this.builder = builder;
     }
 
@@ -124,6 +128,7 @@ public class OCSPValidator {
      */
     public void validate(ValidationReport report, ValidationContext context, X509Certificate certificate,
             ISingleResp singleResp, IBasicOCSPResp ocspResp, Date validationDate, Date responseGenerationDate) {
+        reportAlgorithmUsage(ocspResp);
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.OCSP_VALIDATOR);
         if (CertificateUtil.isSelfSigned(certificate)) {
             report.addReportItem(
@@ -235,6 +240,11 @@ public class OCSPValidator {
         for (ValidationReport candidateReport : candidateReports) {
             report.merge(candidateReport);
         }
+    }
+
+    private void reportAlgorithmUsage(IBasicOCSPResp ocspResp) {
+        eventManager.onEvent(new AlgorithmUsageEvent(
+                null, ocspResp.getSignatureAlgorithmID().getAlgorithm().getId(), OCSP_CHECK));
     }
 
     /**

@@ -50,6 +50,7 @@ import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.events.AlgorithmUsageEvent;
 import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
 import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 import com.itextpdf.signatures.validation.events.ProofOfExistenceFoundEvent;
@@ -273,7 +274,7 @@ public class SignatureValidator {
             }
         }
 
-        ValidationReport signatureReport = new ValidationReport();
+         ValidationReport signatureReport = new ValidationReport();
         ValidationContext localContext = new ValidationContext(validationContext.getValidatorContext(),
                 CertificateSource.SIGNER_CERT, validationContext.getTimeBasedContext());
         onExceptionLog(() ->
@@ -390,6 +391,10 @@ public class SignatureValidator {
                     MessageFormatUtil.format(DOCUMENT_IS_NOT_COVERED, latestSignatureName), ReportItemStatus.INVALID));
         }
         try {
+            eventManager.onEvent(new AlgorithmUsageEvent(
+                    pkcs7.getDigestAlgorithmName(), pkcs7.getDigestAlgorithmOid(), SIGNATURE_VERIFICATION));
+            eventManager.onEvent(new AlgorithmUsageEvent(
+                    pkcs7.getSignatureAlgorithmName(), pkcs7.getSignatureMechanismOid(), SIGNATURE_VERIFICATION));
             if (!pkcs7.verifySignatureIntegrityAndAuthenticity()) {
                 validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, MessageFormatUtil.format(
                         CANNOT_VERIFY_SIGNATURE, latestSignatureName), ReportItemStatus.INVALID));
