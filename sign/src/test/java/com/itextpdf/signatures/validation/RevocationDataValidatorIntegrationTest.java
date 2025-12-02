@@ -176,7 +176,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
         //TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
 
         ValidationCrlClient crlClient = (ValidationCrlClient) parameters.getCrlClients().get(0);
-        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL );
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL, RevocationResponseOrigin.OTHER);
 
         ValidationReport report = new ValidationReport();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
@@ -227,7 +227,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
         //TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
 
         ValidationCrlClient crlClient = (ValidationCrlClient) parameters.getCrlClients().get(0);
-        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL );
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL, RevocationResponseOrigin.OTHER);
 
         ValidationReport report = new ValidationReport();
         //certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));

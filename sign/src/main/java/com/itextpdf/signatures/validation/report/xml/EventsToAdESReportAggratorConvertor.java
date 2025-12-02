@@ -31,12 +31,11 @@ import com.itextpdf.signatures.validation.events.StartSignatureValidationEvent;
 
 /**
  * This class is for internal usage.
- *
+ * <p>
  * It bridges the gap between the new event driven system of collecting validation meta info
  * and the previous interface driven system.
  */
 public class EventsToAdESReportAggratorConvertor implements IEventHandler {
-
     private final AdESReportAggregator target;
 
     /**
@@ -55,28 +54,30 @@ public class EventsToAdESReportAggratorConvertor implements IEventHandler {
     public void onEvent(IEvent rawEvent) {
         if (rawEvent instanceof IValidationEvent) {
             IValidationEvent event = (IValidationEvent) rawEvent;
-            switch ( (event.getEventType())) {
-                case SIGNATURE_VALIDATION_STARTED:
-                    StartSignatureValidationEvent startEvent = (StartSignatureValidationEvent) event;
-                    target.startSignatureValidation(
-                            startEvent.getPdfSignature().getContents().getValueBytes(),
-                            startEvent.getSignatureName(),
-                            startEvent.getSigningDate());
-                    break;
-                case PROOF_OF_EXISTENCE_FOUND:
-                    ProofOfExistenceFoundEvent peoEvent = (ProofOfExistenceFoundEvent) event;
-                    target.proofOfExistenceFound(peoEvent.getTimeStampSignature(),
-                            peoEvent.isDocumentTimestamp());
-                    break;
-                case SIGNATURE_VALIDATION_SUCCESS:
-                    target.reportSignatureValidationSuccess();
-                    break;
-                case SIGNATURE_VALIDATION_FAILURE:
-                    SignatureValidationFailureEvent failureEvent =
-                            (SignatureValidationFailureEvent) event;
-                    target.reportSignatureValidationFailure(failureEvent.isInconclusive(),
-                            failureEvent.getReason());
-                    break;
+            if (event.getEventType() != null) {
+                switch (event.getEventType()) {
+                    case SIGNATURE_VALIDATION_STARTED:
+                        StartSignatureValidationEvent startEvent = (StartSignatureValidationEvent) event;
+                        target.startSignatureValidation(
+                                startEvent.getPdfSignature().getContents().getValueBytes(),
+                                startEvent.getSignatureName(),
+                                startEvent.getSigningDate());
+                        break;
+                    case PROOF_OF_EXISTENCE_FOUND:
+                        ProofOfExistenceFoundEvent peoEvent = (ProofOfExistenceFoundEvent) event;
+                        target.proofOfExistenceFound(peoEvent.getTimeStampSignature(),
+                                peoEvent.isDocumentTimestamp());
+                        break;
+                    case SIGNATURE_VALIDATION_SUCCESS:
+                        target.reportSignatureValidationSuccess();
+                        break;
+                    case SIGNATURE_VALIDATION_FAILURE:
+                        SignatureValidationFailureEvent failureEvent =
+                                (SignatureValidationFailureEvent) event;
+                        target.reportSignatureValidationFailure(failureEvent.isInconclusive(),
+                                failureEvent.getReason());
+                        break;
+                }
             }
         }
     }

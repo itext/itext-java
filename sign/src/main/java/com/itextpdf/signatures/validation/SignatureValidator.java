@@ -315,7 +315,7 @@ public class SignatureValidator {
         Collections.reverse(signatureNames);
 
         // Get OCSP/CRL responses and certificates from DSS
-        updateValidationClients(null, validationReport, validationContext, originalDocument);
+        updateValidationClients(null, validationReport, validationContext, originalDocument, true);
         List<Certificate> certificatesFromDss = getCertificatesFromDss(validationReport, originalDocument);
         onRuntimeExceptionLog(() -> certificateRetriever.addKnownCertificates(certificatesFromDss),
                 validationReport, e -> new ReportItem(SIGNATURE_VERIFICATION, ADD_KNOWN_CERTIFICATES_FAILED, e,
@@ -475,8 +475,13 @@ public class SignatureValidator {
 
     private void updateValidationClients(PdfPKCS7 pkcs7, ValidationReport validationReport,
                                          ValidationContext validationContext, PdfDocument document) {
-        retrieveOcspResponsesFromDss(validationReport, validationContext, document);
-        retrieveCrlResponsesFromDss(validationReport, validationContext, document);
+        updateValidationClients(pkcs7, validationReport, validationContext, document, false);
+    }
+
+    private void updateValidationClients(PdfPKCS7 pkcs7, ValidationReport validationReport,
+                                         ValidationContext validationContext, PdfDocument document, boolean latestDss) {
+        retrieveOcspResponsesFromDss(validationReport, validationContext, document, latestDss);
+        retrieveCrlResponsesFromDss(validationReport, validationContext, document, latestDss);
         if (pkcs7 != null) {
             retrieveSignedRevocationInfoFromSignatureContainer(pkcs7, validationContext);
         }
@@ -486,28 +491,30 @@ public class SignatureValidator {
                                                                     ValidationContext validationContext) {
         if (pkcs7.getCRLs() != null) {
             for (CRL crl : pkcs7.getCRLs()) {
-                validationCrlClient.addCrl((X509CRL) crl, lastKnownPoE, validationContext.getTimeBasedContext());
+                validationCrlClient.addCrl((X509CRL) crl, lastKnownPoE, validationContext.getTimeBasedContext(),
+                        RevocationResponseOrigin.SIGNATURE);
             }
         }
         if (pkcs7.getOcsp() != null) {
             validationOcspClient.addResponse(BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(pkcs7.getOcsp()), lastKnownPoE,
-                    validationContext.getTimeBasedContext());
+                    validationContext.getTimeBasedContext(), RevocationResponseOrigin.SIGNATURE);
         }
     }
 
     private void retrieveNotSignedRevocationInfoFromSignatureContainer(PdfPKCS7 pkcs7,
                                                                        ValidationContext validationContext) {
         for (CRL crl : pkcs7.getSignedDataCRLs()) {
-            validationCrlClient.addCrl((X509CRL) crl, lastKnownPoE, validationContext.getTimeBasedContext());
+            validationCrlClient.addCrl((X509CRL) crl, lastKnownPoE, validationContext.getTimeBasedContext(),
+                    RevocationResponseOrigin.SIGNATURE);
         }
         for (IBasicOCSPResponse oscp : pkcs7.getSignedDataOcsps()) {
             validationOcspClient.addResponse(BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(oscp), lastKnownPoE,
-                    validationContext.getTimeBasedContext());
+                    validationContext.getTimeBasedContext(), RevocationResponseOrigin.SIGNATURE);
         }
     }
 
     private void retrieveOcspResponsesFromDss(ValidationReport validationReport, ValidationContext context,
-                                              PdfDocument document) {
+                                              PdfDocument document, boolean latestDss) {
         PdfDictionary dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         if (dss != null) {
             PdfArray ocsps = dss.getAsArray(PdfName.OCSPs);
@@ -516,8 +523,9 @@ public class SignatureValidator {
                     PdfStream ocspStream = ocsps.getAsStream(i);
                     try {
                         validationOcspClient.addResponse(BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(
-                                        BOUNCY_CASTLE_FACTORY.createOCSPResp(ocspStream.getBytes()).getResponseObject()),
-                                lastKnownPoE, context.getTimeBasedContext());
+                                BOUNCY_CASTLE_FACTORY.createOCSPResp(ocspStream.getBytes()).getResponseObject()),
+                                lastKnownPoE, context.getTimeBasedContext(), latestDss ?
+                                        RevocationResponseOrigin.LATEST_DSS : RevocationResponseOrigin.HISTORICAL_DSS);
                     } catch (IOException | AbstractOCSPException | RuntimeException e) {
                         validationReport.addReportItem(new ReportItem(SIGNATURE_VERIFICATION, MessageFormatUtil.format(
                                 CANNOT_PARSE_OCSP_FROM_DSS, ocspStream), e, ReportItemStatus.INFO));
@@ -528,7 +536,7 @@ public class SignatureValidator {
     }
 
     private void retrieveCrlResponsesFromDss(ValidationReport validationReport, ValidationContext context,
-                                             PdfDocument document) {
+                                             PdfDocument document, boolean latestDss) {
         PdfDictionary dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         if (dss != null) {
             PdfArray crls = dss.getAsArray(PdfName.CRLs);
@@ -538,7 +546,10 @@ public class SignatureValidator {
                     onExceptionLog(() ->
                             validationCrlClient.addCrl(
                                     (X509CRL) CertificateUtil.parseCrlFromBytes(crlStream.getBytes()),
-                                    lastKnownPoE, context.getTimeBasedContext()), validationReport, e ->
+                                    lastKnownPoE, context.getTimeBasedContext(),
+                                    latestDss ? RevocationResponseOrigin.LATEST_DSS :
+                                            RevocationResponseOrigin.HISTORICAL_DSS),
+                            validationReport, e ->
                             new ReportItem(SIGNATURE_VERIFICATION, MessageFormatUtil.format(
                                     CANNOT_PARSE_CRL_FROM_DSS, crlStream), e, ReportItemStatus.INFO));
                 }

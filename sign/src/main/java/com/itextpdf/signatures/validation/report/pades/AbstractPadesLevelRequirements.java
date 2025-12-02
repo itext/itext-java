@@ -33,9 +33,9 @@ import java.util.function.Predicate;
 /**
  * This class gathers all information needed to establish the achieved PAdES level of a signature.
  * It also holds the rules in common for both common signatures and document timestamps.
- *
+ * <p>
  * Specific rules are delegated to implementors of this class.
- *
+ * <p>
  * It also executes all those rules to define the achieved level.
  */
 abstract class AbstractPadesLevelRequirements {
@@ -75,22 +75,21 @@ abstract class AbstractPadesLevelRequirements {
             "The singing certificate should be added as a singing-certificate-v2 signed attribute";
     public static final String THERE_MUST_BE_A_SIGNATURE_OR_DOCUMENT_TIMESTAMP_AVAILABLE = "There must be a signature "
             + "or document timestamp available";
-    public static final String DSS_DICTIONARY_IS_MISSING = "A DSS dictionary is missing";
-    public static final String ISSUER_FOR_THESE_CERTIFICATES_ARE_MISSING = "Issuer for the following certificates is "
+    public static final String ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING = "Issuer for the following certificates is "
             + "missing:\n";
     public static final String REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING = "Revocation data for the "
             + "following certificates is missing:\n";
+    public static final String REVOCATION_DATA_FOR_THESE_CERTIFICATES_NOT_TIMESTAMPED = "Revocation data for the "
+            + "following certificates is not timestamped:\n";
     public static final String DOCUMENT_TIMESTAMP_IS_MISSING = "A document timestamp is missing";
-    public static final String DSS_DICTIONARY_IS_NOT_COVERED_BY_A_DOCUMENT_TIMESTAMP = "The DSS dictionary is not "
-            + "covered by a document timestamp";
 
-    private static final Map<PAdESLevel, LevelChecks> checks = new HashMap<PAdESLevel, LevelChecks>();
+    private static final Map<PAdESLevel, LevelChecks> CHECKS = new HashMap<>();
     private static final PAdESLevel[] PADES_LEVELS =
             new PAdESLevel[] {PAdESLevel.B_B, PAdESLevel.B_T, PAdESLevel.B_LT, PAdESLevel.B_LTA};
-    private final Map<PAdESLevel, List<String>> nonConformaties = new HashMap<PAdESLevel, List<String>>();
-    private final Map<PAdESLevel, List<String>> warnings = new HashMap<PAdESLevel, List<String>>();
+    private final Map<PAdESLevel, List<String>> nonConformaties = new HashMap<>();
+    private final Map<PAdESLevel, List<String>> warnings = new HashMap<>();
     //section 6.2.1
-    protected List<String> algorithmUsage = new ArrayList<String>();
+    protected List<String> algorithmUsage = new ArrayList<>();
     // Table 1 row 1
     protected boolean signedDataCertificatesPresent;
     // Table 1 row 1 note a
@@ -133,20 +132,17 @@ abstract class AbstractPadesLevelRequirements {
     protected boolean poeSignaturePresent;
     // Table 1 row 25
     protected boolean documentTimestampPresent;
-    // Table 1 row 27
-    protected boolean isDSSPresent;
-    // Table 1 row 29
-    protected boolean poeDssPresent;
     // Table 1 row 30 note x
-    protected List<X509Certificate> certificatesIssuerNotInDSS = new ArrayList<X509Certificate>();
-    protected List<X509Certificate> revocationDataNotInDSS = new ArrayList<X509Certificate>();
+    protected List<X509Certificate> certificatesIssuerNotInDSS = new ArrayList<>();
+    protected List<X509Certificate> revocationDataNotInDSS = new ArrayList<>();
+    protected List<X509Certificate> revocationDataNotTimestamped = new ArrayList<>();
     // Table 1 row 30 note y
     protected boolean timestampDictionaryEntrySubFilterValueEtsiRfc3161;
     protected boolean signatureIsValid = false;
 
     static {
         LevelChecks bbChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_B, bbChecks);
+        CHECKS.put(PAdESLevel.B_B, bbChecks);
 
         bbChecks.shalls.add(new CheckAndMessage(
                 r -> r.signedDataCertificatesPresent,
@@ -156,7 +152,6 @@ abstract class AbstractPadesLevelRequirements {
                 r -> r.signatureCertificatesContainsSigningCertificate,
                 SIGNED_DATA_CERTIFICATES_MUST_INCLUDE_SIGNING_CERTIFICATE));
 
-        //TODO
         bbChecks.shoulds.add(new CheckAndMessage(
                 r -> true,
                 r -> SIGNED_DATA_CERTIFICATES_SHOULD_INCLUDE_THE_ENTIRE_CERTIFICATE_CHAIN));
@@ -212,10 +207,10 @@ abstract class AbstractPadesLevelRequirements {
                 SIGNED_ATTRIBUTES_SHOULD_CONTAIN_SIGNING_CERTIFICATE_V2));
 
         LevelChecks BTChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_T, BTChecks);
+        CHECKS.put(PAdESLevel.B_T, BTChecks);
 
         LevelChecks bltChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_LT, bltChecks);
+        CHECKS.put(PAdESLevel.B_LT, bltChecks);
 
         bltChecks.shalls.add(new CheckAndMessage(
                 r -> r.certificatesIssuerNotInDSS.isEmpty()
@@ -223,7 +218,7 @@ abstract class AbstractPadesLevelRequirements {
                 r -> {
                     StringBuilder message = new StringBuilder();
                     if (!r.certificatesIssuerNotInDSS.isEmpty()) {
-                        message.append(ISSUER_FOR_THESE_CERTIFICATES_ARE_MISSING);
+                        message.append(ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING);
                         for (X509Certificate cert : r.certificatesIssuerNotInDSS) {
                             message.append('\t').append(cert).append('\n');
                         }
@@ -238,20 +233,32 @@ abstract class AbstractPadesLevelRequirements {
                 }));
 
         LevelChecks bltaChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_LTA, bltaChecks);
+        bltaChecks.shalls.add(new CheckAndMessage(r -> r.revocationDataNotTimestamped.isEmpty(), r -> {
+            StringBuilder message = new StringBuilder();
+            if (!r.revocationDataNotTimestamped.isEmpty()) {
+                message.append(REVOCATION_DATA_FOR_THESE_CERTIFICATES_NOT_TIMESTAMPED);
+                for (X509Certificate cert : r.revocationDataNotTimestamped) {
+                    message.append('\t').append(cert).append('\n');
+                }
+            }
+            return message.toString();
+        }));
+
+        CHECKS.put(PAdESLevel.B_LTA, bltaChecks);
     }
 
     /**
      * Calculates the highest achieved PAdES level for the signature being checked.
      *
      * @param timestampReports PAdES level reports for already checked timestamp signatures
+     *
      * @return the highest achieved level
      */
     public PAdESLevel getHighestAchievedPadesLevel(Iterable<PAdESLevelReport> timestampReports) {
         for (PAdESLevel level : PADES_LEVELS) {
-            ArrayList<String> messages = new ArrayList<String>();
+            ArrayList<String> messages = new ArrayList<>();
             this.nonConformaties.put(level, messages);
-            for (CheckAndMessage check : checks.get(level).shalls) {
+            for (CheckAndMessage check : CHECKS.get(level).shalls) {
                 if (!check.getCheck().test(this)) {
                     messages.add(check.getMessageGenerator().apply(this));
                 }
@@ -265,9 +272,9 @@ abstract class AbstractPadesLevelRequirements {
                 messages.addAll(tsReport.getNonConformaties().get(level));
             }
 
-            messages = new ArrayList<String>();
+            messages = new ArrayList<>();
             this.warnings.put(level, messages);
-            for (CheckAndMessage check : checks.get(level).shoulds) {
+            for (CheckAndMessage check : CHECKS.get(level).shoulds) {
                 if (!check.getCheck().test(this)) {
                     messages.add(check.getMessageGenerator().apply(this));
                 }
@@ -528,15 +535,6 @@ abstract class AbstractPadesLevelRequirements {
     }
 
     /**
-     * Sets whether there is a DSS covering the signature.
-     *
-     * @param isDSSPresent whether there is a DSS covering the signature
-     */
-    public void setDSSPresent(boolean isDSSPresent) {
-        this.isDSSPresent = isDSSPresent;
-    }
-
-    /**
      * Adds a certificate for which the issuer missing in the DSS.
      *
      * @param certificateUnderInvestigation a certificate for which the issuer missing in the DSS
@@ -555,12 +553,12 @@ abstract class AbstractPadesLevelRequirements {
     }
 
     /**
-     * Sets whether there is a Proof of Existence covering the DSS.
+     * Adds a certificate for which no revocation data was available in a timestamped DSS.
      *
-     * @param poeDssPresent whether there is a Proof of Existence covering the DSS
+     * @param certificateUnderInvestigation a certificate for which no revocation data was available in the DSS
      */
-    public void setPoeDssPresent(boolean poeDssPresent) {
-        this.poeDssPresent = poeDssPresent;
+    public void addRevocationDataNotTimestamped(X509Certificate certificateUnderInvestigation) {
+        revocationDataNotTimestamped.add(certificateUnderInvestigation);
     }
 
     /**
@@ -601,8 +599,8 @@ abstract class AbstractPadesLevelRequirements {
      * A class to hold all rules for a level
      */
     protected static class LevelChecks {
-        protected List<CheckAndMessage> shalls = new ArrayList<CheckAndMessage>();
-        protected List<CheckAndMessage> shoulds = new ArrayList<CheckAndMessage>();
+        protected List<CheckAndMessage> shalls = new ArrayList<>();
+        protected List<CheckAndMessage> shoulds = new ArrayList<>();
 
         protected LevelChecks() {
             // Empty constructor
@@ -613,7 +611,6 @@ abstract class AbstractPadesLevelRequirements {
      * A class containing a check executor and message generator
      */
     public static class CheckAndMessage {
-
         private final Function<AbstractPadesLevelRequirements, String> messageGenerator;
         private final Predicate<AbstractPadesLevelRequirements> check;
 

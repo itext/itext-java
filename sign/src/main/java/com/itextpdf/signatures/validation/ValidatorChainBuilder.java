@@ -72,6 +72,7 @@ public class ValidatorChainBuilder {
     private boolean trustEuropeanLotl = false;
     private final EventManager eventManager;
     private AdESReportAggregator adESReportAggregator = new NullAdESReportAggregator();
+    private boolean padesValidationRequested = false;
 
     /**
      * Creates a ValidatorChainBuilder using default implementations
@@ -359,6 +360,7 @@ public class ValidatorChainBuilder {
      * {@link com.itextpdf.signatures.validation.report.xml.XmlReportGenerator#generate(PadesValidationReport, Writer)}.
      *
      * @param reportEventListener the AdESReportEventListener to use
+     *
      * @return the current ValidatorChainBuilder
      */
     public ValidatorChainBuilder withAdESLevelReportGenerator(XmlReportAggregator reportEventListener) {
@@ -368,11 +370,26 @@ public class ValidatorChainBuilder {
 
     /**
      * Use this PAdES level report generator to generate PAdES report.
+     * <p>
+     * If called multiple times, multiple {@link PAdESLevelReportGenerator} objects will be registered.
      *
      * @param reportGenerator the PAdESLevelReportGenerator to use
+     *
+     * @return current ValidatorChainBuilder
      */
-    public void withPAdESLevelReportGenerator(PAdESLevelReportGenerator reportGenerator) {
+    public ValidatorChainBuilder withPAdESLevelReportGenerator(PAdESLevelReportGenerator reportGenerator) {
+        padesValidationRequested = true;
         eventManager.register(reportGenerator);
+        return this;
+    }
+
+    /**
+     * Checks whether PAdES compliance validation was requested.
+     *
+     * @return {@code true} if PAdES compliance validation was requested, {@code false} otherwise
+     */
+    public boolean padesValidationRequested() {
+        return padesValidationRequested;
     }
 
     /**

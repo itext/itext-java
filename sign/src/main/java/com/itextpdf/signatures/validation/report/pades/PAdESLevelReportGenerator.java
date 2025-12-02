@@ -50,16 +50,12 @@ import java.util.Map.Entry;
  * IValidation events triggered during validation.
  */
 public class PAdESLevelReportGenerator implements IEventHandler {
-
     private static final IBouncyCastleFactory BC_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private final Map<String, AbstractPadesLevelRequirements> signatureInfos =
-            new HashMap<String, AbstractPadesLevelRequirements>();
+    private final Map<String, AbstractPadesLevelRequirements> signatureInfos = new HashMap<>();
 
     private int timestampCount = 0;
-    private boolean PoeFound;
-    private boolean DssFound;
-    private boolean DssHasPoe;
+    private boolean poeFound;
     private String currentSignature;
 
     private final List<PAdESLevelReport> timestampReports = new ArrayList<PAdESLevelReport>();
@@ -97,67 +93,65 @@ public class PAdESLevelReportGenerator implements IEventHandler {
     public void onEvent(IEvent rawEvent) {
         if (rawEvent instanceof IValidationEvent) {
             IValidationEvent event = (IValidationEvent) rawEvent;
-            switch (event.getEventType()) {
-                case PROOF_OF_EXISTENCE_FOUND:
-                    processPoE((ProofOfExistenceFoundEvent) event);
-                    break;
-                case SIGNATURE_VALIDATION_STARTED:
-                    processSignature((StartSignatureValidationEvent) event);
-                    break;
-                case SIGNATURE_VALIDATION_FAILURE:
-                    if (currentSignature != null) {
-                        signatureInfos.get(currentSignature).setValidationSucceeded(false);
-                    }
-                    break;
-                case SIGNATURE_VALIDATION_SUCCESS:
-                    processSignatureSuccess();
-                    break;
-                case CERTIFICATE_ISSUER_EXTERNAL_RETRIEVAL:
-                case CERTIFICATE_ISSUER_OTHER_INTERNAL_SOURCE_USED:
-                    processIssuerRetrieval((AbstractCertificateChainEvent) event);
-                    break;
-                case CRL_OTHER_INTERNAL_SOURCE_USED:
-                case OCSP_OTHER_INTERNAL_SOURCE_USED:
-                case CRL_REQUEST:
-                case OCSP_REQUEST:
-                    processsRevocationRetreival((AbstractCertificateChainEvent) event);
-                    break;
-                case DSS_ENTRY_PROCESSED:
-                    DssFound = true;
-                    DssHasPoe = PoeFound;
-                    break;
-                case ALGORITHM_USAGE:
-                    AlgorithmUsageEvent ae = (AlgorithmUsageEvent) rawEvent;
-                    if (!ae.isAllowedAccordingToEtsiTs119_312()) {
-                        this.signatureInfos.get(currentSignature).addAlgorithmUsage(ae.toString());
-                    }
-                    break;
+            if (event.getEventType() != null) {
+                switch (event.getEventType()) {
+                    case PROOF_OF_EXISTENCE_FOUND:
+                        processPoE((ProofOfExistenceFoundEvent) event);
+                        break;
+                    case SIGNATURE_VALIDATION_STARTED:
+                        processSignature((StartSignatureValidationEvent) event);
+                        break;
+                    case SIGNATURE_VALIDATION_FAILURE:
+                        if (currentSignature != null) {
+                            signatureInfos.get(currentSignature).setValidationSucceeded(false);
+                        }
+                        break;
+                    case SIGNATURE_VALIDATION_SUCCESS:
+                        processSignatureSuccess();
+                        break;
+                    case CERTIFICATE_ISSUER_EXTERNAL_RETRIEVAL:
+                    case CERTIFICATE_ISSUER_OTHER_INTERNAL_SOURCE_USED:
+                        processIssuerRetrieval((AbstractCertificateChainEvent) event);
+                        break;
+                    case REVOCATION_NOT_FROM_DSS:
+                        processRevocationNotInDss((AbstractCertificateChainEvent) event);
+                        break;
+                    case DSS_NOT_TIMESTAMPED:
+                        processNotTimestampedRevocation((AbstractCertificateChainEvent) event);
+                        break;
+                    case ALGORITHM_USAGE:
+                        AlgorithmUsageEvent ae = (AlgorithmUsageEvent) event;
+                        if (!ae.isAllowedAccordingToEtsiTs119_312()) {
+                            this.signatureInfos.get(currentSignature).addAlgorithmUsage(ae.toString());
+                        }
+                        break;
+                }
             }
         }
     }
 
-    private void processsRevocationRetreival(AbstractCertificateChainEvent event) {
+    private void processRevocationNotInDss(AbstractCertificateChainEvent event) {
         if (currentSignature != null) {
-            AbstractCertificateChainEvent retrieval =
-                    event;
-            signatureInfos.get(currentSignature).addRevocationDataNotInDSS(
-                    retrieval.getCertificate());
+            signatureInfos.get(currentSignature).addRevocationDataNotInDSS(event.getCertificate());
+        }
+    }
+
+    private void processNotTimestampedRevocation(AbstractCertificateChainEvent event) {
+        if (currentSignature != null) {
+            signatureInfos.get(currentSignature).addRevocationDataNotTimestamped(event.getCertificate());
         }
     }
 
     private void processIssuerRetrieval(AbstractCertificateChainEvent event) {
         if (currentSignature != null) {
-            AbstractCertificateChainEvent retrieval =
-                    event;
-            signatureInfos.get(currentSignature).addCertificateIssuerNotInDSS(
-                    retrieval.getCertificate());
+            signatureInfos.get(currentSignature).addCertificateIssuerNotInDSS(event.getCertificate());
         }
     }
 
     private void processSignatureSuccess() {
         if (currentSignature != null) {
             if (this.signatureInfos.get(currentSignature) instanceof DocumentTimestampRequirements) {
-                PoeFound = true;
+                poeFound = true;
             }
             signatureInfos.get(currentSignature).setValidationSucceeded(true);
         }
@@ -165,22 +159,20 @@ public class PAdESLevelReportGenerator implements IEventHandler {
     }
 
     private void processSignature(StartSignatureValidationEvent event) {
-        StartSignatureValidationEvent start = event;
         SignatureRequirements sReqs = new SignatureRequirements();
 
-        getDictionaryInfo(start.getPdfSignature(), sReqs);
-        getCmsInfo(start.getPdfSignature(), sReqs);
-        signatureInfos.put(start.getSignatureName(), sReqs);
-        currentSignature = start.getSignatureName();
+        getDictionaryInfo(event.getPdfSignature(), sReqs);
+        getCmsInfo(event.getPdfSignature(), sReqs);
+        signatureInfos.put(event.getSignatureName(), sReqs);
+        currentSignature = event.getSignatureName();
     }
 
     private void processPoE(ProofOfExistenceFoundEvent event) {
         timestampCount++;
-        ProofOfExistenceFoundEvent poe = event;
-        if (poe.isDocumentTimestamp()) {
+        if (event.isDocumentTimestamp()) {
             DocumentTimestampRequirements tsReqs = new DocumentTimestampRequirements(timestampCount == 0);
-            getDictionaryInfo(poe.getPdfSignature(), tsReqs);
-            getCmsInfo(poe.getPdfSignature(), tsReqs);
+            getDictionaryInfo(event.getPdfSignature(), tsReqs);
+            getCmsInfo(event.getPdfSignature(), tsReqs);
             currentSignature = "timestamp" + timestampCount;
             signatureInfos.put(currentSignature, tsReqs);
         }
@@ -217,7 +209,7 @@ public class PAdESLevelReportGenerator implements IEventHandler {
         reqs.setTimestampDictionaryEntrySubFilterValueEtsiRfc3161(sigObj.containsKey(PdfName.SubFilter) &&
                 sigObj.getAsName(PdfName.SubFilter).equals(PdfName.ETSI_RFC3161));
 
-        reqs.setDocumentTimestampPresent(PoeFound);
+        reqs.setDocumentTimestampPresent(poeFound);
     }
 
     private void getCmsInfo(PdfSignature sig, AbstractPadesLevelRequirements reqs) {
@@ -263,12 +255,9 @@ public class PAdESLevelReportGenerator implements IEventHandler {
                             a -> OID.SIGNING_TIME.equals(a.getType())));
             //Table 1 row 24
             reqs.setPoeSignaturePresent(
-                    PoeFound ||
+                    poeFound ||
                             cms.getSignerInfo().getUnSignedAttributes().stream().anyMatch(
                                     a -> OID.AA_TIME_STAMP_TOKEN.equals(a.getType())));
-
-            reqs.setDSSPresent(DssFound);
-            reqs.setPoeDssPresent(DssHasPoe);
 
         } catch (Exception e) {
             // do nothing

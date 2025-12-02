@@ -30,12 +30,12 @@ import java.util.Map;
  */
 class SignatureRequirements extends AbstractPadesLevelRequirements {
 
-    private static Map<PAdESLevel, LevelChecks> checks;
+    private static final Map<PAdESLevel, LevelChecks> CHECKS;
 
     static {
-        checks = new HashMap<PAdESLevel, LevelChecks>();
+        CHECKS = new HashMap<>();
         LevelChecks bbChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_B, bbChecks);
+        CHECKS.put(PAdESLevel.B_B, bbChecks);
 
         bbChecks.shalls.add(new CheckAndMessage(
                 r -> r.signatureDictionaryEntrySubFilterValueIsETSICadesDetached,
@@ -58,29 +58,21 @@ class SignatureRequirements extends AbstractPadesLevelRequirements {
 
 
         LevelChecks btChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_T, btChecks);
+        CHECKS.put(PAdESLevel.B_T, btChecks);
 
         btChecks.shalls.add(new CheckAndMessage(
                 r -> r.poeSignaturePresent || r.documentTimestampPresent,
                 THERE_MUST_BE_A_SIGNATURE_OR_DOCUMENT_TIMESTAMP_AVAILABLE));
 
         LevelChecks bltChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_LT, bltChecks);
-
-        bltChecks.shalls.add(new CheckAndMessage(
-                r -> r.isDSSPresent,
-                DSS_DICTIONARY_IS_MISSING));
+        CHECKS.put(PAdESLevel.B_LT, bltChecks);
 
         LevelChecks bltaChecks = new LevelChecks();
-        checks.put(PAdESLevel.B_LTA, bltaChecks);
+        CHECKS.put(PAdESLevel.B_LTA, bltaChecks);
 
         bltaChecks.shalls.add(new CheckAndMessage(
                 r -> r.documentTimestampPresent,
                 DOCUMENT_TIMESTAMP_IS_MISSING));
-
-        bltaChecks.shalls.add(new CheckAndMessage(
-                r -> r.poeDssPresent,
-                DSS_DICTIONARY_IS_NOT_COVERED_BY_A_DOCUMENT_TIMESTAMP));
     }
 
     /**
@@ -92,6 +84,6 @@ class SignatureRequirements extends AbstractPadesLevelRequirements {
 
     @Override
     protected Map<PAdESLevel, LevelChecks> getChecks() {
-        return checks;
+        return CHECKS;
     }
 }

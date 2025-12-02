@@ -46,7 +46,7 @@ public class XmlReportAggregator implements IEventHandler {
 
     private final ValidationObjects validationObjects = new ValidationObjects();
     private final PadesValidationReport report = new PadesValidationReport(validationObjects);
-    private final Stack<SubValidationReport> validationReportStack = new Stack<SubValidationReport>();
+    private final Stack<SubValidationReport> validationReportStack = new Stack<>();
 
     /**
      * Instantiates a new AdESReportEventListener instance.
@@ -71,41 +71,42 @@ public class XmlReportAggregator implements IEventHandler {
     public void onEvent(IEvent rawEvent) {
         if (rawEvent instanceof IValidationEvent) {
             IValidationEvent event = (IValidationEvent) rawEvent;
-            switch (event.getEventType()) {
-                case PROOF_OF_EXISTENCE_FOUND:
-                    ProofOfExistenceFoundEvent poe = (ProofOfExistenceFoundEvent) event;
-                    this.proofOfExistenceFound(poe.getTimeStampSignature(),
-                            poe.isDocumentTimestamp());
-                    break;
-                case SIGNATURE_VALIDATION_STARTED:
-                    StartSignatureValidationEvent start = (StartSignatureValidationEvent) event;
-                    this.startSignatureValidation(
-                            start.getPdfSignature().getContents().getValueBytes(),
-                            start.getSignatureName(),
-                            start.getSigningDate());
-                    break;
-                case SIGNATURE_VALIDATION_SUCCESS:
-                    this.reportSignatureValidationSuccess();
-                    break;
-                case SIGNATURE_VALIDATION_FAILURE:
-                    SignatureValidationFailureEvent failure =
-                            (SignatureValidationFailureEvent) event;
-                    this.reportSignatureValidationFailure(failure.isInconclusive(),
-                            failure.getReason());
-                    break;
-                case CERTIFICATE_CHAIN_SUCCESS:
-                    break;
-                case CERTIFICATE_CHAIN_FAILURE:
-                    break;
-                case CRL_VALIDATION_SUCCESS:
-                    break;
-                case CRL_VALIDATION_FAILURE:
-                    break;
-                case OCSP_VALIDATION_SUCCESS:
-                    break;
-                case OCSP_VALIDATION_FAILURE:
-                    break;
-
+            if (event.getEventType() != null) {
+                switch (event.getEventType()) {
+                    case PROOF_OF_EXISTENCE_FOUND:
+                        ProofOfExistenceFoundEvent poe = (ProofOfExistenceFoundEvent) event;
+                        this.proofOfExistenceFound(poe.getTimeStampSignature(),
+                                poe.isDocumentTimestamp());
+                        break;
+                    case SIGNATURE_VALIDATION_STARTED:
+                        StartSignatureValidationEvent start = (StartSignatureValidationEvent) event;
+                        this.startSignatureValidation(
+                                start.getPdfSignature().getContents().getValueBytes(),
+                                start.getSignatureName(),
+                                start.getSigningDate());
+                        break;
+                    case SIGNATURE_VALIDATION_SUCCESS:
+                        this.reportSignatureValidationSuccess();
+                        break;
+                    case SIGNATURE_VALIDATION_FAILURE:
+                        SignatureValidationFailureEvent failure =
+                                (SignatureValidationFailureEvent) event;
+                        this.reportSignatureValidationFailure(failure.isInconclusive(),
+                                failure.getReason());
+                        break;
+                    case CERTIFICATE_CHAIN_SUCCESS:
+                        break;
+                    case CERTIFICATE_CHAIN_FAILURE:
+                        break;
+                    case CRL_VALIDATION_SUCCESS:
+                        break;
+                    case CRL_VALIDATION_FAILURE:
+                        break;
+                    case OCSP_VALIDATION_SUCCESS:
+                        break;
+                    case OCSP_VALIDATION_FAILURE:
+                        break;
+                }
             }
         }
     }

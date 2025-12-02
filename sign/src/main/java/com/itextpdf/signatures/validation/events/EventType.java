@@ -53,21 +53,13 @@ public enum EventType {
      */
     CERTIFICATE_ISSUER_OTHER_INTERNAL_SOURCE_USED,
     /**
-     * Event triggered for every outgoing OCSP request.
+     * Event triggered when revocation data coming not from the latest DSS is needed to perform signature validation.
      */
-    OCSP_REQUEST,
+    REVOCATION_NOT_FROM_DSS,
     /**
-     * Event triggered for every OCSP response from the document that was not in the most recent DSS.
+     * Event triggered when revocation data from a timestamped DSS is not enough to perform signature validation.
      */
-    OCSP_OTHER_INTERNAL_SOURCE_USED,
-    /**
-     * Event triggered for every outgoing CRL request.
-     */
-    CRL_REQUEST,
-    /**
-     * Event triggered for every CRL response from the document that was not in the most recent DSS.
-     */
-    CRL_OTHER_INTERNAL_SOURCE_USED,
+    DSS_NOT_TIMESTAMPED,
     /**
      * Event triggered when the most recent DSS has been processed.
      */

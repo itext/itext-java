@@ -30,18 +30,15 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.cms.CMSTestHelper;
 import com.itextpdf.signatures.testutils.PemFileHelper;
-import com.itextpdf.signatures.testutils.X509MockCertificate;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.events.AlgorithmUsageEvent;
-import com.itextpdf.signatures.validation.events.CRLRequestEvent;
 import com.itextpdf.signatures.validation.events.CertificateIssuerRetrievalEvent;
 import com.itextpdf.signatures.validation.events.CertificateIssuerRetrievedOutsideDSSEvent;
 import com.itextpdf.signatures.validation.events.DSSProcessedEvent;
+import com.itextpdf.signatures.validation.events.DssNotTimestampedEvent;
 import com.itextpdf.signatures.validation.events.IValidationEvent;
-import com.itextpdf.signatures.validation.events.OCSPResponseRetrievalEvent;
-import com.itextpdf.signatures.validation.events.OlderCRLResponseUsedEvent;
-import com.itextpdf.signatures.validation.events.OlderOCSPResponseUsedEvent;
 import com.itextpdf.signatures.validation.events.ProofOfExistenceFoundEvent;
+import com.itextpdf.signatures.validation.events.RevocationNotFromDssEvent;
 import com.itextpdf.signatures.validation.events.SignatureValidationFailureEvent;
 import com.itextpdf.signatures.validation.events.SignatureValidationSuccessEvent;
 import com.itextpdf.signatures.validation.events.StartSignatureValidationEvent;
@@ -57,17 +54,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Tag("UnitTest")
+@Tag("BouncyCastleUnitTest")
 public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private PAdESLevelReportGenerator sut;
     private EventManager eventManager;
-    private ValidatorChainBuilder builder;
 
     @BeforeEach
     public void setUp() {
-        builder = new ValidatorChainBuilder();
+        ValidatorChainBuilder builder = new ValidatorChainBuilder();
         sut = new PAdESLevelReportGenerator();
 
         builder.withPAdESLevelReportGenerator(sut);
@@ -97,7 +93,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testB_THappyPath() {
+    public void testB_THappyPath() throws CertificateException, IOException {
         PdfDictionary signatureDict = new PdfDictionary();
         PdfString contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.B_T_1_B64));
         contents.setHexWriting(true);
@@ -108,6 +104,9 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         signatureDict.put(PdfName.M, new PdfString("D:20231204144752+01'00'"));
         PdfSignature sig = new PdfSignature(signatureDict);
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
+        eventManager.onEvent(event);
+        Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
+        event = new RevocationNotFromDssEvent((X509Certificate) chain[0]);
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
         eventManager.onEvent(event);
@@ -172,7 +171,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testB_LTADSSMissingPath() {
+    public void testB_LTADSSMissingPath() throws CertificateException, IOException {
         PdfDictionary signatureDict = new PdfDictionary();
         PdfString contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.B_LTA_1_B64));
         contents.setHexWriting(true);
@@ -184,6 +183,9 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         PdfSignature sig = new PdfSignature(signatureDict);
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
+        Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
+        event = new RevocationNotFromDssEvent((X509Certificate) chain[0]);
+        eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
         eventManager.onEvent(event);
 
@@ -192,6 +194,9 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("test")
                 .getLevel());
         Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
+        Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LT).stream()
+                .anyMatch(nc -> nc.contains(
+                        AbstractPadesLevelRequirements.REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING)));
     }
 
     @Test
@@ -604,7 +609,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         eventManager.onEvent(event);
         DocumentPAdESLevelReport report = sut.getReport();
         System.out.println(report);
-        Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
+        Assertions.assertEquals(PAdESLevel.B_LTA, report.getDocumentLevel());
     }
 
     @Test
@@ -658,7 +663,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("test").getLevel());
         Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
         Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LT).stream()
-                .anyMatch(nc -> nc.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_ARE_MISSING)));
+                .anyMatch(nc -> nc.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING)));
     }
 
     @Test
@@ -693,11 +698,11 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LT)
                 .stream()
                 .anyMatch(nc ->
-                        nc.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_ARE_MISSING)));
+                        nc.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING)));
     }
 
     @Test
-    public void testB_DSSMissingCrlResponse() throws CertificateException, IOException {
+    public void testB_DSSMissingRevData() throws CertificateException, IOException {
         PdfDictionary signatureDict = new PdfDictionary();
         PdfString contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.B_LTA_1_B64));
         contents.setHexWriting(true);
@@ -716,7 +721,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
-        event = new CRLRequestEvent((X509Certificate) chain[0]);
+        event = new RevocationNotFromDssEvent((X509Certificate) chain[0]);
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
         eventManager.onEvent(event);
@@ -731,7 +736,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
     }
 
     @Test
-    public void testB_DSSMissingCrlResponse2() throws CertificateException, IOException {
+    public void testB_DSSMissingTimestampedRevData() throws CertificateException, IOException {
         PdfDictionary signatureDict = new PdfDictionary();
         PdfString contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.B_LTA_1_B64));
         contents.setHexWriting(true);
@@ -750,86 +755,18 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
-        event = new OlderCRLResponseUsedEvent((X509Certificate) chain[0]);
+        event = new DssNotTimestampedEvent((X509Certificate) chain[0]);
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
         eventManager.onEvent(event);
 
         DocumentPAdESLevelReport report = sut.getReport();
         System.out.println(report);
-        Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("test").getLevel());
-        Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
-        Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LT).stream()
+        Assertions.assertEquals(PAdESLevel.B_LT, report.getSignatureReport("test").getLevel());
+        Assertions.assertEquals(PAdESLevel.B_LT, report.getDocumentLevel());
+        Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LTA).stream()
                 .anyMatch(nc -> nc.contains(
-                        AbstractPadesLevelRequirements.REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING)));
-    }
-
-    @Test
-    public void testB_DSSMissingOCSPResponse() throws CertificateException, IOException {
-        PdfDictionary signatureDict = new PdfDictionary();
-        PdfString contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.B_LTA_1_B64));
-        contents.setHexWriting(true);
-        signatureDict.put(PdfName.Contents, contents);
-        signatureDict.put(PdfName.Filter, PdfName.Sig);
-        signatureDict.put(PdfName.SubFilter, PdfName.ETSI_CAdES_DETACHED);
-        signatureDict.put(PdfName.ByteRange, new PdfString("1 2 3 4"));
-        signatureDict.put(PdfName.M, new PdfString("D:20231204144752+01'00'"));
-        PdfSignature sig = new PdfSignature(signatureDict);
-        contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.LTA_1_TS_B64));
-        PdfSignature timestampDict = getTimestampPdfDictionary(contents);
-        eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
-
-        eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
-        IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
-        eventManager.onEvent(event);
-        Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
-        event = new OCSPResponseRetrievalEvent((X509Certificate) chain[0]);
-        eventManager.onEvent(event);
-        event = new SignatureValidationSuccessEvent();
-        eventManager.onEvent(event);
-
-        DocumentPAdESLevelReport report = sut.getReport();
-        System.out.println(report);
-        Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("test").getLevel());
-        Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
-        Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LT).stream()
-                .anyMatch(nc -> nc.contains(
-                        AbstractPadesLevelRequirements.REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING)));
-    }
-
-    @Test
-    public void testB_DSSMissingOCSPResponse2() throws CertificateException, IOException {
-        PdfDictionary signatureDict = new PdfDictionary();
-        PdfString contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.B_LTA_1_B64));
-        contents.setHexWriting(true);
-        signatureDict.put(PdfName.Contents, contents);
-        signatureDict.put(PdfName.Filter, PdfName.Sig);
-        signatureDict.put(PdfName.SubFilter, PdfName.ETSI_CAdES_DETACHED);
-        signatureDict.put(PdfName.ByteRange, new PdfString("1 2 3 4"));
-        signatureDict.put(PdfName.M, new PdfString("D:20231204144752+01'00'"));
-        PdfSignature sig = new PdfSignature(signatureDict);
-        contents = new PdfString(EncodingUtil.fromBase64(PAdESLevelHelper.LTA_1_TS_B64));
-        PdfSignature timestampDict = getTimestampPdfDictionary(contents);
-        eventManager.onEvent(new ProofOfExistenceFoundEvent(timestampDict, "timestampSig1"));
-
-        eventManager.onEvent(new SignatureValidationSuccessEvent());
-        eventManager.onEvent(new DSSProcessedEvent(new PdfDictionary()));
-        IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
-        eventManager.onEvent(event);
-        Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
-        event = new OlderOCSPResponseUsedEvent((X509Certificate) chain[0]);
-        eventManager.onEvent(event);
-        event = new SignatureValidationSuccessEvent();
-        eventManager.onEvent(event);
-
-        DocumentPAdESLevelReport report = sut.getReport();
-        System.out.println(report);
-        Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("test").getLevel());
-        Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
-        Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LT).stream()
-                .anyMatch(nc -> nc.contains(
-                        AbstractPadesLevelRequirements.REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING)));
+                        AbstractPadesLevelRequirements.REVOCATION_DATA_FOR_THESE_CERTIFICATES_NOT_TIMESTAMPED)));
     }
 
     @Test

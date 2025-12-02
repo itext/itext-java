@@ -55,9 +55,45 @@ public class ValidationOcspClient implements IOcspClient {
      * @param response {@link IBasicOCSPResp} response to be added
      * @param date     {@link Date} to be linked with the response
      * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
+     *
+     * @deprecated use {@link #addResponse(IBasicOCSPResp, Date, TimeBasedContext, RevocationResponseOrigin)} instead
      */
+    @Deprecated
     public void addResponse(IBasicOCSPResp response, Date date, TimeBasedContext context) {
-        responses.put(response, new OcspResponseValidationInfo(null, response, date, context));
+        addResponse(response, date, context, RevocationResponseOrigin.OTHER);
+    }
+
+    /**
+     * Add OCSP response which is linked with generation date.
+     *
+     * @param response {@link IBasicOCSPResp} response to be added
+     * @param date     {@link Date} to be linked with the response
+     * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
+     * @param responseOrigin {@link RevocationResponseOrigin} representing an origin from which OCSP comes from
+     */
+    public void addResponse(IBasicOCSPResp response, Date date, TimeBasedContext context,
+                            RevocationResponseOrigin responseOrigin) {
+        OcspResponseValidationInfo validationInfo = responses.get(response);
+        if (validationInfo == null) {
+            responses.put(response,
+                    new OcspResponseValidationInfo(null, response, date, context, responseOrigin));
+        } else {
+            // If OCSP is already there, we don't need to update response origin.
+            // But we do need to update so-called trusted generation date.
+            // Consider such update as following: we've encountered the same OCSP in the document,
+            // but now it's covered with a timestamp. So now we know, if was generated at a certain point in time,
+            // and we can use this information during the validation.
+            // This of course only works, because the OCSP is exactly the same.
+            if (validationInfo.trustedGenerationDate.after(date)) {
+                // We found better data, so update.
+                validationInfo.trustedGenerationDate = date;
+                validationInfo.timeBasedContext = context;
+            }
+            if (validationInfo.responseOrigin.ordinal() > responseOrigin.ordinal()) {
+                // We found better response origin, so update. It's considered better in terms of PAdES compliance.
+                validationInfo.responseOrigin = responseOrigin;
+            }
+        }
     }
 
     /**

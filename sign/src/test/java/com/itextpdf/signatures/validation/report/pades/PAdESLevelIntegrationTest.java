@@ -41,6 +41,7 @@ import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +51,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PAdESLevelIntegrationTest extends ExtendedITextTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/report/pades/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/report/pades/PAdESLevelIntegrationTest/";
     private static final String CERT_SOURCE =
             "./src/test/resources/com/itextpdf/signatures/validation/report/pades/certs/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
@@ -70,21 +71,21 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
         certificateRetriever = new IssuingCertificateRetriever();
         testOcspClient = new AdvancedTestOcspClient();
         testCrlClient = new TestCrlClient();
-        addRootCertInfo(CERT_SOURCE + "rootCertCrlNoOcsp.pem",0);
-        addRootCertInfo(CERT_SOURCE + "rootCertCrlOcsp.pem",0);
-        addRootCertInfo(CERT_SOURCE + "rootCertNoCrlNoOcsp.pem",0);
-        addRootCertInfo(CERT_SOURCE + "rootCertOcspNoCrl.pem",0);
-        addRootCertInfo(CERT_SOURCE + "signCertCrlNoOcsp.pem",0);
-        addRootCertInfo(CERT_SOURCE + "signCertNoOcspNoCrl.pem",0);
-        addRootCertInfo(CERT_SOURCE + "signCertOcspNoCrl.pem",0);
-        addRootCertInfo(CERT_SOURCE + "tsCertRsa.pem",0);
+        addRootCertInfo(CERT_SOURCE + "rootCertCrlNoOcsp.pem", 0);
+        addRootCertInfo(CERT_SOURCE + "rootCertCrlOcsp.pem", 0);
+        addRootCertInfo(CERT_SOURCE + "rootCertNoCrlNoOcsp.pem", 0);
+        addRootCertInfo(CERT_SOURCE + "rootCertOcspNoCrl.pem", 0);
+        addRootCertInfo(CERT_SOURCE + "signCertCrlNoOcsp.pem", 0);
+        addRootCertInfo(CERT_SOURCE + "signCertNoOcspNoCrl.pem", 0);
+        addRootCertInfo(CERT_SOURCE + "signCertOcspNoCrl.pem", 0);
+        addRootCertInfo(CERT_SOURCE + "tsCertRsa.pem", 0);
     }
 
     private static void addRootCertInfo(String pemFile, int rootCertIndex)
             throws CertificateException, IOException, AbstractOperatorCreationException, AbstractPKCSException {
-        X509Certificate caCert = (X509Certificate)PemFileHelper.readFirstChain(pemFile)[rootCertIndex];
+        X509Certificate caCert = (X509Certificate) PemFileHelper.readFirstChain(pemFile)[rootCertIndex];
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
-        PrivateKey pk = PemFileHelper.readFirstKey( pemFile, PASSWORD);
+        PrivateKey pk = PemFileHelper.readFirstKey(pemFile, PASSWORD);
         testOcspClient.addBuilderForCertIssuer(caCert, new TestOcspResponseBuilder(caCert, pk));
         testCrlClient.addBuilderForCertIssuer(caCert, pk);
     }
@@ -98,20 +99,21 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
         builder.withPAdESLevelReportGenerator(reportGenerator);
     }
 
-      @Test
+    @Test
     public void testBB() throws IOException {
-        try (PdfReader reader = new PdfReader( SOURCE_FOLDER+"B-B.pdf");
-                PdfDocument doc = new PdfDocument(reader)) {
+        try (PdfReader reader = new PdfReader(SOURCE_FOLDER + "B-B.pdf");
+             PdfDocument doc = new PdfDocument(reader)) {
             SignatureValidator validator = builder.buildSignatureValidator(doc);
             ValidationReport validationReport = validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
             Assertions.assertEquals(PAdESLevel.B_B, report.getDocumentLevel());
         }
     }
-  @Test
+
+    @Test
     public void testBT() throws IOException {
-        try (PdfReader reader = new PdfReader( SOURCE_FOLDER+"B-T.pdf");
-                PdfDocument doc = new PdfDocument(reader)) {
+        try (PdfReader reader = new PdfReader(SOURCE_FOLDER + "B-T.pdf");
+             PdfDocument doc = new PdfDocument(reader)) {
             SignatureValidator validator = builder.buildSignatureValidator(doc);
             ValidationReport validationReport = validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
@@ -121,8 +123,8 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void testBLT() throws IOException {
-        try (PdfReader reader = new PdfReader( SOURCE_FOLDER+"B-LT.pdf");
-                PdfDocument doc = new PdfDocument(reader)) {
+        try (PdfReader reader = new PdfReader(SOURCE_FOLDER + "B-LT.pdf");
+             PdfDocument doc = new PdfDocument(reader)) {
             SignatureValidator validator = builder.buildSignatureValidator(doc);
             ValidationReport validationReport = validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
@@ -130,14 +132,14 @@ public class PAdESLevelIntegrationTest extends ExtendedITextTest {
         }
     }
 
- @Test
+    @Test
     public void testBLTA() throws IOException {
-        try (PdfReader reader = new PdfReader( SOURCE_FOLDER+"B-LTA.pdf");
-                PdfDocument doc = new PdfDocument(reader)) {
+        try (PdfReader reader = new PdfReader(SOURCE_FOLDER + "B-LTA.pdf");
+             PdfDocument doc = new PdfDocument(reader)) {
             SignatureValidator validator = builder.buildSignatureValidator(doc);
             ValidationReport validationReport = validator.validateSignatures();
             DocumentPAdESLevelReport report = reportGenerator.getReport();
-            Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
+            Assertions.assertEquals(PAdESLevel.B_LTA, report.getDocumentLevel());
         }
     }
 

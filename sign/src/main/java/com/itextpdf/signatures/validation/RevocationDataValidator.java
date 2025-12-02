@@ -30,15 +30,15 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.signatures.CertificateUtil;
-import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
-import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.events.DssNotTimestampedEvent;
+import com.itextpdf.signatures.validation.events.RevocationNotFromDssEvent;
 import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
@@ -185,19 +185,25 @@ public class RevocationDataValidator {
             }
         }
 
-        // Collect revocation data.
-        List<OcspResponseValidationInfo> ocspResponses = retrieveAllOCSPResponses(report, localContext, certificate);
-        ocspResponses = ocspResponses.stream().sorted((o1, o2) -> o2.singleResp.getThisUpdate().compareTo(
+        // Collect revocation data from everywhere.
+        List<OcspResponseValidationInfo> allOcspResponses = retrieveAllOCSPResponses(report, localContext, certificate);
+        allOcspResponses = allOcspResponses.stream().sorted((o1, o2) -> o2.singleResp.getThisUpdate().compareTo(
                 o1.singleResp.getThisUpdate())).collect(Collectors.toList());
 
-        List<CrlValidationInfo> crlResponses = retrieveAllCRLResponses(report, localContext, certificate);
+        List<CrlValidationInfo> allCrlResponses = retrieveAllCRLResponses(report, localContext, certificate);
+        allCrlResponses = allCrlResponses.stream().sorted((o1, o2) -> o2.crl.getThisUpdate().compareTo(
+                o1.crl.getThisUpdate())).collect(Collectors.toList());
 
+        if (builder.padesValidationRequested()) {
+            firePadesRelatedEventsIfNecessary(certificate, localContext, validationDate);
+        }
+
+        ValidationReport revDataValidationReport = new ValidationReport();
         // Try to check responderCert for revocation using provided responder OCSP/CRL clients or
         // Authority Information Access for OCSP responses and CRL Distribution Points for CRL responses
         // using default clients.
-        ValidationReport revDataValidationReport = new ValidationReport();
-        validateRevocationData(revDataValidationReport, localContext, certificate, validationDate, ocspResponses,
-                crlResponses);
+        validateRevocationData(revDataValidationReport, localContext, certificate, validationDate, allOcspResponses,
+                allCrlResponses);
 
         if (ValidationReport.ValidationResult.INDETERMINATE == revDataValidationReport.getValidationResult()) {
             List<CrlValidationInfo> onlineCrlResponses = new ArrayList<>();
@@ -224,13 +230,14 @@ public class RevocationDataValidator {
     }
 
     private static void fillOcspResponses(List<OcspResponseValidationInfo> ocspResponses, IBasicOCSPResp basicOCSPResp,
-                                          Date generationDate, TimeBasedContext timeBasedContext) {
+                                          Date generationDate, TimeBasedContext timeBasedContext,
+                                          RevocationResponseOrigin responseOrigin) {
         if (basicOCSPResp != null) {
             // Getting the responses.
             ISingleResp[] singleResponses = basicOCSPResp.getResponses();
             for (ISingleResp singleResponse : singleResponses) {
                 ocspResponses.add(new OcspResponseValidationInfo(singleResponse, basicOCSPResp, generationDate,
-                        timeBasedContext));
+                        timeBasedContext, responseOrigin));
             }
         }
     }
@@ -250,12 +257,60 @@ public class RevocationDataValidator {
             for (byte[] crlBytes : crlBytesCollection) {
                 onExceptionLog(() ->
                         crlResponses.add(new CrlValidationInfo((X509CRL) CertificateUtil.parseCrlFromBytes(crlBytes),
-                                DateTimeUtil.getCurrentTimeDate(), TimeBasedContext.PRESENT)), report, e ->
+                                DateTimeUtil.getCurrentTimeDate(), TimeBasedContext.PRESENT,
+                                RevocationResponseOrigin.OTHER)), report, e ->
                         new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
                                 MessageFormatUtil.format(CANNOT_PARSE_CRL, crlClient), e, ReportItemStatus.INFO));
             }
         }
         return crlResponses;
+    }
+
+    private void firePadesRelatedEventsIfNecessary(X509Certificate certificate, ValidationContext localContext,
+                                                   Date validationDate) {
+        // Collect revocation data from the latest DSS. We invoke this logic after all other data is collected
+        // to minimize possible breaking changes in case of custom clients.
+        List<OcspResponseValidationInfo> latestDssOcspResponses = retrieveLatestDssOCSPResponses();
+        latestDssOcspResponses = latestDssOcspResponses.stream().sorted((o1, o2) -> o2.singleResp.getThisUpdate()
+                .compareTo(o1.singleResp.getThisUpdate())).collect(Collectors.toList());
+
+        List<CrlValidationInfo> latestDssCrlResponses =
+                retrieveLatestDssCRLResponses(new ValidationReport(), certificate);
+        latestDssCrlResponses = latestDssCrlResponses.stream().sorted((o1, o2) -> o2.crl.getThisUpdate().compareTo(
+                o1.crl.getThisUpdate())).collect(Collectors.toList());
+
+        List<OcspResponseValidationInfo> timestampedDssOcspResponses = latestDssOcspResponses.stream().filter(
+                resp -> resp.timeBasedContext == TimeBasedContext.HISTORICAL).collect(Collectors.toList());
+        List<CrlValidationInfo> timestampedDssCrlResponses = latestDssCrlResponses.stream().filter(
+                resp -> resp.timeBasedContext == TimeBasedContext.HISTORICAL).collect(Collectors.toList());
+        ValidationReport timestampedDssValidationReport = new ValidationReport();
+        validateRevocationData(timestampedDssValidationReport, localContext, certificate, validationDate,
+                timestampedDssOcspResponses, timestampedDssCrlResponses);
+        // Now first we want to try the validation with only timestamped DSS revocation data.
+        // It's needed for PAdES compliance check.
+        // But we don't care about the result. Actual validation result will be determined later.
+        if (ValidationReport.ValidationResult.VALID != timestampedDssValidationReport.getValidationResult()) {
+            // If that's not enough, signature is not PAdES B-LTA compliant.
+            try {
+                builder.getEventManager().onEvent(new DssNotTimestampedEvent(certificate));
+            } catch (Exception ignored) {
+                // Do nothing.
+            }
+
+            // However it still may be B-LT compliant,
+            // in order to check that we need to try to validate with any revocation data, coming from DSS.
+            ValidationReport lastDssValidationReport = new ValidationReport();
+            validateRevocationData(lastDssValidationReport, localContext, certificate, validationDate,
+                    latestDssOcspResponses, latestDssCrlResponses);
+            if (ValidationReport.ValidationResult.VALID != lastDssValidationReport.getValidationResult()) {
+                // If that's not enough, signature is not PAdES B-LT compliant.
+                try {
+                    builder.getEventManager().onEvent(new RevocationNotFromDssEvent(certificate));
+                } catch (Exception ignored) {
+                    // Do nothing.
+                }
+            }
+        }
     }
 
     private void validateRevocationData(ValidationReport report, ValidationContext context, X509Certificate certificate,
@@ -305,9 +360,27 @@ public class RevocationDataValidator {
                 ReportItemStatus.INDETERMINATE));
     }
 
+    private List<OcspResponseValidationInfo> retrieveLatestDssOCSPResponses() {
+        List<OcspResponseValidationInfo> ocspResponses = new ArrayList<>();
+        for (IOcspClient ocspClient : ocspClients) {
+            if (ocspClient instanceof ValidationOcspClient) {
+                ValidationOcspClient validationOcspClient = (ValidationOcspClient) ocspClient;
+                for (Map.Entry<IBasicOCSPResp, OcspResponseValidationInfo> response :
+                        validationOcspClient.getResponses().entrySet()) {
+                    if (response.getValue().responseOrigin == RevocationResponseOrigin.LATEST_DSS) {
+                        // This method handles all OCSP responses coming from the latest DSS.
+                        fillOcspResponses(ocspResponses, response.getKey(), response.getValue().trustedGenerationDate,
+                                response.getValue().timeBasedContext, response.getValue().responseOrigin);
+                    }
+                }
+            }
+        }
+        return ocspResponses;
+    }
+
     private List<OcspResponseValidationInfo> retrieveAllOCSPResponses(ValidationReport report,
-            ValidationContext context,
-            X509Certificate certificate) {
+                                                                      ValidationContext context,
+                                                                      X509Certificate certificate) {
         List<OcspResponseValidationInfo> ocspResponses = new ArrayList<>();
         List<X509Certificate> issuerCerts;
         try {
@@ -323,11 +396,11 @@ public class RevocationDataValidator {
                 for (Map.Entry<IBasicOCSPResp, OcspResponseValidationInfo> response :
                         validationOcspClient.getResponses().entrySet()) {
                     fillOcspResponses(ocspResponses, response.getKey(), response.getValue().trustedGenerationDate,
-                            response.getValue().timeBasedContext);
+                            response.getValue().timeBasedContext, response.getValue().responseOrigin);
                 }
             } else {
                 for (X509Certificate issuerCert : issuerCerts) {
-                    byte[] basicOcspRespBytes = null;
+                    byte[] basicOcspRespBytes;
                     basicOcspRespBytes = onRuntimeExceptionLog(() ->
                             ocspClient.getEncoded(certificate, issuerCert, null), null, report, e ->
                             new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
@@ -340,7 +413,7 @@ public class RevocationDataValidator {
                                             BOUNCY_CASTLE_FACTORY.createASN1Primitive(
                                                     basicOcspRespBytes)));
                             fillOcspResponses(ocspResponses, basicOCSPResp, DateTimeUtil.getCurrentTimeDate(),
-                                    TimeBasedContext.PRESENT);
+                                    TimeBasedContext.PRESENT, RevocationResponseOrigin.OTHER);
                         } catch (IOException | RuntimeException e) {
                             report.addReportItem(new ReportItem(REVOCATION_DATA_CHECK, MessageFormatUtil.format(
                                     CANNOT_PARSE_OCSP, ocspClient), e, ReportItemStatus.INFO));
@@ -357,7 +430,7 @@ public class RevocationDataValidator {
                     IBasicOCSPResp basicOCSPResp = builder.getOcspClient().getBasicOCSPResp(certificate,
                             issuerCert, null);
                     fillOcspResponses(ocspResponses, basicOCSPResp, DateTimeUtil.getCurrentTimeDate(),
-                            TimeBasedContext.PRESENT);
+                            TimeBasedContext.PRESENT, RevocationResponseOrigin.OTHER);
                 }, report, e -> new CertificateReportItem(certificate, REVOCATION_DATA_CHECK,
                         MessageFormatUtil.format(OCSP_CLIENT_FAILURE, "OcspClientBouncyCastle"), e,
                         ReportItemStatus.INDETERMINATE));
@@ -366,8 +439,19 @@ public class RevocationDataValidator {
         return ocspResponses;
     }
 
+    private List<CrlValidationInfo> retrieveLatestDssCRLResponses(ValidationReport report,
+                                                                  X509Certificate certificate) {
+        List<CrlValidationInfo> crlResponses = new ArrayList<>();
+        for (ICrlClient crlClient : crlClients) {
+            crlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, crlClient));
+        }
+        // This method handles all CRL responses coming from the latest DSS.
+        return crlResponses.stream().filter(crlResponse ->
+                crlResponse.responseOrigin == RevocationResponseOrigin.LATEST_DSS).collect(Collectors.toList());
+    }
+
     private List<CrlValidationInfo> retrieveAllCRLResponses(ValidationReport report, ValidationContext context,
-            X509Certificate certificate) {
+                                                            X509Certificate certificate) {
         List<CrlValidationInfo> crlResponses = new ArrayList<>();
         for (ICrlClient crlClient : crlClients) {
             crlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, crlClient));
@@ -377,9 +461,7 @@ public class RevocationDataValidator {
         if (SignatureValidationProperties.OnlineFetching.ALWAYS_FETCH == onlineFetching) {
             crlResponses.addAll(retrieveAllCRLResponsesUsingClient(report, certificate, builder.getCrlClient()));
         }
-        // Sort all the CRL responses available based on the most recent revocation data.
-        return crlResponses.stream().sorted((o1, o2) -> o2.crl.getThisUpdate().compareTo(o1.crl.getThisUpdate()))
-                .collect(Collectors.toList());
+        return crlResponses;
     }
 
     private void tryToFetchRevInfoOnline(ValidationReport report, ValidationContext context,
@@ -403,7 +485,7 @@ public class RevocationDataValidator {
                             issuerCert, null);
                     List<OcspResponseValidationInfo> ocspResponses = new ArrayList<>();
                     fillOcspResponses(ocspResponses, basicOCSPResp, DateTimeUtil.getCurrentTimeDate(),
-                            TimeBasedContext.PRESENT);
+                            TimeBasedContext.PRESENT, RevocationResponseOrigin.OTHER);
                     // Sort all the OCSP responses available based on the most recent revocation data.
                     onlineOcspResponses.addAll(ocspResponses.stream().sorted((o1, o2) ->
                                     o2.singleResp.getThisUpdate().compareTo(o1.singleResp.getThisUpdate()))
@@ -421,8 +503,9 @@ public class RevocationDataValidator {
     public static class OcspResponseValidationInfo {
         final ISingleResp singleResp;
         final IBasicOCSPResp basicOCSPResp;
-        final Date trustedGenerationDate;
-        final TimeBasedContext timeBasedContext;
+        Date trustedGenerationDate;
+        TimeBasedContext timeBasedContext;
+        RevocationResponseOrigin responseOrigin;
 
         /**
          * Creates validation related information about single OCSP response.
@@ -431,13 +514,33 @@ public class RevocationDataValidator {
          * @param basicOCSPResp         {@link IBasicOCSPResp} basic OCSP response which contains this single response
          * @param trustedGenerationDate {@link Date} trusted date at which response was generated
          * @param timeBasedContext      {@link TimeBasedContext} time based context which corresponds to generation date
+         *
+         * @deprecated use a constructor with {@link RevocationResponseOrigin} parameter instead
          */
+        @Deprecated
         public OcspResponseValidationInfo(ISingleResp singleResp, IBasicOCSPResp basicOCSPResp,
                 Date trustedGenerationDate, TimeBasedContext timeBasedContext) {
+            this(singleResp, basicOCSPResp, trustedGenerationDate, timeBasedContext, RevocationResponseOrigin.OTHER);
+        }
+
+        /**
+         * Creates validation related information about single OCSP response.
+         *
+         * @param singleResp            {@link ISingleResp} single response to be validated
+         * @param basicOCSPResp         {@link IBasicOCSPResp} basic OCSP response which contains this single response
+         * @param trustedGenerationDate {@link Date} trusted date at which response was generated
+         * @param timeBasedContext      {@link TimeBasedContext} time based context which corresponds to generation date
+         * @param responseOrigin        {@link RevocationResponseOrigin} representing an origin,
+         *                                                              from which this OCSP response comes from
+         */
+        public OcspResponseValidationInfo(ISingleResp singleResp, IBasicOCSPResp basicOCSPResp,
+                                          Date trustedGenerationDate, TimeBasedContext timeBasedContext,
+                                          RevocationResponseOrigin responseOrigin) {
             this.singleResp = singleResp;
             this.basicOCSPResp = basicOCSPResp;
             this.trustedGenerationDate = trustedGenerationDate;
             this.timeBasedContext = timeBasedContext;
+            this.responseOrigin = responseOrigin;
         }
     }
 
@@ -446,8 +549,9 @@ public class RevocationDataValidator {
      */
     public static class CrlValidationInfo {
         final X509CRL crl;
-        final Date trustedGenerationDate;
-        final TimeBasedContext timeBasedContext;
+        Date trustedGenerationDate;
+        TimeBasedContext timeBasedContext;
+        RevocationResponseOrigin responseOrigin;
 
         /**
          * Creates validation related information about CRL response.
@@ -455,11 +559,29 @@ public class RevocationDataValidator {
          * @param crl                   {@link X509CRL} CRL to be validated
          * @param trustedGenerationDate {@link Date} trusted date at which response was generated
          * @param timeBasedContext      {@link TimeBasedContext} time based context which corresponds to generation date
+         *
+         * @deprecated use a constructor with {@link RevocationResponseOrigin} parameter instead
          */
+        @Deprecated
         public CrlValidationInfo(X509CRL crl, Date trustedGenerationDate, TimeBasedContext timeBasedContext) {
+            this(crl, trustedGenerationDate, timeBasedContext, RevocationResponseOrigin.OTHER);
+        }
+
+        /**
+         * Creates validation related information about CRL response.
+         *
+         * @param crl                   {@link X509CRL} CRL to be validated
+         * @param trustedGenerationDate {@link Date} trusted date at which response was generated
+         * @param timeBasedContext      {@link TimeBasedContext} time based context which corresponds to generation date
+         * @param responseOrigin        {@link RevocationResponseOrigin} representing an origin,
+         *                                                              from which this CRL response comes from
+         */
+        public CrlValidationInfo(X509CRL crl, Date trustedGenerationDate, TimeBasedContext timeBasedContext,
+                                 RevocationResponseOrigin responseOrigin) {
             this.crl = crl;
             this.trustedGenerationDate = trustedGenerationDate;
             this.timeBasedContext = timeBasedContext;
+            this.responseOrigin = responseOrigin;
         }
     }
 }
