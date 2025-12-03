@@ -60,6 +60,9 @@ public interface IStreamCompressionStrategy {
      * This method wraps the provided output stream with a compression implementation.
      * Data written to the returned stream will be compressed before being written
      * to the original stream.
+     * <p>
+     * If the stream requires finalization (e.g., to flush buffers or write end markers),
+     * the returned output stream should also implement the {@link  com.itextpdf.io.source.IFinishable}  interface,
      *
      * @param original the original output stream to wrap
      * @param stream   the PDF stream being compressed (may be used for context or configuration)
@@ -68,14 +71,4 @@ public interface IStreamCompressionStrategy {
      */
     OutputStream createNewOutputStream(OutputStream original, PdfStream stream);
 
-    /**
-     * Finalizes the compression process.  The underlying compression stream should still be open when this method is
-     * called.
-     * <p>
-     * This method should be called when compression is complete to ensure that
-     * all data is properly flushed.
-     *
-     * @param outputStream the output stream to finalize
-     */
-    void finish(OutputStream outputStream);
 }

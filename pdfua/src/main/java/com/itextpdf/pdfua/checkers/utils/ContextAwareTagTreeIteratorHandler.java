@@ -29,6 +29,9 @@ import com.itextpdf.kernel.pdf.tagutils.ITagTreeIteratorHandler;
  */
 public abstract class ContextAwareTagTreeIteratorHandler implements ITagTreeIteratorHandler {
 
+    /**
+     * The validation context that holds necessary information during the tag tree iteration.
+     */
     protected final PdfUAValidationContext context;
 
     /**

@@ -511,7 +511,6 @@ public final class KernelExceptionMessageConstant {
             + "prefix.";
     public static final String YOU_NEED_A_SINGLE_BOOLEAN_FOR_THIS_COLLECTION_SORT_DICTIONARY = "You need a single "
             + "boolean for this collection sort dictionary.";
-    public static final String OUTPUTSTREAM_IS_NOT_OF_INSTANCE = "The outputStream is not of instance {0}.";
 
     private KernelExceptionMessageConstant() {
     }

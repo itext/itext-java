@@ -22,7 +22,6 @@
  */
 package com.itextpdf.brotlicompressor;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.CompressionConstants;
@@ -32,7 +31,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
 
 import com.aayushatharva.brotli4j.Brotli4jLoader;
-import com.aayushatharva.brotli4j.encoder.BrotliOutputStream;
 import com.aayushatharva.brotli4j.encoder.Encoder;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -55,7 +53,7 @@ import java.io.OutputStream;
  * </pre>
  *
  * @see IStreamCompressionStrategy
- * @see BrotliOutputStream
+ * @see com.aayushatharva.brotli4j.encoder.BrotliOutputStream
  */
 public class BrotliStreamCompressionStrategy implements IStreamCompressionStrategy {
 
@@ -109,14 +107,14 @@ public class BrotliStreamCompressionStrategy implements IStreamCompressionStrate
     /**
      * Creates a new Brotli output stream that wraps the original stream.
      * <p>
-     * This method creates a {@link BrotliOutputStream} configured with the compression
+     * This method creates a {@link com.aayushatharva.brotli4j.encoder.BrotliOutputStream} configured with the compression
      * level specified in the PDF stream. The compression level is automatically converted
      * from iText's 0-9 scale to Brotli's 0-11 scale.
      *
      * @param original the original output stream to wrap
      * @param stream   the PDF stream being compressed (used to get compression level)
      *
-     * @return a new {@link BrotliOutputStream} that compresses data before writing to the original stream
+     * @return a new {@link com.aayushatharva.brotli4j.encoder.BrotliOutputStream} that compresses data before writing to the original stream
      *
      * @throws PdfException if an I/O error occurs while creating the Brotli output stream
      */
@@ -128,23 +126,6 @@ public class BrotliStreamCompressionStrategy implements IStreamCompressionStrate
             return new BrotliOutputStream(original, params);
         } catch (IOException e) {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_WRITE_TO_PDF_STREAM, e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void finish(OutputStream outputStream) {
-        if (outputStream instanceof BrotliOutputStream) {
-            try {
-                outputStream.close();
-            } catch (IOException e) {
-                throw new PdfException(KernelExceptionMessageConstant.CANNOT_WRITE_TO_PDF_STREAM, e);
-            }
-        } else {
-            throw new PdfException(
-                    MessageFormatUtil.format(KernelExceptionMessageConstant.OUTPUTSTREAM_IS_NOT_OF_INSTANCE,
-                            "BrotliOutputstream"));
         }
     }
 

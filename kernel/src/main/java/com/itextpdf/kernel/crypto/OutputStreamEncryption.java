@@ -120,7 +120,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      * <p>
      * If {@code off} is negative, or {@code len} is negative, or
      * {@code off+len} is greater than the length of the array
-     * {@code b}, then an <tt>IndexOutOfBoundsException</tt> is thrown.
+     * {@code b}, then an {@code IndexOutOfBoundsException} is thrown.
      *
      * @param b   the data.
      * @param off the start offset in the data.
@@ -131,5 +131,6 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      */
     public abstract void write(byte[] b, int off, int len) throws IOException;
 
+    //TODO DEVSIX-9612 make this class implement IFinishable interface
     public abstract void finish();
 }

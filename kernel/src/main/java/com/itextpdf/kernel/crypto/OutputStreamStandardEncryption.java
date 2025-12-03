@@ -64,7 +64,7 @@ public class OutputStreamStandardEncryption extends OutputStreamEncryption {
      * <p>
      * If {@code off} is negative, or {@code len} is negative, or
      * {@code off+len} is greater than the length of the array
-     * {@code b}, then an <tt>IndexOutOfBoundsException</tt> is thrown.
+     * {@code b}, then an {@code IndexOutOfBoundsException} is thrown.
      *
      * @param b   the data.
      * @param off the start offset in the data.

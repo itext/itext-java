@@ -87,31 +87,4 @@ public class FlateCompressionStrategy implements IStreamCompressionStrategy {
         // Use 32KB buffer size for deflater stream
         return new DeflaterOutputStream(original, stream.getCompressionLevel(), BUFFER);
     }
-
-    /**
-     * Finishes writing compressed data to the output stream and flushes any remaining data.
-     * <p>
-     * This method must be called after all data has been written to ensure that all compressed
-     * data is properly flushed to the underlying stream. The output stream must be an instance
-     * of {@link DeflaterOutputStream}, otherwise a {@link PdfException} will be thrown.
-     *
-     * @param outputStream the output stream to finish, must be a {@link DeflaterOutputStream}
-     *
-     * @throws PdfException if the output stream is not a {@link DeflaterOutputStream} or if
-     *                      an error occurs during the finish operation
-     */
-    @Override
-    public void finish(OutputStream outputStream) {
-        if (outputStream instanceof DeflaterOutputStream) {
-            try {
-                ((DeflaterOutputStream) outputStream).finish();
-            } catch (Exception e) {
-                throw new PdfException(KernelExceptionMessageConstant.CANNOT_WRITE_TO_PDF_STREAM, e);
-            }
-        } else {
-            throw new PdfException(
-                    MessageFormatUtil.format(KernelExceptionMessageConstant.OUTPUTSTREAM_IS_NOT_OF_INSTANCE,
-                            "DeflaterOutputStream"));
-        }
-    }
 }

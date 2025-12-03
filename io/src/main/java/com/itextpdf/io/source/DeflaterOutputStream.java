@@ -34,7 +34,7 @@ import java.util.zip.Deflater;
  * The compression level can be set to values between 0 (no compression) and 9 (maximum compression),
  * or use -1 for the default compression level.
  */
-public class DeflaterOutputStream extends java.util.zip.DeflaterOutputStream {
+public class DeflaterOutputStream extends java.util.zip.DeflaterOutputStream implements IFinishable {
 
     /**
      * Default buffer size for the deflater output stream (512 bytes).

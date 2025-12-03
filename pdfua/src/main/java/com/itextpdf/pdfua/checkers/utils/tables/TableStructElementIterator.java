@@ -58,7 +58,7 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
      * Creates a new {@link TableStructElementIterator} instance.
      *
      * @param tableStructElem the root table struct element.
-     * @param context the validation context.
+     * @param context         the validation context.
      */
     public TableStructElementIterator(PdfStructElem tableStructElem, PdfUAValidationContext context) {
         this.context = context;
@@ -66,7 +66,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Checks if there is a next element in the iteration.
+     *
+     * @return {@code true} if there is a next element, {@code false} otherwise
      */
     @Override
     public boolean hasNext() {
@@ -74,7 +76,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the next table structure element in the iteration.
+     *
+     * @return the next {@link PdfStructElem} in the iteration
      */
     @Override
     public PdfStructElem next() {
@@ -83,7 +87,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the number of rows in the body of the table.
+     *
+     * @return the number of rows in the table body
      */
     @Override
     public int getAmountOfRowsBody() {
@@ -91,7 +97,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the number of rows in the header of the table.
+     *
+     * @return the number of rows in the table header
      */
     @Override
     public int getAmountOfRowsHeader() {
@@ -99,7 +107,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the number of rows in the footer of the table.
+     *
+     * @return the number of rows in the table footer
      */
     @Override
     public int getAmountOfRowsFooter() {
@@ -107,7 +117,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the total number of columns in the table.
+     *
+     * @return the total number of columns in the table
      */
     @Override
     public int getNumberOfColumns() {
@@ -115,7 +127,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the zero-based row index of the current table element.
+     *
+     * @return the zero-based row index of the current element
      */
     @Override
     public int getRow() {
@@ -123,7 +137,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the zero-based column index of the current table element.
+     *
+     * @return the zero-based column index of the current element
      */
     @Override
     public int getCol() {
@@ -131,7 +147,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the rowspan attribute value of the current table element.
+     *
+     * @return the rowspan value of the current element (minimum 1)
      */
     @Override
     public int getRowspan() {
@@ -139,7 +157,9 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the colspan attribute value of the current table element.
+     *
+     * @return the colspan value of the current element (minimum 1)
      */
     @Override
     public int getColspan() {

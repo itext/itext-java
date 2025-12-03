@@ -26,6 +26,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.HighPrecisionOutputStream;
+import com.itextpdf.io.source.IFinishable;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -38,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> {
-
 
     private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");
     private static final byte[] endstream = ByteUtils.getIsoBytes("\nendstream");
@@ -560,8 +560,8 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
                     }
                     fout.write(buf, 0, n);
                 }
-                if (def != null) {
-                    getCompressionStrategy().finish(def);
+                if (def instanceof IFinishable) {
+                    ((IFinishable) def).finish();
                 }
                 if (ose != null) {
                     ose.finish();
@@ -600,7 +600,9 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
                             assert pdfStream.getOutputStream() != null : "Error in outputStream";
                             ((ByteArrayOutputStream) pdfStream.getOutputStream().getOutputStream()).writeTo(zip);
                         }
-                        getCompressionStrategy().finish(zip);
+                        if (zip instanceof IFinishable){
+                            ((IFinishable) zip).finish();
+                        }
                     } else {
                         if (pdfStream instanceof PdfObjectStream) {
                             PdfObjectStream objectStream = (PdfObjectStream) pdfStream;

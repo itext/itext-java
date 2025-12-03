@@ -233,7 +233,7 @@ public final class XMPPathFactory
 	 *        itself simple.
 	 * @param fieldValue The desired value of the field.
 	 * @return Returns the composed path. This will be of the form
-	 *         <tt>ns:arrayName[fNS:fieldName='fieldValue']</tt>, where &quot;ns&quot; is the
+	 *         {@code ns:arrayName[fNS:fieldName='fieldValue']}, where &quot;ns&quot; is the
 	 *         prefix for schemaNS and &quot;fNS&quot; is the prefix for fieldNS.
 	 * @throws XMPException Thrown if the path to create is not valid.
 	 */

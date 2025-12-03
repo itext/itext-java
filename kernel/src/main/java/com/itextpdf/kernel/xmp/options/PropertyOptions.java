@@ -279,8 +279,8 @@ public final class PropertyOptions extends Options
 
 	/**
 	 * @return Return whether this property is an alt-text array. Appears in conjunction with
-	 *         getPropArrayIsAlternate(). It is serialized using an <tt>rdf:Alt</tt> container.
-	 *         Each array element is a simple property with an <tt>xml:lang</tt> attribute.
+	 *         getPropArrayIsAlternate(). It is serialized using an {@code rdf:Alt} container.
+	 *         Each array element is a simple property with an {@code xml:lang} attribute.
 	 */
 	public boolean isArrayAltText()
 	{
