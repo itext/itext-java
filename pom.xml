@@ -1066,6 +1066,7 @@
 
                   -H:IncludeResources=lib/windows-x86_64/brotli.dll
                   -H:IncludeResources=lib/linux-aarch64/libbrotli.so
+                  -H:IncludeResources=lib/linux-x86_64/libbrotli.so
 
                   --initialize-at-run-time=com.aayushatharva.brotli4j.Brotli4jLoader
 
