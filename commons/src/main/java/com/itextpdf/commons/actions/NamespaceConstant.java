@@ -32,6 +32,7 @@ import java.util.List;
 public final class NamespaceConstant {
     
     public static final String ITEXT = "com.itextpdf";
+    public static final String ITEXT5 = "com.itextpdf";
 
     // Core
     public static final String CORE_BARCODES = ITEXT + ".barcodes";

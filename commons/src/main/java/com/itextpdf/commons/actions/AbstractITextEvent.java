@@ -35,6 +35,7 @@ public abstract class AbstractITextEvent implements IEvent {
 
     static {
         registerNamespace(NamespaceConstant.ITEXT);
+        registerNamespace(NamespaceConstant.ITEXT5);
     }
 
     /**
