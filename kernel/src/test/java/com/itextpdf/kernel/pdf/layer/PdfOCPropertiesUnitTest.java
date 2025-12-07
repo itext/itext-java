@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Tag("UnitTest")
@@ -275,4 +276,41 @@ public class PdfOCPropertiesUnitTest extends ExtendedITextTest {
             Assertions.assertEquals(1, layers.get(1).getChildren().size());
         }
     }
+
+    @Test
+    public void removeNotRegisteredOcgsWhenCatalogOcPropertiesMissingTest() throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PdfDocument document = new PdfDocument(new PdfWriter(baos))) {
+
+            // Create two layers and register them as a radio group so that /D->/RBGroups is populated.
+            PdfLayer layer1 = new PdfLayer("Layer1", document);
+            PdfLayer layer2 = new PdfLayer("Layer2", document);
+            PdfLayer.addOCGRadioGroup(document, Arrays.asList(layer1, layer2));
+
+            PdfOCProperties ocProps = document.getCatalog().getOCProperties(true);
+
+            PdfDictionary dDict = ocProps.getPdfObject().getAsDictionary(PdfName.D);
+            PdfArray rbGroupsBefore = dDict.getAsArray(PdfName.RBGroups);
+            // RBGroups array should be present before cleanup
+            Assertions.assertNotNull(rbGroupsBefore);
+            // RBGroups should contain at least one group before cleanup
+            Assertions.assertFalse(rbGroupsBefore.isEmpty());
+
+            document.getCatalog().getPdfObject().remove(PdfName.OCProperties);
+
+            ocProps.fillDictionary(true);
+
+            PdfDictionary dDictAfter = ocProps.getPdfObject().getAsDictionary(PdfName.D);
+            PdfArray rbGroupsAfter = dDictAfter.getAsArray(PdfName.RBGroups);
+            // RBGroups must still exist after cleanup
+            Assertions.assertNotNull(rbGroupsAfter);
+
+            for (PdfObject rbGroupObj : rbGroupsAfter) {
+                PdfArray rbGroup = (PdfArray) rbGroupObj;
+                // All OCGs should be removed from RBGroups when catalog has no OCProperties
+                Assertions.assertTrue(rbGroup.isEmpty());
+            }
+        }
+    }
+
 }

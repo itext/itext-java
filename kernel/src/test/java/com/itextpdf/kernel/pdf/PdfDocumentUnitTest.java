@@ -221,6 +221,53 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    public void closeInAppendModeWithUnmodifiedOcPropsDictTest() throws IOException {
+        // Phase 1: create an in‑memory document that already has OCProperties.
+        byte[] baseBytes;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (PdfDocument baseDoc = new PdfDocument(new PdfWriter(baos))) {
+                PdfPage page = baseDoc.addNewPage();
+                PdfResources resources = page.getResources();
+
+                PdfDictionary ocg = new PdfDictionary();
+                ocg.put(PdfName.Type, PdfName.OCG);
+                ocg.put(PdfName.Name, new PdfString("BaseLayer"));
+                ocg.makeIndirect(baseDoc);
+                resources.addProperties(ocg);
+
+                baseDoc.getCatalog().getOCProperties(true);
+            }
+            baseBytes = baos.toByteArray();
+        }
+
+        byte[] stampedBytes;
+        try (ByteArrayOutputStream stampedBaos = new ByteArrayOutputStream()) {
+            // Phase 2: open in append mode, mark OCProperties as "may have changed"
+            // without actually modifying the OCProperties dictionary.
+            try (PdfDocument pdfDoc = new PdfDocument(
+                    new PdfReader(new ByteArrayInputStream(baseBytes)),
+                    new PdfWriter(stampedBaos),
+                    new StampingProperties().useAppendMode())) {
+                PdfDictionary ocPropsDict = pdfDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
+                // Base document must contain OCProperties
+                Assertions.assertNotNull(ocPropsDict);
+
+                // Force isOCPropertiesMayHaveChanged() to return true, but keep ocPropsDict unmodified.
+                pdfDoc.getCatalog().setOcgCopied(true);
+                pdfDoc.getCatalog().setModified();
+            }
+            stampedBytes = stampedBaos.toByteArray();
+        }
+
+        // Phase 3: verify that the resulting document still has valid OCProperties
+        try (PdfDocument resultDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(stampedBytes)))) {
+            PdfOCProperties ocProps = resultDoc.getCatalog().getOCProperties(false);
+            // OCProperties must be present after append‑mode close
+            Assertions.assertNotNull(ocProps);
+        }
+    }
+
+    @Test
     public void getDocumentInfoAlreadyClosedTest() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pdfWithMetadata.pdf"));
         pdfDocument.close();

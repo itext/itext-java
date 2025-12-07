@@ -1013,9 +1013,13 @@ public class PdfDocument implements Closeable {
                     if (structTreeRoot != null) {
                         tryFlushTagStructure(true);
                     }
-                    if (catalog.isOCPropertiesMayHaveChanged() && catalog.getOCProperties(false).getPdfObject()
-                            .isModified()) {
-                        catalog.getOCProperties(false).flush();
+                    if (catalog.isOCPropertiesMayHaveChanged()) {
+                        PdfObject ocPropsDict = catalog.getOCProperties(false).getPdfObject();
+                        // Ensure OCProperties is referenced from the catalog, even if it didn't exist originally.
+                        catalog.put(PdfName.OCProperties, ocPropsDict);
+                        if (ocPropsDict.isModified()) {
+                            catalog.getOCProperties(false).flush();
+                        }
                     }
                     if (catalog.pageLabels != null) {
                         catalog.put(PdfName.PageLabels, catalog.pageLabels.buildTree());

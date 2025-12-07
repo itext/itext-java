@@ -27,6 +27,7 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -34,6 +35,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -42,6 +44,7 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -646,4 +649,211 @@ public class PdfLayerTest extends ExtendedITextTest {
 
         PdfLayerTestUtils.compareLayers(outPdf, cmpPdf);
     }
+
+    @Test
+    public void addOcgLayerInAppendModeWhenNoLayersExist() throws IOException {
+        // Create a base document without any OCProperties / OCGs.
+        ByteArrayOutputStream baseBaos = new ByteArrayOutputStream();
+        try (PdfDocument baseDoc = new PdfDocument(new PdfWriter(baseBaos))) {
+            baseDoc.addNewPage();
+        }
+
+        byte[] baseBytes = baseBaos.toByteArray();
+        ByteArrayOutputStream resultBaos = new ByteArrayOutputStream();
+
+        // Append: add a single OCG layer in append mode.
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(new ByteArrayInputStream(baseBytes)),
+                new PdfWriter(resultBaos),
+                new StampingProperties().useAppendMode())) {
+
+            PdfFont font = PdfFontFactory.createFont();
+            PdfLayer layer = new PdfLayer("AppendLayer", pdfDoc);
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
+            canvas.setFontAndSize(font, 12);
+            PdfLayerTestUtils.addTextInsideLayer(layer, canvas, "Content in appended layer", 50, 700);
+        }
+
+        // Assert that the resulting document has exactly one OCG with the expected name.
+        try (PdfDocument resultDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(resultBaos.toByteArray())))) {
+            PdfOCProperties ocProps = resultDoc.getCatalog().getOCProperties(false);
+            // OCProperties must be present after appending a layer
+            Assertions.assertNotNull(ocProps);
+
+            List<PdfLayer> layers = ocProps.getLayers();
+            // Exactly one layer is expected
+            Assertions.assertEquals(1, layers.size());
+
+            PdfLayer layer = layers.get(0);
+            Assertions.assertEquals("AppendLayer",
+                    layer.getPdfObject().getAsString(PdfName.Name).toUnicodeString());
+        }
+    }
+
+    @Test
+    public void addOcgLayerInAppendModeWhenLayersExist() throws IOException {
+        // Phase 1: create base document with a single OCG.
+        ByteArrayOutputStream baseBaos = new ByteArrayOutputStream();
+        try (PdfDocument baseDoc = new PdfDocument(new PdfWriter(baseBaos))) {
+            PdfFont font = PdfFontFactory.createFont();
+            PdfCanvas canvas = new PdfCanvas(baseDoc.addNewPage());
+            canvas.setFontAndSize(font, 12);
+
+            PdfLayer baseLayer = new PdfLayer("BaseLayer", baseDoc);
+            PdfLayerTestUtils.addTextInsideLayer(baseLayer, canvas, "Base layer content", 50, 750);
+        }
+
+        byte[] baseBytes = baseBaos.toByteArray();
+        ByteArrayOutputStream resultBaos = new ByteArrayOutputStream();
+
+        // Phase 2: append a new OCG to the existing OCProperties.
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(new ByteArrayInputStream(baseBytes)),
+                new PdfWriter(resultBaos),
+                new StampingProperties().useAppendMode())) {
+
+            PdfFont font = PdfFontFactory.createFont();
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
+            canvas.setFontAndSize(font, 12);
+
+            PdfLayer appendedLayer = new PdfLayer("AppendedLayer", pdfDoc);
+            PdfLayerTestUtils.addTextInsideLayer(appendedLayer, canvas, "Appended layer content", 50, 700);
+        }
+
+        // Assert that both the original and the appended layers are present.
+        try (PdfDocument resultDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(resultBaos.toByteArray())))) {
+            PdfOCProperties ocProps = resultDoc.getCatalog().getOCProperties(false);
+            Assertions.assertNotNull(ocProps);
+
+            List<PdfLayer> layers = ocProps.getLayers();
+            // Two layers expected after append
+            Assertions.assertEquals(2, layers.size());
+
+            List<String> names = new ArrayList<>();
+            for (PdfLayer l : layers) {
+                names.add(l.getPdfObject().getAsString(PdfName.Name).toUnicodeString());
+            }
+            Assertions.assertTrue(names.contains("BaseLayer"));
+            Assertions.assertTrue(names.contains("AppendedLayer"));
+        }
+    }
+
+    @Test
+    public void removeOcgLayersInAppendMode() throws IOException {
+        // Phase 1: create base document with two OCGs.
+        ByteArrayOutputStream baseBaos = new ByteArrayOutputStream();
+        try (PdfDocument baseDoc = new PdfDocument(new PdfWriter(baseBaos))) {
+            PdfFont font = PdfFontFactory.createFont();
+            PdfCanvas canvas = new PdfCanvas(baseDoc.addNewPage());
+            canvas.setFontAndSize(font, 12);
+
+            PdfLayer layer1 = new PdfLayer("LayerToRemove1", baseDoc);
+            PdfLayer layer2 = new PdfLayer("LayerToRemove2", baseDoc);
+
+            PdfLayerTestUtils.addTextInsideLayer(layer1, canvas, "Layer 1 content", 50, 750);
+            PdfLayerTestUtils.addTextInsideLayer(layer2, canvas, "Layer 2 content", 50, 700);
+        }
+
+        byte[] baseBytes = baseBaos.toByteArray();
+        ByteArrayOutputStream resultBaos = new ByteArrayOutputStream();
+
+        // Phase 2: in append mode, remove all OCGs directly from the OCProperties dictionary.
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(new ByteArrayInputStream(baseBytes)),
+                new PdfWriter(resultBaos),
+                new StampingProperties().useAppendMode())) {
+
+            PdfDictionary catalogDict = pdfDoc.getCatalog().getPdfObject();
+            PdfDictionary ocPropsDict = catalogDict.getAsDictionary(PdfName.OCProperties);
+            // OCProperties must exist in base document
+            Assertions.assertNotNull(ocPropsDict);
+
+            PdfArray ocgsArray = ocPropsDict.getAsArray(PdfName.OCGs);
+            // OCGs array must exist in base document
+            Assertions.assertNotNull(ocgsArray);
+            // Base document is expected to have OCGs
+            Assertions.assertFalse(ocgsArray.isEmpty());
+
+            //TODO DEVSIX-778: use OCGRemover alternative here
+            ocgsArray.clear();
+            ocPropsDict.setModified();
+        }
+
+        // Phase 3: verify that resulting document has no OCGs registered.
+        try (PdfDocument resultDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(resultBaos.toByteArray())))) {
+            PdfDictionary catalogDict = resultDoc.getCatalog().getPdfObject();
+            PdfDictionary ocPropsDict = catalogDict.getAsDictionary(PdfName.OCProperties);
+            // OCProperties dictionary should still exist
+            Assertions.assertNotNull(ocPropsDict);
+
+            PdfArray ocgs = ocPropsDict.getAsArray(PdfName.OCGs);
+            // OCGs array is expected to be empty after removal in append mode
+            Assertions.assertTrue(ocgs == null || ocgs.isEmpty());
+
+            // Additionally assert via PdfOCProperties API that no layers are reported.
+            PdfOCProperties ocProps = resultDoc.getCatalog().getOCProperties(false);
+            if (ocProps != null) {
+                // No layers should be registered after OCG removal
+                Assertions.assertTrue(ocProps.getLayers().isEmpty());
+            }
+        }
+    }
+
+    @Test
+    public void modifyExistingOcgLayersInAppendMode() throws IOException {
+        // Phase 1: create base document with one visible (ON) layer.
+        ByteArrayOutputStream baseBaos = new ByteArrayOutputStream();
+        try (PdfDocument baseDoc = new PdfDocument(new PdfWriter(baseBaos))) {
+            PdfFont font = PdfFontFactory.createFont();
+            PdfCanvas canvas = new PdfCanvas(baseDoc.addNewPage());
+            canvas.setFontAndSize(font, 12);
+
+            PdfLayer layer = new PdfLayer("ModifiableLayer", baseDoc);
+            layer.setOn(true);
+            PdfLayerTestUtils.addTextInsideLayer(layer, canvas, "Initially visible layer", 50, 750);
+        }
+
+        byte[] baseBytes = baseBaos.toByteArray();
+        ByteArrayOutputStream resultBaos = new ByteArrayOutputStream();
+
+        // Phase 2: in append mode, modify the existing layer (e.g. turn it OFF and lock it).
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(new ByteArrayInputStream(baseBytes)),
+                new PdfWriter(resultBaos),
+                new StampingProperties().useAppendMode())) {
+
+            PdfOCProperties ocProps = pdfDoc.getCatalog().getOCProperties(false);
+            Assertions.assertNotNull(ocProps);
+
+            List<PdfLayer> layers = ocProps.getLayers();
+            // Single layer expected in base document
+            Assertions.assertEquals(1, layers.size());
+
+            PdfLayer layer = layers.get(0);
+            Assertions.assertEquals("ModifiableLayer",
+                    layer.getPdfObject().getAsString(PdfName.Name).toUnicodeString());
+
+            // Modify: make the layer OFF and locked.
+            layer.setOn(false);
+            layer.setLocked(true);
+        }
+
+        // Phase 3: verify modification persisted in resulting document.
+        try (PdfDocument resultDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(resultBaos.toByteArray())))) {
+            PdfOCProperties ocProps = resultDoc.getCatalog().getOCProperties(false);
+            Assertions.assertNotNull(ocProps);
+
+            List<PdfLayer> layers = ocProps.getLayers();
+            Assertions.assertEquals(1, layers.size());
+
+            PdfLayer layer = layers.get(0);
+            Assertions.assertEquals("ModifiableLayer",
+                    layer.getPdfObject().getAsString(PdfName.Name).toUnicodeString());
+            // Layer should be OFF after modification in append mode
+            Assertions.assertFalse(layer.isOn());
+            // Layer should be locked after modification in append mode
+            Assertions.assertTrue(layer.isLocked());
+        }
+    }
+
 }

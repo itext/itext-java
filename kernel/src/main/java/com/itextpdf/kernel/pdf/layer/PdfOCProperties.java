@@ -257,6 +257,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         if (layer == null)
             throw new IllegalArgumentException("layer argument is null");
         layers.add(layer);
+        setModified();
     }
 
     /**
@@ -309,7 +310,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
         final PdfDictionary ocProperties = this.getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
         final Set<PdfIndirectReference> ocgsFromDocument = new HashSet<>();
-        if (ocProperties.getAsArray(PdfName.OCGs) != null) {
+        if (ocProperties != null && ocProperties.getAsArray(PdfName.OCGs) != null) {
             final PdfArray ocgs = ocProperties.getAsArray(PdfName.OCGs);
             for (final PdfObject ocgObj : ocgs) {
                 if (ocgObj.isDictionary()) {
