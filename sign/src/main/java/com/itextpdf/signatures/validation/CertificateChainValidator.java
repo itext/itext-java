@@ -22,11 +22,15 @@
  */
 package com.itextpdf.signatures.validation;
 
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
+import com.itextpdf.signatures.validation.events.CertificateIssuerExternalRetrievalEvent;
+import com.itextpdf.signatures.validation.events.CertificateIssuerRetrievedOutsideDSSEvent;
 import com.itextpdf.signatures.validation.extensions.CertificateExtension;
 import com.itextpdf.signatures.validation.extensions.DynamicCertificateExtension;
 import com.itextpdf.signatures.validation.lotl.LotlTrustedStore;
@@ -42,6 +46,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.itextpdf.signatures.validation.SafeCalling.onExceptionLog;
 import static com.itextpdf.signatures.validation.SafeCalling.onRuntimeExceptionLog;
@@ -54,6 +59,7 @@ public class CertificateChainValidator {
     private final IssuingCertificateRetriever certificateRetriever;
     private final RevocationDataValidator revocationDataValidator;
     private final LotlTrustedStore lotlTrustedStore;
+    private final EventManager eventManager;
 
     static final String CERTIFICATE_CHECK = "Certificate check.";
     static final String VALIDITY_CHECK = "Certificate validity period check.";
@@ -94,6 +100,7 @@ public class CertificateChainValidator {
         this.properties = builder.getProperties();
         this.revocationDataValidator = builder.getRevocationDataValidator();
         this.lotlTrustedStore = builder.getLotlTrustedStore();
+        this.eventManager = builder.getEventManager();
     }
 
     /**
@@ -143,6 +150,7 @@ public class CertificateChainValidator {
                         TRUSTSTORE_RETRIEVAL_FAILED, e, ReportItemStatus.INFO))) {
             return result;
         }
+        handlePadesEvents(certificate);
 
         validateValidityPeriod(result, certificate, validationDate);
         validateRevocationData(result, localContext, certificate, validationDate);
@@ -152,6 +160,15 @@ public class CertificateChainValidator {
 
         validateChain(result, localContext, certificate, validationDate, previousCertificates);
         return result;
+    }
+
+    private void handlePadesEvents(X509Certificate certificate) {
+        CertificateOrigin certificateOrigin = certificateRetriever.getCertificateOrigin(certificate);
+        if (certificateOrigin == CertificateOrigin.OTHER) {
+            eventManager.onEvent(new CertificateIssuerExternalRetrievalEvent(certificate));
+        } else if (certificateOrigin != CertificateOrigin.LATEST_DSS) {
+            eventManager.onEvent(new CertificateIssuerRetrievedOutsideDSSEvent(certificate));
+        }
     }
 
     private boolean checkIfCertIsTrusted(ValidationReport result, ValidationContext context,
@@ -244,6 +261,11 @@ public class CertificateChainValidator {
                     ISSUER_MISSING, certificate.getSubjectX500Principal()), ReportItemStatus.INDETERMINATE));
             return;
         }
+        // We need to sort certificates to process them starting from those, better suited for PAdES validation.
+        issuerCertificates = issuerCertificates.stream().sorted((issuer1, issuer2) -> Integer.compare(
+                certificateRetriever.getCertificateOrigin(issuer1).ordinal(),
+                certificateRetriever.getCertificateOrigin(issuer2).ordinal()))
+                .collect(Collectors.toList());
         ValidationReport[] candidateReports = new ValidationReport[issuerCertificates.size()];
         for (int i = 0; i < issuerCertificates.size(); i++) {
             candidateReports[i] = new ValidationReport();

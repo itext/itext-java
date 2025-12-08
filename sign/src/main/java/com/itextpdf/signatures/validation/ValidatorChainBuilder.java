@@ -29,6 +29,7 @@ import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClientBouncyCastle;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
+import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
 import com.itextpdf.signatures.validation.lotl.LotlFetchingProperties;
 import com.itextpdf.signatures.validation.lotl.LotlService;
 import com.itextpdf.signatures.validation.lotl.LotlTrustedStore;
@@ -582,10 +583,10 @@ public class ValidatorChainBuilder {
             result.setTrustedCertificates(trustedCertificates);
         }
         if (knownCertificates != null) {
-            result.addKnownCertificates(knownCertificates);
+            result.addKnownCertificates(knownCertificates, CertificateOrigin.OTHER);
         }
 
-        result.addKnownCertificates(lotlTrustedStoreFactory.get().getCertificates());
+        result.addKnownCertificates(lotlTrustedStoreFactory.get().getCertificates(), CertificateOrigin.OTHER);
         return result;
     }
 

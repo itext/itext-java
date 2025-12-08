@@ -77,6 +77,8 @@ abstract class AbstractPadesLevelRequirements {
             + "or document timestamp available";
     public static final String ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING = "Issuer for the following certificates is "
             + "missing:\n";
+    public static final String ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS = "Issuer for the following certificates is "
+            + "missing from the DSS dictionary:\n";
     public static final String REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING = "Revocation data for the "
             + "following certificates is missing:\n";
     public static final String REVOCATION_DATA_FOR_THESE_CERTIFICATES_NOT_TIMESTAMPED = "Revocation data for the "
@@ -133,7 +135,8 @@ abstract class AbstractPadesLevelRequirements {
     // Table 1 row 25
     protected boolean documentTimestampPresent;
     // Table 1 row 30 note x
-    protected List<X509Certificate> certificatesIssuerNotInDSS = new ArrayList<>();
+    protected List<X509Certificate> certificateIssuerMissing = new ArrayList<>();
+    protected List<X509Certificate> certificateIssuerNotInDss = new ArrayList<>();
     protected List<X509Certificate> revocationDataNotInDSS = new ArrayList<>();
     protected List<X509Certificate> revocationDataNotTimestamped = new ArrayList<>();
     // Table 1 row 30 note y
@@ -213,13 +216,13 @@ abstract class AbstractPadesLevelRequirements {
         CHECKS.put(PAdESLevel.B_LT, bltChecks);
 
         bltChecks.shalls.add(new CheckAndMessage(
-                r -> r.certificatesIssuerNotInDSS.isEmpty()
+                r -> r.certificateIssuerMissing.isEmpty()
                         && r.revocationDataNotInDSS.isEmpty(),
                 r -> {
                     StringBuilder message = new StringBuilder();
-                    if (!r.certificatesIssuerNotInDSS.isEmpty()) {
+                    if (!r.certificateIssuerMissing.isEmpty()) {
                         message.append(ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING);
-                        for (X509Certificate cert : r.certificatesIssuerNotInDSS) {
+                        for (X509Certificate cert : r.certificateIssuerMissing) {
                             message.append('\t').append(cert).append('\n');
                         }
                     }
@@ -228,6 +231,16 @@ abstract class AbstractPadesLevelRequirements {
                         for (X509Certificate cert : r.revocationDataNotInDSS) {
                             message.append('\t').append(cert).append('\n');
                         }
+                    }
+                    return message.toString();
+                }));
+        bltChecks.shoulds.add(new CheckAndMessage(
+                r -> r.certificateIssuerNotInDss.isEmpty(),
+                r -> {
+                    StringBuilder message = new StringBuilder();
+                    message.append(ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS);
+                    for (X509Certificate cert : r.certificateIssuerNotInDss) {
+                        message.append('\t').append(cert).append('\n');
                     }
                     return message.toString();
                 }));
@@ -535,12 +548,21 @@ abstract class AbstractPadesLevelRequirements {
     }
 
     /**
+     * Adds a certificate for which the issuer cannot be found anywhere in the document.
+     *
+     * @param certificateUnderInvestigation a certificate for which the issuer cannot be found anywhere in the document
+     */
+    public void addCertificateIssuerMissing(X509Certificate certificateUnderInvestigation) {
+        certificateIssuerMissing.add(certificateUnderInvestigation);
+    }
+
+    /**
      * Adds a certificate for which the issuer missing in the DSS.
      *
      * @param certificateUnderInvestigation a certificate for which the issuer missing in the DSS
      */
     public void addCertificateIssuerNotInDSS(X509Certificate certificateUnderInvestigation) {
-        certificatesIssuerNotInDSS.add(certificateUnderInvestigation);
+        certificateIssuerNotInDss.add(certificateUnderInvestigation);
     }
 
     /**

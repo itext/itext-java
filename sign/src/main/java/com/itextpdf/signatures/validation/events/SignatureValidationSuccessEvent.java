@@ -27,6 +27,9 @@ package com.itextpdf.signatures.validation.events;
  */
 public class SignatureValidationSuccessEvent implements IValidationEvent {
 
+    /**
+     * Creates an instance of {@link SignatureValidationSuccessEvent}.
+     */
     public SignatureValidationSuccessEvent() {
         // empty constructor
     }

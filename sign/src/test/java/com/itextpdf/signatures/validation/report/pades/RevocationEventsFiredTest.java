@@ -34,7 +34,7 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.validation.OCSPValidator;
 import com.itextpdf.signatures.validation.RevocationDataValidator;
-import com.itextpdf.signatures.validation.RevocationResponseOrigin;
+import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 import com.itextpdf.signatures.validation.SignatureValidationProperties;
 import com.itextpdf.signatures.validation.ValidationOcspClient;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
@@ -98,7 +98,7 @@ public class RevocationEventsFiredTest extends ExtendedITextTest {
 
     @Test
     public void notTimestampedResponsesFireOneEventTest() throws CertificateEncodingException {
-        setUpOcspClient(RevocationResponseOrigin.LATEST_DSS, TimeBasedContext.PRESENT);
+        setUpOcspClient(RevocationDataOrigin.LATEST_DSS, TimeBasedContext.PRESENT);
         RevocationDataValidator revocationDataValidator = builder.buildRevocationDataValidator();
         revocationDataValidator.validate(new ValidationReport(), VALIDATION_CONTEXT, dummyCertificate, CURRENT_DATE);
 
@@ -108,7 +108,7 @@ public class RevocationEventsFiredTest extends ExtendedITextTest {
 
     @Test
     public void responsesNotFromLatestDssFireTwoEventsTest() throws CertificateEncodingException {
-        setUpOcspClient(RevocationResponseOrigin.HISTORICAL_DSS, TimeBasedContext.HISTORICAL);
+        setUpOcspClient(RevocationDataOrigin.HISTORICAL_DSS, TimeBasedContext.HISTORICAL);
         RevocationDataValidator revocationDataValidator = builder.buildRevocationDataValidator();
         revocationDataValidator.validate(new ValidationReport(), VALIDATION_CONTEXT, dummyCertificate, CURRENT_DATE);
 
@@ -119,7 +119,7 @@ public class RevocationEventsFiredTest extends ExtendedITextTest {
 
     @Test
     public void responsesFromSignatureFireTwoEventsTest() throws CertificateEncodingException {
-        setUpOcspClient(RevocationResponseOrigin.SIGNATURE, TimeBasedContext.HISTORICAL);
+        setUpOcspClient(RevocationDataOrigin.SIGNATURE, TimeBasedContext.HISTORICAL);
         RevocationDataValidator revocationDataValidator = builder.buildRevocationDataValidator();
         revocationDataValidator.validate(new ValidationReport(), VALIDATION_CONTEXT, dummyCertificate, CURRENT_DATE);
 
@@ -130,14 +130,14 @@ public class RevocationEventsFiredTest extends ExtendedITextTest {
 
     @Test
     public void responsesFromTimestampedDssDontFireEventsTest() throws CertificateEncodingException {
-        setUpOcspClient(RevocationResponseOrigin.LATEST_DSS, TimeBasedContext.HISTORICAL);
+        setUpOcspClient(RevocationDataOrigin.LATEST_DSS, TimeBasedContext.HISTORICAL);
         RevocationDataValidator revocationDataValidator = builder.buildRevocationDataValidator();
         revocationDataValidator.validate(new ValidationReport(), VALIDATION_CONTEXT, dummyCertificate, CURRENT_DATE);
 
         Assertions.assertEquals(0, customReportGenerator.firedEvents.size());
     }
 
-    private void setUpOcspClient(RevocationResponseOrigin responseOrigin, TimeBasedContext timeBasedContext) throws CertificateEncodingException {
+    private void setUpOcspClient(RevocationDataOrigin responseOrigin, TimeBasedContext timeBasedContext) throws CertificateEncodingException {
         TestOcspClient testOcspClient = new TestOcspClient().addBuilderForCertIssuer(parentCert, privateKey);
         SignatureValidationProperties validationProperties = new SignatureValidationProperties();
         validationProperties.addOcspClient(new ValidationOcspClient() {

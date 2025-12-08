@@ -110,8 +110,10 @@ public class PAdESLevelReportGenerator implements IEventHandler {
                         processSignatureSuccess();
                         break;
                     case CERTIFICATE_ISSUER_EXTERNAL_RETRIEVAL:
+                        processIssuerMissing((AbstractCertificateChainEvent) event);
+                        break;
                     case CERTIFICATE_ISSUER_OTHER_INTERNAL_SOURCE_USED:
-                        processIssuerRetrieval((AbstractCertificateChainEvent) event);
+                        processIssuerNotInDss((AbstractCertificateChainEvent) event);
                         break;
                     case REVOCATION_NOT_FROM_DSS:
                         processRevocationNotInDss((AbstractCertificateChainEvent) event);
@@ -142,9 +144,15 @@ public class PAdESLevelReportGenerator implements IEventHandler {
         }
     }
 
-    private void processIssuerRetrieval(AbstractCertificateChainEvent event) {
+    private void processIssuerNotInDss(AbstractCertificateChainEvent event) {
         if (currentSignature != null) {
             signatureInfos.get(currentSignature).addCertificateIssuerNotInDSS(event.getCertificate());
+        }
+    }
+
+    private void processIssuerMissing(AbstractCertificateChainEvent event) {
+        if (currentSignature != null) {
+            signatureInfos.get(currentSignature).addCertificateIssuerMissing(event.getCertificate());
         }
     }
 

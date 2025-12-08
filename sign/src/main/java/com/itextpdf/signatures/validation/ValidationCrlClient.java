@@ -25,6 +25,7 @@ package com.itextpdf.signatures.validation;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.validation.RevocationDataValidator.CrlValidationInfo;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
+import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 
 import java.security.cert.CRLException;
 import java.security.cert.CertificateEncodingException;
@@ -57,11 +58,11 @@ public class ValidationCrlClient implements ICrlClient {
      * @param date     {@link Date} to be linked with the response
      * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
      *
-     * @deprecated use {@link #addCrl(X509CRL, Date, TimeBasedContext, RevocationResponseOrigin)} instead
+     * @deprecated use {@link #addCrl(X509CRL, Date, TimeBasedContext, RevocationDataOrigin)} instead
      */
     @Deprecated
     public void addCrl(X509CRL response, Date date, TimeBasedContext context) {
-        addCrl(response, date, context, RevocationResponseOrigin.OTHER);
+        addCrl(response, date, context, RevocationDataOrigin.OTHER);
     }
 
     /**
@@ -70,9 +71,9 @@ public class ValidationCrlClient implements ICrlClient {
      * @param response {@link X509CRL} response to be added
      * @param date     {@link Date} to be linked with the response
      * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
-     * @param responseOrigin {@link RevocationResponseOrigin} representing an origin from which CRL comes from
+     * @param responseOrigin {@link RevocationDataOrigin} representing an origin from which CRL comes from
      */
-    public void addCrl(X509CRL response, Date date, TimeBasedContext context, RevocationResponseOrigin responseOrigin) {
+    public void addCrl(X509CRL response, Date date, TimeBasedContext context, RevocationDataOrigin responseOrigin) {
         RevocationDataValidator.CrlValidationInfo validationInfo = crls.get(response);
         if (validationInfo != null) {
             // If CRL is already there, we don't need to update response origin.

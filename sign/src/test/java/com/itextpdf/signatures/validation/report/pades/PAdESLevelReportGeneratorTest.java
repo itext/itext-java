@@ -32,7 +32,7 @@ import com.itextpdf.signatures.cms.CMSTestHelper;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.events.AlgorithmUsageEvent;
-import com.itextpdf.signatures.validation.events.CertificateIssuerRetrievalEvent;
+import com.itextpdf.signatures.validation.events.CertificateIssuerExternalRetrievalEvent;
 import com.itextpdf.signatures.validation.events.CertificateIssuerRetrievedOutsideDSSEvent;
 import com.itextpdf.signatures.validation.events.DSSProcessedEvent;
 import com.itextpdf.signatures.validation.events.DssNotTimestampedEvent;
@@ -653,7 +653,7 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
         IValidationEvent event = new StartSignatureValidationEvent(sig, "test", new Date());
         eventManager.onEvent(event);
         Certificate[] chain = PemFileHelper.readFirstChain(certsSrc + "signCertRsa01.pem");
-        event = new CertificateIssuerRetrievalEvent((X509Certificate) chain[0]);
+        event = new CertificateIssuerExternalRetrievalEvent((X509Certificate) chain[0]);
         eventManager.onEvent(event);
         event = new SignatureValidationSuccessEvent();
         eventManager.onEvent(event);
@@ -692,13 +692,13 @@ public class PAdESLevelReportGeneratorTest extends ExtendedITextTest {
 
         DocumentPAdESLevelReport report = sut.getReport();
         System.out.println(report);
-        Assertions.assertEquals(PAdESLevel.B_T, report.getSignatureReport("test")
+        Assertions.assertEquals(PAdESLevel.B_LTA, report.getSignatureReport("test")
                 .getLevel());
-        Assertions.assertEquals(PAdESLevel.B_T, report.getDocumentLevel());
-        Assertions.assertTrue(report.getSignatureReport("test").getNonConformaties().get(PAdESLevel.B_LT)
+        Assertions.assertEquals(PAdESLevel.B_LTA, report.getDocumentLevel());
+        Assertions.assertTrue(report.getSignatureReport("test").getWarnings().get(PAdESLevel.B_LT)
                 .stream()
                 .anyMatch(nc ->
-                        nc.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING)));
+                        nc.contains(AbstractPadesLevelRequirements.ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS)));
     }
 
     @Test

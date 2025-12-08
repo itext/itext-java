@@ -26,6 +26,8 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
+import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
+import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
 import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
@@ -60,6 +62,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
 
     private final TrustedCertificatesStore trustedCertificatesStore = new TrustedCertificatesStore();
     private final Map<String, List<Certificate>> knownCertificates = new HashMap<>();
+    private final Map<Certificate, CertificateOrigin> certificateOrigins = new HashMap<>();
     private final IResourceRetriever resourceRetriever;
 
     /**
@@ -105,7 +108,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
                 String url = CertificateUtil.getIssuerCertURL(lastAddedCert);
                 Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
                 if (certificatesFromAIA != null) {
-                    addKnownCertificates(certificatesFromAIA);
+                    addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
                 }
                 // Retrieve Issuer from the certificate store
                 Certificate issuer = getIssuerFromCertificateSet(lastAddedCert, trustedCertificatesStore
@@ -185,7 +188,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         String url = CertificateUtil.getIssuerCertURL(certificate);
         Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
         if (certificatesFromAIA != null) {
-            addKnownCertificates(certificatesFromAIA);
+            addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
         }
         Set<Certificate> possibleIssuers = trustedCertificatesStore
                 .getKnownCertificates(certificate.getIssuerX500Principal().getName());
@@ -237,12 +240,16 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      */
     public Set<Certificate> retrieveOCSPResponderByNameCertificate(IBasicOCSPResp ocspResp) {
 
-        String name = null;
-        name = FACTORY.createX500Name( FACTORY.createASN1Sequence(
+        String name = FACTORY.createX500Name(FACTORY.createASN1Sequence(
                 ocspResp.getResponderId().toASN1Primitive().getName().toASN1Primitive())).getName();
 
         // Look for the existence of an Authorized OCSP responder inside the cert chain in the ocsp response.
         Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(ocspResp);
+        List<Certificate> certList = new ArrayList<>();
+        for (X509Certificate certificate : certs) {
+            certList.add(certificate);
+        }
+        addKnownCertificates(certList, CertificateOrigin.OCSP_RESPONSE);
         for (X509Certificate cert : certs) {
             try {
                 if (name.equals(cert.getSubjectX500Principal().getName())) {
@@ -252,7 +259,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
                 // Ignore.
             }
         }
-        // Certificate chain is not present in the response, or is does not contain the responder.
+        // Certificate chain is not present in the response, or it does not contain the responder.
         return trustedCertificatesStore.getKnownCertificates(name);
     }
 
@@ -298,7 +305,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         String url = CertificateUtil.getIssuerCertURL(crl);
         List<Certificate> certificatesFromAIA = (List<Certificate>) processCertificatesFromAIA(url);
         if (certificatesFromAIA != null) {
-            addKnownCertificates(certificatesFromAIA);
+            addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
         }
         // Retrieve Issuer from the certificate store
         Set<Certificate> issuers = trustedCertificatesStore
@@ -344,16 +351,44 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
     }
 
     /**
-     * Add certificates collection to known certificates storage, which is used for issuer certificates retrieval.
+     * Adds certificates collection to known certificates storage, which is used for issuer certificates retrieval.
      *
      * @param certificates certificates {@link Collection} to be added
      */
     public void addKnownCertificates(Collection<Certificate> certificates) {
+        addKnownCertificates(certificates, CertificateOrigin.OTHER);
+    }
+
+    /**
+     * Adds certificates collection to known certificates storage, which is used for issuer certificates retrieval.
+     * <p>
+     * Additionally, adds stores the provided origin for all these certificates.
+     *
+     * @param certificates certificates {@link Collection} to be added
+     * @param dataOrigin {@link RevocationDataOrigin} from which these certificates come from
+     */
+    public void addKnownCertificates(Collection<Certificate> certificates, CertificateOrigin dataOrigin) {
         for (Certificate certificate : certificates) {
             String name = ((X509Certificate) certificate).getSubjectX500Principal().getName();
             List<Certificate> certs = knownCertificates.computeIfAbsent(name,k -> new ArrayList<>());
             certs.add(certificate);
+            CertificateOrigin currentCertOrigin = certificateOrigins.get(certificate);
+            if (currentCertOrigin == null || currentCertOrigin.ordinal() > dataOrigin.ordinal()) {
+                certificateOrigins.put(certificate, dataOrigin);
+            }
         }
+    }
+
+    /**
+     * Gets certificate origin for provided {@link Certificate}.
+     *
+     * @param certificate {@link Certificate} for which origin is requested
+     *
+     * @return {@link RevocationDataOrigin} for the certificate
+     */
+    public CertificateOrigin getCertificateOrigin(Certificate certificate) {
+        CertificateOrigin dataOrigin = certificateOrigins.get(certificate);
+        return dataOrigin == null ? CertificateOrigin.OTHER : dataOrigin;
     }
 
     /**

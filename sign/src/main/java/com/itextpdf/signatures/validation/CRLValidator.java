@@ -283,7 +283,7 @@ public class CRLValidator {
 
     private void verifyCrlIntegrity(ValidationReport report, ValidationContext context, X509Certificate certificate,
             X509CRL crl, Date responseGenerationDate) {
-        Certificate[][] certificateSets = null;
+        Certificate[][] certificateSets;
         try {
             certificateSets = certificateRetriever.getCrlIssuerCertificatesByName(crl);
         } catch (RuntimeException e) {
@@ -296,12 +296,18 @@ public class CRLValidator {
                     ReportItemStatus.INDETERMINATE));
             return;
         }
+        // We need to sort certificates to process them starting from those, better suited for PAdES validation.
+        List<Certificate[]> certificatesList =
+                Arrays.stream(certificateSets).sorted((array1, array2) -> Integer.compare(
+                        certificateRetriever.getCertificateOrigin(array1[0]).ordinal(),
+                        certificateRetriever.getCertificateOrigin(array2[0]).ordinal()))
+                .collect(Collectors.toList());
 
-        ValidationReport[] candidateReports = new ValidationReport[certificateSets.length];
-        for (int i = 0; i < certificateSets.length; i++) {
+        ValidationReport[] candidateReports = new ValidationReport[certificatesList.size()];
+        for (int i = 0; i < certificatesList.size(); i++) {
             ValidationReport candidateReport = new ValidationReport();
             candidateReports[i] = candidateReport;
-            Certificate[] certs = certificateSets[i];
+            Certificate[] certs = certificatesList.get(i);
             if (Arrays.asList(certs).contains(certificate)) {
                 candidateReport.addReportItem(new CertificateReportItem(certificate,
                         CRL_CHECK, CERTIFICATE_IN_ISSUER_CHAIN, ReportItemStatus.INDETERMINATE));

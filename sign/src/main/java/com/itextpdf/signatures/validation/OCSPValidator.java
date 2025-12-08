@@ -49,8 +49,10 @@ import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Class that allows you to validate a single OCSP response.
@@ -274,6 +276,11 @@ public class OCSPValidator {
                     ReportItemStatus.INDETERMINATE));
             return;
         }
+        // We need to sort certificates to process them starting from those, better suited for PAdES validation.
+        candidates = new HashSet<>(candidates.stream().sorted((issuer1, issuer2) -> Integer.compare(
+                        certificateRetriever.getCertificateOrigin(issuer1).ordinal(),
+                        certificateRetriever.getCertificateOrigin(issuer2).ordinal()))
+                .collect(Collectors.toList()));
         ValidationReport[] candidateReports = new ValidationReport[candidates.size()];
         int reportIndex = 0;
         for (Certificate cert : candidates) {

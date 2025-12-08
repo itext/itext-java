@@ -20,26 +20,28 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.signatures.validation;
+package com.itextpdf.signatures.validation.events;
+
+import java.security.cert.X509Certificate;
 
 /**
- * Enum representing an origin from where the revocation data comes from.
+ * This event is triggered when a certificate issues was retrieved from the internet.
  */
-public enum RevocationResponseOrigin {
+public class CertificateIssuerExternalRetrievalEvent extends AbstractCertificateChainEvent {
     /**
-     * Latest DSS dictionary in a PDF document.
+     * Creates a new event instance.
+     *
+     * @param certificate the certificate for which the issuer was retrieved externally
      */
-    LATEST_DSS,
+    public CertificateIssuerExternalRetrievalEvent(X509Certificate certificate) {
+        super(certificate);
+    }
+
     /**
-     * DSS dictionary, corresponding to previous PDF document revisions.
+     * {@inheritDoc}
      */
-    HISTORICAL_DSS,
-    /**
-     * Signature CMS container.
-     */
-    SIGNATURE,
-    /**
-     * Other possible sources.
-     */
-    OTHER
+    @Override
+    public EventType getEventType() {
+        return EventType.CERTIFICATE_ISSUER_EXTERNAL_RETRIEVAL;
+    }
 }

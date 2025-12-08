@@ -26,6 +26,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.validation.RevocationDataValidator.OcspResponseValidationInfo;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
+import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
@@ -56,11 +57,11 @@ public class ValidationOcspClient implements IOcspClient {
      * @param date     {@link Date} to be linked with the response
      * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
      *
-     * @deprecated use {@link #addResponse(IBasicOCSPResp, Date, TimeBasedContext, RevocationResponseOrigin)} instead
+     * @deprecated use {@link #addResponse(IBasicOCSPResp, Date, TimeBasedContext, RevocationDataOrigin)} instead
      */
     @Deprecated
     public void addResponse(IBasicOCSPResp response, Date date, TimeBasedContext context) {
-        addResponse(response, date, context, RevocationResponseOrigin.OTHER);
+        addResponse(response, date, context, RevocationDataOrigin.OTHER);
     }
 
     /**
@@ -69,10 +70,10 @@ public class ValidationOcspClient implements IOcspClient {
      * @param response {@link IBasicOCSPResp} response to be added
      * @param date     {@link Date} to be linked with the response
      * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
-     * @param responseOrigin {@link RevocationResponseOrigin} representing an origin from which OCSP comes from
+     * @param responseOrigin {@link RevocationDataOrigin} representing an origin from which OCSP comes from
      */
     public void addResponse(IBasicOCSPResp response, Date date, TimeBasedContext context,
-                            RevocationResponseOrigin responseOrigin) {
+                            RevocationDataOrigin responseOrigin) {
         OcspResponseValidationInfo validationInfo = responses.get(response);
         if (validationInfo == null) {
             responses.put(response,
