@@ -91,7 +91,6 @@ public class PostQuantumAlgorithmsTest extends ExtendedITextTest {
     public static void setup() {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
         createOrClearDestinationFolder(DESTINATION_FOLDER);
-
     }
 
     public static Iterable<Object[]> algorithms() {
@@ -113,7 +112,7 @@ public class PostQuantumAlgorithmsTest extends ExtendedITextTest {
                 {"slh-dsa-sha2-256s", DigestAlgorithms.SHA512, OID.SLH_DSA_SHA2_256S, 29792},
                 {"slh-dsa-sha2-256f", DigestAlgorithms.SHA512, OID.SLH_DSA_SHA2_256F, 49856},
                 {"slh-dsa-shake-256s", DigestAlgorithms.SHAKE256, OID.SLH_DSA_SHAKE_256S, 29792},
-                {"slh-dsa-shake-256f", DigestAlgorithms.SHAKE256, OID.SLH_DSA_SHAKE_256F, 49856},
+                {"slh-dsa-shake-256f", DigestAlgorithms.SHAKE256, OID.SLH_DSA_SHAKE_256F, 49856}
         });
     }
 

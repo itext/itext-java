@@ -539,6 +539,9 @@
             <fileset reason="Some of the algorithms are not supported on .NET and the result is thus different. The tests with the identical result are in PdfPKCS7Test.">
                 <file path="com/itextpdf/signatures/PdfPKCS7ManuallyPortedTest.java"/>
             </fileset>
+            <fileset reason="PQC experimental algorithms are implemented only on low-level for .NET, so right now it's not possible to use the same logic as in Java.">
+                <file path="com/itextpdf/signatures/PostQuantumExperimentalAlgorithmsTest.java"/>
+            </fileset>
             <!-- TODO DEVSIX-6115 Try to remove this files from ignored -->
             <fileset reason="Related to timestamp signatures comparing, they are different in Java and .NET">
                 <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTest.java"/>
@@ -647,16 +650,15 @@
                 <file path="com/itextpdf/test/AssertUtil.java" />
             </fileset>
             <fileset reason="AssertUtilTest has to use AtomicInteger for access from a lambda function. This is not portable.">
-                <file path="com/itextpdf/test/AssertUtilTest.java" />
+                <file path="com/itextpdf/test/AssertUtilTest.java"/>
             </fileset>
 
-
-          <fileset reason="Brotli implementations differ in Java and .Net">
-            <file path="com/itextpdf/brotlicompressor/BrotliStreamCompressionStrategy.java" />
-            <file path="com/itextpdf/brotlicompressor/BrotliOutputStream.java" />
-            <file path="com/itextpdf/brotlicompressor/BrotliOutputStreamTest.java" />
-          </fileset>
-
+            <!-- brotli-compressor -->
+            <fileset reason="Brotli implementations differ in Java and .Net">
+                <file path="com/itextpdf/brotlicompressor/BrotliStreamCompressionStrategy.java"/>
+                <file path="com/itextpdf/brotlicompressor/BrotliOutputStream.java"/>
+                <file path="com/itextpdf/brotlicompressor/BrotliOutputStreamTest.java"/>
+            </fileset>
         </java>
     </ignored>
      <resource>

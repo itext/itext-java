@@ -45,6 +45,8 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -54,7 +56,10 @@ import java.util.Set;
 public class TestTimestampTokenBuilder {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
+    private static final List<String> EXPERIMENTAL_PQC_ALGORITHMS = new ArrayList<>(
+            Arrays.asList("fn-dsa", "falcon", "lms", "xmss", "picnic", "rainbow", "gemss"));
     private static final String SIGN_ALG = "SHA256withRSA";
+    private static final String DIGEST_ALG = "SHA1";
 
     // just a more or less random oid of timestamp policy
     private static final String POLICY_OID = "1.3.6.1.4.1.45794.1.1";
@@ -62,7 +67,7 @@ public class TestTimestampTokenBuilder {
     private final List<Certificate> tsaCertificateChain;
     private final PrivateKey tsaPrivateKey;
     private String signatureAlgo = SIGN_ALG;
-    private String digestAlgo = "SHA1";
+    private String digestAlgo = DIGEST_ALG;
 
     public TestTimestampTokenBuilder(List<Certificate> tsaCertificateChain, PrivateKey tsaPrivateKey) {
         if (tsaCertificateChain.isEmpty()) {
@@ -115,19 +120,37 @@ public class TestTimestampTokenBuilder {
     }
 
     private static ITimeStampTokenGenerator createTimeStampTokenGenerator(PrivateKey pk, Certificate cert,
-            String signatureAlgorithm, String allowedDigest, String policyOid)
+                                                                          String signatureAlgorithm,
+                                                                          String allowedDigest, String policyOid)
             throws AbstractTSPException, AbstractOperatorCreationException, CertificateEncodingException {
-        IContentSigner signer = FACTORY.createJcaContentSignerBuilder(signatureAlgorithm).build(pk);
+        String digestForTsSigningCert = DigestAlgorithms.getAllowedDigest(allowedDigest);
+        String providerName = isPQCAlgorithm(signatureAlgorithm) ? "BCPQC" : FACTORY.getProviderName();
+        IContentSigner signer;
+        if (DIGEST_ALG.equals(allowedDigest)) {
+            signer = FACTORY.createJcaContentSignerBuilder(signatureAlgorithm).setProvider(providerName)
+                    .build(pk);
+        } else {
+            signer = FACTORY.createJcaContentSignerBuilder(signatureAlgorithm, digestForTsSigningCert)
+                    .setProvider(providerName).build(pk);
+        }
         IDigestCalculatorProvider digestCalcProviderProvider = FACTORY.createJcaDigestCalculatorProviderBuilder()
                 .build();
         ISignerInfoGenerator siGen =
                 FACTORY.createJcaSignerInfoGeneratorBuilder(digestCalcProviderProvider)
                         .build(signer, (X509Certificate) cert);
 
-        String digestForTsSigningCert = DigestAlgorithms.getAllowedDigest(allowedDigest);
         IDigestCalculator dgCalc = digestCalcProviderProvider.get(
                 FACTORY.createAlgorithmIdentifier(FACTORY.createASN1ObjectIdentifier(digestForTsSigningCert)));
         IASN1ObjectIdentifier policy = FACTORY.createASN1ObjectIdentifier(policyOid);
         return FACTORY.createTimeStampTokenGenerator(siGen, dgCalc, policy);
+    }
+
+    private static boolean isPQCAlgorithm(String algorithm) {
+        for (String pgcAlgorithm : EXPERIMENTAL_PQC_ALGORITHMS) {
+            if (algorithm.toLowerCase().contains(pgcAlgorithm)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

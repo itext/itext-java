@@ -68,16 +68,21 @@ public final class PemFileHelper {
 
     public static PrivateKey readFirstKey(String pemFileName, char[] keyPass)
             throws IOException, AbstractOperatorCreationException, AbstractPKCSException {
+        return readFirstKey(pemFileName, keyPass, FACTORY.getProvider());
+    }
+
+    public static PrivateKey readFirstKey(String pemFileName, char[] keyPass, Provider provider)
+            throws IOException, AbstractOperatorCreationException, AbstractPKCSException {
         IPKCS8EncryptedPrivateKeyInfo pkcs8Key = readPkcs8PrivateKey(pemFileName);
         if (pkcs8Key != null) {
             IInputDecryptorProvider decProv = FACTORY.createJceOpenSSLPKCS8DecryptorProviderBuilder()
-                    .setProvider(FACTORY.getProvider()).build(keyPass);
-            IJcaPEMKeyConverter keyConverter = FACTORY.createJcaPEMKeyConverter().setProvider(FACTORY.getProvider());
+                    .setProvider(provider).build(keyPass);
+            IJcaPEMKeyConverter keyConverter = FACTORY.createJcaPEMKeyConverter().setProvider(provider);
             return keyConverter.getPrivateKey(pkcs8Key.decryptPrivateKeyInfo(decProv));
         }
         IPrivateKeyInfo key = readPrivateKey(pemFileName);
         if (key != null) {
-            IJcaPEMKeyConverter keyConverter = FACTORY.createJcaPEMKeyConverter().setProvider(FACTORY.getProvider());
+            IJcaPEMKeyConverter keyConverter = FACTORY.createJcaPEMKeyConverter().setProvider(provider);
             return keyConverter.getPrivateKey(key);
         }
         return null;

@@ -46,6 +46,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfEncryption;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
+import javax.security.auth.x500.X500Principal;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
@@ -67,6 +68,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.CRL;
@@ -89,10 +91,10 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import javax.security.auth.x500.X500Principal;
 
 final class SignUtils {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final String PQC_PROVIDER_NAME = "BCPQC";
 
     static String getPrivateKeyAlgorithm(PrivateKey pk) {
         String algorithm = pk.getAlgorithm();
@@ -148,7 +150,7 @@ final class SignUtils {
 
 
     static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
-            IAlgorithmIdentifier digestAlgorithmIdentifier)
+                                                IAlgorithmIdentifier digestAlgorithmIdentifier)
             throws AbstractOperatorCreationException, CertificateEncodingException, AbstractOCSPException {
         return FACTORY.createCertificateID(
                 FACTORY.createJcaDigestCalculatorProviderBuilder().build().get(digestAlgorithmIdentifier),
@@ -157,7 +159,7 @@ final class SignUtils {
     }
 
     static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
-            IASN1ObjectIdentifier identifier)
+                                                IASN1ObjectIdentifier identifier)
             throws AbstractOperatorCreationException, CertificateEncodingException, AbstractOCSPException {
         return FACTORY.createCertificateID(
                 FACTORY.createJcaDigestCalculatorProviderBuilder().build().get(
@@ -275,7 +277,7 @@ final class SignUtils {
     }
 
     static TsaResponse getTsaResponseForUserRequest(String tsaUrl, byte[] requestBytes, String tsaUsername,
-            String tsaPassword) throws IOException {
+                                                    String tsaPassword) throws IOException {
         URL url = new URL(tsaUrl);
         URLConnection tsaConnection;
         try {
@@ -317,9 +319,18 @@ final class SignUtils {
 
     static Signature getSignatureHelper(String algorithm, String provider)
             throws NoSuchProviderException, NoSuchAlgorithmException {
-        return provider == null
-                ? Signature.getInstance(algorithm)
-                : Signature.getInstance(algorithm, provider);
+        if (provider == null) {
+            return Signature.getInstance(algorithm);
+        }
+        try {
+            return Signature.getInstance(algorithm, provider);
+        } catch (NoSuchAlgorithmException e) {
+            Provider pqc = Security.getProvider(PQC_PROVIDER_NAME);
+            if (pqc == null) {
+                throw e;
+            }
+            return Signature.getInstance(algorithm, pqc);
+        }
     }
 
     static void setRSASSAPSSParamsWithMGF1(Signature signature, String digestAlgoName, int saltLen, int trailerField)
