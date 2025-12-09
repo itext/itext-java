@@ -25,9 +25,18 @@ this feature with caution and only when you control both the generation and cons
 
 ## Installation
 
-Add the following dependency to your Maven project:
+`brotli-compressor` is experimental so the artifacts are only available on iText's artifactory.
+
+Add the following dependency and config to your Maven project:
 
 ```xml
+<repositories>
+  <repository>
+    <id>itext-releases</id>
+    <name>iText Repository - releases</name>
+    <url>https://repo.itextsupport.com/releases</url>
+  </repository>
+</repositories>
 
 <dependency>
   <groupId>com.itextpdf</groupId>
@@ -35,6 +44,8 @@ Add the following dependency to your Maven project:
   <version>{itext.version.bigger.then.9.5.0}</version>
 </dependency>
 ```
+
+
 
 ## Usage
 
