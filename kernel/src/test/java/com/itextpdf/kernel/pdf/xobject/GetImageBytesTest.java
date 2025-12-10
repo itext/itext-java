@@ -663,6 +663,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     //TODO DEVSIX-1682: Update after supporting
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void dRGBFlateSmaskTest() throws Exception {
         ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
         properties.setApplyTransparency(true);
@@ -1174,12 +1175,14 @@ public class GetImageBytesTest extends ExtendedITextTest {
 
     @Test
     //TODO DEVSIX-1683: Update after supporting
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void customIndexedColorSpaceTest() throws Exception {
         testFile("customColorIndexed.pdf", "Im1", "png");
     }
 
     @Test
     //TODO DEVSIX-1683: Update after supporting
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void customSeparationColorSpaceTest() throws Exception {
         testFile("customColorSpaceSeparation.pdf", "Im1", "png");
     }
