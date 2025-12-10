@@ -78,20 +78,24 @@ public class LogListener implements BeforeTestExecutionCallback, AfterTestExecut
 
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) {
-        LogMessages logMessages = LoggerHelper.getTestAnnotation(extensionContext, LogMessages.class);
-        if (logMessages != null) {
-            Map<String, Boolean> expectedTemplates = new HashMap<>();
-            LogMessage[] messages = logMessages.messages();
-            for (LogMessage logMessage : messages) {
-                expectedTemplates.put(logMessage.messageTemplate(), logMessage.quietMode());
+        synchronized(LogListener.class) {
+            LogMessages logMessages = LoggerHelper.getTestAnnotation(extensionContext, LogMessages.class);
+            if (logMessages != null) {
+                Map<String, Boolean> expectedTemplates = new HashMap<>();
+                LogMessage[] messages = logMessages.messages();
+                for (LogMessage logMessage : messages) {
+                    expectedTemplates.put(logMessage.messageTemplate(), logMessage.quietMode());
+                }
+                listAppender.setExpectedTemplates(expectedTemplates);
             }
-            listAppender.setExpectedTemplates(expectedTemplates);
         }
     }
 
     @Override
     public void afterTestExecution(ExtensionContext context) {
-        checkLogMessages(context);
+        synchronized(LogListener.class) {
+            checkLogMessages(context);
+        }
     }
 
     @Override
@@ -111,7 +115,6 @@ public class LogListener implements BeforeTestExecutionCallback, AfterTestExecut
 
     private int contains(LogMessage loggingStatement) {
         int count = 0;
-        synchronized(LogListener.class) {
             List<ILoggingEvent> list = listAppender.list;
             for (ILoggingEvent event : list) {
                 if (isLevelCompatible(loggingStatement.logLevel(), event.getLevel())
@@ -121,12 +124,11 @@ public class LogListener implements BeforeTestExecutionCallback, AfterTestExecut
                     count++;
                 }
             }
-        }
 
         return count;
     }
 
-    private boolean isLevelCompatible(int logMessageLevel, Level eventLevel) {
+    private static boolean isLevelCompatible(int logMessageLevel, Level eventLevel) {
         switch (logMessageLevel) {
             case LogLevelConstants.UNKNOWN:
                 return eventLevel.isGreaterOrEqual(Level.WARN);
@@ -145,13 +147,11 @@ public class LogListener implements BeforeTestExecutionCallback, AfterTestExecut
 
     private int getSizeBy(String threadId) {
         int nOfEvents = 0;
-        synchronized(LogListener.class) {
             for (ILoggingEvent iLoggingEvent : listAppender.list) {
                 if (Objects.equals(iLoggingEvent.getThreadName(), threadId)) {
                     nOfEvents++;
                 }
             }
-        }
 
         return nOfEvents;
     }
@@ -232,9 +232,7 @@ public class LogListener implements BeforeTestExecutionCallback, AfterTestExecut
 
         public void clear() {
             String threadId = getThreadId();
-            synchronized(LogListener.class) {
                 list.removeIf(next -> Objects.equals(next.getThreadName(), threadId));
-            }
             if (expectedTemplates.containsKey(threadId)) {
                 expectedTemplates.get(threadId).clear();
             }
