@@ -246,8 +246,8 @@ public class MemoryLimitsAwareHandler {
      * @return calculated limit.
      */
     protected static int calculateMaxElementsInXref(long documentSizeInBytes) {
-        int maxDocSizeForMaxLimit = MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE/MIN_LIMIT_FOR_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE;
-        int documentSizeInMb = Math.max(1, Math.min((int) documentSizeInBytes / (1024 * 1024), maxDocSizeForMaxLimit));
+        final int maxDocSizeForMaxLimit = MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE / MIN_LIMIT_FOR_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE;
+        final int documentSizeInMb = (int) Math.max(1, Math.min(documentSizeInBytes / (1024 * 1024), maxDocSizeForMaxLimit));
         return documentSizeInMb * MIN_LIMIT_FOR_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE;
     }
 
