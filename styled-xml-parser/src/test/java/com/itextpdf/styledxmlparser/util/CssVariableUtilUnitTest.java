@@ -347,4 +347,30 @@ public class CssVariableUtilUnitTest extends ExtendedITextTest {
         Assertions.assertEquals("1px", styles.get("border-right-width"));
         Assertions.assertEquals("gray", styles.get("border-right-color"));
     }
+
+
+    @Test
+    public void resolveFunctionWithMultipleParamsTest() {
+        Map<String, String> styles = new HashMap<>();
+        styles.put("--color-l", "48%");
+        styles.put("--color-s", "89%");
+        styles.put("--color-h", "27%");
+        styles.put("box-shadow", "3px solid hsl(var(--color-h),var(--color-s),var(--color-l))");
+        CssVariableUtil.resolveCssVariables(styles);
+        Assertions.assertEquals(4, styles.size());
+        Assertions.assertEquals("3px solid hsl(27%,89%,48%)", styles.get("box-shadow"));
+    }
+
+    @Test
+    public void resolveFunctionWithMultipleParamsNestedTest() {
+        Map<String, String> styles = new HashMap<>();
+        styles.put("--color-r", "255");
+        styles.put("--color-r-2", "0");
+        styles.put("--color-g", "127");
+        styles.put("--color-b", "0");
+        styles.put("border", "1px dotted rgb(var(--color-r, var(--color-r-2)), var(--color-g), var(--color-b))");
+        CssVariableUtil.resolveCssVariables(styles);
+        Assertions.assertEquals(16, styles.size());
+        Assertions.assertEquals("rgb(255,127,0)", styles.get("border-bottom-color"));
+    }
 }
