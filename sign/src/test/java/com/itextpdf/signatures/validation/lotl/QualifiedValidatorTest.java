@@ -87,7 +87,7 @@ public class QualifiedValidatorTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeAll() {
         // Initialize the LotlService with a default EuropeanResourceFetcher
-        LotlService service = new LotlService(new LotlFetchingProperties(new ThrowExceptionOnFailingCountryData()));
+        LotlService service = new EuropeanLotlService(new LotlFetchingProperties(new ThrowExceptionOnFailingCountryData()));
         service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
         EuropeanTrustedListConfigurationFactory.setFactory(() -> new EuropeanTrustedListConfigurationFactory() {
             @Override

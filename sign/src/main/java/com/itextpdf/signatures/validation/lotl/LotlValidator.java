@@ -22,12 +22,8 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
-import com.itextpdf.signatures.validation.report.ReportItem;
-import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
-import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +42,6 @@ public class LotlValidator {
             "isn't" + " successful.";
     static final String UNABLE_TO_RETRIEVE_LOTL = "Unable to retrieve main Lotl file. Lotl validation isn't " +
             "successful.";
-    private final List<CountryServiceContext> nationalTrustedCertificates = new ArrayList<>();
     private final LotlService service;
 
     /**
@@ -64,41 +59,7 @@ public class LotlValidator {
      * @return a ValidationReport containing the results of the validation
      */
     public ValidationReport validate() {
-        ValidationReport report = new ValidationReport();
-        EuropeanLotlFetcher.Result lotl = service.getLotlBytes();
-        if (!lotl.getLocalReport().getLogs().isEmpty()) {
-            report.merge(lotl.getLocalReport());
-            return report;
-        }
-
-        EuropeanResourceFetcher.Result europeanResult = service.getEUJournalCertificates();
-        report.merge(europeanResult.getLocalReport());
-
-        // get all the data from cache, if it is stale, exception will be thrown
-        // locked and pass to methods
-        PivotFetcher.Result result = service.getAndValidatePivotFiles(lotl.getLotlXml(),
-                europeanResult.getCertificates(), europeanResult.getCurrentlySupportedPublication());
-
-        report.merge(result.getLocalReport());
-        if (result.getLocalReport().getValidationResult() != ValidationResult.VALID) {
-            return report;
-        }
-
-        List<CountrySpecificLotlFetcher.Result> entries = service.getCountrySpecificLotlFiles(lotl.getLotlXml());
-
-        for (CountrySpecificLotlFetcher.Result countrySpecificResult : entries) {
-            // When cache was loaded without config it still contains all country specific Lotl files.
-            // So we need to filter them out if schema names were provided.
-            if (!this.service.getLotlFetchingProperties()
-                    .shouldProcessCountry(countrySpecificResult.getCountrySpecificLotl().getSchemeTerritory())) {
-                continue;
-            }
-            report.merge(countrySpecificResult.getLocalReport());
-            this.nationalTrustedCertificates.addAll(
-                    LotlTrustedStore.mapIServiceContextToCountry(countrySpecificResult.getContexts()));
-        }
-
-        return report;
+        return this.service.getValidationResult();
     }
 
     /**
@@ -107,7 +68,7 @@ public class LotlValidator {
      * @return the list of national trusted certificates
      */
     List<IServiceContext> getNationalTrustedCertificates() {
-        return new ArrayList<>(nationalTrustedCertificates);
+        return this.service.getNationalTrustedCertificates();
     }
 }
 

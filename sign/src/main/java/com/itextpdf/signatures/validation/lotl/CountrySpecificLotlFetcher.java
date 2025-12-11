@@ -66,6 +66,7 @@ public class CountrySpecificLotlFetcher {
      *
      * @return a map of results containing validated country-specific Lotls and their contexts
      */
+    //TODO AAAAAAAAA: remove lotlService parameter when LotlService will be accessible from this.service
     public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, LotlService lotlService) {
         XmlCertificateRetriever certificateRetriever = new XmlCertificateRetriever(new XmlDefaultCertificateHandler());
         List<Certificate> lotlTrustedCertificates = certificateRetriever.getCertificates(
@@ -75,11 +76,16 @@ public class CountrySpecificLotlFetcher {
                 .getAllCountriesLotlFilesLocation(new ByteArrayInputStream(lotlXml),
                         lotlService.getLotlFetchingProperties());
 
+       return  getAndValidateCountrySpecificFiles(lotlTrustedCertificates, countrySpecificLotl, lotlService) ;
+    }
+
+
+    public Map<String, Result> getAndValidateCountrySpecificFiles(List<Certificate> certificates, List<CountrySpecificLotl> countrySpecificInfo, LotlService lotlService) {
         final TrustedCertificatesStore certificatesStore = new TrustedCertificatesStore();
-        certificatesStore.addGenerallyTrustedCertificates(lotlTrustedCertificates);
+        certificatesStore.addGenerallyTrustedCertificates(certificates);
         final XmlSignatureValidator validator = lotlService.getXmlSignatureValidator(certificatesStore);
 
-        final List<Callable<Result>> tasks = getTasks(lotlService, countrySpecificLotl, validator);
+        final List<Callable<Result>> tasks = getTasks(lotlService, countrySpecificInfo, validator);
 
         HashMap<String, Result> countrySpecificCacheEntries = new HashMap<>();
         for (Result result : executeTasks(tasks)) {
@@ -251,6 +257,9 @@ public class CountrySpecificLotlFetcher {
                 countryCertificateRetriever.getCertificates(new ByteArrayInputStream(countryLotlBytes));
                 countryResult.getContexts().addAll(countryCertificateRetriever.getServiceContexts());
             } else {
+                System.out.println("***********************************");
+                System.out.println(localReport);
+                System.out.println("***********************************");
                 countryResult.getLocalReport().addReportItem(new ReportItem(LOTL_VALIDATION,
                         MessageFormatUtil.format(COUNTRY_SPECIFIC_LOTL_NOT_VALIDATED,
                                 countrySpecificLotl.getSchemeTerritory(), countrySpecificLotl.getTslLocation()),

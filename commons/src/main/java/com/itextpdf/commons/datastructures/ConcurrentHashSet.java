@@ -85,7 +85,7 @@ public class ConcurrentHashSet<V> implements Set<V> {
      */
     @Override
     public Object[] toArray() {
-        throw new UnsupportedOperationException(CommonsExceptionMessageConstant.UNSUPPORTED_OPERATION);
+        return set.toArray();
     }
 
     /**

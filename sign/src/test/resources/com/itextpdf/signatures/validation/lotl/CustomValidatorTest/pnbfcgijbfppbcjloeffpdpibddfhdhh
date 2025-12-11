@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns4="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" Id="TrustServiceStatusList" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>5</TSLVersionIdentifier>
+        <TSLSequenceNumber>6</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/ARlist</TSLType>
+        <SchemeOperatorName>
+            <Name xml:lang="es">Subsecretaría de Innovación</Name>
+            <Name xml:lang="en">Undersecretary of Innovation</Name>
+            <Name xml:lang="pt">Subsecretaria de Inovação</Name>
+            <Name xml:lang="gn">Subsecretaría de Innovación</Name>
+        </SchemeOperatorName>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="es">
+                    <StreetAddress>Godoy Cruz N° 2320</StreetAddress>
+                    <Locality>Ciudad Autónoma de Buenos Aires</Locality>
+                    <StateOrProvince>Ciudad Autónoma de Buenos Aires</StateOrProvince>
+                    <PostalCode>C1425FQD</PostalCode>
+                    <CountryName>AR</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>Godoy Cruz N° 2320</StreetAddress>
+                    <Locality>Ciudad Autónoma de Buenos Aires</Locality>
+                    <StateOrProvince>Ciudad Autónoma de Buenos Aires</StateOrProvince>
+                    <PostalCode>C1425FQD</PostalCode>
+                    <CountryName>AR</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="pt">
+                    <StreetAddress>Godoy Cruz N° 2320</StreetAddress>
+                    <Locality>Ciudad Autónoma de Buenos Aires</Locality>
+                    <StateOrProvince>Ciudad Autónoma de Buenos Aires</StateOrProvince>
+                    <PostalCode>C1425FQD</PostalCode>
+                    <CountryName>AR</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="gn">
+                    <StreetAddress>Godoy Cruz N° 2320</StreetAddress>
+                    <Locality>Ciudad Autónoma de Buenos Aires</Locality>
+                    <StateOrProvince>Ciudad Autónoma de Buenos Aires</StateOrProvince>
+                    <PostalCode>C1425FQD</PostalCode>
+                    <CountryName>AR</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="es">https://www.argentina.gob.ar/jefatura/innovacion-ciencia-y-tecnologia/innovacion</URI>
+                <URI xml:lang="en">http://www.argentina.gob.ar/jefatura/innovacion-ciencia-y-tecnologia/innovacion</URI>
+                <URI xml:lang="pt">http://www.argentina.gob.ar/jefatura/innovacion-ciencia-y-tecnologia/innovacion</URI>
+                <URI xml:lang="gn">http://www.argentina.gob.ar/jefatura/innovacion-ciencia-y-tecnologia/innovacion</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeName>
+            <Name xml:lang="es">AR:La lista de confianza contiene informaciones referentes a la Ley de Firma Digital N°25506.</Name>
+            <Name xml:lang="en">AR:This TSL is in compliance with Firma Digital Law N°25506.</Name>
+        </SchemeName>
+        <SchemeInformationURI>
+            <URI xml:lang="es">https://www.argentina.gob.ar/jefatura/innovacion-publica/innovacion-administrativa/firma-digital/normativa-de-firma-digital</URI>
+            <URI xml:lang="en">https://www.argentina.gob.ar/jefatura/innovacion-publica/innovacion-administrativa/firma-digital/normativa-de-firma-digital</URI>
+            <URI xml:lang="pt">https://www.argentina.gob.ar/jefatura/innovacion-publica/innovacion-administrativa/firma-digital/normativa-de-firma-digital</URI>
+            <URI xml:lang="gn">https://www.argentina.gob.ar/jefatura/innovacion-publica/innovacion-administrativa/firma-digital/normativa-de-firma-digital</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>http://uri.etsi.org/TrstSvc/TrustedList/StatusDetn/ARdetermination</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="es">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/AR</URI>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/AR</URI>
+            <URI xml:lang="pt">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/AR</URI>
+            <URI xml:lang="gn">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/AR</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>AR</SchemeTerritory>
+        <PolicyOrLegalNotice>
+            <TSLLegalNotice xml:lang="es">El marco legal aplicable a la presente implementación de esta TSL (Trusted-Service Status List) es el Acuerdo del Mercosur y las directrices establecidas por Subsecretaría de Innovación</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="en">The legal framework applicable to the present implementation of this TSL (Trusted-Service Status List) is the Mercosur Agreement and the guidelines established by the Undersecretariat of Innovation</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="pt">O marco legal aplicável à presente implementação desta TSL (Trusted-Service Status List) é o Acordo do Mercosul e as diretrizes estabelecidas pela Subsecretaria de Inovação</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="gn">El marco legal aplicable a la presente implementación de esta TSL (Trusted-Service Status List) es el Acuerdo del Mercosur y las directrices establecidas por Subsecretaría de Innovación</TSLLegalNotice>
+        </PolicyOrLegalNotice>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <PointersToOtherTSL>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://pki.jgm.gov.ar/TSL/tsl-MB.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/MBlistofthelists</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>MB</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns4:MimeType>application/vnd.etsi.tsl+xml</ns4:MimeType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="es">Secretaría del Mercosur</Name>
+                            <Name xml:lang="pt">Secretaría do Mercosul</Name>
+                            <Name xml:lang="en">Mercosur Secretariat</Name>
+                            <Name xml:lang="gn">Secretaría del Mercosur</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTypeCommunityRules>
+                            <URI xml:lang="es">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                            <URI xml:lang="pt">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                            <URI xml:lang="gn">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                        </SchemeTypeCommunityRules>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://pki.jgm.gov.ar/TSL/tsl-AR.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/ARlist</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>AR</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns4:MimeType>application/vnd.etsi.tsl+xml</ns4:MimeType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="es">Subsecretaría de Innovación</Name>
+                            <Name xml:lang="en">Undersecretary of Innovation</Name>
+                            <Name xml:lang="pt">Subsecretaria de Inovação</Name>
+                            <Name xml:lang="gn">Subsecretaría de Innovación</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTypeCommunityRules>
+                            <URI xml:lang="es">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/AR</URI>
+                            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/AR</URI>
+                            <URI xml:lang="pt">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/AR</URI>
+                            <URI xml:lang="gn">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/AR</URI>
+                        </SchemeTypeCommunityRules>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://pki.jgm.gov.ar/TSL/tsl-CL.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/CLlist</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>CL</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns4:MimeType>application/vnd.etsi.tsl+xml</ns4:MimeType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="es">Subsecretaría de Economía y Empresas de Menor Tamaño</Name>
+                            <Name xml:lang="pt">Subsecretaria de Economia e Pequenas Empresas</Name>
+                            <Name xml:lang="gn">Subsecretario de Economía ha Empresa Michîvéva</Name>
+                            <Name xml:lang="en">Undersecretary of Economy and Smaller Companies</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTypeCommunityRules>
+                            <URI xml:lang="es">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/CL</URI>
+                            <URI xml:lang="pt">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/CL</URI>
+                            <URI xml:lang="gn">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/CL</URI>
+                            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/CL</URI>
+                        </SchemeTypeCommunityRules>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+        </PointersToOtherTSL>
+        <ListIssueDateTime>2025-07-16T03:00:00Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2026-01-16T02:59:59Z</dateTime>
+        </NextUpdate>
+        <DistributionPoints>
+            <URI>https://pki.jgm.gov.ar/TSL/tsl-AR.xml</URI>
+        </DistributionPoints>
+    </SchemeInformation>
+    <TrustServiceProviderList>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="es">Infraestructura de Firma Digital de la República Argentina</Name>
+                    <Name xml:lang="en">Digital Signature Infrastructure of the Argentine Republic</Name>
+                    <Name xml:lang="pt">Infraestrutura de Assinatura Digital da República Argentina</Name>
+                    <Name xml:lang="gn">Infraestructura de Firma Digital de la República Argentina</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="es">SSI</Name>
+                    <Name xml:lang="en">SSI</Name>
+                    <Name xml:lang="es">SSI</Name>
+                    <Name xml:lang="gn">SSI</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="es">
+                            <StreetAddress>Godoy Cruz N° 2320</StreetAddress>
+                            <Locality>Ciudad Autónoma de Buenos Aires</Locality>
+                            <StateOrProvince>Ciudad Autónoma de Buenos Aires</StateOrProvince>
+                            <PostalCode>C1425FQD</PostalCode>
+                            <CountryName>AR</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="pt">
+                            <StreetAddress>Godoy Cruz N° 2320</StreetAddress>
+                            <Locality>Ciudad Autónoma de Buenos Aires</Locality>
+                            <StateOrProvince>Ciudad Autónoma de Buenos Aires</StateOrProvince>
+                            <PostalCode>C1425FQD</PostalCode>
+                            <CountryName>AR</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="gn">
+                            <StreetAddress>Godoy Cruz N° 2320</StreetAddress>
+                            <Locality>Ciudad Autónoma de Buenos Aires</Locality>
+                            <StateOrProvince>Ciudad Autónoma de Buenos Aires</StateOrProvince>
+                            <PostalCode>C1425FQD</PostalCode>
+                            <CountryName>AR</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Godoy Cruz N° 2320</StreetAddress>
+                            <Locality>Ciudad Autónoma de Buenos Aires</Locality>
+                            <StateOrProvince>Ciudad Autónoma de Buenos Aires</StateOrProvince>
+                            <PostalCode>C1425FQD</PostalCode>
+                            <CountryName>AR</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="es">https://www.argentina.gob.ar/jefatura/innovacion-ciencia-y-tecnologia/innovacion</URI>
+                        <URI xml:lang="pt">https://www.argentina.gob.ar/jefatura/innovacion-ciencia-y-tecnologia/innovacion</URI>
+                        <URI xml:lang="gn">https://www.argentina.gob.ar/jefatura/innovacion-ciencia-y-tecnologia/innovacion</URI>
+                        <URI xml:lang="en">https://www.argentina.gob.ar/jefatura/innovacion-ciencia-y-tecnologia/innovacion</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="es">https://www.argentina.gob.ar/jefatura/innovacion-publica/innovacion-administrativa/firma-digital/normativa-de-firma-digital</URI>
+                    <URI xml:lang="en">https://www.argentina.gob.ar/jefatura/innovacion-publica/innovacion-administrativa/firma-digital/normativa-de-firma-digital</URI>
+                    <URI xml:lang="pt">https://www.argentina.gob.ar/jefatura/innovacion-publica/innovacion-administrativa/firma-digital/normativa-de-firma-digital</URI>
+                    <URI xml:lang="gn">https://www.argentina.gob.ar/jefatura/innovacion-publica/innovacion-administrativa/firma-digital/normativa-de-firma-digital</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="es">AC Raíz de la República Argentina</Name>
+                            <Name xml:lang="en">Root Certificate Authority of Argentina</Name>
+                            <Name xml:lang="pt">AC Raiz da República Argentina</Name>
+                            <Name xml:lang="gn">AC Raíz de la República Argentina</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIF0DCCA7igAwIBAgIQOCMpE8OBZZpHt38BVXeV8jANBgkqhkiG9w0BAQ0FADCBgTELMAkGA1UEBhMCQVIxRDBCBgNVBAoMO0luZnJhZXN0cnVjdHVyYSBkZSBGaXJtYSBEaWdpdGFsIGRlIGxhIFJlcMO6YmxpY2EgQXJnZW50aW5hMSwwKgYDVQQDDCNBQyBSYcOteiBkZSBsYSBSZXDDumJsaWNhIEFyZ2VudGluYTAeFw0xNjA2MzAxNDU3NThaFw0zNjA2MzAxNTA3NTdaMIGBMQswCQYDVQQGEwJBUjFEMEIGA1UECgw7SW5mcmFlc3RydWN0dXJhIGRlIEZpcm1hIERpZ2l0YWwgZGUgbGEgUmVww7pibGljYSBBcmdlbnRpbmExLDAqBgNVBAMMI0FDIFJhw616IGRlIGxhIFJlcMO6YmxpY2EgQXJnZW50aW5hMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA79XGwPO0DTdGz1DSsBkuZcpz8zA8Gau/tsx8UGaqg26PJfTiQ0zr10Vnu1MfIA2YLE+7RoKFn3JCfCuktcX0o/r+qplwqOAstrBYSs94pW2rBKbLuEEPQK+tqFFeuQEE0w6vufZoYR8KK/ONbFo0HMSAOsxkb+kkkGpZjPLMOwj7EKC8lKrHEhNf344a7dIuLlEKn5og5smByRMQr7rf1/QY0r2E8muU0greQ5l7Jff6EH8HTQddDQ0rHnbOqtXGPCJ3w+3qQm4rIF+EDO23TXu3DGsrJQreFgN39JOvLYabNuBEM1q+RDRenGZ0wJIkaBeLjDafR6qK6/aWn5kITYWomOgeMkELph1lsnacTIHLt8qwhjTrguQk223yxB6RBVrfAOdexSLpKPu5czioUZKB7sNKXByfOO1zYh4rRHaOLsABppGYQR0WkTogR1RLlwtxm4pOEAFwqZQDwCpDSU4D0ePYFARZP6xRsk5fQPYAvbykXn07cfYsuCEi1eJCK4U+TGFwDhYhYdjRHQzkeA1Lnyi9OFTEW0buzyH/X6SSX5q96++GHxx2Rrs5uTjMLA4HALCJ0QekQ7TwkpHcX3RfBMRaYRACw3INjkDrJUgad0yY5xtOI3AUPmVHWIilymHFPPs7j8aubFYMDTXR5BmStXfcEGrCCvK7ZQiLz90CAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFLge4vs4Nm1/ViXWOUaSCrcWpuDVMA0GCSqGSIb3DQEBDQUAA4ICAQDhfD9S27prvuZlsQKJ4ROwYLVYIcUrJy83J6uCFeaft1j+Rn28s0OS1QgSL16oyGwerUdOGuAhSSUoLdrSPgU1BM8OvKpDtiAbJv20odbBxiWeUSvfTxt5nmYlR4PTJhz2GK1BUP3C4Rk82bz1axV0Hbv6aoMftq6HBpU0J+bTRRWC5i+Q6HcGnCXjTeInpXS7exwbL6DdCDqHXjcVVe+e298KpxMHo+/kHPEYNW51fwgRh/dQ1AVyLxloemtzejAkw7QAzFp6ntiMj1p7JYcTUzpUfpzaUT5ZAeAVy+SsM7wUL4v6y4/+BJkCRQeRzXz7VMVF0QKOO0O/VW+NC1KzDFfmq4PLr+DxCqCTWZbVACAnxAPLtQqoIpztRRzndMeItctmJmyalpej4n+c7ss1G1+0cLxrG0Jd6i/d9FgCA6XWck4LAlq1mo/3bg1vYiJcQJXjdL5yl7tZXUvMNBrjAR8/hskijKHCkuMqUhN9v6r6Tgkger7eJn7m7MesD1s5kdCtvBnlroqKXo73nYL8M9b4HOxrA4VDqFhkuWQLrsW2IrZY437v2stO57xY9W2AIi31OiQ6qYdKbWTJIvKbQejFg5j2pYeU8uGjp3Zt1b9I8rsKE5Ofay0+yUcaW5TICe0X50blfLljPpVL8SKxIG6up/+5JaQ+sx15qaTA4g==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=AC Raíz de la República Argentina, O=Infraestructura de Firma Digital de la República Argentina, C=AR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>uB7i+zg2bX9WJdY5RpIKtxam4NU=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2016-06-30T14:57:58Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="es">https://www.argentina.gob.ar/firmadigital/politicasdecertificacion</URI>
+                            <URI xml:lang="en">https://www.argentina.gob.ar/firmadigital/politicasdecertificacion</URI>
+                            <URI xml:lang="pt">https://www.argentina.gob.ar/firmadigital/politicasdecertificacion</URI>
+                            <URI xml:lang="gn">https://www.argentina.gob.ar/firmadigital/politicasdecertificacion</URI>
+                        </SchemeServiceDefinitionURI>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="es">https://www.argentina.gob.ar/firmadigital/politicasdecertificacion</URI>
+                            <URI xml:lang="en">https://www.argentina.gob.ar/firmadigital/politicasdecertificacion</URI>
+                            <URI xml:lang="pt">https://www.argentina.gob.ar/firmadigital/politicasdecertificacion</URI>
+                            <URI xml:lang="gn">https://www.argentina.gob.ar/firmadigital/politicasdecertificacion</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="es">AC Raíz de la República Argentina</Name>
+<Name xml:lang="en">Root Certificate Authority of Argentina</Name>
+<Name xml:lang="pt">AC Raiz da República Argentina</Name>
+<Name xml:lang="gn">AC Raíz de la República Argentina</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=AC Raíz de la República Argentina, O=Infraestructura de Firma Digital de la República Argentina, C=AR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>uB7i+zg2bX9WJdY5RpIKtxam4NU=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2007-11-22T13:25:39Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+    </TrustServiceProviderList>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="xmldsig-6e36904d-676e-4011-8dd7-86e374f4a8e4">
+<ds:SignedInfo>
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+<ds:Reference Id="xmldsig-6e36904d-676e-4011-8dd7-86e374f4a8e4-ref0" URI="">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+<ds:DigestValue>2ucV4a/J2l4bMmQILcI6vzuxhUDKDdzGL+3uWD48Q0s=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xmldsig-6e36904d-676e-4011-8dd7-86e374f4a8e4-signedprops">
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+<ds:DigestValue>UAT//wjI1Lx6GfFssqFofJMh2QN4qsFGliK93KTLx3M=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue Id="xmldsig-6e36904d-676e-4011-8dd7-86e374f4a8e4-sigvalue">
+01/GI/LpBvYqv9ZkfcTcMXlNcb//EwPA5/8Y+R4HERhcfpDklOaNXFbBzWRANBty56QIBwDix0uW
+TT82PsaPBkzuUp4/TcqwSB0NTORVNdsnv0VgskEVZDnnaksrZcoikJolTDUhdT8Dsz9CL0AkTpOq
+aa3X4krX81r6VRC3dUvKelCh/HHgFYg0FUD0q8A6v+//rBNWwhked/rHmev/cmTadTxxl5E4IEUC
+FaY1yeRl2sNV+z+Ixy3DuWCmR52ZqzZQWFu0ccA9QTfnfAMY3bVB6LiuZcW9QmjxvtzKbZVkqJX8
+w46AJ041IaLeQA2+q34540wKiZ857DBYOT53uQ==
+</ds:SignatureValue>
+<ds:KeyInfo>
+<ds:X509Data>
+<ds:X509Certificate>
+MIIH0jCCBbqgAwIBAgITfwAatU+P4G1P34vbHgABABq1TzANBgkqhkiG9w0BAQsFADCCAUwxCzAJ
+BgNVBAYTAkFSMSkwJwYDVQQIDCBDaXVkYWQgQXV0w7Nub21hIGRlIEJ1ZW5vcyBBaXJlczEzMDEG
+A1UECwwqU3Vic2VjcmV0YXLDrWEgZGUgVGVjbm9sb2fDrWFzIGRlIEdlc3Rpw7NuMSkwJwYDVQQL
+DCBTZWNyZXRhcsOtYSBkZSBHZXN0acOzbiBQw7pibGljYTE5MDcGA1UECwwwT2ZpY2luYSBOYWNp
+b25hbCBkZSBUZWNub2xvZ8OtYXMgZGUgSW5mb3JtYWNpw7NuMSowKAYDVQQKDCFKZWZhdHVyYSBk
+ZSBHYWJpbmV0ZSBkZSBNaW5pc3Ryb3MxGTAXBgNVBAUTEENVSVQgMzA2ODA2MDQ1NzIxMDAuBgNV
+BAMMJ0F1dG9yaWRhZCBDZXJ0aWZpY2FudGUgZGUgRmlybWEgRGlnaXRhbDAeFw0yNTA3MTYxNzU0
+MzFaFw0yNzA3MTYxNzU0MzFaMEkxGTAXBgNVBAUTEENVSUwgMjAyODQyMTAzMzcxCzAJBgNVBAYT
+AkFSMR8wHQYDVQQDExZDQVJSSVpPIEVucmlxdWUgTWFudWVsMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA4SVCvix4shhKgqI/mR0S5br+LvYUDb2BYBAxvYgZ3MXzw3jyNB+UTCubWP01
+wawXTlPIr5HXoRVK7fIJVe5MD5wzqZ2s5yf2Hoy1MVYrNGv/CpY6jyqsy3momOeuiekjdMqLlnpy
+BQbPoCBTyigrwuyqUVVwjGIwAJniCiT10Vmbk7uQmdJZLHC8zTCLZWlMX6pGLbHSfBThoeII1uc4
+FUuUkRJWsovGldMPzVkqadF8r524sllgp/+uRJGysa+cWm1+0e7aXGHcbn+VOZdMwW0fn0ghGRpZ
+xiKsosVBhRIb/8D05pbFbFqHSh8PRAiUG02x/H7yqhtIPtWw1YdkRQIDAQABo4ICrDCCAqgwDgYD
+VR0PAQH/BAQDAgTwMCQGCCsGAQUFBwEDBBgwFjAUBggrBgEFBQcLAjAIBgZgIAEKAgIwHQYDVR0O
+BBYEFG5jlfV+0DMzizj9EmgBdnMPukyDMB0GA1UdEQQWMBSBEnFjYXJyaXpvQGdtYWlsLmNvbTAf
+BgNVHSMEGDAWgBSMG/0ubHBsM5IabSTMm8w/mcXrqDBXBgNVHR8EUDBOMEygSqBIhiBodHRwOi8v
+cGtpLmpnbS5nb3YuYXIvY3JsL0ZELmNybIYkaHR0cDovL3BraWNvbnQuamdtLmdvdi5hci9jcmwv
+RkQuY3JsMIHWBggrBgEFBQcBAQSByTCBxjA1BggrBgEFBQcwAoYpaHR0cDovL3BraS5qZ20uZ292
+LmFyL2FpYS9jYWZkT05USSgxKS5jcnQwOQYIKwYBBQUHMAKGLWh0dHA6Ly9wa2ljb250LmpnbS5n
+b3YuYXIvYWlhL2NhZmRPTlRJKDEpLmNydDAmBggrBgEFBQcwAYYaaHR0cDovL3BraS5qZ20uZ292
+LmFyL29jc3AwKgYIKwYBBQUHMAGGHmh0dHA6Ly9wa2ljb250LmpnbS5nb3YuYXIvb2NzcDAMBgNV
+HRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDAnBgkrBgEEAYI3FQoEGjAY
+MAoGCCsGAQUFBwMCMAoGCCsGAQUFBwMEMEQGCSqGSIb3DQEJDwQ3MDUwDgYIKoZIhvcNAwICAgCA
+MA4GCCqGSIb3DQMEAgIAgDAHBgUrDgMCBzAKBggqhkiG9w0DBzBDBgNVHSAEPDA6MDgGBWAgAQED
+MC8wLQYIKwYBBQUHAgEWIWh0dHA6Ly9wa2kuamdtLmdvdi5hci9jcHMvY3BzLnBkZjANBgkqhkiG
+9w0BAQsFAAOCAgEAyCrHfYvfMKXqrVbxGlAySQSVsDz7fZrYxKU5qXbB/+jCj1IY0ENHLN5q77HY
+M7eomHM8nX9zpXl0e4nV5PLaSwykmW9ERw6EdqhzzcFGJopYriLfQMbVGvhsJVY+/zhQ4//RwFle
+SlkZUZZt92qEQwuau/DLdCfOGq/Xm0c1qpx+I8+sdQKRz7x3iLLExHa7U+dO6pe/ropNSJabKyP5
+ZOXHa2B4s2LRx/qTScfPhg8B06nrLLWnG0QMgpjfEWHL3uPcNI9iMJxRTp7S6Q+a8fQK4Jv2WyLy
+9m2ETKAw5HpF0Mbu6yb9/xNkg/zQCY4Ooy7DHxs67j9ETJ+iP1Fl4+nBFYkCkiqlKreeSicPl+fn
+vcXcdDZto3UJBqpbW6PVGaYkUQRy8cgy2FANMS8y6P6u8dddiQ0a4XatvVAUgrDlPKxyYQ0ZK4Hw
+ggSqcOklFplKSJZyj0Wt1jqF6dtTjxqaMUvqbco/0Zp8fKtMXlqvNu1DbhpIF0Ast/M8DocHuxTM
++b7B1IYmiSZ292aT1ZVYoFww3o3NQuuxNM7CN8GPOF3a09dptvb1NIyWX54DeRX/HF/V2R92vjvE
+ukxaNWIIgv/J496j/Hp+p/N5OR0TEIy42DMj1UHWpCy9CGWYS9sYRW8d1EKUu7JHMFkbRdZ4b22b
+uRsuF6vI08u1AQE=
+</ds:X509Certificate>
+</ds:X509Data>
+</ds:KeyInfo>
+<ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" Target="#xmldsig-6e36904d-676e-4011-8dd7-86e374f4a8e4"><ns3:SignedProperties Id="xmldsig-6e36904d-676e-4011-8dd7-86e374f4a8e4-signedprops"><ns3:SignedSignatureProperties><ns3:SigningTime>2025-07-16T16:01:27.377-03:00</ns3:SigningTime><ns3:SigningCertificate><ns3:Cert><ns3:CertDigest><ns2:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ns2:DigestValue>odPi324ZEMI7hDq72YnrKLBodZfCkU78Rbo+fm0nMBY=</ns2:DigestValue></ns3:CertDigest><ns3:IssuerSerial><ns2:X509IssuerName>CN=Autoridad Certificante de Firma Digital,2.5.4.5=#131043554954203330363830363034353732,O=Jefatura de Gabinete de Ministros,OU=Oficina Nacional de Tecnologías de Información,OU=Secretaría de Gestión Pública,OU=Subsecretaría de Tecnologías de Gestión,ST=Ciudad Autónoma de Buenos Aires,C=AR</ns2:X509IssuerName><ns2:X509SerialNumber>2832203728558305937781262908579699388980049231</ns2:X509SerialNumber></ns3:IssuerSerial></ns3:Cert></ns3:SigningCertificate></ns3:SignedSignatureProperties><ns3:SignedDataObjectProperties><ns3:DataObjectFormat ObjectReference="#xmldsig-6e36904d-676e-4011-8dd7-86e374f4a8e4-ref0"><ns3:MimeType>text/xml</ns3:MimeType></ns3:DataObjectFormat></ns3:SignedDataObjectProperties></ns3:SignedProperties></xades:QualifyingProperties></ds:Object>
+</ds:Signature></TrustServiceStatusList>

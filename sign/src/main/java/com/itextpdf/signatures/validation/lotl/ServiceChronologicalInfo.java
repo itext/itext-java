@@ -25,6 +25,7 @@ package com.itextpdf.signatures.validation.lotl;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +45,11 @@ public class ServiceChronologicalInfo {
     private static final Set<String> VALID_STATUSES = new HashSet<>();
     private final List<AdditionalServiceInformationExtension> serviceExtensions = new ArrayList<>();
     private final List<QualifierExtension> qualifierExtensions = new ArrayList<>();
-    private final DateTimeFormatter statusStartDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    private final List<DateTimeFormatter> statusDateFormats = Arrays.asList(
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+    );
     private String serviceStatus;
     //Local time is used here because it is required to use UTC in a trusted lists, so no offset shall be presented.
     private LocalDateTime serviceStatusStartingTime;
@@ -112,7 +117,14 @@ public class ServiceChronologicalInfo {
     }
 
     void setServiceStatusStartingTime(String timeString) {
-        this.serviceStatusStartingTime = statusStartDateFormat.parse(timeString, LocalDateTime::from);
+        for (DateTimeFormatter statusDateFormat : statusDateFormats) {
+            try {
+                this.serviceStatusStartingTime = statusDateFormat.parse(timeString, LocalDateTime::from);
+                return;
+            } catch (Exception e) {
+                //try next format
+            }
+        }
     }
 
     void setServiceStatusStartingTime(LocalDateTime serviceStatusStartingTime) {

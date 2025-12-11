@@ -232,7 +232,7 @@ public class LotlCertificateChainValidatorTest extends ExtendedITextTest {
 
     @Test
     public void lotlReportItemsTest() throws IOException {
-        LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()));
+        LotlService service = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()));
         service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
         service.withLotlValidator(() -> new LotlValidator(service));
         service.initializeCache();

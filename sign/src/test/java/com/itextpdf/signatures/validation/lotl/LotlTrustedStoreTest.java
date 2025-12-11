@@ -318,7 +318,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
         ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
         chainBuilder.trustEuropeanLotl(true);
         LotlFetchingProperties fetchingProperties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new LotlService(fetchingProperties)) {
+        try (LotlService lotlService = new EuropeanLotlService(fetchingProperties)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             chainBuilder.withLotlService(() -> lotlService);
             lotlService.initializeCache();
@@ -333,7 +333,7 @@ class LotlTrustedStoreTest extends ExtendedITextTest {
         ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder();
         chainBuilder.trustEuropeanLotl(true);
         LotlFetchingProperties fetchingProperties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new LotlService(fetchingProperties)) {
+        try (LotlService lotlService = new EuropeanLotlService(fetchingProperties)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             chainBuilder.withLotlService(() -> lotlService);
             lotlService.initializeCache();

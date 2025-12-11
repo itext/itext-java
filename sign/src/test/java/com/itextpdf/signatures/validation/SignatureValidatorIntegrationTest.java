@@ -45,6 +45,7 @@ import com.itextpdf.signatures.validation.context.TimeBasedContext;
 import com.itextpdf.signatures.validation.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.lotl.EuropeanLotlService;
 import com.itextpdf.signatures.validation.lotl.FromDiskResourceRetriever;
 import com.itextpdf.signatures.validation.lotl.LotlFetchingProperties;
 import com.itextpdf.signatures.validation.lotl.LotlService;
@@ -730,7 +731,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void infiniteRecursionForOCSPFromDSSTest() throws IOException {
-        LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()));
+        LotlService service = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()));
         service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
         service.withLotlValidator(() -> new LotlValidator(service));
         service.initializeCache();
