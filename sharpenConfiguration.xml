@@ -165,6 +165,9 @@
             <fileset reason="HighPrecisionOutputStream is a manual class, and some tests for this class cannot be ported automatically">
                 <file path="com/itextpdf/io/source/HighPrecisionOutputStreamTest.java"/>
             </fileset>
+            <fileset reason="CloseableByteArrayOutputStream cannot be trivially ported into MemoryStream">
+                <file path="com/itextpdf/io/util/CloseableByteArrayOutputStream.java"/>
+            </fileset>
             <!-- barcodes -->
             <file path="com/itextpdf/barcodes/BarcodeMultiThreadingTest.java"/>
 

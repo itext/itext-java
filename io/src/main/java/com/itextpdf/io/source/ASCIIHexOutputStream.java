@@ -1,0 +1,99 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2025 Apryse Group NV
+    Authors: Apryse Software.
+
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.io.source;
+
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+/**
+ * An output stream that encodes data according to the {@code ASCIIHexDecode}
+ * filter from the PDF specification.
+ */
+public class ASCIIHexOutputStream extends FilterOutputStream implements IFinishable {
+    /**
+     * End Of Data marker.
+     */
+    private static final byte EOD = '>';
+    /**
+     * Array for mapping nibble values to the corresponding lowercase
+     * hexadecimal characters.
+     */
+    private static final byte[] CHAR_MAP = {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
+
+    /**
+     * Buffer for storing the output hex char pair.
+     */
+    private final byte[] buffer = new byte[2];
+
+    /**
+     * Flag for detecting, whether {@link #finish} has been called.
+     */
+    private final AtomicBoolean finished = new AtomicBoolean(false);
+
+    /**
+     * Creates a new {@code ASCIIHexDecode} encoding stream.
+     *
+     * @param out the output stream to write encoded data to
+     */
+    public ASCIIHexOutputStream(OutputStream out) {
+        super(out);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(int b) throws IOException {
+        int value = (b & 0xFF);
+        // Writing via a 2-elem buffer, in case `write(byte[])` on the
+        // underlying stream is more performant
+        buffer[0] = CHAR_MAP[value >> 4];
+        buffer[1] = CHAR_MAP[value & 0x0F];
+        out.write(buffer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        finish();
+        super.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void finish() throws IOException {
+        if (finished.getAndSet(true)) {
+            return;
+        }
+        out.write(EOD);
+        flush();
+    }
+}
