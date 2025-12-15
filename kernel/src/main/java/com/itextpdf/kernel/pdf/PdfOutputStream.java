@@ -162,6 +162,8 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
     }
 
     protected boolean containsFlateFilter(PdfStream pdfStream) {
+        PdfName compressionFilter = getCompressionStrategy().getFilterName();
+
         PdfObject filter = pdfStream.get(PdfName.Filter);
         if (filter == null) {
             return false;
@@ -174,7 +176,7 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
             throw new PdfException(KernelExceptionMessageConstant.FILTER_IS_NOT_A_NAME_OR_ARRAY);
         }
         if (filter.getType() == PdfObject.NAME) {
-            return PdfName.FlateDecode.equals(filter);
+            return compressionFilter.equals(filter);
         }
         for (PdfObject obj : (PdfArray) filter) {
             if (obj.isFlushed()) {
@@ -182,7 +184,7 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
                 return true;
             }
         }
-        return ((PdfArray) filter).contains(PdfName.FlateDecode);
+        return ((PdfArray) filter).contains(compressionFilter);
     }
 
     protected void updateCompressionFilter(PdfStream pdfStream) {

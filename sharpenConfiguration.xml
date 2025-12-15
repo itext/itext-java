@@ -746,6 +746,17 @@
         <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">
             <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/grayImages.png" />
         </fileset>
+		<fileset>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleBrotli.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_inlineImg.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleBrotliContentStream.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_realEmbeddedFile.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_imgBrotli.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleEmbeddedUnicode.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleJsonEmbedded.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleEmbeddedFile.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_embeddedFileAndContentStream.pdf"/>
+		</fileset>
 		<!--Junit parallel settings-->
 		<fileset reason="Juunit specific files">
             <file path="junit-platform.properties"/>
