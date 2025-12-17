@@ -16,7 +16,16 @@ import java.io.InputStream;
  */
 public class BrotliInputStream extends InputStream {
 
-  public static final int DEFAULT_INTERNAL_BUFFER_SIZE = 16384;
+  /** Default size of internal buffer (used for faster byte-by-byte reading). */
+  public static final int DEFAULT_INTERNAL_BUFFER_SIZE = 256;
+
+  /**
+   * Value expected by InputStream contract when stream is over.
+   *
+   * In Java it is -1.
+   * In C# it is 0 (should be patched during transpilation).
+   */
+  private static final int END_OF_STREAM_MARKER = -1;
 
   /**
    * Internal buffer used for efficient byte-by-byte reading.
@@ -44,13 +53,14 @@ public class BrotliInputStream extends InputStream {
    * <p> For byte-by-byte reading ({@link #read()}) internal buffer with
    * {@link #DEFAULT_INTERNAL_BUFFER_SIZE} size is allocated and used.
    *
-   * <p> Will block the thread until first kilobyte of data of source is available.
+   * <p> Will block the thread until first {@link BitReader#CAPACITY} bytes of data of source
+   * are available.
    *
    * @param source underlying data source
    * @throws IOException in case of corrupted data or source stream problems
    */
   public BrotliInputStream(InputStream source) throws IOException {
-    this(source, DEFAULT_INTERNAL_BUFFER_SIZE, null);
+    this(source, DEFAULT_INTERNAL_BUFFER_SIZE);
   }
 
   /**
@@ -59,7 +69,8 @@ public class BrotliInputStream extends InputStream {
    * <p> For byte-by-byte reading ({@link #read()}) internal buffer of specified size is
    * allocated and used.
    *
-   * <p> Will block the thread until first kilobyte of data of source is available.
+   * <p> Will block the thread until first {@link BitReader#CAPACITY} bytes of data of source
+   * are available.
    *
    * @param source compressed data source
    * @param byteReadBufferSize size of internal buffer used in case of
@@ -67,25 +78,6 @@ public class BrotliInputStream extends InputStream {
    * @throws IOException in case of corrupted data or source stream problems
    */
   public BrotliInputStream(InputStream source, int byteReadBufferSize) throws IOException {
-    this(source, byteReadBufferSize, null);
-  }
-
-  /**
-   * Creates a {@link InputStream} wrapper that decompresses brotli data.
-   *
-   * <p> For byte-by-byte reading ({@link #read()}) internal buffer of specified size is
-   * allocated and used.
-   *
-   * <p> Will block the thread until first kilobyte of data of source is available.
-   *
-   * @param source compressed data source
-   * @param byteReadBufferSize size of internal buffer used in case of
-   *        byte-by-byte reading
-   * @param customDictionary custom dictionary data; {@code null} if not used
-   * @throws IOException in case of corrupted data or source stream problems
-   */
-  public BrotliInputStream(InputStream source, int byteReadBufferSize,
-      byte[] customDictionary) throws IOException {
     if (byteReadBufferSize <= 0) {
       throw new IllegalArgumentException("Bad buffer size:" + byteReadBufferSize);
     } else if (source == null) {
@@ -95,13 +87,26 @@ public class BrotliInputStream extends InputStream {
     this.remainingBufferBytes = 0;
     this.bufferOffset = 0;
     try {
-      State.setInput(state, source);
+      state.input = source;
+      Decode.initState(state);
     } catch (BrotliRuntimeException ex) {
       throw new IOException("Brotli decoder initialization failed", ex);
     }
-    if (customDictionary != null) {
-      Decode.setCustomDictionary(state, customDictionary);
-    }
+  }
+
+  /** Attach "RAW" dictionary (chunk) to decoder. */
+  public void attachDictionaryChunk(byte[] data) {
+    Decode.attachDictionaryChunk(state, data);
+  }
+
+  /** Request decoder to produce output as soon as it is available. */
+  public void enableEagerOutput() {
+    Decode.enableEagerOutput(state);
+  }
+
+  /** Enable "large window" stream feature. */
+  public void enableLargeWindow() {
+    Decode.enableLargeWindow(state);
   }
 
   /**
@@ -109,7 +114,8 @@ public class BrotliInputStream extends InputStream {
    */
   @Override
   public void close() throws IOException {
-    State.close(state);
+    Decode.close(state);
+    Utils.closeInput(state);
   }
 
   /**
@@ -120,7 +126,8 @@ public class BrotliInputStream extends InputStream {
     if (bufferOffset >= remainingBufferBytes) {
       remainingBufferBytes = read(buffer, 0, buffer.length);
       bufferOffset = 0;
-      if (remainingBufferBytes == -1) {
+      if (remainingBufferBytes == END_OF_STREAM_MARKER) {
+        // Both Java and C# return the same value for EOF on single-byte read.
         return -1;
       }
     }
@@ -138,7 +145,7 @@ public class BrotliInputStream extends InputStream {
       throw new IllegalArgumentException("Bad length: " + destLen);
     } else if (destOffset + destLen > destBuffer.length) {
       throw new IllegalArgumentException(
-          "Buffer overflow: " + (destOffset + destLen) + " > " + destBuffer.length);
+              "Buffer overflow: " + (destOffset + destLen) + " > " + destBuffer.length);
     } else if (destLen == 0) {
       return 0;
     }
@@ -159,10 +166,9 @@ public class BrotliInputStream extends InputStream {
       state.outputLength = destLen;
       state.outputUsed = 0;
       Decode.decompress(state);
-      if (state.outputUsed == 0) {
-        return -1;
-      }
-      return state.outputUsed + copyLen;
+      copyLen += state.outputUsed;
+      copyLen = (copyLen > 0) ? copyLen : END_OF_STREAM_MARKER;
+      return copyLen;
     } catch (BrotliRuntimeException ex) {
       throw new IOException("Brotli stream decoding failed", ex);
     }

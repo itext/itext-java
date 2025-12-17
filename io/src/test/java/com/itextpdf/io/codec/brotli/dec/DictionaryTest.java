@@ -6,25 +6,19 @@
 
 package com.itextpdf.io.codec.brotli.dec;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.itextpdf.test.ExtendedITextTest;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 
-import com.itextpdf.test.ExtendedITextTest;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for {@link Dictionary}.
  */
 @Tag("UnitTest")
 public class DictionaryTest extends ExtendedITextTest {
-
-    @Test
-    public void testGetData() {
-        assertEquals(37084801881332636L, crc64(Dictionary.getData()));
-    }
 
     private static long crc64(ByteBuffer data) {
         long crc = -1;
@@ -36,5 +30,10 @@ public class DictionaryTest extends ExtendedITextTest {
             crc = c ^ (crc >>> 8);
         }
         return ~crc;
+    }
+
+    @Test
+    public void testGetData() {
+        assertEquals(37084801881332636L, crc64(Dictionary.getData()));
     }
 }

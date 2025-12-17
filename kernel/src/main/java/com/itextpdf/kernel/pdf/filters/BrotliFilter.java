@@ -74,9 +74,13 @@ public class BrotliFilter extends MemoryLimitsAwareFilter {
             final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
             final ByteArrayInputStream input = new ByteArrayInputStream(b);
             final ByteArrayOutputStream output = enableMemoryLimitsAwareHandler(streamDictionary);
-            final InputStream brotliInput =
-                    brotliDictionary != null ? new BrotliInputStream(input, DEFAULT_INTERNAL_BUFFER_SIZE,
-                            brotliDictionary.getBytes()) : new BrotliInputStream(input);
+            final BrotliInputStream brotliInput;
+            if (brotliDictionary != null) {
+                brotliInput = new BrotliInputStream(input, DEFAULT_INTERNAL_BUFFER_SIZE);
+                brotliInput.attachDictionaryChunk(brotliDictionary.getBytes());
+            } else {
+                brotliInput = new BrotliInputStream(input);
+            }
 
             int len;
             while ((len = brotliInput.read(buffer, 0, buffer.length)) > 0) {

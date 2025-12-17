@@ -515,6 +515,8 @@
                 <excludes>
                   <!-- Contains interfaces for bouncycastle wrappers which can be changes in any time -->
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
+                  <!-- Updated embedded org.brotli.dec dependency -->
+                  <exclude>com.itextpdf.io.codec.brotli.dec</exclude>
                 </excludes>
                 <excludeModules>
                   <excludeModule>brotli-compressor</excludeModule>
