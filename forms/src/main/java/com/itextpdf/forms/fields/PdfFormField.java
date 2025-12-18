@@ -777,8 +777,9 @@ public class PdfFormField extends AbstractPdfFormField {
         int oldFlags = getFieldFlags();
         put(PdfName.Ff, new PdfNumber(flags));
         if (((oldFlags ^ flags) & PdfTextFormField.FF_COMB) != 0 && PdfName.Tx.equals(getFormType())
-                && PdfFormCreator.createTextFormField(getPdfObject()).getMaxLen() != 0)
+                && PdfFormCreator.createTextFormField(getPdfObject()).getMaxLen() != 0) {
             regenerateField();
+        }
         return this;
     }
 

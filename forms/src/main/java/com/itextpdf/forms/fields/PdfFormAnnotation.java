@@ -956,9 +956,13 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             }
             formFieldElement.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(fontSize));
             value = value.replaceAll(LINE_ENDINGS_REGEXP, " ");
-            ((InputField) formFieldElement).setComb(this.isCombTextFormField());
-            ((InputField) formFieldElement).setMaxLen((parent instanceof PdfTextFormField ? (PdfTextFormField) parent :
-                    PdfFormCreator.createTextFormField(parent.getPdfObject())).getMaxLen());
+            final boolean isComb = this.isCombTextFormField();
+            ((InputField) formFieldElement).setComb(isComb);
+            if (isComb) {
+                ((InputField) formFieldElement).setMaxLen(
+                        (parent instanceof PdfTextFormField ? (PdfTextFormField) parent :
+                                PdfFormCreator.createTextFormField(parent.getPdfObject())).getMaxLen());
+            }
             ((InputField) formFieldElement).useAsPassword(parent.isPassword());
         }
         formFieldElement.setValue(value);
