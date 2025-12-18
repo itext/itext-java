@@ -522,6 +522,9 @@ public abstract class RootRenderer extends AbstractRenderer {
     }
 
     private static boolean isItemInSubtree(IRenderer ancestor, IRenderer item) {
+        if (ancestor == null) {
+            return false;
+        }
         if (ancestor == item) {
             return true;
         }
