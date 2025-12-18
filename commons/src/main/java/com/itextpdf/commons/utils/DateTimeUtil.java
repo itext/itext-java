@@ -59,6 +59,17 @@ public final class DateTimeUtil {
     }
 
     /**
+     * Gets the {@link LocalDateTime} from UTC seconds from the epoch.
+     *
+     * @param epochSecond the UTC milliseconds from the epoch
+     *
+     * @return local time from UTC seconds
+     */
+    public static LocalDateTime ofEpochSecondUTC(long epochSecond) {
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneOffset.UTC);
+    }
+
+    /**
      * Gets the date as {@link Calendar}.
      *
      * @param date the date to be returned as {@link Calendar}
@@ -92,6 +103,16 @@ public final class DateTimeUtil {
      */
     public static Date getCurrentTimeDate() {
         return new Date();
+    }
+
+
+    /**
+     * Gets local current time consistently.
+     *
+     * @return {@link LocalDateTime} at which it was allocated, measured to the nearest millisecond
+     */
+    public static LocalDateTime getLocalDateTime() {
+        return LocalDateTime.now();
     }
 
     /**
@@ -276,6 +297,18 @@ public final class DateTimeUtil {
         GregorianCalendar calendar = new GregorianCalendar(year, month, day, hour, minute, second);
         calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
         return calendar.getTime();
+    }
+
+    /**
+     * Serialize time using format YYYY-MM-DDTHH-MM-SS
+     *
+     * @param dateTime local time to be converted
+     *
+     * @return serialized time
+     */
+    public static String serializeDateToISO8601(LocalDateTime dateTime) {
+        return String.format("%04d-%02d-%02dT%02d:%02d:%02d", dateTime.getYear(), dateTime.getMonthValue(),
+                dateTime.getDayOfMonth(), dateTime.getHour(), dateTime.getMinute(), dateTime.getSecond());
     }
 
     private static DateFormat initParserSDF(String pattern) {
