@@ -45,8 +45,11 @@ import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 
 import java.io.Writer;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -67,6 +70,16 @@ public class ValidatorChainBuilder {
     private Supplier<LotlTrustedStore> lotlTrustedStoreFactory;
     private Supplier<LotlService> lotlServiceFactory;
     private QualifiedValidator qualifiedValidator;
+
+    /**
+     * This set is used to catch recursions while CRL/OCSP responses validation.
+     * There might be loops when
+     * Revocation data for cert 0 is signed by cert 0. Or
+     * Revocation data for cert 0 is signed by cert 1 and revocation data for cert 1 is signed by cert 0.
+     * Some more complex loops are possible, and they all are supposed to be caught by this set
+     * and the methods to manipulate this set.
+     */
+    private Set<X509Certificate> certificatesChainBeingValidated = new HashSet<>();
 
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
@@ -571,6 +584,18 @@ public class ValidatorChainBuilder {
      */
     public LotlService getLotlService() {
         return this.lotlServiceFactory.get();
+    }
+
+    void addCertificateBeingValidated(X509Certificate certificate) {
+        certificatesChainBeingValidated.add(certificate);
+    }
+
+    void removeCertificateBeingValidated(X509Certificate certificate) {
+        certificatesChainBeingValidated.remove(certificate);
+    }
+
+    boolean isCertificateBeingValidated(X509Certificate certificate) {
+        return certificatesChainBeingValidated.contains(certificate);
     }
 
     private static LotlService buildLotlService() {

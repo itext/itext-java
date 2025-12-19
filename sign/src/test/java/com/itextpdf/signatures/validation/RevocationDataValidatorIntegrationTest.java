@@ -244,7 +244,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(1)
-                .hasLogItem(l-> l.withMessage(CRLValidator.CERTIFICATE_IN_ISSUER_CHAIN))
+                .hasLogItems(2, l-> l.withMessage(CRLValidator.CERTIFICATE_IN_ISSUER_CHAIN))
         );
     }
 }

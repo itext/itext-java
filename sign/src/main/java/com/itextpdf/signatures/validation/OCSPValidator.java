@@ -91,8 +91,8 @@ public class OCSPValidator {
     static final String UNABLE_TO_RETRIEVE_ISSUER = "OCSP response could not be verified: Unexpected exception "
             + "occurred while retrieving issuer";
 
-    static final String OCSP_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED = "OCSP response could not be validated: "
-            + "OCSP response is signed by the same certificate as being validated.";
+    static final String CERTIFICATE_IN_ISSUER_CHAIN = "Unable to validate OCSP response: validated certificate is"
+            + " part of issuer certificate chain.";
 
     static final String OCSP_CHECK = "OCSP response check.";
 
@@ -334,30 +334,35 @@ public class OCSPValidator {
                 continue;
             }
 
-            if (certificate.equals(responderCert)) {
-                // OCSP response is signed by this same certificate
+            if (builder.isCertificateBeingValidated(responderCert)) {
+                // OCSP response is signed by the certificate from the issue chain
                 report.addReportItem(new CertificateReportItem(responderCert, OCSP_CHECK,
-                        OCSP_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED,
+                        CERTIFICATE_IN_ISSUER_CHAIN,
                         ReportItem.ReportItemStatus.INDETERMINATE));
                 continue;
-            }
+            } else {
+                builder.addCertificateBeingValidated(responderCert);
 
-            // Validating of the ocsp signer's certificate (responderCert) described in the
-            // RFC6960 4.2.2.2.1. Revocation Checking of an Authorized Responder.
-            ValidationReport responderReport = new ValidationReport();
-            try {
-                builder.getCertificateChainValidator()
-                        .validate(responderReport, localContext, responderCert, responseGenerationDate);
-            } catch (RuntimeException e) {
-                candidateReport.addReportItem(
-                        new CertificateReportItem(responderCert, OCSP_CHECK, OCSP_RESPONDER_NOT_VERIFIED, e,
-                                ReportItemStatus.INDETERMINATE));
-                continue;
-            }
-            addResponderValidationReport(candidateReport, responderReport);
-            if (candidateReport.getValidationResult() == ValidationResult.VALID) {
-                addResponderValidationReport(report, candidateReport);
-                return;
+                // Validating of the ocsp signer's certificate (responderCert) described in the
+                // RFC6960 4.2.2.2.1. Revocation Checking of an Authorized Responder.
+                ValidationReport responderReport = new ValidationReport();
+                try {
+                    builder.getCertificateChainValidator()
+                            .validate(responderReport, localContext, responderCert, responseGenerationDate);
+                } catch (RuntimeException e) {
+                    candidateReport.addReportItem(
+                            new CertificateReportItem(responderCert, OCSP_CHECK, OCSP_RESPONDER_NOT_VERIFIED, e,
+                                    ReportItemStatus.INDETERMINATE));
+                    continue;
+                } finally {
+                    builder.removeCertificateBeingValidated(responderCert);
+                }
+
+                addResponderValidationReport(candidateReport, responderReport);
+                if (candidateReport.getValidationResult() == ValidationResult.VALID) {
+                    addResponderValidationReport(report, candidateReport);
+                    return;
+                }
             }
         }
         //if we get here, none of the candidates were successful

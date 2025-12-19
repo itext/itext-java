@@ -756,7 +756,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                     .hasStatus(ValidationReport.ValidationResult.VALID)
                     .hasNumberOfFailures(0)
                     .hasLogItem(l -> l.withCheckName(OCSPValidator.OCSP_CHECK)
-                            .withMessage(OCSPValidator.OCSP_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED)));
+                            .withMessage(OCSPValidator.CERTIFICATE_IN_ISSUER_CHAIN)));
         }
     }
 

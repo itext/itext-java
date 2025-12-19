@@ -89,13 +89,9 @@ public class CRLValidator {
             "this update: {0}, validation date: {1}, freshness: {2}.";
     static final String ONLY_SOME_REASONS_CHECKED = "Revocation status cannot be determined since " +
             "not all reason codes are covered by the current CRL.";
-    static final String SAME_REASONS_CHECK = "CRLs that cover the same reason codes were already verified.";
     static final String UPDATE_DATE_BEFORE_CHECK_DATE = "nextUpdate: {0} of CRLResponse is before validation date {1}.";
     static final String CERTIFICATE_IN_ISSUER_CHAIN = "Unable to validate CRL response: validated certificate is"
             + " part of issuer certificate chain.";
-
-    static final String CRL_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED = "Unable to validate CRL response: "
-            + "CRL response is signed by the same certificate as being validated.";
 
     // All reasons without unspecified.
     static final int ALL_REASONS = 32895;
@@ -318,11 +314,6 @@ public class CRLValidator {
             ValidationReport candidateReport = new ValidationReport();
             candidateReports[i] = candidateReport;
             Certificate[] certs = certificatesList.get(i);
-            if (Arrays.asList(certs).contains(certificate)) {
-                candidateReport.addReportItem(new CertificateReportItem(certificate,
-                        CRL_CHECK, CERTIFICATE_IN_ISSUER_CHAIN, ReportItemStatus.INDETERMINATE));
-                continue;
-            }
             Certificate crlIssuer = certs[0];
             List<X509Certificate> crlIssuerRoots = getRoots(crlIssuer);
             List<X509Certificate> subjectRoots = getRoots(certificate);
@@ -335,24 +326,31 @@ public class CRLValidator {
                     e -> new CertificateReportItem(certificate, CRL_CHECK, CRL_INVALID, e,
                             ReportItemStatus.INDETERMINATE));
 
-            if (certificate.equals(crlIssuer)) {
-                // OCSP response is signed by this same certificate
+            if (builder.isCertificateBeingValidated((X509Certificate) crlIssuer)) {
+                // CRL response is signed by the certificate from the issue chain
                 report.addReportItem(new CertificateReportItem((X509Certificate) crlIssuer, CRL_CHECK,
-                        CRL_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED,
+                        CERTIFICATE_IN_ISSUER_CHAIN,
                         ReportItem.ReportItemStatus.INDETERMINATE));
                 continue;
-            }
+            } else {
+                builder.addCertificateBeingValidated((X509Certificate) crlIssuer);
 
-            ValidationReport responderReport = new ValidationReport();
-            onExceptionLog(() -> builder.getCertificateChainValidator().validate(responderReport,
-                    context.setCertificateSource(CertificateSource.CRL_ISSUER),
-                    (X509Certificate) crlIssuer, responseGenerationDate), candidateReport, e ->
-                    new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_CHAIN_FAILED, e,
-                            ReportItemStatus.INDETERMINATE));
-            addResponderValidationReport(candidateReport, responderReport);
-            if (candidateReport.getValidationResult() == ValidationResult.VALID) {
-                report.merge(candidateReport);
-                return;
+                ValidationReport responderReport = new ValidationReport();
+                try {
+                    onExceptionLog(() -> builder.getCertificateChainValidator().validate(responderReport,
+                            context.setCertificateSource(CertificateSource.CRL_ISSUER),
+                            (X509Certificate) crlIssuer, responseGenerationDate), candidateReport, e ->
+                            new CertificateReportItem(certificate, CRL_CHECK, CRL_ISSUER_CHAIN_FAILED, e,
+                                    ReportItemStatus.INDETERMINATE));
+                } finally {
+                    builder.removeCertificateBeingValidated((X509Certificate) crlIssuer);
+                }
+
+                addResponderValidationReport(candidateReport, responderReport);
+                if (candidateReport.getValidationResult() == ValidationResult.VALID) {
+                    report.merge(candidateReport);
+                    return;
+                }
             }
         }
         // if failed, add all logs
