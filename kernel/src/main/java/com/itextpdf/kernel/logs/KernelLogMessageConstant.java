@@ -97,6 +97,8 @@ public final class KernelLogMessageConstant {
 
     public static final String XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED =
             "XObject has no StructParents index in its stream, so index is recreated";
+    public static final String DUPLICATE_STRUCT_PARENT_INDEX_IN_TAGGED_OBJECT_REFERENCES =
+            "Duplicate StructParent index is encountered in tagged object references. The reference is ignored.";
 
     @Deprecated
     public static final String DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED = "Duplicated entries in order array are " +

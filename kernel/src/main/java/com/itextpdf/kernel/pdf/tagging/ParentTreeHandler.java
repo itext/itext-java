@@ -209,10 +209,10 @@ class ParentTreeHandler {
             }
             PdfNumber n = obj.getAsNumber(PdfName.StructParent);
             if (n != null) {
-                pageMcrs.putObjectReferenceMcr(n.intValue(), mcr);
+                pageMcrs.putObjectReferenceMcr(n.intValue(), mcr, structTreeRoot.getPdfObject());
             } else if (isModificationAllowed()) {
                 maxStructParentIndex++;
-                pageMcrs.putObjectReferenceMcr(maxStructParentIndex, mcr);
+                pageMcrs.putObjectReferenceMcr(maxStructParentIndex, mcr, structTreeRoot.getPdfObject());
                 obj.put(PdfName.StructParent, new PdfNumber(maxStructParentIndex));
                 structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
                 LOGGER.warn(KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED);
@@ -419,8 +419,15 @@ class ParentTreeHandler {
             pageResourceXObjects = new LinkedHashMap<PdfIndirectReference, TreeMap<Integer, PdfMcr>>();
         }
 
-        void putObjectReferenceMcr(int structParentIndex, PdfMcr mcr) {
-            objRefs.put(structParentIndex, mcr);
+        void putObjectReferenceMcr(int structParentIndex, PdfMcr mcr, PdfDictionary structTreeRootObject) {
+            if (!objRefs.containsKey(structParentIndex)) {
+                objRefs.put(structParentIndex, mcr);
+                return;
+            }
+            LOGGER.warn(KernelLogMessageConstant.DUPLICATE_STRUCT_PARENT_INDEX_IN_TAGGED_OBJECT_REFERENCES);
+            if (findStructTreeRoot(((PdfStructElem) mcr.getParent()).getPdfObject(), structTreeRootObject)) {
+                objRefs.put(structParentIndex, mcr);
+            }
         }
 
         void putPageContentStreamMcr(int mcid, PdfMcr mcr) {
@@ -456,6 +463,19 @@ class ParentTreeHandler {
                 collection.addAll(entry.getValue().values());
             }
             return collection;
+        }
+
+        private boolean findStructTreeRoot(PdfDictionary structElem, PdfDictionary structTreeRootObject) {
+            if (structElem == null) {
+                return false;
+            }
+
+            if (structElem.equals(structTreeRootObject)) {
+                return true;
+            }
+
+            PdfDictionary parent = structElem.getAsDictionary(PdfName.P);
+            return findStructTreeRoot(parent, structTreeRootObject);
         }
     }
 
