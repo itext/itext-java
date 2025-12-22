@@ -26,26 +26,74 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
 
-public class DeflaterOutputStream extends java.util.zip.DeflaterOutputStream {
+/**
+ * An output stream that compresses data using the DEFLATE compression algorithm.
+ * This is a wrapper around {@link java.util.zip.DeflaterOutputStream} that provides
+ * convenient constructors for specifying compression level and buffer size.
+ * <p>
+ * The compression level can be set to values between 0 (no compression) and 9 (maximum compression),
+ * or use -1 for the default compression level.
+ */
+public class DeflaterOutputStream extends java.util.zip.DeflaterOutputStream implements IFinishable {
 
+    /**
+     * Default buffer size for the deflater output stream (512 bytes).
+     */
+    private static final int DEFAULT_BUFFER_SIZE = 512;
+
+    /**
+     * Default compression level (uses Deflater's default).
+     */
+    private static final int DEFAULT_COMPRESSION_LEVEL = -1;
+
+    /**
+     * Creates a new deflater output stream with a specified compression level and buffer size.
+     *
+     * @param out the output stream to write compressed data to
+     * @param level the compression level (0-9, or -1 for default)
+     * @param size the buffer size in bytes
+     */
     public DeflaterOutputStream(OutputStream out, int level, int size) {
         super(out, new Deflater(level), size);
     }
 
+    /**
+     * Creates a new deflater output stream with a specified compression level and default buffer size.
+     *
+     * @param out the output stream to write compressed data to
+     * @param level the compression level (0-9, or -1 for default)
+     */
     public DeflaterOutputStream(OutputStream out, int level) {
-        this(out, level, 512);
+        this(out, level, DEFAULT_BUFFER_SIZE);
     }
 
+    /**
+     * Creates a new deflater output stream with default compression level and buffer size.
+     *
+     * @param out the output stream to write compressed data to
+     */
     public DeflaterOutputStream(OutputStream out) {
-        this(out, -1);
+        this(out, DEFAULT_COMPRESSION_LEVEL);
     }
 
+    /**
+     * Closes this output stream and releases any system resources associated with it.
+     * This method finishes writing compressed data to the output stream before closing.
+     *
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     public void close() throws IOException {
         finish();
         super.close();
     }
 
+    /**
+     * Finishes writing compressed data to the output stream without closing the underlying stream.
+     * This method completes the compression process and ends the deflater, releasing its resources.
+     *
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     public void finish() throws IOException {
         super.finish();

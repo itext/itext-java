@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>9.4.0</version>
+  <version>9.5.0</version>
   <packaging>pom</packaging>
 
   <name>iText</name>
@@ -66,6 +66,7 @@
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
     <module>pdfua</module>
+    <module>brotli-compressor</module>
   </modules>
 
   <scm>
@@ -514,8 +515,11 @@
                 <excludes>
                   <!-- Contains interfaces for bouncycastle wrappers which can be changes in any time -->
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
+                  <!-- Updated embedded org.brotli.dec dependency -->
+                  <exclude>com.itextpdf.io.codec.brotli.dec</exclude>
                 </excludes>
                 <excludeModules>
+                  <excludeModule>brotli-compressor</excludeModule>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
                   <excludeModule>bouncy-castle-connector</excludeModule>
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
@@ -1061,6 +1065,12 @@
                   --initialize-at-run-time=org.bouncycastle.crypto.prng.SP800SecureRandom
                   --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV
                   --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default
+
+                  -H:IncludeResources=lib/windows-x86_64/brotli.dll
+                  -H:IncludeResources=lib/linux-aarch64/libbrotli.so
+                  -H:IncludeResources=lib/linux-x86_64/libbrotli.so
+
+                  --initialize-at-run-time=com.aayushatharva.brotli4j.Brotli4jLoader
 
                   --features=com.itextpdf.BouncyCastleFeature
 

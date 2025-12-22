@@ -18,7 +18,12 @@ import java.nio.ByteBuffer;
  * once in each classworld). To avoid this, it is enough to call {@link #getData()} proactively.
  */
 public final class Dictionary {
-  private static volatile ByteBuffer data;
+  static final int MIN_DICTIONARY_WORD_LENGTH = 4;
+  static final int MAX_DICTIONARY_WORD_LENGTH = 31;
+
+  private static ByteBuffer data = ByteBuffer.allocateDirect(0);
+  static final int[] offsets = new int[32];
+  static final int[] sizeBits = new int[32];
 
   private static class DataLoader {
     static final boolean OK;
@@ -34,12 +39,61 @@ public final class Dictionary {
     }
   }
 
-  public static void setData(ByteBuffer data) {
-    Dictionary.data = data;
+  private static final int DICTIONARY_DEBUG = Utils.isDebugMode();
+
+  /** Initialize static dictionary. */
+  public static void setData(ByteBuffer newData, int[] newSizeBits) {
+    if (DICTIONARY_DEBUG != 0) {
+      if ((Utils.isDirect(newData) == 0) || (Utils.isReadOnly(newData) == 0)) {
+        throw new BrotliRuntimeException("newData must be a direct read-only byte buffer");
+      }
+      // TODO: is that so?
+      if (newSizeBits.length > MAX_DICTIONARY_WORD_LENGTH) {
+        throw new BrotliRuntimeException(
+                "sizeBits length must be at most " + String.valueOf(MAX_DICTIONARY_WORD_LENGTH));
+      }
+      for (int i = 0; i < MIN_DICTIONARY_WORD_LENGTH; ++i) {
+        if (newSizeBits[i] != 0) {
+          throw new BrotliRuntimeException(
+                  "first " + String.valueOf(MIN_DICTIONARY_WORD_LENGTH) + " must be 0");
+        }
+      }
+    }
+    final int[] dictionaryOffsets = Dictionary.offsets;
+    final int[] dictionarySizeBits = Dictionary.sizeBits;
+    for (int i = 0; i < newSizeBits.length; ++i) {
+      dictionarySizeBits[i] = newSizeBits[i];
+    }
+    int pos = 0;
+    for (int i = 0; i < newSizeBits.length; ++i) {
+      dictionaryOffsets[i] = pos;
+      final int bits = dictionarySizeBits[i];
+      if (bits != 0) {
+        pos += i << (bits & 31);
+        if (DICTIONARY_DEBUG != 0) {
+          if (bits >= 31) {
+            throw new BrotliRuntimeException("newSizeBits values must be less than 31");
+          }
+          if (pos <= 0 || pos > newData.capacity()) {
+            throw new BrotliRuntimeException("newSizeBits is inconsistent: overflow");
+          }
+        }
+      }
+    }
+    for (int i = newSizeBits.length; i < 32; ++i) {
+      dictionaryOffsets[i] = pos;
+    }
+    if (DICTIONARY_DEBUG != 0) {
+      if (pos != newData.capacity()) {
+        throw new BrotliRuntimeException("newSizeBits is inconsistent: underflow");
+      }
+    }
+    Dictionary.data = newData;
   }
 
+  /** Access static dictionary. */
   public static ByteBuffer getData() {
-    if (data != null) {
+    if (data.capacity() != 0) {
       return data;
     }
     if (!DataLoader.OK) {
@@ -49,18 +103,6 @@ public final class Dictionary {
     return data;
   }
 
-  static final int[] OFFSETS_BY_LENGTH = {
-    0, 0, 0, 0, 0, 4096, 9216, 21504, 35840, 44032, 53248, 63488, 74752, 87040, 93696, 100864,
-    104704, 106752, 108928, 113536, 115968, 118528, 119872, 121280, 122016
-  };
-
-  static final int[] SIZE_BITS_BY_LENGTH = {
-    0, 0, 0, 0, 10, 10, 11, 11, 10, 10, 10, 10, 10, 9, 9, 8, 7, 7, 8, 7, 7, 6, 6, 5, 5
-  };
-
-  static final int MIN_WORD_LENGTH = 4;
-
-  static final int MAX_WORD_LENGTH = 24;
-
-  static final int MAX_TRANSFORMED_WORD_LENGTH = 5 + MAX_WORD_LENGTH + 8;
+  /** Non-instantiable. */
+  private Dictionary() {}
 }

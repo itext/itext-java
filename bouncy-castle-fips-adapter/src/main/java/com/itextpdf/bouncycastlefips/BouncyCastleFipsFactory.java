@@ -939,6 +939,15 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public Provider getPqcProvider() {
+        throw new UnsupportedOperationException("Post-Quantum-Cryptography algorithms are not supported " +
+                "by BouncyCastle-FIPS yet.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IJceKeyTransEnvelopedRecipient createJceKeyTransEnvelopedRecipient(PrivateKey privateKey) {
         return new JceKeyTransEnvelopedRecipientBCFips(new JceKeyTransEnvelopedRecipient(privateKey));
     }
@@ -1558,6 +1567,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
     @Override
     public IJcaContentSignerBuilder createJcaContentSignerBuilder(String algorithm) {
         return new JcaContentSignerBuilderBCFips(new JcaContentSignerBuilder(algorithm));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IJcaContentSignerBuilder createJcaContentSignerBuilder(String signatureAlgorithm, String digestOid) {
+        return createJcaContentSignerBuilder(signatureAlgorithm);
     }
 
     /**

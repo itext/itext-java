@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>9.4.0</version>
+    <version>9.5.0</version>
   </parent>
 
   <artifactId>io</artifactId>
@@ -13,6 +13,7 @@
   <name>iText - io</name>
   <url>https://itextpdf.com/</url>
   <properties>
+    <sonar.coverage.exclusions>**/com/itextpdf/io/codec/brotli/dec/*</sonar.coverage.exclusions>
 
     <sharpen.phase>install</sharpen.phase>
     <sharpen.projectName>io</sharpen.projectName>

@@ -389,8 +389,8 @@ public class PdfCanvas {
      */
     public PdfCanvas concatMatrix(PdfArray array) {
         if (array.size() != 6) {
-            //Throw exception or warning here
-            return this;
+            throw new PdfException(
+                    KernelExceptionMessageConstant.TRANSFORMATION_MATRIX_ARRAY_SIZE_SHOULD_BE_EQUAL_TO_6);
         }
         for (int i = 0; i < array.size(); i++) {
             if (!array.get(i).isNumber()) {

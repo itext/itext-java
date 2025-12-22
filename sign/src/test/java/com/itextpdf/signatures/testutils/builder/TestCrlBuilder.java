@@ -44,16 +44,23 @@ public class TestCrlBuilder {
 
     private static final String SIGN_ALG = "SHA256withRSA";
 
+    private final String signatureAlgorithm;
     private final PrivateKey issuerPrivateKey;
     private final IX509v2CRLBuilder crlBuilder;
     private Date nextUpdate = DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, 30);
 
-    public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey, Date thisUpdate)
-            throws CertificateEncodingException {
+    public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey, Date thisUpdate,
+                          String signatureAlgorithm) throws CertificateEncodingException {
         this.crlBuilder = FACTORY.createX509v2CRLBuilder(FACTORY.createX500Name(issuerCert), thisUpdate);
         this.issuerPrivateKey = issuerPrivateKey;
+        this.signatureAlgorithm = signatureAlgorithm;
     }
-    
+
+    public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey, Date thisUpdate)
+            throws CertificateEncodingException {
+        this(issuerCert, issuerPrivateKey, thisUpdate, SIGN_ALG);
+    }
+
     public TestCrlBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey)
             throws CertificateEncodingException {
         this(issuerCert, issuerPrivateKey, DateTimeUtil.addDaysToDate(TimeTestUtil.TEST_DATE_TIME, -1));
@@ -81,7 +88,7 @@ public class TestCrlBuilder {
 
     public byte[] makeCrl() throws IOException, AbstractOperatorCreationException {
         IContentSigner signer =
-                FACTORY.createJcaContentSignerBuilder(SIGN_ALG).setProvider(FACTORY.getProviderName())
+                FACTORY.createJcaContentSignerBuilder(signatureAlgorithm).setProvider(FACTORY.getProviderName())
                         .build(issuerPrivateKey);
         crlBuilder.setNextUpdate(nextUpdate);
         IX509CRLHolder crl = crlBuilder.build(signer);

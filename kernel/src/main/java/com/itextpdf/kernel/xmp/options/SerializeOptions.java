@@ -56,7 +56,7 @@ public final class SerializeOptions extends Options
 	/** Use the canonical form of RDF if set. By default the compact form is used */
 	public static final int USE_CANONICAL_FORMAT = 0x0080;
 	/**
-	 * Include a padding allowance for a thumbnail image. If no <tt>xmp:Thumbnails</tt> property
+	 * Include a padding allowance for a thumbnail image. If no {@code xmp:Thumbnails} property
 	 * is present, the typical space for a JPEG thumbnail is used.
 	 */
 	public static final int INCLUDE_THUMBNAIL_PAD = 0x0100;

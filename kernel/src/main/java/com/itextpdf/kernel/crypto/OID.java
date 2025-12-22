@@ -32,12 +32,14 @@ import java.util.Set;
  */
 public final class OID {
     public static final String PKCS7_DATA = "1.2.840.113549.1.7.1";
+    public static final String ID_DATA = "1.2.840.113549.1.7.1";
     public static final String PKCS7_SIGNED_DATA = "1.2.840.113549.1.7.2";
     public static final String RSA = "1.2.840.113549.1.1.1";
     public static final String RSASSA_PSS = "1.2.840.113549.1.1.10";
     public static final String RSA_WITH_SHA256 = "1.2.840.113549.1.1.11";
     public static final String AA_SIGNING_CERTIFICATE_V1 = "1.2.840.113549.1.9.16.2.12";
     public static final String AA_SIGNING_CERTIFICATE_V2 = "1.2.840.113549.1.9.16.2.47";
+    public static final String AA_ETS_COMMITMENTTYPE = "1.2.840.113549.1.9.16.2.16";
     public static final String MGF1 = "1.2.840.113549.1.1.8";
     public static final String AA_TIME_STAMP_TOKEN = "1.2.840.113549.1.9.16.2.14";
     public static final String AUTHENTICATED_DATA = "1.2.840.113549.1.9.16.1.2";
@@ -50,11 +52,14 @@ public final class OID {
     public static final String ADBE_REVOCATION = "1.2.840.113583.1.1.8";
     public static final String TSA = "1.2.840.113583.1.1.9.1";
 
+    public static final String MD5 = "1.2.840.113549.2.5";
+
     public static final String RSA_WITH_SHA3_512 = "2.16.840.1.101.3.4.3.16";
     public static final String SHA_224 = "2.16.840.1.101.3.4.2.4";
     public static final String SHA_256 = "2.16.840.1.101.3.4.2.1";
     public static final String SHA_384 = "2.16.840.1.101.3.4.2.2";
     public static final String SHA_512 = "2.16.840.1.101.3.4.2.3";
+    public static final String SHA_512_256 = "2.16.840.1.101.3.4.2.6";
     public static final String SHA3_224 = "2.16.840.1.101.3.4.2.7";
     public static final String SHA3_256 = "2.16.840.1.101.3.4.2.8";
     public static final String SHA3_384 = "2.16.840.1.101.3.4.2.9";
@@ -70,6 +75,21 @@ public final class OID {
     public static final String KDF_PDF_MAC_WRAP_KDF = "1.0.32004.1.1";
     public static final String CT_PDF_MAC_INTEGRITY_INFO = "1.0.32004.1.0";
 
+    public static final String ML_DSA_44 = "2.16.840.1.101.3.4.3.17";
+    public static final String ML_DSA_65 = "2.16.840.1.101.3.4.3.18";
+    public static final String ML_DSA_87 = "2.16.840.1.101.3.4.3.19";
+    public static final String SLH_DSA_SHA2_128S = "2.16.840.1.101.3.4.3.20";
+    public static final String SLH_DSA_SHA2_128F = "2.16.840.1.101.3.4.3.21";
+    public static final String SLH_DSA_SHA2_192S = "2.16.840.1.101.3.4.3.22";
+    public static final String SLH_DSA_SHA2_192F = "2.16.840.1.101.3.4.3.23";
+    public static final String SLH_DSA_SHA2_256S = "2.16.840.1.101.3.4.3.24";
+    public static final String SLH_DSA_SHA2_256F = "2.16.840.1.101.3.4.3.25";
+    public static final String SLH_DSA_SHAKE_128S = "2.16.840.1.101.3.4.3.26";
+    public static final String SLH_DSA_SHAKE_128F = "2.16.840.1.101.3.4.3.27";
+    public static final String SLH_DSA_SHAKE_192S = "2.16.840.1.101.3.4.3.28";
+    public static final String SLH_DSA_SHAKE_192F = "2.16.840.1.101.3.4.3.29";
+    public static final String SLH_DSA_SHAKE_256S = "2.16.840.1.101.3.4.3.30";
+    public static final String SLH_DSA_SHAKE_256F = "2.16.840.1.101.3.4.3.31";
 
     private OID() {
         // Empty on purpose. Avoiding instantiation of this class.

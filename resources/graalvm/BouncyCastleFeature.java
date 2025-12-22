@@ -24,6 +24,7 @@ package com.itextpdf;
 
 import java.security.Security;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.graalvm.nativeimage.hosted.Feature;
 import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
 
@@ -37,5 +38,6 @@ public class BouncyCastleFeature implements Feature {
     public void afterRegistration(AfterRegistrationAccess access) {
         RuntimeClassInitialization.initializeAtBuildTime("org.bouncycastle");
         Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(new BouncyCastlePQCProvider());
     }
 }

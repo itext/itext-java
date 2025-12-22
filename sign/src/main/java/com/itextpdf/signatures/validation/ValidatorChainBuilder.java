@@ -22,17 +22,22 @@
  */
 package com.itextpdf.signatures.validation;
 
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClientBouncyCastle;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
+import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
 import com.itextpdf.signatures.validation.lotl.LotlFetchingProperties;
 import com.itextpdf.signatures.validation.lotl.LotlService;
 import com.itextpdf.signatures.validation.lotl.LotlTrustedStore;
 import com.itextpdf.signatures.validation.lotl.QualifiedValidator;
+import com.itextpdf.signatures.validation.report.pades.PAdESLevelReportGenerator;
+import com.itextpdf.signatures.validation.report.xml.XmlReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.AdESReportAggregator;
+import com.itextpdf.signatures.validation.report.xml.EventsToAdESReportAggratorConvertor;
 import com.itextpdf.signatures.validation.report.xml.NullAdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.PadesValidationReport;
 import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
@@ -40,8 +45,11 @@ import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 
 import java.io.Writer;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -63,10 +71,22 @@ public class ValidatorChainBuilder {
     private Supplier<LotlService> lotlServiceFactory;
     private QualifiedValidator qualifiedValidator;
 
+    /**
+     * This set is used to catch recursions while CRL/OCSP responses validation.
+     * There might be loops when
+     * Revocation data for cert 0 is signed by cert 0. Or
+     * Revocation data for cert 0 is signed by cert 1 and revocation data for cert 1 is signed by cert 0.
+     * Some more complex loops are possible, and they all are supposed to be caught by this set
+     * and the methods to manipulate this set.
+     */
+    private Set<X509Certificate> certificatesChainBeingValidated = new HashSet<>();
+
     private Collection<Certificate> trustedCertificates;
     private Collection<Certificate> knownCertificates;
-    private AdESReportAggregator adESReportAggregator = new NullAdESReportAggregator();
     private boolean trustEuropeanLotl = false;
+    private final EventManager eventManager;
+    private AdESReportAggregator adESReportAggregator = new NullAdESReportAggregator();
+    private boolean padesValidationRequested = false;
 
     /**
      * Creates a ValidatorChainBuilder using default implementations
@@ -84,6 +104,7 @@ public class ValidatorChainBuilder {
         crlClientFactory = () -> new CrlClientOnline();
         lotlServiceFactory = () -> buildLotlService();
         qualifiedValidator = new NullQualifiedValidator();
+        eventManager = EventManager.createNewInstance();
     }
 
     /**
@@ -334,10 +355,55 @@ public class ValidatorChainBuilder {
      *
      * @param adESReportAggregator the report aggregator to use
      * @return the current ValidatorChainBuilder
+     *
+     * @deprecated This method will be removed in a later version, use {@link #withAdESLevelReportGenerator} instead.
      */
+    @Deprecated
     public ValidatorChainBuilder withAdESReportAggregator(AdESReportAggregator adESReportAggregator) {
         this.adESReportAggregator = adESReportAggregator;
+        eventManager.register(
+                new EventsToAdESReportAggratorConvertor(adESReportAggregator));
         return this;
+    }
+
+    /**
+     * Use this reportEventListener to generate an AdES xml report.
+     *
+     * <p>
+     * Generated {@link PadesValidationReport} report could be provided to
+     * {@link com.itextpdf.signatures.validation.report.xml.XmlReportGenerator#generate(PadesValidationReport, Writer)}.
+     *
+     * @param reportEventListener the AdESReportEventListener to use
+     *
+     * @return the current ValidatorChainBuilder
+     */
+    public ValidatorChainBuilder withAdESLevelReportGenerator(XmlReportAggregator reportEventListener) {
+        eventManager.register(reportEventListener);
+        return this;
+    }
+
+    /**
+     * Use this PAdES level report generator to generate PAdES report.
+     * <p>
+     * If called multiple times, multiple {@link PAdESLevelReportGenerator} objects will be registered.
+     *
+     * @param reportGenerator the PAdESLevelReportGenerator to use
+     *
+     * @return current ValidatorChainBuilder
+     */
+    public ValidatorChainBuilder withPAdESLevelReportGenerator(PAdESLevelReportGenerator reportGenerator) {
+        padesValidationRequested = true;
+        eventManager.register(reportGenerator);
+        return this;
+    }
+
+    /**
+     * Checks whether PAdES compliance validation was requested.
+     *
+     * @return {@code true} if PAdES compliance validation was requested, {@code false} otherwise
+     */
+    public boolean padesValidationRequested() {
+        return padesValidationRequested;
     }
 
     /**
@@ -378,11 +444,22 @@ public class ValidatorChainBuilder {
     }
 
     /**
+     * Returns the EventManager to be used for all events fired during validation.
+     *
+     * @return the EventManager to be used for all events fired during validation
+     */
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
+    /**
      * Retrieves the explicitly added or automatically created {@link AdESReportAggregator} instance.
      * Default is the {@link NullAdESReportAggregator}.
      *
      * @return the explicitly added or automatically created {@link AdESReportAggregator} instance.
+     * @deprecated The AdESReportAggregator system is replaced by the {@link XmlReportAggregator} system.
      */
+    @Deprecated
     public AdESReportAggregator getAdESReportAggregator() {
         return adESReportAggregator;
     }
@@ -509,6 +586,18 @@ public class ValidatorChainBuilder {
         return this.lotlServiceFactory.get();
     }
 
+    void addCertificateBeingValidated(X509Certificate certificate) {
+        certificatesChainBeingValidated.add(certificate);
+    }
+
+    void removeCertificateBeingValidated(X509Certificate certificate) {
+        certificatesChainBeingValidated.remove(certificate);
+    }
+
+    boolean isCertificateBeingValidated(X509Certificate certificate) {
+        return certificatesChainBeingValidated.contains(certificate);
+    }
+
     private static LotlService buildLotlService() {
         return LotlService.getGlobalService();
     }
@@ -519,10 +608,10 @@ public class ValidatorChainBuilder {
             result.setTrustedCertificates(trustedCertificates);
         }
         if (knownCertificates != null) {
-            result.addKnownCertificates(knownCertificates);
+            result.addKnownCertificates(knownCertificates, CertificateOrigin.OTHER);
         }
 
-        result.addKnownCertificates(lotlTrustedStoreFactory.get().getCertificates());
+        result.addKnownCertificates(lotlTrustedStoreFactory.get().getCertificates(), CertificateOrigin.OTHER);
         return result;
     }
 

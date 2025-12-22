@@ -2461,7 +2461,7 @@ public class PdfUAFormFieldsTest extends ExtendedITextTest {
             framework.assertBothFail("widgetNeitherFormNorArtifact",
                     PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);
         } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
-            // TODO DEVSIX-9036. VeraPDF claims the document to be valid, although it's not.
+            // TODO DEVSIX-9580. VeraPDF claims the document to be valid, although it's not.
             //  We will need to update this test when veraPDF behavior is fixed and veraPDF version is updated.
             framework.assertOnlyITextFail("widgetNeitherFormNorArtifact",
                     PdfUAExceptionMessageConstants.WIDGET_SHALL_BE_FORM_OR_ARTIFACT, pdfUAConformance);

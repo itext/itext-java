@@ -42,23 +42,37 @@ import java.util.List;
 public class TestTsaClient implements ITSAClient {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
+    private static final String SIGN_ALG = "SHA256withRSA";
     private static final String DIGEST_ALG = "SHA256";
+
     private final PrivateKey tsaPrivateKey;
-    private List<Certificate> tsaCertificateChain;
+    private final List<Certificate> tsaCertificateChain;
+    private int estimatedSize = 4096;
+    private String signatureAlgo = SIGN_ALG;
+    private String digestAlgo = DIGEST_ALG;
 
     public TestTsaClient(List<Certificate> tsaCertificateChain, PrivateKey tsaPrivateKey) {
         this.tsaCertificateChain = tsaCertificateChain;
         this.tsaPrivateKey = tsaPrivateKey;
     }
 
+    public TestTsaClient(List<Certificate> tsaCertificateChain, PrivateKey tsaPrivateKey, int estimatedSize,
+                         String signatureAlgo, String digestAlgo) {
+        this.tsaCertificateChain = tsaCertificateChain;
+        this.tsaPrivateKey = tsaPrivateKey;
+        this.estimatedSize = estimatedSize;
+        this.signatureAlgo = signatureAlgo;
+        this.digestAlgo = digestAlgo;
+    }
+
     @Override
     public int getTokenSizeEstimate() {
-        return 4096;
+        return estimatedSize;
     }
 
     @Override
     public MessageDigest getMessageDigest() throws GeneralSecurityException {
-        return SignTestPortUtil.getMessageDigest(DIGEST_ALG);
+        return SignTestPortUtil.getMessageDigest(digestAlgo);
     }
 
     @Override
@@ -66,8 +80,14 @@ public class TestTsaClient implements ITSAClient {
         ITimeStampRequestGenerator tsqGenerator = BOUNCY_CASTLE_FACTORY.createTimeStampRequestGenerator();
         tsqGenerator.setCertReq(true);
         BigInteger nonce = BigInteger.valueOf(SystemUtil.getTimeBasedSeed());
-        ITimeStampRequest request = tsqGenerator.generate(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(DigestAlgorithms.getAllowedDigest(DIGEST_ALG)), imprint, nonce);
+        ITimeStampRequest request = tsqGenerator.generate(BOUNCY_CASTLE_FACTORY.createASN1ObjectIdentifier(
+                DigestAlgorithms.getAllowedDigest(digestAlgo)), imprint, nonce);
 
-        return new TestTimestampTokenBuilder(tsaCertificateChain, tsaPrivateKey).createTimeStampToken(request);
+        if (SIGN_ALG.equals(signatureAlgo)) {
+            return new TestTimestampTokenBuilder(tsaCertificateChain, tsaPrivateKey)
+                    .createTimeStampToken(request);
+        }
+        return new TestTimestampTokenBuilder(tsaCertificateChain, tsaPrivateKey, signatureAlgo, digestAlgo)
+                .createTimeStampToken(request);
     }
 }

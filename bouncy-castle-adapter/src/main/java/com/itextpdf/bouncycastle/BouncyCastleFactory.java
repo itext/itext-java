@@ -345,6 +345,7 @@ import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
@@ -357,16 +358,19 @@ import org.bouncycastle.tsp.TimeStampToken;
 public class BouncyCastleFactory implements IBouncyCastleFactory {
 
     private static final Provider PROVIDER = new BouncyCastleProvider();
+    private static final Provider PQC_PROVIDER = new BouncyCastlePQCProvider();
     private static final BouncyCastleTestConstantsFactory BOUNCY_CASTLE_TEST_CONSTANTS =
             new BouncyCastleTestConstantsFactory();
 
     private final SecurityProviderProxy securityProviderProxy;
+    private final SecurityProviderProxy pqcSecurityProviderProxy;
 
     /**
      * Creates {@link IBouncyCastleFactory} for usual bouncy-castle module.
      */
     public BouncyCastleFactory() {
         this.securityProviderProxy = new SecurityProviderProxy(PROVIDER);
+        this.pqcSecurityProviderProxy = new SecurityProviderProxy(PQC_PROVIDER);
     }
 
     /**
@@ -928,6 +932,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public String getProviderName() {
         return this.securityProviderProxy.getProviderName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Provider getPqcProvider() {
+        return this.pqcSecurityProviderProxy.getProvider();
     }
 
     /**
@@ -1553,6 +1565,18 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public IJcaContentSignerBuilder createJcaContentSignerBuilder(String algorithm) {
         return new JcaContentSignerBuilderBC(new JcaContentSignerBuilder(algorithm));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IJcaContentSignerBuilder createJcaContentSignerBuilder(String signatureAlgorithm, String digestOid) {
+        if (digestOid == null) {
+            return createJcaContentSignerBuilder(signatureAlgorithm);
+        }
+        return new JcaContentSignerBuilderBC(new JcaContentSignerBuilder(signatureAlgorithm,
+                new AlgorithmIdentifier(new ASN1ObjectIdentifier(digestOid))));
     }
 
     /**

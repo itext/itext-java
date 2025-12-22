@@ -105,7 +105,7 @@ public final class XMPMetaFactory {
      *                The available options are:
      *                <ul>
      *                <li> XMP_REQUIRE_XMPMETA - The &lt;x:xmpmeta&gt; XML element is required around
-     *                <tt>&lt;rdf:RDF&gt;</tt>.
+     *                {@code <rdf:RDF>}.
      *                <li> XMP_STRICT_ALIASING - Do not reconcile alias differences, throw an exception.
      *                </ul>
      *                <em>Note:</em>The XMP_STRICT_ALIASING option is not yet implemented.

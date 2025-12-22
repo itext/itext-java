@@ -33,16 +33,27 @@ import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.builder.TestCrlBuilder;
+import com.itextpdf.signatures.validation.SignatureValidationProperties.OnlineFetching;
 import com.itextpdf.signatures.validation.context.CertificateSource;
+import com.itextpdf.signatures.validation.context.CertificateSources;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
+import com.itextpdf.signatures.validation.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
+import com.itextpdf.signatures.validation.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 import com.itextpdf.signatures.validation.mocks.MockChainValidator;
 import com.itextpdf.signatures.validation.mocks.MockIssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -559,6 +570,46 @@ public class CRLValidatorTest extends ExtendedITextTest {
         ValidationReport report = performValidation("happyPath", TimeTestUtil.TEST_DATE_TIME, crl);
         AssertValidationReport.assertThat(report, a -> a
                 .hasStatus(ValidationReport.ValidationResult.VALID));
+    }
+
+    @Test
+    // Android-Conversion-Ignore-Test (Fails on android earlier with an error 'The CRL issuer does not share the root of the inspected certificate.')
+    public void crlResponsesCrossSignedTest() throws IOException, CertificateException, CRLException {
+        String testDataPath = SOURCE_FOLDER + "crlResponsesCrossSigned/";
+
+        validatorChainBuilder
+                .withCertificateChainValidatorFactory(() -> new CertificateChainValidator(validatorChainBuilder));
+        validatorChainBuilder.getProperties().setRevocationOnlineFetching(
+                ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(), OnlineFetching.NEVER_FETCH);
+
+        // Load CRL responses
+        ValidationCrlClient crlClient = (ValidationCrlClient) validatorChainBuilder.getProperties().getCrlClients()
+                .get(0);
+        X509CRL crl = (X509CRL) CertificateUtil.parseCrlFromStream(
+                FileUtil.getInputStreamForFile(testDataPath + "crl1.crl"));
+        crlClient.addCrl(crl, TimeTestUtil.TEST_DATE_TIME, TimeBasedContext.HISTORICAL, RevocationDataOrigin.OTHER);
+        crl = (X509CRL) CertificateUtil.parseCrlFromStream(
+                FileUtil.getInputStreamForFile(testDataPath + "crl2.crl"));
+        crlClient.addCrl(crl, TimeTestUtil.TEST_DATE_TIME, TimeBasedContext.HISTORICAL, RevocationDataOrigin.OTHER);
+
+        // Load certificates
+        Certificate knownCert = CertificateUtil.generateCertificate(new ByteArrayInputStream(
+                Files.readAllBytes(Paths.get(testDataPath, "cert1.crt"))));
+        certificateRetriever.addKnownCertificates(Arrays.asList(knownCert));
+        knownCert = CertificateUtil.generateCertificate(new ByteArrayInputStream(
+                Files.readAllBytes(Paths.get(testDataPath, "cert2.crt"))));
+        certificateRetriever.addKnownCertificates(Arrays.asList(knownCert));
+
+        // Validate
+        ValidationReport report = new ValidationReport();
+        ValidationContext context = new ValidationContext(
+                ValidatorContext.REVOCATION_DATA_VALIDATOR, CertificateSource.SIGNER_CERT,
+                TimeBasedContext.PRESENT);
+        validatorChainBuilder.getCRLValidator().validate(report, context, (X509Certificate) knownCert, crl,
+                TimeTestUtil.TEST_DATE_TIME, TimeTestUtil.TEST_DATE_TIME);
+
+        AssertValidationReport.assertThat(report, a -> a
+                        .hasLogItems(3, l-> l.withMessage(CRLValidator.CERTIFICATE_IN_ISSUER_CHAIN)));
     }
 
     private ValidationReport checkCrlScope(String crlPath) throws Exception {

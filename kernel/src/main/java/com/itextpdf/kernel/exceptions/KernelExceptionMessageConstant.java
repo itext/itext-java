@@ -40,6 +40,7 @@ public final class KernelExceptionMessageConstant {
     public static final String BAD_USER_PASSWORD =
             "Bad user password. Password is not provided or wrong password provided. Correct password should be passed "
                     + "to PdfReader constructor with properties. See ReaderProperties#setPassword() method.";
+    public static final String BROTLI_DICTIONARY_IS_NOT_A_STREAM = "Brotli dictionary is not a stream.";
     public static final String CANNOT_ADD_KID_TO_THE_FLUSHED_ELEMENT = "Cannot add kid to the flushed element.";
     public static final String CANNOT_BE_EMBEDDED_DUE_TO_LICENSING_RESTRICTIONS =
             "{0} cannot be embedded due to licensing restrictions.";
@@ -105,6 +106,8 @@ public final class KernelExceptionMessageConstant {
             + "remove marked content reference, because its page has been already flushed.";
     public static final String CANNOT_REMOVE_TAG_BECAUSE_ITS_PARENT_IS_FLUSHED = "Cannot remove tag, because its "
             + "parent is flushed.";
+    public static final String CANNOT_RESIZE_PAGE_WITH_NEGATIVE_OR_INFINITE_SCALE
+            = "Can't resize page to the given size {0} because it is negative or zero";
     public static final String CANNOT_RETRIEVE_MEDIA_BOX_ATTRIBUTE = "Invalid PDF. There is no media box attribute "
             + "for page or its parents.";
     public static final String CANNOT_SET_DATA_TO_PDF_STREAM_WHICH_WAS_CREATED_BY_INPUT_STREAM = "Cannot set data to "
@@ -118,13 +121,17 @@ public final class KernelExceptionMessageConstant {
     public static final String CANNOT_WRITE_OBJECT_AFTER_IT_WAS_RELEASED = "Cannot write object after it was "
             + "released. In normal situation the object must be read once again before being written.";
     public static final String CANNOT_WRITE_TO_PDF_STREAM = "Cannot write to PdfStream.";
-    public static final String CANNOT_RESIZE_PAGE_WITH_NEGATIVE_OR_INFINITE_SCALE
-            = "Can't resize page to the given size {0} because it is negative or zero";
     public static final String CERTIFICATE_IS_NOT_PROVIDED_DOCUMENT_IS_ENCRYPTED_WITH_PUBLIC_KEY_CERTIFICATE =
             "Certificate is not provided. Document is encrypted with public key certificate, it should be passed "
                     + "to PdfReader constructor with properties. See ReaderProperties#setPublicKeySecurityParams() "
                     + "method.";
     public static final String CF_NOT_FOUND_ENCRYPTION = "/CF not found (encryption)";
+    public static final String COLOR_DEPTH_IS_NOT_SUPPORTED = "The color depth {0} is not supported.";
+    public static final String COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE =
+            "The color depth {0} is not supported for color space {1}.";
+    public static final String COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_SEPARATION_ALTERNATE_COLORSPACE =
+            "The color depth {0} is not supported for separation target color space {1}.";
+    public static final String COLOR_SPACE_IS_NOT_SUPPORTED = "The color space {0} is not supported.";
     public static final String COLOR_SPACE_NOT_FOUND = "ColorSpace not found.";
     public static final String CONTAINER_EMBEDDING_EXCEPTION =
             "IOException occurred while trying to embed MAC container into document output stream.";
@@ -185,6 +192,7 @@ public final class KernelExceptionMessageConstant {
     public static final String ERROR_WHILE_READING_OBJECT_STREAM = "Error while reading Object Stream.";
     public static final String EXTERNAL_ENTITY_ELEMENT_FOUND_IN_XML =
             "External entity element found in XML. This entity will not be parsed to prevent XML attacks.";
+    public static final String FAILED_TO_DECODE_BROTLI_STREAM = "Failed to decode Brotli stream.";
     public static final String FILE_POSITION_0_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "file position 0 cross "
             + "reference entry in this xref subsection.";
     public static final String FILTER_CCITTFAXDECODE_IS_ONLY_SUPPORTED_FOR_IMAGES = "Filter CCITTFaxDecode is only "
@@ -229,6 +237,7 @@ public final class KernelExceptionMessageConstant {
     public static final String INSTANCE_SHOULD_NOT_BE_NULL = "Instance should not be null";
     public static final String INVALID_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "Invalid cross reference entry "
             + "in this xref subsection.";
+    public static final String INVALID_DATA_LENGTH = "Invalid data length, expected length = {0}, actual length = {1}";
     public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0} {1} R.";
     public static final String INVALID_INPUT_FOR_TYPE_2_FUNCTION =
             "Invalid input value for PDF Type 2 Function, value should be a single number.";
@@ -285,6 +294,8 @@ public final class KernelExceptionMessageConstant {
             + "page numbers must be greater or equal to 1.";
     public static final String IO_EXCEPTION = "I/O exception.";
     public static final String IO_EXCEPTION_WHILE_CREATING_FONT = "I/O exception while creating Font";
+    public static final String LENGTH_OF_ARRAY_SHOULD_MATCH_NUMBER_OF_COMPONENTS =
+            "Length of pixel array ({0}) should match number of components ({1})";
     public static final String LZW_DECODER_EXCEPTION = "LZW decoder exception.";
     public static final String LZW_FLAVOUR_NOT_SUPPORTED = "LZW flavour not supported.";
     public static final String MAC_ALGORITHM_NOT_SUPPORTED = "This MAC algorithm is not supported.";
@@ -320,6 +331,7 @@ public final class KernelExceptionMessageConstant {
     public static final String NO_COMPATIBLE_ENCRYPTION_FOUND = "No compatible encryption found.";
     public static final String NO_GLYPHS_DEFINED_FOR_TYPE_3_FONT = "No glyphs defined for type3 font.";
     public static final String NO_KID_WITH_SUCH_ROLE = "No kid with such role.";
+    public static final String NO_SUCH_ALGORITHM = "algorithm identifier in key not recognised";
     public static final String NO_SUCH_ALGORITHM_FOR_PROVIDER_BCFIPS = "no such algorithm: {0} for provider BCFIPS";
     public static final String NO_VALID_ENCRYPTION_MODE = "No valid encryption mode.";
     public static final String NUMBER_OF_BOOLEANS_IN_THE_ARRAY_DOES_NOT_CORRESPOND_WITH_THE_NUMBER_OF_FIELDS = "The "
@@ -327,6 +339,7 @@ public final class KernelExceptionMessageConstant {
     public static final String NUMBER_OF_ENTRIES_IN_THIS_XREF_SUBSECTION_NOT_FOUND = "Number of entries in this xref "
             + "subsection not found.";
     public static final String NUMBER_OF_PAGES_CAN_NOT_BE_NEGATIVE = "Number of pages can not be negative.";
+    public static final String N_VALUE_IS_NOT_SUPPORTED = "N value {0} is not supported.";
     public static final String OBJECT_MUST_BE_INDIRECT_TO_WORK_WITH_THIS_WRAPPER = "Object must be indirect to work "
             + "with this wrapper.";
     public static final String OBJECT_NUMBER_OF_THE_FIRST_OBJECT_IN_THIS_XREF_SUBSECTION_NOT_FOUND = "Object number "
@@ -342,6 +355,9 @@ public final class KernelExceptionMessageConstant {
             "The passed page belongs to document {0} (page {1} of the document) and therefore cannot be added "
                     + "to this document ({2}).";
     public static final String PAGE_IS_NOT_SET_FOR_THE_PDF_TAG_STRUCTURE = "Page is not set for the pdf tag structure.";
+    public static final String PALLET_CONTENT_ERROR = "Indexed color spaces require four array entries.";
+    public static final String PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED = "Parent-child ({0}:{1}) relation is not " +
+            "allowed.";
     public static final String PASSED_BYTE_BUFFER_CAN_NOT_BE_NULL = "Passed byte buffer can not be null.";
     public static final String PDF_DECRYPTION = "Exception occurred with PDF document decryption. One of the possible "
             + "reasons is wrong password or wrong public key certificate and private key.";
@@ -367,6 +383,9 @@ public final class KernelExceptionMessageConstant {
     public static final String PDF_TYPE0_FUNCTION_INVALID_SIZE = "Invalid size array for PDF function of type 0";
     public static final String PDF_TYPE0_FUNCTION_NOT_NULL_PARAMETERS = "Domain, range and size must be not null";
     public static final String PDF_VERSION_IS_NOT_VALID = "PDF version is not valid.";
+    public static final String PIXEL_OUT_OF_BORDERS =
+            "Pixel ({0}, {1}) is out of borders of the image with parameter {2} x {3}";
+    public static final String PNG_CHANNEL_ERROR = "PngGeneration does not support {0} color components.";
     public static final String PNG_FILTER_UNKNOWN = "PNG filter unknown.";
     public static final String PRINT_SCALING_ENFORCE_ENTRY_INVALID = "/PrintScaling shall may appear in the Enforce "
             + "array only if the corresponding entry in the viewer preferences dictionary specifies a valid value "
@@ -425,6 +444,8 @@ public final class KernelExceptionMessageConstant {
     public static final String TRAILER_NOT_FOUND = "Trailer not found.";
     public static final String TRAILER_PREV_ENTRY_POINTS_TO_ITS_OWN_CROSS_REFERENCE_SECTION = "Trailer prev entry "
             + "points to its own cross reference section.";
+    public static final String TRANSFORMATION_MATRIX_ARRAY_SIZE_SHOULD_BE_EQUAL_TO_6 =
+            "Transformation matrix array size shuold be equal to 6";
     public static final String TYPE4_EXECUTION_NOT_SUPPORTED =
             "Type 4 functions are not yet supported for separation color image extraction.";
     public static final String TYPE_SHOULD_NOT_BE_NULL = "ClassArgument type should not be null";
@@ -490,23 +511,6 @@ public final class KernelExceptionMessageConstant {
             + "prefix.";
     public static final String YOU_NEED_A_SINGLE_BOOLEAN_FOR_THIS_COLLECTION_SORT_DICTIONARY = "You need a single "
             + "boolean for this collection sort dictionary.";
-    public static final String PARENT_CHILD_ROLE_RELATION_IS_NOT_ALLOWED = "Parent-child ({0}:{1}) relation is not " +
-            "allowed.";
-    public static final String INVALID_DATA_LENGTH = "Invalid data length, expected length = {0}, actual length = {1}";
-    public static final String PIXEL_OUT_OF_BORDERS =
-            "Pixel ({0}, {1}) is out of borders of the image with parameter {2} x {3}";
-    public static final String LENGTH_OF_ARRAY_SHOULD_MATCH_NUMBER_OF_COMPONENTS =
-            "Length of pixel array ({0}) should match number of components ({1})";
-    public static final String COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE =
-            "The color depth {0} is not supported for color space {1}.";
-    public static final String COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_SEPARATION_ALTERNATE_COLORSPACE =
-            "The color depth {0} is not supported for separation target color space {1}.";
-    public static final String N_VALUE_IS_NOT_SUPPORTED = "N value {0} is not supported.";
-    public static final String COLOR_DEPTH_IS_NOT_SUPPORTED = "The color depth {0} is not supported.";
-    public static final String COLOR_SPACE_IS_NOT_SUPPORTED = "The color space {0} is not supported.";
-    public static final String PNG_CHANNEL_ERROR = "PngGeneration does not support {0} color components.";
-    public static final String PALLET_CONTENT_ERROR = "Indexed color spaces require four array entries.";
-
 
     private KernelExceptionMessageConstant() {
     }

@@ -3705,6 +3705,40 @@ public class TableTest extends AbstractTableTest {
                 testName + "_diff"));
     }
 
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
+    })
+    @Test
+    public void keepTogetherNestedTableDoesNotThrow() throws IOException, InterruptedException {
+        String testName = "keepTogetherNestedTableDoesNotThrow.pdf";
+        String outFileName = destinationFolder + testName;
+        String cmpFileName = sourceFolder + "cmp_" + testName;
+
+        PdfWriter writer = new PdfWriter(outFileName);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+        Div leftContent = new Div().add(
+                new Table(2)
+                        .addCell(new Cell(2, 1))
+                        .addCell(new Cell())
+                        .addCell(new Cell())
+        );
+        Table table = new Table(1);
+        for (int i = 0; i < 35; i++) {
+            table.addCell(new Cell().add(new Paragraph("Item #" + i)));
+        }
+        Div rightContent = new Div().add(table);
+        Table outerTable = new Table(2)
+                .addCell(new Cell().add(leftContent))
+                .addCell(new Cell().setKeepTogether(true).add(rightContent));
+
+        document.add(outerTable);
+        document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder,
+                testName + "_diff"));
+    }
+
     private static class RotatedDocumentRenderer extends DocumentRenderer {
         private final PdfDocument pdfDoc;
 

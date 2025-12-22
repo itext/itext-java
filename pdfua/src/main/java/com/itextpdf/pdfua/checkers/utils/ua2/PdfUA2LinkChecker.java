@@ -128,20 +128,6 @@ public final class PdfUA2LinkChecker {
             return;
         }
 
-        // In the map, key is a destination object from current link annotation, value is a set of Link or Reference
-        // structure elements enclosing already checked links annotation with that same destination (actually, value
-        // always contains either 0 or 1 parent, it's just more convenient to use set during checks).
-        Set<IStructureNode> destinationStructParents = destinationToStructParentsMap.computeIfAbsent(structDestination,
-                k -> new HashSet<>());
-
-        // Go through all parents: Link or Reference structure elements enclosing links with current destination.
-        // It shall be the same single parent if present. Otherwise, exception will be thrown.
-        for (IStructureNode parentNode : destinationStructParents) {
-            if (!parent.equals(parentNode)) {
-                throw new PdfUAConformanceException(
-                        PdfUAExceptionMessageConstants.SAME_LINKS_IN_DIFFERENT_STRUCT_ELEMS);
-            }
-        }
         // Go through all other already checked destinations. They shall have separate Link or Reference structure
         // elements, so no other parent should be equal to the current one. Otherwise, exception will be thrown.
         for (Map.Entry<PdfObject, Set<IStructureNode>> entry : destinationToStructParentsMap.entrySet()) {
@@ -156,6 +142,13 @@ public final class PdfUA2LinkChecker {
                 }
             }
         }
+
+        // In the map, key is a destination object from current link annotation, value is a set of Link or Reference
+        // structure elements enclosing already checked links annotation with that same destination (actually, value
+        // always contains either 0 or 1 parent, it's just more convenient to use set during checks).
+        Set<IStructureNode> destinationStructParents = destinationToStructParentsMap.computeIfAbsent(structDestination,
+                k -> new HashSet<>());
+
         // Add current parent to the map.
         destinationStructParents.add(parent);
     }

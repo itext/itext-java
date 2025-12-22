@@ -30,8 +30,8 @@ import com.itextpdf.commons.ecosystem.TestMetaInfo;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class AbstractContextBasedEventHandlerTest extends ExtendedITextTest {
@@ -51,7 +51,7 @@ public class AbstractContextBasedEventHandlerTest extends ExtendedITextTest {
         handler.onEvent(new ITextTestEvent(new SequenceId(), null,
                 "test-event",
                 ProductNameConstant.PDF_HTML));
-        Assertions.assertTrue(handler.wasInvoked());
+        Assertions.assertFalse(handler.wasInvoked());
     }
 
     @Test

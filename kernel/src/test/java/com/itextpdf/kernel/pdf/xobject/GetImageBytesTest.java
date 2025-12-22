@@ -144,7 +144,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
     public void testFlateCalRgb() throws Exception {
         testFile("img_calrgb.pdf", "Im1", "png");
     }
-   @Test
+    @Test
     public void testJPXDecode() throws Exception {
         testFile("JPXDecode.pdf", "Im1", "jp2");
     }
@@ -181,9 +181,10 @@ public class GetImageBytesTest extends ExtendedITextTest {
     // TODO: DEVSIX-6757 (update test after fix)
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testSeparationCSWithDeviceCMYKAsAlternative() throws Exception {
-            testFile("separationCSWithDeviceCMYKAsAlternative.pdf", "Im1", "png");
+        testFile("separationCSWithDeviceCMYKAsAlternative.pdf", "Im1", "png");
     }
 
+    //TODO DEVSIX-5751: update image
     @Test
     public void testGrayScalePng() throws Exception {
         testFile("grayImages.pdf", "Im1", "png");
@@ -237,11 +238,11 @@ public class GetImageBytesTest extends ExtendedITextTest {
         testFile("RGBFlateF0.pdf", "Im1", "png");
     }
 
-  @Test
+    @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
     public void testRGBSeparationCSWithFlateDecoderAndFunctionType0WithColorTrans() throws Exception {
-      ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
-      properties.setApplyTintTransformations(true);
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTintTransformations(true);
         testFile("RGBFlateF0.pdf", "Im1", "png", ".ColorTrans", properties);
     }
 
@@ -653,7 +654,34 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE,
                 4, PdfName.DeviceRGB), e.getMessage());
     }
-    
+
+    @Test
+    //TODO DEVSIX-1682: Update after supporting
+    public void dRGBDCTSmaskTest() throws Exception {
+        testFile("dRGBDCTSmask.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    //TODO DEVSIX-1682: Update after supporting
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void dRGBFlateSmaskTest() throws Exception {
+        ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
+        properties.setApplyTransparency(true);
+        testFile("dRGBFlateSmask.pdf", "Im1", "png", ".trans", properties);
+    }
+
+    @Test
+    //TODO DEVSIX-1682: Update after supporting
+    public void dGrayDCTSmaskTest() throws Exception {
+        testFile("dGrayDCTSmask.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    //TODO DEVSIX-1682: Update after supporting
+    public void dGrayFlateSmaskTest() throws Exception {
+        testFile("dGrayFlateSmask.pdf", "Im0", "png");
+    }
+
     @Test
     public void ICCBasedDctMaskedInvertedTest() throws Exception {
         testFile("ICCBasedDctMaskedInverted.pdf", "Im1", "jpg");
@@ -753,8 +781,6 @@ public class GetImageBytesTest extends ExtendedITextTest {
         testFile("calGray4bitGamma10Inverted.pdf", "Im1", "png", ".decode", properties);
     }
 
-
-
     @Test
     public void calGray8bitExtGStateTest() throws Exception {
         testFile("calGray8bitExtGStateTest.pdf", "Im1", "png");
@@ -796,6 +822,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
         testFile("calRGB8bitSMask.pdf", "Im1", "png");
     }
 
+    //TODO DEVSIX-1682: update after supporting
     @Test
     public void calRGB8bitSMaskWithTransparencyTest() throws Exception {
         ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
@@ -894,11 +921,13 @@ public class GetImageBytesTest extends ExtendedITextTest {
         testFile("indexed8bitGradient.pdf", "Im0", "png");
     }
 
+    //TODO DEVSIX-1682: update after supporting
     @Test
     public void indexed8bitSMaskTest() throws Exception {
         testFile("indexed8bitSMask.pdf", "Im0", "png");
     }
 
+    //TODO DEVSIX-1682: update after supporting
     @Test
     public void indexed8bitSMaskWithTransparencyTest() throws Exception {
         ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
@@ -1026,7 +1055,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
         ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
         properties.setApplyTintTransformations(true);
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, ()->
-            testFile("separation1bitDeviceRGB.pdf", "Im0", "png",".ColorTrans", properties));
+                testFile("separation1bitDeviceRGB.pdf", "Im0", "png",".ColorTrans", properties));
         Assertions.assertEquals(MessageFormatUtil.format(
                 KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_SEPARATION_ALTERNATE_COLORSPACE,
                 "1", PdfName.DeviceRGB), e.getMessage());
@@ -1136,6 +1165,26 @@ public class GetImageBytesTest extends ExtendedITextTest {
                 () -> testFile("deviceN8bitDeviceRGBRotated.pdf", "Im0", "tif"));
         Assertions.assertEquals(MessageFormatUtil.format(KernelExceptionMessageConstant.COLOR_SPACE_IS_NOT_SUPPORTED,
                 "/DeviceN"), e.getMessage());
+    }
+
+    @Test
+    //TODO DEVSIX-1683: Update after supporting
+    public void customCalRGBColorSpaceTest() throws Exception {
+        testFile("customColorSpaceRGB.pdf", "Im1", "jpg");
+    }
+
+    @Test
+    //TODO DEVSIX-1683: Update after supporting
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void customIndexedColorSpaceTest() throws Exception {
+        testFile("customColorIndexed.pdf", "Im1", "png");
+    }
+
+    @Test
+    //TODO DEVSIX-1683: Update after supporting
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    public void customSeparationColorSpaceTest() throws Exception {
+        testFile("customColorSpaceSeparation.pdf", "Im1", "png");
     }
 
     private void testFile(String filename, String objectid, String expectedImageFormat) throws Exception {

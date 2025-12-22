@@ -24,6 +24,7 @@ package com.itextpdf.commons.bouncycastle.cert.ocsp;
 
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.operator.IContentVerifierProvider;
 
@@ -93,4 +94,11 @@ public interface IBasicOCSPResp {
      * @return the Responder Id
      */
     IRespID getResponderId();
+
+    /**
+     * Calls actual {@code getSignatureAlgorithmID} method for the wrapped BasicOCSPResp object.
+     *
+     * @return the signature algorithm id
+     */
+    IAlgorithmIdentifier getSignatureAlgorithmID();
 }

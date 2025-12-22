@@ -110,7 +110,6 @@ public class LotlServiceTest extends ExtendedITextTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("allCountries")
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore )
     public void serializeIndividualCountry(String country) throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         props.setCountryNames(country);
@@ -368,7 +367,6 @@ public class LotlServiceTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore )
     public void serializationAllCountriesTest() throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         try (LotlService lotlService = new LotlService(props)) {

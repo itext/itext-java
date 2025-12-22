@@ -50,12 +50,10 @@ import com.itextpdf.signatures.validation.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
-import com.itextpdf.signatures.validation.mocks.MockChainValidator;
+import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 import com.itextpdf.signatures.validation.mocks.MockCrlValidator;
-import com.itextpdf.signatures.validation.mocks.MockDocumentRevisionsValidator;
 import com.itextpdf.signatures.validation.mocks.MockIssuingCertificateRetriever;
 import com.itextpdf.signatures.validation.mocks.MockOCSPValidator;
-import com.itextpdf.signatures.validation.mocks.MockRevocationDataValidator;
 import com.itextpdf.signatures.validation.mocks.MockSignatureValidationProperties;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
@@ -66,12 +64,11 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import java.security.cert.X509CRL;
 import java.util.ArrayList;
 
 import java.util.Arrays;
-import java.util.function.Supplier;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -87,7 +84,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 
 @Tag("BouncyCastleUnitTest")
@@ -225,7 +221,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 // the logitem from the CRL valdiation should be copied to the final report
                 .hasNumberOfLogs(1)
                 .hasLogItem(reportItem));
-        // there should be one call per CrlClient
+        // there should be two calls per CrlClient, second one is needed for PAdES compliance check.
         Assertions.assertEquals(1, crlClient.getCalls().size());
         // since there was one response there should be one validator call
         Assertions.assertEquals(1, mockCrlValidator.calls.size());
@@ -818,7 +814,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 .getEncoded(checkCert, caCert, null);
         IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
                 FACTORY.createASN1Primitive(ocspResponseBytes)));
-        ocspClient.addResponse(basicOCSPResp, ocspGeneration, TimeBasedContext.HISTORICAL);
+        ocspClient.addResponse(basicOCSPResp, ocspGeneration, TimeBasedContext.HISTORICAL, RevocationDataOrigin.OTHER);
         validator.addOcspClient(ocspClient);
 
         ValidationCrlClient crlClient = new ValidationCrlClient() {
@@ -831,7 +827,7 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
         TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
         byte[] crlResponseBytes = new ArrayList<>(
                 new TestCrlClient().addBuilderForCertIssuer(crlBuilder).getEncoded(checkCert, null)).get(0);
-        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(crlResponseBytes), crlGeneration, TimeBasedContext.HISTORICAL);
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(crlResponseBytes), crlGeneration, TimeBasedContext.HISTORICAL, RevocationDataOrigin.OTHER);
         validator.addCrlClient(crlClient);
 
         validator.validate(report, baseContext, checkCert, checkDate);
@@ -862,14 +858,14 @@ public class RevocationDataValidatorTest extends ExtendedITextTest {
                 .getEncoded(checkCert, caCert, null);
         IBasicOCSPResp basicOCSPResp = FACTORY.createBasicOCSPResp(FACTORY.createBasicOCSPResponse(
                 FACTORY.createASN1Primitive(ocspResponseBytes)));
-        ocspClient.addResponse(basicOCSPResp, checkDate, TimeBasedContext.HISTORICAL);
+        ocspClient.addResponse(basicOCSPResp, checkDate, TimeBasedContext.HISTORICAL, RevocationDataOrigin.OTHER);
         validator.addOcspClient(ocspClient);
 
         ValidationCrlClient crlClient = new ValidationCrlClient();
         TestCrlBuilder crlBuilder = new TestCrlBuilder(caCert, caPrivateKey, checkDate);
         byte[] crlResponseBytes = new ArrayList<>(
                 new TestCrlClient().addBuilderForCertIssuer(crlBuilder).getEncoded(checkCert, null)).get(0);
-        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(crlResponseBytes), checkDate, TimeBasedContext.HISTORICAL);
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(crlResponseBytes), checkDate, TimeBasedContext.HISTORICAL, RevocationDataOrigin.OTHER);
         validator.addCrlClient(crlClient);
 
         validator.validate(report, baseContext, checkCert, checkDate);

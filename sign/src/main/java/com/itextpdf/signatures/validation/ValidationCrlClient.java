@@ -25,6 +25,7 @@ package com.itextpdf.signatures.validation;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.validation.RevocationDataValidator.CrlValidationInfo;
 import com.itextpdf.signatures.validation.context.TimeBasedContext;
+import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 
 import java.security.cert.CRLException;
 import java.security.cert.CertificateEncodingException;
@@ -56,10 +57,43 @@ public class ValidationCrlClient implements ICrlClient {
      * @param response {@link X509CRL} response to be added
      * @param date     {@link Date} to be linked with the response
      * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
+     *
+     * @deprecated use {@link #addCrl(X509CRL, Date, TimeBasedContext, RevocationDataOrigin)} instead
      */
+    @Deprecated
     public void addCrl(X509CRL response, Date date, TimeBasedContext context) {
-        // We need to have these data stored in Map in order to replace duplicates.
-        crls.put(response, new CrlValidationInfo(response, date, context));
+        addCrl(response, date, context, RevocationDataOrigin.OTHER);
+    }
+
+    /**
+     * Add CRL response which is linked with generation date.
+     *
+     * @param response {@link X509CRL} response to be added
+     * @param date     {@link Date} to be linked with the response
+     * @param context  {@link TimeBasedContext} time based context which corresponds to generation date
+     * @param responseOrigin {@link RevocationDataOrigin} representing an origin from which CRL comes from
+     */
+    public void addCrl(X509CRL response, Date date, TimeBasedContext context, RevocationDataOrigin responseOrigin) {
+        RevocationDataValidator.CrlValidationInfo validationInfo = crls.get(response);
+        if (validationInfo != null) {
+            // If CRL is already there, we don't need to update response origin.
+            // But we do need to update so-called trusted generation date.
+            // Consider such update as following: we've encountered the same CRL in the document,
+            // but now it's covered with a timestamp. So now we know, if was generated at a certain point in time,
+            // and we can use this information during the validation.
+            // This of course only works, because the CRL is exactly the same.
+            if (validationInfo.trustedGenerationDate.after(date)) {
+                // We found better data, so update.
+                validationInfo.trustedGenerationDate = date;
+                validationInfo.timeBasedContext = context;
+            }
+            if (validationInfo.responseOrigin.ordinal() > responseOrigin.ordinal()) {
+                // We found better response origin, so update. It's considered better in terms of PAdES compliance.
+                validationInfo.responseOrigin = responseOrigin;
+            }
+        } else {
+            crls.put(response, new CrlValidationInfo(response, date, context, responseOrigin));
+        }
     }
 
     /**

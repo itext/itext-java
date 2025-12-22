@@ -43,6 +43,7 @@ import com.itextpdf.signatures.validation.context.TimeBasedContexts;
 import com.itextpdf.signatures.validation.context.ValidationContext;
 import com.itextpdf.signatures.validation.context.ValidatorContext;
 import com.itextpdf.signatures.validation.context.ValidatorContexts;
+import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.test.ExtendedITextTest;
@@ -176,7 +177,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
         //TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
 
         ValidationCrlClient crlClient = (ValidationCrlClient) parameters.getCrlClients().get(0);
-        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL );
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL, RevocationDataOrigin.OTHER);
 
         ValidationReport report = new ValidationReport();
         certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
@@ -227,7 +228,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
         //TestCrlClientWrapper crlClient = new TestCrlClientWrapper(new TestCrlClient().addBuilderForCertIssuer(builder));
 
         ValidationCrlClient crlClient = (ValidationCrlClient) parameters.getCrlClients().get(0);
-        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL );
+        crlClient.addCrl((X509CRL) CertificateUtil.parseCrlFromBytes(builder.makeCrl()), checkDate, TimeBasedContext.HISTORICAL, RevocationDataOrigin.OTHER);
 
         ValidationReport report = new ValidationReport();
         //certificateRetriever.addTrustedCertificates(Collections.singletonList(caCert));
@@ -243,7 +244,7 @@ public class RevocationDataValidatorIntegrationTest extends ExtendedITextTest {
 
         AssertValidationReport.assertThat(report, a -> a
                 .hasNumberOfFailures(1)
-                .hasLogItem(l-> l.withMessage(CRLValidator.CERTIFICATE_IN_ISSUER_CHAIN))
+                .hasLogItems(2, l-> l.withMessage(CRLValidator.CERTIFICATE_IN_ISSUER_CHAIN))
         );
     }
 }

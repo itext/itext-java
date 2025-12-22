@@ -80,6 +80,12 @@ public final class PdfUA1AnnotationChecker {
         return true;
     }
 
+    /**
+     * Checks the annotation element for PDF/UA-1 compliance.
+     *
+     * @param context The validation context.
+     * @param elem    The structure element to check.
+     */
     public static void checkElement(PdfUAValidationContext context, IStructureNode elem) {
         if (!(elem instanceof PdfObjRef)) {
             return;

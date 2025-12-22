@@ -75,6 +75,11 @@
             <fileset reason="Different implementation of thread-safe set on Java and .NET">
                 <file path="com/itextpdf/commons/datastructures/ConcurrentHashSet.java"/>
             </fileset>
+            <fileset reason="Different implementation JSON serialization/deserialization Java and .NET">
+                <file path="com/itextpdf/commons/json/JsonValueConverter.java"/>
+                <file path="com/itextpdf/commons/json/JsonValueDeserializer.java"/>
+                <file path="com/itextpdf/commons/json/JsonValueSerializer.java"/>
+            </fileset>
             <!-- io -->
             <fileset reason="LimitedInputStream extends InputStream, which has different interfaces in Java and .NET">
                 <file path="com/itextpdf/io/resolver/resource/LimitedInputStream.java" />
@@ -146,29 +151,16 @@
                 <file path="com/itextpdf/io/util/XmlUtilTest.java"/>
             </fileset>
             <file path="com/itextpdf/io/util/EnumUtil.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/BitReader.java"/>
             <file path="com/itextpdf/io/codec/brotli/dec/BrotliInputStream.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/BrotliRuntimeException.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/Context.java"/>
             <file path="com/itextpdf/io/codec/brotli/dec/Decode.java"/>
             <file path="com/itextpdf/io/codec/brotli/dec/Dictionary.java"/>
             <file path="com/itextpdf/io/codec/brotli/dec/DictionaryData.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/files.txt"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/Huffman.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/HuffmanTreeGroup.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/IntReader.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/Prefix.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/RunningState.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/State.java"/>
             <file path="com/itextpdf/io/codec/brotli/dec/Transform.java"/>
             <file path="com/itextpdf/io/codec/brotli/dec/Utils.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/WordTransformType.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/BitReaderTest.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/DecodeTest.java"/>
             <file path="com/itextpdf/io/codec/brotli/dec/DictionaryTest.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/EnumTest.java"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/files"/>
-            <file path="com/itextpdf/io/codec/brotli/dec/SynthTest.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/EagerStreamTest.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/SetDictionaryTest.java"/>
+            <file path="com/itextpdf/io/codec/brotli/dec/TestUtils.java"/>
             <file path="com/itextpdf/io/codec/brotli/dec/TransformTest.java"/>
             <fileset reason="HighPrecisionOutputStream is a manual class, and some tests for this class cannot be ported automatically">
                 <file path="com/itextpdf/io/source/HighPrecisionOutputStreamTest.java"/>
@@ -534,7 +526,11 @@
             <fileset reason="Some of the algorithms are not supported on .NET and the result is thus different. The tests with the identical result are in PdfPKCS7Test.">
                 <file path="com/itextpdf/signatures/PdfPKCS7ManuallyPortedTest.java"/>
             </fileset>
-            <fileset reason="Different implementation on .NET and java">
+            <fileset reason="PQC experimental algorithms are implemented only on low-level for .NET, so right now it's not possible to use the same logic as in Java.">
+                <file path="com/itextpdf/signatures/PostQuantumExperimentalAlgorithmsTest.java"/>
+            </fileset>
+            <!-- TODO DEVSIX-6115 Try to remove this files from ignored -->
+            <fileset reason="Related to timestamp signatures comparing, they are different in Java and .NET">
                 <file path="com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest.java"/>
@@ -542,6 +538,7 @@
                 <file path="com/itextpdf/signatures/sign/PadesSignatureLevelTest.java"/>
                 <file path="com/itextpdf/signatures/sign/PdfPadesSignerTest.java"/>
                 <file path="com/itextpdf/signatures/sign/TimestampSigTest.java"/>
+                <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest.java"/>
             </fileset>
             <fileset reason=".pem files reading logic is different in java and .net">
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
@@ -640,10 +637,15 @@
                 <file path="com/itextpdf/test/AssertUtil.java" />
             </fileset>
             <fileset reason="AssertUtilTest has to use AtomicInteger for access from a lambda function. This is not portable.">
-                <file path="com/itextpdf/test/AssertUtilTest.java" />
+                <file path="com/itextpdf/test/AssertUtilTest.java"/>
             </fileset>
 
-
+            <!-- brotli-compressor -->
+            <fileset reason="Brotli implementations differ in Java and .Net">
+                <file path="com/itextpdf/brotlicompressor/BrotliStreamCompressionStrategy.java"/>
+                <file path="com/itextpdf/brotlicompressor/BrotliOutputStream.java"/>
+                <file path="com/itextpdf/brotlicompressor/BrotliOutputStreamTest.java"/>
+            </fileset>
         </java>
     </ignored>
      <resource>
@@ -654,10 +656,11 @@
         <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/ccittfaxdecode.png" />
         <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/flatedecode_runlengthdecode.png" />
         <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/img_calrgb.png" />
+        <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/dRGBFlateSmask.trans.png" />
         <file path="com/itextpdf/forms/xfa/XFAFormTest/cmp_createEmptyXFAFormTest02.pdf" />
         <file path="com/itextpdf/forms/xfa/XFAFormTest/cmp_createXFAFormTest.pdf" />
-                <!-- TODO: Remove this files from ignored after completing DEVSIX-6115 -->
-        <fileset reason="Files related to timestamp signatures comparing shall be ignored since they are different in java and .Net">
+         <!-- TODO DEVSIX-6115 Remove this files from ignored -->
+        <fileset reason="Files related to timestamp signatures comparing shall be ignored since they are different in java and .NET">
             <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledTsTest01.pdf"/>
             <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_secondLtvOriginalHasNoVriTs01.pdf"/>
             <file path="com/itextpdf/signatures/sign/LtvSigTest/cmp_ltvEnabledSingleSignatureNoOcspDataTest.pdf"/>
@@ -730,6 +733,17 @@
         <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">
             <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/grayImages.png" />
         </fileset>
+		<fileset>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleBrotli.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_inlineImg.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleBrotliContentStream.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_realEmbeddedFile.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_imgBrotli.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleEmbeddedUnicode.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleJsonEmbedded.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleEmbeddedFile.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_embeddedFileAndContentStream.pdf"/>
+		</fileset>
 		<!--Junit parallel settings-->
 		<fileset reason="Juunit specific files">
             <file path="junit-platform.properties"/>

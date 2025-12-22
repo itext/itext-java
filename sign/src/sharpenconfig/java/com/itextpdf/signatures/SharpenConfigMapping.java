@@ -22,8 +22,6 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.commons.UseBCWrappersModuleOption;
-
 import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
 import sharpen.config.MemberKind;
@@ -166,6 +164,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapProperty("org.bouncycastle.asn1.x509.AlgorithmIdentifier.getAlgorithm", "Algorithm");
         configurator.mapProperty("org.bouncycastle.asn1.x509.AlgorithmIdentifier.getParameters", "Parameters");
         configurator.mapType("com.itextpdf.signatures.validation.lotl.QualifiedValidator.QualificationConclusion", "QualificationConclusion?");
+        configurator.mapType("com.itextpdf.signatures.validation.dataorigin.CertificateOrigin", "iText.Signatures.Validation.Dataorigin.CertificateOrigin?");
+        configurator.mapType("com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin", "iText.Signatures.Validation.Dataorigin.RevocationDataOrigin?");
     }
 
     @Override

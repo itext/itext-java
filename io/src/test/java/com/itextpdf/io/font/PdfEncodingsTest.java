@@ -23,10 +23,9 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.test.ExtendedITextTest;
-
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfEncodingsTest extends ExtendedITextTest {
@@ -36,5 +35,36 @@ public class PdfEncodingsTest extends ExtendedITextTest {
         Assertions.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', null));
         Assertions.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', ""));
         Assertions.assertArrayEquals(new byte[]{(byte) 194}, PdfEncodings.convertToBytes('Â', "symboltt"));
+    }
+
+    @Test
+    public void convertToBytesSymbolTTTest() {
+        Assertions.assertArrayEquals(new byte[]{}, PdfEncodings.convertToBytes('原', "symboltt"));
+        Assertions.assertArrayEquals(new byte[]{}, PdfEncodings.convertToBytes((char) 21407, "symboltt"));
+        Assertions.assertArrayEquals(new byte[]{(byte) 159}, PdfEncodings.convertToBytes((char) 21407, null));
+    }
+
+    @Test
+    public void convertToBytesExtraEncodingTest() {
+        Assertions.assertArrayEquals(new byte[]{}, PdfEncodings.convertToBytes('奆', "symbol"));
+        Assertions.assertArrayEquals(new byte[]{}, PdfEncodings.convertToBytes('奆', PdfEncodings.WINANSI));
+        PdfEncodings.addExtraEncoding("TestExtra", new IExtraEncoding() {
+            @Override
+            public byte[] charToByte(String text, String encoding) {
+                return null;
+            }
+
+            @Override
+            public byte[] charToByte(char char1, String encoding) {
+                return null;
+            }
+
+            @Override
+            public String byteToChar(byte[] b, String encoding) {
+                return "";
+            }
+        });
+        Assertions.assertArrayEquals(new byte[]{}, PdfEncodings.convertToBytes('奆', "TestExtra"));
+        Assertions.assertArrayEquals(new byte[]{}, PdfEncodings.convertToBytes("奆時灈", "TestExtra"));
     }
 }

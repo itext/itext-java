@@ -84,7 +84,6 @@ public class QualifiedValidatorTest extends ExtendedITextTest {
             "MwsoJseoWfQ6GjmQCv0kpQ==\n" +
             "-----END CERTIFICATE-----";
 
-    // Android-Conversion-Skip-Block-Start (TODO DEVSIX-7371 investigate different behavior of a few iTextCore)
     @BeforeAll
     public static void beforeAll() {
         // Initialize the LotlService with a default EuropeanResourceFetcher
@@ -1959,5 +1958,4 @@ public class QualifiedValidatorTest extends ExtendedITextTest {
                 qualifiedValidator.obtainQualificationValidationResultForSignature("signature1").getQualificationConclusion();
         Assertions.assertEquals(QualifiedValidator.QualificationConclusion.ESIG_WITH_QC_AND_QSCD, conclusion);
     }
-    // Android-Conversion-Skip-Block-End
 }

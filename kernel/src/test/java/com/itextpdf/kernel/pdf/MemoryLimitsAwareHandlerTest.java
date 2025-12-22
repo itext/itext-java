@@ -59,6 +59,15 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void hugeDocumentHandler() {
+        MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler(4000000000l);
+
+        Assertions.assertEquals(2147483600, handler.getMaxSizeOfSingleDecompressedPdfStream());
+        Assertions.assertEquals(53687091000l, handler.getMaxSizeOfDecompressedPdfStreamsSum());
+        Assertions.assertEquals(50000000l, handler.getMaxNumberOfElementsInXrefStructure());
+    }
+
+    @Test
     public void overridenMemoryHandler() {
         MemoryLimitsAwareHandler defaultHandler = new MemoryLimitsAwareHandler();
         MemoryLimitsAwareHandler customHandler = new MemoryLimitsAwareHandler() {

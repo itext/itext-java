@@ -26,6 +26,7 @@ import com.itextpdf.styledxmlparser.css.parse.CssRuleSetParser;
 import com.itextpdf.styledxmlparser.css.selector.CssSelector;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -71,5 +72,14 @@ public class CssRuleSetTest extends ExtendedITextTest {
         for (int i = 0; i < expectedImportant.length; i++) {
             Assertions.assertEquals(expectedImportant[i], importantDeclarations.get(i).toString());
         }
+    }
+
+    @Test
+    public void addCssRuleSetWithNullDeclarationExpressionTest() {
+        CssSelector selector = new CssSelector("ol");
+        CssDeclaration cssDeclaration = new CssDeclaration("list-style-type", null);
+        CssRuleSet cssRuleSet = new CssRuleSet(selector, Collections.singletonList(cssDeclaration));
+        Assertions.assertEquals(0, cssRuleSet.getImportantDeclarations().size());
+        Assertions.assertEquals(0, cssRuleSet.getNormalDeclarations().size());
     }
 }

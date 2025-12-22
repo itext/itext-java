@@ -67,7 +67,7 @@ public class CssDeclarationVarParser extends CssDeclarationValueTokenizer {
 
         // handle the following tokens: var(--one), calc(var(--one)), ...
         if (isEndingWithBracket(tokenValue)) {
-            String resultTokenValue = removeUnclosedBrackets(tokenValue.substring(tokenValue.indexOf("var")));
+            String resultTokenValue = extractSingleVar(tokenValue.substring(tokenValue.indexOf("var")));
             return new VarToken(resultTokenValue, start, index + 1);
         }
 
@@ -76,30 +76,33 @@ public class CssDeclarationVarParser extends CssDeclarationValueTokenizer {
         // func == null condition is not expected and shouldn't be invoked since all cases which can produce null func
         // are handled above
 
-        String resultTokenValue = removeUnclosedBrackets(func.getValue().substring(func.getValue().indexOf("var")));
+        String resultTokenValue = extractSingleVar(func.getValue().substring(func.getValue().indexOf("var")));
         return new VarToken(resultTokenValue, start, index + 1);
     }
 
-    private String removeUnclosedBrackets(String expression) {
-        StringBuilder resultBuilder = new StringBuilder();
-        int openBrackets = 0;
-        int closeBrackets = 0;
-        for (int i = 0; i < expression.length(); ++i) {
-            if (expression.charAt(i) == '(') {
-                ++openBrackets;
-            } else if (expression.charAt(i) == ')') {
-                ++closeBrackets;
-                if (closeBrackets > openBrackets) {
-                    --index;
-                    continue;
-                }
+    /**
+     * Cut symbols not related to first variable.
+     *
+     * @param expression expression to process
+     * @return expression with single variable
+     */
+    private String extractSingleVar(String expression) {
+        //Starting from index 3 as we expect string to start like "var(..."
+        int currentIndex = 3;
+        int depth = 0;
+        do {
+            char ch = expression.charAt(currentIndex);
+            if (ch == '(') {
+                depth++;
+            } else if (ch == ')') {
+                depth--;
             }
-            resultBuilder.append(expression.charAt(i));
-        }
 
-        String resultTrimmed = resultBuilder.toString().trim();
-        index -= resultBuilder.length() - resultTrimmed.length();
-        return resultTrimmed;
+            currentIndex++;
+        } while (currentIndex <= expression.length() - 1 && depth != 0);
+        String result = expression.substring(0, currentIndex);
+        this.index -= expression.length() - result.length();
+        return result;
     }
 
     private static boolean isEndingWithBracket(String expression) {

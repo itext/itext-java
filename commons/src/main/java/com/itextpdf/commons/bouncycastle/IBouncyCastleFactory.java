@@ -694,6 +694,13 @@ public interface IBouncyCastleFactory {
     String getProviderName();
 
     /**
+     * Get experimental PQC {@link Provider} instance for this factory.
+     *
+     * @return PQC {@link Provider} instance
+     */
+    Provider getPqcProvider();
+
+    /**
      * Create Jce Key trans enveloped recipient wrapper from {@link PrivateKey}.
      *
      * @param privateKey {@link PrivateKey} to create Jce Key trans enveloped recipient wrapper from
@@ -1340,6 +1347,16 @@ public interface IBouncyCastleFactory {
      * @return created Jca content signer builder wrapper
      */
     IJcaContentSignerBuilder createJcaContentSignerBuilder(String algorithm);
+
+    /**
+     * Create Jca content signer builder wrapper from {@link String} algorithm.
+     *
+     * @param signatureAlgorithm {@link String} algorithm to create Jca content signer builder wrapper from
+     * @param digestOid {@link String} OID for digest algorithm to create Jca content signer builder wrapper
+     *
+     * @return created Jca content signer builder wrapper
+     */
+    IJcaContentSignerBuilder createJcaContentSignerBuilder(String signatureAlgorithm, String digestOid);
 
     /**
      * Create Jca signer info generator builder wrapper from digest calculator provider wrapper.

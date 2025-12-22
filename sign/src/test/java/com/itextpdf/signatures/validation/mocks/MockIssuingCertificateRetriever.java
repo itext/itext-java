@@ -24,6 +24,7 @@ package com.itextpdf.signatures.validation.mocks;
 
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
+import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
 
 import java.io.IOException;
@@ -152,6 +153,11 @@ public class MockIssuingCertificateRetriever extends IssuingCertificateRetriever
 
     @Override
     public void addKnownCertificates(Collection<Certificate> certificates) {
+        addKnownCertificates(certificates, CertificateOrigin.OTHER);
+    }
+
+    @Override
+    public void addKnownCertificates(Collection<Certificate> certificates, CertificateOrigin dataOrigin) {
         addKnownCertificatesCalls.add(certificates);
         if (addKnownCertificatesHandler != null) {
             addKnownCertificatesHandler.accept(certificates);

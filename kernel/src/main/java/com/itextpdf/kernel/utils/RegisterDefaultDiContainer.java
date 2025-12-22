@@ -27,6 +27,8 @@ import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
 import com.itextpdf.kernel.di.pagetree.DefaultPageTreeListFactory;
 import com.itextpdf.kernel.mac.IMacContainerLocator;
 import com.itextpdf.kernel.mac.StandaloneMacContainerLocator;
+import com.itextpdf.kernel.pdf.FlateCompressionStrategy;
+import com.itextpdf.kernel.pdf.IStreamCompressionStrategy;
 
 /**
  * Registers a default instance for a dependency injection container for the kernel module.
@@ -35,17 +37,18 @@ public class RegisterDefaultDiContainer {
 
     private static final int DEFAULT_PAGE_TREE_LIST_FACTORY_MAX_SAFE_ENTRIES = 50_000;
 
+    static {
+        DIContainer.registerDefault(IPageTreeListFactory.class,
+                () -> new DefaultPageTreeListFactory(DEFAULT_PAGE_TREE_LIST_FACTORY_MAX_SAFE_ENTRIES));
+        DIContainer.registerDefault(IMacContainerLocator.class, () -> new StandaloneMacContainerLocator());
+        DIContainer.registerDefault(IStreamCompressionStrategy.class, () -> new FlateCompressionStrategy());
+    }
+
     /**
      * Creates an instance of {@link RegisterDefaultDiContainer}.
      */
     public RegisterDefaultDiContainer() {
         // Empty constructor but should be public as we need it for automatic class loading
         // sharp
-    }
-
-    static {
-        DIContainer.registerDefault(IPageTreeListFactory.class,
-                () -> new DefaultPageTreeListFactory(DEFAULT_PAGE_TREE_LIST_FACTORY_MAX_SAFE_ENTRIES));
-        DIContainer.registerDefault(IMacContainerLocator.class, () -> new StandaloneMacContainerLocator());
     }
 }

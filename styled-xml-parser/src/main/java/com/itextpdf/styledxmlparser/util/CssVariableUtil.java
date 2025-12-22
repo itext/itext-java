@@ -164,10 +164,11 @@ public class CssVariableUtil {
         CssDeclarationVarParser tokenizer = new CssDeclarationVarParser(expression);
         CssDeclarationVarParser.VarToken currentToken = tokenizer.getFirstValidVarToken();
         if (currentToken != null) {
+
             String resolvedVar = resolveVarExpression(currentToken.getValue(), styles);
             expandedExpressionBuilder.append(expression, 0, currentToken.getStart())
-                                     .append(resolvedVar)
-                                     .append(expression, currentToken.getEnd(), expression.length());
+                    .append(resolvedVar)
+                    .append(expression, currentToken.getEnd(), expression.length());
         } else {
             throw new StyledXMLParserException(StyledXmlParserLogMessageConstant.ERROR_DURING_CSS_VARIABLE_RESOLVING);
         }

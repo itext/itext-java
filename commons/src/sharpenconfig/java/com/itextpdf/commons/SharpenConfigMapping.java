@@ -70,6 +70,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("java.util.EnumSet<>", "iText.Commons.Utils.Collections.EnumSet");
         configurator.addCustomUsingForMethodInvocation("java.util.Map.computeIfAbsent",  Collections.singletonList("iText.Commons.Utils.Collections"));
         configurator.addCustomUsingForMethodInvocation("java.util.Map.getOrDefault",  Collections.singletonList("iText.Commons.Utils.Collections"));
+        configurator.mapMethod("java.util.Map.equals", "System.Linq.Enumerable.SequenceEqual", false);
+        configurator.mapMemberToInvocationsChain ("java.util.Map.containsValue", "Values.Contains", MemberKind.Method);
         configurator.mapMethod("java.lang.Integer.toHexString", "iText.Commons.Utils.JavaUtil.IntegerToHexString", false);
         configurator.mapMethod("java.lang.Integer.toOctalString", "iText.Commons.Utils.JavaUtil.IntegerToOctalString", false);
         configurator.mapMethod("java.lang.Integer.toString", "iText.Commons.Utils.JavaUtil.IntegerToString", false);
@@ -301,13 +303,19 @@ public class SharpenConfigMapping implements MappingConfiguration {
                 MemberKind.Method);
 
         configurator.removeMethod("java.security.Security.addProvider");
-        configurator.mapStringLiteral("com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT", "Either itext7.bouncy-castle-adapter or itext7.bouncy-castle-fips-adapter dependency must be added in order to use BouncyCastleFactoryCreator");
+        configurator.mapStringLiteral("com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT", "Either itext.bouncy-castle-adapter or itext.bouncy-castle-fips-adapter dependency must be added in order to use BouncyCastleFactoryCreator");
 
         configurator.mapMemberToInvocationsChain("org.bouncycastle.asn1.esf.SigPolicyQualifiers.SigPolicyQualifiers" + "(org.bouncycastle.asn1.esf.SigPolicyQualifierInfo[])", "", MemberKind.Method);
 
         configurator.mapMemberToInvocationsChain("java.util.LinkedList.peekLast", "Last.Value", MemberKind.Property);
         configurator.mapMethod("java.util.LinkedList.add", "AddLast");
         configurator.mapMethod("java.util.LinkedList.pollLast", "RemoveLast");
+
+        // More lenient behaviour in net461
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.leadingZerosInNumbersTest()", "NETSTANDARD2_0");
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.malformedJsonSingleQuotesTest()", "NETSTANDARD2_0");
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.malformedJsonTrailingCommaTest()", "NETSTANDARD2_0");
+        configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.malformedJsonUnescapedNewlineInStringTest()", "NETSTANDARD2_0");
 
         if (useBCWrappersConfig) {
             BCWrappersConfigurationUtils.applyMappingConfiguration(configurator);

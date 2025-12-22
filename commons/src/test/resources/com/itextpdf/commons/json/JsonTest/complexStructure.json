@@ -1,0 +1,1 @@
+{"map":{"FirstMapKey":15.1234,"SecondMapKey":8,"NullInstance":null,"TrueInstance":true,"FalseInstance":false},"str":"StringFieldValue","childsMap":{"ChildMapkey":{"arrayStr":["someStr1","someStr2"],"grandsons":[{"integer":13,"name":"someName"},{"integer":0,"name":""}]},"ChildMapKey2":{"arrayStr":[""],"grandsons":[{"integer":0,"name":""}]}}}

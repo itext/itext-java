@@ -161,7 +161,7 @@ public class PdfEncodings {
     public static byte[] convertToBytes(String text, String encoding) {
         if (text == null)
             return new byte[0];
-        if (encoding == null || encoding.length() == 0) {
+        if (encoding == null || encoding.isEmpty()) {
             int len = text.length();
             byte[] b = new byte[len];
             for (int k = 0; k < len; ++k) {
@@ -172,8 +172,7 @@ public class PdfEncodings {
         IExtraEncoding extra = extraEncodings.get(StringNormalizer.toLowerCase(encoding));
         if (extra != null) {
             byte[] b = extra.charToByte(text, encoding);
-            if (b != null)
-                return b;
+            return b == null ? new byte[0] : b;
         }
         IntHashtable hash = null;
         if (encoding.equals(WINANSI)) {
@@ -220,10 +219,14 @@ public class PdfEncodings {
      * @return an array of {@code byte} representing the conversion according to the font's encoding
      */
     public static byte[] convertToBytes(char ch, String encoding) {
-        if (encoding == null || encoding.length() == 0 || "symboltt".equals(encoding)) {
+        if (encoding == null || encoding.isEmpty()) {
             return new byte[]{(byte) ch};
         }
-
+        IExtraEncoding extra = extraEncodings.get(StringNormalizer.toLowerCase(encoding));
+        if (extra != null) {
+            byte[] b = extra.charToByte(ch, encoding);
+            return b == null ? new byte[0] : b;
+        }
         IntHashtable hash = null;
         if (encoding.equals(WINANSI))
             hash = winansi;

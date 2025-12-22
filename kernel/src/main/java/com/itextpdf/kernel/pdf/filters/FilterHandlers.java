@@ -57,6 +57,7 @@ public final class FilterHandlers {
         map.put(PdfName.RunLengthDecode, new RunLengthDecodeFilter());
         map.put(PdfName.DCTDecode, new DctDecodeFilter());
         map.put(PdfName.JPXDecode, new JpxDecodeFilter());
+        map.put(PdfName.BrotliDecode, new BrotliFilter());
 
         defaults = Collections.unmodifiableMap(map);
     }

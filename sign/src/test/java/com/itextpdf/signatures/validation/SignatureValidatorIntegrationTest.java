@@ -55,7 +55,6 @@ import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -85,7 +84,6 @@ import org.junit.jupiter.api.Tag;
 @Tag("BouncyCastleIntegrationTest")
 public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/validation/SignatureValidatorIntegrationTest/certs/";
-    private static final String COMMON_CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/SignatureValidatorIntegrationTest/";
     private static final String SOURCE_FOLDER_LOTL_FILES = "./src/test/resources/com/itextpdf/signatures/validation" +
             "/lotl/LotlState2025_08_08/";
@@ -731,23 +729,24 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
-    public void infiniteRecursionTest() throws IOException, CertificateException {
-        String trustedCertsFileName = COMMON_CERTS_SRC + "tsCertRsa.pem";
-        Certificate[] trustedCerts = PemFileHelper.readFirstChain(trustedCertsFileName);
-
+    public void infiniteRecursionForOCSPFromDSSTest() throws IOException {
         LotlService service = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()));
         service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
         service.withLotlValidator(() -> new LotlValidator(service));
         service.initializeCache();
         SignatureValidationProperties param = new SignatureValidationProperties()
+                .setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(),
+                        TimeBasedContexts.all(), SignatureValidationProperties.OnlineFetching.NEVER_FETCH)
                 .setFreshness(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                         Duration.ofDays(1000000));
+
         ValidatorChainBuilder chainBuilder = new ValidatorChainBuilder()
                 .withSignatureValidationProperties(param)
                 .withLotlService(() -> service)
-                .trustEuropeanLotl(true)
-                // Trust self signed certificate used for timestamping
-                .withTrustedCertificates(Arrays.asList(trustedCerts));
+                .trustEuropeanLotl(true);
+        chainBuilder
+                .withCertificateChainValidatorFactory(() -> new CustomDateChainValidator(chainBuilder,
+                                DateTimeUtil.createUtcDateTime(2025, 10, 05, 0, 0, 0)));
         try (PdfDocument document = new PdfDocument(
                 new PdfReader(SOURCE_FOLDER + "ocspResponseSignedByCertToCheck.pdf"))) {
             SignatureValidator signatureValidator = chainBuilder.buildSignatureValidator(document);
@@ -757,7 +756,7 @@ public class SignatureValidatorIntegrationTest extends ExtendedITextTest {
                     .hasStatus(ValidationReport.ValidationResult.VALID)
                     .hasNumberOfFailures(0)
                     .hasLogItem(l -> l.withCheckName(OCSPValidator.OCSP_CHECK)
-                            .withMessage(OCSPValidator.OCSP_RESPONSE_IS_SIGNED_BY_CERTIFICATE_BEING_VALIDATED)));
+                            .withMessage(OCSPValidator.CERTIFICATE_IN_ISSUER_CHAIN)));
         }
     }
 
