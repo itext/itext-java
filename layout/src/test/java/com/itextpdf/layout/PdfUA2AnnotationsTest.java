@@ -139,10 +139,6 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
         compareAndValidate(outFile, cmpFile);
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    KernelLogMessageConstant.DUPLICATE_STRUCT_PARENT_INDEX_IN_TAGGED_OBJECT_REFERENCES, count = 1)
-    })
     @Test
     public void pdfUA2FileAttachmentAnnotTest() throws IOException, XMPException, InterruptedException {
         String outFile = DESTINATION_FOLDER + "pdfuaFileAttachmentAnnotTest.pdf";
@@ -158,11 +154,8 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfFileAttachmentAnnotation annot = new PdfFileAttachmentAnnotation(rect, fs);
             annot.setContents("Hello world");
             annot.getPdfObject().put(PdfName.Type, PdfName.Annot);
-            pdfPage.addAnnotation(annot);
-
             PdfFormXObject xObject = new PdfFormXObject(rect);
             annot.setNormalAppearance(xObject.getPdfObject());
-
             pdfPage.addAnnotation(annot);
         }
         compareAndValidate(outFile, cmpFile);
