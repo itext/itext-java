@@ -35,10 +35,18 @@ import java.security.cert.Certificate;
 import java.security.cert.X509CRL;
 import java.util.Arrays;
 
+/**
+ * Represents the DSS dictionary.
+ */
 public class PdfDSS extends PdfObjectWrapper<PdfDictionary> {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
+    /**
+     * Creates new {@link PdfDSS} instance.
+     *
+     * @param pdfObject {@link PdfDictionary} to create new {@link PdfDSS} instance from
+     */
     public PdfDSS(PdfDictionary pdfObject) {
         super(pdfObject);
     }
@@ -48,6 +56,11 @@ public class PdfDSS extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
+    /**
+     * Returns certificates stored in DSS dictionary.
+     *
+     * @return certificates stored in DSS dictionary
+     */
     public Certificate[] getCertificates() {
         PdfArray certs = super.getPdfObject().getAsArray(PdfName.Certs);
         Certificate[] result = new Certificate[certs == null ? 0 : certs.size()];
@@ -62,6 +75,11 @@ public class PdfDSS extends PdfObjectWrapper<PdfDictionary> {
         return result;
     }
 
+    /**
+     * Returns OCSP responses stored in DSS dictionary.
+     *
+     * @return OCSP responses stored in DSS dictionary
+     */
     public IOCSPResp[] getOcsps() {
         PdfArray ocsps = getPdfObject().getAsArray(PdfName.OCSPs);
         IOCSPResp[] result = new IOCSPResp[ocsps == null ? 0 : ocsps.size()];
@@ -75,6 +93,11 @@ public class PdfDSS extends PdfObjectWrapper<PdfDictionary> {
         return result;
     }
 
+    /**
+     * Returns CRL responses stored in DSS dictionary.
+     *
+     * @return CRL responses stored in DSS dictionary
+     */
     public X509CRL[] getCrls() {
         PdfArray crls = getPdfObject().getAsArray(PdfName.CRLs);
         X509CRL[] result = new X509CRL[crls == null ? 0 : crls.size()];
