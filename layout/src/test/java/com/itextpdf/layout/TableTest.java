@@ -73,8 +73,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TableTest extends AbstractTableTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TableTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/TableTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/TableTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/TableTest/";
 
     private static final String TEXT_CONTENT = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +
@@ -85,14 +85,14 @@ public class TableTest extends AbstractTableTest {
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void simpleTableTest01() throws IOException, InterruptedException {
         String testName = "tableTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -102,15 +102,16 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 1, 2")));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
         Assertions.assertEquals("Cell[row=0, col=0, rowspan=1, colspan=1]", table.getCell(0, 0).toString());
     }
 
     @Test
     public void simpleTableTest02() throws IOException, InterruptedException {
         String testName = "tableTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -124,14 +125,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell());
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest03() throws IOException, InterruptedException {
         String testName = "tableTest03.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -150,14 +152,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + textContent2)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest04() throws IOException, InterruptedException {
         String testName = "tableTest04.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -169,14 +172,15 @@ public class TableTest extends AbstractTableTest {
         table.addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest05() throws IOException, InterruptedException {
         String testName = "tableTest05.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -188,14 +192,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest06() throws IOException, InterruptedException {
         String testName = "tableTest06.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -207,14 +212,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 3, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest07() throws IOException, InterruptedException {
         String testName = "tableTest07.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -226,14 +232,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 3, 2\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest08() throws IOException, InterruptedException {
         String testName = "tableTest08.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -252,14 +259,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest09() throws IOException, InterruptedException {
         String testName = "tableTest09.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -281,14 +289,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest10() throws IOException, InterruptedException {
         String testName = "tableTest10.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -312,7 +321,7 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(new Paragraph("Table 3"));
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "itext.png")));
         Image image = new Image(xObject, 50);
 
         Table table3 = new Table(new float[]{100, 100})
@@ -322,14 +331,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("2, 2")));
         doc.add(table3);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest11() throws IOException, InterruptedException {
         String testName = "tableTest11.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -355,14 +365,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().setKeepTogether(true).add(new Paragraph("cell 7, 2\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest12() throws IOException, InterruptedException {
         String testName = "tableTest12.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -396,14 +407,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 11, 2\n" + shortTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest13() throws IOException, InterruptedException {
         String testName = "tableTest13.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -427,14 +439,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 7, 2\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest14() throws IOException, InterruptedException {
         String testName = "tableTest14.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -459,14 +472,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest15() throws IOException, InterruptedException {
         String testName = "tableTest15.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -494,14 +508,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 7, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest16() throws IOException, InterruptedException {
         String testName = "tableTest16.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -519,14 +534,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 2, 2\n" + longTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void wideFirstCellBorderDoesntAffectSecondCellTest() throws IOException, InterruptedException {
         String testName = "wideFirstCellBorderDoesntAffectSecondCellTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -551,7 +567,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
         Assertions.assertNull(
-                new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+                new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -560,8 +576,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void simpleTableTest17() throws IOException, InterruptedException {
         String testName = "tableTest17.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -581,7 +597,8 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -590,8 +607,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void simpleTableTest18() throws IOException, InterruptedException {
         String testName = "tableTest18.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -613,7 +630,8 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -622,8 +640,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void simpleTableTest19() throws IOException, InterruptedException {
         String testName = "tableTest19.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -633,7 +651,7 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 1, 3\n" + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 2, 3\n" + TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 3, 3\n" + TEXT_CONTENT)))
-                .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Image(ImageDataFactory.create(SOURCE_FOLDER + "red.png"))))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + SHORT_TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + MIDDLE_TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + SHORT_TEXT_CONTENT)))
@@ -644,7 +662,8 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + MIDDLE_TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -653,14 +672,14 @@ public class TableTest extends AbstractTableTest {
     })
     public void simpleTableTest20() throws IOException, InterruptedException {
         String testName = "tableTest20.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Image(ImageDataFactory.create(SOURCE_FOLDER + "red.png"))))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + SHORT_TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + MIDDLE_TEXT_CONTENT)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + SHORT_TEXT_CONTENT)))
@@ -671,7 +690,8 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + MIDDLE_TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -680,8 +700,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void simpleTableTest21() throws IOException, InterruptedException {
         String testName = "tableTest21.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -693,7 +713,7 @@ public class TableTest extends AbstractTableTest {
         doc.add(new Paragraph(TEXT_CONTENT));
 
         Table table = new Table(new float[]{130, 130, 260})
-                .addCell(new Cell().add(new Image(ImageDataFactory.create(sourceFolder + "red.png"))))
+                .addCell(new Cell().add(new Image(ImageDataFactory.create(SOURCE_FOLDER + "red.png"))))
                 .addCell(new Cell().add(new Paragraph("cell 4, 2\n" + shortTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 4, 3\n" + middleTextContent)))
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + shortTextContent)))
@@ -704,14 +724,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 6, 3\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest22() throws IOException, InterruptedException {
         String testName = "tableTest22.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -723,14 +744,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 1, 4")));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void simpleTableTest23() throws IOException, InterruptedException {
         String testName = "tableTest23.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -770,14 +792,15 @@ public class TableTest extends AbstractTableTest {
         table.complete();
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void widthInPercentShouldBeResetAfterOverflow() throws IOException, InterruptedException {
         String testName = "widthInPercentShouldBeResetAfterOverflow.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -792,14 +815,15 @@ public class TableTest extends AbstractTableTest {
         // will be added on the second page
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void bigRowspanTest01() throws IOException, InterruptedException {
         String testName = "bigRowspanTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -819,14 +843,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + middleTextContent)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void bigRowspanTest02() throws IOException, InterruptedException {
         String testName = "bigRowspanTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -846,14 +871,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void bigRowspanTest03() throws IOException, InterruptedException {
         String testName = "bigRowspanTest03.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -870,14 +896,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void bigRowspanTest04() throws IOException, InterruptedException {
         String testName = "bigRowspanTest04.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -897,14 +924,15 @@ public class TableTest extends AbstractTableTest {
                 .addCell(new Cell().add(new Paragraph("cell 5, 1\n" + TEXT_CONTENT)));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void bigRowspanTest05() throws IOException, InterruptedException {
         String testName = "bigRowspanTest05.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -921,14 +949,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void bigRowspanTest06() throws IOException, InterruptedException {
         String testName = "bigRowspanTest06.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -942,14 +971,15 @@ public class TableTest extends AbstractTableTest {
         table.setBorderTop(new SolidBorder(ColorConstants.GREEN, 50)).setBorderBottom(new SolidBorder(ColorConstants.ORANGE, 40));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void bigRowspanTest07() throws IOException, InterruptedException {
         String testName = "bigRowspanTest07.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -973,14 +1003,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void differentPageOrientationTest01() throws IOException, InterruptedException {
         String testName = "differentPageOrientationTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         final PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1006,18 +1037,19 @@ public class TableTest extends AbstractTableTest {
         doc.setRenderer(new RotatedDocumentRenderer(doc, pdfDoc));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void extendLastRowTest01() throws IOException, InterruptedException {
         String testName = "extendLastRowTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "itext.png")));
         Image image = new Image(xObject, 100);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -1033,7 +1065,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1042,8 +1075,8 @@ public class TableTest extends AbstractTableTest {
     @Test
     public void toLargeElementWithKeepTogetherPropertyInTableTest01() throws IOException, InterruptedException {
         String testName = "toLargeElementWithKeepTogetherPropertyInTableTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
@@ -1063,7 +1096,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1073,9 +1107,9 @@ public class TableTest extends AbstractTableTest {
     @Test
     public void toLargeElementInTableTest01() throws IOException, InterruptedException {
         String testName = "toLargeElementInTableTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "toLargeElementInTableTest01.pdf"));
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "toLargeElementInTableTest01.pdf"));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{5});
@@ -1087,14 +1121,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void nestedTablesCollapseTest01() throws IOException, InterruptedException {
         String testName = "nestedTablesCollapseTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1139,14 +1174,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(outertable);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void nestedTableSkipHeaderFooterTest() throws IOException, InterruptedException {
         String testName = "nestedTableSkipHeaderFooter.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
@@ -1171,14 +1207,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(t);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void nestedTablesWithMarginsTest01() throws IOException, InterruptedException {
         String testName = "nestedTablesWithMarginsTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
@@ -1193,7 +1230,8 @@ public class TableTest extends AbstractTableTest {
         outerTable.setMarginTop(10);
         doc.add(outerTable);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1202,8 +1240,8 @@ public class TableTest extends AbstractTableTest {
     @Test
     public void splitTableOnShortPage() throws IOException, InterruptedException {
         String testName = "splitTableOnShortPage.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(300, 98));
@@ -1233,14 +1271,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void splitCellWithStyles() throws IOException, InterruptedException {
         String testName = "splitCellWithStyles.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         String text = "Make Gretzky Great Again";
 
@@ -1264,19 +1303,20 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void imageInTableTest_HA() throws IOException, InterruptedException {
         String testName = "imageInTableTest_HA.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "itext.png")));
         Image imageL = new Image(xObject);
         imageL.setHorizontalAlignment(HorizontalAlignment.LEFT);
         Image imageC = new Image(xObject);
@@ -1292,14 +1332,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void cellAlignmentAndSplittingTest01() throws IOException, InterruptedException {
         String testName = "cellAlignmentAndSplittingTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1311,14 +1352,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void cellAlignmentAndKeepTogetherTest01() throws IOException, InterruptedException {
         String testName = "cellAlignmentAndKeepTogetherTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1330,7 +1372,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1339,8 +1382,8 @@ public class TableTest extends AbstractTableTest {
     @Test
     public void tableWithSetHeightProperties01() throws IOException, InterruptedException {
         String testName = "tableWithSetHeightProperties01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1406,7 +1449,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @LogMessages(messages = {
@@ -1415,8 +1459,8 @@ public class TableTest extends AbstractTableTest {
     @Test
     public void tableWithSetHeightProperties02() throws IOException, InterruptedException {
         String testName = "tableWithSetHeightProperties02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1509,14 +1553,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableWithSetHeightProperties03() throws IOException, InterruptedException {
         String testName = "tableWithSetHeightProperties03.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1594,14 +1639,15 @@ public class TableTest extends AbstractTableTest {
 
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableWithHeaderInTheBottomOfPageTest() throws IOException, InterruptedException {
         String testName = "tableWithHeaderInTheBottomOfPageTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1620,15 +1666,16 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void bigFooterTest01() throws IOException, InterruptedException {
         String testName = "bigFooterTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1640,15 +1687,16 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void bigFooterTest02() throws IOException, InterruptedException {
         String testName = "bigFooterTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1661,14 +1709,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableWithDocumentRelayoutTest() throws IOException, InterruptedException {
         String testName = "tableWithDocumentRelayoutTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4, false);
@@ -1682,14 +1731,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableWithKeepTogetherOnCells() throws IOException, InterruptedException {
         String testName = "tableWithKeepTogetherOnCells.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
 
@@ -1702,14 +1752,15 @@ public class TableTest extends AbstractTableTest {
         document.add(table);
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void emptyTableTest01() throws IOException, InterruptedException {
         String testName = "emptyTableTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1736,14 +1787,15 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void emptyTableTest02() throws IOException, InterruptedException {
         String testName = "emptyTableTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1757,7 +1809,8 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
 
     }
 
@@ -1765,8 +1818,8 @@ public class TableTest extends AbstractTableTest {
     @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE, count = 2)})
     public void tableWithIncompleteFooter() throws IOException, InterruptedException {
         String testName = "tableWithIncompleteFooter.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1781,7 +1834,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -1790,8 +1844,8 @@ public class TableTest extends AbstractTableTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN)})
     public void tableWithCustomRendererTest01() throws IOException, InterruptedException {
         String testName = "tableWithCustomRendererTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1807,7 +1861,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -1816,8 +1871,8 @@ public class TableTest extends AbstractTableTest {
     // However, as setSkipLastFooter is true, we can lay out that row with data on the first page and avoid unnecessary footer placement.
     public void skipLastRowTest() throws IOException, InterruptedException {
         String testName = "skipLastRowTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1834,14 +1889,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void skipFooterTest01() throws IOException, InterruptedException {
         String testName = "skipFooterTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1856,14 +1912,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void skipHeaderTest01() throws IOException, InterruptedException {
         String testName = "skipHeaderTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdf);
@@ -1885,14 +1942,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableSplitTest01() throws IOException, InterruptedException {
         String testName = "tableSplitTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         String gretzky = "Make Gretzky great again!";
 
@@ -1908,14 +1966,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableSplitTest02() throws IOException, InterruptedException {
         String testName = "tableSplitTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         String gretzky = "Make Gretzky great again!";
 
@@ -1925,7 +1984,7 @@ public class TableTest extends AbstractTableTest {
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 15));
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "itext.png")));
         Image image = new Image(xObject, 50);
 
 
@@ -1940,14 +1999,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableSplitTest03() throws IOException, InterruptedException {
         String testName = "tableSplitTest03.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         String gretzky = "Make Gretzky great again!";
 
@@ -1966,14 +2026,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableSplitTest04() throws IOException, InterruptedException {
         String testName = "tableSplitTest04.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         String gretzky = "Make Gretzky great again!";
 
@@ -1983,7 +2044,7 @@ public class TableTest extends AbstractTableTest {
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setBorder(new SolidBorder(ColorConstants.GREEN, 15));
 
-        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(sourceFolder + "itext.png")));
+        PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "itext.png")));
         Image image = new Image(xObject, 50);
 
 
@@ -1996,7 +2057,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -2006,8 +2068,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void tableNothingResultTest() throws IOException, InterruptedException {
         String testName = "tableNothingResultTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2023,7 +2085,8 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -2032,8 +2095,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void tableWithEmptyLastRowTest() throws IOException, InterruptedException {
         String testName = "tableWithEmptyLastRowTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2045,14 +2108,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
 	@Test
 	public void tableWithEmptyRowsBetweenFullRowsTest() throws IOException, InterruptedException {
 		String testName = "tableWithEmptyRowsBetweenFullRowsTest.pdf";
-		String outFileName = destinationFolder + testName;
-		String cmpFileName = sourceFolder + "cmp_" + testName;
+		String outFileName = DESTINATION_FOLDER + testName;
+		String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
 		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
 		Document doc = new Document(pdfDoc);
@@ -2066,7 +2130,8 @@ public class TableTest extends AbstractTableTest {
 		doc.add(table);
 
 		doc.close();
-		Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+		Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
 	}
 
     @Test
@@ -2075,8 +2140,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void tableWithEmptyRowAfterJustOneCellTest() throws IOException, InterruptedException {
         String testName = "tableWithEmptyRowAfterJustOneCellTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2091,7 +2156,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -2100,8 +2166,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void tableWithAlternatingRowsTest() throws IOException, InterruptedException {
         String testName = "tableWithAlternatingRowsTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2115,14 +2181,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void coloredTableWithColoredCellsTest() throws IOException, InterruptedException {
         String testName = "coloredTableWithColoredCellsTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2138,14 +2205,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableWithEmptyRowsAndSpansTest() throws IOException, InterruptedException {
         String testName = "tableWithEmptyRowsAndSpansTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2162,14 +2230,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableWithEmptyRowsAndSeparatedBordersTest() throws IOException, InterruptedException {
         String testName = "tableWithEmptyRowsAndSeparatedBordersTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2184,14 +2253,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableWithCollapsedBordersTest() throws IOException, InterruptedException {
         String testName = "tableWithCollapsedBordersTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2205,7 +2275,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -2214,8 +2285,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void tableWithCollapsedBordersAndFooterTest() throws IOException, InterruptedException {
         String testName = "tableWithCollapsedBordersAndFooterTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2229,14 +2300,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void autoLayoutTest01() throws IOException, InterruptedException {
         String testName = "autoLayoutTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         //Initialize PDF document
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
@@ -2263,14 +2335,15 @@ public class TableTest extends AbstractTableTest {
 
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void autoLayoutTest02() throws IOException, InterruptedException {
         String testName = "autoLayoutTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdf);
@@ -2283,14 +2356,15 @@ public class TableTest extends AbstractTableTest {
                 .add(new Paragraph("Long long long Long long long Long long long Long long long text")));
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void autoLayoutTest03() throws IOException, InterruptedException {
         String testName = "autoLayoutTest03.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdf);
@@ -2303,14 +2377,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void fixedLayoutTest01() throws IOException, InterruptedException {
         String testName = "fixedLayoutTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         //Initialize PDF document
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
@@ -2325,14 +2400,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void fixedLayoutTest02() throws IOException, InterruptedException {
         String testName = "fixedLayoutTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         //Initialize PDF document
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
@@ -2347,7 +2423,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -2356,8 +2433,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void fixedPositionTest01() throws IOException, InterruptedException {
         String testName = "fixedPositionTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         //Initialize PDF document
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
@@ -2381,7 +2458,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -2389,8 +2467,8 @@ public class TableTest extends AbstractTableTest {
     // When the test was created, only first line of text was displayed on the first page
     public void nestedTableLostContent() throws IOException, InterruptedException {
         String testName = "nestedTableLostContent.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdf);
@@ -2408,7 +2486,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(outerTable);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -2417,8 +2496,8 @@ public class TableTest extends AbstractTableTest {
     // At some point isOriginalNonSplitRenderer was true for a parent renderer but false for the inner table renderer
     public void nestedTableMinMaxWidthException() throws IOException, InterruptedException {
         String testName = "nestedTableMinMaxWidthException.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdf);
@@ -2436,14 +2515,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(outerTable);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableMinMaxWidthTest01() throws IOException, InterruptedException {
         String testName = "tableMinMaxWidthTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2454,14 +2534,15 @@ public class TableTest extends AbstractTableTest {
         table.addCell(cell);
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableMinMaxWidthTest02() throws IOException, InterruptedException {
         String testName = "tableMinMaxWidthTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2472,14 +2553,15 @@ public class TableTest extends AbstractTableTest {
         table.addCell(cell);
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableMinMaxWidthTest03() throws IOException, InterruptedException {
         String testName = "tableMinMaxWidthTest03.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2490,14 +2572,15 @@ public class TableTest extends AbstractTableTest {
         table.addCell(cell);
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableMinMaxWidthTest04() throws IOException, InterruptedException {
         String testName = "tableMinMaxWidthTest04.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2508,14 +2591,15 @@ public class TableTest extends AbstractTableTest {
         table.addCell(cell);
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableMinMaxWidthTest05() throws IOException, InterruptedException {
         String testName = "tableMinMaxWidthTest05.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2531,14 +2615,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void cellsWithEdgeCaseLeadingTest01() throws IOException, InterruptedException {
         String testName = "cellsWithEdgeCaseLeadingTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdf = new PdfDocument(writer);
@@ -2603,14 +2688,15 @@ public class TableTest extends AbstractTableTest {
         document.add(table);
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableMinMaxWidthTest06() throws IOException, InterruptedException {
         String testName = "tableMinMaxWidthTest06.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2626,7 +2712,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -2685,8 +2772,8 @@ public class TableTest extends AbstractTableTest {
     @Test
     public void marginPaddingTest01() throws IOException, InterruptedException {
         String testName = "marginPaddingTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2711,14 +2798,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void spacingTest01() throws IOException, InterruptedException {
         String testName = "spacingTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2745,14 +2833,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void taggedTableWithCaptionTest01() throws IOException, InterruptedException {
         String testName = "taggedTableWithCaptionTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         pdfDoc.setTagged();
@@ -2768,14 +2857,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void wideCaptionTest01() throws IOException, InterruptedException {
         String testName = "wideCaptionTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2810,14 +2900,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void splitTableWithCaptionTest01() throws IOException, InterruptedException {
         String testName = "splitTableWithCaptionTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2842,14 +2933,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void captionedTableOfOnePageWithCollapsedBordersTest01() throws IOException, InterruptedException {
         String testName = "captionedTableOfOnePageWithCollapsedBordersTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2886,14 +2978,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableWithDifferentStylesOfCollapsedBordersTest() throws IOException, InterruptedException {
         String testName = "tableWithDifferentStylesOfCollapsedBordersTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2908,15 +3001,16 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
 
     }
 
     @Test
     public void captionedTableOfOnePageWithSeparatedBordersTest01() throws IOException, InterruptedException {
         String testName = "captionedTableOfOnePageWithSeparatedBordersTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -2951,7 +3045,8 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     private void addTable(Table table, boolean addParagraphBefore, boolean addParagraphAfter, Document doc) {
@@ -2998,8 +3093,8 @@ public class TableTest extends AbstractTableTest {
     @Test
     public void skipLastFooterAndProcessBigRowspanTest01() throws IOException, InterruptedException {
         String testName = "skipLastFooterAndProcessBigRowspanTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 140));
@@ -3016,14 +3111,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void skipLastFooterAndProcessBigRowspanTest02() throws IOException, InterruptedException {
         String testName = "skipLastFooterAndProcessBigRowspanTest02.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         int numRows = 3;
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
@@ -3046,14 +3142,15 @@ public class TableTest extends AbstractTableTest {
         }
         doc.add(table);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void skipLastFooterOnShortPageTest01() throws IOException, InterruptedException {
         String testName = "skipLastFooterOnShortPageTest01.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 120));
@@ -3071,14 +3168,15 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void firstRowPartiallyFitWideBottomBorderTest() throws IOException, InterruptedException {
         String testName = "firstRowPartiallyFitWideBottomBorderTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4);
@@ -3103,14 +3201,15 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void collapseWithNextRowWiderThanWithTableBorderTest() throws IOException, InterruptedException {
         String testName = "collapseWithNextRowWiderThanWithTableBorderTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4);
@@ -3136,14 +3235,15 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void tableBottomBorderWideTest() throws IOException, InterruptedException {
         String testName = "tableBottomBorderWideTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -3160,14 +3260,15 @@ public class TableTest extends AbstractTableTest {
         addTableBelowToCheckThatOccupiedAreaIsCorrect(doc);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void cellWithBigRowspanCompletedRowTooTest() throws IOException, InterruptedException {
         String testName = "cellWithBigRowspanCompletedRowTooTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -3199,14 +3300,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void cellWithBigRowspanCompletedRowNotTest() throws IOException, InterruptedException {
         String testName = "cellWithBigRowspanCompletedRowNotTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -3239,14 +3341,15 @@ public class TableTest extends AbstractTableTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void inheritHeaderPropsWhileMinMaxWidthCalculationsTest() throws IOException, InterruptedException {
         String filename = "inheritHeaderPropsWhileMinMaxWidthCalculations.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument pdf = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         Document document = new Document(pdf);
 
         Paragraph p = new Paragraph("Some text is placed at the beginning"
@@ -3267,8 +3370,8 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
@@ -3277,8 +3380,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void infiniteLoopOnUnfitCellAndBigRowspanTest() throws IOException, InterruptedException {
         String testName = "infiniteLoopOnUnfitCellAndBigRowspanTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
@@ -3291,7 +3394,7 @@ public class TableTest extends AbstractTableTest {
         table.addCell(cellNum1);
 
         Cell cellNum2 = new Cell(2, 2);
-        Image img = new Image(ImageDataFactory.create(sourceFolder + "itext.png"));
+        Image img = new Image(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"));
         cellNum2.add(img);
         table.addCell(cellNum2);
 
@@ -3302,7 +3405,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -3312,8 +3416,8 @@ public class TableTest extends AbstractTableTest {
     })
     public void firstRowNotFitBigRowspanTest() throws IOException, InterruptedException {
         String testName = "firstRowNotFitBigRowspanTest.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4);
@@ -3336,76 +3440,23 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
     public void bigRowSpanTooFarFullTest() throws IOException, InterruptedException {
-        String filename = "bigRowSpanTooFarFullTest.pdf";
-
-        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + filename));
-        Document document = new Document(pdf);
-
-        Table table = new Table(2);
-
-        int bigRowSpan = 5;
-        table.addCell(
-                new Cell(bigRowSpan, 1)
-                        .add(new Paragraph("row span " + bigRowSpan))
-                        .setBackgroundColor(ColorConstants.RED));
-        for (int i = 0; i < bigRowSpan; i++) {
-            table.addCell(
-                    new Cell()
-                            .add(new Paragraph(Integer.toString(i)))
-                            .setHeight(375)
-                            .setBackgroundColor(ColorConstants.BLUE));
-        }
-
-        document.add(table);
-        document.add(new AreaBreak());
-
-        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
-        document.add(table);
-
-        document.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder));
+        bigRowspanTooFar("bigRowSpanTooFarFullTest.pdf", false, false, false);
     }
 
     @Test
     public void bigRowSpanTooFarPartialTest() throws IOException, InterruptedException {
-        String filename = "bigRowSpanTooFarPartialTest.pdf";
+        bigRowspanTooFar("bigRowSpanTooFarPartialTest.pdf", false, false, true);
+    }
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + filename));
-        Document document = new Document(pdf);
-
-        Table table = new Table(2);
-
-        int bigRowSpan = 5;
-        table.addCell(
-                new Cell(bigRowSpan, 1)
-                        .add(new Paragraph("row span " + bigRowSpan))
-                        .setHeight(800)
-                        .setBackgroundColor(ColorConstants.RED));
-        for (int i = 0; i < bigRowSpan; i++) {
-            table.addCell(
-                    new Cell()
-                            .add(new Paragraph(Integer.toString(i)))
-                            .setHeight(375)
-                            .setBackgroundColor(ColorConstants.BLUE));
-        }
-
-        document.add(table);
-        document.add(new AreaBreak());
-
-        table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
-        document.add(table);
-
-        document.close();
-
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder));
+    @Test
+    public void bigRowSpanTooFarPartialLongLastCellTest() throws IOException, InterruptedException {
+        bigRowspanTooFar("bigRowSpanTooFarPartialLongLastCell.pdf", false, true, true);
     }
 
     @Test
@@ -3413,27 +3464,44 @@ public class TableTest extends AbstractTableTest {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
     })
     public void bigRowSpanTooFarNothingTest() throws IOException, InterruptedException {
-        String filename = "bigRowSpanTooFarNothingTest.pdf";
+        bigRowspanTooFar("bigRowSpanTooFarNothingTest.pdf", true, false, true);
+    }
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + filename));
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
+    public void bigRowSpanTooFarNothingLongLastCellTest() throws IOException, InterruptedException {
+        bigRowspanTooFar("bigRowSpanTooFarNothingLongLastCell.pdf", true, true, true);
+    }
+
+    private static void bigRowspanTooFar(String filename, boolean addKeepTogether, boolean longLastCell, boolean bigRowspanWithHeight) throws IOException, InterruptedException {
+        PdfDocument pdf = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         Document document = new Document(pdf);
 
         Table table = new Table(2);
 
         int bigRowSpan = 5;
-        table.addCell(
-                new Cell(bigRowSpan, 1)
-                        .add(new Paragraph("row span " + bigRowSpan))
-                        .setHeight(800)
-                        .setKeepTogether(true)
-                        .setBackgroundColor(ColorConstants.RED));
-        for (int i = 0; i < bigRowSpan; i++) {
+        final Cell bigRowspanCell = new Cell(bigRowSpan, 1)
+                .add(new Paragraph("row span " + bigRowSpan))
+                .setBackgroundColor(ColorConstants.RED);
+        if (bigRowspanWithHeight) {
+            bigRowspanCell.setHeight(800);
+        }
+        if (addKeepTogether) {
+            bigRowspanCell.setKeepTogether(true);
+        }
+        table.addCell(bigRowspanCell);
+        for (int i = 0; i < bigRowSpan - 1; i++) {
             table.addCell(
                     new Cell()
                             .add(new Paragraph(Integer.toString(i)))
-                            .setHeight(375)
-                            .setBackgroundColor(ColorConstants.BLUE));
+                            .setHeight(375));
         }
+        final Cell lastCell = new Cell()
+                .add(new Paragraph(Integer.toString(bigRowSpan - 1)))
+                .setHeight(longLastCell ? 1000 : 375);
+        table.addCell(lastCell);
 
         document.add(table);
         document.add(new AreaBreak());
@@ -3443,8 +3511,8 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename,
-                sourceFolder + "cmp_" + filename, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename,
+                SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER));
     }
 
     @Test
@@ -3452,7 +3520,7 @@ public class TableTest extends AbstractTableTest {
     public void setWidthShouldBeRespectedTest() throws IOException, InterruptedException {
         String fileName = "setWidthShouldBeRespectedTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
         Document doc = new Document(pdfDocument, new PageSize(842, 1400));
 
         Table table = new Table(2);
@@ -3472,8 +3540,8 @@ public class TableTest extends AbstractTableTest {
         doc.add(table);
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
-                sourceFolder + "cmp_" + fileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName,
+                SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER));
     }
 
     //creates 2 empty lines, where 2 is random number
@@ -3486,7 +3554,7 @@ public class TableTest extends AbstractTableTest {
     public void preciseFittingItalicBoldSimulatedTextInCellsTest() throws IOException, InterruptedException {
         String fileName = "preciseFittingItalicBoldSimulatedTextInCells.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
             Document doc = new Document(pdfDocument)) {
 
             int numberOfColumns = 9;
@@ -3507,8 +3575,8 @@ public class TableTest extends AbstractTableTest {
             doc.add(table);
         }
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
-                sourceFolder + "cmp_" + fileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName,
+                SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -3549,7 +3617,7 @@ public class TableTest extends AbstractTableTest {
         String fileName = "infiniteLoopKeepTogether.pdf";
         float fontSize = 8;
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + fileName));
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
                 Document doc = new Document(pdfDoc)) {
             doc.setMargins(138, 20, 75, 20);
 
@@ -3572,8 +3640,8 @@ public class TableTest extends AbstractTableTest {
             doc.add(table);
         }
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
-                sourceFolder + "cmp_" + fileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName,
+                SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -3583,15 +3651,16 @@ public class TableTest extends AbstractTableTest {
     })
     public void negativeLayoutAreaTest() throws IOException, InterruptedException {
         String testName = "negativeLayoutAreaTable.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595.0f, 50.0f));
 
         doc.add(new Table(new float[]{1, 1}).addCell(new Cell().setHeight(10.0f)));
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, testName + "_diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName,
+                DESTINATION_FOLDER, testName + "_diff"));
     }
 
     @Test
@@ -3601,7 +3670,7 @@ public class TableTest extends AbstractTableTest {
     public void keepTogetherCaptionAndHugeCellTest() throws IOException, InterruptedException {
         String fileName = "keepTogetherCaptionAndHugeCell.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName));
         Document document = new Document(pdfDocument, PageSize.A4);
 
         Table table = new Table(1)
@@ -3617,8 +3686,8 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
-                sourceFolder + "cmp_" + fileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName,
+                SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -3628,7 +3697,7 @@ public class TableTest extends AbstractTableTest {
     public void keepTogetherCaptionDoesntFitPageTest() throws IOException, InterruptedException {
         String fileName = "keepTogetherCaptionDoesntFitPage.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName));
         Document document = new Document(pdfDocument, PageSize.A4);
 
         document.add(new Paragraph(PlaceHolderTextUtil
@@ -3647,8 +3716,8 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
-                sourceFolder + "cmp_" + fileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName,
+                SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -3657,7 +3726,7 @@ public class TableTest extends AbstractTableTest {
     })
     public void keepTogetherCaptionAndSplitCellTest() throws IOException, InterruptedException {
         String fileName = "keepTogetherCaptionAndSplitCell.pdf";
-        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName));
         Document document = new Document(pdfDocument, PageSize.A4);
 
         Table table = new Table(1)
@@ -3674,8 +3743,8 @@ public class TableTest extends AbstractTableTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + fileName,
-                sourceFolder + "cmp_" + fileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName,
+                SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER));
     }
 
     @Test
@@ -3688,8 +3757,8 @@ public class TableTest extends AbstractTableTest {
         // and then minimized
 
         String testName = "splitComplexTable.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         ComplexTableGenerator template = new ComplexTableGenerator();
         ComplexTableGenerator.GenerationContext context = new ComplexTableGenerator.GenerationContext();
@@ -3701,7 +3770,7 @@ public class TableTest extends AbstractTableTest {
         template.generate(context);
         context.pdf.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder,
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
                 testName + "_diff"));
     }
 
@@ -3711,8 +3780,8 @@ public class TableTest extends AbstractTableTest {
     @Test
     public void keepTogetherNestedTableDoesNotThrow() throws IOException, InterruptedException {
         String testName = "keepTogetherNestedTableDoesNotThrow.pdf";
-        String outFileName = destinationFolder + testName;
-        String cmpFileName = sourceFolder + "cmp_" + testName;
+        String outFileName = DESTINATION_FOLDER + testName;
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdf = new PdfDocument(writer);
@@ -3735,7 +3804,7 @@ public class TableTest extends AbstractTableTest {
         document.add(outerTable);
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder,
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
                 testName + "_diff"));
     }
 

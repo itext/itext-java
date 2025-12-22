@@ -44,8 +44,6 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -54,6 +52,8 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Table}
@@ -1969,38 +1969,46 @@ public class TableRenderer extends AbstractRenderer {
         // the number of cells behind is less than minRowspan-1
         // so we should process the last cell in the column as in the case 1 == minRowspan
         if (i != row + minRowspan - 1 && null != rows.get(i)[col]) {
-            CellRenderer overflowCell = (CellRenderer) ((Cell) rows.get(i)[col].getModelElement()).getRenderer().setParent(this);
+            CellRenderer originalCell = rows.get(i)[col];
+            CellRenderer overflowCell = (CellRenderer) originalCell.createOverflowRenderer(-1);
+
             overflowRows.setCell(i - row, col, null);
             overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
-            CellRenderer originalCell = rows.get(i)[col];
             rows.get(i)[col] = null;
             rows.get(targetOverflowRowIndex[col])[col] = originalCell;
             originalCell.isLastRendererForModelElement = false;
-            overflowCell.setProperty(Property.TAGGING_HINT_KEY, originalCell.<Object>getProperty(Property.TAGGING_HINT_KEY));
         }
     }
 
-    private void enlargeCell(int col, int row, int minRowspan, CellRenderer[] currentRow, OverflowRowsWrapper overflowRows,
-                             int[] targetOverflowRowIndex, TableRenderer[] splitResult) {
+    private void enlargeCell(int col, int row, int minRowspan, CellRenderer[] currentRow,
+            OverflowRowsWrapper overflowRows, int[] targetOverflowRowIndex, TableRenderer[] splitResult) {
+
         LayoutArea cellOccupiedArea = currentRow[col].getOccupiedArea();
         if (1 == minRowspan) {
-
             // Here we use the same cell, but create a new renderer which doesn't have any children,
             // therefore it won't have any content.
             // we will change properties
-            CellRenderer overflowCell = (CellRenderer) ((Cell) currentRow[col].getModelElement()).clone(true).getRenderer();
+
+            Cell cellClone = ((Cell) currentRow[col].getModelElement()).clone(true);
+            CellRenderer overflowCell = (CellRenderer) cellClone.getRenderer();
             overflowCell.setParent(this);
+            // Remove properties from model element
             overflowCell.deleteProperty(Property.HEIGHT);
             overflowCell.deleteProperty(Property.MIN_HEIGHT);
             overflowCell.deleteProperty(Property.MAX_HEIGHT);
+            CellRenderer originalCell = currentRow[col];
+            overflowCell.addAllProperties(originalCell.getOwnProperties());
+            // Remove properties from renderer after copying
+            overflowCell.deleteProperty(Property.HEIGHT);
+            overflowCell.deleteProperty(Property.MIN_HEIGHT);
+            overflowCell.deleteProperty(Property.MAX_HEIGHT);
+
             overflowRows.setCell(0, col, null);
             overflowRows.setCell(targetOverflowRowIndex[col] - row, col, overflowCell);
             childRenderers.add(currentRow[col]);
-            CellRenderer originalCell = currentRow[col];
             currentRow[col] = null;
             rows.get(targetOverflowRowIndex[col])[col] = originalCell;
             originalCell.isLastRendererForModelElement = false;
-            overflowCell.setProperty(Property.TAGGING_HINT_KEY, originalCell.<Object>getProperty(Property.TAGGING_HINT_KEY));
         } else {
             enlargeCellWithBigRowspan(currentRow, overflowRows, row, col, minRowspan, splitResult, targetOverflowRowIndex);
         }

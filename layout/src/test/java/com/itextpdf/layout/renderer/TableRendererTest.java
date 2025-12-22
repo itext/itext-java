@@ -33,10 +33,12 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
@@ -148,6 +150,41 @@ public class TableRendererTest extends ExtendedITextTest {
 
         doc.add(table);
         doc.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void collapsedBorderRowspanOnPageSplitTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "collapsedBorderRowspanOnPageSplit.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_collapsedBorderRowspanOnPageSplit.pdf";
+
+        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+
+            Div dummyDiv = new Div();
+            dummyDiv.setBorder(new SolidBorder(ColorConstants.BLACK, 1.5f));
+            dummyDiv.setWidth(400);
+            dummyDiv.setHeight(720);
+            doc.add(dummyDiv);
+
+            Table table = new Table(2);
+            table.setBorderCollapse(BorderCollapsePropertyValue.COLLAPSE);
+            table.setBorder(new SolidBorder(ColorConstants.BLACK, 1.5f));
+
+            Cell cell1 = new Cell(4, 1);
+            cell1.setBackgroundColor(ColorConstants.GRAY);
+            cell1.add(new Paragraph("Text 0"));
+            table.addCell(cell1);
+
+            Cell cell2 = new Cell(4, 1);
+            cell2.add(new Paragraph("Text 1"));
+            cell2.add(new Paragraph("Text 2"));
+            cell2.add(new Paragraph("Text 3"));
+            cell2.add(new Paragraph("Text 4"));
+            table.addCell(cell2);
+
+            doc.add(table);
+        }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
