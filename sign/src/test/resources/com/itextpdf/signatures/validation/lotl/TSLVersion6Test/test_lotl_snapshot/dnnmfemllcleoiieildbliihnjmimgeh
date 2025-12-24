@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns4="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" Id="LOTL1235" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>6</TSLVersionIdentifier>
+        <TSLSequenceNumber>1</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUlistofthelists</TSLType>
+        <SchemeOperatorName>
+            <Name xml:lang="en">EU Operator name</Name>
+        </SchemeOperatorName>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>TEST</StreetAddress>
+                    <Locality>TEST</Locality>
+                    <PostalCode>TEST</PostalCode>
+                    <CountryName>EU</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="en">mailto:test@test.test</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeName>
+            <Name xml:lang="en">EU: TEST</Name>
+        </SchemeName>
+        <SchemeInformationURI>
+            <URI xml:lang="en">https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2019.276.01.0001.01.ENG</URI>
+            <URI xml:lang="en">https://ec.europa.eu/tools/lotl/eu-lotl-legalnotice.html#en</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>http://uri.etsi.org/TrstSvc/TrustedList/StatusDetn/EUlistofthelists</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/EUlistofthelists</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>EU</SchemeTerritory>
+        <PolicyOrLegalNotice>
+            <TSLLegalNotice xml:lang="en">TEST</TSLLegalNotice>
+        </PolicyOrLegalNotice>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <PointersToOtherTSL>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIDPDCCAiSgAwIBAgIBATANBgkqhkiG9w0BAQ0FADBQMRQwEgYDVQQDDAtDRVJULUxPVEwtNDEYMBYGA1UECgwPRVUgT3JnYW5pemF0aW9uMREwDwYDVQQLDAhQS0ktVEVTVDELMAkGA1UEBhMCTFUwHhcNMjQxMjIxMDAwMDA2WhcNMjYxMjIxMDAwMDA2WjBQMRQwEgYDVQQDDAtDRVJULUxPVEwtNDEYMBYGA1UECgwPRVUgT3JnYW5pemF0aW9uMREwDwYDVQQLDAhQS0ktVEVTVDELMAkGA1UEBhMCTFUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCiu8CP3OKq8DMOoJigZH8n1xssQhLtySOJ5tGS6KOWTfDaTl3eq+4svjLzhqGNDgSYwk/khYZEoJntO3lrkDN6KsYSOBDFNpjYpxa7p3EUjuJxDb1clqx27kkuMTIFl5pcs9oNuUORntyZ2SqjqqnqxkjsSpqNPl8nyZc9gaAY13XU4D2ACsRmnpURmkFj4ppMucMjTCeqlFesvJELf06jfJcLHIJU/b2Wx8a20x3nN564anLIpBfL5Ws40ScRywp9tve2M77DXWXhXKSAaE5D7Fnb7NRb/pPbW5sdfjhDoO7EghXsIDKgJPtdJlThikTkGTk59t6IODu9gnZ5x7uvAgMBAAGjITAfMB0GA1UdDgQWBBROJGXazRDpyPzpJpUN2EBep0AzazANBgkqhkiG9w0BAQ0FAAOCAQEAnOzoRYzYEhFdNqXwA89CaHTTEnfubTXqv+fx5t5SpXxr+TEYt4Vrhxepk+nHTfR9zcwsECYRaZ8c436F7Gk/Fva99njCSJKvh8Awtbmi1+qv8hdkaaNTs2mH+6zR0ivaanq+G3ozGXQ20L6/HdYXrmrBl6i4JjZ2jbbc5whPx/urgAlngB9oD34YfaedLVUfQr8y9OCwFNh0zVvLwYbFyPFdvmt9bgxvxmAH+pD/k8Sxe8HkMbqVqMo2/PgHlEaW7CoKoEnAsgGlvmTA4fA2rlUNIUWzZNCr6ee6pdfM6+wZS4v4301L1JezYzyJxJHN/Ols4IYrBvATPiZl2kxVPQ==</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://eidas.ec.europa.eu/efda/api/v2/validation-tests/testcase/tl/LOTL-4.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>EU</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUlistofthelists</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="en">EU Operator name</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns3:MimeType>application/vnd.etsi.tsl+xml</ns3:MimeType>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIDPjCCAiagAwIBAgIBATANBgkqhkiG9w0BAQ0FADBRMRMwEQYDVQQDDApDRVJULVRMLTQxMRowGAYDVQQKDBFUTDQxIE9yZ2FuaXphdGlvbjERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkxVMB4XDTI0MTIyMTAwMDAwNloXDTI2MTIyMTAwMDAwNlowUTETMBEGA1UEAwwKQ0VSVC1UTC00MTEaMBgGA1UECgwRVEw0MSBPcmdhbml6YXRpb24xETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJMVTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJ7o5NneCcKsLRSNL2HvpQ2IuFoqbeQp/kES93aoJ8OsHbY1dVBknrECy26+z7jEZ65tQdIKeI7EmRMQbTO20Iq0p+sjepFixBQbSllfEA6GaKLtvUDrzUgyw3MCRZx1zgEPy0DVmQg65urgMUqo2B835ffGSyq8czTJju7xWWZeLzJJMqRcZagJcj+Z2bBAgLkZanVqaUQtNtZ72Olw2j7oBP5KcghcrHE/eGEUVs8wlqJI+VzdEEfiPbGEnwJWOWTgyqs4NVywnq52Vr9SkiS+cPAAHzD545Hv0L+UL70wzohcyOt7A8APmF9uMcfa2azxCQASH18eZt0I/Uc+cP0CAwEAAaMhMB8wHQYDVR0OBBYEFAZ50rQUFw/Z/KmTU4iZ55tVIC8KMA0GCSqGSIb3DQEBDQUAA4IBAQBV8aNctP/UoZeaBFpORV7CDVhhkn0COs0E+8dG6WQUOEtAhpjxWCmn90+vgEfTfWKbnonQhRCkjfnX6uA584o4pLel7R+CqUoyBdgOvel/WLeD7kZeASJwMm3nNvUl3jsi/FREgkLg/ZBCq3QQGYmsV3uT41vTx/hmlPICe1ay0hHcR8UimDAXvrtS4U/EU8YD4N0gJJmCqurXYdBqFle3eHgKGtvCm0in4FJE91+34xFClC2OTwQ4BIfDoHVn1vV8jUZNgvXsDurIYxaajWr5PsKrjSY6bj0yvpVzjTOXA6CVe43wJmai4iQP5fXK6OpeTgdrt+P99wfHVzEelV6Y</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://eidas.ec.europa.eu/efda/api/v2/validation-tests/testcase/tl/TL-41.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>LU</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUgeneric</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="en">LU Operator name</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns3:MimeType>application/vnd.etsi.tsl+xml</ns3:MimeType>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIDPjCCAiagAwIBAgIBATANBgkqhkiG9w0BAQ0FADBRMRMwEQYDVQQDDApDRVJULVRMLTQyMRowGAYDVQQKDBFUTDQyIE9yZ2FuaXphdGlvbjERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkZSMB4XDTI0MTIyMTAwMDAwOFoXDTI2MTIyMTAwMDAwOFowUTETMBEGA1UEAwwKQ0VSVC1UTC00MjEaMBgGA1UECgwRVEw0MiBPcmdhbml6YXRpb24xETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJGUjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN+oBKd7cTJ7KAaxAlNa1UesLHX/nSwGoyaeDbcPsHNYVVnKfVYD9h5Lb6Ms5PNkhnSS6uqJIONWG2aFfI1VDj+TCJUfsYWAodvTJNLMiffjdOFtCm9Q//APAf5OnB4IaxF1gjCGDCzXrSlU8l8LJC6t3kEQ15/sCjRMtMOGtG5eCAgBHlB9uJ055tVOylPN5lhFNTpxaYiJUW+5R7k6KxWSfTbPjWZQHOWWp3zj6/sGccfUmpElkbEF7eajandlYNAi2J9afNSOnXfkeacqjwovCv5ij0Cy/OMb/ReScnHzZmdwBrTK5DS9jMZVyKkv8NtAKJUHIEJQH6atBMg1j5sCAwEAAaMhMB8wHQYDVR0OBBYEFHtdU8IXmE3eXBvS6IXse/hwOEAvMA0GCSqGSIb3DQEBDQUAA4IBAQAx1BcbYtMmTsbAGvV1zfuEVgUrqY8FzqQ8uUCfvV8ybmOiq2pbwAT6NH6HywnbVLWXti54EDlOaLlc/ZkbXGExkmmOT64lkyRldxRP9sFQPy60WpKfiHAiwQA0jIusGnXwhHm5st0aTen23HDc6ixTtdAcG3UGWS3mDcGXxI3SrO6HO5/UZCLbViTWGrQPErFO7Jm2xq0qZMtxBtQHGgpxFqllKbCrMozI4GaUjc6AyGABkdaZxvKqerNtbhk9qABWsc/GIuONjmYVKbghdJWr8LXISR7bPcmBBlifFuNscV1gi4bPhlgdLHRGuwdXJ517c4lYh00A5KSpLfaxVBDn</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://eidas.ec.europa.eu/efda/api/v2/validation-tests/testcase/tl/TL-42.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>FR</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUgeneric</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="en">FR Operator name</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns3:MimeType>application/vnd.etsi.tsl+xml</ns3:MimeType>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIDPjCCAiagAwIBAgIBATANBgkqhkiG9w0BAQ0FADBRMRMwEQYDVQQDDApDRVJULVRMLTQzMRowGAYDVQQKDBFUTDQzIE9yZ2FuaXphdGlvbjERMA8GA1UECwwIUEtJLVRFU1QxCzAJBgNVBAYTAkJFMB4XDTI0MTIyMTAwMDAxMFoXDTI2MTIyMTAwMDAxMFowUTETMBEGA1UEAwwKQ0VSVC1UTC00MzEaMBgGA1UECgwRVEw0MyBPcmdhbml6YXRpb24xETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJCRTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM8gGwjv82ehFl521h+JsWfROBm7ddSks2nmqOXXofgnl5uZhgEw3yeviJ59UTCaBVcAsS9cjgJEHTls9AarYesva6ODCErrN7VIvqMVi+B5As9uGxiUYfypt0AWv294fOFUMFgnV68QJHVF7Js1JAMQc3DwqGQUTxw8UrNh17PksF+m8T6tvsfkE7GCiKvl+Yu/qIoVhltmAoN8TZ9+vWRc12+uFO5cKXSa3xwedJYRtFR6MlUg8DwLYnrIgpiM0IHqhcKxkR/HzPPWKu2Fj1SyH7Z3FLy7FoPghosyOyf3AzX/xp+7k9iFhKDR69fvrQJFMQF/Xg0new3dIEEkHvcCAwEAAaMhMB8wHQYDVR0OBBYEFLNS5ThnMT91dGgyg9/doRwmdgO2MA0GCSqGSIb3DQEBDQUAA4IBAQCTiDflwDOlTyFo0OMut0kGORy0Pa0aptixjQuDs8FgeLYbWbiHHSS4Xc+1RH7s4jHkvf3vfCxPHeowxd5LgU/BKz+AJqRcTnK35jT7aOTNeJjU6zTVWARcUjIx7DfyQ7omlDWT6fucXL2OZ98fcsmi6s0RGVD8tguPO8BHrV/Fc9mkNWRkG1MrhhRueeg5gkzq6kUW2Z4OBkiFP5bVeSeB/cG+HqAtihwTVMWdrtCJX3uUdeaIwc8ONuKGUjyDiUtgx7a6NNIacHBG2YO+r0zXWy9p91Hy1TyhZybzDnpa+NwsD1hlgAf1vwnwav3JXmFc1r1BsKBp910OXU8qhIXa</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://eidas.ec.europa.eu/efda/api/v2/validation-tests/testcase/tl/TL-43.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>BE</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUgeneric</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="en">BE Operator name</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns3:MimeType>application/vnd.etsi.tsl+xml</ns3:MimeType>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+        </PointersToOtherTSL>
+        <ListIssueDateTime>2025-12-20T00:00:00Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2026-01-21T00:00:00Z</dateTime>
+        </NextUpdate>
+    </SchemeInformation>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="id-2dea4ecb192976ed48ee2fc4c2213467"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512"/><ds:Reference Id="xml_ref_id" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>dMtSfBA3nLZL/WXLTMVZn22uiHqIZgJCX4wnYEJRpS95qgGb2XEGsNP0FZPuXMyVBgZUZby0SG7yiMOL5aIMPg==</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xades-id-2dea4ecb192976ed48ee2fc4c2213467"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>8hzhfhSAkHnEU3RFYUaCbii1SRkckhr9I4mvYr3ApT5dLxPpP+v1pyH9O8LmF2o96PcvlRTIeMIOOy5lMuV0JA==</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="value-id-2dea4ecb192976ed48ee2fc4c2213467">J86+v1r7SsPRMPf1jSRsZt0uweB519ZzY/yk4RGGA7zxFEVUEMVbRxueP86yymZt76tFTaKAzOXL4sTY/bExNFe0/lbwb59M6DyJ4LbrJ/RlGgkM8qlPozQDu9YHYkn2zRJz0BAx13TRkkYZbEDU4HDVj2qRpwDatcErLF4cZ3f2+9DmRX1Dvh5/qeMGvfyJSCTNSGWcV9nu3na3TiME1+svBpulJW3Uw2DhDkJV513OtUdCyyjdMip2KaRhSLJMduFKAG66GvIc+/T7IdClphe0esL6LpeWIfuRMTpsei9IbXiAaZDuSTwLKUjG4WlnmKcrWEFtetHRCJC6RUiiGg==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIDPDCCAiSgAwIBAgIBATANBgkqhkiG9w0BAQ0FADBQMRQwEgYDVQQDDAtDRVJULUxPVEwtNDEYMBYGA1UECgwPRVUgT3JnYW5pemF0aW9uMREwDwYDVQQLDAhQS0ktVEVTVDELMAkGA1UEBhMCTFUwHhcNMjQxMjIxMDAwMDA2WhcNMjYxMjIxMDAwMDA2WjBQMRQwEgYDVQQDDAtDRVJULUxPVEwtNDEYMBYGA1UECgwPRVUgT3JnYW5pemF0aW9uMREwDwYDVQQLDAhQS0ktVEVTVDELMAkGA1UEBhMCTFUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCiu8CP3OKq8DMOoJigZH8n1xssQhLtySOJ5tGS6KOWTfDaTl3eq+4svjLzhqGNDgSYwk/khYZEoJntO3lrkDN6KsYSOBDFNpjYpxa7p3EUjuJxDb1clqx27kkuMTIFl5pcs9oNuUORntyZ2SqjqqnqxkjsSpqNPl8nyZc9gaAY13XU4D2ACsRmnpURmkFj4ppMucMjTCeqlFesvJELf06jfJcLHIJU/b2Wx8a20x3nN564anLIpBfL5Ws40ScRywp9tve2M77DXWXhXKSAaE5D7Fnb7NRb/pPbW5sdfjhDoO7EghXsIDKgJPtdJlThikTkGTk59t6IODu9gnZ5x7uvAgMBAAGjITAfMB0GA1UdDgQWBBROJGXazRDpyPzpJpUN2EBep0AzazANBgkqhkiG9w0BAQ0FAAOCAQEAnOzoRYzYEhFdNqXwA89CaHTTEnfubTXqv+fx5t5SpXxr+TEYt4Vrhxepk+nHTfR9zcwsECYRaZ8c436F7Gk/Fva99njCSJKvh8Awtbmi1+qv8hdkaaNTs2mH+6zR0ivaanq+G3ozGXQ20L6/HdYXrmrBl6i4JjZ2jbbc5whPx/urgAlngB9oD34YfaedLVUfQr8y9OCwFNh0zVvLwYbFyPFdvmt9bgxvxmAH+pD/k8Sxe8HkMbqVqMo2/PgHlEaW7CoKoEnAsgGlvmTA4fA2rlUNIUWzZNCr6ee6pdfM6+wZS4v4301L1JezYzyJxJHN/Ols4IYrBvATPiZl2kxVPQ==</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#id-2dea4ecb192976ed48ee2fc4c2213467"><xades:SignedProperties Id="xades-id-2dea4ecb192976ed48ee2fc4c2213467"><xades:SignedSignatureProperties><xades:SigningTime>2025-12-21T00:00:52Z</xades:SigningTime><xades:SigningCertificateV2><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>ifB5PbV8j3FiO96SuIWxDGUgMchzYDiDOXRlVZywLDA4ctbnx9AHNCVTVFgCNMmBRJ6Nd6nT8WY2LnKJ/8e7UA==</ds:DigestValue></xades:CertDigest><xades:IssuerSerialV2>MFkwVKRSMFAxFDASBgNVBAMMC0NFUlQtTE9UTC00MRgwFgYDVQQKDA9FVSBPcmdhbml6YXRpb24xETAPBgNVBAsMCFBLSS1URVNUMQswCQYDVQQGEwJMVQIBAQ==</xades:IssuerSerialV2></xades:Cert></xades:SigningCertificateV2></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#xml_ref_id"><xades:MimeType>application/octet-stream</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></TrustServiceStatusList>
