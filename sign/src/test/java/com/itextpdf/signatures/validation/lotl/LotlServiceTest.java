@@ -64,7 +64,7 @@ public class LotlServiceTest extends ExtendedITextTest {
             "./src/test/resources/com/itextpdf/signatures/validation" + "/lotl/LotlState2025_08_08/";
     private static final String SOURCE =
             "./src/test/resources/com/itextpdf/signatures/validation" + "/lotl/LotlServiceTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/LotlTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/LotlTest/";
 
     @BeforeAll
     public static void before() {

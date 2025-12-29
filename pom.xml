@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
-  <groupId>com.itextpdf</groupId>
-  <artifactId>root</artifactId>
+  <groupId>com.itextpdf.android</groupId>
+  <artifactId>root-android</artifactId>
   <version>9.5.0</version>
   <packaging>pom</packaging>
-
   <name>iText</name>
   <description>A Free Java-PDF library</description>
   <url>https://itextpdf.com/</url>
@@ -21,7 +20,6 @@
       <url>http://www.fsf.org/licensing/licenses/agpl-3.0.html</url>
     </license>
   </licenses>
-
   <developers>
     <developer>
       <id>itext</id>
@@ -30,7 +28,6 @@
       <url>https://www.itextpdf.com</url>
     </developer>
   </developers>
-
   <mailingLists>
     <mailingList>
       <name>iText on StackOverflow</name>
@@ -45,7 +42,6 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
-
   <modules>
     <module>commons</module>
     <module>barcodes</module>
@@ -62,13 +58,10 @@
     <module>sign</module>
     <module>styled-xml-parser</module>
     <module>svg</module>
-    <module>bouncy-castle-fips-adapter</module>
     <module>bouncy-castle-adapter</module>
     <module>bouncy-castle-connector</module>
     <module>pdfua</module>
-    <module>brotli-compressor</module>
   </modules>
-
   <scm>
     <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
     <url>https://git.itextsupport.com/projects/I7J/repos/itextcore</url>
@@ -81,48 +74,43 @@
     <system>jenkins-ci</system>
     <url>https://jenkins.itextsupport.com/</url>
   </ciManagement>
-
   <properties>
-    <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.81</bouncycastle.version>
-    <dependencyCheck.version>7.0.0</dependencyCheck.version>
-    <failsafe.version>3.0.0-M3</failsafe.version>
-    <jacoco.version>0.8.4</jacoco.version>
-    <java.version>1.8</java.version>
-    <javadoc-additionalOptions />
-    <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
-    <javadoc.version>3.7.0</javadoc.version>
-    <junit.jupiter.version>5.10.2</junit.jupiter.version>
-    <junit.platform.version>1.10.2</junit.platform.version>
+    <sharpen.cSharpTargetFolder>empty</sharpen.cSharpTargetFolder>
+    <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
+    <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
     <junitparams.version>1.0.4</junitparams.version>
-    <logback.version>1.3.14</logback.version>
-    <jackson.core.version>2.17.0</jackson.core.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.jar.version>3.1.0</maven.jar.version>
+    <surefire.version>3.0.0-M3</surefire.version>
+    <native.maven.plugin.version>0.10.1</native.maven.plugin.version>
+    <junit.platform.version>1.10.2</junit.platform.version>
+    <sharpen.phase>none</sharpen.phase>
+    <sharpen.showdiff>false</sharpen.showdiff>
+    <slf4j.version>2.0.9</slf4j.version>
+    <sharpen.extraDependencies></sharpen.extraDependencies>
     <maven.source.version>3.0.1</maven.source.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <skipTests>true</skipTests>
-    <slf4j.version>2.0.16</slf4j.version>
-    <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
-    <sonar.dependencyCheck.reportPath>target/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
-    <surefire.version>3.0.0-M3</surefire.version>
-    <apache.santuario.version>3.0.6</apache.santuario.version>
-
-    <sharpen.builddotnet>false</sharpen.builddotnet>
-    <sharpen.showdiff>false</sharpen.showdiff>
-    <sharpen.phase>none</sharpen.phase>
+    <logback.version>1.3.14</logback.version>
+    <java.version>1.8</java.version>
+    <bouncycastle.version>1.81</bouncycastle.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
     <sharpen.projectName>empty</sharpen.projectName>
-    <sharpen.cSharpTargetFolder>empty</sharpen.cSharpTargetFolder>
-    <sharpen.cSharpSourceCodeDestination />
-    <sharpen.cSharpTestCodeDestination />
-    <sharpen.extraDependencies>
-    </sharpen.extraDependencies>
-
-    <native.maven.plugin.version>0.10.1</native.maven.plugin.version>
+    <apache.santuario.version>2.3.5</apache.santuario.version>
+    <javadoc.version>3.7.0</javadoc.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+    <jacoco.version>0.8.4</jacoco.version>
+    <sharpen.builddotnet>false</sharpen.builddotnet>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <dependencyCheck.version>7.0.0</dependencyCheck.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <sharpen.cSharpTestCodeDestination></sharpen.cSharpTestCodeDestination>
+    <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
+    <failsafe.version>3.0.0-M3</failsafe.version>
+    <javadoc-additionalOptions></javadoc-additionalOptions>
+    <jackson.core.version>2.17.0</jackson.core.version>
+    <maven.jar.version>3.1.0</maven.jar.version>
+    <argLine>-Xmx1024m</argLine>
+    <sharpen.cSharpSourceCodeDestination></sharpen.cSharpSourceCodeDestination>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -148,7 +136,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <repositories>
     <repository>
       <releases>
@@ -183,7 +170,6 @@
       <url>https://repo.itextsupport.com/artifactory/releases</url>
     </pluginRepository>
   </pluginRepositories>
-
   <build>
     <finalName>itext-${project.artifactId}-${project.version}</finalName>
     <pluginManagement>
@@ -250,7 +236,6 @@
           <target>${java.version}</target>
         </configuration>
       </plugin>
-      <!-- Run integration tests -->
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${failsafe.version}</version>
@@ -299,7 +284,6 @@
             <link>${javadoc-link}</link>
           </links>
           <sourceFileExcludes>
-            <!-- com.itextpdf.io.util -->
             <sourceFileExclude>com/itextpdf/io/util/ArrayUtil.java</sourceFileExclude>
             <sourceFileExclude>com/itextpdf/io/util/DateTimeUtil.java</sourceFileExclude>
             <sourceFileExclude>com/itextpdf/io/util/DecimalFormatUtil.java</sourceFileExclude>
@@ -319,22 +303,11 @@
             <sourceFileExclude>com/itextpdf/io/util/SystemUtil.java</sourceFileExclude>
             <sourceFileExclude>com/itextpdf/io/util/TextUtil.java</sourceFileExclude>
             <sourceFileExclude>com/itextpdf/io/util/UrlUtil.java</sourceFileExclude>
-
-            <!-- com.itextpdf.io.codec.brotli -->
             <sourceFileExclude>com/itextpdf/io/codec/brotli/dec/*.java</sourceFileExclude>
-
-            <!-- styled-xml-parser -->
             <sourceFileExclude>com/itextpdf/styledxmlparser/PortUtil.java</sourceFileExclude>
-
-            <!-- com.itextpdf.styledxmlparser.jsoup -->
             <sourceFileExclude>com/itextpdf/styledxmlparser/jsoup/**/*.java</sourceFileExclude>
-
-            <!-- kernel -->
             <sourceFileExclude>com/itextpdf/kernel/crypto/CryptoUtil.java</sourceFileExclude>
-
-            <!-- svg -->
             <sourceFileExclude>com/itextpdf/svg/utils/SvgCoordinateUtils.java</sourceFileExclude>
-            <!-- sharpen mapping -->
             <sourceFileExclude>**/sharpenconfig/**</sourceFileExclude>
           </sourceFileExcludes>
           <groups>
@@ -409,7 +382,6 @@
           <excludeResources>true</excludeResources>
         </configuration>
       </plugin>
-      <!-- Run unit tests -->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
@@ -431,7 +403,6 @@
       </plugin>
     </plugins>
   </build>
-
   <reporting>
     <plugins>
       <plugin>
@@ -472,7 +443,6 @@
       </plugin>
     </plugins>
   </reporting>
-
   <profiles>
     <profile>
       <id>java9+</id>
@@ -480,8 +450,8 @@
         <jdk>[9,)</jdk>
       </activation>
       <properties>
-        <javadoc-additionalOptions>-html5</javadoc-additionalOptions>
         <javadoc-link>https://docs.oracle.com/javase/9/docs/api/</javadoc-link>
+        <javadoc-additionalOptions>-html5</javadoc-additionalOptions>
       </properties>
     </profile>
     <profile>
@@ -494,7 +464,6 @@
       <id>qa</id>
       <build>
         <plugins>
-          <!-- Compares current version to the latest released version to prevent breaking changes -->
           <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
             <artifactId>japicmp-maven-plugin</artifactId>
@@ -513,16 +482,12 @@
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
                 <excludes>
-                  <!-- Contains interfaces for bouncycastle wrappers which can be changes in any time -->
                   <exclude>com.itextpdf.commons.bouncycastle</exclude>
-                  <!-- Updated embedded org.brotli.dec dependency -->
                   <exclude>com.itextpdf.io.codec.brotli.dec</exclude>
                 </excludes>
                 <excludeModules>
-                  <excludeModule>brotli-compressor</excludeModule>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
                   <excludeModule>bouncy-castle-connector</excludeModule>
-                  <excludeModule>bouncy-castle-fips-adapter</excludeModule>
                   <excludeModule>pdftest</excludeModule>
                 </excludeModules>
               </parameter>
@@ -534,7 +499,7 @@
             <executions>
               <execution>
                 <id>bundle-manifest</id>
-                <phase />
+                <phase></phase>
               </execution>
             </executions>
           </plugin>
@@ -550,11 +515,11 @@
             <executions>
               <execution>
                 <id>default-resources</id>
-                <phase />
+                <phase></phase>
               </execution>
               <execution>
                 <id>default-testResources</id>
-                <phase />
+                <phase></phase>
               </execution>
             </executions>
           </plugin>
@@ -575,6 +540,13 @@
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
             <version>${dependencyCheck.version}</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
             <dependencies>
               <dependency>
                 <groupId>mysql</groupId>
@@ -590,26 +562,18 @@
               <databaseUser />
               <format>ALL</format>
             </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>aggregate</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>
       <properties>
-        <maven.main.skip>true</maven.main.skip>
         <maven.test.skip>true</maven.test.skip>
+        <maven.main.skip>true</maven.main.skip>
       </properties>
     </profile>
     <profile>
       <id>test</id>
       <build>
         <plugins>
-          <!-- Run integration tests -->
           <plugin>
             <artifactId>maven-failsafe-plugin</artifactId>
             <executions>
@@ -643,7 +607,6 @@
               <skipSource>true</skipSource>
             </configuration>
           </plugin>
-          <!-- Run unit tests -->
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
@@ -659,8 +622,6 @@
               <skip>true</skip>
             </configuration>
           </plugin>
-          <!-- Compute test coverage for Sonar BEWARE: Sonar
-                                  doesn't run the verify phase, it has to be forced by setting -Dsonar.phase=verify -->
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -682,22 +643,15 @@
             </executions>
             <configuration>
               <propertyName>jacoco.agent.argLine</propertyName>
-              <!-- default: argLine -->
               <includes>
                 <include>com/itextpdf/**</include>
               </includes>
               <destFile>${project.build.directory}/jacoco-integration.exec</destFile>
-              <!-- agent -->
               <dataFile>${project.build.directory}/jacoco-integration.exec</dataFile>
-              <!-- report -->
               <jmx>true</jmx>
-              <!-- jmx is set to true as a workaround for the code coverage measurement problem with upgrade
-              to junit 4.13.2. See more in DEVSIX-4761. With the future jacoco/junit upgrades the necessity in
-              setting this parameter might fade. It's not used for anything else but making sure code coverage is
-              measured correctly. -->
             </configuration>
           </plugin>
-          <plugin><!-- A fork of https://github.com/sparebank1utvikling/turbo-maven-plugin; available at https://repo.itextsupport.com/artifactory/releases -->
+          <plugin>
             <groupId>com.apryse</groupId>
             <artifactId>apryse-turbo-maven-plugin</artifactId>
             <version>1.0.0</version>
@@ -709,73 +663,7 @@
         </plugins>
       </build>
     </profile>
-    <!-- This profile shall always go after test profile because it overrides several plugins -->
     <profile>
-      <id>bouncy-castle-fips-test</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <configuration>
-              <includes>
-                <include>**/*.java</include>
-              </includes>
-              <groups>BouncyCastleIntegrationTest</groups>
-            </configuration>
-            <executions>
-              <execution>
-                <id>general-mode</id>
-                <goals>
-                  <goal>integration-test</goal>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>approved-mode</id>
-                <goals>
-                  <goal>integration-test</goal>
-                  <goal>verify</goal>
-                </goals>
-                <configuration>
-                  <systemPropertyVariables>
-                    <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <groups>BouncyCastleUnitTest</groups>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <id>general-mode</id>
-              </execution>
-              <execution>
-                <id>approved-mode</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <systemPropertyVariables>
-                    <org.bouncycastle.fips.approved_only>true</org.bouncycastle.fips.approved_only>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <!-- This profile is only used by Jenkins. -->
       <id>mutationtest</id>
       <build>
         <plugins>
@@ -810,25 +698,12 @@
         </plugins>
       </build>
       <properties>
-        <maven.main.skip>true</maven.main.skip>
         <maven.test.skip>true</maven.test.skip>
+        <maven.main.skip>true</maven.main.skip>
       </properties>
     </profile>
     <profile>
       <id>build-sharpen-configs</id>
-      <dependencies>
-        <dependency>
-          <groupId>sharpen</groupId>
-          <artifactId>sharpen-config</artifactId>
-          <version>1.0-SNAPSHOT</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>sharpen</groupId>
-          <artifactId>standard-framework-mapping</artifactId>
-          <version>1.0-SNAPSHOT</version>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -857,16 +732,15 @@
             </executions>
           </plugin>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <version>3.4.2</version>
             <executions>
               <execution>
                 <id>sharpen-config-jar</id>
+                <phase>package</phase>
                 <goals>
                   <goal>jar</goal>
                 </goals>
-                <phase>package</phase>
                 <configuration>
                   <classifier>sharpen-configuration</classifier>
                   <includes>
@@ -879,10 +753,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-
-    <profile>
-      <id>with-sharpen</id>
       <dependencies>
         <dependency>
           <groupId>sharpen</groupId>
@@ -896,55 +766,10 @@
           <version>1.0-SNAPSHOT</version>
         </dependency>
       </dependencies>
+    </profile>
+    <profile>
+      <id>with-sharpen</id>
       <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <version>3.6.0</version>
-            <executions>
-              <execution>
-                <id>add-sharpenConfiguration-source</id>
-                <phase>generate-sources</phase>
-                <goals>
-                  <goal>add-source</goal>
-                  <goal>add-resource</goal>
-                </goals>
-                <configuration>
-                  <sources>
-                    <source>${project.basedir}/src/sharpenconfig/java</source>
-                  </sources>
-                  <resources>
-                    <resource>
-                      <directory>${project.basedir}/src/sharpenconfig/resources</directory>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>3.4.2</version>
-            <executions>
-              <execution>
-                <id>sharpen-config-jar</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-                <phase>package</phase>
-                <configuration>
-                  <classifier>sharpen-configuration</classifier>
-                  <includes>
-                    <include>**/SharpenConfig*.class</include>
-                    <include>**/sharpen.config.MappingConfiguration</include>
-                  </includes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
         <pluginManagement>
           <plugins>
             <plugin>
@@ -975,7 +800,67 @@
             </plugin>
           </plugins>
         </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>add-sharpenConfiguration-source</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-source</goal>
+                  <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                  <sources>
+                    <source>${project.basedir}/src/sharpenconfig/java</source>
+                  </sources>
+                  <resources>
+                    <resource>
+                      <directory>${project.basedir}/src/sharpenconfig/resources</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.4.2</version>
+            <executions>
+              <execution>
+                <id>sharpen-config-jar</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <classifier>sharpen-configuration</classifier>
+                  <includes>
+                    <include>**/SharpenConfig*.class</include>
+                    <include>**/sharpen.config.MappingConfiguration</include>
+                  </includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
       </build>
+      <dependencies>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>sharpen-config</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>standard-framework-mapping</artifactId>
+          <version>1.0-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
     </profile>
     <profile>
       <id>sharpen-configuration</id>
@@ -985,16 +870,15 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <version>3.4.2</version>
             <executions>
               <execution>
                 <id>default-jar</id>
+                <phase>package</phase>
                 <goals>
                   <goal>jar</goal>
                 </goals>
-                <phase>package</phase>
                 <configuration>
                   <excludes>
                     <exclude>**/SharpenConfig*.class</exclude>
@@ -1009,19 +893,6 @@
     </profile>
     <profile>
       <id>native</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.graalvm.nativeimage</groupId>
-          <artifactId>svm</artifactId>
-          <version>22.3.5</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>bcprov-jdk18on</artifactId>
-          <version>${bouncycastle.version}</version>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -1051,16 +922,15 @@
             <executions>
               <execution>
                 <id>test-native</id>
+                <phase>test</phase>
                 <goals>
                   <goal>test</goal>
                 </goals>
-                <phase>test</phase>
               </execution>
             </executions>
             <configuration>
               <buildArgs>
-                <arg>
-                  --initialize-at-build-time=org.junit.validator.PublicClassValidator
+                <arg>--initialize-at-build-time=org.junit.validator.PublicClassValidator
                   --initialize-at-build-time=org.junit.platform.engine.TestTag
                   --initialize-at-run-time=org.bouncycastle.crypto.prng.SP800SecureRandom
                   --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV
@@ -1079,10 +949,8 @@
 
                   -H:+AddAllCharsets
                   -H:ReflectionConfigurationFiles=${basedir}/../resources/graalvm/reflect-config.json
-                  <!-- Graalvm requires VisualStudio 2022 on Windows but it also works with earlier versions.
-                       So this is a workaround to run tests on TC agents having earlier VS versions installed. -->
-                  -H:-CheckToolchain
-                </arg>
+                  
+                  -H:-CheckToolchain</arg>
               </buildArgs>
               <skipTests>false</skipTests>
               <metadataRepository>
@@ -1092,6 +960,19 @@
           </plugin>
         </plugins>
       </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.graalvm.nativeimage</groupId>
+          <artifactId>svm</artifactId>
+          <version>22.3.5</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15to18</artifactId>
+          <version>${bouncycastle.version}</version>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>

@@ -193,7 +193,7 @@ public class CompareTool {
         if (MEMORY_FIRST_WRITER_DISABLED) {
             return new PdfWriter(filename, properties);
         } else {
-            return new MemoryFirstPdfWriter(filename, properties); // Android-Conversion-Replace return new PdfWriter(filename, properties);
+            return new PdfWriter(filename, properties);
         }
     }
 

@@ -48,7 +48,7 @@ import org.xml.sax.SAXException;
 public class TaggedPdfReaderToolTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/utils/TaggedPdfReaderToolTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/utils/TaggedPdfReaderToolTest/";
 
     @BeforeAll
     public static void beforeClass() {

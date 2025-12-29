@@ -64,7 +64,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/ListBoxFieldTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/forms/form/element/ListBoxFieldTest/";
+            "./target/test/com/itextpdf/forms/form/element/ListBoxFieldTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -56,7 +56,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class CreateShadingTest extends ExtendedITextTest {
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/colorspace/CreateShadingTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/colorspace/CreateShadingTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/colorspace/CreateShadingTest/";
 
     @BeforeAll

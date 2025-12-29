@@ -29,7 +29,6 @@ import com.itextpdf.kernel.pdf.PageResizer.VerticalAnchorPoint;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
 
 import org.junit.jupiter.api.*;
 
@@ -37,7 +36,7 @@ import java.io.IOException;
 
 @Tag("IntegrationTest")
 public class PageResizerTest extends ExtendedITextTest {
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PageResizerTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PageResizerTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PageResizerTest/";
 
     @BeforeAll
@@ -566,7 +565,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -582,7 +580,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -598,7 +595,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -614,7 +610,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -630,7 +625,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -646,7 +640,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -662,7 +655,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -678,7 +670,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -694,7 +685,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -710,7 +700,6 @@ public class PageResizerTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(DESTINATION_FOLDER + outFileName,
                         SOURCE_FOLDER + "cmp_" + outFileName, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(DESTINATION_FOLDER + outFileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test

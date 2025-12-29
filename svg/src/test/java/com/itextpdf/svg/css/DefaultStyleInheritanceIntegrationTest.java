@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class DefaultStyleInheritanceIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/css/DefaultInheritance/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/css/DefaultInheritance/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/css/DefaultInheritance/";
 
     @BeforeAll
     public static void beforeClass() {

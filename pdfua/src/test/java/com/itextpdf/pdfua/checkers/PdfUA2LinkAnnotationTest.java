@@ -59,7 +59,7 @@ import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUA2LinkAnnotationTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUA2LinkAnnotationTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
     @BeforeAll

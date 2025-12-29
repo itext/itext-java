@@ -573,7 +573,7 @@ public class CRLValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (Fails on android earlier with an error 'The CRL issuer does not share the root of the inspected certificate.')
+    @org.junit.jupiter.api.Disabled
     public void crlResponsesCrossSignedTest() throws IOException, CertificateException, CRLException {
         String testDataPath = SOURCE_FOLDER + "crlResponsesCrossSigned/";
 

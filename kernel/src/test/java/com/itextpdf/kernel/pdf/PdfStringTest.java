@@ -56,7 +56,7 @@ import org.junit.jupiter.api.Test;
 public class PdfStringTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStringTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfStringTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStringTest/";
 
     @BeforeAll
     public static void beforeClass() {

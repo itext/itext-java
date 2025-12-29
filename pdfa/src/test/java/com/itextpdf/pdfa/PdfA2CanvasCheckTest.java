@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Tag("IntegrationTest")
 public class PdfA2CanvasCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2CanvasCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2CanvasCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

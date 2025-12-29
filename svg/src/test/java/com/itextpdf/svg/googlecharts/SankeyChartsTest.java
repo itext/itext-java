@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class SankeyChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/SankeyChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/SankeyChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/SankeyChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

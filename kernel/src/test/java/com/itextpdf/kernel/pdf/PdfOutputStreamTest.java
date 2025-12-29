@@ -45,7 +45,7 @@ import java.nio.charset.StandardCharsets;
 @Tag("IntegrationTest")
 public class PdfOutputStreamTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfOutputStreamTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfOutputStreamTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -64,7 +64,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
     public static final String SRC =
             "./src/test/resources/com/itextpdf/kernel/crypto/securityhandler/StandardHandlerUsingAesGcmTest/";
     public static final String DEST =
-            TestUtil.getOutputPath() + "/kernel/crypto/securityhandler/StandardHandlerUsingAesGcmTest/";
+            "./target/test/com/itextpdf/kernel/crypto/securityhandler/StandardHandlerUsingAesGcmTest/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final byte[] OWNER_PASSWORD = "supersecret".getBytes(StandardCharsets.UTF_8);

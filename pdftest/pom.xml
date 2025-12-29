@@ -1,31 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>9.5.0</version>
   </parent>
-
-  <artifactId>pdftest</artifactId>
-
+  <artifactId>pdftest-android</artifactId>
   <name>iText - pdftest</name>
   <url>https://itextpdf.com/</url>
-
   <properties>
-    <sonar.skip>true</sonar.skip>
-    <!-- Latest version for now, but still needs to be updated later in order to fix VeraPdf issues -->
-    <verapdf.version>1.28.2</verapdf.version>
-
     <sharpen.phase>install</sharpen.phase>
-    <sharpen.projectName>pdftest</sharpen.projectName>
     <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
-    <sharpen.cSharpSourceCodeDestination>itext/itext.pdftest</sharpen.cSharpSourceCodeDestination>
     <sharpen.cSharpTestCodeDestination>itext.tests/itext.pdftest.tests</sharpen.cSharpTestCodeDestination>
+    <sonar.skip>true</sonar.skip>
+    <sharpen.projectName>pdftest</sharpen.projectName>
+    <verapdf.version>1.28.2</verapdf.version>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.pdftest</sharpen.cSharpSourceCodeDestination>
   </properties>
-
-
   <dependencies>
     <dependency>
       <groupId>org.verapdf</groupId>
@@ -43,7 +36,6 @@
       <version>${junit.jupiter.version}</version>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -55,6 +47,14 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-assembly-verapdf-app</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
           <finalName>VeraPdfValidatorApp</finalName>
           <archive>
@@ -67,14 +67,6 @@
           </descriptorRefs>
           <appendAssemblyId>false</appendAssemblyId>
         </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly-verapdf-app</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

@@ -1,52 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>root</artifactId>
+    <groupId>com.itextpdf.android</groupId>
+    <artifactId>root-android</artifactId>
     <version>9.5.0</version>
   </parent>
-
-  <artifactId>layout</artifactId>
-
+  <artifactId>layout-android</artifactId>
   <name>iText - layout</name>
   <url>https://itextpdf.com/</url>
   <properties>
-
     <sharpen.phase>install</sharpen.phase>
-    <sharpen.projectName>layout</sharpen.projectName>
     <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
-    <sharpen.cSharpSourceCodeDestination>itext/itext.layout</sharpen.cSharpSourceCodeDestination>
     <sharpen.cSharpTestCodeDestination>itext.tests/itext.layout.tests</sharpen.cSharpTestCodeDestination>
+    <sharpen.projectName>layout</sharpen.projectName>
+    <sharpen.cSharpSourceCodeDestination>itext/itext.layout</sharpen.cSharpSourceCodeDestination>
   </properties>
-
   <dependencies>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>kernel</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>kernel-android</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>font-asian</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>hyph</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>font-asian-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>pdftest</artifactId>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>hyph-android</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf.android</groupId>
+      <artifactId>pdftest-android</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
@@ -62,7 +57,5 @@
         </includes>
       </resource>
     </resources>
-    <plugins>
-    </plugins>
   </build>
 </project>

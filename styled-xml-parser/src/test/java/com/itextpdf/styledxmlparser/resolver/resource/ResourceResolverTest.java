@@ -146,7 +146,7 @@ public class ResourceResolverTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6612 Unignore tests related to "#" symbol in URL path)
+    @org.junit.jupiter.api.Disabled
     public void malformedResourceNameTest07() throws IOException {
         String fileName = "%23%5B%5D@!$&'()+,;=._~-/styles09.css";
 

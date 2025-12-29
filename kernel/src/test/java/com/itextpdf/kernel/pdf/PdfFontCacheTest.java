@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 public class PdfFontCacheTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfFontCacheTest/";
     private static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfFontCacheTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfFontCacheTest/";
 
 
     static final String pangramme = "Amazingly few discotheques provide jukeboxes " +

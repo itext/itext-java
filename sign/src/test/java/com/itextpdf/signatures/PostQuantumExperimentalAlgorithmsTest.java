@@ -68,7 +68,7 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/signatures/PostQuantumExperimentalAlgorithmsTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/signatures/PostQuantumExperimentalAlgorithmsTest/";
+            "./target/test/com/itextpdf/signatures/PostQuantumExperimentalAlgorithmsTest/";
 
     private static final String SOURCE_FILE = SOURCE_FOLDER + "helloWorldDoc.pdf";
     private static final String SIGNATURE_FIELD = "Signature";
