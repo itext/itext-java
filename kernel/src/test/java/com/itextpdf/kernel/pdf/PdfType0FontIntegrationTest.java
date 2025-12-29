@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfType0FontIntegrationTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfType0FontIntegrationTest/";
-    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfType0FontIntegrationTest/";
 
     private static final String[] CHINESE = new String[] {

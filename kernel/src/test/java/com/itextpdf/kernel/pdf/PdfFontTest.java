@@ -69,13 +69,13 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfFontTest extends ExtendedITextTest {
-    public static final int PageCount = 1;
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfFontTest/";
-    public static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfFontTest/";
+    private static final int PageCount = 1;
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfFontTest/";
+    private static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/fonts/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfFontTest/";
 
-    static final String author = "Alexander Chingarev";
-    static final String creator = "iText";
+    private static final String author = "Alexander Chingarev";
+    private static final String creator = "iText";
 
     @BeforeAll
     public static void beforeClass() {
@@ -225,7 +225,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         PdfFont type0Font = PdfFontFactory.createFont(font, "Identity-H");
 //        type0Font.setSubset(false);
         Assertions.assertTrue(type0Font instanceof PdfType0Font, "PdfType0Font expected");
@@ -665,7 +665,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_EMBEDDED);
         Assertions.assertTrue(pdfTrueTypeFont instanceof PdfTrueTypeFont, "PdfTrueTypeFont expected");
@@ -716,7 +716,7 @@ public class PdfFontTest extends ExtendedITextTest {
         pdfDoc.getDocumentInfo().setAuthor(author).
                 setCreator(creator).
                 setTitle(title);
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_NOT_EMBEDDED);
         Assertions.assertTrue(pdfTrueTypeFont instanceof PdfTrueTypeFont, "PdfTrueTypeFont expected");
@@ -769,7 +769,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        String font = fontsFolder + "Puritan2.otf";
+        String font = fontsFolder + "Puritan-Regular.otf";
 
         PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_EMBEDDED);
@@ -821,7 +821,7 @@ public class PdfFontTest extends ExtendedITextTest {
         writer.setCompressionLevel(CompressionConstants.NO_COMPRESSION);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        String font = fontsFolder + "Puritan2.otf";
+        String font = fontsFolder + "Puritan-Regular.otf";
 
         PdfFont pdfTrueTypeFont = PdfFontFactory.createFont(font, PdfEncodings.IDENTITY_H);
         PdfPage page = pdfDoc.addNewPage();
@@ -862,7 +862,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        String font = fontsFolder + "Puritan2.otf";
+        String font = fontsFolder + "Puritan-Regular.otf";
 
         PdfFont pdfFont = PdfFontFactory.createFont(font, "Identity-H");
         Assertions.assertTrue(pdfFont instanceof PdfType0Font, "PdfType0Font expected");
@@ -1463,19 +1463,19 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void autoDetect3() throws IOException {
-        byte[] otf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "Puritan2.otf"));
+        byte[] otf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "Puritan-Regular.otf"));
         Assertions.assertTrue(FontProgramFactory.createFont(otf) instanceof TrueTypeFont, "TrueType (OTF) font expected");
     }
 
     @Test
     public void autoDetect4() throws IOException {
-        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "abserif4_5.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "PTSerif-Regular.ttf"));
         Assertions.assertTrue(FontProgramFactory.createFont(ttf) instanceof TrueTypeFont, "TrueType (TTF) expected");
     }
 
     @Test
     public void autoDetect5() throws IOException {
-        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "abserif4_5.ttf"));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "PTSerif-Regular.ttf"));
         Assertions.assertTrue(FontProgramFactory.createFont(ttf) instanceof TrueTypeFont, "TrueType (TTF) expected");
     }
 
@@ -1489,6 +1489,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
+        // TODO DEVSIX-9682 Replace uming.ttc in kernel
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "uming.ttc,1");
 
         PdfCanvas canvas = new PdfCanvas(page);
@@ -1517,6 +1518,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
+        // TODO DEVSIX-9682 Replace uming.ttc in kernel
         String font = fontsFolder + "uming.ttc";
 
         PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI,
@@ -1572,6 +1574,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
+        // TODO DEVSIX-9682 Replace uming.ttc in kernel
         String font = fontsFolder + "uming.ttc";
 
         PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI,
@@ -1902,6 +1905,7 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void testCheckTTCSize() throws IOException {
+        // TODO DEVSIX-9682 Replace uming.ttc in kernel
         TrueTypeCollection collection = new TrueTypeCollection(fontsFolder + "uming.ttc");
         Assertions.assertTrue(collection.getTTCSize() == 4);
     }
@@ -1960,41 +1964,43 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void otfByStringNames() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "Puritan2.otf");
-        Assertions.assertEquals(descriptor.getFontName(), "Puritan2");
-        Assertions.assertEquals(descriptor.getFullNameLowerCase(), StringNormalizer.toLowerCase("Puritan 2.0 Regular"));
-        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), StringNormalizer.toLowerCase("Puritan 2.0"));
-        Assertions.assertEquals(descriptor.getStyle(), "Normal");
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "Puritan-Regular.otf");
+        Assertions.assertEquals("Puritan-Regular", descriptor.getFontName());
+        Assertions.assertEquals(StringNormalizer.toLowerCase("Puritan Regular"), descriptor.getFullNameLowerCase());
+        Assertions.assertEquals(StringNormalizer.toLowerCase("Puritan"), descriptor.getFamilyNameLowerCase());
+        Assertions.assertEquals("Regular", descriptor.getStyle());
         Assertions.assertEquals(descriptor.getFontWeight(), 400);
 
     }
 
     @Test
     public void otfByStreamNames() throws Exception {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "Puritan2.otf")));
-        Assertions.assertEquals(descriptor.getFontName(), "Puritan2");
-        Assertions.assertEquals(descriptor.getFullNameLowerCase(), StringNormalizer.toLowerCase("Puritan 2.0 Regular"));
-        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), StringNormalizer.toLowerCase("Puritan 2.0"));
-        Assertions.assertEquals(descriptor.getStyle(), "Normal");
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(
+                fontsFolder + "Puritan-Regular.otf")));
+        Assertions.assertEquals("Puritan-Regular", descriptor.getFontName());
+        Assertions.assertEquals(StringNormalizer.toLowerCase("Puritan Regular"), descriptor.getFullNameLowerCase());
+        Assertions.assertEquals(StringNormalizer.toLowerCase("Puritan"), descriptor.getFamilyNameLowerCase());
+        Assertions.assertEquals("Regular", descriptor.getStyle());
         Assertions.assertEquals(descriptor.getFontWeight(), 400);
     }
 
     @Test
     public void ttfByStringNames() {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "abserif4_5.ttf");
-        Assertions.assertEquals(descriptor.getFontName(), "AboriginalSerif");
-        Assertions.assertEquals(descriptor.getFullNameLowerCase(), StringNormalizer.toLowerCase("Aboriginal Serif"));
-        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), StringNormalizer.toLowerCase("Aboriginal Serif"));
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(fontsFolder + "PTSerif-Regular.ttf");
+        Assertions.assertEquals("PTSerif-Regular", descriptor.getFontName());
+        Assertions.assertEquals(StringNormalizer.toLowerCase("Pt Serif"), descriptor.getFullNameLowerCase());
+        Assertions.assertEquals(StringNormalizer.toLowerCase("Pt Serif"), descriptor.getFamilyNameLowerCase());
         Assertions.assertEquals(descriptor.getStyle(), "Regular");
         Assertions.assertEquals(descriptor.getFontWeight(), 400);
     }
 
     @Test
     public void ttfByStreamNames() throws Exception {
-        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(fontsFolder + "abserif4_5.ttf")));
-        Assertions.assertEquals(descriptor.getFontName(), "AboriginalSerif");
-        Assertions.assertEquals(descriptor.getFullNameLowerCase(), StringNormalizer.toLowerCase("Aboriginal Serif"));
-        Assertions.assertEquals(descriptor.getFamilyNameLowerCase(), StringNormalizer.toLowerCase("Aboriginal Serif"));
+        FontProgramDescriptor descriptor = FontProgramDescriptorFactory.fetchDescriptor(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(
+                fontsFolder + "PTSerif-Regular.ttf")));
+        Assertions.assertEquals("PTSerif-Regular", descriptor.getFontName());
+        Assertions.assertEquals(StringNormalizer.toLowerCase("Pt Serif"), descriptor.getFullNameLowerCase());
+        Assertions.assertEquals(StringNormalizer.toLowerCase("Pt Serif"), descriptor.getFamilyNameLowerCase());
         Assertions.assertEquals(descriptor.getStyle(), "Regular");
         Assertions.assertEquals(descriptor.getFontWeight(), 400);
     }

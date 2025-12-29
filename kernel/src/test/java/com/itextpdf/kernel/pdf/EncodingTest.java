@@ -42,8 +42,9 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class EncodingTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncodingTest/";
-    public static final String outputFolder = TestUtil.getOutputPath() + "/kernel/pdf/EncodingTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncodingTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
+    private static final String outputFolder = TestUtil.getOutputPath() + "/kernel/pdf/EncodingTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -61,7 +62,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "DejaVuSans.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "DejaVuSans.ttf", PdfEncodings.IDENTITY_H);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
                 saveState().
@@ -84,7 +85,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSans-Regular.ttf",
                 "# simple 1 0020 041c 0456 0440 044a 0050 0065 0061 0063",
                 EmbeddingStrategy.PREFER_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
@@ -163,7 +164,7 @@ public class EncodingTest extends ExtendedITextTest {
         String fileName = "notdefInTrueTypeFontTest.pdf";
         PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSans-Regular.ttf",
                 "# simple 32 0020 00C5 1987", EmbeddingStrategy.PREFER_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
@@ -174,7 +175,7 @@ public class EncodingTest extends ExtendedITextTest {
                 showText("\u00C5 \u1987").
                 endText().
                 restoreState();
-        font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSans-Regular.ttf",
                 PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.
                 saveState().
@@ -196,7 +197,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         canvas.
                 saveState().
@@ -272,7 +273,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(writer);
 
         // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.WINANSI,
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "Symbols1.ttf", PdfEncodings.WINANSI,
                 EmbeddingStrategy.PREFER_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         StringBuilder str = new StringBuilder();
@@ -321,7 +322,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(writer);
 
         // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         StringBuilder builder = new StringBuilder();
         for (int i = 32; i <= 100; i++) {
@@ -373,7 +374,7 @@ public class EncodingTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(writer);
 
         // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "Symbols1.ttf", PdfEncodings.IDENTITY_H);
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
         String line = "AABBCCDDEEFFGGHHIIJJ";
         canvas.

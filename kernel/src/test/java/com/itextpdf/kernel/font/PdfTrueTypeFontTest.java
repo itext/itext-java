@@ -32,13 +32,13 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfTrueTypeFontTest extends ExtendedITextTest {
-
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/font/PdfTrueTypeFontTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/font/PdfTrueTypeFontTest/";
 
     @Test
     public void testReadingPdfTrueTypeFontWithType1StandardFontProgram() throws IOException {
@@ -64,7 +64,7 @@ public class PdfTrueTypeFontTest extends ExtendedITextTest {
     @Test
     public void isNotBuiltInTest() throws IOException {
         PdfFont font = PdfFontFactory.createFont(
-                SOURCE_FOLDER + "NotoSans-Regular.ttf",
+                FONTS_FOLDER + "NotoSans-Regular.ttf",
                 PdfEncodings.WINANSI);
         Assertions.assertTrue(font instanceof PdfTrueTypeFont);
         Assertions.assertFalse(((PdfTrueTypeFont) font).isBuiltInFont());

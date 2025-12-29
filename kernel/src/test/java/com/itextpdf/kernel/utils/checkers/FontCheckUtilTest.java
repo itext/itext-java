@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class FontCheckUtilTest extends ExtendedITextTest {
-    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
 
     @Test
     public void checkFontAvailable() throws IOException {

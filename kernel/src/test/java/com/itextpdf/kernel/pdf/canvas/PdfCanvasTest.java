@@ -93,7 +93,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/canvas/PdfCanvasTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasTest/";
 
-    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
 
 
     private static final String AUTHOR = "iText Software";

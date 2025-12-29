@@ -29,27 +29,29 @@ import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfType0FontTest extends ExtendedITextTest {
-
-    public static final String DESTINATION_FOLDER = "./target/test/resources/com/itextpdf/kernel/font/PdfType0FontTest/";
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/font/PdfType0FontTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/font/PdfType0FontTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
 
     @Test
     public void trueTypeFontAndCmapConstructorTest() throws IOException {
-        TrueTypeFont ttf = new TrueTypeFont(SOURCE_FOLDER + "NotoSerif-Regular_v1.7.ttf");
+        TrueTypeFont ttf = new TrueTypeFont(FONTS_FOLDER + "NotoSerif-Regular_v1.7.ttf");
 
         PdfType0Font type0Font = new PdfType0Font(ttf, PdfEncodings.IDENTITY_H);
 
@@ -67,7 +69,7 @@ public class PdfType0FontTest extends ExtendedITextTest {
 
     @Test
     public void unsupportedCmapTest() throws IOException {
-        TrueTypeFont ttf = new TrueTypeFont(SOURCE_FOLDER + "NotoSerif-Regular_v1.7.ttf");
+        TrueTypeFont ttf = new TrueTypeFont(FONTS_FOLDER + "NotoSerif-Regular_v1.7.ttf");
 
         Exception e = Assertions.assertThrows(PdfException.class,
                 () -> new PdfType0Font(ttf, PdfEncodings.WINANSI)
@@ -103,7 +105,7 @@ public class PdfType0FontTest extends ExtendedITextTest {
         // this text contains three successive surrogate pairs, which should result in three glyphs
         String textWithThreeSurrogatePairs = "\uD800\uDF10\uD800\uDF00\uD800\uDF11";
         PdfFont type0Font =
-                PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSansOldItalic-Regular.ttf", PdfEncodings.IDENTITY_H);
+                PdfFontFactory.createFont(FONTS_FOLDER + "NotoSansOldItalic-Regular.ttf", PdfEncodings.IDENTITY_H);
 
         List<Glyph> glyphs = new ArrayList<>();
         type0Font.appendGlyphs(textWithThreeSurrogatePairs, 0, textWithThreeSurrogatePairs.length() - 1, glyphs);

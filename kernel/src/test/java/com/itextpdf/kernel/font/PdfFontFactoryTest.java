@@ -22,15 +22,15 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontNames;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -38,14 +38,11 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfFontFactoryTest extends ExtendedITextTest {
-
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/font/";
-
     @Test
     public void standardFontForceEmbeddedTest() throws IOException {
         Type1Font fontProgram = (Type1Font) FontProgramFactory.createFont(StandardFonts.HELVETICA);

@@ -45,12 +45,11 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfFontCacheTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfFontCacheTest/";
-    private static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfFontCacheTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfFontCacheTest/";
+    private static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/fonts/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfFontCacheTest/";
 
-
-    static final String pangramme = "Amazingly few discotheques provide jukeboxes " +
+    private static final String pangramme = "Amazingly few discotheques provide jukeboxes " +
             "but it now while sayingly ABEFGHJKNOPQRSTUWYZ?";
 
     @BeforeAll
@@ -191,14 +190,14 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createDocumentWithAbserifAndIdentityHEncodings() throws IOException, InterruptedException {
-        String testName = "DocumentWithAbserifAndIdentityHEncodings";
+    public void createDocumentWithPTserifAndIdentityHEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithPTserifAndIdentityHEncodings";
 
         String filename = destinationFolder + testName + ".pdf";
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
 
         //All those encodings actually the same Identity-H.
         addPagesWithFonts(pdfDoc, font, null, TextSetWithABC);
@@ -212,14 +211,14 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createDocumentWithEmbeddedAbserifFirstWinAnsiThenIdentityHEncodings() throws IOException, InterruptedException {
-        String testName = "DocumentWithEmbeddedAbserifFirstWinAnsiThenIdentityHEncodings";
+    public void createDocumentWithEmbeddedPTserifFirstWinAnsiThenIdentityHEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithEmbeddedPTserifFirstWinAnsiThenIdentityHEncodings";
 
         String filename = destinationFolder + testName + ".pdf";
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
 
         addPagesWithFonts(pdfDoc, font, PdfEncodings.WINANSI, TextSetWithABC);
         addPagesWithFonts(pdfDoc, font, "", TextSetWithABC);
@@ -230,14 +229,14 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createDocumentWithEmbeddedAbserifFirstIdentityHThenWinAnsiEncodings() throws IOException, InterruptedException {
-        String testName = "DocumentWithEmbeddedAbserifFirstIdentityHThenWinAnsiEncodings";
+    public void createDocumentWithEmbeddedPTserifFirstIdentityHThenWinAnsiEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithEmbeddedPTserifFirstIdentityHThenWinAnsiEncodings";
 
         String filename = destinationFolder + testName + ".pdf";
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
 
         addPagesWithFonts(pdfDoc, font, "", TextSetWithABC);
         addPagesWithFonts(pdfDoc, font, PdfEncodings.WINANSI, TextSetWithABC);
@@ -248,14 +247,14 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createDocumentWithNotEmbeddedAbserifFirstWinAnsiThenIdentityHEncodings() throws IOException, InterruptedException {
-        String testName = "DocumentWithNotEmbeddedAbserifFirstWinAnsiThenIdentityHEncodings";
+    public void createDocumentWithNotEmbeddedPTserifFirstWinAnsiThenIdentityHEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithNotEmbeddedPTserifFirstWinAnsiThenIdentityHEncodings";
 
         String filename = destinationFolder + testName + ".pdf";
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         EmbeddingStrategy embeddingStrategy = EmbeddingStrategy.PREFER_NOT_EMBEDDED;
 
         addPagesWithFonts(pdfDoc, font, PdfEncodings.WINANSI, embeddingStrategy, TextSetWithABC);
@@ -267,14 +266,14 @@ public class PdfFontCacheTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createDocumentWithNotEmbeddedAbserifFirstIdentityHThenWinAnsiEncodings() throws IOException, InterruptedException {
-        String testName = "DocumentWithNotEmbeddedAbserifFirstIdentityHThenWinAnsiEncodings";
+    public void createDocumentWithNotEmbeddedPTserifFirstIdentityHThenWinAnsiEncodings() throws IOException, InterruptedException {
+        String testName = "DocumentWithNotEmbeddedPTserifFirstIdentityHThenWinAnsiEncodings";
 
         String filename = destinationFolder + testName + ".pdf";
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         EmbeddingStrategy embeddingStrategy = EmbeddingStrategy.PREFER_NOT_EMBEDDED;
 
         addPagesWithFonts(pdfDoc, font, "", embeddingStrategy, TextSetWithABC);
@@ -313,7 +312,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         String encoding = null;
 
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
@@ -333,7 +332,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         String encoding = PdfEncodings.WINANSI;
 
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
@@ -353,7 +352,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         String encoding = null;
 
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
@@ -378,7 +377,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         String encoding = "Identity-H";
 
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
@@ -398,7 +397,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         String cmpFilename = sourceFolder + "cmp_" + testName + ".pdf";
         PdfDocument pdfDoc = createDocument(filename);
 
-        String font = fontsFolder + "abserif4_5.ttf";
+        String font = fontsFolder + "PTSerif-Regular.ttf";
         String encoding = "Identity-H";
 
         addPagesWithFonts(pdfDoc, font, encoding, TextSetWithABC);
@@ -590,6 +589,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         //There is only one just loaded and used document font.
         Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
+        // TODO DEVSIX-9683 Replace abserif4_5.ttc in kernel
         addPagesWithFonts(pdfDoc, fontsFolder + "abserif4_5.ttf", "WinAnsi", TextSetWithABC);
         pdfDoc.close();
 
@@ -683,6 +683,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         //There is only one just loaded and used document font.
         Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
+        // TODO DEVSIX-9683 Replace abserif4_5.ttc in kernel
         addPagesWithFonts(pdfDoc, fontsFolder + "abserif4_5.ttf", encoding, TextSetWithABC);
         pdfDoc.close();
 

@@ -44,8 +44,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontToUnicodeTest extends ExtendedITextTest {
-    public static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/pdf/fonts/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/FontToUnicodeTest/";
+    private static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/fonts/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/FontToUnicodeTest/";
 
     @BeforeAll
     public static void beforeClass() {
