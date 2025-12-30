@@ -44,25 +44,25 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontToUnicodeTest extends ExtendedITextTest {
-    private static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/fonts/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/FontToUnicodeTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/FontToUnicodeTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @AfterAll
     public static void afterClass() {
-        CompareTool.cleanup(destinationFolder);
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
     
     @Test
     public void severalUnicodesWithinOneGlyphTest() throws IOException {
-        String outFileName = destinationFolder + "severalUnicodesWithinOneGlyphTest.pdf";
+        String outFileName = DESTINATION_FOLDER + "severalUnicodesWithinOneGlyphTest.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSansCJKjp-Bold.otf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSansCJKjp-Bold.otf",
                 PdfEncodings.IDENTITY_H);
 
         List<Glyph> glyphs = Collections.singletonList(font.getGlyph((int) '\u65E0'));

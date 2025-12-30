@@ -42,24 +42,24 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class EncodingTest extends ExtendedITextTest {
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncodingTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/EncodingTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
-    private static final String outputFolder = TestUtil.getOutputPath() + "/kernel/pdf/EncodingTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/EncodingTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(outputFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @AfterAll
     public static void afterClass() {
-        CompareTool.cleanup(outputFolder);
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
     public void surrogatePairTest() throws IOException, InterruptedException {
         String fileName = "surrogatePairTest.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "DejaVuSans.ttf", PdfEncodings.IDENTITY_H);
@@ -76,13 +76,14 @@ public class EncodingTest extends ExtendedITextTest {
         canvas.release();
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void customSimpleEncodingTimesRomanTest() throws IOException, InterruptedException {
         String fileName = "customSimpleEncodingTimesRomanTest.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSans-Regular.ttf",
@@ -100,13 +101,14 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void customFullEncodingTimesRomanTest() throws IOException, InterruptedException {
         String fileName = "customFullEncodingTimesRomanTest.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN,
@@ -122,13 +124,14 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void notdefInStandardFontTest() throws IOException, InterruptedException {
         String fileName = "notdefInStandardFontTest.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA,
@@ -156,13 +159,14 @@ public class EncodingTest extends ExtendedITextTest {
         doc.close();
 
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void notdefInTrueTypeFontTest() throws IOException, InterruptedException {
         String fileName = "notdefInTrueTypeFontTest.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
         PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSans-Regular.ttf",
                 "# simple 32 0020 00C5 1987", EmbeddingStrategy.PREFER_EMBEDDED);
@@ -188,13 +192,14 @@ public class EncodingTest extends ExtendedITextTest {
         doc.close();
 
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void notdefInType0Test() throws IOException, InterruptedException {
         String fileName = "notdefInType0Test.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
@@ -210,13 +215,14 @@ public class EncodingTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void symbolDefaultFontTest() throws IOException, InterruptedException {
         String fileName = "symbolDefaultFontTest.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         PdfFont font = PdfFontFactory.createFont(StandardFonts.SYMBOL);
@@ -226,7 +232,8 @@ public class EncodingTest extends ExtendedITextTest {
         fillSymbolDefaultPage(font, doc.addNewPage());
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     private void fillSymbolDefaultPage(PdfFont font, PdfPage page) {
@@ -269,7 +276,7 @@ public class EncodingTest extends ExtendedITextTest {
     @Test
     public void symbolTrueTypeFontWinAnsiTest() throws IOException, InterruptedException {
         String fileName = "symbolTrueTypeFontWinAnsiTest.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
@@ -312,13 +319,14 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void symbolTrueTypeFontIdentityTest() throws IOException, InterruptedException {
         String fileName = "symbolTrueTypeFontIdentityTest.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
@@ -364,13 +372,14 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void symbolTrueTypeFontSameCharsIdentityTest() throws IOException, InterruptedException {
         String fileName = "symbolTrueTypeFontSameCharsIdentityTest.pdf";
-        PdfWriter writer = CompareTool.createTestPdfWriter(outputFolder + fileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName);
         PdfDocument doc = new PdfDocument(writer);
 
         // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
@@ -387,12 +396,13 @@ public class EncodingTest extends ExtendedITextTest {
                 restoreState();
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outputFolder + fileName, sourceFolder + "cmp_" + fileName, outputFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + fileName, SOURCE_FOLDER + "cmp_" + fileName,
+                DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void encodingStreamExtractionTest() throws IOException {
-        String fileName = sourceFolder + "encodingStream01.pdf";
+        String fileName = SOURCE_FOLDER + "encodingStream01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(fileName));
         String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
         Assertions.assertEquals("abc", extractedText);
@@ -400,7 +410,7 @@ public class EncodingTest extends ExtendedITextTest {
 
     @Test
     public void differentCodeSpaceRangeLengthsExtractionTest() throws IOException {
-        String fileName = sourceFolder + "differentCodeSpaceRangeLengths01.pdf";
+        String fileName = SOURCE_FOLDER + "differentCodeSpaceRangeLengths01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(fileName));
         String extractedText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
         Assertions.assertEquals("Hello\u7121\u540dworld\u6b98\u528d", extractedText);

@@ -44,29 +44,29 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfCanvasGlyphlineShowTextTest extends ExtendedITextTest {
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
-    private static final String fontsFolder = "./src/test/resources/com/itextpdf/kernel/fonts/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @AfterAll
     public static void afterClass() {
-        CompareTool.cleanup(destinationFolder);
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
     
     @Test
     public void notoSerifWithInvalidXYPlacementAnchorDeltaTest() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "notoSerifWithInvalidXYPlacementAnchorDeltaTest.pdf";
-        String cmpPdf = sourceFolder + "cmp_notoSerifWithInvalidXYPlacementAnchorDeltaTest.pdf";
+        String outPdf = DESTINATION_FOLDER + "notoSerifWithInvalidXYPlacementAnchorDeltaTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_notoSerifWithInvalidXYPlacementAnchorDeltaTest.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         PdfPage page = pdfDoc.addNewPage();
 
-        PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoSerif-Regular_v1.7.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSerif-Regular_v1.7.ttf", PdfEncodings.IDENTITY_H);
 
         // ゙B̸̭̼ͣ̎̇
         List<Glyph> glyphs = Arrays.asList(
@@ -94,7 +94,7 @@ public class PdfCanvasGlyphlineShowTextTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 
     private Glyph applyGlyphParameters(char glyphUni, int anchorDelta, int xPlacement, int yPlacement, PdfFont font) {
