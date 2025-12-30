@@ -26,13 +26,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 final class XmlUtils {
@@ -45,20 +46,43 @@ final class XmlUtils {
         transformer.transform(source, result);
     }
 
-    public static boolean compareXmls(InputStream xml1, InputStream xml2)
-            throws ParserConfigurationException, SAXException, IOException {
+    public static boolean compareXmls(InputStream xml1, InputStream xml2) throws SAXException, IOException {
         DocumentBuilder db = XmlProcessorCreator.createSafeDocumentBuilder(true, true);
 
         Document doc1 = db.parse(xml1);
         doc1.normalizeDocument();
+        normalizeTextNodes(doc1.getDocumentElement());
 
         Document doc2 = db.parse(xml2);
         doc2.normalizeDocument();
+        normalizeTextNodes(doc2.getDocumentElement());
 
         return doc2.isEqualNode(doc1);
     }
 
-    public static Document initNewXmlDocument() throws ParserConfigurationException {
+    private static void normalizeTextNodes(Node node) {
+        NodeList children = node.getChildNodes();
+        java.util.List<Node> toRemove = new java.util.ArrayList<Node>();
+
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+
+            if (child.getNodeType() == Node.TEXT_NODE) {
+                String text = child.getNodeValue();
+                if (text != null && text.trim().isEmpty()) {
+                    toRemove.add(child);
+                }
+            } else if (child.getNodeType() == Node.ELEMENT_NODE) {
+                normalizeTextNodes(child);
+            }
+        }
+
+        for (Node n : toRemove) {
+            node.removeChild(n);
+        }
+    }
+
+    public static Document initNewXmlDocument() {
         DocumentBuilder db = XmlProcessorCreator.createSafeDocumentBuilder(false, false);
         return db.newDocument();
     }
