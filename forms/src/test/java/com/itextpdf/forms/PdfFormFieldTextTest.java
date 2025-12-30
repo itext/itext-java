@@ -50,9 +50,9 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfFormFieldTextTest extends ExtendedITextTest {
-
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldTextTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTextTest/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldTextTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTextTest/";
     private static final String TEXT = "Some text in Russian \u0442\u0435\u043A\u0441\u0442 (text)";
 
     @BeforeAll
@@ -98,7 +98,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         String filename = "fontsResourcesHelvFontTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "drWithHelv.pdf"),
                 new PdfWriter(destinationFolder + filename));
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         font.setSubset(false);
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
@@ -134,7 +134,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         String filename = "fontsResourcesHelvCourierNotoFontTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "drWithHelvAndCourier.pdf"),
                 new PdfWriter(destinationFolder + filename));
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         font.setSubset(false);
         PdfFormField formField = PdfFormCreator.getAcroForm(pdfDoc, false)

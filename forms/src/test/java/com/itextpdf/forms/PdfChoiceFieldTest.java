@@ -54,9 +54,9 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfChoiceFieldTest extends ExtendedITextTest {
-
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfChoiceFieldTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfChoiceFieldTest/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfChoiceFieldTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfChoiceFieldTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -69,7 +69,7 @@ public class PdfChoiceFieldTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_choiceFieldsWithUnicodeTest.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "NotoSansCJKjp-Bold.otf", "Identity-H");
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSansCJKjp-Bold.otf", "Identity-H");
         font.setSubset(false);
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);

@@ -50,9 +50,9 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
-
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldMultilineTextTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldMultilineTextTest/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldMultilineTextTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldMultilineTextTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -238,7 +238,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "formFieldWithStringTest.pdf"));
 
         PdfFont font = PdfFontFactory.createFont(
-                sourceFolder + "NotoSansCJKtc-Light.otf", PdfEncodings.IDENTITY_H);
+                FONT_FOLDER + "NotoSansCJKtc-Light.otf", PdfEncodings.IDENTITY_H);
 
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
 

@@ -80,9 +80,9 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfFormFieldTest extends ExtendedITextTest {
-
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldTest/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -802,10 +802,10 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document document = new Document(pdfDoc);
 
-        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
+        PdfFont hebrew = PdfFontFactory.createFont(FONT_FOLDER + "OpenSansHebrew-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         hebrew.setSubset(false);
-        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont sileot = PdfFontFactory.createFont(FONT_FOLDER + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
         sileot.setSubset(false);
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
@@ -836,10 +836,10 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document document = new Document(pdfDoc);
 
-        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
+        PdfFont hebrew = PdfFontFactory.createFont(FONT_FOLDER + "OpenSansHebrew-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         hebrew.setSubset(false);
-        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont sileot = PdfFontFactory.createFont(FONT_FOLDER + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
         sileot.setSubset(false);
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
@@ -872,10 +872,10 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
+        PdfFont hebrew = PdfFontFactory.createFont(FONT_FOLDER + "OpenSansHebrew-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         hebrew.setSubset(false);
-        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont sileot = PdfFontFactory.createFont(FONT_FOLDER + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
         sileot.setSubset(false);
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
@@ -902,10 +902,10 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
-        PdfFont hebrew = PdfFontFactory.createFont(sourceFolder + "OpenSansHebrew-Regular.ttf",
+        PdfFont hebrew = PdfFontFactory.createFont(FONT_FOLDER + "OpenSansHebrew-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         hebrew.setSubset(false);
-        PdfFont sileot = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont sileot = PdfFontFactory.createFont(FONT_FOLDER + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
         sileot.setSubset(false);
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
@@ -1272,7 +1272,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
                 new Rectangle(36, 400, 100, 40))
                 .createText().setValue("Helvetica"));
 
-        PdfFont noto = PdfFontFactory.createFont(sourceFolder + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont noto = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
         noto.setSubset(false);
         String value = "aAáÁàÀăĂắẮằẰẵẴẳẲâÂấẤầẦẫẪǎǍåÅǻǺäÄǟǞãÃą" +
                 "ĄāĀảẢạẠặẶẬæÆǽǼbBḃḂcCćĆčČċĊçÇdDd̂D̂ďĎḋḊḑḐđĐðÐeE" +
@@ -1401,7 +1401,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDocument, true);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "SILEOT.ttf", PdfEncodings.IDENTITY_H);
 
         Rectangle rect1 = new Rectangle(10, 700, 200, 25);
         Rectangle rect2 = new Rectangle(30, 600, 200, 25);

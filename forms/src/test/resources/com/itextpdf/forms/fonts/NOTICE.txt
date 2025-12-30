@@ -1,0 +1,7 @@
+This software uses the following test resources under the following licenses:
+NotoSans-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit a970ecbe0bf1e6ae5cb22d6abdea672448655f0c (03.03.2022) from "https://github.com/google/fonts"
+NotoSansCJKjp-Bold.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit f36eda03dfa5582a6d49abbfb5c83d0209584158 (01.07.2015) from repository: "https://github.com/googlefonts/noto-cjk"
+NotoSansCJKtc-Light.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit f36eda03dfa5582a6d49abbfb5c83d0209584158 (01.07.2015) from repository: "https://github.com/googlefonts/noto-cjk"
+SILEOT.ttf | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on "https://software.sil.org/ezra/""
+OpenSansHebrew-Regular.ttf | Apache-2.0 | Based on commit 66fbf17ecab031071aacfd387ad3356a9661d95a (13.07.2021) from repository: "https://github.com/sebastienrousseau/open-sans"
+NotoSansCJKsc-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit f36eda03dfa5582a6d49abbfb5c83d0209584158 (01.07.2015) from repository: "https://github.com/googlefonts/noto-cjk"
