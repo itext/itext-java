@@ -70,7 +70,7 @@ public class FontProgramTest extends ExtendedITextTest {
         FontCache.clearSavedFonts();
         FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/otf/");
 
-        Assertions.assertEquals(43, FontProgramFactory.getRegisteredFonts().size());
+        Assertions.assertEquals(44, FontProgramFactory.getRegisteredFonts().size());
         Assertions.assertNull(FontCache.getFont("./src/test/resources/com/itextpdf/io/font/otf/FreeSansBold.ttf"));
         Assertions.assertTrue(FontProgramFactory.getRegisteredFonts().contains("free sans lihavoitu"));
     }

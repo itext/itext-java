@@ -26,18 +26,16 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
@@ -53,7 +51,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
     private static final int JP_REGULAR_CFF_OFFSET = 337316;
     private static final int JP_REGULAR_CFF_LENGTH = 4210891;
 
-    private static final String PURITAN_PATH = FONTS_FOLDER + "Puritan2.otf";
+    private static final String PURITAN_PATH = FONTS_FOLDER + "Puritan-Regular.otf";
 
     @Test
     public void subsetNotoSansCjkJpBoldNoUsedGlyphsTest() throws IOException {
@@ -117,7 +115,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
         byte[] cffData = new TrueTypeFont(PURITAN_PATH).getFontStreamBytes();
         byte[] cffSubsetBytes = new CFFFontSubset(cffData, glyphsUsed).Process();
         CFFFont result = new CFFFont(cffSubsetBytes);
-        int expectedCharsetLength = 255;
+        int expectedCharsetLength = 237;
         // skip over the format ID (1 byte) and the first SID (2 bytes)
         result.seek(result.fonts[0].getCharsetOffset() + 3);
         Assertions.assertEquals(expectedCharsetLength - 2, result.getCard16());

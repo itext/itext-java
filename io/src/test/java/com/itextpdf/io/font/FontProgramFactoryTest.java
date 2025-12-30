@@ -64,10 +64,10 @@ public class FontProgramFactoryTest extends ExtendedITextTest {
 
     @Test
     public void tryToCreateTrueTypeWoff2FontTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "valid.woff2"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "BellefairRegularLatin.woff2"));
         TrueTypeFont woff2Font = FontProgramFactory.createTrueTypeFont(fontBytes, false);
         Assertions.assertNotNull(woff2Font);
-        Assertions.assertEquals(4, woff2Font.countOfGlyphs());
+        Assertions.assertEquals(209, woff2Font.countOfGlyphs());
 
     }
 }

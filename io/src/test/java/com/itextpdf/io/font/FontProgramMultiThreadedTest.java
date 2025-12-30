@@ -32,8 +32,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontProgramMultiThreadedTest extends ExtendedITextTest {
-
-    private static final String FONT = "./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/";
+    private static final String FONT = FONTS_FOLDER + "NotoSans-Regular.ttf";
 
     @Test
     public void fontSubsetTest() throws InterruptedException, IOException {
@@ -49,7 +49,7 @@ public class FontProgramMultiThreadedTest extends ExtendedITextTest {
         }
         for (TestThread thread : threads) {
             Assertions.assertFalse(thread.exceptionCaught, "Exception during font subsetting");
-            Assertions.assertEquals(2956, thread.subsetSize);
+            Assertions.assertEquals(3680, thread.subsetSize);
         }
     }
 

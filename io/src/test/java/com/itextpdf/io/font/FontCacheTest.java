@@ -41,7 +41,7 @@ public class FontCacheTest extends ExtendedITextTest {
 
     @Test
     public void clearFontCacheTest() {
-        String fontName = "FreeSans.ttf";
+        String fontName = "NotoSans-Regular.ttf";
         Assertions.assertNull(FontCache.getFont(fontName));
 
         FontProgram fontProgram = new FontProgramMock();

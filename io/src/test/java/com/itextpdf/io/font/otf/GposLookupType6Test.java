@@ -35,14 +35,12 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class GposLookupType6Test extends ExtendedITextTest {
-
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/";
-
-    private static final String FREE_SANS_FONT_PATH = RESOURCE_FOLDER + "FreeSans.ttf";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/";
+    private static final String NOTO_SANS_FONT_PATH = FONTS_FOLDER + "NotoSans-Regular.ttf";
 
     @Test
     public void idxEqualToEndLineGpos6Test() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FREE_SANS_FONT_PATH);
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(NOTO_SANS_FONT_PATH);
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType6 lookup = new GposLookupType6(gposTableReader, 0, new int[0]);
         List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(445)),
@@ -55,7 +53,7 @@ public class GposLookupType6Test extends ExtendedITextTest {
 
     @Test
     public void idxSmallerThanEndLineGpos6Test() throws IOException {
-        TrueTypeFont font = new TrueTypeFont(FREE_SANS_FONT_PATH);
+        TrueTypeFont font = new TrueTypeFont(NOTO_SANS_FONT_PATH);
 
         GlyphPositioningTableReader gposTableReader = font.getGposTable();
         GposLookupType6 lookup = new GposLookupType6(gposTableReader, 0, new int[0]);

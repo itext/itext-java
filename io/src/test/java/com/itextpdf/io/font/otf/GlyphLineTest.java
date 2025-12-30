@@ -37,8 +37,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class GlyphLineTest extends ExtendedITextTest {
-
-    public static final String FREESANS_FONT_PATH = "./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/";
+    private static final String NOTO_SANS_FONT_PATH = FONTS_FOLDER + "NotoSans-Regular.ttf";
 
     private static List<Glyph> constructGlyphListFromString(String text, TrueTypeFont font) {
         List<Glyph> glyphList = new ArrayList<>();
@@ -442,7 +442,7 @@ public class GlyphLineTest extends ExtendedITextTest {
     }
 
     private TrueTypeFont initializeFont() throws IOException {
-        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(FREESANS_FONT_PATH));
+        byte[] ttf = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(NOTO_SANS_FONT_PATH));
         return new TrueTypeFont(ttf);
     }
 }

@@ -40,7 +40,8 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class OpenTypeParserTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/OpenTypeParserTest/";
-    private static final String FREESANS_FONT_PATH = "./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/";
+    private static final String NOTO_SANS_FONT_PATH = FONTS_FOLDER + "NotoSans-Regular.ttf";
 
     @Test
     public void tryToReadFontSubsetWithoutGlyfTableTest() throws IOException {
@@ -61,7 +62,7 @@ public class OpenTypeParserTest extends ExtendedITextTest {
 
     @Test
     public void getFlatGlyphsCompositeTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(FREESANS_FONT_PATH));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(NOTO_SANS_FONT_PATH));
         OpenTypeParser parser = new OpenTypeParser(fontBytes);
         parser.loadTables(true);
         Set<Integer> usedGlyphs = new HashSet<Integer>();
@@ -72,8 +73,8 @@ public class OpenTypeParserTest extends ExtendedITextTest {
         Assertions.assertEquals(4, glyphs.size());
         Assertions.assertEquals(137, glyphs.get(0));
         Assertions.assertEquals(0, glyphs.get(1));
-        Assertions.assertEquals(586, glyphs.get(2));
-        Assertions.assertEquals(38, glyphs.get(3));
+        Assertions.assertEquals(38, glyphs.get(2));
+        Assertions.assertEquals(122, glyphs.get(3));
     }
 
     @Test
