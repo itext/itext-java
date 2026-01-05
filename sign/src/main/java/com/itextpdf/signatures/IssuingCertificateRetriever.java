@@ -25,12 +25,12 @@ package com.itextpdf.signatures;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
+import com.itextpdf.io.resolver.resource.IAdvancedResourceRetriever;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
 import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
-import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
-import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -63,22 +63,29 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
     private final TrustedCertificatesStore trustedCertificatesStore = new TrustedCertificatesStore();
     private final Map<String, List<Certificate>> knownCertificates = new HashMap<>();
     private final Map<Certificate, CertificateOrigin> certificateOrigins = new HashMap<>();
-    private final IResourceRetriever resourceRetriever;
+    @Deprecated
+    private final com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever resourceRetriever;
+    private IAdvancedResourceRetriever advancedResourceRetriever;
 
     /**
      * Creates {@link IssuingCertificateRetriever} instance.
      */
     public IssuingCertificateRetriever() {
-        this.resourceRetriever = new DefaultResourceRetriever();
+        this.resourceRetriever = null;
+        this.advancedResourceRetriever = new DefaultResourceRetriever();
     }
 
     /**
      * Creates {@link IssuingCertificateRetriever} instance.
      *
-     * @param resourceRetriever an @{link IResourceRetriever} instance to use for performing http
-     *                          requests.
+     * @param resourceRetriever an @{link com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever}
+     *                          instance to use for performing http requests.
+     *
+     * @deprecated in favour of {@link #withResourceRetriever}
      */
-    public IssuingCertificateRetriever(IResourceRetriever resourceRetriever) {
+    @Deprecated
+    public IssuingCertificateRetriever(
+            com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever resourceRetriever) {
         this.resourceRetriever = resourceRetriever;
     }
 
@@ -161,6 +168,30 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
             result.add(chain.toArray(new X509Certificate[0]));
         }
         return result;
+    }
+
+    /**
+     * Sets a resource retriever for this CA issuer certificates retriever.
+     * <p>
+     * This method allows you to provide a custom implementation of {@link IAdvancedResourceRetriever} to be used
+     * for fetching CA issuer certificates. By default, {@link DefaultResourceRetriever} is used.
+     *
+     * @param resourceRetriever the custom resource retriever to be used for fetching CA issuer certificates
+     *
+     * @return the current instance of {@link IssuingCertificateRetriever}
+     */
+    public IssuingCertificateRetriever withResourceRetriever(IAdvancedResourceRetriever resourceRetriever) {
+        advancedResourceRetriever = resourceRetriever;
+        return this;
+    }
+
+    /**
+     * Gets the resource retriever currently being used in this CA issuer certificates retriever.
+     *
+     * @return resource retriever
+     */
+    public IAdvancedResourceRetriever getResourceRetriever() {
+        return advancedResourceRetriever;
     }
 
     private List<List<X509Certificate>> buildCertificateChainsList(X509Certificate[] certificates) {
@@ -422,7 +453,11 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      * @throws IOException if an I/O error occurs.
      */
     protected InputStream getIssuerCertByURI(String uri) throws IOException {
-        return resourceRetriever.getInputStreamByUrl(new URL(uri));
+        if (advancedResourceRetriever == null) {
+            return resourceRetriever.getInputStreamByUrl(new URL(uri));
+        } else {
+            return advancedResourceRetriever.getInputStreamByUrl(new URL(uri));
+        }
     }
 
     /**

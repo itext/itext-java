@@ -23,6 +23,8 @@
 package com.itextpdf.signatures.validation;
 
 import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.io.resolver.resource.IAdvancedResourceRetriever;
+import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.ICrlClient;
@@ -40,8 +42,6 @@ import com.itextpdf.signatures.validation.report.xml.AdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.EventsToAdESReportAggratorConvertor;
 import com.itextpdf.signatures.validation.report.xml.NullAdESReportAggregator;
 import com.itextpdf.signatures.validation.report.xml.PadesValidationReport;
-import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
-import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
 
 import java.io.Writer;
 import java.security.cert.Certificate;
@@ -63,7 +63,9 @@ public class ValidatorChainBuilder {
     private Supplier<RevocationDataValidator> revocationDataValidatorFactory;
     private Supplier<OCSPValidator> ocspValidatorFactory;
     private Supplier<CRLValidator> crlValidatorFactory;
-    private Supplier<IResourceRetriever> resourceRetrieverFactory;
+    @Deprecated
+    private Supplier<com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever> resourceRetrieverFactory;
+    private Supplier<IAdvancedResourceRetriever> advancedResourceRetrieverFactory;
     private Supplier<DocumentRevisionsValidator> documentRevisionsValidatorFactory;
     private Supplier<IOcspClientBouncyCastle> ocspClientFactory;
     private Supplier<ICrlClient> crlClientFactory;
@@ -87,6 +89,8 @@ public class ValidatorChainBuilder {
     private final EventManager eventManager;
     private AdESReportAggregator adESReportAggregator = new NullAdESReportAggregator();
     private boolean padesValidationRequested = false;
+    @Deprecated
+    private boolean deprecatedResourceRetrieverToUse = false;
 
     /**
      * Creates a ValidatorChainBuilder using default implementations
@@ -98,10 +102,12 @@ public class ValidatorChainBuilder {
         revocationDataValidatorFactory = () -> buildRevocationDataValidator();
         ocspValidatorFactory = () -> buildOCSPValidator();
         crlValidatorFactory = () -> buildCRLValidator();
-        resourceRetrieverFactory = () -> new DefaultResourceRetriever();
+        resourceRetrieverFactory = () -> new com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever();
+        advancedResourceRetrieverFactory = () -> new DefaultResourceRetriever();
         documentRevisionsValidatorFactory = () -> buildDocumentRevisionsValidator();
-        ocspClientFactory = () -> new OcspClientBouncyCastle();
-        crlClientFactory = () -> new CrlClientOnline();
+        ocspClientFactory = () -> new OcspClientBouncyCastle()
+                .withResourceRetriever(advancedResourceRetrieverFactory.get());
+        crlClientFactory = () -> new CrlClientOnline().withResourceRetriever(advancedResourceRetrieverFactory.get());
         lotlServiceFactory = () -> buildLotlService();
         qualifiedValidator = new NullQualifiedValidator();
         eventManager = EventManager.createNewInstance();
@@ -131,7 +137,7 @@ public class ValidatorChainBuilder {
      *
      * @param trustEuropeanLotl {@code true} if European Union LOTLs are expected to be trusted, {@code false} otherwise
      *
-     * @return current ValidatorChainBuilder.
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder trustEuropeanLotl(boolean trustEuropeanLotl) {
         this.trustEuropeanLotl = trustEuropeanLotl;
@@ -213,7 +219,8 @@ public class ValidatorChainBuilder {
      * for use in the validation chain.
      *
      * @param documentRevisionsValidatorFactory the document revisions validator factory method to use
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withDocumentRevisionsValidatorFactory(
             Supplier<DocumentRevisionsValidator> documentRevisionsValidatorFactory) {
@@ -225,7 +232,8 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link CRLValidator} for use in the validation chain.
      *
      * @param crlValidatorFactory the CRLValidatorFactory method to use
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withCRLValidatorFactory(Supplier<CRLValidator> crlValidatorFactory) {
         this.crlValidatorFactory = crlValidatorFactory;
@@ -233,13 +241,45 @@ public class ValidatorChainBuilder {
     }
 
     /**
-     * Use this factory method to create instances of {@link IResourceRetriever} for use in the validation chain.
+     * Use this factory method to create instances of
+     * {@link com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever} for use in the validation chain.
      *
-     * @param resourceRetrieverFactory the ResourceRetrieverFactory method to use.
-     * @return the current ValidatorChainBuilder.
+     * @param resourceRetrieverFactory the ResourceRetrieverFactory method to use
+     *
+     * @return the current {@link ValidatorChainBuilder}
+     *
+     * @deprecated in favor of {@link #withAdvancedResourceRetriever}
      */
-    public ValidatorChainBuilder withResourceRetriever(Supplier<IResourceRetriever> resourceRetrieverFactory) {
+    @Deprecated
+    public ValidatorChainBuilder withResourceRetriever(
+            Supplier<com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever> resourceRetrieverFactory) {
         this.resourceRetrieverFactory = resourceRetrieverFactory;
+        deprecatedResourceRetrieverToUse = true;
+        return this;
+    }
+
+    /**
+     * Use this factory method to create instances of {@link IAdvancedResourceRetriever} for use in the validation chain.
+     *
+     * <p>
+     * Resource retriever created by this factory will be automatically used in the default CRL client,
+     * default OCSP client and default CA issuer certificate retriever. If some custom client is set
+     * and one needs to use their custom resource retriever for it, it's their responsibility to pass
+     * custom resource retriever to their custom client.
+     *
+     * <p>
+     * Note that resource retriever created by this factory will <b>not</b> be used for {@link LotlService} because
+     * the global instance of {@link LotlService} is used by default. If one needs to use their custom resource
+     * retriever for {@link LotlService}, they can pass it using {@link LotlService#withCustomResourceRetriever}
+     * method.
+     *
+     * @param resourceRetrieverFactory the resource retriever factory method to use
+     *
+     * @return the current {@link ValidatorChainBuilder}
+     */
+    public ValidatorChainBuilder withAdvancedResourceRetriever(
+            Supplier<IAdvancedResourceRetriever> resourceRetrieverFactory) {
+        this.advancedResourceRetrieverFactory = resourceRetrieverFactory;
         return this;
     }
 
@@ -247,7 +287,8 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link OCSPValidator} for use in the validation chain.
      *
      * @param ocspValidatorFactory the OCSPValidatorFactory method to use
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withOCSPValidatorFactory(Supplier<OCSPValidator> ocspValidatorFactory) {
         this.ocspValidatorFactory = ocspValidatorFactory;
@@ -258,7 +299,8 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link RevocationDataValidator} for use in the validation chain.
      *
      * @param revocationDataValidatorFactory the RevocationDataValidator factory method to use
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withRevocationDataValidatorFactory(
             Supplier<RevocationDataValidator> revocationDataValidatorFactory) {
@@ -270,7 +312,8 @@ public class ValidatorChainBuilder {
      * Use this factory method to create instances of {@link CertificateChainValidator} for use in the validation chain.
      *
      * @param certificateChainValidatorFactory the CertificateChainValidator factory method to use
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withCertificateChainValidatorFactory(
             Supplier<CertificateChainValidator> certificateChainValidatorFactory) {
@@ -282,7 +325,8 @@ public class ValidatorChainBuilder {
      * Use this instance of a {@link SignatureValidationProperties} in the validation chain.
      *
      * @param properties the SignatureValidationProperties instance to use
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withSignatureValidationProperties(SignatureValidationProperties properties) {
         this.properties = properties;
@@ -294,7 +338,8 @@ public class ValidatorChainBuilder {
      * for use in the validation chain.
      *
      * @param certificateRetrieverFactory the IssuingCertificateRetriever factory method to use
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withIssuingCertificateRetrieverFactory(
             Supplier<IssuingCertificateRetriever> certificateRetrieverFactory) {
@@ -306,7 +351,8 @@ public class ValidatorChainBuilder {
      * Use this factory to create instances of {@link IOcspClientBouncyCastle} for use in the validation chain.
      *
      * @param ocspClientFactory the IOcspClient factory method to use
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withOcspClient(Supplier<IOcspClientBouncyCastle> ocspClientFactory) {
         this.ocspClientFactory = ocspClientFactory;
@@ -317,7 +363,8 @@ public class ValidatorChainBuilder {
      * Use this factory to create instances of {@link ICrlClient} for use in the validation chain.
      *
      * @param crlClientFactory the ICrlClient factory method to use
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withCrlClient(Supplier<ICrlClient> crlClientFactory) {
         this.crlClientFactory = crlClientFactory;
@@ -328,7 +375,8 @@ public class ValidatorChainBuilder {
      * Adds known certificates to the {@link IssuingCertificateRetriever}.
      *
      * @param knownCertificates the list of known certificates to add
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withKnownCertificates(Collection<Certificate> knownCertificates) {
         this.knownCertificates = new ArrayList<>(knownCertificates);
@@ -339,7 +387,8 @@ public class ValidatorChainBuilder {
      * Sets the trusted certificates to the {@link IssuingCertificateRetriever}.
      *
      * @param trustedCertificates the list of trusted certificates to set
-     * @return the current ValidatorChainBuilder.
+     *
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withTrustedCertificates(Collection<Certificate> trustedCertificates) {
         this.trustedCertificates = new ArrayList<>(trustedCertificates);
@@ -354,7 +403,8 @@ public class ValidatorChainBuilder {
      * {@link com.itextpdf.signatures.validation.report.xml.XmlReportGenerator#generate(PadesValidationReport, Writer)}.
      *
      * @param adESReportAggregator the report aggregator to use
-     * @return the current ValidatorChainBuilder
+     *
+     * @return the current {@link ValidatorChainBuilder}
      *
      * @deprecated This method will be removed in a later version, use {@link #withAdESLevelReportGenerator} instead.
      */
@@ -375,7 +425,7 @@ public class ValidatorChainBuilder {
      *
      * @param reportEventListener the AdESReportEventListener to use
      *
-     * @return the current ValidatorChainBuilder
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withAdESLevelReportGenerator(XmlReportAggregator reportEventListener) {
         eventManager.register(reportEventListener);
@@ -389,7 +439,7 @@ public class ValidatorChainBuilder {
      *
      * @param reportGenerator the PAdESLevelReportGenerator to use
      *
-     * @return current ValidatorChainBuilder
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withPAdESLevelReportGenerator(PAdESLevelReportGenerator reportGenerator) {
         padesValidationRequested = true;
@@ -416,9 +466,9 @@ public class ValidatorChainBuilder {
      * <p>
      * If no instance is provided, the qualification validation is not executed.
      *
-     * @param qualifiedValidator {@link QualifiedValidator} instance which performs the validation.
+     * @param qualifiedValidator {@link QualifiedValidator} instance which performs the validation
      *
-     * @return current ValidatorChainBuilder
+     * @return the current {@link ValidatorChainBuilder}
      */
     public ValidatorChainBuilder withQualifiedValidator(QualifiedValidator qualifiedValidator) {
         this.qualifiedValidator = qualifiedValidator;
@@ -465,11 +515,16 @@ public class ValidatorChainBuilder {
     }
 
     /**
-     * Retrieves the explicitly added or automatically created {@link IResourceRetriever} instance.
+     * Retrieves the explicitly added or automatically created
+     * {@link com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever} instance.
      *
-     * @return the explicitly added or automatically created {@link IResourceRetriever} instance.
+     * @return the explicitly added or automatically created
+     *          {@link com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever} instance
+     *
+     * @deprecated as user should not normally need this getter
      */
-    public IResourceRetriever getResourceRetriever() {
+    @Deprecated
+    public com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever getResourceRetriever() {
         return resourceRetrieverFactory.get();
     }
 
@@ -603,16 +658,23 @@ public class ValidatorChainBuilder {
     }
 
     private IssuingCertificateRetriever buildIssuingCertificateRetriever() {
-        IssuingCertificateRetriever result = new IssuingCertificateRetriever(this.resourceRetrieverFactory.get());
-        if (trustedCertificates != null) {
-            result.setTrustedCertificates(trustedCertificates);
-        }
-        if (knownCertificates != null) {
-            result.addKnownCertificates(knownCertificates, CertificateOrigin.OTHER);
+        IssuingCertificateRetriever certRetriever;
+        if (deprecatedResourceRetrieverToUse) {
+            certRetriever = new IssuingCertificateRetriever(this.resourceRetrieverFactory.get());
+        } else {
+            certRetriever = new IssuingCertificateRetriever()
+                    .withResourceRetriever(advancedResourceRetrieverFactory.get());
         }
 
-        result.addKnownCertificates(lotlTrustedStoreFactory.get().getCertificates(), CertificateOrigin.OTHER);
-        return result;
+        if (trustedCertificates != null) {
+            certRetriever.setTrustedCertificates(trustedCertificates);
+        }
+        if (knownCertificates != null) {
+            certRetriever.addKnownCertificates(knownCertificates, CertificateOrigin.OTHER);
+        }
+
+        certRetriever.addKnownCertificates(lotlTrustedStoreFactory.get().getCertificates(), CertificateOrigin.OTHER);
+        return certRetriever;
     }
 
     private LotlTrustedStore buildLotlTrustedStore() {

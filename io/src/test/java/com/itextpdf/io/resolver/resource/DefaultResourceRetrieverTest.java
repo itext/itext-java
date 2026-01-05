@@ -24,12 +24,16 @@ package com.itextpdf.io.resolver.resource;
 
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.InputStream;
 import java.net.BindException;
 import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -101,13 +105,15 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(
-                    messageTemplate = IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT)
+                    messageTemplate = IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, count = 2)
     })
     public void filterOutFilteredResourcesTest() throws IOException {
         DefaultResourceRetriever resourceRetriever = new FilteredResourceRetriever();
         Assertions.assertFalse(resourceRetriever.urlFilter(new URL("https://example.com/resource")));
 
         Assertions.assertNull(resourceRetriever.getInputStreamByUrl(new URL("https://example.com/resource")));
+        Assertions.assertNull(resourceRetriever.get(new URL("https://example.com/resource"), new byte[0],
+                new HashMap<>(0)));
     }
 
     @Test
@@ -119,6 +125,20 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         Assertions.assertTrue(data.length > 0);
     }
 
+    @Test
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    public void loadWithRequestAndHeaders() throws IOException {
+        DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36");
+        InputStream is = resourceRetriever.get(
+                new URL("https://itextpdf.com/blog/itext-news-technical-notes/get-excited-itext-8-here"),
+                new byte[0], headers);
+        byte[] data = StreamUtil.inputStreamToArray(is);
+
+        Assertions.assertNotNull(data);
+        Assertions.assertTrue(data.length > 0);
+    }
 
     private static class FilteredResourceRetriever extends DefaultResourceRetriever {
         @Override

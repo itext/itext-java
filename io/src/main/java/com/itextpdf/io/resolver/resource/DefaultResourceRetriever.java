@@ -27,6 +27,8 @@ import com.itextpdf.io.exceptions.ReadingByteLimitException;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
+
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +40,7 @@ import java.net.URL;
  * Default implementation of the {@link IResourceRetriever} interface, which can set a limit
  * on the size of retrieved resources using input stream with a limit on the number of bytes read.
  */
-public class DefaultResourceRetriever implements IResourceRetriever {
+public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultResourceRetriever.class);
     private static final int DEFAULT_CONNECT_TIMEOUT = 300_000;
     private static final int DEFAULT_READ_TIMEOUT = 300_000;
@@ -129,12 +131,9 @@ public class DefaultResourceRetriever implements IResourceRetriever {
     }
 
     /**
-     * Gets the input stream with current limit on the number of bytes read,
-     * that connect with source URL for retrieving data from that connection.
-     *
-     * @param url the source URL
-     * @return the limited input stream or null if the URL was filtered
+     * {@inheritDoc}
      */
+    @Override
     public InputStream getInputStreamByUrl(URL url) throws IOException {
         if (urlFilter(url)) {
             return new LimitedInputStream(UrlUtil.getInputStreamOfFinalConnection(url, connectTimeout, readTimeout),
@@ -145,12 +144,9 @@ public class DefaultResourceRetriever implements IResourceRetriever {
     }
 
     /**
-     * Gets the byte array that are retrieved from the source URL.
-     *
-     * @param url the source URL
-     * @return the byte array or null if the retrieving failed or the
-     * URL was filtered or the resourceSizeByteLimit was violated
+     * {@inheritDoc}
      */
+    @Override
     public byte[] getByteArrayByUrl(URL url) throws IOException {
         try (InputStream stream = getInputStreamByUrl(url)) {
             if (stream != null) {
@@ -163,6 +159,19 @@ public class DefaultResourceRetriever implements IResourceRetriever {
                     url, resourceSizeByteLimit));
             return null;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public InputStream get(URL url, byte[] request, Map<String, String> headers) throws IOException {
+        if (urlFilter(url)) {
+            return new LimitedInputStream(UrlUtil.get(url, request, headers, connectTimeout, readTimeout),
+                    resourceSizeByteLimit);
+        }
+        LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));
+        return null;
     }
 
     /**

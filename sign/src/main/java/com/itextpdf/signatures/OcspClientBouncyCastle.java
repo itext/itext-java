@@ -33,7 +33,11 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
+import com.itextpdf.io.resolver.resource.IAdvancedResourceRetriever;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +46,8 @@ import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +62,8 @@ public class OcspClientBouncyCastle implements IOcspClientBouncyCastle {
      * The Logger instance.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(OcspClientBouncyCastle.class);
+
+    private IAdvancedResourceRetriever resourceRetriever = new DefaultResourceRetriever();
 
     /**
      * Creates new {@link OcspClientBouncyCastle} instance.
@@ -113,6 +121,29 @@ public class OcspClientBouncyCastle implements IOcspClientBouncyCastle {
         return null;
     }
 
+    /**
+     * Sets a resource retriever for this OCSP client.
+     * <p>
+     * This method allows you to provide a custom implementation of {@link IAdvancedResourceRetriever} to be used
+     * for fetching OCSP responses. By default, {@link DefaultResourceRetriever} is used.
+     *
+     * @param resourceRetriever the custom resource retriever to be used for fetching OCSP responses
+     *
+     * @return the current instance of {@link OcspClientBouncyCastle}
+     */
+    public OcspClientBouncyCastle withResourceRetriever(IAdvancedResourceRetriever resourceRetriever) {
+        this.resourceRetriever = resourceRetriever;
+        return this;
+    }
+
+    /**
+     * Gets the resource retriever currently being used in this OCSP client.
+     *
+     * @return resource retriever
+     */
+    public IAdvancedResourceRetriever getResourceRetriever() {
+        return resourceRetriever;
+    }
 
     /**
      * Generates an OCSP request using BouncyCastle.
@@ -162,6 +193,38 @@ public class OcspClientBouncyCastle implements IOcspClientBouncyCastle {
     }
 
     /**
+     * Create OCSP request and get the response for this request, represented as {@link InputStream}.
+     * 
+     * @param checkCert {@link X509Certificate} certificate to get OCSP response for
+     * @param rootCert {@link X509Certificate} root certificate from which OCSP request will be built
+     * @param url {@link URL} link, which is expected to be used to get OCSP response from
+     * 
+     * @return OCSP response bytes, represented as {@link InputStream}
+     * 
+     * @throws IOException if an I/O error occurs
+     * @throws AbstractOperatorCreationException is thrown if any errors occur while handling OCSP requests/responses
+     * @throws AbstractOCSPException is thrown if any errors occur while handling OCSP requests/responses
+     * @throws CertificateEncodingException is thrown if any errors occur while handling OCSP requests/responses
+     */
+    protected InputStream createRequestAndResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
+            throws IOException, AbstractOperatorCreationException, AbstractOCSPException, CertificateEncodingException {
+        LOGGER.info("Getting OCSP from " + url);
+        IOCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
+        byte[] array = request.getEncoded();
+        URL urlt = new URL(url);
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/ocsp-request");
+        headers.put("Accept", "application/ocsp-response");
+
+        try {
+            return resourceRetriever.get(urlt, array, headers);
+        } catch (com.itextpdf.io.exceptions.IOException e) {
+            throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE).setMessageParams(e.getMessage());
+        }
+    }
+
+    /**
      * Gets an OCSP response object using BouncyCastle.
      *
      * @param checkCert to certificate to check
@@ -189,28 +252,5 @@ public class OcspClientBouncyCastle implements IOcspClientBouncyCastle {
         }
         InputStream in = createRequestAndResponse(checkCert, rootCert, url);
         return in == null ? null : BOUNCY_CASTLE_FACTORY.createOCSPResp(StreamUtil.inputStreamToArray(in));
-    }
-
-    /**
-     * Create OCSP request and get the response for this request, represented as {@link InputStream}.
-     * 
-     * @param checkCert {@link X509Certificate} certificate to get OCSP response for
-     * @param rootCert {@link X509Certificate} root certificate from which OCSP request will be built
-     * @param url {@link URL} link, which is expected to be used to get OCSP response from
-     * 
-     * @return OCSP response bytes, represented as {@link InputStream}
-     * 
-     * @throws IOException if an I/O error occurs
-     * @throws AbstractOperatorCreationException is thrown if any errors occur while handling OCSP requests/responses
-     * @throws AbstractOCSPException is thrown if any errors occur while handling OCSP requests/responses
-     * @throws CertificateEncodingException is thrown if any errors occur while handling OCSP requests/responses
-     */
-    protected InputStream createRequestAndResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
-            throws IOException, AbstractOperatorCreationException, AbstractOCSPException, CertificateEncodingException {
-        LOGGER.info("Getting OCSP from " + url);
-        IOCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
-        byte[] array = request.getEncoded();
-        URL urlt = new URL(url);
-        return SignUtils.getHttpResponseForOcspRequest(array, urlt);
     }
 }

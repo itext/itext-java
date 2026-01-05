@@ -132,23 +132,6 @@ final class SignUtils {
         return externalDigest.getMessageDigest(hashAlgorithm);
     }
 
-    static InputStream getHttpResponse(URL urlt) throws IOException {
-        return getHttpResponse(urlt, -1);
-    }
-
-    static InputStream getHttpResponse(URL urlt, int connectionTimeout) throws IOException {
-        HttpURLConnection con = (HttpURLConnection) urlt.openConnection();
-        if (connectionTimeout >= 0) {
-            con.setConnectTimeout(connectionTimeout);
-        }
-        if (con.getResponseCode() / 100 != 2) {
-            throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE)
-                    .setMessageParams(con.getResponseCode());
-        }
-        return (InputStream) con.getContent();
-    }
-
-
     static ICertificateID generateCertificateId(X509Certificate issuerCert, BigInteger serialNumber,
                                                 IAlgorithmIdentifier digestAlgorithmIdentifier)
             throws AbstractOperatorCreationException, CertificateEncodingException, AbstractOCSPException {
@@ -177,24 +160,6 @@ final class SignUtils {
                 FACTORY.createOCSPObjectIdentifiers().getIdPkixOcspNonce(), false, derOctetString);
         gen.setRequestExtensions(FACTORY.createExtensions(ext));
         return gen.build();
-    }
-
-    static InputStream getHttpResponseForOcspRequest(byte[] request, URL urlt) throws IOException {
-        HttpURLConnection con = (HttpURLConnection) urlt.openConnection();
-        con.setRequestProperty("Content-Type", "application/ocsp-request");
-        con.setRequestProperty("Accept", "application/ocsp-response");
-        con.setDoOutput(true);
-        OutputStream out = con.getOutputStream();
-        DataOutputStream dataOut = new DataOutputStream(new BufferedOutputStream(out));
-        dataOut.write(request);
-        dataOut.flush();
-        dataOut.close();
-        if (con.getResponseCode() / 100 != 2) {
-            throw new PdfException(SignExceptionMessageConstant.INVALID_HTTP_RESPONSE)
-                    .setMessageParams(con.getResponseCode());
-        }
-        //Get Response
-        return (InputStream) con.getContent();
     }
 
     static boolean isSignatureValid(IBasicOCSPResp validator, Certificate certStoreX509, String provider)

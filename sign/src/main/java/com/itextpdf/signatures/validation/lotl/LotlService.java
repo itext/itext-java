@@ -156,7 +156,6 @@ public class LotlService implements AutoCloseable {
         return this;
     }
 
-
     /**
      * Initializes the cache with the latest Lotl data and related resources.
      */

@@ -26,6 +26,8 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
+import com.itextpdf.io.resolver.resource.IAdvancedResourceRetriever;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,7 +59,9 @@ public class CrlClientOnline implements ICrlClient {
      * The URLs of the CRLs.
      */
     protected List<URL> urls = new ArrayList<>();
+    @Deprecated
     private int connectionTimeout = -1;
+    private IAdvancedResourceRetriever resourceRetriever = new DefaultResourceRetriever();
 
     /**
      * Creates a CrlClientOnline instance that will try to find
@@ -168,10 +172,38 @@ public class CrlClientOnline implements ICrlClient {
 
     /**
      * Sets the connection timeout for the http client
+     *
      * @param i the timeout in milliseconds, a negative number means using the system connection timeout
+     *
+     * @deprecated in favor of custom resource retriever
      */
+    @Deprecated
     public void setConnectionTimeout(int i) {
         connectionTimeout = i;
+    }
+
+    /**
+     * Sets a resource retriever for this CRL client.
+     * <p>
+     * This method allows you to provide a custom implementation of {@link IAdvancedResourceRetriever} to be used
+     * for fetching CRL responses. By default, {@link DefaultResourceRetriever} is used.
+     *
+     * @param resourceRetriever the custom resource retriever to be used for fetching CRL responses
+     *
+     * @return the current instance of {@link CrlClientOnline}
+     */
+    public CrlClientOnline withResourceRetriever(IAdvancedResourceRetriever resourceRetriever) {
+        this.resourceRetriever = resourceRetriever;
+        return this;
+    }
+
+    /**
+     * Gets the resource retriever currently being used in this CRL client.
+     *
+     * @return resource retriever
+     */
+    public IAdvancedResourceRetriever getResourceRetriever() {
+        return resourceRetriever;
     }
 
     /**
@@ -185,7 +217,11 @@ public class CrlClientOnline implements ICrlClient {
      * @throws IOException if an I/O error occurs
      */
     protected InputStream getCrlResponse(X509Certificate cert, URL urlt) throws IOException {
-        return SignUtils.getHttpResponse(urlt, connectionTimeout);
+        if (connectionTimeout > 0 && resourceRetriever instanceof DefaultResourceRetriever) {
+            ((DefaultResourceRetriever) resourceRetriever).setConnectTimeout(connectionTimeout);
+        }
+
+        return resourceRetriever.getInputStreamByUrl(urlt);
     }
 
     /**

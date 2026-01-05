@@ -166,6 +166,9 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.signatures.validation.lotl.QualifiedValidator.QualificationConclusion", "QualificationConclusion?");
         configurator.mapType("com.itextpdf.signatures.validation.dataorigin.CertificateOrigin", "iText.Signatures.Validation.Dataorigin.CertificateOrigin?");
         configurator.mapType("com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin", "iText.Signatures.Validation.Dataorigin.RevocationDataOrigin?");
+
+        configurator.addFullName("iText.StyledXmlParser.Resolver.Resource.IResourceRetriever");
+        configurator.addFullName("iText.StyledXmlParser.Resolver.Resource.DefaultResourceRetriever");
     }
 
     @Override

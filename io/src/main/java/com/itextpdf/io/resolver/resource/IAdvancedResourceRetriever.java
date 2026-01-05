@@ -25,30 +25,24 @@ package com.itextpdf.io.resolver.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 
 /**
- * Interface for classes that can retrieve data from resources by URL.
+ * Extended interface for classes that can retrieve data from resources by URL.
+ * An extra method with http headers and request data is added.
  */
-public interface IResourceRetriever {
+public interface IAdvancedResourceRetriever extends IResourceRetriever {
+
     /**
      * Gets the {@link InputStream} with the data from a provided URL by instantiating an HTTP connection to the URL.
      *
      * @param url the source URL
+     * @param request data to send to the URL
+     * @param headers HTTP headers to set for the outgoing connection
      *
      * @return the input stream with the retrieved data
      *
      * @throws IOException if any input/output issue occurs
      */
-    InputStream getInputStreamByUrl(URL url) throws IOException;
-
-    /**
-     * Gets the byte array with the data from a provided URL by instantiating an HTTP connection to the URL.
-     *
-     * @param url the source URL
-     *
-     * @return the byte array with the retrieved data
-     *
-     * @throws IOException if any input/output issue occurs
-     */
-    byte[] getByteArrayByUrl(URL url) throws IOException;
+    InputStream get(URL url, byte[] request, Map<String, String> headers) throws IOException;
 }
