@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -103,7 +103,9 @@ public class ReaderProperties {
      * @param externalDecryptionProcess the external decryption process to be used
      * @return this {@link ReaderProperties} instance
      */
-    public ReaderProperties setPublicKeySecurityParams(Certificate certificate, IExternalDecryptionProcess externalDecryptionProcess) {
+    public ReaderProperties setPublicKeySecurityParams(Certificate certificate,
+            IExternalDecryptionProcess externalDecryptionProcess) {
+
         clearEncryptionParams();
         this.certificate = certificate;
         this.externalDecryptionProcess = externalDecryptionProcess;

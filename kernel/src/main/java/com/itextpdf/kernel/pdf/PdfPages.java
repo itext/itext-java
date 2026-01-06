@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,7 +24,7 @@ package com.itextpdf.kernel.pdf;
 
 class PdfPages extends PdfObjectWrapper<PdfDictionary> {
 
-	private int from;
+    private int from;
     private PdfNumber count;
     private final PdfArray kids;
     private final PdfPages parent;
@@ -75,8 +75,9 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public boolean addPage(int index, PdfPage pdfPage) {
-        if (index < from || index > from + getCount())
+        if (index < from || index > from + getCount()) {
             return false;
+        }
         kids.add(index - from, pdfPage.getPdfObject());
         pdfPage.getPdfObject().put(PdfName.Parent, getPdfObject());
         pdfPage.setModified();
@@ -85,8 +86,9 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     }
 
     public boolean removePage(int pageNum) {
-        if (pageNum < from || pageNum >= from + getCount())
+        if (pageNum < from || pageNum >= from + getCount()) {
             return false;
+        }
         decrementCount();
         kids.remove(pageNum - from);
         return true;
@@ -119,7 +121,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         return count.intValue();
     }
 
-    public void correctFrom(int correction){
+    public void correctFrom(int correction) {
         from += correction;
     }
 
@@ -131,25 +133,29 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         return parent;
     }
 
-    public void incrementCount(){
+    public void incrementCount() {
         count.increment();
         setModified();
-        if (parent != null)
+        if (parent != null) {
             parent.incrementCount();
+        }
     }
 
-    public void decrementCount(){
+    public void decrementCount() {
         count.decrement();
         setModified();
-        if (parent != null)
+        if (parent != null) {
             parent.decrementCount();
+        }
     }
 
     public int compareTo(int index) {
-        if (index < from)
+        if (index < from) {
             return 1;
-        if (index >= from + getCount())
+        }
+        if (index >= from + getCount()) {
             return -1;
+        }
         return 0;
     }
 
