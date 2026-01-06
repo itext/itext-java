@@ -61,14 +61,14 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfReader implements Closeable {
     /**
-     * The Logger instance.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfReader.class);
-
-    /**
      * The default {@link StrictnessLevel} to be used.
      */
     public static final StrictnessLevel DEFAULT_STRICTNESS_LEVEL = StrictnessLevel.LENIENT;
+
+    /**
+     * The Logger instance.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfReader.class);
 
     private static final String endstream1 = "endstream";
     private static final String endstream2 = "\nendstream";
@@ -78,21 +78,8 @@ public class PdfReader implements Closeable {
     private static final byte[] endobj = ByteUtils.getIsoBytes("endobj");
 
     protected static boolean correctStreamLength = true;
-
-    private boolean unethicalReading;
-
-    private boolean memorySavingMode;
-
-    private StrictnessLevel strictnessLevel = DEFAULT_STRICTNESS_LEVEL;
-
-    //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
-    private PdfIndirectReference currentIndirectReference;
-
-    private XrefProcessor xrefProcessor = new XrefProcessor();
-
     protected PdfTokenizer tokens;
     protected PdfEncryption decrypt;
-
     // here we store only the pdfVersion that is written in the document's header,
     // however it could differ from the actual pdf version that could be written in document's catalog
     protected PdfVersion headerPdfVersion;
@@ -100,14 +87,19 @@ public class PdfReader implements Closeable {
     protected long eofPos;
     protected PdfDictionary trailer;
     protected PdfDocument pdfDocument;
-
     protected ReaderProperties properties;
-
     protected boolean encrypted = false;
     protected boolean rebuiltXref = false;
     protected boolean hybridXref = false;
     protected boolean fixedXref = false;
     protected boolean xrefStm = false;
+
+    private boolean unethicalReading;
+    private boolean memorySavingMode;
+    private StrictnessLevel strictnessLevel = DEFAULT_STRICTNESS_LEVEL;
+    //indicate nearest first Indirect reference object which includes current reading the object, using for PdfString decrypt
+    private PdfIndirectReference currentIndirectReference;
+    private XrefProcessor xrefProcessor = new XrefProcessor();
 
     private XMPMeta xmpMeta;
     private PdfConformance pdfConformance;
@@ -219,7 +211,7 @@ public class PdfReader implements Closeable {
      * value of this parameter.
      *
      * @param unethicalReading true to enable unethicalReading, false to disable it.
-     *                         By default unethicalReading is disabled.
+     *                         By default, unethicalReading is disabled.
      * @return this {@link PdfReader} instance.
      */
     public PdfReader setUnethicalReading(boolean unethicalReading) {
@@ -230,7 +222,7 @@ public class PdfReader implements Closeable {
     /**
      * Defines if memory saving mode is enabled.
      * <p>
-     * By default memory saving mode is disabled for the sake of time–memory trade-off.
+     * By default, memory saving mode is disabled for the sake of time–memory trade-off.
      * <p>
      * If memory saving mode is enabled, document processing might slow down, but reading will be less memory demanding.
      *
@@ -332,6 +324,7 @@ public class PdfReader implements Closeable {
      * <p>
      * This method's returned value might change over time, because PdfObjects reading
      * can be postponed even up to document closing.
+     *
      * @return true, if PdfReader fixed offsets of PdfObjects.
      * @throws PdfException if the method has been invoked before the PDF document was read.
      */
@@ -393,13 +386,15 @@ public class PdfReader implements Closeable {
             checkPdfStreamLength(stream);
         }
         long offset = stream.getOffset();
-        if (offset <= 0)
+        if (offset <= 0) {
             return null;
+        }
         int length = stream.getLength();
-        if (length <= 0)
+        if (length <= 0) {
             return new byte[0];
+        }
         RandomAccessFileOrArray file = tokens.getSafeFile();
-        byte[] bytes = null;
+        byte[] bytes;
         try {
             file.seek(offset);
             bytes = new byte[length];
@@ -433,7 +428,8 @@ public class PdfReader implements Closeable {
                     skip = true;
                 }
                 if (!skip) {
-                    decrypt.setHashKeyForNextObject(stream.getIndirectReference().getObjNumber(), stream.getIndirectReference().getGenNumber());
+                    decrypt.setHashKeyForNextObject(stream.getIndirectReference().getObjNumber(),
+                            stream.getIndirectReference().getGenNumber());
                     bytes = decrypt.decryptByteArray(bytes);
                 }
             }
@@ -482,7 +478,8 @@ public class PdfReader implements Closeable {
      * @return the decoded bytes
      * @throws PdfException if there are any problems decoding the bytes
      */
-    public static byte[] decodeBytes(byte[] b, PdfDictionary streamDictionary, Map<PdfName, IFilterHandler> filterHandlers) {
+    public static byte[] decodeBytes(byte[] b, PdfDictionary streamDictionary,
+            Map<PdfName, IFilterHandler> filterHandlers) {
         if (b == null) {
             return null;
         }
@@ -504,14 +501,16 @@ public class PdfReader implements Closeable {
         final boolean memoryLimitsAwarenessRequired = null != memoryLimitsAwareHandler &&
                 memoryLimitsAwareHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters);
 
-        if(memoryLimitsAwarenessRequired) {
+        if (memoryLimitsAwarenessRequired) {
             memoryLimitsAwareHandler.beginDecompressedPdfStreamProcessing();
         }
 
         PdfArray dp = new PdfArray();
         PdfObject dpo = streamDictionary.get(PdfName.DecodeParms);
         if (dpo == null || (dpo.getType() != PdfObject.DICTIONARY && dpo.getType() != PdfObject.ARRAY)) {
-            if (dpo != null) dpo.release();
+            if (dpo != null) {
+                dpo.release();
+            }
             dpo = streamDictionary.get(PdfName.DP);
         }
         if (dpo != null) {
@@ -525,9 +524,10 @@ public class PdfReader implements Closeable {
         for (int j = 0; j < filters.size(); ++j) {
             PdfName filterName = (PdfName) filters.get(j);
             IFilterHandler filterHandler = filterHandlers.get(filterName);
-            if (filterHandler == null)
+            if (filterHandler == null) {
                 throw new PdfException(KernelExceptionMessageConstant.THIS_FILTER_IS_NOT_SUPPORTED)
                         .setMessageParams(filterName);
+            }
 
             PdfDictionary decodeParams;
             if (j < dp.size()) {
@@ -628,10 +628,11 @@ public class PdfReader implements Closeable {
             throw new PdfException(KernelExceptionMessageConstant.DOCUMENT_HAS_NOT_BEEN_READ_YET);
         }
 
-        if (decrypt == null)
+        if (decrypt == null) {
             return -1;
-        else
+        } else {
             return decrypt.getCryptoMode();
+        }
     }
 
     /**
@@ -798,24 +799,27 @@ public class PdfReader implements Closeable {
             boolean ok = true;
             for (int k = 0; k < n; ++k) {
                 ok = tokens.nextToken();
-                if (!ok)
+                if (!ok) {
                     break;
+                }
                 if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
                     ok = false;
                     break;
                 }
                 objNumber[k] = tokens.getIntValue();
                 ok = tokens.nextToken();
-                if (!ok)
+                if (!ok) {
                     break;
+                }
                 if (tokens.getTokenType() != PdfTokenizer.TokenType.Number) {
                     ok = false;
                     break;
                 }
                 address[k] = tokens.getIntValue() + first;
             }
-            if (!ok)
+            if (!ok) {
                 throw new PdfException(KernelExceptionMessageConstant.ERROR_WHILE_READING_OBJECT_STREAM);
+            }
             for (int k = 0; k < n; ++k) {
                 tokens.seek(address[k]);
                 tokens.nextToken();
@@ -832,7 +836,7 @@ public class PdfReader implements Closeable {
                     continue;
                 }
                 if (tokens.getTokenType() == PdfTokenizer.TokenType.Number) {
-                    // This ensure that we don't even try to read as indirect reference token (two numbers and "R")
+                    // This ensures that we don't even try to read as indirect reference token (two numbers and "R")
                     // which are forbidden in object streams.
                     obj = new PdfNumber(tokens.getByteContent());
                 } else {
@@ -934,7 +938,8 @@ public class PdfReader implements Closeable {
             case String: {
                 PdfString pdfString = new PdfString(tokens.getByteContent(), tokens.isHexString());
                 if (encrypted && !decrypt.isEmbeddedFilesOnly() && !objStm) {
-                    pdfString.setDecryption(currentIndirectReference.getObjNumber(), currentIndirectReference.getGenNumber(), decrypt);
+                    pdfString.setDecryption(currentIndirectReference.getObjNumber(),
+                            currentIndirectReference.getGenNumber(), decrypt);
                 }
                 return pdfString;
             }
@@ -967,8 +972,9 @@ public class PdfReader implements Closeable {
     protected PdfName readPdfName(boolean readAsDirect) {
         if (readAsDirect) {
             PdfName cachedName = PdfName.staticNames.get(tokens.getStringValue());
-            if (cachedName != null)
+            if (cachedName != null) {
                 return cachedName;
+            }
         }
         // an indirect name (how odd...), or a non-standard one
         return new PdfName(tokens.getByteContent());
@@ -988,12 +994,14 @@ public class PdfReader implements Closeable {
             PdfName name = readPdfName(true);
             PdfObject obj = readObject(true, objStm);
             if (obj == null) {
-                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic)
+                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndDic) {
                     tokens.throwError(MessageFormatUtil.
                             format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, ">>"));
-                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray)
+                }
+                if (tokens.getTokenType() == PdfTokenizer.TokenType.EndArray) {
                     tokens.throwError(MessageFormatUtil.
                             format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN, "]"));
+                }
             }
             dic.put(name, obj);
         }
@@ -1082,8 +1090,9 @@ public class PdfReader implements Closeable {
 
     protected PdfDictionary readXrefSection() throws IOException {
         tokens.nextValidToken();
-        if (!tokens.tokenValueEqualsTo(PdfTokenizer.Xref))
+        if (!tokens.tokenValueEqualsTo(PdfTokenizer.Xref)) {
             tokens.throwError(KernelExceptionMessageConstant.XREF_SUBSECTION_NOT_FOUND);
+        }
         PdfXrefTable xref = pdfDocument.getXref();
         while (true) {
             tokens.nextValidToken();
@@ -1223,8 +1232,9 @@ public class PdfReader implements Closeable {
             PdfArray w = xrefStream.getAsArray(PdfName.W);
             long prev = -1;
             obj = getXrefPrev(xrefStream.get(PdfName.Prev, false));
-            if (obj != null)
+            if (obj != null) {
                 prev = ((PdfNumber) obj).longValue();
+            }
             xref.setCapacity(size);
             byte[] b = readStreamBytes(xrefStream, true);
             int bptr = 0;
@@ -1300,18 +1310,21 @@ public class PdfReader implements Closeable {
         PdfXrefTable xref = pdfDocument.getXref();
         tokens.seek(0);
         ByteBuffer buffer = new ByteBuffer(24);
-        PdfTokenizer lineTokeniser = new PdfTokenizer(new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
+        PdfTokenizer lineTokeniser = new PdfTokenizer(
+                new RandomAccessFileOrArray(new ReusableRandomAccessSource(buffer)));
         for (; ; ) {
             long pos = tokens.getPosition();
             buffer.reset();
 
             // added boolean because of mailing list issue (17 Feb. 2014)
-            if (!tokens.readLineSegment(buffer, true))
+            if (!tokens.readLineSegment(buffer, true)) {
                 break;
+            }
             if (buffer.get(0) >= '0' && buffer.get(0) <= '9') {
                 int[] obj = PdfTokenizer.checkObjectStart(lineTokeniser);
-                if (obj == null)
+                if (obj == null) {
                     continue;
+                }
                 int num = obj[0];
                 int gen = obj[1];
                 PdfIndirectReference reference = xref.get(num);
@@ -1321,7 +1334,6 @@ public class PdfReader implements Closeable {
             }
         }
     }
-
 
     protected void rebuildXref() throws IOException {
         xrefStm = false;
@@ -1355,7 +1367,7 @@ public class PdfReader implements Closeable {
                         // if the pdf is linearized it is possible that the trailer has been read
                         // before the actual objects it refers to this causes the trailer to have
                         // objects in READING state that's why we keep track of the position  of the
-                        // trailer and then asign it when the whole pdf has been loaded
+                        // trailer and then assign it when the whole pdf has been loaded
                         trailerIndex = pos;
                     } else {
                         tokens.seek(pos);
@@ -1376,31 +1388,6 @@ public class PdfReader implements Closeable {
             // in READING state when the pdf has been linearised now we can assign the trailer
             // and it will have the right references
             setTrailerFromTrailerIndex(trailerIndex);
-        }
-    }
-
-    private boolean isCurrentObjectATrailer() {
-        try {
-            final PdfDictionary dic = (PdfDictionary) readObject(false);
-            return dic.get(PdfName.Root, false) != null;
-        } catch (MemoryLimitsAwareException e){
-            throw e;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private void setTrailerFromTrailerIndex(Long trailerIndex) throws IOException {
-        if (trailerIndex == null) {
-            throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);
-        }
-        tokens.seek((long)trailerIndex);
-        final PdfDictionary dic = (PdfDictionary) readObject(false);
-        if (dic.get(PdfName.Root, false) != null) {
-            trailer = dic;
-        }
-        if (trailer == null) {
-            throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);
         }
     }
 
@@ -1432,6 +1419,31 @@ public class PdfReader implements Closeable {
         this.xrefProcessor = xrefProcessor;
     }
 
+    private boolean isCurrentObjectATrailer() {
+        try {
+            final PdfDictionary dic = (PdfDictionary) readObject(false);
+            return dic.get(PdfName.Root, false) != null;
+        } catch (MemoryLimitsAwareException e) {
+            throw e;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private void setTrailerFromTrailerIndex(Long trailerIndex) throws IOException {
+        if (trailerIndex == null) {
+            throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);
+        }
+        tokens.seek((long) trailerIndex);
+        final PdfDictionary dic = (PdfDictionary) readObject(false);
+        if (dic.get(PdfName.Root, false) != null) {
+            trailer = dic;
+        }
+        if (trailer == null) {
+            throw new PdfException(KernelExceptionMessageConstant.TRAILER_NOT_FOUND);
+        }
+    }
+
     private void processArrayReadError() {
         final String error = MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN,
                 new String(tokens.getByteContent(), StandardCharsets.UTF_8));
@@ -1443,11 +1455,13 @@ public class PdfReader implements Closeable {
     }
 
     private void readDecryptObj() {
-        if (encrypted)
+        if (encrypted) {
             return;
+        }
         PdfDictionary enc = trailer.getAsDictionary(PdfName.Encrypt);
-        if (enc == null)
+        if (enc == null) {
             return;
+        }
         encrypted = true;
         PdfName filter = enc.getAsName(PdfName.Filter);
         if (PdfName.Adobe_PubSec.equals(filter)) {
@@ -1460,17 +1474,20 @@ public class PdfReader implements Closeable {
         } else if (PdfName.Standard.equals(filter)) {
             decrypt = new PdfEncryption(enc, properties.password, getOriginalFileId());
         } else {
-            throw new UnsupportedSecurityHandlerException(MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_SECURITY_HANDLER, filter));
+            throw new UnsupportedSecurityHandlerException(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.UNSUPPORTED_SECURITY_HANDLER, filter));
         }
 
         decrypt.configureEncryptionParametersFromReader(pdfDocument, trailer);
     }
 
     private PdfObject readObject(PdfIndirectReference reference, boolean fixXref) {
-        if (reference == null)
+        if (reference == null) {
             return null;
-        if (reference.refersTo != null)
+        }
+        if (reference.refersTo != null) {
             return reference.refersTo;
+        }
         try {
             currentIndirectReference = reference;
             if (reference.getObjStreamNumber() > 0) {
@@ -1514,12 +1531,13 @@ public class PdfReader implements Closeable {
     }
 
     private void checkPdfStreamLength(PdfStream pdfStream) throws IOException {
-        if (!correctStreamLength)
+        if (!correctStreamLength) {
             return;
+        }
         long fileLength = tokens.length();
         long start = pdfStream.getOffset();
         boolean calc = false;
-        int streamLength = 0;
+        int streamLength;
         PdfNumber pdfNumber = pdfStream.getAsNumber(PdfName.Length);
         if (pdfNumber != null) {
             streamLength = pdfNumber.intValue();
@@ -1559,8 +1577,9 @@ public class PdfReader implements Closeable {
                     tokens.seek(pos - 16);
                     String s = tokens.readString(16);
                     int index = s.indexOf(endstream1);
-                    if (index >= 0)
+                    if (index >= 0) {
                         pos = pos - 16 + index;
+                    }
                     break;
                 }
             }
@@ -1627,7 +1646,7 @@ public class PdfReader implements Closeable {
             LOGGER.error(MessageFormatUtil.format(
                     IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
                     , ex.getCause().getMessage()));
-        } else if (ex.getMessage() !=null) {
+        } else if (ex.getMessage() != null) {
             LOGGER.error(MessageFormatUtil.format(
                     IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
                     , ex.getMessage()));

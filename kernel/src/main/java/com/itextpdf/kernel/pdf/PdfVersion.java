@@ -45,8 +45,8 @@ public class PdfVersion implements Comparable<PdfVersion> {
     public static final PdfVersion PDF_1_7 = createPdfVersion(1, 7);
     public static final PdfVersion PDF_2_0 = createPdfVersion(2, 0);
 
-    private int major;
-    private int minor;
+    private final int major;
+    private final int minor;
 
     /**
      * Creates a PdfVersion class.
@@ -56,20 +56,6 @@ public class PdfVersion implements Comparable<PdfVersion> {
     private PdfVersion(int major, int minor) {
         this.major = major;
         this.minor = minor;
-    }
-
-    @Override
-    public String toString() {
-        return MessageFormatUtil.format("PDF-{0}.{1}", major, minor);
-    }
-
-    /**
-     * Gets the PDF version in "X.Y" format. Use {@link #toString()} to get the version in "PDF-X.Y" format.
-     *
-     * @return the string representation of the PDF version
-     */
-    public PdfName toPdfName() {
-        return new PdfName(MessageFormatUtil.format("{0}.{1}", major, minor));
     }
 
     /**
@@ -102,6 +88,20 @@ public class PdfVersion implements Comparable<PdfVersion> {
             }
         }
         throw new IllegalArgumentException("The provided pdf version was not found.");
+    }
+
+    @Override
+    public String toString() {
+        return MessageFormatUtil.format("PDF-{0}.{1}", major, minor);
+    }
+
+    /**
+     * Gets the PDF version in "X.Y" format. Use {@link #toString()} to get the version in "PDF-X.Y" format.
+     *
+     * @return the string representation of the PDF version
+     */
+    public PdfName toPdfName() {
+        return new PdfName(MessageFormatUtil.format("{0}.{1}", major, minor));
     }
 
     @Override

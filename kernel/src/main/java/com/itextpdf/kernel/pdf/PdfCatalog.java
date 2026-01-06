@@ -61,7 +61,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     private static final Set<PdfName> PAGE_LAYOUTS = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(PdfName.SinglePage, PdfName.OneColumn, PdfName.TwoColumnLeft,
                     PdfName.TwoColumnRight, PdfName.TwoPageLeft, PdfName.TwoPageRight)));
-    final private PdfPagesTree pageTree;
+
     /**
      * Map of the {@link PdfNameTree}. Used for creation {@code name tree}  dictionary.
      */
@@ -74,6 +74,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * The document’s optional content properties dictionary.
      */
     protected PdfOCProperties ocProperties;
+
+    private final PdfPagesTree pageTree;
     private PdfOutline outlines;
     //This HashMap contents all pages of the document and outlines associated to them
     private final Map<PdfObject, List<PdfOutline>> pagesWithOutlines = new HashMap<>();
@@ -131,9 +133,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @return the Optional Content Properties Dictionary
      */
     public PdfOCProperties getOCProperties(boolean createIfNotExists) {
-        if (ocProperties != null)
+        if (ocProperties != null) {
             return ocProperties;
-        else {
+        } else {
             PdfDictionary ocPropertiesDict = getPdfObject().getAsDictionary(PdfName.OCProperties);
             if (ocPropertiesDict != null) {
                 if (getDocument().getWriter() != null) {
@@ -163,11 +165,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     public void flush() {
         Logger logger = LoggerFactory.getLogger(PdfDocument.class);
         logger.warn("PdfCatalog cannot be flushed manually");
-    }
-
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return true;
     }
 
     /**
@@ -289,7 +286,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     /**
      * This method gets Names tree from the catalog.
      *
-     * @param treeType type of the tree (Dests, AP, EmbeddedFiles etc).
+     * @param treeType type of the tree (Dests, AP, EmbeddedFiles etc.).
      *
      * @return returns {@link PdfNameTree}
      */
@@ -389,12 +386,14 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary existingExtensionDict = extensions.getAsDictionary(extension.getPrefix());
             if (existingExtensionDict != null) {
                 int diff = extension.getBaseVersion().compareTo(existingExtensionDict.getAsName(PdfName.BaseVersion));
-                if (diff < 0)
+                if (diff < 0) {
                     return;
+                }
                 diff = extension.getExtensionLevel() - existingExtensionDict.
                         getAsNumber(PdfName.ExtensionLevel).intValue();
-                if (diff <= 0)
+                if (diff <= 0) {
                     return;
+                }
             }
             extensions.put(extension.getPrefix(), extension.getDeveloperExtensions());
         }
@@ -487,6 +486,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         return this;
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
     /**
      * True indicates that getOCProperties() was called, may have been modified,
      * and thus its dictionary needs to be reconstructed.
@@ -500,6 +504,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     void setOcgCopied(boolean ocgCopied) {
         this.ocgCopied = ocgCopied;
     }
+
     PdfPagesTree getPageTree() {
         return pageTree;
     }
@@ -514,7 +519,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This methods adds new name to the Dests NameTree. It throws an exception, if the name already exists.
+     * This method adds new name to the Dests NameTree. It throws an exception, if the name already exists.
      *
      * @param key   Name of the destination.
      * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
@@ -525,7 +530,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * This methods adds a new name to the specified NameTree. It throws an exception, if the name already exists.
+     * This method adds a new name to the specified NameTree. It throws an exception, if the name already exists.
      *
      * @param key      key in the name tree
      * @param value    value in the name tree
@@ -602,11 +607,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         }
         if (hasOutlines()) {
             getOutlines(false);
-            if (pagesWithOutlines.size() > 0) {
-                if (pagesWithOutlines.get(page.getPdfObject()) != null) {
-                    for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject())) {
-                        outline.removeOutline();
-                    }
+            if (!pagesWithOutlines.isEmpty() && pagesWithOutlines.get(page.getPdfObject()) != null) {
+                for (PdfOutline outline : pagesWithOutlines.get(page.getPdfObject())) {
+                    outline.removeOutline();
                 }
             }
         }
@@ -618,10 +621,11 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      * @param outline the outline dictionary that shall be the root of the document’s outline hierarchy
      */
     void addRootOutline(PdfOutline outline) {
-        if (!outlineMode)
+        if (!outlineMode) {
             return;
+        }
 
-        if (pagesWithOutlines.size() == 0) {
+        if (pagesWithOutlines.isEmpty()) {
             put(PdfName.Outlines, outline.getContent());
         }
     }
@@ -733,8 +737,9 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfArray srcDestArray = (PdfArray) dests.get(srcDestName);
             if (srcDestArray != null) {
                 PdfObject pageObject = srcDestArray.get(0);
-                if (pageObject instanceof PdfNumber)
+                if (pageObject instanceof PdfNumber) {
                     pageObject = getDocument().getPage(((PdfNumber) pageObject).intValue() + 1).getPdfObject();
+                }
                 for (PdfPage oldPage : page2page.keySet()) {
                     if (oldPage.getPdfObject() == pageObject) {
                         d = new PdfStringDestination(srcDestName);
@@ -785,21 +790,6 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 NullCopyFilter.getInstance()));
     }
 
-    private static PdfDestination createDestinationFromPageRef(PdfObject dest, Map<PdfPage, PdfPage> page2page,
-            PdfDocument toDocument, PdfObject pageObject) {
-        for (PdfPage oldPage : page2page.keySet()) {
-            if (oldPage.getPdfObject() == pageObject) {
-                // in the copiedArray old page ref will be correctly replaced by the new page ref
-                // as this page is already copied
-                final PdfArray copiedArray = (PdfArray) dest.copyTo(toDocument, false,
-                        NullCopyFilter.getInstance());
-                return new PdfExplicitDestination(copiedArray);
-            }
-        }
-
-        return null;
-    }
-
     private boolean isEqualSameNameDestExist(Map<PdfPage, PdfPage> page2page, PdfDocument toDocument,
             PdfString srcDestName, PdfArray srcDestArray, PdfPage oldPage) {
         PdfArray sameNameDest = (PdfArray) toDocument.getCatalog().getNameTree(PdfName.Dests).
@@ -808,8 +798,8 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
         if (sameNameDest != null && sameNameDest.getAsDictionary(0) != null) {
             PdfIndirectReference existingDestPageRef = sameNameDest.getAsDictionary(0).getIndirectReference();
             PdfIndirectReference newDestPageRef = page2page.get(oldPage).getPdfObject().getIndirectReference();
-            if (equalSameNameDestExists = existingDestPageRef.equals(newDestPageRef) &&
-                    sameNameDest.size() == srcDestArray.size()) {
+            equalSameNameDestExists = existingDestPageRef.equals(newDestPageRef);
+            if (equalSameNameDestExists && sameNameDest.size() == srcDestArray.size()) {
                 for (int i = 1; i < sameNameDest.size(); ++i) {
                     equalSameNameDestExists = equalSameNameDestExists &&
                             sameNameDest.get(i).equals(srcDestArray.get(i));
@@ -855,7 +845,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
             PdfDictionary action = item.getAsDictionary(PdfName.A);
             if (action != null) {
                 PdfName actionType = action.getAsName(PdfName.S);
-                //Check if it is a go to action
+                //Check if it is a go-to action
                 if (PdfName.GoTo.equals(actionType)) {
                     checkIsoConformanceForAction(new PdfAction(action));
                     //First check if structure destination is present.
@@ -872,5 +862,20 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 }
             }
         }
+    }
+
+    private static PdfDestination createDestinationFromPageRef(PdfObject dest, Map<PdfPage, PdfPage> page2page,
+            PdfDocument toDocument, PdfObject pageObject) {
+        for (PdfPage oldPage : page2page.keySet()) {
+            if (oldPage.getPdfObject() == pageObject) {
+                // in the copiedArray old page ref will be correctly replaced by the new page ref
+                // as this page is already copied
+                final PdfArray copiedArray = (PdfArray) dest.copyTo(toDocument, false,
+                        NullCopyFilter.getInstance());
+                return new PdfExplicitDestination(copiedArray);
+            }
+        }
+
+        return null;
     }
 }

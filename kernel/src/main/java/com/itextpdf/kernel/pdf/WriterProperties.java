@@ -344,6 +344,7 @@ public class WriterProperties {
      * To help ensure the uniqueness of file identifiers,
      * it is recommended to be computed by means of a message digest algorithm such as MD5.
      *
+     * <p>
      * iText will by default keep the existing initial id.
      * But if you'd like you can set this id yourself using this setter.
      *

@@ -78,22 +78,6 @@ public class PdfNameTree extends GenericNameTree {
         return items;
     }
 
-    private static void normalizeDestinations(Map<PdfString, PdfObject> items) {
-        // normalise dest entries to arrays
-
-        // A separate collection for keys is used for auto porting to C#, because in C#
-        // it is impossible to change the collection which you iterate in for loop
-        Set<PdfString> keys = new HashSet<>(items.keySet());
-        for (PdfString key : keys) {
-            PdfArray arr = getDestArray(items.get(key));
-            if (arr == null) {
-                items.remove(key);
-            } else {
-                items.put(key, arr);
-            }
-        }
-    }
-
     private void insertDestsEntriesFromCatalog(Map<PdfString, PdfObject> items) {
         // make sure that destinations in the Catalog/Dests dictionary are listed
         // in the destination name tree (if that's what we're working on)
@@ -106,6 +90,22 @@ public class PdfNameTree extends GenericNameTree {
                     continue;
                 }
                 items.put(new PdfString(key.getValue()), array);
+            }
+        }
+    }
+
+    private static void normalizeDestinations(Map<PdfString, PdfObject> items) {
+        // normalise dest entries to arrays
+
+        // A separate collection for keys is used for auto porting to C#, because in C#
+        // it is impossible to change the collection which you iterate in for loop
+        Set<PdfString> keys = new HashSet<>(items.keySet());
+        for (PdfString key : keys) {
+            PdfArray arr = getDestArray(items.get(key));
+            if (arr == null) {
+                items.remove(key);
+            } else {
+                items.put(key, arr);
             }
         }
     }

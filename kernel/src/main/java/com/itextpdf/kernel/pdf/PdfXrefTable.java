@@ -44,14 +44,12 @@ import org.slf4j.LoggerFactory;
  * A representation of a cross-referenced table of a PDF document.
  */
 public class PdfXrefTable {
-
-
     public static final int MAX_GENERATION = 65535;
-    private static final int INITIAL_CAPACITY = 32;
 
+    private static final int INITIAL_CAPACITY = 32;
     /**
      * The maximum offset in a cross-reference stream. This is a limitation of the PDF specification.
-     * SPEC1.7: 7.5.4 Cross reference trailer
+     * SPEC1.7: 7.5.4 Cross-reference trailer
      * <p>
      *
      * It states that the offset should be a 10-digit byte, so the maximum value is 9999999999.
@@ -162,8 +160,8 @@ public class PdfXrefTable {
     public int getCountOfIndirectObjects() {
         int countOfIndirectObjects = 0;
 
-        for (final PdfIndirectReference ref: xref) {
-            if (ref != null && ! ref.isFree()) {
+        for (final PdfIndirectReference ref : xref) {
+            if (ref != null && !ref.isFree()) {
                 countOfIndirectObjects++;
             }
         }
@@ -247,14 +245,15 @@ public class PdfXrefTable {
     }
 
     /**
-     * Writes cross reference table and trailer to PDF.
+     * Writes cross-reference table and trailer to PDF.
      *
      * @param document is the current {@link PdfDocument document}
      * @param fileId   field id
      * @param crypto   pdf encryption
      * @throws IOException if any I/O error occurs
      */
-    protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto) throws IOException {
+    protected void writeXrefTableAndTrailer(PdfDocument document, PdfObject fileId, PdfObject crypto)
+            throws IOException {
         PdfWriter writer = document.getWriter();
 
         if (!document.properties.appendMode) {
@@ -275,7 +274,7 @@ public class PdfXrefTable {
             xrefStream.makeIndirect(document);
         }
         List<Integer> sections = createSections(document, false);
-        boolean noModifiedObjects = (sections.size() == 0) ||
+        boolean noModifiedObjects = (sections.isEmpty()) ||
                 (xrefStream != null && sections.size() == 2 && sections.get(0) == count && sections.get(1) == 1);
         if (document.properties.appendMode && noModifiedObjects) {
             // No modifications in document
@@ -290,8 +289,9 @@ public class PdfXrefTable {
         if (xrefStream != null) {
             xrefStream.put(PdfName.Type, PdfName.XRef);
             xrefStream.put(PdfName.ID, fileId);
-            if (crypto != null)
+            if (crypto != null) {
                 xrefStream.put(PdfName.Encrypt, crypto);
+            }
             xrefStream.put(PdfName.Size, new PdfNumber(this.size()));
 
             int offsetSize = getOffsetSize(Math.max(startxref, size()));
@@ -469,7 +469,7 @@ public class PdfXrefTable {
             } else if (xref[next].getGenNumber() == MAX_GENERATION && xref[next].getOffset() == 0) {
                 continue;
             }
-            if (prevFreeRef.getOffset() != (long)next) {
+            if (prevFreeRef.getOffset() != (long) next) {
                 ((PdfIndirectReference) prevFreeRef.setState(PdfObject.MODIFIED)).setOffset(next);
             }
             freeReferencesLinkedList.put(next, prevFreeRef);
@@ -560,8 +560,9 @@ public class PdfXrefTable {
         int size = 5;
         long mask = 0xff00000000L;
         for (; size > 1; size--) {
-            if ((mask & startxref) != 0)
+            if ((mask & startxref) != 0) {
                 break;
+            }
             // there is no need to use >>> because mask is positive
             mask >>= 8;
         }
@@ -583,7 +584,7 @@ public class PdfXrefTable {
 
     /**
      * Removes indirect reference from free references linked list.
-     * It does not removes it from xref table and affects only the linked list formed by offset values of free references.
+     * It does not remove it from xref table and affects only the linked list formed by offset values of free references.
      * @param freeRefObjNr object number of the reference to be removed.
      *                     Removes the free reference with the least object number if this parameter is less than zero:
      *                     this could be used for finding the next free reference for reusing.
@@ -611,7 +612,7 @@ public class PdfXrefTable {
             if (leastFreeRefObjNum == null) {
                 return null;
             }
-            freeRefObjNr = (int)leastFreeRefObjNum;
+            freeRefObjNr = (int) leastFreeRefObjNum;
         }
 
         PdfIndirectReference freeRef = xref[freeRefObjNr];

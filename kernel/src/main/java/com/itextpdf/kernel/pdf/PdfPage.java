@@ -53,8 +53,6 @@ import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,12 +61,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
-
-    private PdfResources resources = null;
-    private int mcid = -1;
-    PdfPages parentPages;
     private static final List<PdfName> PAGE_EXCLUDED_KEYS = new ArrayList<>(Arrays.asList(
             PdfName.Parent,
             PdfName.Annots,
@@ -79,6 +75,19 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
 
     private static final List<PdfName> XOBJECT_EXCLUDED_KEYS;
 
+    PdfPages parentPages;
+
+    private PdfResources resources = null;
+    private int mcid = -1;
+    /**
+     * Automatically rotate new content if the page has a rotation ( is disabled by default )
+     */
+    private boolean ignorePageRotationForContent = false;
+    /**
+     * See {@link #isPageRotationInverseMatrixWritten()}.
+     */
+    private boolean pageRotationInverseMatrixWritten = false;
+
     static {
         XOBJECT_EXCLUDED_KEYS = new ArrayList<>(Arrays.asList(PdfName.MediaBox,
                 PdfName.CropBox,
@@ -86,16 +95,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 PdfName.Contents));
         XOBJECT_EXCLUDED_KEYS.addAll(PAGE_EXCLUDED_KEYS);
     }
-
-    /**
-     * Automatically rotate new content if the page has a rotation ( is disabled by default )
-     */
-    private boolean ignorePageRotationForContent = false;
-
-    /**
-     * See {@link #isPageRotationInverseMatrixWritten()}.
-     */
-    private boolean pageRotationInverseMatrixWritten = false;
 
     protected PdfPage(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -516,7 +515,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * finalized and are completely written to the output stream. This frees their memory but makes
      * it impossible to modify or read data from them. Whenever there is an attempt to modify or to fetch
      * flushed object inner contents an exception will be thrown. Flushing is only possible for objects in the writing
-     * and stamping modes, also its possible to flush modified objects in append mode.
+     * and stamping modes, also it's possible to flush modified objects in append mode.
      *
      * @param flushResourcesContentStreams if true all content streams that are rendered on this page (like form xObjects,
      *                                     annotation appearance streams, patterns) and also all images associated with this page
@@ -636,7 +635,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * When the page is displayed or printed, its contents shall be clipped (cropped) to this rectangle
      * and then shall be imposed on the output medium in some implementation-defined manner.
      *
-     * @return the {@link Rectangle} object specified by pages's CropBox, expressed in default user space units.
+     * @return the {@link Rectangle} object specified by page's CropBox, expressed in default user space units.
      * MediaBox by default.
      */
     public Rectangle getCropBox() {
@@ -981,8 +980,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public int getAnnotsSize() {
         PdfArray annots = getAnnots(false);
-        if (annots == null)
+        if (annots == null) {
             return 0;
+        }
         return annots.size();
     }
 
@@ -1043,9 +1043,10 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return this {@link PdfPage} instance.
      */
     public PdfPage setPageLabel(PageLabelNumberingStyle numberingStyle, String labelPrefix, int firstPage) {
-        if (firstPage < 1)
+        if (firstPage < 1) {
             throw new PdfException(
                     KernelExceptionMessageConstant.IN_A_PAGE_LABEL_THE_PAGE_NUMBERS_MUST_BE_GREATER_OR_EQUAL_TO_1);
+        }
         PdfDictionary pageLabel = new PdfDictionary();
         if (numberingStyle != null) {
             switch (numberingStyle) {
@@ -1135,8 +1136,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @see PdfOutputIntent
      */
     public PdfPage addOutputIntent(PdfOutputIntent outputIntent) {
-        if (outputIntent == null)
+        if (outputIntent == null) {
             return this;
+        }
 
         PdfArray outputIntents = getPdfObject().getAsArray(PdfName.OutputIntents);
         if (outputIntents == null) {
@@ -1235,6 +1237,11 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return afArray;
     }
 
+    @Override
+    protected boolean isWrappedObjectMustBeIndirect() {
+        return true;
+    }
+
     void tryFlushPageTags() {
         try {
             if (!getDocument().isClosing) {
@@ -1270,57 +1277,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     void setPageRotationInverseMatrixWritten() {
         pageRotationInverseMatrixWritten = true;
-    }
-
-    @Override
-    protected boolean isWrappedObjectMustBeIndirect() {
-        return true;
-    }
-
-    private static boolean isAnnotInvisible(PdfAnnotation annotation) {
-        PdfNumber f = annotation.getPdfObject().getAsNumber(PdfName.F);
-        if (f == null) {
-            return false;
-        }
-        int flags = f.intValue();
-        return PdfCheckersUtil.checkFlag(flags, PdfAnnotation.INVISIBLE) ||
-                (PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_VIEW) &&
-                        !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.TOGGLE_NO_VIEW));
-    }
-
-    private static boolean isReferenceAllowed(String role) {
-        // For these roles, Link is an allowed child, but Reference is not.
-        return !StandardRoles.DOCUMENT.equals(role) && !StandardRoles.DOCUMENTFRAGMENT.equals(role) &&
-                !StandardRoles.ART.equals(role) && !StandardRoles.SECT.equals(role);
-    }
-
-    private void tagAnnotation(PdfAnnotation annotation) {
-        boolean tagAdded = false;
-        boolean presentInTagStructure = true;
-        boolean isUA2 = isPdfUA2Document();
-        TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
-        if (isUA2 && isAnnotInvisible(annotation)) {
-            if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
-                if (!StandardRoles.ARTIFACT.equals(tagPointer.getRole())) {
-                    tagPointer.addTag(StandardRoles.ARTIFACT);
-                    tagAdded = true;
-                }
-            } else {
-                presentInTagStructure = false;
-            }
-        } else {
-            tagAdded = addAnnotationTag(tagPointer, annotation);
-        }
-        if (presentInTagStructure) {
-            PdfPage prevPage = tagPointer.getCurrentPage();
-            tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
-            if (prevPage != null) {
-                tagPointer.setPageForTagging(prevPage);
-            }
-        }
-        if (tagAdded) {
-            tagPointer.moveToParent();
-        }
     }
 
     private boolean isPdfUA2Document() {
@@ -1418,27 +1374,6 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return annots;
     }
 
-    private PdfObject getInheritedValue(PdfName pdfName, int type) {
-        if (this.parentPages == null) {
-            this.parentPages = getDocument().getCatalog().getPageTree().findPageParent(this);
-        }
-        PdfObject val = getInheritedValue(this.parentPages, pdfName);
-        return val != null && val.getType() == type ? val : null;
-    }
-
-    private static PdfObject getInheritedValue(PdfPages parentPages, PdfName pdfName) {
-        if (parentPages != null) {
-            PdfDictionary parentDictionary = parentPages.getPdfObject();
-            PdfObject value = parentDictionary.get(pdfName);
-            if (value != null) {
-                return value;
-            } else {
-                return getInheritedValue(parentPages.getParent(), pdfName);
-            }
-        }
-        return null;
-    }
-
     private PdfStream newContentStream(boolean before) {
         PdfObject contents = getPdfObject().get(PdfName.Contents);
         PdfArray array;
@@ -1474,7 +1409,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         return contentStream;
     }
 
-    private void copyAnnotations(PdfDocument toDocument,PdfPage page, ICopyFilter copyFilter) {
+    private void copyAnnotations(PdfDocument toDocument, PdfPage page, ICopyFilter copyFilter) {
         for (final PdfAnnotation annot : getAnnotations()) {
             if (copyFilter.shouldProcess(page.getPdfObject(), null, annot.getPdfObject())) {
                 final PdfAnnotation newAnnot = PdfAnnotation.makeAnnotation(
@@ -1518,8 +1453,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         }
 
         for (PdfObject obj : objsCollection.values()) {
-            if (obj.isFlushed())
+            if (obj.isFlushed()) {
                 continue;
+            }
             flushResourcesContentStreams(((PdfDictionary) obj).getAsDictionary(PdfName.Resources));
             flushMustBeIndirectObject(obj);
         }
@@ -1578,7 +1514,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         rebuildFormFieldParent(field, newField, toDocument, new HashSet<>());
     }
 
-    private void rebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument, Set<PdfDictionary> visitedForms) {
+    private void rebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument,
+            Set<PdfDictionary> visitedForms) {
         if (newField.containsKey(PdfName.Parent)) {
             return;
         }
@@ -1603,6 +1540,73 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
                 newParent.put(PdfName.Kids, new PdfArray());
             }
             newField.put(PdfName.Parent, newParent);
+        }
+    }
+
+    private PdfObject getInheritedValue(PdfName pdfName, int type) {
+        if (this.parentPages == null) {
+            this.parentPages = getDocument().getCatalog().getPageTree().findPageParent(this);
+        }
+        PdfObject val = getInheritedValue(this.parentPages, pdfName);
+        return val != null && val.getType() == type ? val : null;
+    }
+
+    private static PdfObject getInheritedValue(PdfPages parentPages, PdfName pdfName) {
+        if (parentPages != null) {
+            PdfDictionary parentDictionary = parentPages.getPdfObject();
+            PdfObject value = parentDictionary.get(pdfName);
+            if (value != null) {
+                return value;
+            } else {
+                return getInheritedValue(parentPages.getParent(), pdfName);
+            }
+        }
+        return null;
+    }
+
+    private static boolean isAnnotInvisible(PdfAnnotation annotation) {
+        PdfNumber f = annotation.getPdfObject().getAsNumber(PdfName.F);
+        if (f == null) {
+            return false;
+        }
+        int flags = f.intValue();
+        return PdfCheckersUtil.checkFlag(flags, PdfAnnotation.INVISIBLE) ||
+                (PdfCheckersUtil.checkFlag(flags, PdfAnnotation.NO_VIEW) &&
+                        !PdfCheckersUtil.checkFlag(flags, PdfAnnotation.TOGGLE_NO_VIEW));
+    }
+
+    private static boolean isReferenceAllowed(String role) {
+        // For these roles, Link is an allowed child, but Reference is not.
+        return !StandardRoles.DOCUMENT.equals(role) && !StandardRoles.DOCUMENTFRAGMENT.equals(role) &&
+                !StandardRoles.ART.equals(role) && !StandardRoles.SECT.equals(role);
+    }
+
+    private void tagAnnotation(PdfAnnotation annotation) {
+        boolean tagAdded = false;
+        boolean presentInTagStructure = true;
+        boolean isUA2 = isPdfUA2Document();
+        TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
+        if (isUA2 && isAnnotInvisible(annotation)) {
+            if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
+                if (!StandardRoles.ARTIFACT.equals(tagPointer.getRole())) {
+                    tagPointer.addTag(StandardRoles.ARTIFACT);
+                    tagAdded = true;
+                }
+            } else {
+                presentInTagStructure = false;
+            }
+        } else {
+            tagAdded = addAnnotationTag(tagPointer, annotation);
+        }
+        if (presentInTagStructure) {
+            PdfPage prevPage = tagPointer.getCurrentPage();
+            tagPointer.setPageForTagging(this).addAnnotationTag(annotation);
+            if (prevPage != null) {
+                tagPointer.setPageForTagging(prevPage);
+            }
+        }
+        if (tagAdded) {
+            tagPointer.moveToParent();
         }
     }
 }

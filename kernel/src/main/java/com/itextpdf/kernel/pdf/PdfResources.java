@@ -41,8 +41,6 @@ import java.util.TreeSet;
  * used by content streams operators. (ISO 32000-1, 7.8.3 Resource Dictionaries)
  */
 public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
-
-
     private static final String F = "F";
     private static final String Im = "Im";
     private static final String Fm = "Fm";
@@ -52,16 +50,16 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     private static final String P = "P";
     private static final String Sh = "Sh";
 
-    private Map<PdfObject, PdfName> resourceToName = new HashMap<>();
+    private final Map<PdfObject, PdfName> resourceToName = new HashMap<>();
 
-    private ResourceNameGenerator fontNamesGen = new ResourceNameGenerator(PdfName.Font, F);
-    private ResourceNameGenerator imageNamesGen = new ResourceNameGenerator(PdfName.XObject, Im);
-    private ResourceNameGenerator formNamesGen = new ResourceNameGenerator(PdfName.XObject, Fm);
-    private ResourceNameGenerator egsNamesGen = new ResourceNameGenerator(PdfName.ExtGState, Gs);
-    private ResourceNameGenerator propNamesGen = new ResourceNameGenerator(PdfName.Properties, Pr);
-    private ResourceNameGenerator csNamesGen = new ResourceNameGenerator(PdfName.ColorSpace, Cs);
-    private ResourceNameGenerator patternNamesGen = new ResourceNameGenerator(PdfName.Pattern, P);
-    private ResourceNameGenerator shadingNamesGen = new ResourceNameGenerator(PdfName.Shading, Sh);
+    private final ResourceNameGenerator fontNamesGen = new ResourceNameGenerator(PdfName.Font, F);
+    private final ResourceNameGenerator imageNamesGen = new ResourceNameGenerator(PdfName.XObject, Im);
+    private final ResourceNameGenerator formNamesGen = new ResourceNameGenerator(PdfName.XObject, Fm);
+    private final ResourceNameGenerator egsNamesGen = new ResourceNameGenerator(PdfName.ExtGState, Gs);
+    private final ResourceNameGenerator propNamesGen = new ResourceNameGenerator(PdfName.Properties, Pr);
+    private final ResourceNameGenerator csNamesGen = new ResourceNameGenerator(PdfName.ColorSpace, Cs);
+    private final ResourceNameGenerator patternNamesGen = new ResourceNameGenerator(PdfName.Pattern, P);
+    private final ResourceNameGenerator shadingNamesGen = new ResourceNameGenerator(PdfName.Shading, Sh);
 
     private boolean readOnly = false;
     private boolean isModified = false;
@@ -283,18 +281,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return shading instanceof PdfDictionary ? AbstractPdfShading.makeShading((PdfDictionary) shading) : null;
     }
 
-    protected boolean isReadOnly() {
-        return readOnly;
-    }
-
-    protected void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-    }
-
-    protected boolean isModified() {
-        return isModified;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -356,8 +342,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfName getResourceName(PdfObject resource) {
         PdfName resName = resourceToName.get(resource);
-        if (resName == null)
+        if (resName == null) {
             resName = resourceToName.get(resource.getIndirectReference());
+        }
         return resName;
     }
 
@@ -436,13 +423,21 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         return null;
     }
 
+    protected boolean isReadOnly() {
+        return readOnly;
+    }
+
+    protected void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    protected boolean isModified() {
+        return isModified;
+    }
+
     @Override
     protected boolean isWrappedObjectMustBeIndirect() {
         return false;
-    }
-
-    <T extends PdfObject> PdfName addResource(PdfObjectWrapper<T> resource, ResourceNameGenerator nameGen) {
-        return addResource(resource.getPdfObject(), nameGen);
     }
 
     protected void addResource(PdfObject resource, PdfName resType, PdfName resName) {
@@ -469,17 +464,6 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
         setModified();
     }
 
-    PdfName addResource(PdfObject resource, ResourceNameGenerator nameGen) {
-        PdfName resName = getResourceName(resource);
-
-        if (resName == null) {
-            resName = nameGen.generate(this);
-            addResource(resource, nameGen.getResourceType(), resName);
-        }
-
-        return resName;
-    }
-
     protected void buildResources(PdfDictionary dictionary) {
         for (PdfName resourceType : dictionary.keySet()) {
             if (getPdfObject().get(resourceType) == null) {
@@ -497,6 +481,21 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
                 resourceToName.put(resource, resourceName);
             }
         }
+    }
+
+    <T extends PdfObject> PdfName addResource(PdfObjectWrapper<T> resource, ResourceNameGenerator nameGen) {
+        return addResource(resource.getPdfObject(), nameGen);
+    }
+
+    PdfName addResource(PdfObject resource, ResourceNameGenerator nameGen) {
+        PdfName resName = getResourceName(resource);
+
+        if (resName == null) {
+            resName = nameGen.generate(this);
+            addResource(resource, nameGen.getResourceType(), resName);
+        }
+
+        return resName;
     }
 
     private void checkAndResolveCircularReferences(PdfObject pdfObject) {
@@ -528,9 +527,9 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
     static class ResourceNameGenerator {
 
 
-        private PdfName resourceType;
+        private final PdfName resourceType;
         private int counter;
-        private String prefix;
+        private final String prefix;
 
         /**
          * Constructs an instance of {@link ResourceNameGenerator} class.
