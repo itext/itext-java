@@ -36,6 +36,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
@@ -154,9 +155,9 @@ public final class UrlUtil {
      * Gets the input stream of connection related to last redirected url. You should manually close input stream after
      * calling this method to not hold any open resources.
      *
-     * @param initialUrl an initial URL
+     * @param initialUrl     an initial URL
      * @param connectTimeout a connect timeout in milliseconds
-     * @param readTimeout a read timeout in milliseconds
+     * @param readTimeout    a read timeout in milliseconds
      *
      * @return an input stream of connection related to the last redirected url
      *
@@ -164,17 +165,37 @@ public final class UrlUtil {
      */
     public static InputStream getInputStreamOfFinalConnection(URL initialUrl, int connectTimeout, int readTimeout)
             throws IOException {
-        return getInputStreamOfFinalConnection(initialUrl, connectTimeout, readTimeout, null);
+        return getInputStreamOfFinalConnection(initialUrl, connectTimeout, readTimeout, null, null);
     }
 
     /**
      * Gets the input stream of connection related to last redirected url. You should manually close input stream after
      * calling this method to not hold any open resources.
      *
-     * @param initialUrl an initial URL
+     * @param initialUrl     an initial URL
      * @param connectTimeout a connect timeout in milliseconds
-     * @param readTimeout a read timeout in milliseconds
-     * @param sslContext {@link SSLContext} to configure ssl connection
+     * @param readTimeout    a read timeout in milliseconds
+     * @param requestHeaders a set of custom request headers to set
+     *
+     * @return an input stream of connection related to the last redirected url
+     *
+     * @throws IOException signals that an I/O exception has occurred
+     */
+    public static InputStream getInputStreamOfFinalConnection(URL initialUrl, int connectTimeout, int readTimeout,
+            Map<String, String> requestHeaders)
+            throws IOException {
+        return getInputStreamOfFinalConnection(initialUrl, connectTimeout, readTimeout, null, requestHeaders);
+    }
+
+
+    /**
+     * Gets the input stream of connection related to last redirected url. You should manually close input stream after
+     * calling this method to not hold any open resources.
+     *
+     * @param initialUrl     an initial URL
+     * @param connectTimeout a connect timeout in milliseconds
+     * @param readTimeout    a read timeout in milliseconds
+     * @param sslContext     {@link SSLContext} to configure ssl connection
      *
      * @return an input stream of connection related to the last redirected url
      *
@@ -182,22 +203,42 @@ public final class UrlUtil {
      */
     public static InputStream getInputStreamOfFinalConnection(URL initialUrl, int connectTimeout, int readTimeout,
                                                               SSLContext sslContext) throws IOException {
-        final URLConnection finalConnection = getFinalConnection(initialUrl, connectTimeout, readTimeout, sslContext);
+        return getInputStreamOfFinalConnection(initialUrl, connectTimeout, readTimeout, sslContext, null);
+    }
+
+    /**
+     * Gets the input stream of connection related to last redirected url. You should manually close input stream after
+     * calling this method to not hold any open resources.
+     *
+     * @param initialUrl     an initial URL
+     * @param connectTimeout a connect timeout in milliseconds
+     * @param readTimeout    a read timeout in milliseconds
+     * @param sslContext     {@link SSLContext} to configure ssl connection
+     * @param requestHeaders a set of custom request headers to set
+     *
+     * @return an input stream of connection related to the last redirected url
+     *
+     * @throws IOException signals that an I/O exception has occurred
+     */
+    public static InputStream getInputStreamOfFinalConnection(URL initialUrl, int connectTimeout, int readTimeout,
+            SSLContext sslContext, Map<String, String> requestHeaders) throws IOException {
+        final URLConnection finalConnection =
+                getFinalConnection(initialUrl, connectTimeout, readTimeout, sslContext, requestHeaders);
         return finalConnection.getInputStream();
     }
 
     /**
      * Gets the {@link InputStream} with the data from a provided URL by instantiating an HTTP connection to the URL.
      *
-     * @param url a URL to connect to
-     * @param request data to send to the URL
-     * @param headers HTTP headers to set for the outgoing connection
+     * @param url            a URL to connect to
+     * @param request        data to send to the URL
+     * @param headers        HTTP headers to set for the outgoing connection
      * @param connectTimeout a connect timeout in milliseconds
-     * @param readTimeout a read timeout in milliseconds
+     * @param readTimeout    a read timeout in milliseconds
      *
      * @return the input stream with the retrieved data
      *
-     * @throws IOException signals that an I/O exception has occurred.
+     * @throws IOException signals that an I/O exception has occurred
      */
     public static InputStream get(URL url, byte[] request, Map<String, String> headers,
             int connectTimeout, int readTimeout) throws IOException {
@@ -220,24 +261,31 @@ public final class UrlUtil {
         return connection.getInputStream();
     }
 
-    /**
-     * Gets the connection related to the last redirected url. You should close connection manually after calling
-     * this method, to not hold any open resources.
-     *
-     * @param initialUrl an initial URL
-     * @param connectTimeout a connect timeout in milliseconds
-     * @param readTimeout a read timeout in milliseconds
-     *
-     * @return connection related to the last redirected url
-     *
-     * @throws IOException signals that an I/O exception has occurred
-     */
+            /**
+         * Gets the connection related to the last redirected url. You should close connection manually after calling
+         * this method, to not hold any open resources.
+         *
+         * @param initialUrl     an initial URL
+         * @param connectTimeout a connect timeout in milliseconds
+         * @param readTimeout    a read timeout in milliseconds
+         * @param requestHeaders a set of custom request headers to set
+         *
+         * @return connection related to the last redirected url
+         *
+         * @throws IOException signals that an I/O exception has occurred
+         */
     static URLConnection getFinalConnection(URL initialUrl, int connectTimeout, int readTimeout,
-                                            SSLContext sslContext) throws IOException {
+                                            SSLContext sslContext,
+                                            Map<String, String> requestHeaders) throws IOException {
         URL nextUrl = initialUrl;
         URLConnection connection = null;
         while (nextUrl != null) {
             connection = nextUrl.openConnection();
+            if (requestHeaders != null) {
+                for(Entry<String, String> header : requestHeaders.entrySet()) {
+                    connection.setRequestProperty(header.getKey(), header.getValue());
+                }
+            }
             if (sslContext != null && connection instanceof HttpsURLConnection) {
                 ((HttpsURLConnection) connection).setSSLSocketFactory(sslContext.getSocketFactory());
             }

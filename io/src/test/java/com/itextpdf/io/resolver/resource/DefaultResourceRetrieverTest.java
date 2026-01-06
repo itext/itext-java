@@ -32,8 +32,11 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.InputStream;
 import java.net.BindException;
 import java.net.InetAddress;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -140,6 +143,54 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         Assertions.assertTrue(data.length > 0);
     }
 
+    @Test
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    public void loadWithRequestAndMixedHeaders() throws IOException, InterruptedException {
+        TestResource thread = new TestResource();
+        thread.start();
+        while (!thread.isStarted() && !thread.isFailed()) {
+            Thread.sleep(250);
+        }
+        Assertions.assertFalse(thread.failed);
+        URL url = new URL("http://127.0.0.1:" + thread.port + "/");
+        DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
+        Map<String, String> defaultHeaders = new HashMap<>(3);
+        defaultHeaders.put("User-Agent","DEFAULT User Agent");
+        defaultHeaders.put("TEST-HEADER","DEFAULT test header");
+        resourceRetriever.setRequestHeaders(defaultHeaders);
+        Map<String, String> getHeaders = Collections.singletonMap("User-Agent","TEST User Agent");
+        try {
+            resourceRetriever.get(url, new byte[0], getHeaders);
+        } catch (Exception e) {
+            // exception is expected here, but we do not care
+        }
+        Assertions.assertTrue(thread.getLastRequest().contains("User-Agent: TEST User Agent"));
+        Assertions.assertTrue(thread.getLastRequest().contains("TEST-HEADER: DEFAULT test header"));
+    }
+
+    @Test
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    public void userAgentTest() throws InterruptedException, MalformedURLException {
+        TestResource thread = new TestResource();
+        thread.start();
+        while (!thread.isStarted() && !thread.isFailed()) {
+            Thread.sleep(250);
+        }
+        Assertions.assertFalse(thread.failed);
+        URL url = new URL("http://127.0.0.1:" + thread.port + "/");
+        DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
+        Map<String, String> headers = Collections.singletonMap("User-Agent","TEST User Agent");
+        resourceRetriever.setRequestHeaders(headers);
+
+        try {
+            resourceRetriever.getInputStreamByUrl(url);
+        } catch (Exception e) {
+            // exception is expected here, but we do not care
+        }
+        Assertions.assertTrue(thread.getLastRequest().contains("User-Agent: TEST User Agent"));
+    }
+
+
     private static class FilteredResourceRetriever extends DefaultResourceRetriever {
         @Override
         public boolean urlFilter(URL url) {
@@ -153,6 +204,8 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         private int port = 8000;
         private boolean started = false;
         private boolean failed = false;
+        private String request;
+
         @Override
         public void run() {
             try {
@@ -176,6 +229,10 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
             return failed;
         }
 
+        public String getLastRequest() {
+            return request;
+        }
+
         private void startServer() throws IOException, InterruptedException {
             int tryCount = 0;
             while (!started) {
@@ -196,7 +253,16 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
                                 "</html>\n";
                         out.print(response);
                         out.flush();
-                        server.accept();
+
+                        try {
+                            if (clientSocket.getInputStream().available() > 0) {
+                                byte[] buff = new byte[clientSocket.getInputStream().available()];
+                                clientSocket.getInputStream().read(buff);
+                                request = new String(buff, StandardCharsets.UTF_8);
+                            }
+                        } catch (Exception e) {
+                            request = e.toString();
+                        }
                     }
                 } catch (BindException ex) {
                     if (tryCount > 100) {

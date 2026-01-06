@@ -28,6 +28,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
     private long resourceSizeByteLimit;
     private int connectTimeout;
     private int readTimeout;
+    private Map<String, String> requestHeaders;
 
     /**
      * Creates a new {@link DefaultResourceRetriever} instance.
@@ -107,6 +109,24 @@ public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
     }
 
     /**
+     * Gets the request headers to use in the request.
+     *
+     * @return the request headers to use in the request
+     */
+    public Map<String, String> getRequestHeaders() {
+        return requestHeaders;
+    }
+
+    /**
+     * Sets the request headers to use in the request.
+     *
+     * @param headers the request headers to use in the request
+     */
+    public void setRequestHeaders(Map<String, String> headers) {
+        this.requestHeaders = headers;
+    }
+
+    /**
      * Gets the read timeout.
      * <p>
      * The read timeout is used to create input stream with a limited time to receive data from resource.
@@ -123,6 +143,7 @@ public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
      * The read timeout is used to create input stream with a limited time to receive data from resource.
      *
      * @param readTimeout the read timeout in milliseconds
+     *
      * @return the {@link IResourceRetriever} instance
      */
     public IResourceRetriever setReadTimeout(int readTimeout) {
@@ -136,7 +157,8 @@ public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
     @Override
     public InputStream getInputStreamByUrl(URL url) throws IOException {
         if (urlFilter(url)) {
-            return new LimitedInputStream(UrlUtil.getInputStreamOfFinalConnection(url, connectTimeout, readTimeout),
+            return new LimitedInputStream(UrlUtil
+                    .getInputStreamOfFinalConnection(url, connectTimeout, readTimeout, requestHeaders),
                     resourceSizeByteLimit);
         }
         LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));
@@ -166,8 +188,15 @@ public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
      */
     @Override
     public InputStream get(URL url, byte[] request, Map<String, String> headers) throws IOException {
+        HashMap<String, String> finalHeaders = new HashMap<String, String>();
+        if (requestHeaders != null) {
+            finalHeaders.putAll(requestHeaders);
+        }
+        if (headers != null) {
+            finalHeaders.putAll(headers);
+        }
         if (urlFilter(url)) {
-            return new LimitedInputStream(UrlUtil.get(url, request, headers, connectTimeout, readTimeout),
+            return new LimitedInputStream(UrlUtil.get(url, request, finalHeaders, connectTimeout, readTimeout),
                     resourceSizeByteLimit);
         }
         LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));

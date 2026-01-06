@@ -37,6 +37,7 @@ import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResu
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -65,6 +66,7 @@ public class LotlService implements AutoCloseable {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LotlService.class);
     private static final Object GLOBAL_SERVICE_LOCK = new Object();
+    private static final String DEFAULT_USER_AGENT = "iText-lotl-retriever/1.0";
     // Global service
     static LotlService GLOBAL_SERVICE;
     private final LotlFetchingProperties lotlFetchingProperties;
@@ -76,7 +78,7 @@ public class LotlService implements AutoCloseable {
     private CountrySpecificLotlFetcher countrySpecificLotlFetcher;
     private boolean cacheInitialized = false;
     private Timer cacheTimer = null;
-    private IResourceRetriever resourceRetriever = new LoggableResourceRetriever();
+    private IResourceRetriever resourceRetriever;
     private Function<TrustedCertificatesStore, XmlSignatureValidator> xmlSignatureValidatorFactory;
     private Supplier<LotlValidator> lotlValidatorFactory;
 
@@ -96,6 +98,9 @@ public class LotlService implements AutoCloseable {
         this.xmlSignatureValidatorFactory = trustedCertificatesStore -> buildXmlSignatureValidator(
                 trustedCertificatesStore);
         this.lotlValidatorFactory = () -> buildLotlValidator();
+        this.resourceRetriever = new LoggableResourceRetriever();
+        ((LoggableResourceRetriever) this.resourceRetriever).setRequestHeaders(
+                Collections.singletonMap("User-Agent",DEFAULT_USER_AGENT));
     }
 
     /**
@@ -146,6 +151,9 @@ public class LotlService implements AutoCloseable {
      * <p>
      * This method allows you to provide a custom implementation of {@link IResourceRetriever} to be used
      * for fetching resources such as the Lotl XML, pivot files, and country-specific Lotls.
+     * <p>
+     * Multiple lotl endpoints require a userAgent header to be sent. This should be taken into account
+     * when providing a custom  {@link IResourceRetriever}.
      *
      * @param resourceRetriever the custom resource retriever to be used for fetching resources
      *
