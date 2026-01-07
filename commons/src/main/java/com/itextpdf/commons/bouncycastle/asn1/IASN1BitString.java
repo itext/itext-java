@@ -33,4 +33,11 @@ public interface IASN1BitString extends IASN1Primitive, IASN1String {
      * @return int value of the wrapped ASN1BitString.
      */
     int intValue();
+
+    /**
+     * Call actual {@code getBytes} method for the wrapped ASN1BitString object.
+     *
+     * @return bytes of the wrapped ASN1BitString.
+     */
+    byte[] getBytes();
 }

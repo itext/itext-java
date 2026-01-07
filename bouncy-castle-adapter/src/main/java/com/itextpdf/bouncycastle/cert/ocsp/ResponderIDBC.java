@@ -52,6 +52,14 @@ public class ResponderIDBC implements IResponderID {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getKeyHash() {
+        return responderID.getKeyHash();
+    }
+
+    /**
      * Gets actual org.bouncycastle object being wrapped.
      *
      * @return wrapped {@link ResponderID}.

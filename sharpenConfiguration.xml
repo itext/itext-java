@@ -238,6 +238,7 @@
                 <file path="com/itextpdf/bouncycastle/tsp/TimeStampRequestBC.java"/>
                 <file path="com/itextpdf/bouncycastle/tsp/TimeStampTokenGeneratorBC.java"/>
                 <file path="com/itextpdf/bouncycastle/tsp/TimeStampTokenBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/x509/SubjectPublicKeyInfoBC.java"/>
                 <file path="com/itextpdf/bouncycastlefips/BouncyCastleFipsFactory.java"/>
                 <file path="com/itextpdf/bouncycastlefips/BouncyCastleFipsTestConstantsFactory.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1IntegerBCFips.java"/>
@@ -313,6 +314,7 @@
                 <file path="com/itextpdf/bouncycastlefips/tsp/TimeStampTokenInfoBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/tsp/TSPExceptionBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/crypto/modes/GCMBlockCipherBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/x509/SubjectPublicKeyInfoBCFips.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/IBouncyCastleFactory.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/asn1/IASN1InputStream.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/asn1/IASN1Integer.java"/>

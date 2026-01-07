@@ -229,6 +229,7 @@ import com.itextpdf.commons.bouncycastle.crypto.modes.IGCMBlockCipher;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
@@ -1643,6 +1644,16 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IRespID createRespID(Certificate certificate)
+            throws AbstractOperatorCreationException, AbstractOCSPException {
+        return new RespIDBC(
+                (SubjectPublicKeyInfoBC) createSubjectPublicKeyInfo(certificate.getPublicKey().getEncoded()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IBasicOCSPRespBuilder createBasicOCSPRespBuilder(IRespID respID) {
         return new BasicOCSPRespBuilderBC(respID);
     }
@@ -1752,7 +1763,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public ISubjectPublicKeyInfo createSubjectPublicKeyInfo(Object object) {
         return new SubjectPublicKeyInfoBC(object instanceof ASN1EncodableBC ?
-                ((ASN1EncodableBC) object).getEncodable() : object);
+                ((ASN1EncodableBC) object).getEncodable() :
+                object instanceof PublicKey ? ((PublicKey) object).getEncoded() : object);
     }
 
     /**

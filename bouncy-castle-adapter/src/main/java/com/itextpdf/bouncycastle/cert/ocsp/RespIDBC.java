@@ -23,12 +23,21 @@
 package com.itextpdf.bouncycastle.cert.ocsp;
 
 import com.itextpdf.bouncycastle.asn1.x500.X500NameBC;
+import com.itextpdf.bouncycastle.asn1.x509.SubjectPublicKeyInfoBC;
+import com.itextpdf.bouncycastle.operator.OperatorCreationExceptionBC;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRespID;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IResponderID;
 
 import java.util.Objects;
+
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import org.bouncycastle.cert.ocsp.CertificateID;
+import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.RespID;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 /**
  * Wrapper class for {@link RespID}.
@@ -52,6 +61,26 @@ public class RespIDBC implements IRespID {
      */
     public RespIDBC(IX500Name x500Name) {
         this(new RespID(((X500NameBC) x500Name).getX500Name()));
+    }
+
+    /**
+     * Creates new wrapper instance for {@link RespID}.
+     *
+     * @param subjectPublicKeyInfo {@link org.bouncycastle.asn1.x509.SubjectPublicKeyInfo} wrapper
+     *
+     * @throws AbstractOCSPException in case of {@link OCSPException}
+     * @throws AbstractOperatorCreationException in case of {@link OperatorCreationException}
+     */
+    public RespIDBC(SubjectPublicKeyInfoBC subjectPublicKeyInfo) throws AbstractOCSPException,
+            AbstractOperatorCreationException {
+        try {
+            this.respID = new RespID(subjectPublicKeyInfo.getSubjectPublicKeyInfo(),
+                    new JcaDigestCalculatorProviderBuilder().build().get(CertificateID.HASH_SHA1));
+        } catch (OCSPException e) {
+            throw new OCSPExceptionBC(e);
+        } catch (OperatorCreationException e) {
+            throw new OperatorCreationExceptionBC(e);
+        }
     }
 
     /**

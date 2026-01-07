@@ -24,14 +24,19 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.io.resolver.resource.IAdvancedResourceRetriever;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.dataorigin.CertificateOrigin;
 import com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
 
+import java.io.ByteArrayInputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -270,10 +275,6 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      * @return retrieved OCSP responder candidates or an empty set in case none were found.
      */
     public Set<Certificate> retrieveOCSPResponderByNameCertificate(IBasicOCSPResp ocspResp) {
-
-        String name = FACTORY.createX500Name(FACTORY.createASN1Sequence(
-                ocspResp.getResponderId().toASN1Primitive().getName().toASN1Primitive())).getName();
-
         // Look for the existence of an Authorized OCSP responder inside the cert chain in the ocsp response.
         Iterable<X509Certificate> certs = SignUtils.getCertsFromOcspResponse(ocspResp);
         List<Certificate> certList = new ArrayList<>();
@@ -281,19 +282,26 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
             certList.add(certificate);
         }
         addKnownCertificates(certList, CertificateOrigin.OCSP_RESPONSE);
-        for (X509Certificate cert : certs) {
-            try {
-                if (name.equals(cert.getSubjectX500Principal().getName())) {
-                    return Collections.singleton(cert);
-                }
-            } catch (Exception ignored) {
-                // Ignore.
-            }
+        IX500Name x500Name = ocspResp.getResponderId().toASN1Primitive().getName();
+        Set<Certificate> responders = null;
+        if (!x500Name.isNull()) {
+            responders = retrieveOCSPResponderByName(certs, x500Name);
+        }
+        if (responders == null) {
+            byte[] keyHash = ocspResp.getResponderId().toASN1Primitive().getKeyHash();
+            responders = retrieveOCSPResponderByKeyHash(certs, keyHash);
         }
         // Certificate chain is not present in the response, or it does not contain the responder.
-        return trustedCertificatesStore.getKnownCertificates(name);
+        if (responders == null) {
+            if (x500Name.isNull()) {
+                responders = Collections.<Certificate>emptySet();
+            } else {
+                responders = trustedCertificatesStore.getKnownCertificates(
+                        FACTORY.createX500Name(FACTORY.createASN1Sequence(x500Name.toASN1Primitive())).getName());
+            }
+        }
+        return responders;
     }
-
 
     /**
      * {@inheritDoc}
@@ -471,6 +479,39 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      */
     protected Collection<Certificate> parseCertificates(InputStream certsData) throws CertificateException {
         return SignUtils.readAllCerts(certsData, null);
+    }
+
+    private static Set<Certificate> retrieveOCSPResponderByKeyHash(Iterable<X509Certificate> certs, byte[] keyHash) {
+        for (X509Certificate cert : certs) {
+            try {
+                ISubjectPublicKeyInfo publicKeyInfo = FACTORY.createSubjectPublicKeyInfo(cert.getPublicKey());
+                // According to RFC2560 hash algorithm is always SHA-1.
+                byte[] publicKeyHash = DigestAlgorithms.digest(
+                        new ByteArrayInputStream(publicKeyInfo.getPublicKeyData().getBytes()),
+                        DigestAlgorithms.getMessageDigest(DigestAlgorithms.SHA1, FACTORY.getProviderName()));
+
+                if (Arrays.equals(publicKeyHash, keyHash)) {
+                    return Collections.singleton(cert);
+                }
+            } catch (Exception ignored) {
+                // Ignore.
+            }
+        }
+        return null;
+    }
+
+    private static Set<Certificate> retrieveOCSPResponderByName(Iterable<X509Certificate> certs, IX500Name x500Name) {
+        String name = FACTORY.createX500Name(FACTORY.createASN1Sequence(x500Name.toASN1Primitive())).getName();
+        for (X509Certificate cert : certs) {
+            try {
+                if (name.equals(cert.getSubjectX500Principal().getName())) {
+                    return Collections.singleton(cert);
+                }
+            } catch (Exception ignored) {
+                // Ignore.
+            }
+        }
+        return null;
     }
 
     private Collection<Certificate> processCertificatesFromAIA(String url) {

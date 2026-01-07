@@ -120,6 +120,7 @@ import com.itextpdf.commons.bouncycastle.crypto.modes.IGCMBlockCipher;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
@@ -1420,6 +1421,19 @@ public interface IBouncyCastleFactory {
      * @return created resp ID wrapper
      */
     IRespID createRespID(IX500Name x500Name);
+
+    /**
+     * Creates resp ID wrapper from Subject Public Key Info wrapper.
+     *
+     * @param certificate {@link Certificate} from which resp ID wrapper will be created
+     *
+     * @return created resp ID wrapper
+     *
+     * @throws AbstractOCSPException in case of OCSPException being thrown
+     * @throws AbstractOperatorCreationException in case of OperatorCreationException being thrown
+     */
+    IRespID createRespID(Certificate certificate) throws AbstractOCSPException,
+            AbstractOperatorCreationException;
 
     /**
      * Create basic OCSP Resp builder wrapper from resp ID wrapper.

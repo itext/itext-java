@@ -32,7 +32,14 @@ public interface IResponderID {
     /**
      * Calls actual {@code getName} method for the wrapped BasicOCSPResp object.
      *
-     * @return wrapped X500NAme.
+     * @return wrapped X500NAme
      */
     IX500Name getName();
+
+    /**
+     * Calls actual {@code getKeyHash} method for the wrapped BasicOCSPResp object.
+     *
+     * @return {@code byte[]} representing corresponding key hash
+     */
+    byte[] getKeyHash();
 }

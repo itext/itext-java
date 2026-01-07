@@ -24,11 +24,13 @@ package com.itextpdf.signatures.testutils.client;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.PrivateKey;
@@ -60,6 +62,24 @@ public class TestOcspClient implements IOcspClient {
         return this;
     }
 
+    public IBasicOCSPResp getBasicOcspResp(X509Certificate checkCert, X509Certificate issuerCert) {
+        IBasicOCSPResp basicOCSPResp = null;
+        try {
+            ICertificateID id = SignTestPortUtil.generateCertificateId(issuerCert, checkCert.getSerialNumber(), BOUNCY_CASTLE_FACTORY.createCertificateID().getHashSha1());
+            TestOcspResponseBuilder builder = issuerIdToResponseBuilder.get(issuerCert.getSerialNumber().toString(16));
+            if (builder == null) {
+                throw new IllegalArgumentException("This TestOcspClient instance is not capable of providing OCSP response for the given issuerCert:" + issuerCert.getSubjectDN().toString());
+            }
+            basicOCSPResp = builder.makeOcspResponseObject(SignTestPortUtil.generateOcspRequestWithNonce(id).getEncoded());
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+        }
+
+        return basicOCSPResp;
+    }
+
     @Override
     public byte[] getEncoded(X509Certificate checkCert, X509Certificate issuerCert, String url) {
         if (url != null && !url.isEmpty()) {
@@ -71,20 +91,10 @@ public class TestOcspClient implements IOcspClient {
             }
         }
 
-        byte[] bytes = null;
         try {
-            ICertificateID id = SignTestPortUtil.generateCertificateId(issuerCert, checkCert.getSerialNumber(), BOUNCY_CASTLE_FACTORY.createCertificateID().getHashSha1());
-            TestOcspResponseBuilder builder = issuerIdToResponseBuilder.get(issuerCert.getSerialNumber().toString(16));
-            if (builder == null) {
-                throw new IllegalArgumentException("This TestOcspClient instance is not capable of providing OCSP response for the given issuerCert:" + issuerCert.getSubjectDN().toString());
-            }
-            bytes = builder.makeOcspResponse(SignTestPortUtil.generateOcspRequestWithNonce(id).getEncoded());
-        } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
+            return getBasicOcspResp(checkCert, issuerCert).getEncoded();
+        } catch (IOException e) {
+            throw new RuntimeException("Response encoding produced an exception.", e);
         }
-
-        return bytes;
     }
 }

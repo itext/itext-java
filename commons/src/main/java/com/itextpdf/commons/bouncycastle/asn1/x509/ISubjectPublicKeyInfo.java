@@ -22,6 +22,7 @@
  */
 package com.itextpdf.commons.bouncycastle.asn1.x509;
 
+import com.itextpdf.commons.bouncycastle.asn1.IASN1BitString;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
 
 /**
@@ -35,4 +36,11 @@ public interface ISubjectPublicKeyInfo extends IASN1Encodable {
      * @return {@link IAlgorithmIdentifier} wrapped AlgorithmIdentifier.
      */
     IAlgorithmIdentifier getAlgorithm();
+
+    /**
+     * Calls actual {@code getPublicKeyData} method for the wrapped SubjectPublicKeyInfo object.
+     *
+     * @return {@link IASN1BitString} wrapped ASN1 Bit String representing public key data.
+     */
+    IASN1BitString getPublicKeyData();
 }
