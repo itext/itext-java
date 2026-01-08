@@ -263,29 +263,29 @@ public final class KernelExceptionMessageConstant {
             "Invalid PDF Type 2 Function object, \"N\" field should exist and must be a number.";
     public static final String INVALID_TYPE_2_FUNCTION_N_NEGATIVE =
             "Invalid PDF Type 2 Function object, when \"N\" is negative, values of \"Domain\" shall "
-            + "not allow zero as input value.";
+                    + "not allow zero as input value.";
     public static final String INVALID_TYPE_2_FUNCTION_N_NOT_INTEGER =
             "Invalid PDF Type 2 Function object, when \"N\" is not an integer, values of \"Domain\" shall "
-            + "define the input value as non-negative.";
+                    + "define the input value as non-negative.";
     public static final String INVALID_TYPE_2_FUNCTION_OUTPUT_SIZE =
             "Invalid PDF Type 2 Function object, if present the size of \"C0\", \"C1\" and half "
                     + "\"Range\" shall be equal.";
     public static final String INVALID_TYPE_3_FUNCTION_BOUNDS =
             "Invalid PDF Type 3 Function object, \"Bounds\" elements shall be in order of increasing value, and "
-            + "each value shall be within the domain defined by \"Domain\".";
+                    + "each value shall be within the domain defined by \"Domain\".";
     public static final String INVALID_TYPE_3_FUNCTION_DOMAIN =
             "Invalid PDF Type 3 Function object, \"Domain\" array shall consist of 2 numbers.";
     public static final String INVALID_TYPE_3_FUNCTION_FUNCTIONS_INPUT =
             "Invalid PDF Type 3 Function object, all functions shall have 1 input value.";
     public static final String INVALID_TYPE_3_FUNCTION_FUNCTIONS_OUTPUT =
             "Invalid PDF Type 3 Function object, the output dimensionality of all functions shall be the same, "
-            + "and compatible with the value of \"Range\".";
+                    + "and compatible with the value of \"Range\".";
     public static final String INVALID_TYPE_3_FUNCTION_NULL_BOUNDS =
             "Invalid PDF Type 3 Function object, \"Bounds\" array should exist and its size should correspond "
-            + "to the size of the \"Functions\" array.";
+                    + "to the size of the \"Functions\" array.";
     public static final String INVALID_TYPE_3_FUNCTION_NULL_ENCODE =
             "Invalid PDF Type 3 Function object, \"Encode\" array should exist and its size should be 2 times "
-            + "more than the size of the \"Functions\" array.";
+                    + "more than the size of the \"Functions\" array.";
     public static final String INVALID_TYPE_3_FUNCTION_NULL_FUNCTIONS =
             "Invalid PDF Type 3 Function object, \"Functions\" array should exist and can't be empty.";
     public static final String INVALID_XREF_STREAM = "Invalid xref stream.";
@@ -349,7 +349,8 @@ public final class KernelExceptionMessageConstant {
             + "truetype";
     public static final String OPERATOR_EI_NOT_FOUND_AFTER_END_OF_IMAGE_DATA = "Operator EI not found after the end "
             + "of image data.";
-    public static final String ORDERING_SHOULD_BE_DETERMINED = "Ordering should be determined for CIDFont of Type0 font.";
+    public static final String ORDERING_SHOULD_BE_DETERMINED = "Ordering should be determined for CIDFont of Type0 "
+            + "font.";
     public static final String PAGE_ALREADY_FLUSHED = "The page has been already flushed.";
     public static final String PAGE_CANNOT_BE_ADDED_TO_DOCUMENT_BECAUSE_IT_BELONGS_TO_ANOTHER_DOCUMENT =
             "The passed page belongs to document {0} (page {1} of the document) and therefore cannot be added "
@@ -436,8 +437,8 @@ public final class KernelExceptionMessageConstant {
     public static final String THIS_FILTER_IS_NOT_SUPPORTED = "Filter {0} is not supported.";
     public static final String TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT =
             "Pdf contains too many xObject elements on a page "
-            + "and may cause OOM exception. You can increase page size limit by setting custom "
-            + "MemoryLimitsAwareHandler.";
+                    + "and may cause OOM exception. You can increase page size limit by setting custom "
+                    + "MemoryLimitsAwareHandler.";
     public static final String TO_FLUSH_THIS_WRAPPER_UNDERLYING_OBJECT_MUST_BE_ADDED_TO_DOCUMENT = "To manually "
             + "flush this wrapper, you have to ensure that the object behind this wrapper is added to the document, "
             + "i.e. it has an indirect reference.";
@@ -452,8 +453,8 @@ public final class KernelExceptionMessageConstant {
     @Deprecated
     public static final String UNABLE_TO_ADD_SECOND_PARENT_LAYER = "Unable to add second parent layer to " +
             "{0} ocg layer";
-    public static final String UNABLE_TO_READ_OBJECT_STREAM ="Unable to read object stream.";
-    public static final String UNABLE_TO_READ_STREAM_BYTES ="Unable to read stream bytes because stream is null.";
+    public static final String UNABLE_TO_READ_OBJECT_STREAM = "Unable to read object stream.";
+    public static final String UNABLE_TO_READ_STREAM_BYTES = "Unable to read stream bytes because stream is null.";
     @Deprecated
     public static final String UNABLE_TO_REMOVE_DUPLICATE_LAYER = "Unable to remove duplicated layer {0} " +
             "because it has child layers.";
@@ -491,7 +492,8 @@ public final class KernelExceptionMessageConstant {
             + " contain version identifier pdfaid:rev with four digit integer value";
     public static final String XOBJECT_STRUCT_PARENT_INDEX_MISSED = "XObject has no StructParents index in its stream.";
     public static final String XREF_HAS_AN_ENTRY_WITH_TOO_BIG_OFFSET = "Pdf document is to large to "
-            + "use normal cross reference table. Use cross reference streams instead. To enable feature use com.itextpdf"
+            + "use normal cross reference table. Use cross reference streams instead. To enable feature use com"
+            + ".itextpdf"
             + ".kernel.pdf.WriterProperties#setFullCompressionMode(true). ";
     public static final String XREF_PREV_SHALL_BE_DIRECT_NUMBER_OBJECT = "Prev pointer in xref structure shall be "
             + "direct number object.";

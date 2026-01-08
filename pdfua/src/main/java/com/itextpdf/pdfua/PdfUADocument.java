@@ -23,6 +23,7 @@
 package com.itextpdf.pdfua;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.contrast.ColorContrastChecker;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -43,6 +44,7 @@ import com.itextpdf.pdfua.checkers.PdfUA2Checker;
 import com.itextpdf.pdfua.checkers.PdfUAChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +82,7 @@ public class PdfUADocument extends PdfDocument {
 
         setupUAConfiguration(config);
         final ValidationContainer validationContainer = new ValidationContainer();
-        final List<IValidationChecker> checkers = getCorrectCheckerFromConformance(config.getConformance());
+        final List<IValidationChecker> checkers = createCheckers(config.getConformance());
         for (IValidationChecker checker : checkers) {
             validationContainer.addChecker(checker);
         }
@@ -117,12 +119,51 @@ public class PdfUADocument extends PdfDocument {
         setupUAConfiguration(config);
 
         final ValidationContainer validationContainer = new ValidationContainer();
-        final List<IValidationChecker> checkers = getCorrectCheckerFromConformance(config.getConformance());
+        final List<IValidationChecker> checkers = createCheckers(config.getConformance());
         for (IValidationChecker checker : checkers) {
             validationContainer.addChecker(checker);
         }
         this.getDiContainer().register(ValidationContainer.class, validationContainer);
         this.pdfPageFactory = new PdfUAPageFactory(getUaChecker(checkers));
+    }
+
+    /**
+     * Creates a list of {@link PdfUAChecker} for specified PDF/UA conformance.
+     * If you want to enable/disable specific checks, you can override the implementation.
+     *
+     * @param uaConformance the conformance for which checker is needed
+     *
+     * @return the correct list of PDF/UA checkers
+     */
+    protected List<IValidationChecker> createCheckers(PdfUAConformance uaConformance) {
+        List<IValidationChecker> checkers = new ArrayList<>();
+        final ColorContrastChecker contrastChecker = new ColorContrastChecker(false, false);
+        contrastChecker.setCheckWcagAA(false);
+        contrastChecker.setCheckWcagAAA(true);
+        switch (uaConformance.getPart()) {
+            case "1":
+                checkers.add(new PdfUA1Checker(this));
+                checkers.add(contrastChecker);
+                break;
+            case "2":
+                checkers.add(new PdfUA2Checker(this));
+                checkers.add(new Pdf20Checker(this));
+                checkers.add(contrastChecker);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        PdfUAExceptionMessageConstants.CANNOT_FIND_PDF_UA_CHECKER_FOR_SPECIFIED_CONFORMANCE);
+        }
+        return checkers;
+    }
+
+    private void setupUAConfiguration(PdfUAConfig config) {
+        // Basic configuration.
+        this.setTagged();
+        this.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
+        this.getCatalog().setLang(new PdfString(config.getLanguage()));
+        final PdfDocumentInfo info = this.getDocumentInfo();
+        info.setTitle(config.getTitle());
     }
 
     private static PdfWriter configureWriterProperties(PdfWriter writer, PdfUAConformance uaConformance) {
@@ -149,37 +190,5 @@ public class PdfUADocument extends PdfDocument {
             }
         }
         return null;
-    }
-
-    private void setupUAConfiguration(PdfUAConfig config) {
-        // Basic configuration.
-        this.setTagged();
-        this.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
-        this.getCatalog().setLang(new PdfString(config.getLanguage()));
-        final PdfDocumentInfo info = this.getDocumentInfo();
-        info.setTitle(config.getTitle());
-    }
-
-    /**
-     * Gets correct {@link PdfUAChecker} for specified PDF/UA conformance.
-     *
-     * @param uaConformance the conformance for which checker is needed
-     * @return the correct PDF/UA checker
-     */
-    private List<IValidationChecker> getCorrectCheckerFromConformance(PdfUAConformance uaConformance) {
-        List<IValidationChecker> checkers = new ArrayList<>();
-        switch (uaConformance.getPart()) {
-            case "1":
-                checkers.add(new PdfUA1Checker(this));
-                break;
-            case "2":
-                checkers.add(new PdfUA2Checker(this));
-                checkers.add(new Pdf20Checker(this));
-                break;
-            default:
-                throw new IllegalArgumentException(
-                        PdfUAExceptionMessageConstants.CANNOT_FIND_PDF_UA_CHECKER_FOR_SPECIFIED_CONFORMANCE);
-        }
-        return checkers;
     }
 }

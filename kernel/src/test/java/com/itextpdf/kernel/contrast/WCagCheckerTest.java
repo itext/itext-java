@@ -1,0 +1,87 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2026 Apryse Group NV
+    Authors: Apryse Software.
+
+    This program is offered under a commercial and under the AGPL license.
+    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
+
+    AGPL licensing:
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.itextpdf.kernel.contrast;
+
+import com.itextpdf.test.ExtendedITextTest;
+
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.*;
+
+@Tag("UnitTest")
+public class WCagCheckerTest extends ExtendedITextTest {
+
+
+    public static Object[][] wcagAAATestData() {
+        return new Object[][] {
+                // Normal text (<18pt)
+                {12.0, 7.0, true},   // exact minimum
+                {12.0, 6.99, false},  // just below minimum
+                {16.0, 8.0, true},
+                {16.0, 4.5, false},
+
+                // Large text (>=18.66pt is our threshold for large text)
+                {18.66, 4.5, true},   // exact minimum
+                {18.66, 4.49, false},
+                {24.0, 5.0, true},
+                {24.0, 3.0, false}
+        };
+    }
+
+
+    public static Object[][] wcagAATestData() {
+        return new Object[][] {
+                // Normal text (<18pt)
+                {12.0, 4.5, true},   // exact minimum
+                {12.0, 4.49, false},
+                {16.0, 5.0, true},
+                {16.0, 3.0, false},
+
+                // Large text (>=18.66pt is our threshold for large text)
+                {18.66, 3.0, true},   // exact minimum
+                {18.66, 2.99, false},
+                {24.0, 4.5, true},
+                {24.0, 2.0, false}
+        };
+    }
+
+    @ParameterizedTest(name = "AAA: fontSize={0}pt, contrast={1} should be {2}")
+    @MethodSource("wcagAAATestData")
+    public void testWCAGAAACompliance(double fontSize, double contrastRatio, boolean expectedCompliant) {
+        boolean result = WCagChecker.isTextWcagAAACompliant(fontSize, contrastRatio);
+        assertEquals(expectedCompliant, result,
+                String.format("Font size %.2fpt with contrast %.2f should %s WCAG AAA",
+                        fontSize, contrastRatio, expectedCompliant ? "pass" : "fail"));
+    }
+
+    @ParameterizedTest(name = "AA: fontSize={0}pt, contrast={1} should be {2}")
+    @MethodSource("wcagAATestData")
+    public void testWCAGAACompliance(double fontSize, double contrastRatio, boolean expectedCompliant) {
+        boolean result = WCagChecker.isTextWcagAACompliant(fontSize, contrastRatio);
+        assertEquals(expectedCompliant, result,
+                String.format("Font size %.2fpt with contrast %.2f should %s WCAG AA",
+                        fontSize, contrastRatio, expectedCompliant ? "pass" : "fail"));
+    }
+}
+

@@ -140,7 +140,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
 
             document.add(new Paragraph("Validate Grid Container with Background"));
             GridContainer gridContainer0 = createGridBoxWithText();
-            gridContainer0.setBackgroundColor(ColorConstants.RED);
+            gridContainer0.setBackgroundColor(ColorConstants.PINK);
             document.add(gridContainer0);
         });
         framework.assertBothValid("background", pdfUAConformance);

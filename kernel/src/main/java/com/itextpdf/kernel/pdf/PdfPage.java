@@ -538,8 +538,8 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         } else if (resources.isModified() && !resources.isReadOnly()) {
             put(PdfName.Resources, resources.getPdfObject());
         }
+        getDocument().checkIsoConformance(new PdfPageValidationContext(this));
         if (flushResourcesContentStreams) {
-            getDocument().checkIsoConformance(new PdfPageValidationContext(this));
             flushResourcesContentStreams();
         }
 

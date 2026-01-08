@@ -112,11 +112,18 @@ public final class KernelLogMessageConstant {
     public static final String MEMORYLIMITAWAREHANDLER_OVERRIDE_CREATENEWINSTANCE_METHOD =
             "MemoryLimitsAwareHandler#createNewInstance method must be overriden.";
     public static final String FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX =
-            "Failed to process a transformation matrix which is noninvertible. Some content may be placed not as expected.";
+            "Failed to process a transformation matrix which is noninvertible. Some content may be placed not as "
+                    + "expected.";
     public static final String PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY =
             "The PDF contains a BDC operator which refers to a not existing Property dictionary: {0}.";
     public static final String UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS =
             "Unable to parse operator '{0}', wrong number of operands {1}";
+    public static final String PAGE_IS_FLUSHED_NO_CONTRAST = "Page content is flushed and cannot be processed for "
+            + "contrast analysis.";
+    public static final String UNSUPPORTED_COLOR_SPACE_CONTRAST = "Unsupported color space for contrast calculation: "
+            + "{0}";
+    public static final String BOTH_WCAG_AA_AND_AAA_COMPLIANCE_CHECKS_DISABLED = "Both WCAG AA and AAA compliance "
+            + "checks are disabled. No contrast checks will be performed.";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly

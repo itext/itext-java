@@ -214,7 +214,7 @@ public class PdfUA1Checker extends PdfUAChecker {
 
     @Override
     void checkLogicalStructureInBMC(Stack<Tuple2<PdfName, PdfDictionary>> stack,
-                                    Tuple2<PdfName, PdfDictionary> currentBmc, PdfDocument document) {
+            Tuple2<PdfName, PdfDictionary> currentBmc, PdfDocument document) {
         checkStandardRoleMapping(currentBmc);
         super.checkLogicalStructureInBMC(stack, currentBmc, document);
     }

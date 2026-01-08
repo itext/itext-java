@@ -278,7 +278,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .setFontAndSize(font, 12)
                     .beginText()
                     .moveText(200, 200)
-                    .setColor(ColorConstants.RED, true)
+                    .setColor(ColorConstants.BLUE, true)
                     .showText(glyphLine)
                     .endText()
                     .closeTag()
@@ -306,7 +306,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .setFontAndSize(font, 12)
                     .beginText()
                     .moveText(200, 200)
-                    .setColor(ColorConstants.RED, true)
+                    .setColor(ColorConstants.BLUE, true)
                     .showText(glyphLine)
                     .endText()
                     .closeTag()
@@ -329,7 +329,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .beginMarkedContent(PdfName.P)
                     .beginText()
                     .moveText(200, 200)
-                    .setColor(ColorConstants.RED, true)
+                    .setColor(ColorConstants.BLUE, true)
                     .showText(glyphLine)
                     .endMarkedContent()
                     .endText()
@@ -354,7 +354,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .openTag(new CanvasTag(PdfName.Artifact))
                     .beginText()
                     .moveText(200, 200)
-                    .setColor(ColorConstants.RED, true)
+                    .setColor(ColorConstants.BLUE, true)
                     .showText(glyphLine)
                     .closeTag()
                     .endMarkedContent()
@@ -390,8 +390,11 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             canvas.setColor(ColorConstants.RED, true)
                     .setLineWidth(2);
+            canvas.moveTo(0,0);
             canvas.lineTo(200, 200);
+
         });
+
         framework.assertBothValid("lineContentThatIsContentIsNotTagged_noContent", pdfUAConformance);
     }
 
@@ -423,6 +426,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
             canvas.openTag(new CanvasTag(PdfName.P))
                     .setColor(ColorConstants.RED, true)
                     .setLineWidth(2);
+            canvas.moveTo(0,0);
             canvas.lineTo(200, 200);
             canvas.lineTo(300, 200);
 

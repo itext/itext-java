@@ -2299,7 +2299,7 @@ public class PdfDocument implements Closeable {
     }
 
     /**
-     * List all newly added or loaded fonts
+     * List all newly added or loaded fonts.
      *
      * @return List of {@link PdfFont}.
      */

@@ -303,7 +303,16 @@ public final class ClipperBridge {
      */
     public boolean addPolygonToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] polyVertices,
                                        IClipper.PolyType polyType) {
-        return clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(polyVertices)))), polyType, true);
+        List<Point.LongPoint> convertedPoints = new ArrayList<>(polyVertices.length);
+
+        for (com.itextpdf.kernel.geom.Point point : polyVertices) {
+            convertedPoints.add(new Point.LongPoint(
+                    getFloatMultiplier() * point.getX(),
+                    getFloatMultiplier() * point.getY()
+            ));
+        }
+
+        return clipper.addPath(new Path(convertedPoints), polyType, true);
     }
 
     /**

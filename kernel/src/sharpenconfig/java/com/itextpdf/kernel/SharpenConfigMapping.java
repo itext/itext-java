@@ -82,6 +82,9 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapProperty("com.itextpdf.kernel.pdf.canvas.parser.clipper.PolyNode.isOpen", "IsOpen");
         configurator.mapProperty("com.itextpdf.kernel.pdf.canvas.parser.clipper.Point.LongPoint.getX", "X");
         configurator.mapProperty("com.itextpdf.kernel.pdf.canvas.parser.clipper.Point.LongPoint.getY", "Y");
+        configurator.mapProperty("com.itextpdf.kernel.pdf.canvas.parser.clipper.PolyTree.getTotalSize", "Total");
+
+
         configurator.addFullName("com.itextpdf.kernel.geom.Path");
         configurator.removeMethodOverload("com.itextpdf.kernel.pdf.PdfWriter.write(int)");
         configurator.removeMethodOverload("com.itextpdf.kernel.pdf.PdfWriter.write(byte[])");
@@ -157,6 +160,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethodParametersOrder("com.itextpdf.kernel.crypto.CryptoUtil.getMessageDigest", "1");
         configurator.mapMethodParametersOrder("com.itextpdf.kernel.crypto.CryptoUtil.getMessageDigest(java.lang.String,java.lang.String)", "1");
         //BouncyCastleWrappersConfigUtils.applyMappingConfiguration(configurator);
+
+        configurator.addCustomUsingDeclaration("com.itextpdf.kernel.contrast.ContrastAnalyzer", Arrays.asList("Paths = System.Collections.Generic.List<System.Collections.Generic.List<iText.Kernel.Pdf.Canvas.Parser.ClipperLib.IntPoint>>"));
     }
 
     @Override

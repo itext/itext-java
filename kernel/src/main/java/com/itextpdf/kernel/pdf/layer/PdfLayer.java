@@ -51,7 +51,7 @@ import java.util.ArrayList;
  */
 public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG {
 
-	/**
+    /**
      * Used for titling group of objects but not actually grouping them.
      */
     protected String title;
@@ -80,7 +80,8 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
 
     /**
      * Creates a new layer by its name and document.
-     * @param name the layer name
+     *
+     * @param name     the layer name
      * @param document the PdfDocument which the layer belongs to
      */
     public PdfLayer(String name, PdfDocument document) {
@@ -98,8 +99,10 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     /**
      * Creates a title layer. A title layer is not really a layer but a collection of layers
      * under the same title heading.
-     * @param title the title text
+     *
+     * @param title    the title text
      * @param document the <CODE>PdfDocument</CODE>
+     *
      * @return the title layer
      */
     public static PdfLayer createTitle(String title, PdfDocument document) {
@@ -114,8 +117,9 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * That is, the state of at most one optional content group
      * in the array should be ON at a time: if one group is turned
      * ON, all others must be turned OFF.
+     *
      * @param document the <CODE>PdfDocument</CODE>
-     * @param group the radio group
+     * @param group    the radio group
      */
     public static void addOCGRadioGroup(PdfDocument document, List<PdfLayer> group) {
         document.getCatalog().getOCProperties(true).addOCGRadioGroup(group);
@@ -123,6 +127,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
 
     /**
      * Adds a child layer. Nested layers can only have one parent.
+     *
      * @param childLayer the child layer
      */
     public void addChild(PdfLayer childLayer) {
@@ -157,7 +162,17 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     }
 
     /**
+     * Gets the name of the layer to be displayed in the Layers panel.
+     *
+     * @return the name of the layer.
+     */
+    public PdfString getName() {
+        return getPdfObject().getAsString(PdfName.Name);
+    }
+
+    /**
      * Sets the name of the layer to be displayed in the Layers panel.
+     *
      * @param name the name of the layer.
      */
     public void setName(String name) {
@@ -167,6 +182,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
 
     /**
      * Gets the initial visibility of the layer when the document is opened.
+     *
      * @return the initial visibility of the layer
      */
     public boolean isOn() {
@@ -175,17 +191,20 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
 
     /**
      * Sets the initial visibility of the layer when the document is opened.
+     *
      * @param on the initial visibility of the layer
      */
     public void setOn(boolean on) {
-        if (this.on != on)
+        if (this.on != on) {
             fetchOCProperties().setModified();
+        }
         this.on = on;
     }
 
     /**
      * Gets whether the layer is currently locked or not. If the layer is locked,
      * it will not be possible to change its state (on/off) in a viewer.
+     *
      * @return true if the layer is currently locked, false otherwise.
      */
     public boolean isLocked() {
@@ -201,13 +220,15 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * @param locked sets whether the layer is currently locked or not
      */
     public void setLocked(boolean locked) {
-        if (this.isLocked() != locked)
+        if (this.isLocked() != locked) {
             fetchOCProperties().setModified();
+        }
         this.locked = locked;
     }
 
     /**
      * Gets the layer visibility in Acrobat's layer panel
+     *
      * @return the layer visibility in Acrobat's layer panel
      */
     public boolean isOnPanel() {
@@ -218,11 +239,13 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * Sets the visibility of the layer in Acrobat's layer panel. If <CODE>false</CODE>
      * the layer cannot be directly manipulated by the user. Note that any children layers will
      * also be absent from the panel.
+     *
      * @param onPanel the visibility of the layer in Acrobat's layer panel
      */
     public void setOnPanel(boolean onPanel) {
-        if (this.on != onPanel)
+        if (this.on != onPanel) {
             fetchOCProperties().setModified();
+        }
         this.onPanel = onPanel;
     }
 
@@ -230,13 +253,14 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * Gets a collection of current intents specified for this layer.
      * The default value is {@link PdfName#View}, so it will be the only element of the
      * resultant collection if no intents are currently specified.
+     *
      * @return the collection of intents.
      */
     public Collection<PdfName> getIntents() {
         final PdfObject intent = getPdfObject().get(PdfName.Intent);
-        if (intent instanceof PdfName)
+        if (intent instanceof PdfName) {
             return Collections.singletonList((PdfName) intent);
-        else if (intent instanceof PdfArray) {
+        } else if (intent instanceof PdfArray) {
             PdfArray intentArr = (PdfArray) intent;
             Collection<PdfName> intentsCollection = new ArrayList<>(intentArr.size());
             for (PdfObject i : intentArr) {
@@ -251,6 +275,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
 
     /**
      * Sets the intents of the layer.
+     *
      * @param intents the list of intents.
      */
     public void setIntents(List<PdfName> intents) {
@@ -273,11 +298,12 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     /**
      * Used by the creating application to store application-specific
      * data associated with this optional content group.
+     *
      * @param creator a text string specifying the application that created the group
      * @param subtype a string defining the type of content controlled by the group. Suggested
-     * values include but are not limited to <B>Artwork</B>, for graphic-design or publishing
-     * applications, and <B>Technical</B>, for technical designs such as building plans or
-     * schematics
+     *                values include but are not limited to <B>Artwork</B>, for graphic-design or publishing
+     *                applications, and <B>Technical</B>, for technical designs such as building plans or
+     *                schematics
      */
     public void setCreatorInfo(String creator, String subtype) {
         PdfDictionary usage = getUsage();
@@ -291,17 +317,19 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     /**
      * Specifies the language of the content controlled by this
      * optional content group
-     * @param lang a language string which specifies a language and possibly a locale
-     * (for example, <B>es-MX</B> represents Mexican Spanish)
+     *
+     * @param lang      a language string which specifies a language and possibly a locale
+     *                  (for example, <B>es-MX</B> represents Mexican Spanish)
      * @param preferred used by viewer applications when there is a partial match but no exact
-     * match between the system language and the language strings in all usage dictionaries
+     *                  match between the system language and the language strings in all usage dictionaries
      */
     public void setLanguage(String lang, boolean preferred) {
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.Lang, new PdfString(lang, PdfEncodings.UNICODE_BIG));
-        if (preferred)
+        if (preferred) {
             dic.put(PdfName.Preferred, PdfName.ON);
+        }
         usage.put(PdfName.Language, dic);
         usage.setModified();
     }
@@ -311,6 +339,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * group when the document (or part of it) is saved by a viewer application to a format
      * that does not support optional content (for example, an earlier version of
      * PDF or a raster image format).
+     *
      * @param export the export state
      */
     public void setExport(boolean export) {
@@ -324,21 +353,25 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     /**
      * Specifies a range of magnifications at which the content
      * in this optional content group is best viewed.
+     *
      * @param min the minimum recommended magnification factors at which the group
-     * should be ON. A negative value will set the default to 0
+     *            should be ON. A negative value will set the default to 0
      * @param max the maximum recommended magnification factor at which the group
-     * should be ON. A negative value will set the largest possible magnification supported by the
-     * viewer application
+     *            should be ON. A negative value will set the largest possible magnification supported by the
+     *            viewer application
      */
     public void setZoom(float min, float max) {
-        if (min <= 0 && max < 0)
+        if (min <= 0 && max < 0) {
             return;
+        }
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
-        if (min > 0)
+        if (min > 0) {
             dic.put(PdfName.min, new PdfNumber(min));
-        if (max >= 0)
+        }
+        if (max >= 0) {
             dic.put(PdfName.max, new PdfNumber(max));
+        }
         usage.put(PdfName.Zoom, dic);
         usage.setModified();
     }
@@ -346,10 +379,11 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     /**
      * Specifies that the content in this group is intended for
      * use in printing
-     * @param subtype a name specifying the kind of content controlled by the group;
-     * for example, <B>Trapping</B>, <B>PrintersMarks</B> and <B>Watermark</B>
+     *
+     * @param subtype    a name specifying the kind of content controlled by the group;
+     *                   for example, <B>Trapping</B>, <B>PrintersMarks</B> and <B>Watermark</B>
      * @param printState indicates that the group should be
-     * set to that state when the document is printed from a viewer application
+     *                   set to that state when the document is printed from a viewer application
      */
     public void setPrint(String subtype, boolean printState) {
         PdfDictionary usage = getUsage();
@@ -363,6 +397,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     /**
      * Indicates that the group should be set to that state when the
      * document is opened in a viewer application.
+     *
      * @param view the view state
      */
     public void setView(boolean view) {
@@ -376,15 +411,18 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     /**
      * Specifies one or more users for whom this optional content group
      * is primarily intended.
-     * @param type a name that can be Ind (individual), Ttl (title), or Org (organization).
+     *
+     * @param type  a name that can be Ind (individual), Ttl (title), or Org (organization).
      * @param names one or more text strings representing
-     * the name(s) of the individual, position or organization
+     *              the name(s) of the individual, position or organization
      */
     public void setUser(String type, String... names) {
-        if (type == null || !"Ind".equals(type) && !"Ttl".equals(type) && !"Org".equals(type))
+        if (type == null || !"Ind".equals(type) && !"Ttl".equals(type) && !"Org".equals(type)) {
             throw new IllegalArgumentException("Illegal type argument");
-        if (names == null || names.length == 0)
+        }
+        if (names == null || names.length == 0) {
             throw new IllegalArgumentException("Illegal names argument");
+        }
         PdfDictionary usage = getUsage();
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.Type, new PdfName(type));
@@ -403,8 +441,9 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
 
     /**
      * Indicates that the group contains a pagination artifact.
+     *
      * @param pe one of the following names: "HF" (Header Footer),
-     * "FG" (Foreground), "BG" (Background), or "L" (Logo).
+     *           "FG" (Foreground), "BG" (Background), or "L" (Logo).
      */
     public void setPageElement(String pe) {
         PdfDictionary usage = getUsage();
@@ -416,6 +455,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
 
     /**
      * Gets the indirect reference to the current layer object.
+     *
      * @return the indirect reference to the object representing the layer
      */
     public PdfIndirectReference getIndirectReference() {
@@ -435,10 +475,28 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * Gets the list of the current child layers of the layer.
      * BE CAREFUL! Do not try to add a child layer using the resultant child list,
      * use #addChild method instead.
+     *
      * @return the list of the current child layers, null if the layer has no children.
      */
     public List<PdfLayer> getChildren() {
         return childLayers == null ? null : new ArrayList<>(childLayers);
+    }
+
+    /**
+     * Creates a title layer without registering it in PdfOCProperties.
+     *
+     * @param title    the title of the layer
+     * @param document the document this title layer belongs to
+     *
+     * @return the created layer
+     */
+    protected static PdfLayer createTitleSilent(String title, PdfDocument document) {
+        if (title == null) {
+            throw new IllegalArgumentException("Invalid title argument");
+        }
+        PdfLayer layer = new PdfLayer(document);
+        layer.title = title;
+        return layer;
     }
 
     @Override
@@ -456,21 +514,8 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
     }
 
     /**
-     * Creates a title layer without registering it in PdfOCProperties.
-     * @param title the title of the layer
-     * @param document the document this title layer belongs to
-     * @return the created layer
-     */
-    protected static PdfLayer createTitleSilent(String title, PdfDocument document) {
-        if (title == null)
-            throw new IllegalArgumentException("Invalid title argument");
-        PdfLayer layer = new PdfLayer(document);
-        layer.title = title;
-        return layer;
-    }
-
-    /**
      * Gets the /Usage dictionary, creating a new one if necessary.
+     *
      * @return the /Usage dictionary
      */
     protected PdfDictionary getUsage() {
