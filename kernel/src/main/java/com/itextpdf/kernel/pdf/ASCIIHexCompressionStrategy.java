@@ -48,7 +48,9 @@ public class ASCIIHexCompressionStrategy implements IStreamCompressionStrategy {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the name of the compression filter.
+     *
+     * @return {@link PdfName#ASCIIHexDecode} representing the {@code ASCIIHexDecode} filter
      */
     @Override
     public PdfName getFilterName() {
@@ -56,7 +58,12 @@ public class ASCIIHexCompressionStrategy implements IStreamCompressionStrategy {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the decode parameters for the {@code ASCIIHexDecode} filter.
+     * <p>
+     * This implementation returns {@code null} as no special decode parameters
+     * are required for standard ASCIIHex compression.
+     *
+     * @return {@code null} as no decode parameters are needed
      */
     @Override
     public PdfObject getDecodeParams() {
@@ -64,7 +71,15 @@ public class ASCIIHexCompressionStrategy implements IStreamCompressionStrategy {
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new output stream with ASCIIHex compression applied.
+     * <p>
+     * This method wraps the original output stream in a {@link ASCIIHexOutputStream}
+     * that applies ASCIIHex compression.
+     *
+     * @param original the original output stream to wrap
+     * @param stream   the PDF stream containing compression configuration
+     *
+     * @return a new {@link ASCIIHexOutputStream} that compresses data using the ASCIIHex algorithm
      */
     @Override
     public OutputStream createNewOutputStream(OutputStream original, PdfStream stream) {

@@ -26,7 +26,6 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * An output stream that encodes data according to the {@code ASCII85Decode}
@@ -51,11 +50,11 @@ public class ASCII85OutputStream extends FilterOutputStream implements IFinishab
      * Marker written, when all input bytes are zero. Not used for partial
      * blocks.
      */
-    private static final byte ALL_ZEROS_MARKER = 'z';
+    private static final byte ALL_ZEROS_MARKER = (byte) 'z';
     /**
      * End Of Data marker.
      */
-    private static final byte[] EOD = new byte[]{'~', '>'};
+    private static final byte[] EOD = new byte[]{(byte) '~', (byte) '>'};
 
     /**
      * Encoding block buffer. Reused for encoding output, when flushing.
@@ -74,7 +73,7 @@ public class ASCII85OutputStream extends FilterOutputStream implements IFinishab
     /**
      * Flag for detecting, whether {@link #finish} has been called.
      */
-    private final AtomicBoolean finished = new AtomicBoolean(false);
+    private boolean finished = false;
 
     /**
      * Creates a new {@code ASCIIHexDecode} encoding stream.
@@ -111,9 +110,11 @@ public class ASCII85OutputStream extends FilterOutputStream implements IFinishab
      */
     @Override
     public void finish() throws IOException {
-        if (finished.getAndSet(true)) {
+        if (finished) {
             return;
         }
+
+        finished = true;
         // Writing the remainder
         if (inputCursor > 0) {
             if (inputOr == 0) {

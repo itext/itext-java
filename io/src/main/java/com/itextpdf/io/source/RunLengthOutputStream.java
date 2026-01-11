@@ -25,7 +25,6 @@ package com.itextpdf.io.source;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * An output stream that encodes data according to the {@code RunLengthDecode}
@@ -58,7 +57,7 @@ public class RunLengthOutputStream extends FilterOutputStream implements IFinish
     /**
      * Flag for detecting, whether {@link #finish} has been called.
      */
-    private final AtomicBoolean finished = new AtomicBoolean(false);
+    private boolean finished = false;
 
     /**
      * Creates a new {@code RunLengthDecode} encoding stream.
@@ -135,9 +134,11 @@ public class RunLengthOutputStream extends FilterOutputStream implements IFinish
      */
     @Override
     public void finish() throws IOException {
-        if (finished.getAndSet(true)) {
+        if (finished) {
             return;
         }
+
+        finished = true;
         writePending();
         out.write(EOD);
         flush();

@@ -25,7 +25,6 @@ package com.itextpdf.io.source;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * An output stream that encodes data according to the {@code ASCIIHexDecode}
@@ -35,13 +34,14 @@ public class ASCIIHexOutputStream extends FilterOutputStream implements IFinisha
     /**
      * End Of Data marker.
      */
-    private static final byte EOD = '>';
+    private static final byte EOD = (byte) '>';
     /**
      * Array for mapping nibble values to the corresponding lowercase
      * hexadecimal characters.
      */
     private static final byte[] CHAR_MAP = {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+            (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8',
+            (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f'
     };
 
     /**
@@ -52,7 +52,7 @@ public class ASCIIHexOutputStream extends FilterOutputStream implements IFinisha
     /**
      * Flag for detecting, whether {@link #finish} has been called.
      */
-    private final AtomicBoolean finished = new AtomicBoolean(false);
+    private boolean finished = false;
 
     /**
      * Creates a new {@code ASCIIHexDecode} encoding stream.
@@ -90,9 +90,11 @@ public class ASCIIHexOutputStream extends FilterOutputStream implements IFinisha
      */
     @Override
     public void finish() throws IOException {
-        if (finished.getAndSet(true)) {
+        if (finished) {
             return;
         }
+
+        finished = true;
         out.write(EOD);
         flush();
     }

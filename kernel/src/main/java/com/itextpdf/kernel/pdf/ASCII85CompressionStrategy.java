@@ -49,7 +49,9 @@ public class ASCII85CompressionStrategy implements IStreamCompressionStrategy {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the name of the compression filter.
+     *
+     * @return {@link PdfName#ASCII85Decode} representing the {@code ASCII85Decode} filter
      */
     @Override
     public PdfName getFilterName() {
@@ -57,7 +59,12 @@ public class ASCII85CompressionStrategy implements IStreamCompressionStrategy {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the decode parameters for the {@code ASCII85Decode} filter.
+     * <p>
+     * This implementation returns {@code null} as no special decode parameters
+     * are required for standard ASCII85 compression.
+     *
+     * @return {@code null} as no decode parameters are needed
      */
     @Override
     public PdfObject getDecodeParams() {
@@ -65,7 +72,15 @@ public class ASCII85CompressionStrategy implements IStreamCompressionStrategy {
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new output stream with ASCII85 compression applied.
+     * <p>
+     * This method wraps the original output stream in a {@link ASCII85OutputStream}
+     * that applies ASCII85 compression.
+     *
+     * @param original the original output stream to wrap
+     * @param stream   the PDF stream containing compression configuration
+     *
+     * @return a new {@link ASCII85OutputStream} that compresses data using the ASCII85 algorithm
      */
     @Override
     public OutputStream createNewOutputStream(OutputStream original, PdfStream stream) {

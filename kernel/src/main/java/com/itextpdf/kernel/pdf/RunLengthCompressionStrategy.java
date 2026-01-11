@@ -48,7 +48,9 @@ public class RunLengthCompressionStrategy implements IStreamCompressionStrategy 
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the name of the compression filter.
+     *
+     * @return {@link PdfName#RunLengthDecode} representing the {@code RunLengthDecode} filter
      */
     @Override
     public PdfName getFilterName() {
@@ -56,7 +58,12 @@ public class RunLengthCompressionStrategy implements IStreamCompressionStrategy 
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the decode parameters for the {@code RunLengthDecode} filter.
+     * <p>
+     * This implementation returns {@code null} as no special decode parameters
+     * are required for standard run length compression.
+     *
+     * @return {@code null} as no decode parameters are needed
      */
     @Override
     public PdfObject getDecodeParams() {
@@ -64,7 +71,15 @@ public class RunLengthCompressionStrategy implements IStreamCompressionStrategy 
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new output stream with run length compression applied.
+     * <p>
+     * This method wraps the original output stream in a {@link RunLengthOutputStream}
+     * that applies run length compression.
+     *
+     * @param original the original output stream to wrap
+     * @param stream   the PDF stream containing compression configuration
+     *
+     * @return a new {@link RunLengthOutputStream} that compresses data using the run length algorithm
      */
     @Override
     public OutputStream createNewOutputStream(OutputStream original, PdfStream stream) {

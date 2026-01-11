@@ -81,6 +81,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("java.io.DataInputStreamReadFully", "iText.IO.Util.StreamUtil.ReadFully", false);
         configurator.mapMethod("java.net.URL.openStream", "iText.IO.Util.UrlUtil.OpenStream", false);
         configurator.mapMethod("java.lang.Character.isWhitespace", "iText.IO.Util.TextUtil.IsWhiteSpace", false);
+        configurator.mapType("java.io.FilterOutputStream", "iText.Commons.Utils.FilterOutputStream");
 
         configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.io.image.ImageDataFactory.create(java.awt.Image,java.awt.Color)", "!NETSTANDARD2_0");
         configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.io.image.ImageDataFactory.create(java.awt.Image,java.awt.Color,boolean)", "!NETSTANDARD2_0");

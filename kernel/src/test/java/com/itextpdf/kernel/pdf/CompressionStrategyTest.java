@@ -24,17 +24,38 @@ package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.io.source.IFinishable;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.TestUtil;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import java.util.Arrays;
 
 @Tag("IntegrationTest")
 public class CompressionStrategyTest extends ExtendedITextTest {
+
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/CompressionStrategyTest/";
+
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/CompressionStrategyTest/";
+
+    @BeforeAll
+    public static void beforeClass() {
+        createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    private static final String testString = "Some test string for testing compression strategy should be big enough";
+
     private static final byte[] TEST_CONTENT_STREAM_DATA = ("q\n"
             + "0 0 0 RG\n"
             + "10 w\n"
@@ -50,6 +71,43 @@ public class CompressionStrategyTest extends ExtendedITextTest {
             + "S\n"
             + "Q\n"
     ).getBytes(StandardCharsets.US_ASCII);
+
+    public static Iterable<Object[]> compressionStrategiesArguments() {
+        return Arrays.asList(
+                new Object[]{
+                        new ASCII85CompressionStrategy(),
+                        "ASCII85"
+                },
+                new Object[]{
+                        new ASCIIHexCompressionStrategy(),
+                        "ASCIIHex"
+                },
+                new Object[]{
+                        new RunLengthCompressionStrategy(),
+                        "RunLength"
+                }
+        );
+    }
+
+    public static Iterable<Object[]> twoCompressionStrategies() {
+        return Arrays.asList(
+                new Object[]{
+                        new RunLengthCompressionStrategy(),
+                        new ASCII85CompressionStrategy(),
+                        "Run length on ASCII85"
+                },
+                new Object[]{
+                        new ASCII85CompressionStrategy(),
+                        new ASCIIHexCompressionStrategy(),
+                        "ASCII85 on ASCIIHex"
+                },
+                new Object[]{
+                        new ASCIIHexCompressionStrategy(),
+                        new RunLengthCompressionStrategy(),
+                        "ASCIIHex on RunLength"
+                }
+        );
+    }
 
     @Test
     public void ascii85DecodeTest() throws IOException {
@@ -71,11 +129,99 @@ public class CompressionStrategyTest extends ExtendedITextTest {
         doStrategyTest(new RunLengthCompressionStrategy());
     }
 
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("compressionStrategiesArguments")
+    public void addStreamCompressionStampingModeTest(IStreamCompressionStrategy strategy, String compressionName) throws IOException {
+        String resultPath = DESTINATION_FOLDER + "stamped" + compressionName + "Streams.pdf";
+        StampingProperties props = new StampingProperties();
+        props.registerDependency(IStreamCompressionStrategy.class, strategy);
+        int streamCount = 3;
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + compressionName + "ContentStream.pdf"),
+                new PdfWriter(resultPath), props)) {
+            PdfPage page = pdfDoc.addNewPage();
+
+
+            PdfStream stream = new PdfStream(testString.getBytes(StandardCharsets.UTF_8), CompressionConstants.BEST_COMPRESSION);
+            stream.makeIndirect(pdfDoc);
+            PdfArray contents = new PdfArray();
+            contents.add(page.getPdfObject().get(PdfName.Contents));
+
+            for (int i = 0; i < streamCount; i++) {
+                contents.add(stream.getIndirectReference());
+            }
+            page.getPdfObject().put(PdfName.Contents, contents);
+        }
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(resultPath), props)) {
+            PdfPage page = pdfDoc.getPage(2);
+            Assertions.assertEquals(streamCount + 1, page.getContentStreamCount());
+
+            for (int i = 1; i < page.getContentStreamCount(); i++) {
+                PdfObject filterObject = page.getContentStream(i).get(PdfName.Filter);
+                Assertions.assertEquals(strategy.getFilterName(), filterObject);
+                Assertions.assertArrayEquals(page.getContentStream(i).getBytes(),
+                        testString.getBytes(StandardCharsets.UTF_8));
+            }
+        }
+    }
+
+
+    @ParameterizedTest(name = "{2}")
+    @MethodSource("twoCompressionStrategies")
+    public void twoFiltersInSingleStreamTest(IStreamCompressionStrategy firstStrategy, IStreamCompressionStrategy secondStrategy, String testName) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        StampingProperties props = new StampingProperties();
+        props.registerDependency(IStreamCompressionStrategy.class, firstStrategy);
+
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfWriter(baos), props)) {
+            PdfPage page = pdfDoc.addNewPage();
+
+            PdfCanvas canvas = new PdfCanvas(page);
+            canvas.beginText();
+            canvas.setFontAndSize(PdfFontFactory.createFont(), 12);
+            canvas.moveText(50, 700);
+            canvas.showText(testString);
+            canvas.endText();
+            canvas.release();
+
+            PdfStream contentStream = page.getContentStream(0);
+            contentStream.setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION);
+
+            ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+            OutputStream zip = secondStrategy.createNewOutputStream(byteArrayStream, contentStream);
+            ((ByteArrayOutputStream) contentStream.getOutputStream().getOutputStream()).writeTo(zip);
+            ((IFinishable) zip).finish();
+
+            contentStream.setData(byteArrayStream.toByteArray());
+            PdfArray filters = new PdfArray();
+            filters.add(secondStrategy.getFilterName());
+            contentStream.put(PdfName.Filter, filters);
+        }
+
+        try (PdfDocument readDoc = new PdfDocument(
+                new PdfReader(new ByteArrayInputStream(baos.toByteArray())))) {
+
+            PdfStream stream = readDoc.getFirstPage().getContentStream(0);
+
+            PdfArray filters = stream.getAsArray(PdfName.Filter);
+            Assertions.assertEquals(firstStrategy.getFilterName(), filters.getAsName(0));
+            Assertions.assertEquals(secondStrategy.getFilterName(), filters.getAsName(1));
+
+            byte[] decoded = stream.getBytes();
+
+            String decodedText = new String(decoded, StandardCharsets.UTF_8);
+            Assertions.assertTrue(decodedText.contains(testString));
+        }
+
+    }
+
     private static void doStrategyTest(IStreamCompressionStrategy strategy) throws IOException {
         long writePlainTime = SystemUtil.currentTimeMillis();
         ByteArrayOutputStream plainPdfBytes = new ByteArrayOutputStream();
         writeTestDocument(plainPdfBytes, null, CompressionConstants.NO_COMPRESSION);
-        long plainSize = plainPdfBytes.size();
+        byte[] bytes = plainPdfBytes.toByteArray();
+        long plainSize = bytes.length;
         writePlainTime = SystemUtil.currentTimeMillis() - writePlainTime;
         System.out.println(
                 "Generated PDF size without compression: "
@@ -85,7 +231,8 @@ public class CompressionStrategyTest extends ExtendedITextTest {
         long writeCompressedTime = SystemUtil.currentTimeMillis();
         ByteArrayOutputStream compressedPdfBytes = new ByteArrayOutputStream();
         writeTestDocument(compressedPdfBytes, strategy, CompressionConstants.DEFAULT_COMPRESSION);
-        long compressedSize = compressedPdfBytes.size();
+        byte[] compressedBytes = compressedPdfBytes.toByteArray();
+        long compressedSize = compressedBytes.length;
         writeCompressedTime = SystemUtil.currentTimeMillis() - writeCompressedTime;
         System.out.println(
                 "Generated PDF with `" + strategy.getFilterName() + "` compression: "
@@ -94,12 +241,8 @@ public class CompressionStrategyTest extends ExtendedITextTest {
 
         System.out.println("Compression ratio: " + ((double) compressedSize / plainSize));
 
-        PdfDocument plainDoc = new PdfDocument(new PdfReader(
-                new ByteArrayInputStream(compressedPdfBytes.toByteArray())
-        ));
-        PdfDocument compressedDoc = new PdfDocument(new PdfReader(
-                new ByteArrayInputStream(plainPdfBytes.toByteArray())
-        ));
+        PdfDocument plainDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(compressedBytes)));
+        PdfDocument compressedDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(bytes)));
 
         int numberOfPdfObjects = plainDoc.getNumberOfPdfObjects();
         Assertions.assertEquals(
@@ -144,7 +287,7 @@ public class CompressionStrategyTest extends ExtendedITextTest {
 
     private static byte getType(PdfObject obj) {
         if (obj == null) {
-            return -1;
+            return (byte) 0;
         }
         return obj.getType();
     }
