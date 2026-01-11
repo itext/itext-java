@@ -24,6 +24,8 @@ package com.itextpdf.styledxmlparser.css.parse;
 
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.styledxmlparser.css.selector.CssSelector;
+import com.itextpdf.styledxmlparser.css.selector.ICssSelector;
 import com.itextpdf.styledxmlparser.css.selector.item.CssAttributeSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssClassSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssIdSelectorItem;
@@ -32,12 +34,15 @@ import com.itextpdf.styledxmlparser.css.selector.item.CssPseudoElementSelectorIt
 import com.itextpdf.styledxmlparser.css.selector.item.CssSeparatorSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssTagSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
+import com.itextpdf.styledxmlparser.css.util.EscapeGroup;
 import com.itextpdf.styledxmlparser.exceptions.StyledXmlParserExceptionMessage;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for parsing CSS selectors.
@@ -60,6 +65,20 @@ public final class CssSelectorParser {
     }
 
     /**
+     * Parses a comma-separated list of CSS selectors from a string and returns a list of
+     * {@link ICssSelector} objects that represent the selectors.
+     *
+     * @param arguments the string containing a comma-separated list of CSS selectors
+     *
+     * @return a list of {@link ICssSelector} objects representing the parsed selectors
+     */
+    public static List<ICssSelector> parseCommaSeparatedSelectors(String arguments) {
+        return splitByTopLevelComma(arguments).stream().filter(part -> !part.isEmpty())
+                .map(part -> (ICssSelector) new CssSelector(CssSelectorParser.parseSelectorItems(part, true)))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Parses the given CSS selector string into a list of {@link ICssSelectorItem} objects.
      * This method processes the selector string character by character, handling state transitions
      * and escape sequences to generate a structured representation of the selector components.
@@ -69,6 +88,22 @@ public final class CssSelectorParser {
      * @return a list of {@link ICssSelectorItem} objects representing the components of the parsed selector
      */
     public static List<ICssSelectorItem> parseSelectorItems(String selector) {
+        return parseSelectorItems(selector, false);
+    }
+
+    /**
+     * Parses the given CSS selector string into a list of {@link ICssSelectorItem} objects, with an option
+     * to allow a relative selector at the beginning. This method processes the selector character
+     * by character, handling state transitions and escaped sequences to properly parse the structure.
+     *
+     * @param selector the CSS selector string to be parsed
+     * @param allowRelativeSelectorAtStart a boolean flag indicating whether a relative selector
+     *                                     is allowed at the start of the selector string
+     *
+     * @return a list of {@link ICssSelectorItem} objects representing the parsed components
+     *         of the CSS selector
+     */
+    static List<ICssSelectorItem> parseSelectorItems(String selector, boolean allowRelativeSelectorAtStart) {
         List<ICssSelectorItem> selectorItems = new ArrayList<>();
         State state = new NoneState();
         for (int i = 0; i < selector.length(); ++i) {
@@ -76,6 +111,7 @@ public final class CssSelectorParser {
             State nextState;
             //process escape sequence if necessary
             boolean isEscaped = false;
+
             if (c == '\\') {
                 Tuple2<Integer, Character> escapedSeq = processEscape(i, selector);
                 i = (int) escapedSeq.getFirst();
@@ -84,7 +120,7 @@ public final class CssSelectorParser {
                 //Only tags can start with an escaped character
                 nextState = trySwitchToTagState(state);
             } else {
-                nextState = trySwitchState(state, c);
+                nextState = trySwitchState(state, c, allowRelativeSelectorAtStart);
             }
 
             if (state != nextState) {
@@ -95,6 +131,20 @@ public final class CssSelectorParser {
         }
         state.process(selectorItems);
         return selectorItems;
+    }
+
+    /**
+     * Splits a string by top-level commas, ignoring commas inside parentheses or quoted strings.
+     * This handles escape sequences for quotes correctly.
+     *
+     * @param input the string to split
+     * @return a list of string parts split by top-level commas
+     */
+    static List<String> splitByTopLevelComma(String input) {
+        return CssUtils.splitString(input, ',',
+                new EscapeGroup('(', ')'),
+                new EscapeGroup('"'),
+                new EscapeGroup('\''));
     }
 
     /**
@@ -181,10 +231,11 @@ public final class CssSelectorParser {
      * @return the new state after evaluating the character; if no switch is performed,
      *         the original state is returned
      */
-    private static State trySwitchState(State state, char c) {
+    private static State trySwitchState(State state, char c, boolean allowRelativeSelectorAtStart) {
         if (!state.isReadyForSwitch(c)) {
             return state;
         }
+
         switch (c) {
             case '.':
                 return new ClassState();
@@ -200,13 +251,14 @@ public final class CssSelectorParser {
             case '~':
             case ',':
             case '|':
-                return new SeparatorState();
+                return new SeparatorState(allowRelativeSelectorAtStart);
             case '*':
                 return new TagState();
             default:
                 return state instanceof SeparatorState || state instanceof NoneState ? new TagState() : state;
         }
     }
+
 
     /**
      * Represents the state of a CSS selector parser. Each state defines a specific behavior for
@@ -306,18 +358,41 @@ public final class CssSelectorParser {
      */
     private static final class SeparatorState implements State {
         private char data = '\0';
+        private final boolean allowRelativeSelectorAtStart;
+
+        public SeparatorState(boolean allowRelativeSelectorAtStart) {
+            this.allowRelativeSelectorAtStart = allowRelativeSelectorAtStart;
+        }
+
         @Override
         public boolean isReadyForSwitch(char c) {
-            return true;
+            if (data != '\0' && data != ' ' && Character.isWhitespace(c)) {
+                return false;
+            }
+            //If we already captured a descendant separator (' '), collapse multiple whitespace chars.
+            return data != ' ' || !Character.isWhitespace(c);
         }
 
         @Override
         public void addChar(char c, boolean isEscaped) {
-            if (data != '\0') {
-                throw new IllegalArgumentException(MessageFormatUtil
-                    .format(StyledXmlParserExceptionMessage.INVALID_SELECTOR_STRING, "" + data + c));
+            if (data == '\0') {
+                // Normalize any whitespace separator to ' ' for consistent downstream behavior.
+                if (!isEscaped && Character.isWhitespace(c)) {
+                    data = ' ';
+                } else {
+                    data = c;
+                }
+                return;
             }
-            data = c;
+
+            // If we stayed in this state to consume whitespace (see isReadyForSwitch),
+            // treat it as insignificant and ignore it.
+            if (!isEscaped && Character.isWhitespace(c)) {
+                return;
+            }
+
+            throw new IllegalArgumentException(MessageFormatUtil
+                    .format(StyledXmlParserExceptionMessage.INVALID_SELECTOR_STRING, "" + data + c));
         }
 
         /**
@@ -338,9 +413,15 @@ public final class CssSelectorParser {
         @Override
         public void process(List<ICssSelectorItem> selectorItems) {
             if (selectorItems.isEmpty()) {
+                // Allow relative selectors at the start only when explicitly enabled (e.g. inside :has()).
+                if (allowRelativeSelectorAtStart && isCombinator(data)) {
+                    selectorItems.add(new CssSeparatorSelectorItem(data));
+                    return;
+                }
                 throw new IllegalArgumentException(MessageFormatUtil.format(
                         StyledXmlParserExceptionMessage.INVALID_SELECTOR_STRING, data));
             }
+
             ICssSelectorItem lastItem = selectorItems.get(selectorItems.size() - 1);
             CssSeparatorSelectorItem curItem = new CssSeparatorSelectorItem(data);
             if (lastItem instanceof CssSeparatorSelectorItem) {
@@ -354,6 +435,10 @@ public final class CssSelectorParser {
             } else {
                 selectorItems.add(curItem);
             }
+        }
+
+        private static boolean isCombinator(char c) {
+            return c == '+' || c == '>' || c == '~';
         }
     }
 
@@ -406,7 +491,6 @@ public final class CssSelectorParser {
             selectorItems.add(new CssIdSelectorItem(data.toString().substring(1)));
         }
     }
-
 
     /**
      * Represents an abstract state for managing the parsing and processing of CSS selector

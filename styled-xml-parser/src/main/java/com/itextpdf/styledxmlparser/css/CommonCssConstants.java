@@ -1800,6 +1800,11 @@ public class CommonCssConstants {
     public static final String CHECKED = "checked";
 
     /**
+     * The Constant HAS.
+     */
+    public static final String HAS = "has";
+
+    /**
      * The Constant DISABLED.
      */
     public static final String DISABLED = "disabled";

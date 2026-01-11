@@ -60,7 +60,23 @@ public class CssSelector extends AbstractCssSelector {
      * @see com.itextpdf.styledxmlparser.css.selector.ICssSelector#matches(com.itextpdf.styledxmlparser.html.node.INode)
      */
     public boolean matches(INode element) {
-        return matches(element, selectorItems.size() - 1);
+        return matches(element, selectorItems.size() - 1, null);
+    }
+
+    /**
+     * Checks if the node matches this selector, but limits ancestor traversal so that it never
+     * goes above the provided {@code scope} node.
+     * <p>
+     * This is primarily used to implement {@code :has(...)} correctly: when matching a candidate
+     * descendant against an argument selector, ancestor combinators must not escape the {@code :has()}
+     * scope element.
+     *
+     * @param element the element to match
+     * @param scope the scope boundary (inclusive). If {@code null}, behaves like {@link #matches(INode)}.
+     * @return true if the element matches within the given scope, false otherwise
+     */
+    public boolean matchesWithinScope(INode element, INode scope) {
+        return matches(element, selectorItems.size() - 1, scope);
     }
 
     /**
@@ -72,7 +88,7 @@ public class CssSelector extends AbstractCssSelector {
     public boolean notMatches(INode element) {
         int counter = 0;
         while (counter != selectorItems.size()) {
-            boolean matches = matches(element, selectorItems.size() - counter - 1);
+            boolean matches = matches(element, selectorItems.size() - counter - 1, null);
             if (matches) {
                 return false;
             } else {
@@ -87,9 +103,10 @@ public class CssSelector extends AbstractCssSelector {
      *
      * @param element the node
      * @param lastSelectorItemInd the index of the last selector
+     * @param scope the boundary scope node (inclusive) for ancestor traversal, or {@code null} for unbounded
      * @return true, if there's a match
      */
-    private boolean matches(INode element, int lastSelectorItemInd) {
+    private boolean matches(INode element, int lastSelectorItemInd, INode scope) {
         if (!(element instanceof IElementNode)) {
             return false;
         }
@@ -110,14 +127,17 @@ public class CssSelector extends AbstractCssSelector {
                 char separator = ((CssSeparatorSelectorItem) currentItem).getSeparator();
                 switch (separator) {
                     case '>':
-                        return matches(element.parentNode(), i - 1);
+                        return matches(element.parentNode(), i - 1, scope);
                     case ' ': {
                         INode parent = element.parentNode();
                         while (parent != null) {
-                            boolean parentMatches = matches(parent, i - 1);
+                            boolean parentMatches = matches(parent, i - 1, scope);
                             if (parentMatches) {
                                 return true;
                             } else {
+                                if (scope != null && parent == scope) {
+                                    break;
+                                }
                                 parent = parent.parentNode();
                             }
                         }
@@ -128,7 +148,7 @@ public class CssSelector extends AbstractCssSelector {
                         if (parent != null) {
                             int indexOfElement = parent.childNodes().indexOf(element);
                             for (int j = indexOfElement - 1; j >= 0; j--) {
-                                if (matches(parent.childNodes().get(j), i - 1)) {
+                                if (matches(parent.childNodes().get(j), i - 1, scope)) {
                                     return true;
                                 }
                             }
@@ -146,7 +166,7 @@ public class CssSelector extends AbstractCssSelector {
                                     break;
                                 }
                             if (previousElement != null)
-                                return indexOfElement > 0 && matches(previousElement, i - 1);
+                                return indexOfElement > 0 && matches(previousElement, i - 1, scope);
                         }
                         return false;
                     }
