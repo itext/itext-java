@@ -111,6 +111,12 @@ public final class KernelLogMessageConstant {
 
     public static final String MEMORYLIMITAWAREHANDLER_OVERRIDE_CREATENEWINSTANCE_METHOD =
             "MemoryLimitsAwareHandler#createNewInstance method must be overriden.";
+    public static final String FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX =
+            "Failed to process a transformation matrix which is noninvertible. Some content may be placed not as expected.";
+    public static final String PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY =
+            "The PDF contains a BDC operator which refers to a not existing Property dictionary: {0}.";
+    public static final String UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS =
+            "Unable to parse operator '{0}', wrong number of operands {1}";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly

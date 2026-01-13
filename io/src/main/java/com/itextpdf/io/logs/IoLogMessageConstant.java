@@ -178,6 +178,8 @@ public final class IoLogMessageConstant {
 
     public static final String FAILED_TO_PARSE_ENCODING_STREAM = "Failed to parse encoding stream.";
 
+    @Deprecated
+     // replaced by com.itextpdf.kernel.logs.KernelLogMessageConstant#FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX
     public static final String FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX =
             "Failed to process a transformation matrix which is noninvertible. Some content may be placed not as "
                     + "expected.";
@@ -349,6 +351,8 @@ public final class IoLogMessageConstant {
 
     public static final String PDF_READER_CLOSING_FAILED = "PdfReader closing failed due to the error occurred!";
 
+    @Deprecated
+    // replaced by com.itextpdf.kernel.logs.KernelLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY
     public static final String PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY =
             "The PDF contains a BDC operator which refers to a not existing Property dictionary: {0}.";
 

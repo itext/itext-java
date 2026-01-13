@@ -22,17 +22,17 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfTextExtractorTest extends ExtendedITextTest {
@@ -40,7 +40,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/parser/PdfTextExtractorTest/";
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY))
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY))
     public void noSpecifiedDictionaryInPropertiesTest() throws IOException {
         String inFile = sourceFolder + "noSpecifiedDictionaryInProperties.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {
@@ -51,7 +51,7 @@ public class PdfTextExtractorTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY))
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY))
     public void noPropertiesInResourcesTest() throws IOException {
         String inFile = sourceFolder + "noPropertiesInResources.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFile))) {

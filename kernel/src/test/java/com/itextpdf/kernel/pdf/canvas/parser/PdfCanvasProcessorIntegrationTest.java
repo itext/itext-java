@@ -22,7 +22,6 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -137,7 +136,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX, count = 1))
     public void testNoninvertibleMatrix() throws IOException {
         String fileName = "noninvertibleMatrix.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName));
@@ -254,6 +253,58 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
         parser.processContent(document.getPage(1).getContentBytes(), document.getPage(1).getResources());
         Assertions.assertEquals(listener.getResultantText(), "test 1\ntest 2");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS)
+    })
+    public void smallerNumberOfOperandsTmTest() throws IOException {
+        SimpleTextExtractionStrategy listener = new SimpleTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "smallerNumberOfOperandsTm.pdf")))) {
+            parser.processPageContent(pdfDocument.getPage(1));
+        }
+        Assertions.assertEquals("ABCD", listener.getResultantText());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS)
+    })
+    public void biggerNumberOfOperandsTmTest() throws IOException {
+        SimpleTextExtractionStrategy listener = new SimpleTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "biggerNumberOfOperandsTm.pdf")))) {
+            parser.processPageContent(pdfDocument.getPage(1));
+        }
+        Assertions.assertEquals("ABCD", listener.getResultantText());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS)
+    })
+    public void smallerNumberOfOperandsMTest() throws IOException {
+        LocationTextExtractionStrategy listener = new LocationTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "smallerNumberOfOperandsM.pdf")))) {
+            parser.processPageContent(pdfDocument.getPage(1));
+        }
+        Assertions.assertEquals("ABCD", listener.getResultantText());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS)
+    })
+    public void biggerNumberOfOperandsMTest() throws IOException {
+        LocationTextExtractionStrategy listener = new LocationTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "biggerNumberOfOperandsM.pdf")))) {
+            parser.processPageContent(pdfDocument.getPage(1));
+        }
+        Assertions.assertEquals("ABCD", listener.getResultantText());
     }
 
     private static class ColorParsingEventListener implements IEventListener {
