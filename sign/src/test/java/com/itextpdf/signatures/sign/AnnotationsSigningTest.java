@@ -27,10 +27,13 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -43,6 +46,7 @@ import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
@@ -155,6 +159,49 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
                 "TestCity", null, true, false);
 
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
+    }
+
+    @Test
+    public void signFieldWithDAEntryTest() throws GeneralSecurityException, IOException, InterruptedException, AbstractOperatorCreationException, AbstractPKCSException {
+        String srcFile = SOURCE_FOLDER + "signatureFieldWithDAEntry.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signedFieldWithDAEntry.pdf";
+        String outPdf = DESTINATION_FOLDER + "signedFieldWithDAEntry.pdf";
+        String[] signatureFieldNames = {"signature1"};
+
+        sign(srcFile, signatureFieldNames[0], outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "reason1",
+                "TestCity", null, false, true);
+
+        compareDAEntry(outPdf, cmpPdf, signatureFieldNames);
+    }
+
+    @Test
+    public void signTwiceDocWithDAEntryTest() throws GeneralSecurityException, IOException {
+        String srcFile = SOURCE_FOLDER + "signedOnceDocWithDAEntry.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signedTwiceDocWithDAEntry.pdf";
+        String outPdf = DESTINATION_FOLDER + "signedTwiceDocWithDAEntry.pdf";
+        String[] signatureFieldNames = {"signature1", "signature2"};
+
+        sign(srcFile, signatureFieldNames[1], outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "reason2",
+                "TestCity", null, false, true);
+
+        compareDAEntry(outPdf, cmpPdf, signatureFieldNames);
+    }
+
+    private void compareDAEntry(String outPdf, String cmpPdf, String[] signatureFieldNames) throws IOException {
+        ITextTest.printOutCmpPdfNameAndDir(outPdf, cmpPdf);
+        try (PdfDocument outDoc = new PdfDocument(new PdfReader(outPdf))) {
+            try (PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpPdf))) {
+                for (String signatureFieldName : signatureFieldNames) {
+                    String outDA = PdfFormCreator.getAcroForm(outDoc, false)
+                            .getField(signatureFieldName).getPdfObject()
+                            .getAsString(PdfName.DA).toString();
+                    String cmpDA = PdfFormCreator.getAcroForm(cmpDoc, false)
+                            .getField(signatureFieldName).getPdfObject()
+                            .getAsString(PdfName.DA).toString();
+                    Assertions.assertEquals(outDA, cmpDA);
+                }
+            }
+        }
     }
 
     protected void sign(String src, String name, String dest,

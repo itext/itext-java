@@ -1011,7 +1011,7 @@ public class PdfFormField extends AbstractPdfFormField {
             put(PdfName.DA, generateDefaultAppearance(fontName, getFontSize(), color));
             // Font from DR may not be added to document through PdfResource.
             getDocument().addFont(getFont());
-        } else {
+        } else if (getFormType() != PdfName.Sig){
             getPdfObject().remove(PdfName.DA);
             setModified();
         }
