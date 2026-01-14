@@ -45,6 +45,7 @@ import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
+import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
@@ -249,6 +250,46 @@ public class BlockRendererTest extends ExtendedITextTest {
 
 
         doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void absolutePositionedChildIsNotDroppedWhenParentSplitsTest() throws Exception {
+        String cmpFileName = SOURCE_FOLDER + "cmp_absolutePositionedChildIsNotDroppedWhenParentSplits.pdf";
+        String outFile = DESTINATION_FOLDER + "absolutePositionedChildIsNotDroppedWhenParentSplits.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+                Document doc = new Document(pdfDoc)) {
+            Div tocEntry = new Div();
+            tocEntry.setProperty(Property.POSITION, LayoutPosition.RELATIVE);
+
+            Div counter = new Div().add(new Paragraph("1"));
+            counter.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            counter.setWidth(40);
+
+            Div icons = new Div().add(new Paragraph("Page 27"));
+            icons.setProperty(Property.POSITION, LayoutPosition.ABSOLUTE);
+            icons.setProperty(Property.RIGHT, 6f);
+            icons.setProperty(Property.TOP, 6f);
+
+            String strToFill = "Very long agenda item title intended to force a split across pages. ";
+            int iterations = 70;
+            StringBuilder longText = new StringBuilder(iterations * strToFill.length());
+            for (int i = 0; i < iterations; ++i) {
+                longText.append(strToFill);
+            }
+            Paragraph title = new Paragraph(longText.toString());
+            title.setMarginLeft(45);
+
+            tocEntry.add(counter);
+            tocEntry.add(title);
+            tocEntry.add(icons);
+
+            doc.add(tocEntry);
+
+            // Add a control element after
+            doc.add(new Paragraph("Control"));
+        }
         Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
