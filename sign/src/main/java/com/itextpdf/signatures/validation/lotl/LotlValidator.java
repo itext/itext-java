@@ -56,7 +56,7 @@ public class LotlValidator {
     /**
      * Validates the List of Trusted Lists (Lotl) and retrieves national trusted certificates.
      *
-     * @return a ValidationReport containing the results of the validation
+     * @return a {@link ValidationReport} containing the results of the LOTL validation
      */
     public ValidationReport validate() {
         return this.service.getValidationResult();
@@ -65,7 +65,7 @@ public class LotlValidator {
     /**
      * Retrieves national trusted certificates.
      *
-     * @return the list of national trusted certificates
+     * @return the list of the national trusted certificates
      */
     List<IServiceContext> getNationalTrustedCertificates() {
         return this.service.getNationalTrustedCertificates();

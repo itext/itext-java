@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.resolver.resource.IResourceRetriever;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
@@ -111,7 +112,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     public void serializeIndividualCountry(String country) throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         props.setCountryNames(country);
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             lotlService.initializeCache();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -138,7 +139,7 @@ public class LotlServiceTest extends ExtendedITextTest {
 
     @Test
     public void testWithPivotFetcher() {
-        try (LotlService lotlService = new EuropeanLotlService(
+        try (LotlService lotlService = new LotlService(
                 new LotlFetchingProperties(new RemoveOnFailingCountryData()).setCountryNames("NL"))) {
             AssertUtil.doesNotThrow(() -> lotlService.withPivotFetcher(new PivotFetcher(lotlService)));
         }
@@ -243,7 +244,7 @@ public class LotlServiceTest extends ExtendedITextTest {
         lotlFetchingProperties.setRefreshIntervalCalculator(l -> 500);
 
         AtomicLong refreshCounter = new AtomicLong(0);
-        try (LotlService lotlService = new EuropeanLotlService(lotlFetchingProperties) {
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties) {
             @Override
             public void initializeCache() {
             }
@@ -264,7 +265,7 @@ public class LotlServiceTest extends ExtendedITextTest {
         LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         lotlFetchingProperties.setRefreshIntervalCalculator(l -> 100); // 100 milliseconds
         AtomicLong refreshCounter = new AtomicLong(0);
-        try (LotlService lotlService = new EuropeanLotlService(lotlFetchingProperties) {
+        try (LotlService lotlService = new LotlService(lotlFetchingProperties) {
             @Override
             public void initializeCache() {
             }
@@ -286,7 +287,7 @@ public class LotlServiceTest extends ExtendedITextTest {
             SignLogMessageConstant.FAILED_TO_FETCH_EU_JOURNAL_CERTIFICATES))
     public void euJournalInvalidOnRefreshTest() {
         LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService service = new EuropeanLotlService(lotlFetchingProperties)) {
+        try (LotlService service = new LotlService(lotlFetchingProperties)) {
             EuropeanResourceFetcher europeanResourceFetcher = new EuropeanResourceFetcher() {
                 @Override
                 public Result getEUJournalCertificates() {
@@ -303,7 +304,7 @@ public class LotlServiceTest extends ExtendedITextTest {
 
     @Test
     public void serviceStaticInitializedTwiceTest() {
-        LotlService.GLOBAL_SERVICE = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()));
+        LotlService.GLOBAL_SERVICE = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()));
 
         String exceptionMessage = Assertions.assertThrows(PdfException.class,
                         () -> LotlService.initializeGlobalCache(new LotlFetchingProperties(new RemoveOnFailingCountryData())))
@@ -316,7 +317,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void getLotlbytesUnsuccessfulTest() {
         ValidationReport report;
-        try (EuropeanLotlService lotlService = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData())) {
+        try (LotlService lotlService = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData())) {
             @Override
             public Result getLotlBytes() {
                 Result result = new Result();
@@ -334,7 +335,7 @@ public class LotlServiceTest extends ExtendedITextTest {
 
     @Test
     public void initializeCacheWithCountrySpecificFailure() {
-        try (LotlService lotlService = new EuropeanLotlService(
+        try (LotlService lotlService = new LotlService(
                 new LotlFetchingProperties(new ThrowExceptionOnFailingCountryData()))) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             CountrySpecificLotlFetcher countrySpecificLotlFetcher = new CountrySpecificLotlFetcher(lotlService) {
@@ -359,7 +360,7 @@ public class LotlServiceTest extends ExtendedITextTest {
 
     @Test
     public void cancelTimerWhenItsNotSet() {
-        try (LotlService lotlService = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+        try (LotlService lotlService = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
             AssertUtil.doesNotThrow(() -> lotlService.cancelTimer());
         }
     }
@@ -367,7 +368,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void serializationAllCountriesTest() throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             lotlService.initializeCache();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -385,7 +386,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void serializationPassNullAsStreamFallsBackToNetwork() {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             AssertUtil.doesNotThrow(() -> {
                 lotlService.initializeCache(null);
@@ -396,7 +397,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void serializationPassNonExistingFile() {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             Assertions.assertThrows(IOException.class, () -> {
                 lotlService.initializeCache(Files.newInputStream(Paths.get(SOURCE + "nonExistingFile.json")));
@@ -407,7 +408,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void serializationPassEmptyJson() {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             Assertions.assertThrows(PdfException.class, () -> {
                 lotlService.initializeCache(Files.newInputStream(Paths.get(SOURCE + "empty.json")));
@@ -418,7 +419,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void serializationInvalidTopLevel() {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             Assertions.assertThrows(PdfException.class, () -> {
                 lotlService.initializeCache(Files.newInputStream(Paths.get(SOURCE + "invalid-top-level.json")));
@@ -429,7 +430,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void serializationBroken() {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             Assertions.assertThrows(PdfException.class, () -> {
                 lotlService.initializeCache(Files.newInputStream(Paths.get(SOURCE + "invalid-top-level.json")));
@@ -440,7 +441,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void loadAllCountriesFromValue() throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             AssertUtil.doesNotThrow(() -> {
                 lotlService.initializeCache(Files.newInputStream(Paths.get(SOURCE + "all-countries.json")));
@@ -463,7 +464,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     public void loadStateButItDoesNotContainRequiredCountryThrowsException() throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         props.setCountryNames(LotlCountryCodeConstants.NETHERLANDS, LotlCountryCodeConstants.POLAND);
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             lotlService.initializeCache();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -471,7 +472,7 @@ public class LotlServiceTest extends ExtendedITextTest {
 
             LotlFetchingProperties props2 = new LotlFetchingProperties(new RemoveOnFailingCountryData());
             props2.setCountryNames(LotlCountryCodeConstants.NETHERLANDS, LotlCountryCodeConstants.BELGIUM);
-            try (LotlService lotlService2 = new EuropeanLotlService(props2)) {
+            try (LotlService lotlService2 = new LotlService(props2)) {
                 lotlService2.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
                 Exception e = Assertions.assertThrows(PdfException.class,
                         () -> lotlService2.initializeCache(new ByteArrayInputStream(outputStream.toByteArray())));
@@ -487,7 +488,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     public void loadStateWithLessRequiredCountriesLogs() throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         props.setCountryNames(LotlCountryCodeConstants.NETHERLANDS, LotlCountryCodeConstants.POLAND);
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             lotlService.initializeCache();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -517,7 +518,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     public void serializeDeserializedWithTimestampsToOldThrows() throws IOException, InterruptedException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         props.setCountryNames(LotlCountryCodeConstants.BELGIUM);
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             lotlService.initializeCache();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -542,7 +543,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     public void serializeDeserializedWithTimestampsOkDoesntThrow() throws IOException {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         props.setCountryNames(LotlCountryCodeConstants.BELGIUM);
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             lotlService.initializeCache();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -565,7 +566,7 @@ public class LotlServiceTest extends ExtendedITextTest {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         props.setRefreshIntervalCalculator(l -> Integer.MAX_VALUE);
         props.setCountryNames(LotlCountryCodeConstants.BELGIUM);
-        try (LotlService lotlService = new EuropeanLotlService(props)) {
+        try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             lotlService.initializeCache();
             ByteArrayOutputStream outputStreamOldest = new ByteArrayOutputStream();
@@ -573,7 +574,7 @@ public class LotlServiceTest extends ExtendedITextTest {
 
             Thread.sleep(50);
             ByteArrayOutputStream outputStreamNewer = new ByteArrayOutputStream();
-            try (LotlService lotlService1 = new EuropeanLotlService(props)) {
+            try (LotlService lotlService1 = new LotlService(props)) {
                 lotlService1.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
                 lotlService1.initializeCache();
                 lotlService1.serializeCache(outputStreamNewer);
@@ -584,7 +585,7 @@ public class LotlServiceTest extends ExtendedITextTest {
             props2.setCountryNames(LotlCountryCodeConstants.BELGIUM);
             props2.setRefreshIntervalCalculator(l -> Integer.MAX_VALUE);
 
-            try (LotlService lotlService2 = new EuropeanLotlService(props2)) {
+            try (LotlService lotlService2 = new LotlService(props2)) {
                 lotlService2.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
                 lotlService2.initializeCache(new ByteArrayInputStream(outputStreamNewer.toByteArray()));
                 Exception e = Assertions.assertThrows(PdfException.class, () -> {
@@ -593,6 +594,19 @@ public class LotlServiceTest extends ExtendedITextTest {
                 Assertions.assertEquals(SignExceptionMessageConstant.CACHE_INCOMING_DATA_IS_STALER, e.getMessage());
             }
         }
+    }
+
+    @Test
+    public void unsupportedExceptionTest() {
+        LotlService lotlService = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData())) {
+            @Override
+            public void initializeCache() {
+            }
+        };
+
+        Exception e = Assertions.assertThrows(UnsupportedOperationException.class, () ->
+                lotlService.withPivotFetcher(new PivotFetcher(lotlService)));
+        Assertions.assertTrue(e.getMessage().contains("next major release"));
     }
 
     static void assert2LotlCacheDataV1(LotlCacheDataV1 expected, LotlCacheDataV1 actual) {

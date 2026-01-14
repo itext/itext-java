@@ -34,7 +34,6 @@ import java.util.List;
 import static com.itextpdf.signatures.validation.lotl.LotlValidator.JOURNAL_CERT_NOT_PARSABLE;
 import static com.itextpdf.signatures.validation.lotl.LotlValidator.LOTL_VALIDATION;
 
-
 /**
  * This class fetches the European Union Journal certificates from the trusted list configuration.
  * It reads the PEM certificates and returns them in a structured result.
@@ -129,5 +128,4 @@ public class EuropeanResourceFetcher {
             this.currentlySupportedPublication = currentlySuppostedPublication;
         }
     }
-
 }

@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns4="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" Id="TrustServiceStatusList" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>5</TSLVersionIdentifier>
+        <TSLSequenceNumber>7</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/BRlist</TSLType>
+        <SchemeOperatorName>
+            <Name xml:lang="pt">Instituto Nacional De Tecnologia Da Informação ITI</Name>
+            <Name xml:lang="en">National Institute of Information Technology ITI</Name>
+            <Name xml:lang="es">Instituto Nacional de Tecnologías de la Información ITI</Name>
+            <Name xml:lang="gn">Instituto Nacional de Tecnología de la Información ITI</Name>
+        </SchemeOperatorName>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="pt">
+                    <StreetAddress>SCN Q 2 bloco E</StreetAddress>
+                    <Locality>Brasília</Locality>
+                    <StateOrProvince>DF</StateOrProvince>
+                    <PostalCode>70712-905</PostalCode>
+                    <CountryName>BR</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>SCN Q 2 bloco E</StreetAddress>
+                    <Locality>Brasília</Locality>
+                    <StateOrProvince>DF</StateOrProvince>
+                    <PostalCode>70712-905</PostalCode>
+                    <CountryName>BR</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="es">
+                    <StreetAddress>SCN Q 2 bloco E</StreetAddress>
+                    <Locality>Brasília</Locality>
+                    <StateOrProvince>DF</StateOrProvince>
+                    <PostalCode>70712-905</PostalCode>
+                    <CountryName>BR</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="gn">
+                    <StreetAddress>SCN Q 2 bloco E</StreetAddress>
+                    <Locality>Brasília</Locality>
+                    <StateOrProvince>DF</StateOrProvince>
+                    <PostalCode>70712-905</PostalCode>
+                    <CountryName>BR</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="pt">https://www.gov.br/iti</URI>
+                <URI xml:lang="en">https://www.gov.br/iti</URI>
+                <URI xml:lang="es">https://www.gov.br/iti</URI>
+                <URI xml:lang="gn">https://www.gov.br/iti</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeName>
+            <Name xml:lang="pt">BR: A Lista de Confiança contém informações relacionadas com Raízes de Confiança Qualificadas da ICP-Brasil de acordo com a MP 2200-2 de Agosto de 2001, com a Lei 14063 de Setembro de 2020 e com o Decreto 12.376, de 6 de fevereiro de 2025</Name>
+            <Name xml:lang="en">BR: The Trust List contains information related to ICP-Brasil Qualified Roots of Trust in accordance with MP 2200-2 of August 2001 and Law 14063 of September 2020</Name>
+            <Name xml:lang="es">BR: La Lista de Fideicomiso contiene información relacionada con Raíces de Fideicomiso Calificadas ICP-Brasil de acuerdo con la MP 2200-2 de agosto de 2001 y la Ley 14063 de septiembre de 2020</Name>
+            <Name xml:lang="gn">BR: Lista de Fideicomisos oguereko marandu ojoajúva ICP-Brasil Calificado Raíces de Confianza rehe he’iháicha MP 2200-2 agosto 2001-pe ha Ley 14063 jasypoteĩ 2020-pe</Name>
+        </SchemeName>
+        <SchemeInformationURI>
+            <URI xml:lang="pt">https://www.gov.br/iti/pt-br/assuntos/icp-brasil</URI>
+            <URI xml:lang="en">https://www.gov.br/iti/pt-br/assuntos/icp-brasil</URI>
+            <URI xml:lang="es">https://www.gov.br/iti/pt-br/assuntos/icp-brasil</URI>
+            <URI xml:lang="gn">https://www.gov.br/iti/pt-br/assuntos/icp-brasil</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>http://uri.etsi.org/TrstSvc/TrustedList/StatusDetn/BRdetermination</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="pt">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/BR</URI>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/BR</URI>
+            <URI xml:lang="es">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/BR</URI>
+            <URI xml:lang="gn">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/BR</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>BR</SchemeTerritory>
+        <PolicyOrLegalNotice>
+            <TSLLegalNotice xml:lang="pt">O quadro jurídico aplicável à presente implementação desta TSL (Trusted-Service Status List) é o Acordo do Mercosul, decreto 12.376 de 6 de defeveiro de 2025 e as diretrizes estabelecidas pelo Comite Gestor da ICP-Brasil</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="en">The legal framework applicable to the present implementation of this TSL (Trusted-Service Status List) is the Mercosur Agreement and the guidelines established by the ICP-Brasil Management Committee</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="es">El marco legal aplicable a la presente implementación de esta TSL (Trusted-Service Status List) es el Acuerdo del Mercosur y las directrices establecidas por el Comité de Gestión ICP-Brasil</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="gn">Pe marco jurídico ojeporúva ko TSL (Lista de Estatus de Servicio Confiable) ñemboguatarã ko’ágã ha’e Acuerdo Mercosur ha umi directriz omopyendáva Comité de Gestión ICP-Brasil</TSLLegalNotice>
+        </PolicyOrLegalNotice>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <PointersToOtherTSL>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIIiDCCBnCgAwIBAgIIbjmWHr1QCH4wDQYJKoZIhvcNAQELBQAwWjEaMBgGA1UEAwwRQ0EtRE9DVU1FTlRBIFMuQS4xFjAUBgNVBAUTDVJVQzgwMDUwMTcyLTExFzAVBgNVBAoMDkRPQ1VNRU5UQSBTLkEuMQswCQYDVQQGEwJQWTAeFw0yNDA1MTAxNjI2MDBaFw0yNjA1MTAxNjI2MDBaMIG9MSUwIwYDVQQDDBxMVUNBUyBBVElMSU8gU09UT01BWU9SIExMQU5PMRIwEAYDVQQFEwlDSTIzMDQwMjYxFTATBgNVBCoMDExVQ0FTIEFUSUxJTzEYMBYGA1UEBAwPU09UT01BWU9SIExMQU5PMQswCQYDVQQLDAJGMjE1MDMGA1UECgwsQ0VSVElGSUNBRE8gQ1VBTElGSUNBRE8gREUgRklSTUEgRUxFQ1RST05JQ0ExCzAJBgNVBAYTAlBZMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAueFKTz9rE9whBnJEFN0UB6n/37PrLZmyZPo+/O7gHU+BfYg2gUAHMk1FFGdnHewodkjkUsG1/nNUSvt9afp/13NnxVNJunDxDHe2QtPnyHHtCBkNyZnRE4OltbDYTQ02i0WeVjzKsfIiN3dzbyR1bRszFm0AnSqCEha3cfWA0NE+VSG1UdKHMcEy/mxUjyXV8wFFDBrIQRSil3wxsALxMUKWSxN1D/65DGrev5TNXE55S0an75bASc6mN1V8uJwp/FC4yvIh5OITiKyCVigdh72O2PBB1Zy3Uajsit75+eiuP2hL9QxYLT8LAj1VqLSrVxPMWWk5pttBPZFyCwNrTQIDAQABo4ID7DCCA+gwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBShPYUrzdgslh85AgyfUztY2JULezCBlAYIKwYBBQUHAQEEgYcwgYQwVQYIKwYBBQUHMAKGSWh0dHBzOi8vd3d3LmRpZ2l0by5jb20ucHkvdXBsb2Fkcy9jZXJ0aWZpY2Fkby1kb2N1bWVudGEtc2EtMTUzNTExNzc3MS5jcnQwKwYIKwYBBQUHMAGGH2h0dHBzOi8vd3d3LmRpZ2l0by5jb20ucHkvb2NzcC8wTwYDVR0RBEgwRoEYbHVrcy5zb3RvbWF5b3JAZ21haWwuY29tpCowKDEmMCQGA1UEDQwdRklSTUEgRUxFQ1RST05JQ0EgQ1VBTElGSUNBREEwggH1BgNVHSAEggHsMIIB6DCCAeQGDSsGAQQBgvk7AQEBCgEwggHRMC8GCCsGAQUFBwIBFiNodHRwczovL3d3dy5kaWdpdG8uY29tLnB5L2Rlc2NhcmdhczCCAZwGCCsGAQUFBwICMIIBjh6CAYoAQwBlAHIAdABpAGYAaQBjAGEAZABvACAAYwB1AGEAbABpAGYAaQBjAGEAZABvACAAZABlACAAZgBpAHIAbQBhACAAZQBsAGUAYwB0AHIA8wBuAGkAYwBhACAAdABpAHAAbwAgAEYAMgAgACgAYwBsAGEAdgBlAHMAIABlAG4AIABkAGkAcwBwAG8AcwBpAHQAaQB2AG8AIABjAHUAYQBsAGkAZgBpAGMAYQBkAG8AKQAsACAAcwB1AGoAZQB0AGEAIABhACAAbABhAHMAIABjAG8AbgBkAGkAYwBpAG8AbgBlAHMAIABkAGUAIAB1AHMAbwAgAGUAeABwAHUAZQBzAHQAYQBzACAAZQBuACAAbABhACAARABlAGMAbABhAHIAYQBjAGkA8wBuACAAZABlACAAUAByAOEAYwB0AGkAYwBhAHMAIABkAGUAIABDAGUAcgB0AGkAZgBpAGMAYQBjAGkA8wBuACAAZABlACAARABPAEMAVQBNAEUATgBUAEEAIABTAC4AQQAuMCoGA1UdJQEB/wQgMB4GCCsGAQUFBwMCBggrBgEFBQcDBAYIKwYBBQUHAwEwewYDVR0fBHQwcjA0oDKgMIYuaHR0cHM6Ly93d3cuZGlnaXRvLmNvbS5weS9jcmwvZG9jdW1lbnRhX2NhLmNybDA6oDigNoY0aHR0cHM6Ly93d3cuZG9jdW1lbnRhLmNvbS5weS9kaWdpdG8vZG9jdW1lbnRhX2NhLmNybDAdBgNVHQ4EFgQUhH7iuHaTlo3hg9bXKb0FSJ41sHkwDgYDVR0PAQH/BAQDAgXgMA0GCSqGSIb3DQEBCwUAA4ICAQBjHjPk6LoH7EpAdn5A+Ya3zUWDICPvLXKdvRlLbIy+7GGPgBMHSJwSyhWyHQzG5q5t1kXOJxZ5veGIkgzaHRW8KrSfCmx3owaUyRqPln0wHM6NyN1Ei4s6JZYtec9/dFfmHThugiN9kXxaaMEzMmpOPgIUPfp3nuWVMJDWW0ZGUdlI/AFT+XzPgpvVVtt06NwpUwYyfDScGoR8XEyM3RN8cE//b3+Y1WtQ5lKgzGosjKxjZpJHu42e3syUcBowbF2+xpVVxn5hn0BVRNbO1ba/eHSZgbkbnddzt4j90Jttt0SWSPLjr/LATXtqKqx6v678JAgs+6M2mQ16rRrmHIYRfbHuOaaCPh2jGnonS2BSpCuSBu4WYjsDsivWnTg8Qc6Sia8F1/zk8zPDTuiVwxCvjbVPLSLkstAD6TFdH2ZkuicaqGDONBTb6j5dGpwVTpWVzlcxkH7WCttSpat0Tri7N15AfjT8grWIKDYeVtb9AUyOuUvq9p1MrUEPm6MgFiLBXI9eDqUcP3Qy6h5zDbfQURcAzPT+0wNHDw14S3RlzbmzlrzbcmuiVo2FWJ4cEMKKIAFCaXSwhBF8X0OPKAg9l21JSVT5qyAZ4rhDB21TPQya0BRqydeBXx95JRtdiYI8503OMLh9amu/cDnLzJvromz2UUUNGjINmlACdUlHpg==</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIFsDCCA5igAwIBAgIQEbTm669/QzljW76Ha7c78zANBgkqhkiG9w0BAQsFADBtMTwwOgYDVQQDEzNBdXRvcmlkYWQgQ2VydGlmaWNhZG9yYSBkZWwgTWluaXN0ZXJpbyBkZWwgSW50ZXJpb3IxIDAeBgNVBAoTF01pbmlzdGVyaW8gZGVsIEludGVyaW9yMQswCQYDVQQGEwJVWTAeFw0yMjEwMjgxMTM1MzVaFw0yNzEwMjgxMTM1MzVaMEMxCzAJBgNVBAYTAlVZMRQwEgYDVQQFEwtETkkxNDkxODcxMDEeMBwGA1UEAwwVREFOSUVMIE1PUkRFQ0tJIFBVUEtPMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqGgkil8nMl6I+QEVPlPcn0WpFn/AuR/x7VyzzrwONRCUX5CfRVkoF1Om+UaU+AuMpA2mEeUxxhEGcK/T306zMn/tLgHzXyaDxwUJ3dM2rO5ouOZnJDcX4EaTgfv32xNIxidCcBVKrtpTSrE8Uh9KtjOp+YE/rx6ING+Ms51yUM9/Q3Fz7Fl/uInuFeTTCetV01mmLpWMbxNyzyp9lwA4BcsrI8GlC0umz+d/8DW+LG5BGmrT4iisUUUOgoYzLjTFXyVSw3QZof6Da4HWk4o5qw8oNBzT1c1+l5SKTYuC+4ABDwBydPYaoEMcuM/uJ3GBv1LEXKCaZBtZpIlH2o4h8QIDAQABo4IBdDCCAXAwCQYDVR0TBAIwADAOBgNVHQ8BAf8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMB0GA1UdDgQWBBRWN450nJy9hJTDPQpZQvyAbFm7GjBNBggrBgEFBQcBAQRBMD8wPQYIKwYBBQUHMAKGMWh0dHBzOi8vY2EubWludGVyaW9yLmd1Yi51eS9jZXJ0aWZpY2Fkb3MvTUlDQS5jZXIwHwYDVR0jBBgwFoAUn7M0PJs6qWAQyshZBG3trWIsSP8wagYDVR0gBGMwYTBfBgtghlqE4q4dhIgFAjBQME4GCCsGAQUFBwIBFkJ3d3cudWNlLmd1Yi51eS9pbmZvcm1hY2lvbi10ZWNuaWNhL3BvbGl0aWNhcy9jcF9wZXJzb25hX2Zpc2ljYS5wZGYwOQYDVR0fBDIwMDAuoCygKoYoaHR0cHM6Ly9jYS5taW50ZXJpb3IuZ3ViLnV5L2NybHMvY3JsLmNybDANBgkqhkiG9w0BAQsFAAOCAgEAuyOOA2bJvnutmUd2iTOHp0fjFHG+1Y+94q6KaEH1xc92rKk07fwvrZlP4SBSXCJPK9VrOsEKoXCH39Xpz6FkL1dyPbd0i4t6jY6GWxAIzk2ZX13R4xpZYwUOephVe8sNBmTxt4ghUe73nnU1+zrSRxGAyOt8mp3jzEtUz05tNqQq5DzvGUR84YfD83KYRs3Q7EO2cyAmMTRJ8yTnlAL0osYBmL6X/MRdl/7v1SeP5hvmR5R2nkSKciuDU0glFZVzFmgFmMf5hLt7pFGcAooiFkpxKh9p4WM9BM85okpeFk4Pi1/hmhgKAF19t7j7XRRLFihq+bxcqEkCg3MZjWr+1vWlyevEV8hcF2J8QlTcm8oM9bkWyz64NXeLPaV+54g7EScEnLwA+AxB1alJfeLbYpqJgtIxiWtDkZYlB2linKHhoRAHBFsrcPYxzaEJJXRbp992cP+UYR77VjO2eCiYxyhIYDDWT1f2vCgXts+ftYtVLDK5ijn6F3Cup++dueyWav7c9sMgjRtqs0Pv0ybesKoJptewPP0L8IilpRQ0Hx6vqG6VZYaM4SvIiO0rovMdIAIKuuj0AGBYhDa72U9YovbujpKruvCzfW9+V+TcgRqgTfTXDS9+PztHkvO9CHa9CdUmbtgqiEcsBL2itBWlHpmwGPTHij05OjS+d/uQuzU=</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://validar.iti.gov.br/trustlist/trust-list-MB.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/MBlistofthelists</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>MB</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns4:MimeType>application/vnd.etsi.tsl+xml</ns4:MimeType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="pt">Secretaria do Mercosul</Name>
+                            <Name xml:lang="es">Secretaria del Mercosul</Name>
+                            <Name xml:lang="en">Mercosur Secretariat</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTypeCommunityRules>
+                            <URI xml:lang="pt">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                            <URI xml:lang="es">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                        </SchemeTypeCommunityRules>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://validar.iti.gov.br/trustlist/trust-list-BR.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/BRlist</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>BR</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns4:MimeType>application/vnd.etsi.tsl+xml</ns4:MimeType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="pt">Instituto Nacional De Tecnologia Da Informação ITI</Name>
+                            <Name xml:lang="en">National Institute of Information Technology ITI</Name>
+                            <Name xml:lang="es">Instituto Nacional de Tecnologías de la Información ITI</Name>
+                            <Name xml:lang="gn">Instituto Nacional de Tecnología de la Información ITI</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTypeCommunityRules>
+                            <URI xml:lang="pt">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/BR</URI>
+                            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/BR</URI>
+                            <URI xml:lang="es">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/BR</URI>
+                            <URI xml:lang="gn">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/BR</URI>
+                        </SchemeTypeCommunityRules>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+        </PointersToOtherTSL>
+        <ListIssueDateTime>2025-11-07T03:00:00Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2026-05-07T02:59:59Z</dateTime>
+        </NextUpdate>
+        <DistributionPoints>
+            <URI>https://validar.iti.gov.br/trustlist/trust-list-BR.xml</URI>
+        </DistributionPoints>
+    </SchemeInformation>
+    <TrustServiceProviderList>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="pt">Instituto Nacional De Tecnologia Da Informação ITI</Name>
+                    <Name xml:lang="en">National Institute of Information Technology ITI</Name>
+                    <Name xml:lang="es">Instituto Nacional de Tecnologías de la Información ITI</Name>
+                    <Name xml:lang="gn">Instituto Nacional de Tecnología de la Información ITI</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="pt">ICP-Brasil</Name>
+                    <Name xml:lang="en">ICP-Brasil</Name>
+                    <Name xml:lang="es">ICP-Brasil</Name>
+                    <Name xml:lang="gn">ICP-Brasil</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="pt">
+                            <StreetAddress>SCN Q 2 bloco E</StreetAddress>
+                            <Locality>Brasília</Locality>
+                            <StateOrProvince>DF</StateOrProvince>
+                            <PostalCode>70712-905</PostalCode>
+                            <CountryName>BR</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>SCN Q 2 bloco E</StreetAddress>
+                            <Locality>Brasília</Locality>
+                            <StateOrProvince>DF</StateOrProvince>
+                            <PostalCode>70712-905</PostalCode>
+                            <CountryName>BR</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="es">
+                            <StreetAddress>SCN Q 2 bloco E</StreetAddress>
+                            <Locality>Brasília</Locality>
+                            <StateOrProvince>DF</StateOrProvince>
+                            <PostalCode>70712-905</PostalCode>
+                            <CountryName>BR</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="gn">
+                            <StreetAddress>SCN Q 2 bloco E</StreetAddress>
+                            <Locality>Brasília</Locality>
+                            <StateOrProvince>DF</StateOrProvince>
+                            <PostalCode>70712-905</PostalCode>
+                            <CountryName>BR</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="pt">https://www.gov.br/iti</URI>
+                        <URI xml:lang="en">https://www.gov.br/iti</URI>
+                        <URI xml:lang="es">https://www.gov.br/iti</URI>
+                        <URI xml:lang="gn">https://www.gov.br/iti</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="pt">https://www.gov.br/iti/pt-br/</URI>
+                    <URI xml:lang="en">https://www.gov.br/iti/pt-br/</URI>
+                    <URI xml:lang="es">https://www.gov.br/iti/pt-br/</URI>
+                    <URI xml:lang="gn">https://www.gov.br/iti/pt-br/</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileño rehegua</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIEuDCCA6CgAwIBAgIBBDANBgkqhkiG9w0BAQUFADCBtDELMAkGA1UEBhMCQlIxEzARBgNVBAoTCklDUC1CcmFzaWwxPTA7BgNVBAsTNEluc3RpdHV0byBOYWNpb25hbCBkZSBUZWNub2xvZ2lhIGRhIEluZm9ybWFjYW8gLSBJVEkxETAPBgNVBAcTCEJyYXNpbGlhMQswCQYDVQQIEwJERjExMC8GA1UEAxMoQXV0b3JpZGFkZSBDZXJ0aWZpY2Fkb3JhIFJhaXogQnJhc2lsZWlyYTAeFw0wMTExMzAxMjU4MDBaFw0xMTExMzAyMzU5MDBaMIG0MQswCQYDVQQGEwJCUjETMBEGA1UEChMKSUNQLUJyYXNpbDE9MDsGA1UECxM0SW5zdGl0dXRvIE5hY2lvbmFsIGRlIFRlY25vbG9naWEgZGEgSW5mb3JtYWNhbyAtIElUSTERMA8GA1UEBxMIQnJhc2lsaWExCzAJBgNVBAgTAkRGMTEwLwYDVQQDEyhBdXRvcmlkYWRlIENlcnRpZmljYWRvcmEgUmFpeiBCcmFzaWxlaXJhMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwPMudwX/hvm+Uh2b/lQAcHVAisamaLkWdkwP9/S/tOKIgRrL6Oy+ZIGlOUdd6uYtk9Ma/3pUpgcfNAj0vYm5gsyjQo9emsc+x6m4VWwk9iqMZSCK5EQkAq/Ut4n7KuLE1+gdftwdIgxfUsPt4CyNrY50QV57KM2UT8x5rrmzEjr7TICGpSUAl2gVqe6xaii+bmYR1QrmWaBSAG59LrkrjrYtbRhFboUDe1DK+6T8s5L6k8c8okpbHpa9veMztDVC9sPJ60MWXh6anVKo1UcLcbURyEeNvZneVRKAAU6ouwdjDvwlsaKydFKwed0ToQ47bmUKgcm+wV3eTRk36UOnTwIDAQABo4HSMIHPME4GA1UdIARHMEUwQwYFYEwBAQAwOjA4BggrBgEFBQcCARYsaHR0cDovL2FjcmFpei5pY3BicmFzaWwuZ292LmJyL0RQQ2FjcmFpei5wZGYwPQYDVR0fBDYwNDAyoDCgLoYsaHR0cDovL2FjcmFpei5pY3BicmFzaWwuZ292LmJyL0xDUmFjcmFpei5jcmwwHQYDVR0OBBYEFIr68VeEERM1kEL6V0lUaQ2kxPA3MA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgEGMA0GCSqGSIb3DQEBBQUAA4IBAQAZA5c1U/hgIh6OcgLAfiJgFWpvmDZWqlV30/bHFpj8iBobJSm5uDpt7TirYh1Uxe3fQaGlYjJe+9zd+izPRbBqXPVQA34EXcwk4qpWuf1hHriWfdrx8AcqSqr6CuQFwSr75FosSzlwDADa70mT7wZjAmQhnZx2xJ6wfWlT9VQfS//JYeIc7Fue2JNLd00UOSMMaiK/t79enKNHEA2fupH3vEigf5Eh4bVAN5VohrTm6MY53x7XQZZr1ME7a55lFEnSeT0umlOAjR2mAbvSM5X5oSZNrmetdzyTj2flCM8CC7MLab0kkdngRIlUBGHF1/S5nmPbK+9A46sd33oqK8n8</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira, ST=DF, L=Brasilia, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>ivrxV4QREzWQQvpXSVRpDaTE8Dc=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileño rehegua</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira, ST=DF, L=Brasilia, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>ivrxV4QREzWQQvpXSVRpDaTE8Dc=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2011-11-30T23:59:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileño rehegua</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira, ST=DF, L=Brasilia, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>ivrxV4QREzWQQvpXSVRpDaTE8Dc=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2001-11-30T12:58:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v1</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v1</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v1</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v1</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIEgDCCA2igAwIBAgIBATANBgkqhkiG9w0BAQUFADCBlzELMAkGA1UEBhMCQlIxEzARBgNVBAoTCklDUC1CcmFzaWwxPTA7BgNVBAsTNEluc3RpdHV0byBOYWNpb25hbCBkZSBUZWNub2xvZ2lhIGRhIEluZm9ybWFjYW8gLSBJVEkxNDAyBgNVBAMTK0F1dG9yaWRhZGUgQ2VydGlmaWNhZG9yYSBSYWl6IEJyYXNpbGVpcmEgdjEwHhcNMDgwNzI5MTkxNzEwWhcNMjEwNzI5MTkxNzEwWjCBlzELMAkGA1UEBhMCQlIxEzARBgNVBAoTCklDUC1CcmFzaWwxPTA7BgNVBAsTNEluc3RpdHV0byBOYWNpb25hbCBkZSBUZWNub2xvZ2lhIGRhIEluZm9ybWFjYW8gLSBJVEkxNDAyBgNVBAMTK0F1dG9yaWRhZGUgQ2VydGlmaWNhZG9yYSBSYWl6IEJyYXNpbGVpcmEgdjEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDOHOi+kzTOybHkVO4J9uykCIWgP8aKxnAwp4CM7T4BVAeMGSM7n7vHtIsgseL3QRYtXodmurAH3W/RPzzayFkznRWwn5LIVlRYijonojQem3i1t83lm+nALhKecHgH+o7yTMD45XJ8HqmpYANXJkfbg3bDzsgSu9H/766zYn2aoOS8bn0BLjRg3IfgX38FcFwwFSzCdaM/UANmI2Ys53R3eNtmF9/5Hw2CaI91h/fpMXpTT89YYrtAojTPwHCEUJcV2iBL6ftMQq0raI6j2a0FYv4IdMTowcyFE86tKDBQ3d7AgcFJsF4uJjjpYwQzd7WAds0qf/I8rF2TQjn0onNFAgMBAAGjgdQwgdEwTgYDVR0gBEcwRTBDBgVgTAEBADA6MDgGCCsGAQUFBwIBFixodHRwOi8vYWNyYWl6LmljcGJyYXNpbC5nb3YuYnIvRFBDYWNyYWl6LnBkZjA/BgNVHR8EODA2MDSgMqAwhi5odHRwOi8vYWNyYWl6LmljcGJyYXNpbC5nb3YuYnIvTENSYWNyYWl6djEuY3JsMB0GA1UdDgQWBBRCsixcdAEHvpv/VTM77im7XZG/BjAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBBjANBgkqhkiG9w0BAQUFAAOCAQEAWWyKdukZcVeD/qf0eg+egdDPBxwMI+kkDVHLM+gqCcN6/w6jgIZgwXCX4MAKVd2kZUyPp0ewV7fzq8TDGeOY7A2wG1GRydkJ1ulqs+cMsLKSh/uOTRXsEhQZeAxi6hQ5GArFVdtThdx7KPoVcaPKdCWCD2cnNNeuUhMC+8XvmoAlpVKeOQ7tOvR4B1/VKHoKSvXQw2f3jFgXbwoAoyYQtGAiOkpIpdrgqYTeQ9ufQ6c/KARHki/352R1IdJPgc6qPmQO4w6tVZp+lJs0wdCuaU4eo9mzh1facMJafYfN+b833u1WNfe3Ig5Pkrg/CN+cnphe8m+5+pss+M1F2HKyIA==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v1, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>QrIsXHQBB76b/1UzO+4pu12RvwY=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v1</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v1</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v1</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v1</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v1, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>QrIsXHQBB76b/1UzO+4pu12RvwY=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2021-07-29T19:17:10Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v1</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v1</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v1</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v1</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v1, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>QrIsXHQBB76b/1UzO+4pu12RvwY=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2008-07-29T19:17:10Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v2</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v2</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v2</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación Raíz Brasileña rehegua v2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v2, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>DDkgOrcBH8vXKH1BoMf6Sq0yJL4=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v2</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v2</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v2</Name>
+<Name xml:lang="gn">Autoridad de Certificación Raíz Brasileña rehegua v2</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v2, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>DDkgOrcBH8vXKH1BoMf6Sq0yJL4=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2010-06-21T19:04:57Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v3</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v3</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v3</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v3</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDmzCCAv6gAwIBAgIBATAKBggqhkjOPQQDBDCBlzELMAkGA1UEBhMCQlIxEzARBgNVBAoTCklDUC1CcmFzaWwxPTA7BgNVBAsTNEluc3RpdHV0byBOYWNpb25hbCBkZSBUZWNub2xvZ2lhIGRhIEluZm9ybWFjYW8gLSBJVEkxNDAyBgNVBAMTK0F1dG9yaWRhZGUgQ2VydGlmaWNhZG9yYSBSYWl6IEJyYXNpbGVpcmEgdjMwHhcNMTAwNjIxMTk0NTQwWhcNMjMwNjIxMTk0NTQwWjCBlzELMAkGA1UEBhMCQlIxEzARBgNVBAoTCklDUC1CcmFzaWwxPTA7BgNVBAsTNEluc3RpdHV0byBOYWNpb25hbCBkZSBUZWNub2xvZ2lhIGRhIEluZm9ybWFjYW8gLSBJVEkxNDAyBgNVBAMTK0F1dG9yaWRhZGUgQ2VydGlmaWNhZG9yYSBSYWl6IEJyYXNpbGVpcmEgdjMwgZswEAYHKoZIzj0CAQYFK4EEACMDgYYABAH4FsZK7KWFoG93qg0P56nb8k0IXDOW188VXXGoJD0P17mbSwR2OUnZsBwqaFFlii+BSU6KL1J2LSY2JSoDFf60WgFYYrRHZrt0axkbUqoqswpHc9daxbXKbl7uJWK0IocoHnlThPAInk41H8Msm5KDCWkoYDLMwk1hbRfQzMV4657Q46OB9TCB8jBOBgNVHSAERzBFMEMGBWBMAQEAMDowOAYIKwYBBQUHAgEWLGh0dHA6Ly9hY3JhaXouaWNwYnJhc2lsLmdvdi5ici9EUENhY3JhaXoucGRmMD8GA1UdHwQ4MDYwNKAyoDCGLmh0dHA6Ly9hY3JhaXouaWNwYnJhc2lsLmdvdi5ici9MQ1JhY3JhaXp2My5jcmwwHwYDVR0jBBgwFoAU8oVL8AXgiWZPMrhgsf8/sNG65JYwHQYDVR0OBBYEFPKFS/AF4IlmTzK4YLH/P7DRuuSWMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgEGMAoGCCqGSM49BAMEA4GKADCBhgJBdm+/UKCH8bYZu8VEJcr6GD5nYGWU4eteDhXvEhLmhdZpYABF5eKpMn/Q8vCsaRSsI5T6eag2YnMssXRJLh75C/ECQQwkIOK7fi8S00CYFLXv9v79/TaK4antnz+Sz/23PASfXvraR7OAovDPkrek72pm04CpmM92SHSAIq0b2ueB1qPz</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v3, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>8oVL8AXgiWZPMrhgsf8/sNG65JY=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v3</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v3</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v3</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v3</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v3, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>8oVL8AXgiWZPMrhgsf8/sNG65JY=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2014-02-26T03:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v3</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v3</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v3</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v3</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v3, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>8oVL8AXgiWZPMrhgsf8/sNG65JY=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2010-06-21T19:45:40Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v4</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v4</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v4</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v4</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIFODCCBJygAwIBAgIBATAKBggqhkjOPQQDBDCBlzELMAkGA1UEBhMCQlIxEzARBgNVBAoMCklDUC1CcmFzaWwxPTA7BgNVBAsMNEluc3RpdHV0byBOYWNpb25hbCBkZSBUZWNub2xvZ2lhIGRhIEluZm9ybWFjYW8gLSBJVEkxNDAyBgNVBAMMK0F1dG9yaWRhZGUgQ2VydGlmaWNhZG9yYSBSYWl6IEJyYXNpbGVpcmEgdjQwHhcNMTUwNDIzMTgzODU4WhcNMzUwNDIzMjM1OTU4WjCBlzELMAkGA1UEBhMCQlIxEzARBgNVBAoMCklDUC1CcmFzaWwxPTA7BgNVBAsMNEluc3RpdHV0byBOYWNpb25hbCBkZSBUZWNub2xvZ2lhIGRhIEluZm9ybWFjYW8gLSBJVEkxNDAyBgNVBAMMK0F1dG9yaWRhZGUgQ2VydGlmaWNhZG9yYSBSYWl6IEJyYXNpbGVpcmEgdjQwggI4MIIBrwYHKoZIzj0CATCCAaICAQEwTAYHKoZIzj0BAQJBAKrdnbjb6cSLP9TmrjPJ/AfLMI2zs8nSDtZjnMpwMwhxfU2bAJvGaEKuzaEq5qOA5iiB/y8tgsaFKKpgVlg6SPMwgYQEQHgwozGLYDuJ4jJxRawjTMWUy92NPfkWEKg0QcrqmGO8Le1dWqglOqEKLvHJi5rItX8RF6cr8se558GsTXf8lMoEQD35FhCoNEHK6phjvC3tXVqoJTqhCi7xyYuayLV/ERenK/LHuefBrE13/JTK3Ag+Z5hAULdeuuXdKAm9Y4AW9yMEgYEEga7kvdgu2WRaITIunExqk4Xtn3C12RbBtDti7vTQCY7/Ox944tDUjVDRaHuTuX1ffG1QR0BqXmiLNSIJvLn4In3eOF1WYzLswOq/qc94Iv3yCfcAJKV7GqAAxVuIH4ERstzeSUpfSF5bykvYiidjrtHKKy+o8FQGeM0eDzrYCJICQQCq3Z242+nEiz/U5q4zyfwHyzCNs7PJ0g7WY5zKcDMIcFU+XEFMqSYZQYZhGX+sEEcdsdOBCF3a3bWHloKcqQBpAgEBA4GCAASh2JXCKnslsJmFrhkIZUn+kmuxJzTrNLMrEqd16TttJArlN5Z1ZgmwykWEJiXexnz1NiH56Q+uVAQv+cUHEEnnaCai4JADtzVU6JTArh2NdCKdfYAvFUXsuxBt77ZC5RHdoxTxJ0F2Bog/ZrTp0UiZTEHFhvd7ZI9qwBhoX6TSKKOB9TCB8jBOBgNVHSAERzBFMEMGBWBMAQEAMDowOAYIKwYBBQUHAgEWLGh0dHA6Ly9hY3JhaXouaWNwYnJhc2lsLmdvdi5ici9EUENhY3JhaXoucGRmMD8GA1UdHwQ4MDYwNKAyoDCGLmh0dHA6Ly9hY3JhaXouaWNwYnJhc2lsLmdvdi5ici9MQ1JhY3JhaXp2NC5jcmwwHwYDVR0jBBgwFoAUQ2kmGavdx43zrDUyEVRy6MmZCk0wHQYDVR0OBBYEFENpJhmr3ceN86w1MhFUcujJmQpNMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgEGMAoGCCqGSM49BAMEA4GJADCBhQJBAJXLz8mEYizmFEmnHUsAWjXz974qT+n5Vln6tLxt5wIuK4Vt8GIG9OHSLMjORIMjMXjW6DnQydlLBh5k5MKWBbQCQD4dMp0flw1SZieapVRy8KKLAU0MrE6u3A8PGVemgXoD0ipvpjj0SZ5QIFTfjfp7ISqZFggO0sdSpTYAmrUhAd4=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v4, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>Q2kmGavdx43zrDUyEVRy6MmZCk0=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v4</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v4</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v4</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v4</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v4, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>Q2kmGavdx43zrDUyEVRy6MmZCk0=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2015-04-23T18:38:58Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v5</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v5</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v5</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación Raíz Brasileña rehegua v5</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v5, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>aai+ddnE72znE0XkYW7laPi2QF4=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v5</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v5</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v5</Name>
+<Name xml:lang="gn">Autoridad de Certificación Raíz Brasileña rehegua v5</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v5, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>aai+ddnE72znE0XkYW7laPi2QF4=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2016-03-02T13:01:38Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v8</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v8</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v8</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v8</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v8, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>Lvft/v3CTye8XhAppbasYH/C5b0=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v8</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v8</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v8</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v8</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v8, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>Lvft/v3CTye8XhAppbasYH/C5b0=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2018-12-18T02:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v8</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v8</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v8</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v8</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v8, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>Lvft/v3CTye8XhAppbasYH/C5b0=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2018-09-25T17:34:28Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v9</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v9</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v9</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v9</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v9, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>+nRAVj2bUHA63Hpkes4Rn50UvHw=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v9</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v9</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v9</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v9</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v9, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>+nRAVj2bUHA63Hpkes4Rn50UvHw=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2018-12-18T02:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v9</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v9</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v9</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v9</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v9, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>+nRAVj2bUHA63Hpkes4Rn50UvHw=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2018-09-25T17:48:48Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v10</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v10</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v10</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v10</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIGrDCCBJSgAwIBAgIJANLVi0S/gZNCMA0GCSqGSIb3DQEBDQUAMIGYMQswCQYDVQQGEwJCUjETMBEGA1UECgwKSUNQLUJyYXNpbDE9MDsGA1UECww0SW5zdGl0dXRvIE5hY2lvbmFsIGRlIFRlY25vbG9naWEgZGEgSW5mb3JtYWNhbyAtIElUSTE1MDMGA1UEAwwsQXV0b3JpZGFkZSBDZXJ0aWZpY2Fkb3JhIFJhaXogQnJhc2lsZWlyYSB2MTAwHhcNMTkwNzAxMTkxNTU5WhcNMzIwNzAxMTIwMDU5WjCBmDELMAkGA1UEBhMCQlIxEzARBgNVBAoMCklDUC1CcmFzaWwxPTA7BgNVBAsMNEluc3RpdHV0byBOYWNpb25hbCBkZSBUZWNub2xvZ2lhIGRhIEluZm9ybWFjYW8gLSBJVEkxNTAzBgNVBAMMLEF1dG9yaWRhZGUgQ2VydGlmaWNhZG9yYSBSYWl6IEJyYXNpbGVpcmEgdjEwMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAk3AxKl1ZtP0pNyjChqO7qNkn+/sClZeqiV/Kd7KnnbkDbI2y3VWcUG7feCE/deIxot6GH6JXncRG794UZl+4doD0D0/cEwBd4DvrDSZm0RT40xhmYYOTxZDJxv+coTHdmsT5aNmSkktfjzYX4HQHh/7Mem+kTOpT/3E4K6B7KVs9HkOT7nXx5yU1qYbVWqI0qpJM9mOTSFx8C9HiKcHvLCvt1ioXKPAmFuHPkayOcXP2MXeb+VRNjWKU4E+L2t5uZPKVx1M/9i1DztlLb4K8OfYgGaPDUSF1sxnoGk5qZHLleO6KjCpmuQepmgsBvxi2YNO7X2YUwQQx1AXNSolgtkAR5gt+1WzxhbFUhItQqlhqxgWHefLmiT5T/Ctz/P2v+zSO4efkkIzsi1iwD+ypZvM2lnIvB24RcSN6jzmCahLPX4CwjwIK6JsSoMVxIhpZHCguUP4LXqP8IWUZ6WgS/4zB7B9E0EICl2rM1PRy+6ulv+ZOW256e8a0pijUB+hXM1msUq9L92476FAAX8va3sP7+Uut94+bGHmubcTLImWUPrxNT7QyrvE3FyHicfiHioeFL2oV4cXTLZrEq2wS8R4PKPdSzNn5Z9e2uMEGYQaSNO+OwvVycpIhOBOqrm12wJ9ZhWKtM5UOo34/o37r5ZBITYXAGbhqQDB9mWXwH+0CAwEAAaOB9jCB8zBOBgNVHSAERzBFMEMGBWBMAQEAMDowOAYIKwYBBQUHAgEWLGh0dHA6Ly9hY3JhaXouaWNwYnJhc2lsLmdvdi5ici9EUENhY3JhaXoucGRmMEAGA1UdHwQ5MDcwNaAzoDGGL2h0dHA6Ly9hY3JhaXouaWNwYnJhc2lsLmdvdi5ici9MQ1JhY3JhaXp2MTAuY3JsMB8GA1UdIwQYMBaAFHTzfv/8n1N68Xzrqz6kptoYukVjMB0GA1UdDgQWBBR0837//J9TevF866s+pKbaGLpFYzAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBBjANBgkqhkiG9w0BAQ0FAAOCAgEAeCNhBSuy/Ih/T+1VOtAJju85SrtoE3vET1qXASpmjQllDHG/ph7VFNRAkC+gha+BCbjoA5oJ/8wwl+Qdp1KGz6nXXFTLx3osU+kjm0srmBf9nyXHPqvFyvBeB0A7sYb7TmII9GKD20oCxsdkccR/oE/JuTaNnGq0GYZ2aDb5v62uLi21Y6P9UBiTxZqQ4ojWET6kXNjlK238jpXv17FR8Sg3VusCvX7Q8eJkavvHHZDeWck2fSA+ycAc2JeL2Z0BMSxGWpH32WM9J8+6XqCJUXHiWEV0zCE8wDYiYC+047pTxQI/gB/FcU7jvylh98DJkQPHd/Tp6Og3ynlDA9n9uBbxYHVRZs9vsZ/7xTFaxRe+zk8dhgKgZ/3RrcMFB5702t8LFbyuUE/kQVY6rZ0QJ9qMWQ7VPLRwRhiMeU3k8WDJb/tBbOXHBqldTbWyQ+mpMEDWhbrzE/IED82wAuO23Tb05cYk2xC7+Izef8fSc3XdJDuPSbcDpWukzyCDtSEHisLiGEtIbYRiPsF3czlQPsnIEVoTTCWxHCH1zYR6zScSv18Qh69qVe2J40K5jZoPGEOhq/oKhVJQAdvAFW5Odp7mF3Tk9nivjjsctJSxY26LFiV5GRV+07SSse4ti0aOjO5PLg5SWjfcOtBG2rz02EIvQAmLcb0kGBtfdj0lW/w=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v10, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>dPN+//yfU3rxfOurPqSm2hi6RWM=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v10</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v10</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v10</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v10</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v10, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>dPN+//yfU3rxfOurPqSm2hi6RWM=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2019-07-01T19:15:59Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v11</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v11</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v11</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v11</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v11, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>nK1i4ZftgJ5zOR7cUb7HBMvYHqk=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v11</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v11</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v11</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v11</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v11, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>nK1i4ZftgJ5zOR7cUb7HBMvYHqk=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2019-07-01T19:26:18Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v12</Name>
+                            <Name xml:lang="en">Brazilian Root Certification Authority v12</Name>
+                            <Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v12</Name>
+                            <Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v12</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v12, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>asF615LBumlO1uLzwpmEib5VdA4=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2024-10-22T14:41:24Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="pt">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="en">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="es">https://www.gov.br/iti/</URI>
+                            <URI xml:lang="gn">https://www.gov.br/iti/</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="pt">Autoridade Certificadora Raiz Brasileira v12</Name>
+<Name xml:lang="en">Brazilian Root Certification Authority v12</Name>
+<Name xml:lang="es">Autoridad de Certificación Raíz de Brasil v12</Name>
+<Name xml:lang="gn">Autoridad de Certificación de Raíz Brasileña rehegua v12</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Autoridade Certificadora Raiz Brasileira v12, OU=Instituto Nacional de Tecnologia da Informacao - ITI, O=ICP-Brasil, C=BR</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>asF615LBumlO1uLzwpmEib5VdA4=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2024-10-22T14:41:24Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+    </TrustServiceProviderList>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="id-6676740ac0034adeaf26391af3ab13b1"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><ds:Reference Id="xml_ref_id" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>j+nWunjicjDEVqlnkt2TliaOYhKS66gJ3I/sZKf2Q84=</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xades-id-6676740ac0034adeaf26391af3ab13b1"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>45QW0ua3hytY/R72FxawOPiQdj9cPVILzE+JMcbheOs=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="value-id-6676740ac0034adeaf26391af3ab13b1">eZVQR0sswSCI+D28vbvvyNdEtGxUcKoP3Qr45qqD3QLcOzbrXXFoXA3I5yePClv6ddBW3cb0CX0+pUgmmIXuZmlGP/NElq+5fK1kp55/SPI7WLUR1DLeN+UhzYXca49/eWcQpb0VDmW5sZ+8FKK1KyHcaDVp8d72ffHrXb5NTP66iYZ0AFraLdVa60uY3ssq51rQp7yY3yrDVYzYtboYVWaeXXFID0BDhz0rqiT00nOX6WrabmytE2rXIv/lWFsiTXe0SRo92kGTVHFtHpfrWKlJsLqcgLU+m/SwcG5aFVXemLpLqPNlLCxImRMscxPCl6xxZD6ZYBOYuI/ej85Jhw==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>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</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#id-6676740ac0034adeaf26391af3ab13b1"><xades:SignedProperties Id="xades-id-6676740ac0034adeaf26391af3ab13b1"><xades:SignedSignatureProperties><xades:SigningTime>2025-11-06T14:09:34Z</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>M+JQ0Shbz+o3w1qDwqbmfIlYlMM=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>CN=Autoridade Certificadora da Presidencia da Republica v5,OU=Autoridade Certificadora Raiz Brasileira v5,O=ICP-Brasil,C=BR</ds:X509IssuerName><ds:X509SerialNumber>43405375132394839540616535117</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#xml_ref_id"><xades:MimeType>text/xml</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></TrustServiceStatusList>

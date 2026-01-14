@@ -24,7 +24,6 @@ package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
-import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.io.resolver.resource.IResourceRetriever;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 

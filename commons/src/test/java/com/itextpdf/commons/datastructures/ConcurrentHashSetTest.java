@@ -152,4 +152,16 @@ public class ConcurrentHashSetTest extends ExtendedITextTest {
         anotherSet.add("2");
         Assertions.assertNotEquals(set.hashCode(), anotherSet.hashCode());
     }
+
+    @Test
+    public void toArrayTest() {
+        ConcurrentHashSet<String> set = new ConcurrentHashSet<>();
+        set.add("1");
+        set.add("2");
+
+        Object[] arr = set.toArray();
+        Assertions.assertEquals(2, arr.length);
+        Assertions.assertTrue(arr[0].equals("1") || arr[0].equals("2"));
+        Assertions.assertTrue(arr[1].equals("1") || arr[1].equals("2"));
+    }
 }

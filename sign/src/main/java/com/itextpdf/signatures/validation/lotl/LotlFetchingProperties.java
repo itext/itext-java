@@ -231,6 +231,4 @@ public class LotlFetchingProperties {
     List<String> getSchemaNames() {
         return Collections.unmodifiableList(Arrays.asList(schemaNames.toArray(new String[0])));
     }
-
-
 }
