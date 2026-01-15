@@ -43,6 +43,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
@@ -1006,8 +1007,9 @@ public class PdfA2Checker extends PdfA1Checker {
 
         checkTransparencyGroup(form, contentStream);
 
-        checkResources(form.getAsDictionary(PdfName.Resources), contentStream != null ? contentStream : form);
-        checkContentStream(form);
+        final PdfDictionary resourcesDict = form.getAsDictionary(PdfName.Resources);
+        checkResources(resourcesDict, contentStream != null ? contentStream : form);
+        checkContentStream(form, resourcesDict == null ? new PdfResources() : new PdfResources(resourcesDict));
     }
 
     /**

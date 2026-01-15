@@ -37,6 +37,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfOutline;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfXrefTable;
@@ -525,11 +526,28 @@ public abstract class PdfAChecker implements IValidationChecker {
 
     /**
      * Attest content stream conformance with appropriate specification.
-     * Throws PdfAConformanceException if any discrepancy was found
+     *
+     * <p>
+     * Throws {@link PdfAConformanceException} if any discrepancy was found.
      *
      * @param contentStream is a content stream to validate
      */
     protected abstract void checkContentStream(PdfStream contentStream);
+
+    /**
+     * Attest content stream conformance with appropriate specification.
+     *
+     * <p>
+     * Throws {@link PdfAConformanceException} if any discrepancy was found.
+     *
+     * @param contentStream is a content stream to validate
+     * @param resources the resources of the contentStream
+     */
+    protected void checkContentStream(PdfStream contentStream, PdfResources resources) {
+        // Do nothing
+        // TODO DEVSIX-8808 iText Core related api breaks for the next major release
+        //  After major release the method must become abstract
+    }
 
     /**
      * Verify the conformity of the operand of content stream with appropriate
@@ -965,7 +983,7 @@ public abstract class PdfAChecker implements IValidationChecker {
         int contentStreamCount = page.getContentStreamCount();
         for (int j = 0; j < contentStreamCount; ++j) {
             PdfStream contentStream = page.getContentStream(j);
-            checkContentStream(contentStream);
+            checkContentStream(contentStream, page.getResources());
             checkedObjects.add(contentStream);
         }
     }

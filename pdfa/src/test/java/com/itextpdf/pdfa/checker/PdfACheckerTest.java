@@ -36,6 +36,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -54,8 +55,8 @@ import java.io.IOException;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfACheckerTest extends ExtendedITextTest {
@@ -178,6 +179,11 @@ public class PdfACheckerTest extends ExtendedITextTest {
 
         @Override
         protected void checkContentStream(PdfStream contentStream) {
+
+        }
+
+        @Override
+        protected void checkContentStream(PdfStream contentStream, PdfResources resources) {
 
         }
 

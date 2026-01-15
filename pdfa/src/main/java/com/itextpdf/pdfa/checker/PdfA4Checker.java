@@ -33,6 +33,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.CanvasGraphicsState;
@@ -437,8 +438,10 @@ public class PdfA4Checker extends PdfA3Checker {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_FORM_XOBJECT_DICTIONARY_SHALL_NOT_CONTAIN_REF_KEY);
         }
         checkTransparencyGroup(form, contentStream);
-        checkResources(form.getAsDictionary(PdfName.Resources), form);
-        checkContentStream(form);
+
+        final PdfDictionary resourcesDict = form.getAsDictionary(PdfName.Resources);
+        checkResources(resourcesDict, form);
+        checkContentStream(form, resourcesDict == null ? new PdfResources() : new PdfResources(resourcesDict));
     }
 
     /**

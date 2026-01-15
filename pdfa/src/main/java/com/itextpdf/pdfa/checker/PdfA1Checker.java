@@ -42,6 +42,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
+import com.itextpdf.kernel.pdf.PdfResources;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfXrefTable;
@@ -57,8 +58,6 @@ import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfAConformanceLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,6 +66,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PdfA1Checker defines the requirements of the PDF/A-1 standard and contains
@@ -362,12 +363,17 @@ public class PdfA1Checker extends PdfAChecker {
 
     @Override
     protected void checkContentStream(PdfStream contentStream) {
+        checkContentStream(contentStream, null);
+    }
+
+    @Override
+    protected void checkContentStream(PdfStream contentStream, PdfResources resources) {
         if (isFullCheckMode() || contentStream.isModified()) {
             byte[] contentBytes = contentStream.getBytes();
             PdfTokenizer tokenizer = new PdfTokenizer(
                     new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
 
-            PdfCanvasParser parser = new PdfCanvasParser(tokenizer);
+            PdfCanvasParser parser = new PdfCanvasParser(tokenizer, resources);
             List<PdfObject> operands = new ArrayList<>();
             try {
                 while (parser.parse(operands).size() > 0) {
@@ -454,8 +460,9 @@ public class PdfA1Checker extends PdfAChecker {
             throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_GROUP_OBJECT_WITH_AN_S_KEY_WITH_A_VALUE_OF_TRANSPARENCY_SHALL_NOT_BE_INCLUDED_IN_A_FORM_XOBJECT);
         }
 
-        checkResources(form.getAsDictionary(PdfName.Resources), form);
-        checkContentStream(form);
+        final PdfDictionary resourcesDict = form.getAsDictionary(PdfName.Resources);
+        checkResources(resourcesDict, form);
+        checkContentStream(form, resourcesDict == null ? new PdfResources() : new PdfResources(resourcesDict));
     }
 
     @Override

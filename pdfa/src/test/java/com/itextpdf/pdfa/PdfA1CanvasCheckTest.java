@@ -24,8 +24,10 @@ package com.itextpdf.pdfa;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfAConformance;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutputIntent;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -116,5 +118,22 @@ public class PdfA1CanvasCheckTest extends ExtendedITextTest {
                     PdfaExceptionMessageConstant.IF_SPECIFIED_RENDERING_SHALL_BE_ONE_OF_THE_FOLLOWING_RELATIVECOLORIMETRIC_ABSOLUTECOLORIMETRIC_PERCEPTUAL_OR_SATURATION,
                     e.getMessage());
         }
+    }
+
+    @Test
+    public void checkInlineImageTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "checkInlineImage.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_checkInlineImage.pdf";
+
+        InputStream iccStream = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", iccStream);
+        PdfADocument pdfADocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformance.PDF_A_1B, outputIntent);
+
+        PdfDocument inlineImagePdf = new PdfDocument(new PdfReader(SOURCE_FOLDER + "inlineImage.pdf"));
+        inlineImagePdf.copyPagesTo(1, inlineImagePdf.getNumberOfPages(), pdfADocument);
+        inlineImagePdf.close();
+        pdfADocument.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
     }
 }

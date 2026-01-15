@@ -466,6 +466,23 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
                 e.getMessage());
     }
 
+    @Test
+    public void checkInlineImageTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "checkInlineImage.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_checkInlineImage.pdf";
+
+        InputStream iccStream = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
+        PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", iccStream);
+        PdfADocument pdfADocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformance.PDF_A_4, outputIntent);
+
+        PdfDocument inlineImagePdf = new PdfDocument(new PdfReader(SOURCE_FOLDER + "inlineImage.pdf"));
+        inlineImagePdf.copyPagesTo(1, inlineImagePdf.getNumberOfPages(), pdfADocument);
+        inlineImagePdf.close();
+        pdfADocument.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER));
+    }
+
     private static class PdfDocumentCustomVersion extends PdfADocument {
 
         public PdfDocumentCustomVersion(PdfWriter writer, PdfAConformance aConformance, PdfOutputIntent outputIntent) {
