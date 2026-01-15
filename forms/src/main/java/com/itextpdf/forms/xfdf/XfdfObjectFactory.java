@@ -495,7 +495,7 @@ public class XfdfObjectFactory {
             PdfPage page = pdfDoc.getPage(i);
             List<PdfAnnotation> pdfAnnots = page.getAnnotations();
             for (PdfAnnotation pdfAnnot : pdfAnnots) {
-                if (pdfAnnot.getSubtype() == PdfName.Popup) {
+                if (PdfName.Popup.equals(pdfAnnot.getSubtype())) {
                     addPopup(pdfAnnot, annots, i);
                 } else {
                     addAnnotation(pdfAnnot, annots, i);

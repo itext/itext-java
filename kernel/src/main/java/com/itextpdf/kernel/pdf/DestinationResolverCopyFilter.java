@@ -59,7 +59,7 @@ public class DestinationResolverCopyFilter implements ICopyFilter {
         if (workRef.getType() == PdfObject.DICTIONARY) {
             final PdfDictionary dict = (PdfDictionary) workRef;
             // a goto action
-            if (dict.getAsName(PdfName.S) == PdfName.GoTo) {
+            if (PdfName.GoTo.equals(dict.getAsName(PdfName.S))) {
                 processAction(newParent, name, dict);
                 return false;
             }

@@ -120,7 +120,7 @@ class StructTreeResultMatrix extends AbstractResultMatrix<PdfStructElem> {
      */
     @Override
     String getRole(PdfStructElem cell) {
-        return ((TableStructElementIterator)iterator).context.resolveToStandardRole(cell);
+        return ((TableStructElementIterator) iterator).context.resolveToStandardRole(cell);
     }
 
 }

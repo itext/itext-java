@@ -147,10 +147,10 @@ final class TableCellIterator implements ITableIterator<Cell> {
     public int getRow() {
         PdfName location = getLocation();
         int row = currentCell.getRow();
-        if (location == PdfName.TBody) {
+        if (PdfName.TBody.equals(location)) {
             row += this.getAmountOfRowsHeader();
         }
-        if (location == PdfName.TFoot) {
+        if (PdfName.TFoot.equals(location)) {
             row += this.getAmountOfRowsHeader();
             row += this.getAmountOfRowsBody();
         }

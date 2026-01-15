@@ -237,7 +237,7 @@ abstract class AbstractResultMatrix<T> {
     private static <Z> List<Z> createFixedSizedList(int capacity, Object defaultValue) {
         List<Z> arr = new ArrayList<>(capacity);
         for (int i = 0; i < capacity; i++) {
-            arr.add((Z)defaultValue);
+            arr.add((Z) defaultValue);
         }
         return arr;
     }
