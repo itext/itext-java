@@ -1036,8 +1036,12 @@ public class PdfCanvasProcessor {
                 PdfColorSpace underlyingCs = ((PdfSpecialCs.UncoloredTilingPattern) pdfColorSpace).getUnderlyingColorSpace();
                 if (patternName instanceof PdfName) {
                     PdfPattern pattern = resources.getPattern((PdfName) patternName);
-                    if (pattern instanceof PdfPattern.Tiling && !((PdfPattern.Tiling) pattern).isColored()) {
-                        return new PatternColor((PdfPattern.Tiling) pattern, underlyingCs, getColorants(underlyingOperands));
+                    if (pattern instanceof PdfPattern.Tiling) {
+                        if (((PdfPattern.Tiling) pattern).isColored()) {
+                            return new PatternColor(pattern);
+                        }
+                        return new PatternColor((PdfPattern.Tiling) pattern, underlyingCs,
+                                getColorants(underlyingOperands));
                     }
                 }
             }

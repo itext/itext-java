@@ -23,7 +23,6 @@
 package com.itextpdf.kernel.pdf.canvas.parser;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -166,26 +165,6 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE))
-    public void patternColorParsingNotValidPdfTest() throws IOException {
-        String inputFile = SOURCE_FOLDER + "patternColorParsingNotValidPdfTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFile));
-
-        for (int i = 1; i <= pdfDocument.getNumberOfPages(); ++i) {
-            PdfPage page = pdfDocument.getPage(i);
-
-            ColorParsingEventListener colorParsingEventListener = new ColorParsingEventListener();
-
-            PdfCanvasProcessor processor = new PdfCanvasProcessor(colorParsingEventListener);
-            processor.processPageContent(page);
-
-            Color renderInfo = colorParsingEventListener.getEncounteredPath().getFillColor();
-
-            Assertions.assertNull(renderInfo);
-        }
-    }
-
-    @Test
     public void patternColorParsingValidPdfTest() throws IOException {
         String inputFile = SOURCE_FOLDER + "patternColorParsingValidPdfTest.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFile));
@@ -305,6 +284,33 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             parser.processPageContent(pdfDocument.getPage(1));
         }
         Assertions.assertEquals("ABCD", listener.getResultantText());
+    }
+
+    @Test
+    public void coloredPatternTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "coloredPatternParsingTest.pdf"));
+        ColorParsingEventListener listener = new ColorParsingEventListener();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        AssertUtil.doesNotThrow(()->
+            parser.processPageContent(pdfDoc.getFirstPage()));
+        pdfDoc.close();
+        PathRenderInfo renderInfo = listener.getEncounteredPath();
+        PdfColorSpace colorSpace = renderInfo.getGraphicsState().getFillColor().getColorSpace();
+
+        Assertions.assertEquals("Pattern", colorSpace.getName().getValue());
+    }
+
+    @Test
+    public void unColoredPatternTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "unColoredPatternParsingTest.pdf"));
+        ColorParsingEventListener listener = new ColorParsingEventListener();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        AssertUtil.doesNotThrow(()->
+                parser.processPageContent(pdfDoc.getFirstPage()));
+        pdfDoc.close();
+        PathRenderInfo renderInfo = listener.getEncounteredPath();
+        PdfColorSpace colorSpace = renderInfo.getGraphicsState().getFillColor().getColorSpace();
+        Assertions.assertEquals("UncoloredTilingPattern",colorSpace.getName().getValue() );
     }
 
     private static class ColorParsingEventListener implements IEventListener {
