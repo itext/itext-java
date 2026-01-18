@@ -119,6 +119,10 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
                 return createHasSelectorItem(arguments);
             case CommonCssConstants.NOT:
                 return createNotSelectorItem(arguments);
+            case CommonCssConstants.IS:
+                return CssPseudoClassIsSelectorItem.createIsSelectorItem(arguments);
+            case CommonCssConstants.WHERE:
+                return CssPseudoClassWhereSelectorItem.createWhereSelectorItem(arguments);
             case CommonCssConstants.ROOT:
                 return CssPseudoClassRootSelectorItem.getInstance();
             case CommonCssConstants.LINK:
