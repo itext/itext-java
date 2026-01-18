@@ -41,6 +41,13 @@ class CssPseudoClassNotSelectorItem extends CssPseudoClassSelectorItem {
         this.argumentsSelector = argumentsSelector;
     }
 
+    @Override
+    public int getSpecificity() {
+        // Per Selectors Level 4: :not() specificity is replaced by the specificity
+        // of the most specific complex selector in its selector list argument.
+        return argumentsSelector != null ? argumentsSelector.calculateSpecificity() : 0;
+    }
+
     public List<ICssSelectorItem> getArgumentsSelector() {
         return CssSelectorParser.parseSelectorItems(arguments);
     }
