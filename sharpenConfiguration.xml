@@ -370,6 +370,7 @@
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampToken.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampTokenGenerator.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/SecurityProviderProxy.java"/>
+                <file path="com/itextpdf/brotlicompressor/BrotliStreamCompressionStrategyTest.java"/>
             </fileset>
 
             <fileset reason="These classes are used only in Java.">
@@ -748,6 +749,10 @@
 			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleJsonEmbedded.pdf"/>
 			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleEmbeddedFile.pdf"/>
 			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_embeddedFileAndContentStream.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_pushButton.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_radioButton.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_textField.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_choiceField.pdf"/>
 		</fileset>
 		<!--Junit parallel settings-->
 		<fileset reason="Juunit specific files">

@@ -22,11 +22,28 @@
  */
 package com.itextpdf.brotlicompressor;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.SystemUtil;
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
+import com.itextpdf.forms.fields.PdfButtonFormField;
+import com.itextpdf.forms.fields.PdfChoiceFormField;
+import com.itextpdf.forms.fields.PdfFormAnnotation;
+import com.itextpdf.forms.fields.PdfFormCreator;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.PdfTextFormField;
+import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
+import com.itextpdf.forms.fields.RadioFormFieldBuilder;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.IFinishable;
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
@@ -44,21 +61,36 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.filters.BrotliFilter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.signatures.AccessPermissions;
+import com.itextpdf.signatures.BouncyCastleDigest;
+import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.PdfPKCS7;
+import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.Provider;
+import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -78,6 +110,8 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
     private static final String testString = "The quick brown fox jumps over the lazy dog. "
             + "And accented words like naïve, façade, and piñata help validate Unicode handling";
     private static final int streamCount = 10;
+    private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
+    private static final Provider PROVIDER = FACTORY.getProvider();
 
     @BeforeAll
     public static void setUp() {
@@ -113,6 +147,35 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
             contents.add(pdfStream.getIndirectReference());
             page.getPdfObject().put(PdfName.Contents, contents);
         }), fileName);
+    }
+
+    @Test
+    public void brotliContentStreamFullCompressionTest() throws IOException {
+        String resultPath = DESTINATION_FOLDER + "brotliCSFullComp.pdf";
+        DocumentProperties props = createBrotliProperties();
+
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfWriter(resultPath, new WriterProperties().setFullCompressionMode(true)), props)) {
+            PdfPage page = pdfDoc.addNewPage();
+            PdfStream pdfStream = new PdfStream(testString.getBytes(StandardCharsets.UTF_8),
+                    CompressionConstants.BEST_COMPRESSION);
+            pdfStream.makeIndirect(pdfDoc);
+            PdfArray contents = new PdfArray();
+            contents.add(pdfStream.getIndirectReference());
+            page.getPdfObject().put(PdfName.Contents, contents);
+        }
+
+        try (PdfDocument resDoc = new PdfDocument(new PdfReader(resultPath), props)) {
+            int numberOfPages = resDoc.getNumberOfPages();
+            Assertions.assertEquals(1, numberOfPages);
+
+            PdfPage firstPage = resDoc.getFirstPage();
+            PdfStream firstContentStream = firstPage.getFirstContentStream();
+            Assertions.assertEquals(testString, new String(firstContentStream.getBytes()));
+
+            Assertions.assertEquals(PdfName.BrotliDecode, firstContentStream.getAsName(PdfName.Filter));
+
+        }
     }
 
     @Test
@@ -482,6 +545,164 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
             PdfCanvas canvas = new PdfCanvas(page);
             canvas.addImageFittedIntoRectangle(imageData, new Rectangle(36, 460, 100, 14.16f), true);
         }, fileName);
+    }
+
+    @Test
+    public void textFieldBrotliTest() throws Exception {
+        String fileName = "textField.pdf";
+        runTest(pdfDoc -> {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
+            Rectangle rect = new Rectangle(210, 490, 150, 22);
+            PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "fieldName")
+                    .setWidgetRectangle(rect).createText();
+            field.setValue("test value");
+            form.addField(field);
+
+        }, fileName);
+    }
+
+    @Test
+    public void choiceFieldBrotliTest() throws Exception {
+        String fileName = "choiceField.pdf";
+        runTest(pdfDoc -> {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
+
+            Rectangle rect = new Rectangle(210, 490, 150, 20);
+
+            String[] options = new String[] {"Val 1", "Val 2", "Val 3"};
+            PdfChoiceFormField choice = new ChoiceFormFieldBuilder(pdfDoc, "choiceField")
+                    .setWidgetRectangle(rect).setOptions(options).createComboBox();
+            choice.setValue("Val 1", true);
+
+            form.addField(choice);
+
+        }, fileName);
+    }
+
+    @Test
+    public void radioButtonBrotliTest() throws Exception {
+        String fileName = "radioButton.pdf";
+        runTest(pdfDoc -> {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
+
+            Rectangle rect1 = new Rectangle(36, 700, 20, 20);
+
+            String formFieldName = "TestFieldName";
+            RadioFormFieldBuilder builder = new RadioFormFieldBuilder(pdfDoc, formFieldName);
+            PdfButtonFormField group = builder.createRadioGroup();
+            group.setValue("radio value", true);
+
+            group.addKid(builder.createRadioButton("1", rect1));
+
+            form.addField(group);
+
+        }, fileName);
+    }
+
+    @Test
+    public void pushButtonBrotliTest() throws Exception {
+        String fileName = "pushButton.pdf";
+        runTest(pdfDoc -> {
+            PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
+            String itext = "itextpdf";
+
+            PdfButtonFormField button = new PushButtonFormFieldBuilder(pdfDoc, itext)
+                    .setWidgetRectangle(new Rectangle(36, 500, 200, 200)).setCaption(itext)
+                    .createPushButton();
+            button.setFontSize(0);
+            button.setValue(itext);
+
+            button.getFirstFormAnnotation()
+                    .setBorderWidth(10).setBorderColor(ColorConstants.GREEN).setBackgroundColor(ColorConstants.GRAY)
+                    .setVisibility(PdfFormAnnotation.VISIBLE);
+
+            form.addField(button);
+
+        }, fileName);
+    }
+
+    @Test
+    public void simpleSignatureDocumentBrotliTest() throws Exception {
+        String fileName = "signatureUnsignedBrotli.pdf";
+        runTest(pdfDoc -> {
+            PdfFormField formField = new SignatureFormFieldBuilder(pdfDoc, "fieldName").createSignature();
+            PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
+            acroForm.addField(formField);
+
+        }, fileName);
+    }
+
+    @Test
+    public void signedSimpleDocumentBrotliTest() throws Exception {
+        String unsigned = DESTINATION_FOLDER + "unsigned.pdf";
+        String signed = DESTINATION_FOLDER + "signedDocumentBrotli.pdf";
+
+        char[] password = "testpassphrase".toCharArray();
+
+        KeyStore ks = KeyStore.getInstance("pkcs12", PROVIDER.getName());
+        try (InputStream ksStream = Files.newInputStream(Paths.get(SOURCE_FOLDER + "certificate.p12"))) {
+            ks.load(ksStream, password);
+        }
+        String alias = ks.aliases().nextElement();
+        PrivateKey pk = (PrivateKey) ks.getKey(alias, password);
+        Certificate[] chain = ks.getCertificateChain(alias);
+
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfWriter(unsigned,
+                        new WriterProperties()
+                                .setCompressionLevel(CompressionConstants.DEFAULT_COMPRESSION)),
+                createBrotliProperties())) {
+
+            pdfDoc.getDiContainer().register(IStreamCompressionStrategy.class, new BrotliStreamCompressionStrategy());
+            pdfDoc.addNewPage();
+        }
+
+        StampingProperties props = new StampingProperties().useAppendMode();
+        props.registerDependency(
+                IStreamCompressionStrategy.class,
+                new BrotliStreamCompressionStrategy());
+
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(unsigned),
+                FileUtil.getFileOutputStream(signed),
+                props
+        );
+
+        signer.setSignerProperties(
+                new SignerProperties()
+                        .setFieldName("Signature1")
+                        .setPageNumber(1)
+                        .setPageRect(new Rectangle(36, 648, 200, 100))
+                        .setCertificationLevel(AccessPermissions.UNSPECIFIED)
+        );
+
+        IExternalSignature signature = new PrivateKeySignature(
+                pk,
+                DigestAlgorithms.SHA256,
+                FACTORY.getProviderName()
+        );
+
+        signer.signDetached(
+                new BouncyCastleDigest(),
+                signature,
+                chain,
+                null,
+                null,
+                null,
+                0,
+                PdfSigner.CryptoStandard.CADES
+        );
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(signed))) {
+            PdfAnnotation signatureAnnot = pdfDoc.getPage(1).getAnnotations().get(0);
+            PdfDictionary signatureObject = signatureAnnot.getPdfObject();
+            Assertions.assertEquals(PdfName.Widget, signatureAnnot.getSubtype());
+            Assertions.assertEquals(new PdfString("Signature1"), signatureAnnot.getTitle());
+            Assertions.assertEquals(PdfName.Sig, signatureObject.getAsName(PdfName.FT));
+            SignatureUtil sigUtil = new SignatureUtil(pdfDoc);
+            PdfPKCS7 signature1 = sigUtil.readSignatureData("Signature1");
+            Assertions.assertTrue(signature1.verifySignatureIntegrityAndAuthenticity());
+        }
     }
 
     @Test
