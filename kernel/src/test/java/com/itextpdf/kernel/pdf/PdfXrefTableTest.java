@@ -35,6 +35,7 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
@@ -98,6 +99,37 @@ public class PdfXrefTableTest extends ExtendedITextTest {
                 new PdfDocument(new PdfReader(inputFile), new PdfWriter(outputStream)));
         Assertions.assertEquals(KernelExceptionMessageConstant.XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT, e.getMessage());
     }
+
+    @Test
+    public void stampingModeDoesNotApplyXrefSizeLimitToNewContentTest() {
+        // Phase 1: create a small valid base PDF in memory.
+        ByteArrayOutputStream baseBaos = new ByteArrayOutputStream();
+        try (PdfDocument baseDoc = new PdfDocument(new PdfWriter(baseBaos))) {
+            baseDoc.addNewPage();
+        }
+
+        // Phase 2: open in stamping mode with a strict xref limit for the ORIGINAL content.
+        MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
+        handler.setMaxNumberOfElementsInXrefStructure(30);
+
+        byte[] baseBytes = baseBaos.toByteArray();
+        ByteArrayOutputStream stampedBaos = new ByteArrayOutputStream();
+
+        AssertUtil.doesNotThrow(() -> {
+            try (PdfDocument stampingDoc = new PdfDocument(
+                    new PdfReader(new ByteArrayInputStream(baseBytes),
+                            new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
+                    new PdfWriter(stampedBaos))) {
+
+                // Phase 3: add a lot of new content that will force xref growth beyond the configured limit.
+                // The xref size limit should NOT be applied to newly added content in stamping mode.
+                for (int i = 0; i < 200; i++) {
+                    stampingDoc.addNewPage();
+                }
+            }
+        });
+    }
+
 
     @Test
     public void testCreateAndUpdateXMP() throws IOException, XMPException {

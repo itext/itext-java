@@ -636,11 +636,12 @@ public class PdfXrefTable {
     }
 
     private void extendXref(int capacity) {
-        if (this.memoryLimitsAwareHandler != null) {
+        if (this.memoryLimitsAwareHandler != null && !readingCompleted) {
             this.memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacity);
         }
         PdfIndirectReference[] newXref = new PdfIndirectReference[capacity];
         System.arraycopy(this.xref, 0, newXref, 0, this.xref.length);
         this.xref = newXref;
     }
+
 }

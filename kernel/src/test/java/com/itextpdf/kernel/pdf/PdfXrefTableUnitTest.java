@@ -70,6 +70,28 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    public void xrefSizeLimitIsNotAppliedAfterReadingCompletedTest() {
+        final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
+        memoryLimitsAwareHandler.setMaxNumberOfElementsInXrefStructure(5);
+
+        final PdfXrefTable xrefTable = new PdfXrefTable(5, memoryLimitsAwareHandler);
+
+        // Simulate that original document xref reading/building has finished (stamping scenario).
+        xrefTable.markReadingCompleted();
+
+        // After reading is completed, growing xref due to new content must not be blocked by the limit.
+        AssertUtil.doesNotThrow(() -> xrefTable.setCapacity(100));
+
+        // Also ensure adding new refs beyond the original limit doesn't throw.
+        AssertUtil.doesNotThrow(() -> {
+            for (int i = 1; i <= 50; i++) {
+                xrefTable.add(new PdfIndirectReference(null, i));
+            }
+        });
+    }
+
+
+    @Test
     public void checkNumberOfIndirectObjectsWithRandomNumbersTest() {
         PdfXrefTable table = new PdfXrefTable();
 
