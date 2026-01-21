@@ -117,7 +117,7 @@ public class SingleFileLotlService extends LotlService {
      */
     @Override
     public void serializeCache(OutputStream outputStream) throws IOException {
-        // TODO: DEVSIX-9626
+        // TODO: DEVSIX-9720 - Implement cache serialization/deserialization
     }
 
     /**
