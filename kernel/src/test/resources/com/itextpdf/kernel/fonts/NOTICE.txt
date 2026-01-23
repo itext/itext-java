@@ -13,7 +13,7 @@ NotoSansSC-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b
 NotoSansTC-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.03.2021) from repository: "https://github.com/googlefonts/noto-cjk"
 NotoSerif-Regular_v1.7.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 5a89b487c648c34c2b6d1b9ebb73bb3fab1df4b2 (20.09.2017) from "https://github.com/googlefonts/noto-fonts"
 PTSerif-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://github.com/google/fonts/blob/main/ofl/ptserif/PT_Serif-Web-Regular.ttf"
-Puritan-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://www.fontsquirrel.com/fonts/puritan-2.0"
+Puritan-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Puritan" (26.01.2026)
 SourceHanSansHW-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt |  Based on "https://github.com/adobe-fonts/source-han-sans/releases/tag/2.004R" (File: Static Language Specific OTFs, path in zip folder:OTF/japanesHW) (07.09.2023)
 SourceHanSerifKR-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 59e61fd2e39967b6d3b713cdb47612893ab989e1 (26.01.2022) from "https://github.com/adobe-fonts/source-han-serif"
 SourceSerif4-Black.woff | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit a9eaef81588dddd479f2275d87b3707ed7ae2847 (26.01.2021) from "https://github.com/adobe-fonts/source-serif"

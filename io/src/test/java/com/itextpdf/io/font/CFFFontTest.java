@@ -33,13 +33,12 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class CFFFontTest extends ExtendedITextTest {
-
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void seekTest() throws IOException {
         RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory()
-                .createBestSource(SOURCE_FOLDER + "NotoSansCJKjp-Bold.otf"));
+                .createBestSource(FONTS_FOLDER + "NotoSansCJKjp-Bold.otf"));
 
         int offsetToCff = 259880;
         int cffLength = 16023217;
@@ -66,7 +65,7 @@ public class CFFFontTest extends ExtendedITextTest {
     @Test
     public void getPositionTest() throws IOException {
         RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory()
-                .createBestSource(SOURCE_FOLDER + "NotoSansCJKjp-Bold.otf"));
+                .createBestSource(FONTS_FOLDER + "NotoSansCJKjp-Bold.otf"));
 
         int offsetToCff = 259880;
         int cffLength = 16023217;

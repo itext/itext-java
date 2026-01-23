@@ -7,7 +7,7 @@
         @font-face {
         font-family: "Test font";
         src:
-        url("w3c-test-fonts/header-flavor-001.woff2")
+        url("../../../../fonts/w3c-test-fonts/header-flavor-001.woff2")
         format("woff2");
         }
 

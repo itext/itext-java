@@ -81,7 +81,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontProvider sel = new FontProvider();
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "NotoSans-Regular.ttf"));
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "FreeSans.ttf"));
-        Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
+        Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "Puritan-Regular.ttf", PdfEncodings.IDENTITY_H, "Puritan42"));
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -105,7 +105,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
-        Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "Puritan2.otf"));
+        Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "Puritan-Regular.ttf"));
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "NotoSans-Regular.ttf"));
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "FreeSans.ttf"));
 
@@ -134,7 +134,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "FreeSans.ttf"));
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "NotoSans-Regular.ttf"));
-        Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "Puritan2.otf"));
+        Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "Puritan-Regular.ttf"));
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -161,7 +161,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "FreeSans.ttf"));
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "NotoSans-Regular.ttf"));
-        Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "Puritan2.otf"));
+        Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "Puritan-Regular.ttf"));
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
@@ -188,7 +188,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         FontProvider sel = new FontProvider();
-        Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "Puritan2.otf"));
+        Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "Puritan-Regular.ttf"));
 
         String s = "Hello мир!";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
@@ -320,8 +320,8 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontProvider sel = new FontProvider();
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "NotoSans-Regular.ttf"));
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "FreeSans.ttf"));
-        Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
-        Collection<FontInfo> fonts = sel.getFontSet().get("puritan2");
+        Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "Puritan-Regular.ttf", PdfEncodings.IDENTITY_H, "Puritan42"));
+        Collection<FontInfo> fonts = sel.getFontSet().get("Puritan-Regular");
         Assertions.assertTrue(fonts.size() != 0, "Puritan not found!");
 
         FontInfo puritan = getFirst(fonts);
@@ -333,12 +333,12 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assertions.assertTrue(sel.getFontSet().contains("Noto Sans"), "NotoSans not found!");
         Assertions.assertTrue(sel.getFontSet().contains("FreeSans"), "FreeSans not found!");
         Assertions.assertTrue(sel.getFontSet().contains("Free Sans"), "FreeSans not found!");
-        Assertions.assertTrue(sel.getFontSet().contains("puritan 2.0 regular"), "Puritan 2.0 not found!");
-        Assertions.assertTrue(sel.getFontSet().contains("puritan2"), "Puritan 2.0 not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("Puritan-Regular"), "Puritan-Regular not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("Puritan Regular"), "Puritan not found!");
         Assertions.assertFalse(sel.getFontSet().contains("puritan42"), "Puritan42 found!");
 
-        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("puritan 2.0 regular")), "Puritan 2.0 not found!");
-        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("puritan2")), "Puritan 2.0 not found!");
+        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("Puritan-Regular")), "Puritan-Regular not found!");
+        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("Puritan-Regular")), "Puritan-regular not found!");
         Assertions.assertTrue(getFirst(sel.getFontSet().get("puritan42")) == null, "Puritan42 found!");
     }
 
@@ -347,10 +347,10 @@ public class FontSelectorTest extends ExtendedITextTest {
         FontProvider sel = new FontProvider();
         Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "NotoSans-Regular.ttf"));
         Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "FreeSans.ttf"));
-        Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan42"));
+        Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "Puritan-Regular.ttf", PdfEncodings.IDENTITY_H, "Puritan42"));
 
 
-        Collection<FontInfo> fonts = sel.getFontSet().get("puritan2");
+        Collection<FontInfo> fonts = sel.getFontSet().get("Puritan-Regular");
         Assertions.assertTrue(fonts.size() != 0, "Puritan not found!");
         FontInfo puritan = getFirst(fonts);
 
@@ -366,16 +366,16 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assertions.assertTrue(sel.getFontSet().contains("Noto Sans"), "NotoSans not found!");
         Assertions.assertTrue(sel.getFontSet().contains("FreeSans"), "FreeSans not found!");
         Assertions.assertTrue(sel.getFontSet().contains("Free Sans"), "FreeSans not found!");
-        Assertions.assertTrue(sel.getFontSet().contains("puritan 2.0 regular"), "Puritan 2.0 not found!");
-        Assertions.assertTrue(sel.getFontSet().contains("puritan2"), "Puritan 2.0 not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("Puritan-Regular"), "Puritan-Regular not found!");
+        Assertions.assertTrue(sel.getFontSet().contains("Puritan Regular"), "Puritan Regular not found!");
         Assertions.assertFalse(sel.getFontSet().contains("puritan42"), "Puritan42 found!");
 
         Assertions.assertEquals(notoSans, getFirst(sel.getFontSet().get("NotoSans")), "NotoSans not found!");
         Assertions.assertEquals(notoSans, getFirst(sel.getFontSet().get("Noto Sans")), "NotoSans not found!");
         Assertions.assertEquals(freeSans, getFirst(sel.getFontSet().get("FreeSans")), "FreeSans not found!");
         Assertions.assertEquals(freeSans, getFirst(sel.getFontSet().get("Free Sans")), "FreeSans not found!");
-        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("puritan 2.0 regular")), "Puritan 2.0 not found!");
-        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("puritan2")), "Puritan 2.0 not found!");
+        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("Puritan-Regular")), "Puritan-Regular not found!");
+        Assertions.assertEquals(puritan, getFirst(sel.getFontSet().get("Puritan Regular")), "Puritan-regular not found!");
         Assertions.assertTrue(getFirst(sel.getFontSet().get("puritan42")) == null, "Puritan42 found!");
     }
 
@@ -393,7 +393,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Map<String, String> aliasToFontName = new LinkedHashMap<>();
         aliasToFontName.put(cyrillicAlias, "NotoSans-Regular.ttf");
         aliasToFontName.put(greekAlias, "FreeSans.ttf");
-        aliasToFontName.put(japaneseAlias, "Puritan2.otf");
+        aliasToFontName.put(japaneseAlias, "Puritan-Regular.ttf");
 
 
         FontProvider provider = new FontProvider();
@@ -425,7 +425,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         String japaneseAlias = "\u30D5\u30A9\u30F3\u30C83";
         FontProvider provider = new FontProvider();
         provider.addFont(FONTS_FOLDER + "NotoSans-Regular.ttf");
-        provider.getFontSet().addFont(FONTS_FOLDER + "Puritan2.otf", PdfEncodings.IDENTITY_H, japaneseAlias);
+        provider.getFontSet().addFont(FONTS_FOLDER + "Puritan-Regular.ttf", PdfEncodings.IDENTITY_H, japaneseAlias);
         provider.addFont(FONTS_FOLDER + "FreeSans.ttf");
 
         String s = "Hello world!";
@@ -530,7 +530,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         // 'd', 'e' and 'f' are in that interval
         Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(100, 102).create()));
         // 'x', 'y' and 'z' are in that interval
-        Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "Puritan2.otf", null, "FontAlias", new RangeBuilder(120, 122).create()));
+        Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "Puritan-Regular.ttf", null, "FontAlias", new RangeBuilder(120, 122).create()));
 
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
@@ -1016,9 +1016,9 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         FontProvider sel = new FontProvider();
-        sel.getFontSet().addFont(FONTS_FOLDER + "Open_Sans/" + "OpenSans-Bold.ttf");
-        sel.getFontSet().addFont(FONTS_FOLDER + "Open_Sans/" + "OpenSans-ExtraBold.ttf");
-        sel.getFontSet().addFont(FONTS_FOLDER + "Open_Sans/" + "OpenSans-SemiBold.ttf");
+        sel.getFontSet().addFont(FONTS_FOLDER + "OpenSans-Bold.ttf");
+        sel.getFontSet().addFont(FONTS_FOLDER + "OpenSans-ExtraBold.ttf");
+        sel.getFontSet().addFont(FONTS_FOLDER + "OpenSans-SemiBold.ttf");
         doc.setFontProvider(sel);
 
         Div div = new Div().setFontFamily("OpenSans");
@@ -1052,8 +1052,8 @@ public class FontSelectorTest extends ExtendedITextTest {
         Document doc = new Document(pdfDoc);
 
         FontProvider sel = new FontProvider();
-        sel.getFontSet().addFont(FONTS_FOLDER + "Open_Sans/" + "OpenSans-Regular.ttf");
-        sel.getFontSet().addFont(FONTS_FOLDER + "Open_Sans/" + "OpenSans-Light.ttf");
+        sel.getFontSet().addFont(FONTS_FOLDER + "OpenSans-Regular.ttf");
+        sel.getFontSet().addFont(FONTS_FOLDER + "OpenSans-Light.ttf");
         doc.setFontProvider(sel);
 
         Div div = new Div().setFontFamily("OpenSans");
@@ -1076,11 +1076,9 @@ public class FontSelectorTest extends ExtendedITextTest {
 
     @Test
     public void openSansOutOfBoldFontWeightTest() {
-        String openSansFolder = "Open_Sans/";
-
         FontSet set = new FontSet();
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-Bold.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-ExtraBold.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-Bold.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-ExtraBold.ttf");
 
         List<String> fontFamilies = new ArrayList<>();
         fontFamilies.add("OpenSans");
@@ -1093,11 +1091,9 @@ public class FontSelectorTest extends ExtendedITextTest {
 
     @Test
     public void openSansOutOfMixedFontWeightTest() {
-        String openSansFolder = "Open_Sans/";
-
         FontSet set = new FontSet();
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-Light.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-SemiBold.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-Light.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-SemiBold.ttf");
 
         List<String> fontFamilies = new ArrayList<>();
         fontFamilies.add("OpenSans");
@@ -1118,11 +1114,9 @@ public class FontSelectorTest extends ExtendedITextTest {
     @Test
     // TODO: DEVSIX-2120 Currently light and regular fonts have the same score. When fixed update assertion to "OpenSans-Regular"
     public void openSansOutOfNotBoldFontWeightTest() {
-        String openSansFolder = "Open_Sans/";
-
         FontSet set = new FontSet();
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-Light.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-Regular.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-Light.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-Regular.ttf");
 
         List<String> fontFamilies = new ArrayList<>();
         fontFamilies.add("OpenSans");
@@ -1155,10 +1149,10 @@ public class FontSelectorTest extends ExtendedITextTest {
     @Test
     public void family2UsedToSortFontsTest() {
         FontSet set = new FontSet();
-        set.addFont(FONTS_FOLDER + "Lato/Lato-Black.ttf");
-        set.addFont(FONTS_FOLDER + "Lato/Lato-Regular.ttf");
-        set.addFont(FONTS_FOLDER + "Lato/Lato-Italic.ttf");
-        set.addFont(FONTS_FOLDER + "Lato/Lato-Hairline.ttf");
+        set.addFont(FONTS_FOLDER + "Lato-Black.ttf");
+        set.addFont(FONTS_FOLDER + "Lato-Regular.ttf");
+        set.addFont(FONTS_FOLDER + "Lato-Italic.ttf");
+        set.addFont(FONTS_FOLDER + "Lato-Hairline.ttf");
 
         List<String> fontFamilies = new ArrayList<>();
         fontFamilies.add("Lato Hairline");
@@ -1304,16 +1298,16 @@ public class FontSelectorTest extends ExtendedITextTest {
     private static FontSet getOpenSansFontSet() {
         String openSansFolder = "Open_Sans/";
         FontSet set = new FontSet();
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-Bold.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-BoldItalic.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-ExtraBold.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-ExtraBoldItalic.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-Light.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-LightItalic.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-Regular.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-Italic.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-SemiBold.ttf");
-        set.addFont(FONTS_FOLDER + openSansFolder + "OpenSans-SemiBoldItalic.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-Bold.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-BoldItalic.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-ExtraBold.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-ExtraBoldItalic.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-Light.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-LightItalic.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-Regular.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-Italic.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-SemiBold.ttf");
+        set.addFont(FONTS_FOLDER + "OpenSans-SemiBoldItalic.ttf");
         return set;
     }
 

@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class GposLookupType7Test extends ExtendedITextTest {
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType7Test/";
+    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void verifyXAdvanceIsAppliedForContextualPositioning() throws IOException {

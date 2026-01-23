@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class OpenTypeGdefTableReaderTest extends ExtendedITextTest {
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/OpenTypeGdefTableReaderTest/";
+    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void testLookupFlagWithMarkAttachmentTypeAndMarkGlyphWithoutMarkAttachmentClass() throws IOException {

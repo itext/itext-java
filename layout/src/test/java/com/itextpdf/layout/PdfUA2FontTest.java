@@ -64,14 +64,14 @@ public class PdfUA2FontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPuritan2WithUTF8Test() throws IOException, XMPException, InterruptedException {
-        String outFile = DESTINATION_FOLDER + "puritan2WithUTF8Test.pdf";
-        String cmpFile = SOURCE_FOLDER + "cmp_puritan2WithUTF8Test.pdf";
+    public void checkPuritanWithUTF8Test() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "puritanWithUTF8Test.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_puritanWithUTF8Test.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
                 PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "Puritan2.otf",
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "Puritan-Regular.otf",
                     PdfEncodings.UTF8, EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
@@ -128,7 +128,7 @@ public class PdfUA2FontTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
                 PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "Open_Sans/OpenSans-Regular.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "OpenSans-Regular.ttf",
                     PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);

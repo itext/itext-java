@@ -45,21 +45,22 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfALongStringTest extends ExtendedITextTest {
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfALongStringTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfALongStringTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
     private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis condimentum, tortor sit amet fermentum pharetra, sem felis finibus enim, vel consectetur nunc justo at nisi. In hac habitasse platea dictumst. Donec quis suscipit eros. Nam urna purus, scelerisque in placerat in, convallis vel sapien. Suspendisse sed lacus sit amet orci ornare vulputate. In hac habitasse platea dictumst. Ut eu aliquet felis, at consectetur neque.";
     private static final int STRING_LENGTH_LIMIT = 32767;
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void runTest() throws Exception {
         String file = "pdfALongString.pdf";
-        String filename = destinationFolder + file;
-        try (InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        String filename = DESTINATION_FOLDER + file;
+        try (InputStream icm = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
                 OutputStream fos = FileUtil.getFileOutputStream(filename)) {
             Document document = new Document(new PdfADocument(new PdfWriter(fos), PdfAConformance.PDF_A_3U,
                     new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", icm))
@@ -68,9 +69,9 @@ public class PdfALongStringTest extends ExtendedITextTest {
             while (stringBuilder.length() < STRING_LENGTH_LIMIT) {
                 stringBuilder.append(stringBuilder.toString());
             }
-            PdfFontFactory.register(sourceFolder + "FreeSans.ttf", sourceFolder + "FreeSans.ttf");
+            PdfFontFactory.register(FONTS_FOLDER + "FreeSans.ttf", FONTS_FOLDER + "FreeSans.ttf");
             PdfFont font = PdfFontFactory.createFont(
-                    sourceFolder + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+                    FONTS_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
             Paragraph p = new Paragraph(stringBuilder.toString());
             p.setMinWidth(1e6f);
             p.setFont(font);

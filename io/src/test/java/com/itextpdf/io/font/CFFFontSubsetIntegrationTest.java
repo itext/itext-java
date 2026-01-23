@@ -40,8 +40,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/CFFFontSubsetIntegrationTest/";
-    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     private static final String CJK_JP_BOLD_PATH = FONTS_FOLDER + "NotoSansCJKjp-Bold.otf";
     private static final int CJK_JP_BOLD_CFF_OFFSET = 259880;
@@ -55,7 +54,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void subsetNotoSansCjkJpBoldNoUsedGlyphsTest() throws IOException {
-        String cmpCff = SOURCE_FOLDER + "subsetNotoSansCJKjpBoldNoUsedGlyphs.cff";
+        String cmpCff = FONTS_FOLDER + "subsetNotoSansCJKjpBoldNoUsedGlyphs.cff";
 
         Set<Integer> glyphsUsed = Collections.<Integer>emptySet();
 
@@ -71,7 +70,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void subsetNotoSansCjkJpBoldTwoUsedGlyphsTest() throws IOException {
-        String cmpCff = SOURCE_FOLDER + "subsetNotoSansCJKjpBoldTwoUsedGlyphs.cff";
+        String cmpCff = FONTS_FOLDER + "subsetNotoSansCJKjpBoldTwoUsedGlyphs.cff";
 
         // In this case cid == gid for given characters.
         // \u20eab "𠺫"
@@ -103,7 +102,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
         int expectedSubsetLength = 121796;
         Assertions.assertEquals(expectedSubsetLength, cffSubsetBytes.length);
 
-        byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetNotoSansJPRegularOneUsedGlyph.cff"));
+        byte[] cmpBytes = Files.readAllBytes(Paths.get(FONTS_FOLDER + "subsetNotoSansJPRegularOneUsedGlyph.cff"));
         Assertions.assertArrayEquals(cmpBytes, cffSubsetBytes);
     }
 

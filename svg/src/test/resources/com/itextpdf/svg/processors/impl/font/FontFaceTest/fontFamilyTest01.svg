@@ -5,15 +5,15 @@
 <style  type="text/css" media="print">
 @font-face {
   font-family: "돋움";
-  src: url("w3c-test-fonts/valid-005.ttf") format("TrueType");
+  src: url("../../../../fonts/w3c-test-fonts/valid-005.ttf") format("TrueType");
 }
 @font-face {
    font-family: 돋움;
-  src: url("w3c-test-fonts/valid-005.ttf") format("TrueType");
+  src: url("../../../../fonts/w3c-test-fonts/valid-005.ttf") format("TrueType");
 }
 @font-face {
   font-family: testFont;
-  src: url("w3c-test-fonts/valid-005.ttf") format("TrueType");
+  src: url("../../../../fonts/w3c-test-fonts/valid-005.ttf") format("TrueType");
 }
 
 </style >

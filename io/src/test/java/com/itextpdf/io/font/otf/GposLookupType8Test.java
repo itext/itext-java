@@ -36,11 +36,11 @@ import org.junit.jupiter.api.Tag;
 @Tag("IntegrationTest")
 public class GposLookupType8Test extends ExtendedITextTest {
 
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType8Test/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void verifyXAdvanceIsAppliedForContextualPositioning() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "Padauk-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "Padauk-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
 
         List<Glyph> glyphs = Arrays.asList(fontProgram.getGlyphByCode(233), fontProgram.getGlyphByCode(163),
@@ -56,7 +56,7 @@ public class GposLookupType8Test extends ExtendedITextTest {
 
     @Test
     public void verifyXAdvanceIsAppliedForPosTableLookup8Format2() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansMyanmar-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "NotoSansMyanmar-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
 
         List<Glyph> glyphs = Arrays.asList(fontProgram.getGlyphByCode(29),
@@ -79,7 +79,7 @@ public class GposLookupType8Test extends ExtendedITextTest {
 
     @Test
     public void verifyXAdvanceIsNotAppliedForUnsatisfiedContextualPositioning() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "Padauk-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "Padauk-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
 
         List<Glyph> glyphs = Arrays.asList(fontProgram.getGlyphByCode(233), fontProgram.getGlyphByCode(163),

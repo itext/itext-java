@@ -51,7 +51,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @Test
     public void validAmountOfIndirectObjectsTest() throws IOException {
@@ -63,7 +64,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         };
 
         try (
-                InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+                InputStream icm = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
                 OutputStream fos = new ByteArrayOutputStream();
                 Document document = new Document(new PdfADocument(new PdfWriter(fos),
                         PdfAConformance.PDF_A_1B,
@@ -90,7 +91,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         };
 
         try (
-                InputStream icm = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+                InputStream icm = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
                 OutputStream fos = new ByteArrayOutputStream();
         ) {
             Document document = new Document(new PdfADocument(new PdfWriter(fos),
@@ -120,7 +121,7 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
         };
 
         try (
-                InputStream fis = FileUtil.getInputStreamForFile(sourceFolder + "pdfs/pdfa10IndirectObjects.pdf");
+                InputStream fis = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "pdfs/pdfa10IndirectObjects.pdf");
                 OutputStream fos = new ByteArrayOutputStream();
         ) {
             PdfADocument pdfa = new PdfADocument(new PdfReader(fis), new PdfWriter(fos), new StampingProperties().useAppendMode());
@@ -137,9 +138,9 @@ public class PdfAIndirectObjectsCountLimitTest extends ExtendedITextTest {
     }
 
     private Paragraph buildContent() throws IOException {
-        PdfFontFactory.register(sourceFolder + "FreeSans.ttf",sourceFolder + "FreeSans.ttf");
+        PdfFontFactory.register(FONTS_FOLDER + "FreeSans.ttf", FONTS_FOLDER + "FreeSans.ttf");
         PdfFont font = PdfFontFactory.createFont(
-                sourceFolder + "FreeSans.ttf", PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
+                FONTS_FOLDER + "FreeSans.ttf", PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
         Paragraph p = new Paragraph(UUID.randomUUID().toString());
         p.setMinWidth(1e6f);
         p.setFont(font);

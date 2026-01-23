@@ -281,7 +281,7 @@ public class PdfUA2Test extends ExtendedITextTest {
     @Test
     public void checkTableOfContentsTest() throws IOException, XMPException, InterruptedException {
         String outFile = DESTINATION_FOLDER + "tableOfContentsTest.pdf";
-        String cmpFile = SOURCE_FOLDER + "cmp_tableOfContentsTestTest.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_tableOfContentsTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);

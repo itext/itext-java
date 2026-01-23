@@ -226,7 +226,7 @@ public class TextRendererTest extends RendererUnitTest {
         text.setFontFamily(Arrays.asList("Puritan 2.0", "Noto Sans"));
 
         FontProvider fontProvider = new FontProvider();
-        fontProvider.addFont(FONTS_FOLDER + "Puritan2.otf");
+        fontProvider.addFont(FONTS_FOLDER + "Puritan-Regular.ttf");
         fontProvider.addFont(FONTS_FOLDER + "NotoSans-Regular.ttf");
         text.setProperty(Property.FONT_PROVIDER, fontProvider);
 

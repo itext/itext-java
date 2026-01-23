@@ -102,8 +102,9 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfAFormFieldTest extends ExtendedITextTest {
 
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfAFormFieldTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfAFormFieldTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -123,9 +124,9 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
 
         PageSize pageSize = PageSize.LETTER;
         Document doc = new Document(pdf, pageSize);
-        PdfFontFactory.register(SOURCE_FOLDER + "FreeSans.ttf", SOURCE_FOLDER + "FreeSans.ttf");
+        PdfFontFactory.register(FONTS_FOLDER + "FreeSans.ttf", FONTS_FOLDER + "FreeSans.ttf");
         PdfFont font = PdfFontFactory.createFont(
-                SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+                FONTS_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
 
         PdfButtonFormField group = new RadioFormFieldBuilder(pdf, "group")
                 .setConformance(PdfConformance.PDF_A_1B).createRadioGroup();
@@ -226,7 +227,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ChoiceField.pdf";
 
-        PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont fontFreeSans = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
 
@@ -255,7 +256,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ComboBoxField.pdf";
 
-        PdfFont fontCJK = PdfFontFactory.createFont(SOURCE_FOLDER + "NotoSansCJKtc-Light.otf",
+        PdfFont fontCJK = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSansCJKtc-Light.otf",
                         PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_EMBEDDED);
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
@@ -283,7 +284,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1ListField.pdf";
 
-        PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont fontFreeSans = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
@@ -316,7 +317,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1PushButtonField.pdf";
 
-        PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont fontFreeSans = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
@@ -382,7 +383,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1TextField.pdf";
 
-        PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont fontFreeSans = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         fontFreeSans.setSubset(false);
 
@@ -409,7 +410,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_pdfA1DocWithPdfA1SignatureField.pdf";
 
-        PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont fontFreeSans = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         fontFreeSans.setSubset(false);
 
@@ -443,7 +444,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
                                 "http://www.color.org", "sRGB ICC preference", is));
                 Document doc = new Document(pdfDoc)) {
 
-            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf", PdfEncodings.WINANSI);
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf", PdfEncodings.WINANSI);
 
             doc.add(new Paragraph(new Text("Some text").setFont(font).setFontSize(10)));
 
@@ -539,7 +540,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void testMultipleCombinationsFontOnFieldSeparate() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "testMultipleCombinations.pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_testMultipleCombinations.pdf";
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         makePdfDocument(outPdf, cmp, document -> {
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
@@ -560,7 +561,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     @Test
     public void testMultipleCombinationsWriteAndReload() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "testMultipleCombinationsWriteAndLoad1.pdf";
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         makePdfDocument(outPdf, null, (document -> {
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
@@ -592,7 +593,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void testMultipleCombinationsOnDocument() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "testMultipleCombinationsOnDocument.pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_testMultipleCombinationsOnDocument.pdf";
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         makePdfDocument(outPdf, cmp, (document -> {
             document.setFont(font);
@@ -614,7 +615,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void testMultipleCombinationsFontOnFieldSeparateNonInteractive() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "testMultipleCombinationsNonInteractive.pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_testMultipleCombinationsNonInteractive.pdf";
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         makePdfDocument(outPdf, cmp, (document -> {
             for (Supplier<IFormField> formFieldSupplier : generateFormFields()) {
@@ -635,7 +636,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
     public void testMultipleCombinationsOnDocumentNonInteractive() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "testMultipleCombinationsOnDocumentNonInteractive.pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_testMultipleCombinationsOnDocumentNonInteractive.pdf";
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         makePdfDocument(outPdf, cmp, (document -> {
             document.setFont(font);
@@ -659,7 +660,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "testCopyPagesDoesntEmbedHelveticaFont.pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_testCopyPagesDoesntEmbedHelveticaFont.pdf";
 
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfWriter writer = new PdfWriter(simplePdf, new WriterProperties()
@@ -696,7 +697,7 @@ public class PdfAFormFieldTest extends ExtendedITextTest {
         String fileName = DESTINATION_FOLDER + name + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp/PdfAFormFieldTest/cmp_" + name + ".pdf";
 
-        PdfFont fontFreeSans = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont fontFreeSans = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
 
         makePdfDocument(fileName, cmp, (pdfDoc) -> {

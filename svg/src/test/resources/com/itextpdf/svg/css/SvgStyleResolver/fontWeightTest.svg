@@ -2,21 +2,21 @@
 <svg width="400px" height="300px" version="1.1"
      xmlns = 'http://www.w3.org/2000/svg'><style  type="text/css">
     @font-face {
-    font-family: 'Droid Serif';
+    font-family: 'Roboto Serif';
     font-weight: 400;
     font-style: normal;
-    src: url('web-fonts/droid-serif-regular.ttf') format('truetype');
+    src: url('../../fonts/RobotoSerif-Regular.ttf') format('truetype');
     }
     @font-face {
-    font-family: 'Droid Serif';
+    font-family: 'Roboto Serif';
     font-weight: 700;
     font-style: bold;
-    src: url('web-fonts/droid-serif-bold.ttf') format('truetype');
+    src: url('../../fonts/RobotoSerif-Bold.ttf') format('truetype');
     }
 
 </style >
     <g transform="translate(20,265)">
-        <text y = "30" font-family="Droid Serif" font-size="20" font-weight="400">3. Droid Serif font-weight 400</text>
-        <text font-family="Droid Serif" font-size="20" font-weight="700">3. Droid Serif font-weight 700</text>
+        <text y = "30" font-family="Roboto Serif" font-size="20" font-weight="400">3. Roboto Serif font-weight 400</text>
+        <text font-family="Roboto Serif" font-size="20" font-weight="700">3. Roboto Serif font-weight 700</text>
     </g>
 </svg>

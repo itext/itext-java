@@ -68,6 +68,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA4CatalogCheckTest/";
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4CatalogCheckTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -97,7 +98,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument pdfDoc = (PdfADocument) new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is)).setTagged();
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
         Document document = new Document(pdfDoc);
         document.setFont(font);

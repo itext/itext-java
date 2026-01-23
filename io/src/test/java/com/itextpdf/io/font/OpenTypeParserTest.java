@@ -39,13 +39,12 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class OpenTypeParserTest extends ExtendedITextTest {
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/OpenTypeParserTest/";
-    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
     private static final String NOTO_SANS_FONT_PATH = FONTS_FOLDER + "NotoSans-Regular.ttf";
 
     @Test
     public void tryToReadFontSubsetWithoutGlyfTableTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetWithoutGlyfTable.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONTS_FOLDER + "subsetWithoutGlyfTable.ttf"));
         OpenTypeParser parser = new OpenTypeParser(fontBytes);
         parser.loadTables(true);
         Set<Integer> usedGlyphs = new HashSet<Integer>();
@@ -79,7 +78,7 @@ public class OpenTypeParserTest extends ExtendedITextTest {
 
     @Test
     public void smallNumberOfMetricsTest() throws IOException {
-        OpenTypeParser parser = new OpenTypeParser(SOURCE_FOLDER + "NotoSansAndSpaceMono.ttc", 1);
+        OpenTypeParser parser = new OpenTypeParser(FONTS_FOLDER + "NotoSansAndSpaceMono.ttc", 1);
         parser.loadTables(true);
         Set<Integer> usedGlyphs = new HashSet<Integer>();
         usedGlyphs.add(36);

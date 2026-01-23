@@ -5,7 +5,7 @@
         font-family: Amaranth Woff Test;
         font-weight: 400;
         font-style: normal;
-        src: url('web-fonts/Amaranth-Regular.woff') format('woff');
+        src: url('../../../../fonts/Amaranth-Regular.woff') format('woff');
         }
 
     </style>

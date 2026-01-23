@@ -87,9 +87,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Tag("IntegrationTest")
 public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA4GraphicsCheckTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4GraphicsCheckTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA4GraphicsCheckTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4GraphicsCheckTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -312,7 +313,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
             String shortText = "text";
 
             PdfFont font = PdfFontFactory.createFont(
-                    SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+                    FONTS_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
             canvas.setFontAndSize(font, 12);
             canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
             canvas.setFillColor(DeviceGray.GRAY).beginText().showText(shortText).endText();
@@ -422,7 +423,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String shortText = "text";
 
         PdfFont font = PdfFontFactory.createFont(
-                SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+                FONTS_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.setFontAndSize(font, 12);
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.CLIP);
         canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
@@ -456,7 +457,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String shortText = "text";
 
         PdfFont font = PdfFontFactory.createFont(
-                SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+                FONTS_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.setFontAndSize(font, 12);
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.CLIP);
         canvas.setFillColor(ColorConstants.RED).beginText().showText(shortText).endText();
@@ -489,7 +490,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String shortText = "text";
 
         PdfFont font = PdfFontFactory.createFont(
-                SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+                FONTS_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.setFontAndSize(font, 12);
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
         canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
@@ -523,7 +524,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         String shortText = "text";
 
         PdfFont font = PdfFontFactory.createFont(
-                SOURCE_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
+                FONTS_FOLDER + "FreeSans.ttf", EmbeddingStrategy.PREFER_EMBEDDED);
         canvas.setFontAndSize(font, 12);
         canvas.setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE);
         canvas.setFillColor(new DeviceCmyk(0.1f, 0.1f, 0.1f, 0.1f)).beginText().showText(shortText).endText();
@@ -634,7 +635,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
                 PdfAConformance.PDF_A_4, null);
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page = pdfDocument.addNewPage();
@@ -660,7 +661,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
                 PdfAConformance.PDF_A_4, null);
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page = pdfDocument.addNewPage();
@@ -689,7 +690,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
                 PdfAConformance.PDF_A_4, null);
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page = pdfDocument.addNewPage();

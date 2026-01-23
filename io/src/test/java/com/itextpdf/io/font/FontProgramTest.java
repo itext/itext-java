@@ -37,6 +37,7 @@ import java.io.IOException;
 
 @Tag("UnitTest")
 public class FontProgramTest extends ExtendedITextTest {
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
     private static final String notExistingFont = "some-font.ttf";
 
     @BeforeEach
@@ -68,16 +69,16 @@ public class FontProgramTest extends ExtendedITextTest {
         FontProgramFactory.clearRegisteredFonts();
         FontProgramFactory.clearRegisteredFontFamilies();
         FontCache.clearSavedFonts();
-        FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/otf/");
+        FontProgramFactory.registerFontDirectory(FONT_FOLDER);
 
-        Assertions.assertEquals(44, FontProgramFactory.getRegisteredFonts().size());
-        Assertions.assertNull(FontCache.getFont("./src/test/resources/com/itextpdf/io/font/otf/FreeSansBold.ttf"));
-        Assertions.assertTrue(FontProgramFactory.getRegisteredFonts().contains("free sans lihavoitu"));
+        Assertions.assertEquals(52, FontProgramFactory.getRegisteredFonts().size());
+        Assertions.assertNull(FontCache.getFont("./src/test/resources/com/itextpdf/io/font/FreeSansBold.ttf"));
+        Assertions.assertTrue(FontProgramFactory.getRegisteredFonts().contains("free sans bold"));
     }
 
     @Test
     public void registerDirectoryType1Test() throws IOException {
-        FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/font/type1/");
+        FontProgramFactory.registerFontDirectory("./src/test/resources/com/itextpdf/io/");
         FontProgram computerModern = FontProgramFactory.createRegisteredFont("computer modern");
         FontProgram cmr10 = FontProgramFactory.createRegisteredFont("cmr10");
         Assertions.assertNull(computerModern);
@@ -86,7 +87,7 @@ public class FontProgramTest extends ExtendedITextTest {
 
     @Test
     public void registerDirectoryType1RecursivelyTest() throws IOException {
-        FontProgramFactory.registerFontDirectoryRecursively("./src/test/resources/com/itextpdf/io/font/type1/");
+        FontProgramFactory.registerFontDirectoryRecursively("./src/test/resources/com/itextpdf/io/");
         FontProgram computerModern = FontProgramFactory.createRegisteredFont("computer modern");
         FontProgram cmr10 = FontProgramFactory.createRegisteredFont("cmr10");
         Assertions.assertNotNull(computerModern);

@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontProgramFactoryTest extends ExtendedITextTest {
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/FontProgramFactoryTest/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void createRegisteredFontTest() throws IOException {
@@ -56,7 +56,7 @@ public class FontProgramFactoryTest extends ExtendedITextTest {
 
     @Test
     public void createTrueTypeWoffFontTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "SourceSerif4-Black.woff"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "SourceSerif4-Black.woff"));
         TrueTypeFont woffFont = FontProgramFactory.createTrueTypeFont(fontBytes, false);
         Assertions.assertNotNull(woffFont);
         Assertions.assertEquals(1463, woffFont.bBoxes.length);
@@ -64,7 +64,7 @@ public class FontProgramFactoryTest extends ExtendedITextTest {
 
     @Test
     public void tryToCreateTrueTypeWoff2FontTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "BellefairRegularLatin.woff2"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "BellefairRegularLatin.woff2"));
         TrueTypeFont woff2Font = FontProgramFactory.createTrueTypeFont(fontBytes, false);
         Assertions.assertNotNull(woff2Font);
         Assertions.assertEquals(209, woff2Font.countOfGlyphs());

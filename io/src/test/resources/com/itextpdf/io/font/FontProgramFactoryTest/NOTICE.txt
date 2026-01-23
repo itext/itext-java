@@ -1,3 +1,0 @@
-This software uses the following test resources under the following licenses:
-SourceSerif4-Black.woff | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit a9eaef81588dddd479f2275d87b3707ed7ae2847 (26.01.2021) from "https://github.com/adobe-fonts/source-serif"
-BellefairRegularLatin.woff2 | OFL-1.1 | LICENSE_OFL-1.1.txt

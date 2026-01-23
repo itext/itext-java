@@ -51,24 +51,25 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfAPushbuttonfieldTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfAPushbuttonfieldTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String CMP_FOLDER = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfAPushbuttonfieldTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfAPushbuttonfieldTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void pdfA1bButtonAppearanceTest() throws IOException, InterruptedException {
         String name = "pdfA1b_ButtonAppearanceTest";
-        String outPath = destinationFolder + name + ".pdf";
-        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String outPath = DESTINATION_FOLDER + name + ".pdf";
+        String cmpPath = CMP_FOLDER + "cmp_" + name + ".pdf";
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent);
         doc.setTagged();
@@ -77,7 +78,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
         Rectangle rect = new Rectangle(36, 626, 100, 40);
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfFormField button = new PushButtonFormFieldBuilder(doc, "push button").setWidgetRectangle(rect)
                 .setCaption("push").setConformance(PdfConformance.PDF_A_1B)
@@ -86,7 +87,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         form.addField(button);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, DESTINATION_FOLDER, diff));
         Assertions.assertNull(new VeraPdfValidator().validate(outPath)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }
@@ -94,12 +95,12 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
     @Test
     public void pdfA1bButtonAppearanceRegenerateTest() throws IOException, InterruptedException {
         String name = "pdfA1b_ButtonAppearanceRegenerateTest";
-        String outPath = destinationFolder + name + ".pdf";
-        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String outPath = DESTINATION_FOLDER + name + ".pdf";
+        String cmpPath = CMP_FOLDER + "cmp_" + name + ".pdf";
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent);
         doc.setTagged();
@@ -108,7 +109,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
         Rectangle rect = new Rectangle(36, 626, 100, 40);
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfFormField button = new PushButtonFormFieldBuilder(doc, "push button").setWidgetRectangle(rect)
                 .setCaption("push").setConformance(PdfConformance.PDF_A_1B)
@@ -118,19 +119,19 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         form.addField(button);
 
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, DESTINATION_FOLDER, diff));
         Assertions.assertNull(new VeraPdfValidator().validate(outPath)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
     public void pdfA1bButtonAppearanceSetValueTest() throws IOException, InterruptedException {
         String name = "pdfA1b_ButtonAppearanceSetValueTest";
-        String outPath = destinationFolder + name + ".pdf";
-        String cmpPath = cmpFolder + "cmp_" + name + ".pdf";
+        String outPath = DESTINATION_FOLDER + name + ".pdf";
+        String cmpPath = CMP_FOLDER + "cmp_" + name + ".pdf";
         String diff = "diff_" + name + "_";
 
         PdfWriter writer = new PdfWriter(outPath);
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent);
         doc.setTagged();
@@ -139,7 +140,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
         Rectangle rect = new Rectangle(36, 626, 100, 40);
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfFormField button = new PushButtonFormFieldBuilder(doc, "push button").setWidgetRectangle(rect)
                 .setCaption("push").setConformance(PdfConformance.PDF_A_1B)
@@ -148,7 +149,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         button.setValue("button");
         form.addField(button);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, destinationFolder, diff));
+        Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, DESTINATION_FOLDER, diff));
         Assertions.assertNull(new VeraPdfValidator().validate(outPath)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
     }

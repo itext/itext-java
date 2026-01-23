@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontProgramMultiThreadedTest extends ExtendedITextTest {
-    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
     private static final String FONT = FONTS_FOLDER + "NotoSans-Regular.ttf";
 
     @Test

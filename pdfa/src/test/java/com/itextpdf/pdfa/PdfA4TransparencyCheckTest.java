@@ -66,9 +66,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
 public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String CMP_FOLDER = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfA4TransparencyCheckTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4TransparencyCheckTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String CMP_FOLDER = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfA4TransparencyCheckTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4TransparencyCheckTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -83,7 +84,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDocument.addNewPage();
@@ -112,7 +113,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         PdfDocument pdfDoc = new PdfADocument(writer, PdfAConformance.PDF_A_4, null);
 
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfOutputIntent outputIntent = createOutputIntent();
@@ -146,7 +147,7 @@ public class PdfA4TransparencyCheckTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfADocument(
                 new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
                 PdfAConformance.PDF_A_4, null);
-        PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         InputStream streamGray = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "BlackWhite.icc");

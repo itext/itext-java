@@ -3,11 +3,11 @@
 <style  type="text/css" media="print">
 @font-face {
   font-family: "Noto Serif CJK JP";
-  src: url("web-fonts/NotoSerifCJKjp-Regular.otf") format("OpenType");
+  src: url("../../../../fonts/NotoSerifCJKjp-Regular.otf") format("OpenType");
 }
 @font-face {
   font-family: "Noto Sans CJK";
-  src: url("web-fonts/NotoSansCJK-Regular.woff2") format("woff2");
+  src: url("../../../../fonts/NotoSansCJK-Regular.woff2") format("woff2");
 }
 
 </style >

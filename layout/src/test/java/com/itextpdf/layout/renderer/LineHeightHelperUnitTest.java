@@ -44,8 +44,7 @@ import org.junit.jupiter.api.Tag;
 public class LineHeightHelperUnitTest extends ExtendedITextTest {
 
     private static final double EPS = 1e-5;
-    private static final String FONTS = "./src/test/resources/com/itextpdf/layout/fonts/";
-    private static final String OPEN_SANS_FONTS = FONTS + "Open_Sans/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsCourierTest() throws IOException {
@@ -154,7 +153,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
     @Test
     public void calculateLineHeightTextRendererNormalAscenderDescenderSumForNotoSansFontTest() throws IOException {
         Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())));
-        PdfFont font = PdfFontFactory.createFont(FONTS + "NotoSans-Regular.ttf");
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf");
         TextRenderer textRenderer = new TextRenderer(new Text("Hello"));
         textRenderer.setProperty(Property.FONT, font);
         textRenderer.setProperty(Property.LINE_HEIGHT, LineHeight.createNormalValue());
@@ -175,7 +174,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoEmojiFontTest() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(FONTS + "NotoEmoji-Regular.ttf");
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoEmoji-Regular.ttf");
         float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assertions.assertEquals(1068.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assertions.assertEquals(-292.0f, ascenderDescenderFromFontMetrics[1], EPS);
@@ -183,7 +182,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoSansFontTest() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(FONTS + "NotoSans-Regular.ttf");
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf");
         float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assertions.assertEquals(1068.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assertions.assertEquals(-292.0f, ascenderDescenderFromFontMetrics[1], EPS);
@@ -191,7 +190,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoColorEmojiFontTest() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(FONTS + "NotoColorEmoji.ttf");
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoColorEmoji.ttf");
         float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         System.out.println(ascenderDescenderFromFontMetrics[0]);
         System.out.println(ascenderDescenderFromFontMetrics[1]);
@@ -199,15 +198,15 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoSansCJKscRegularFontTest() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(FONTS + "NotoSansCJKsc-Regular.otf");
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSansCJKsc-Regular.otf");
         float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assertions.assertEquals(1160.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assertions.assertEquals(-320.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
 
     @Test
-    public void calculateFontAscenderDescenderFromFontMetricsPuritan2FontTest() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(FONTS + "Puritan2.otf");
+    public void calculateFontAscenderDescenderFromFontMetricsPuritanFontTest() throws IOException {
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "Puritan-Regular.ttf");
         float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assertions.assertEquals(860.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assertions.assertEquals(-232.0f, ascenderDescenderFromFontMetrics[1], EPS);
@@ -215,7 +214,7 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsNotoSansCJKjpBoldFontTest() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(FONTS + "NotoSansCJKjp-Bold.otf");
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSansCJKjp-Bold.otf");
         float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assertions.assertEquals(1160.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assertions.assertEquals(-320.0f, ascenderDescenderFromFontMetrics[1], EPS);
@@ -223,15 +222,15 @@ public class LineHeightHelperUnitTest extends ExtendedITextTest {
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsFreeSansFontTest() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(FONTS + "FreeSans.ttf");
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "FreeSans.ttf");
         float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
-        Assertions.assertEquals(800.0f, ascenderDescenderFromFontMetrics[0], EPS);
-        Assertions.assertEquals(-200.0f, ascenderDescenderFromFontMetrics[1], EPS);
+        Assertions.assertEquals(1141.0f, ascenderDescenderFromFontMetrics[0], EPS);
+        Assertions.assertEquals(-459.0f, ascenderDescenderFromFontMetrics[1], EPS);
     }
 
     @Test
     public void calculateFontAscenderDescenderFromFontMetricsOpenSansRegularFontTest() throws IOException {
-        PdfFont font = PdfFontFactory.createFont(OPEN_SANS_FONTS + "OpenSans-Regular.ttf");
+        PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "OpenSans-Regular.ttf");
         float[] ascenderDescenderFromFontMetrics = TextRenderer.calculateAscenderDescender(font, RenderingMode.HTML_MODE);
         Assertions.assertEquals(1068.0f, ascenderDescenderFromFontMetrics[0], EPS);
         Assertions.assertEquals(-292.0f, ascenderDescenderFromFontMetrics[1], EPS);

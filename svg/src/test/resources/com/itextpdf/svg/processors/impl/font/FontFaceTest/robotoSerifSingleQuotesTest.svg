@@ -1,0 +1,41 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <style>
+
+        @font-face {
+        font-family: 'Roboto Italic';
+        src: url("../../../../fonts/RobotoSerif-Italic.ttf") ;
+        }
+
+        @font-face {
+        font-family: 'Roboto Bold';
+        src: url('../../../../fonts/RobotoSerif-Bold.ttf') ;
+        }
+
+
+        @font-face {
+        font-family: 'Roboto Bold Italic';
+        src: url("../../../../fonts/RobotoSerif-BoldItalic.ttf") ;
+        }
+
+        text.robotoitalic {
+        font-family: 'Roboto Italic';;
+        }
+
+        text.robotobold {
+        font-family: 'Roboto Bold';
+        }
+
+        text.robotobolditalic {
+        font-family: 'Roboto Bold Italic';
+        }
+
+        text {
+        font-size: 4em;
+        }
+    </style>
+
+    <text x="100" y="100" class="robotobold">j</text>
+    <text x="100" y="150" class="robotoitalic">u</text>
+    <text x="100" y="200" class="robotobolditalic">j</text>
+</svg>

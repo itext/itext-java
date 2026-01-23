@@ -36,11 +36,11 @@ import org.junit.jupiter.api.Tag;
 @Tag("IntegrationTest")
 public class GsubLookupType4Test extends ExtendedITextTest {
 
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GsubLookupType4Test/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void testNoIndexOutOfBound() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "DejaVuSansMono.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "DejaVuSansMono.ttf");
         GlyphSubstitutionTableReader gsubTableReader = fontProgram.getGsubTable();
 
         List<Glyph> glyphs = Arrays.asList(new Glyph(1, 1, 1),
@@ -61,7 +61,7 @@ public class GsubLookupType4Test extends ExtendedITextTest {
 
     @Test
     public void noTransformationTest() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "DejaVuSansMono.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "DejaVuSansMono.ttf");
         GlyphSubstitutionTableReader gsubTableReader = fontProgram.getGsubTable();
 
         List<Glyph> glyphs = Arrays.asList(new Glyph(1, 1, 1),

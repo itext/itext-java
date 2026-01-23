@@ -64,7 +64,7 @@ public class FontSelectorLayoutTest extends ExtendedITextTest {
         sel.setFontSelectorStrategyFactory(new BestMatchFontSelectorStrategyFactory());
         sel.getFontSet().addFont(StandardFonts.TIMES_ROMAN);
         sel.getFontSet().addFont(StandardFonts.COURIER);
-        sel.getFontSet().addFont(fontsFolder + "Puritan2.otf", PdfEncodings.IDENTITY_H, "Puritan2");
+        sel.getFontSet().addFont(fontsFolder + "Puritan-Regular.ttf", PdfEncodings.IDENTITY_H, "Puritan-Regular");
         sel.getFontSet().addFont(fontsFolder + "NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H, "NotoSans");
         sel.getFontSet().addFont(fontsFolder + "FreeSans.ttf", PdfEncodings.IDENTITY_H, "FreeSans");
         document.setFontProvider(sel);
@@ -73,7 +73,7 @@ public class FontSelectorLayoutTest extends ExtendedITextTest {
         document.add(createParagraph("For Standard font COURIER: ", StandardFonts.COURIER));
         document.add(createParagraph("For FreeSans: ", ("FreeSans")));
         document.add(createParagraph("For NotoSans: ", ("NotoSans")));
-        document.add(createParagraph("For Puritan2: ", ("Puritan2")));
+        document.add(createParagraph("For Puritan-Regular: ", ("Puritan-Regular")));
 
         document.close();
 

@@ -41,9 +41,6 @@ import java.util.List;
 public class OtfReadCommonTest extends ExtendedITextTest {
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/OtfReadCommonTest/";
 
-    private static final String RESOURCE_FOLDER_2 = "./src/test/resources/com/itextpdf/io/font/otf"
-            + "/GposLookupType7Test/";
-
     @Test
     public void testReadCoverageFormat1() throws IOException {
         // Based on Example 5 from the specification

@@ -122,7 +122,7 @@ public class FontProviderTest extends ExtendedITextTest {
 
     @Test
     public void customFontProvider() throws Exception {
-        String fileName = "customFontProvider.pdf";
+        String fileName = "customFontProvider";
         String outFileName = destinationFolder + fileName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 
@@ -148,7 +148,7 @@ public class FontProviderTest extends ExtendedITextTest {
 
     @Test
     public void customFontProvider2() throws Exception {
-        String fileName = "customFontProvider2.pdf";
+        String fileName = "customFontProvider2";
         String outFileName = destinationFolder + fileName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
 

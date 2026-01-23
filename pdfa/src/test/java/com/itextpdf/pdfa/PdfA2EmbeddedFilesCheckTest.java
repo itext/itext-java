@@ -51,13 +51,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
 public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String cmpFolder = sourceFolder + "cmp/PdfA2EmbeddedFilesCheckTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2EmbeddedFilesCheckTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA2EmbeddedFilesCheckTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA2EmbeddedFilesCheckTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
@@ -68,15 +69,15 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
     // conforming pdfa-2 document. We only check they mime type, to define embedded file type, but we don't check
     // the bytes of the file. That's why this test creates invalid pdfa document.
     public void fileSpecNonConformingTest01() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "pdfA2b_fileSpecNonConformingTest01.pdf";
-        String cmpPdf = cmpFolder + "cmp_pdfA2b_fileSpecNonConformingTest01.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA2b_fileSpecNonConformingTest01.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA2b_fileSpecNonConformingTest01.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_2B, outputIntent);
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -102,15 +103,15 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = PdfAConformanceLogMessageConstant.EMBEDDED_FILE_SHALL_BE_COMPLIANT_WITH_SPEC, count = 1)
     })
     public void fileSpecCheckTest02() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "pdfA2b_fileSpecCheckTest02.pdf";
-        String cmpPdf = cmpFolder + "cmp_pdfA2b_fileSpecCheckTest02.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA2b_fileSpecCheckTest02.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA2b_fileSpecCheckTest02.pdf";
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_2B, outputIntent);
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -121,7 +122,7 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
                 .endText()
                 .restoreState();
 
-        InputStream fis = FileUtil.getInputStreamForFile(sourceFolder + "pdfs/pdfa.pdf");
+        InputStream fis = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "pdfs/pdfa.pdf");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
@@ -141,12 +142,12 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
     })
     public void fileSpecCheckTest03() throws IOException {
         PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_2B, outputIntent);
 
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -169,7 +170,7 @@ public class PdfA2EmbeddedFilesCheckTest extends ExtendedITextTest {
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        String result = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);
         }
