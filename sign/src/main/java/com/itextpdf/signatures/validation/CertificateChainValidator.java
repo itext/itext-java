@@ -272,6 +272,7 @@ public class CertificateChainValidator {
         issuerCertificates = issuerCertificates.stream().sorted((issuer1, issuer2) -> Integer.compare(
                 certificateRetriever.getCertificateOrigin(issuer1).ordinal(),
                 certificateRetriever.getCertificateOrigin(issuer2).ordinal()))
+                .filter( c -> !previousCertificates.contains(c))
                 .collect(Collectors.toList());
         ValidationReport[] candidateReports = new ValidationReport[issuerCertificates.size()];
         for (int i = 0; i < issuerCertificates.size(); i++) {

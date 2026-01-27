@@ -1,0 +1,183 @@
+external-url-prefix: "http://localhost.test"
+keysets:
+  testkeys:
+    keys:
+      r1:
+        path: keys/root1_key.pem
+        password: testpassphrase
+      r2:
+        path: keys/root2_key.pem
+        password: testpassphrase
+      ca1:
+        path: keys/im1_key.pem
+        password: testpassphrase
+      ca2a:
+        path: keys/im2_key.pem
+        password: testpassphrase
+      ca3a:
+        path: keys/im3_key.pem
+        password: testpassphrase
+      ca2b:
+        path: keys/im2_key.pem
+        password: testpassphrase
+      ca3b:
+        path: keys/im3_key.pem
+        password: testpassphrase
+      ca4:
+        path: keys/im4_key.pem
+        password: testpassphrase
+      ca5:
+        path: keys/im5_key.pem
+        password: testpassphrase
+      sign:
+        path: keys/sign1-key.pem
+        password: testpassphrase
+pki-architectures:
+  default:
+    keyset: testkeys
+    entity-defaults:
+      country-name: BE
+      organization-name: iText
+      organizational-unit-name: Cross signing
+    entities:
+      r1:
+        common-name: iTextTestRoot1
+      r2:
+        common-name: iTextTestRoot2
+      ca1:
+        common-name: iTextTestIntermediate1
+      ca2a:
+        common-name: iTextTestIntermediate2
+      ca2b:
+        common-name: iTextTestIntermediate2
+      ca3a:
+        common-name: iTextTestIntermediate3
+      ca3b:
+        common-name: iTextTestIntermediate3
+      ca4:
+        common-name: iTextTestIntermediate4
+      ca5:
+        common-name: iTextTestIntermediate5
+      sign:
+        common-name: iTextTestSign
+    certs:
+      r1:
+        subject: r1
+        issuer: r1
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2500-01-01T00:00:00+0000"
+        extensions:
+          - id: basic_constraints
+            critical: true
+            value:
+              ca: true
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign]
+      r2:
+        subject: r2
+        issuer: r2
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2500-01-01T00:00:00+0000"
+        extensions:
+          - id: basic_constraints
+            critical: true
+            value:
+              ca: true
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign]
+      ca5:
+        issuer: r1
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2450-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      ca4:
+        issuer: r2
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2450-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      ca3a:
+        issuer: ca4
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2450-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      ca2a:
+        issuer: ca5
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2450-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      ca3b:
+        issuer: ca2a
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2450-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      ca2b:
+        issuer: ca3a
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2450-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      ca1:
+        issuer: ca2b
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2450-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation, key_encipherment, key_cert_sign, crl_sign]
+      sign:
+        issuer: ca1
+        validity:
+          valid-from: "2000-01-01T00:00:00+0000"
+          valid-to: "2400-01-01T00:00:00+0000"
+        extensions:
+          - id: key_usage
+            critical: true
+            smart-value:
+              schema: key-usage
+              params: [digital_signature, non_repudiation]

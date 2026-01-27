@@ -110,6 +110,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.addFullName("NUnit.Framework.TestCaseSource");
         configurator.addFullName("NUnit.Framework.Timeout");
         configurator.removeNamedParameterFromAnnotation("NUnit.Framework.Timeout", "Unit");
+        configurator.removeNamedParameterFromAnnotation("NUnit.Framework.Timeout", "ThreadMode");
 
         configurator.addFullName("NUnit.Framework.Category");
         configurator.mapMethodParametersOrder("org.junit.jupiter.api.Assertions.assertTrue(java.lang.String,boolean)", "2, 1");

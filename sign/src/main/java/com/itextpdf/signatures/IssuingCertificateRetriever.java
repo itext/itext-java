@@ -137,6 +137,9 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
                         return fullChain.toArray(new Certificate[0]);
                     }
                 }
+                if (fullChain.contains(issuer)) {
+                    return fullChain.toArray(new Certificate[0]);
+                }
                 fullChain.add(issuer);
             }
             lastAddedCert = (X509Certificate) fullChain.get(fullChain.size() - 1);
@@ -201,7 +204,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
 
     private List<List<X509Certificate>> buildCertificateChainsList(X509Certificate[] certificates) {
         List<List<X509Certificate>> allChains =
-                new ArrayList<>(buildCertificateChainsList(certificates[certificates.length - 1]));
+                new ArrayList<>(buildCertificateChainsList(certificates[certificates.length - 1], null));
         for (List<X509Certificate> issuerChain : allChains) {
             for (int i = certificates.length - 2; i >= 0; --i) {
                 issuerChain.add(certificates[i]);
@@ -210,7 +213,19 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         return allChains;
     }
 
-    private List<List<X509Certificate>> buildCertificateChainsList(X509Certificate certificate) {
+    private List<List<X509Certificate>> buildCertificateChainsList(X509Certificate certificate,
+            HashSet<X509Certificate> prevProcessed) {
+        HashSet<X509Certificate> processed;
+        if (prevProcessed == null) {
+            processed = new HashSet<X509Certificate>();
+        } else {
+            processed = prevProcessed;
+        }
+        if (!processed.add(certificate)) {
+            //certificate is already being processed
+            return new ArrayList<>();
+        }
+
         if (CertificateUtil.isSelfSigned(certificate)) {
             List<List<X509Certificate>> singleChain = new ArrayList<>();
             List<X509Certificate> chain = new ArrayList<>();
@@ -240,7 +255,8 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
             return singleChain;
         }
         for (Certificate possibleIssuer : possibleIssuers) {
-            List<List<X509Certificate>> issuerChains = buildCertificateChainsList((X509Certificate) possibleIssuer);
+            List<List<X509Certificate>> issuerChains =
+                    buildCertificateChainsList((X509Certificate) possibleIssuer, processed);
             for (List<X509Certificate> issuerChain : issuerChains) {
                 issuerChain.add(certificate);
                 allChains.add(issuerChain);

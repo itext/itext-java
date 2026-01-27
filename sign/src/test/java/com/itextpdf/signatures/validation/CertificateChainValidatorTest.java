@@ -44,6 +44,7 @@ import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
@@ -53,6 +54,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
@@ -104,6 +106,28 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                                     l -> rootCert.getSubjectX500Principal())
                     .withCertificate(rootCert)
                    ));
+    }
+
+    @Test
+    public void crossSignedChainTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        String chainName = CERTS_SRC + "crossSigned/chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert =
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/sign.cert.pem")[0];
+        X509Certificate rootCert =
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/r2.cert.pem")[0];
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Arrays.asList(certificateChain));
+        certificateRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        AssertUtil.doesNotThrow( () ->
+                validator.validateCertificate(baseContext, signingCert, TimeTestUtil.TEST_DATE_TIME)
+        );
     }
 
     @Test

@@ -43,12 +43,16 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.Timeout.ThreadMode;
 
 @Tag("BouncyCastleIntegrationTest")
 class IssuingCertificateRetrieverTest extends ExtendedITextTest {
@@ -56,6 +60,33 @@ class IssuingCertificateRetrieverTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
+
+    @Test
+    @Timeout(value = 10, unit = TimeUnit.SECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
+    public void infiniteloopTest()
+            throws CertificateException, IOException {
+        IssuingCertificateRetriever issuingCertificateRetriever =
+                new IssuingCertificateRetriever();
+        Certificate[] cert = PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/sign.cert.pem");
+        // the order of the known certificates is important,
+        // changing it can make the test succeed without fix
+        // the cross signed certificates that create the loop
+        // must come first
+        Certificate[] knownCerts = new Certificate[6];
+        knownCerts[0] = PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/sign.cert.pem")[0];
+        knownCerts[5] = PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca1.cert.pem")[0];
+        knownCerts[4] = PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca2a.cert.pem")[0];
+        knownCerts[3] = PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca2b.cert.pem")[0];
+        knownCerts[2] = PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca3a.cert.pem")[0];
+        knownCerts[1] = PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca3b.cert.pem")[0];
+        issuingCertificateRetriever.addKnownCertificates(Arrays.asList(knownCerts));
+
+        // An endless loop does not throw an exception, but it is caught the @Timeout annotation
+        Certificate[] result = issuingCertificateRetriever.retrieveMissingCertificates(cert);
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.length>1);
+    }
+
 
     @Test
     public void testResourceRetrieverUsage() throws CertificateException, IOException {
