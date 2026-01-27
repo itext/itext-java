@@ -86,7 +86,7 @@ class ImagePdfBytesInfo {
     private byte[] iccData;
 
     public ImagePdfBytesInfo(PdfImageXObject imageXObject, ImageBytesRetrievalProperties properties) {
-        this.properties =properties;
+        this.properties = properties;
         this.imageXObject = imageXObject;
         if (properties.isApplyDecodeArray()
                 && imageXObject.getPdfObject().containsKey(PdfName.Decode)) {
@@ -112,7 +112,7 @@ class ImagePdfBytesInfo {
 
         byte[] data = PdfReader.decodeBytes(intialBytes, imageXObject.getPdfObject());
 
-        if ( decodeArray != null && !isNeutralDecodeArray(decodeArray)) {
+        if (decodeArray != null && !isNeutralDecodeArray(decodeArray)) {
             data = applyDecoding(data);
         }
         for (IPdfFunction fct : colorTransformations) {
@@ -197,14 +197,16 @@ class ImagePdfBytesInfo {
                 switch (((PdfName) csArray.get(0)).getValue()) {
                     case "Indexed":
                         palette = new Palette(csArray, colorDepth);
-                        long color0 = isPaletteBlackAndWhite(palette);
-                        if (colorDepth == 1 && color0 >= 0) {
-                            targetColorSpace = new PdfDeviceCs.Gray();
-                            if (color0 == 1 && decodeArray == null) {
-                                decodeArray = new double[] {1.0, 0.0};
+                        if (colorDepth == 1 && palette.getPaletteSize() == 2) {
+                            long color0 = isPaletteBlackAndWhite(palette);
+                            if (color0 >= 0) {
+                                targetColorSpace = new PdfDeviceCs.Gray();
+                                if (color0 == 1 && decodeArray == null) {
+                                    decodeArray = new double[] {1.0, 0.0};
+                                }
+                                palette = null;
+                                break;
                             }
-                            palette = null;
-                            break;
                         }
                         if ((properties.isApplyTransparency() && alphaChannel)
                                 || palette.getBaseColorspace().getNumberOfComponents() == 1) {
@@ -271,33 +273,6 @@ class ImagePdfBytesInfo {
         }
     }
 
-    private static long isPaletteBlackAndWhite(Palette palette) {
-        // more than 2 values
-        if (palette.getHiVal() > 1) {
-            return -1;
-        }
-        long color0 = -1;
-        for (int c = 0; c < palette.getBaseColorspace().getNumberOfComponents(); c++) {
-            for (int i = 0; i < 2; i++) {
-                switch ((int) palette.getColor(i)[c]) {
-                    case 0:
-                        if (i == 0) {
-                            color0 = 0;
-                        }
-                        break;
-                    case 0xff:
-                        if (i == 0) {
-                            color0 = 1;
-                        }
-                        break;
-                    default:
-                        return -1;
-                }
-            }
-        }
-        return color0;
-    }
-
     private byte[] applytransparency(byte[] imageData) {
         int maskMultiplier = 8 / transparencyMask.getPdfObject().getAsNumber(PdfName.BitsPerComponent).intValue();
         byte[] mask = transparencyMask.getImageBytes(false);
@@ -347,6 +322,33 @@ class ImagePdfBytesInfo {
         return imagePixels.getData();
     }
 
+    private static long isPaletteBlackAndWhite(Palette palette) {
+        // more than 2 values
+        if (palette.getHiVal() > 1) {
+            return -1;
+        }
+        long color0 = -1;
+        for (int c = 0; c < palette.getBaseColorspace().getNumberOfComponents(); c++) {
+            for (int i = 0; i < 2 && i < palette.getPaletteSize(); i++) {
+                switch ((int) palette.getColor(i)[c]) {
+                    case 0:
+                        if (i == 0) {
+                            color0 = 0;
+                        }
+                        break;
+                    case 0xff:
+                        if (i == 0) {
+                            color0 = 1;
+                        }
+                        break;
+                    default:
+                        return -1;
+                }
+            }
+        }
+        return color0;
+    }
+
     public enum OutputFileType {
         TIFF,
         PNG
@@ -362,12 +364,17 @@ class ImagePdfBytesInfo {
         RGBA
     }
 
+    private interface ImageProcesser {
+        byte[] processImage() throws IOException;
+    }
+
     private static class Palette {
         private final PdfColorSpace baseColorspace;
         private final int hiVal;
         private final int indexBitDepth;
         private final byte[] paletteData;
         private final int paletteChannels;
+
         public Palette(PdfArray csArray, int indexBitDepth) {
             if (csArray.size() != 4) {
                 throw new PdfException(KernelExceptionMessageConstant.PALLET_CONTENT_ERROR);
@@ -410,10 +417,10 @@ class ImagePdfBytesInfo {
         public int getHiVal() {
             return hiVal;
         }
-    }
 
-    private interface ImageProcesser {
-        byte[] processImage() throws IOException;
+        public int getPaletteSize() {
+            return paletteData.length / paletteChannels;
+        }
     }
 
     private static class TiffImageProcessor implements ImageProcesser {

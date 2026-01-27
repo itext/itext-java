@@ -936,6 +936,11 @@ public class GetImageBytesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void oneColorPalletIndexedTest() throws Exception {
+        testFile("oneColorPalette.pdf", "Im1", "png");
+    }
+
+    @Test
     public void separation1bitDeviceCMYKTest() throws Exception {
         testFile("separation1bitDeviceCMYK.pdf", "Im0", "png");
     }
