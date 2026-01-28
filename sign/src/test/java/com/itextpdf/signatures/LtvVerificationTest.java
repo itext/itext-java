@@ -26,6 +26,8 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -184,20 +186,25 @@ public class LtvVerificationTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-5696 Sign: NPE is thrown because no such a signature
     public void exceptionWhenValidateNonExistentSigNameTest() throws IOException {
         LtvVerification testVerification = setup();
-        Assertions.assertThrows(NullPointerException.class,
-                () -> testVerification.addVerification("nonExistentSigName", null, null, null));
+        String signatureName = "nonExistentSigName";
+        Exception exception = Assertions.assertThrows(PdfException.class,
+                () -> testVerification.addVerification(signatureName, null, null, null));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                SignExceptionMessageConstant.NO_SIGNATURE_WITH_THAT_NAME, signatureName), exception.getMessage());
+
     }
 
     @Test
-    //TODO DEVSIX-5696 Sign: NPE is thrown because no such a signature
     public void exceptionWhenValidateParticularNonExistentSigNameTest() throws IOException {
         LtvVerification testVerification = setup();
-        Assertions.assertThrows(NullPointerException.class,
-                () -> testVerification.addVerification("nonExistentSigName", null, null,
+        String signatureName = "nonExistentSigName";
+        Exception exception = Assertions.assertThrows(PdfException.class,
+                () -> testVerification.addVerification(signatureName, null, null,
                         CertificateOption.SIGNING_CERTIFICATE, Level.OCSP_CRL, CertificateInclusion.YES));
+        Assertions.assertEquals(MessageFormatUtil.format(
+                SignExceptionMessageConstant.NO_SIGNATURE_WITH_THAT_NAME, signatureName), exception.getMessage());
     }
 
     @Test
