@@ -383,4 +383,13 @@ public class AffineTransformTest extends ExtendedITextTest {
 
         Assertions.assertArrayEquals(expected, dest, 0);
     }
+
+    @Test
+    public void getMatrixNoArgumentTest() {
+        float[] expected = new float[]{0f, 1f, 2f, 3f, 4f, 5f};
+        AffineTransform affineTransform = new AffineTransform(expected);
+        float[] result = affineTransform.getMatrix();
+
+        Assertions.assertArrayEquals(expected, result, 0);
+    }
 }

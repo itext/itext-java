@@ -325,6 +325,17 @@ public class AffineTransform implements Cloneable {
     }
 
     /**
+     * Gets an array filled with the values of this {@link AffineTransform} instance.
+     *
+     * @return an array filled with the values of this {@link AffineTransform} instance.
+     */
+    public float[] getMatrix() {
+        float[] matrix = new float[6];
+        getMatrix(matrix);
+        return matrix;
+    }
+
+    /**
      * Fills the matrix parameter with the values of this {@link AffineTransform} instance.
      *
      * @param matrix the array to be filled with the values of this {@link AffineTransform} instance.
