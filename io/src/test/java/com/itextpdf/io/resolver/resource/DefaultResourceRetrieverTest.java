@@ -54,13 +54,14 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void retrieveResourceReadTimeoutTest() throws IOException, InterruptedException {
 
-        TestResource thread = new TestResource();
+        TestResource thread = new TestResource(1000);
         thread.start();
         while (!thread.isStarted() && !thread.isFailed()) {
             Thread.sleep(250);
         }
+        Assertions.assertNull(thread.getException());
         Assertions.assertFalse(thread.failed);
-        URL url = new URL("http://127.0.0.1:" + thread.port + "/");
+        URL url = new URL("http://127.0.0.1:" + thread.getPort() + "/");
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
         resourceRetriever.setReadTimeout(500);
 
@@ -151,8 +152,9 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         while (!thread.isStarted() && !thread.isFailed()) {
             Thread.sleep(250);
         }
+        Assertions.assertNull(thread.getException());
         Assertions.assertFalse(thread.failed);
-        URL url = new URL("http://127.0.0.1:" + thread.port + "/");
+        URL url = new URL("http://127.0.0.1:" + thread.getPort() + "/");
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
         Map<String, String> defaultHeaders = new HashMap<>(3);
         defaultHeaders.put("User-Agent","DEFAULT User Agent");
@@ -164,6 +166,10 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         } catch (Exception e) {
             // exception is expected here, but we do not care
         }
+        while (thread.getException() == null && thread.getLastRequest() == null) {
+            Thread.sleep(100);
+        }
+        Assertions.assertNull(thread.getException());
         Assertions.assertTrue(thread.getLastRequest().contains("User-Agent: TEST User Agent"));
         Assertions.assertTrue(thread.getLastRequest().contains("TEST-HEADER: DEFAULT test header"));
     }
@@ -176,8 +182,9 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         while (!thread.isStarted() && !thread.isFailed()) {
             Thread.sleep(250);
         }
+        Assertions.assertNull(thread.getException());
         Assertions.assertFalse(thread.failed);
-        URL url = new URL("http://127.0.0.1:" + thread.port + "/");
+        URL url = new URL("http://127.0.0.1:" + thread.getPort() + "/");
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
         Map<String, String> headers = Collections.singletonMap("User-Agent","TEST User Agent");
         resourceRetriever.setRequestHeaders(headers);
@@ -187,6 +194,10 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         } catch (Exception e) {
             // exception is expected here, but we do not care
         }
+        while (thread.getException() == null && thread.getLastRequest() == null) {
+            Thread.sleep(100);
+        }
+        Assertions.assertNull(thread.getException());
         Assertions.assertTrue(thread.getLastRequest().contains("User-Agent: TEST User Agent"));
     }
 
@@ -201,10 +212,20 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
 
     private static class TestResource extends Thread {
 
-        private int port = 8000;
-        private boolean started = false;
-        private boolean failed = false;
-        private String request;
+        private final int responseWaitTime;
+        private volatile int port = 8000;
+        private volatile boolean started = false;
+        private volatile boolean failed = false;
+        private volatile String request;
+        private volatile Exception exception;
+
+        public TestResource(int responseWaitTime) {
+            this.responseWaitTime = responseWaitTime;
+        }
+
+        public TestResource() {
+            this.responseWaitTime = 0;
+        }
 
         @Override
         public void run() {
@@ -233,6 +254,10 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
             return request;
         }
 
+        public Exception getException() {
+            return exception;
+        }
+
         private void startServer() throws IOException, InterruptedException {
             int tryCount = 0;
             while (!started) {
@@ -242,7 +267,9 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
                     server.setSoTimeout(20000);
                     started = true;
                     try (Socket clientSocket = server.accept()){
-                        Thread.sleep(1000);
+                        if (responseWaitTime > 0) {
+                            Thread.sleep(responseWaitTime);
+                        }
                         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                         String response = "HTTP/1.1 OK OKrnContent-Type: text/html; charset=UTF-8rnrn" +
                                 "<!DOCTYPE html>\n" +
@@ -255,21 +282,36 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
                         out.flush();
 
                         try {
-                            if (clientSocket.getInputStream().available() > 0) {
-                                byte[] buff = new byte[clientSocket.getInputStream().available()];
-                                clientSocket.getInputStream().read(buff);
-                                request = new String(buff, StandardCharsets.UTF_8);
+                            int attempt = 0;
+                            while (attempt < 10 && request == null){
+                                attempt++;
+                                if (clientSocket.getInputStream().available() > 0) {
+                                    byte[] buff = new byte[clientSocket.getInputStream().available()];
+                                    clientSocket.getInputStream().read(buff);
+                                    request = new String(buff, StandardCharsets.UTF_8);
+                                } else {
+                                    Thread.sleep(100);
+                                }
+                            }
+                            if (request == null) {
+                                exception = new IllegalStateException("No request data available");
                             }
                         } catch (Exception e) {
+                            exception = e;
                             request = e.toString();
                         }
                     }
                 } catch (BindException ex) {
                     if (tryCount > 100) {
                         failed = true;
+                        exception = ex;
                         throw ex;
                     }
                     port++;
+                } catch (Exception e) {
+                    failed = true;
+                    exception = e;
+                    throw e;
                 }
             }
         }
