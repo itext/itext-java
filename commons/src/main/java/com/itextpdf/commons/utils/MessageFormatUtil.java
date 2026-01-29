@@ -40,6 +40,8 @@ public final class MessageFormatUtil {
      * Indexed arguments can be referred with {index},
      * to escape curly braces you have to double them.
      *
+     * Warning!: Do not use this method in a performance sensitive context.
+     *
      * <p>
      * Only basic escaping is allowed, single quotes in a set of curly braces are not supported and
      * multiple escaped braces in a row are also not supported

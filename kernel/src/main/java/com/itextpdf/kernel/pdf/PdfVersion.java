@@ -92,7 +92,7 @@ public class PdfVersion implements Comparable<PdfVersion> {
 
     @Override
     public String toString() {
-        return MessageFormatUtil.format("PDF-{0}.{1}", major, minor);
+        return "PDF-" + major + "." + minor;
     }
 
     /**
@@ -101,7 +101,7 @@ public class PdfVersion implements Comparable<PdfVersion> {
      * @return the string representation of the PDF version
      */
     public PdfName toPdfName() {
-        return new PdfName(MessageFormatUtil.format("{0}.{1}", major, minor));
+        return new PdfName(major + "." + minor);
     }
 
     @Override
