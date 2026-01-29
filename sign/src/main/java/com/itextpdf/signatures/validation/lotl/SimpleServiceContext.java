@@ -22,11 +22,20 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonArray;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonValue;
+import com.itextpdf.signatures.SignJsonSerializerHelper;
+
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-class SimpleServiceContext implements IServiceContext {
+class SimpleServiceContext implements IServiceContext, IJsonSerializable {
+    private static final String JSON_KEY_CERTIFICATES = "certificates";
+
     private List<Certificate> certificates;
 
     SimpleServiceContext() {
@@ -37,6 +46,42 @@ class SimpleServiceContext implements IServiceContext {
     SimpleServiceContext(Certificate certificate) {
         this.certificates = new ArrayList<>();
         certificates.add(certificate);
+    }
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        JsonObject jsonObject = new JsonObject();
+
+        JsonArray certificatesJson = new JsonArray();
+        for (Certificate certificate : certificates) {
+            certificatesJson.add(SignJsonSerializerHelper.serializeCertificate(certificate));
+        }
+        jsonObject.add(JSON_KEY_CERTIFICATES, certificatesJson);
+
+        return jsonObject;
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link SimpleServiceContext}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link SimpleServiceContext}
+     */
+    public static SimpleServiceContext fromJson(JsonValue jsonValue) {
+        JsonObject simpleServiceContextJson = (JsonObject) jsonValue;
+        JsonArray certificatesJson =
+                (JsonArray) simpleServiceContextJson.getField(JSON_KEY_CERTIFICATES);
+        List<Certificate> certificatesFromJson = certificatesJson.getValues().stream().map(certificateJson ->
+                SignJsonSerializerHelper.deserializeCertificate(certificateJson)).collect(Collectors.toList());
+        SimpleServiceContext simpleServiceContextFromJson = new SimpleServiceContext();
+        simpleServiceContextFromJson.certificates = certificatesFromJson;
+        return simpleServiceContextFromJson;
     }
 
     @Override

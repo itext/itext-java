@@ -22,11 +22,16 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonString;
+import com.itextpdf.commons.json.JsonValue;
+
 /**
  * This class represents a country-specific TSL (Trusted List) location.
  * It contains the scheme territory, the TSL location URL and MIME type.
  */
-public final class CountrySpecificLotl {
+public final class CountrySpecificLotl implements IJsonSerializable {
     private final String schemeTerritory;
     private final String tslLocation;
     private final String mimeType;
@@ -79,6 +84,35 @@ public final class CountrySpecificLotl {
      */
     public String getMimeType() {
         return mimeType;
+    }
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("schemeTerritory", new JsonString(schemeTerritory));
+        jsonObject.add("tslLocation", new JsonString(tslLocation));
+        jsonObject.add("mimeType", new JsonString(mimeType));
+        return jsonObject;
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link CountrySpecificLotl}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link CountrySpecificLotl}
+     */
+    public static CountrySpecificLotl fromJson(JsonValue jsonValue) {
+        JsonObject countrySpecificLotlJson = (JsonObject) jsonValue;
+        return new CountrySpecificLotl(
+                ((JsonString) countrySpecificLotlJson.getField("schemeTerritory")).getValue(),
+                ((JsonString) countrySpecificLotlJson.getField("tslLocation")).getValue(),
+                ((JsonString) countrySpecificLotlJson.getField("mimeType")).getValue());
     }
 
     @Override

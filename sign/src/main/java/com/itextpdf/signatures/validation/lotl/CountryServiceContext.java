@@ -22,20 +22,31 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonArray;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonString;
+import com.itextpdf.commons.json.JsonValue;
 import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.SignJsonSerializerHelper;
 
 import java.security.cert.Certificate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class representing TSPService entry in a country specific Trusted List.
  */
-public class CountryServiceContext implements IServiceContext {
-    private final List<Certificate> certificates = new ArrayList<>();
+public class CountryServiceContext implements IServiceContext, IJsonSerializable {
+    private static final String JSON_KEY_CERTIFICATES = "certificates";
+    private static final String JSON_KEY_SERVICE_TYPE = "serviceType";
+    private static final String JSON_KEY_SERVICE_CHRONOLOGICAL_INFOS = "serviceChronologicalInfos";
+
+    private List<Certificate> certificates = new ArrayList<>();
     //It is expected that service statuses are ordered starting from the newest one.
-    private final List<ServiceChronologicalInfo> serviceChronologicalInfos = new ArrayList<>();
+    private List<ServiceChronologicalInfo> serviceChronologicalInfos = new ArrayList<>();
     private String serviceType;
 
     CountryServiceContext() {
@@ -111,6 +122,58 @@ public class CountryServiceContext implements IServiceContext {
      */
     public ServiceChronologicalInfo getCurrentChronologicalInfo() {
         return serviceChronologicalInfos.get(0);
+    }
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        JsonObject jsonObject = new JsonObject();
+
+        JsonArray certificatesJson = new JsonArray();
+        for (Certificate certificate : certificates) {
+            certificatesJson.add(SignJsonSerializerHelper.serializeCertificate(certificate));
+        }
+        jsonObject.add(JSON_KEY_CERTIFICATES, certificatesJson);
+        jsonObject.add(JSON_KEY_SERVICE_CHRONOLOGICAL_INFOS,
+                new JsonArray(serviceChronologicalInfos.stream().map(
+                        serviceChronologicalInfo -> serviceChronologicalInfo.toJson())
+                        .collect(Collectors.toList())));
+        jsonObject.add(JSON_KEY_SERVICE_TYPE, new JsonString(serviceType));
+
+        return jsonObject;
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link CountryServiceContext}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link CountryServiceContext}
+     */
+    public static CountryServiceContext fromJson(JsonValue jsonValue) {
+        JsonObject countryServiceContextJson = (JsonObject) jsonValue;
+        JsonArray certificatesJson =
+                (JsonArray) countryServiceContextJson.getField(JSON_KEY_CERTIFICATES);
+        List<Certificate> certificatesFromJson = certificatesJson.getValues().stream().map(certificateJson ->
+                SignJsonSerializerHelper.deserializeCertificate(certificateJson)).collect(Collectors.toList());
+        CountryServiceContext countryServiceContextFromJson = new CountryServiceContext();
+        countryServiceContextFromJson.certificates = certificatesFromJson;
+
+        JsonArray serviceChronologicalInfosJson =
+                (JsonArray) countryServiceContextJson.getField(JSON_KEY_SERVICE_CHRONOLOGICAL_INFOS);
+        countryServiceContextFromJson.serviceChronologicalInfos =
+                serviceChronologicalInfosJson.getValues().stream().map(
+                        serviceChronologicalInfoJson ->
+                                ServiceChronologicalInfo.fromJson(serviceChronologicalInfoJson))
+                        .collect(Collectors.toList());
+
+        countryServiceContextFromJson.serviceType =
+                ((JsonString) countryServiceContextJson.getField(JSON_KEY_SERVICE_TYPE)).getValue();
+        return countryServiceContextFromJson;
     }
 
     void setServiceType(String serviceType) {

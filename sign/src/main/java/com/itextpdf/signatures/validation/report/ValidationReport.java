@@ -22,6 +22,10 @@
  */
 package com.itextpdf.signatures.validation.report;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonArray;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonValue;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 
 import java.util.ArrayList;
@@ -32,7 +36,9 @@ import java.util.stream.Collectors;
 /**
  * Validation report, which contains detailed validation results.
  */
-public class ValidationReport {
+public class ValidationReport implements IJsonSerializable {
+    private static final String JSON_KEY_REPORT_ITEMS = "reportItems";
+
     private final List<ReportItem> reportItems = new ArrayList<>();
 
     /**
@@ -146,6 +152,54 @@ public class ValidationReport {
             }
         }
         return this;
+    }
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        // Sort the items by check name to ensure consistent order
+        List<ReportItem> sortedItems = getLogs().stream().sorted((item1, item2) -> {
+            if (item1.getCheckName() == null && item2.getCheckName() == null) {
+                return 0;
+            } else if (item1.getCheckName() == null) {
+                return -1;
+            } else if (item2.getCheckName() == null) {
+                return 1;
+            } else {
+                return item1.getCheckName().compareTo(item2.getCheckName());
+            }
+        }).collect(Collectors.toList());
+
+        JsonArray reportItemsJson = new JsonArray();
+        for (ReportItem reportItem : sortedItems) {
+            reportItemsJson.add(reportItem.toJson());
+        }
+        JsonObject validationReportJson = new JsonObject();
+        validationReportJson.add(JSON_KEY_REPORT_ITEMS, reportItemsJson);
+        return validationReportJson;
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link ValidationReport}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link ValidationReport}
+     */
+    public static ValidationReport fromJson(JsonValue jsonValue) {
+        JsonObject validationReportJson = (JsonObject) jsonValue;
+        JsonArray reportItemsJson =
+                (JsonArray) validationReportJson.getField(JSON_KEY_REPORT_ITEMS);
+        ValidationReport validationReportFromJson = new ValidationReport();
+        for (ReportItem reportItem : reportItemsJson.getValues().stream().map(
+                reportItemJson -> ReportItem.fromJson(reportItemJson)).collect(Collectors.toList())) {
+            validationReportFromJson.addReportItem(reportItem);
+        }
+        return validationReportFromJson;
     }
 
     /**

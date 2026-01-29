@@ -33,7 +33,6 @@ import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.cert.Certificate;
@@ -261,16 +260,14 @@ public class EuropeanLotlService extends LotlService {
      * Serializes the current state of the cache to the provided output stream.
      *
      * @param outputStream the output stream to which the cache will be serialized.
-     *
-     * @throws IOException if an I/O error occurs during serialization.
      */
     @Override
-    public void serializeCache(OutputStream outputStream) throws IOException {
-        if (cache instanceof InMemoryLotlServiceCache) {
+    public void serializeCache(OutputStream outputStream) {
+        try {
             InMemoryLotlServiceCache inMemoryCache = (InMemoryLotlServiceCache) cache;
             inMemoryCache.getAllData().serialize(outputStream);
-        } else {
-            throw new PdfException(SignExceptionMessageConstant.CACHE_CANNOT_BE_SERIALIZED);
+        } catch (Exception e) {
+            throw new PdfException(SignExceptionMessageConstant.CACHE_CANNOT_BE_SERIALIZED, e);
         }
     }
 

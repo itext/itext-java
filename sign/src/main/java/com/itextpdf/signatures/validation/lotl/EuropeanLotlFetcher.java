@@ -22,6 +22,11 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonString;
+import com.itextpdf.commons.json.JsonValue;
+import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -85,8 +90,10 @@ public class EuropeanLotlFetcher {
     /**
      * Represents the result of fetching the List of Trusted Lists (Lotl).
      */
-    public static class Result {
-        private final ValidationReport localReport = new ValidationReport();
+    public static class Result implements IJsonSerializable {
+        private static final String JSON_KEY_LOCAL_REPORT = "localReport";
+        private static final String JSON_KEY_LOTL_XML = "lotlXml";
+        private ValidationReport localReport = new ValidationReport();
         private byte[] lotlXml;
 
         /**
@@ -135,6 +142,39 @@ public class EuropeanLotlFetcher {
          */
         public ValidationReport getLocalReport() {
             return localReport;
+        }
+
+        /**
+         * {@inheritDoc}.
+         *
+         * @return {@inheritDoc}
+         */
+        @Override
+        public JsonValue toJson() {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add(JSON_KEY_LOCAL_REPORT, localReport.toJson());
+            String base64Encoded = EncodingUtil.toBase64(lotlXml);
+            jsonObject.add(JSON_KEY_LOTL_XML, new JsonString(base64Encoded));
+            return jsonObject;
+        }
+
+        /**
+         * Deserializes {@link JsonValue} into {@link EuropeanLotlFetcher.Result}.
+         *
+         * @param jsonValue {@link JsonValue} to deserialize
+         *
+         * @return deserialized {@link EuropeanLotlFetcher.Result}
+         */
+        public static Result fromJson(JsonValue jsonValue) {
+            JsonObject europeanLotlFetcherResultJson = (JsonObject) jsonValue;
+            JsonObject localReportJson =
+                    (JsonObject) europeanLotlFetcherResultJson.getField(JSON_KEY_LOCAL_REPORT);
+            ValidationReport validationReportFromJson = ValidationReport.fromJson(localReportJson);
+            String base64Encoded = ((JsonString) europeanLotlFetcherResultJson.getField(JSON_KEY_LOTL_XML)).getValue();
+            byte[] lotlXmlFromJson = EncodingUtil.fromBase64(base64Encoded);
+            Result resultFromJson = new Result(lotlXmlFromJson);
+            resultFromJson.localReport = validationReportFromJson;
+            return resultFromJson;
         }
 
         boolean hasValidXml() {

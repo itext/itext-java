@@ -22,16 +22,22 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonString;
+import com.itextpdf.commons.json.JsonValue;
+
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Wrapper class for additional service information extension.
  */
-public class AdditionalServiceInformationExtension {
+public class AdditionalServiceInformationExtension implements IJsonSerializable {
     static final String FOR_E_SIGNATURES = "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures";
     static final String FOR_E_SEALS = "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals";
     static final String FOR_WSA = "http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication";
+    private static final String JSON_KEY_URI = "uri";
     private static final Set<String> INVALID_SCOPES = new HashSet<>();
     private String uri;
 
@@ -65,5 +71,29 @@ public class AdditionalServiceInformationExtension {
 
     boolean isScopeValid() {
         return !INVALID_SCOPES.contains(uri);
+    }
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        JsonObject extensionJson = new JsonObject();
+        extensionJson.add(JSON_KEY_URI, new JsonString(getUri()));
+        return extensionJson;
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link AdditionalServiceInformationExtension}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link AdditionalServiceInformationExtension}
+     */
+    public static AdditionalServiceInformationExtension fromJson(JsonValue jsonValue) {
+        return new AdditionalServiceInformationExtension(
+                ((JsonString) ((JsonObject) jsonValue).getField(JSON_KEY_URI)).getValue());
     }
 }

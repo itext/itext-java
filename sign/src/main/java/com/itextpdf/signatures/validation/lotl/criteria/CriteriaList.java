@@ -22,6 +22,11 @@
  */
 package com.itextpdf.signatures.validation.lotl.criteria;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonValue;
+import com.itextpdf.signatures.SignJsonSerializerHelper;
+
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +34,7 @@ import java.util.List;
 /**
  * Criteria List which holds other Criteria or other Criteria Lists.
  */
-public class CriteriaList implements Criteria {
+public class CriteriaList implements Criteria, IJsonSerializable {
     private final List<Criteria> criterias = new ArrayList<>();
     private final String assertValue;
 
@@ -101,5 +106,26 @@ public class CriteriaList implements Criteria {
             default:
                 return false;
         }
+    }
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        return SignJsonSerializerHelper.serializeCriteriaList(this);
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link CriteriaList}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link CriteriaList}
+     */
+    public static CriteriaList fromJson(JsonValue jsonValue) {
+        return SignJsonSerializerHelper.deserializeCriteriaList((JsonObject) jsonValue);
     }
 }

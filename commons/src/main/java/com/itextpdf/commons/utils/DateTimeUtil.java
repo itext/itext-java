@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -221,6 +222,30 @@ public final class DateTimeUtil {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Parses date with specified format into {@link LocalDateTime}.
+     *
+     * @param date {@link String} date to parse
+     * @param format {@link String} parsing format
+     *
+     * @return {@link LocalDateTime} parsed date
+     */
+    public static LocalDateTime parseToLocalDateTime(String date, String format) {
+        return DateTimeFormatter.ofPattern(format).parse(date, LocalDateTime::from);
+    }
+
+    /**
+     * Parses {@link LocalDateTime} local date time according to specified format.
+     *
+     * @param dateTime {@link LocalDateTime} to parse
+     * @param format {@link String} parsing format
+     *
+     * @return parse date time as {@link String}
+     */
+    public static String parseLocalDateTime(LocalDateTime dateTime, String format) {
+        return dateTime.format(DateTimeFormatter.ofPattern(format));
     }
 
     /**

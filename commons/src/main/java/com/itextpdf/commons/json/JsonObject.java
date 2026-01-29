@@ -60,6 +60,17 @@ public final class JsonObject extends JsonValue {
     }
 
     /**
+     * Gets particular json object field.
+     *
+     * @param fieldName {@link String} name of the field
+     *
+     * @return field as {@link JsonValue}
+     */
+    public JsonValue getField(String fieldName) {
+        return fields.get(fieldName);
+    }
+
+    /**
      * Adds a new field into json object.
      *
      * @param key a key to add into json object fields

@@ -22,6 +22,10 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonArray;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonValue;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.MultiThreadingUtil;
 import com.itextpdf.io.resolver.resource.IResourceRetriever;
@@ -144,7 +148,12 @@ public class CountrySpecificLotlFetcher {
     /**
      * Represents the result of fetching and validating country-specific LOTLs.
      */
-    public static class Result {
+    public static class Result implements IJsonSerializable {
+        private static final String JSON_KEY_SERVICE_TYPE = "serviceType";
+        private static final String JSON_KEY_SERVICE_CHRONOLOGICAL_INFOS = "serviceChronologicalInfos";
+        private static final String JSON_KEY_LOCAL_REPORT = "localReport";
+        private static final String JSON_KEY_CONTEXTS = "contexts";
+        private static final String JSON_KEY_COUNTRY_SPECIFIC_LOTL = "countrySpecificLotl";
         private ValidationReport localReport;
         private List<IServiceContext> contexts;
         private CountrySpecificLotl countrySpecificLotl;
@@ -223,6 +232,65 @@ public class CountrySpecificLotlFetcher {
          */
         public String createUniqueIdentifier() {
             return countrySpecificLotl.getSchemeTerritory() + "_" + countrySpecificLotl.getTslLocation();
+        }
+
+        /**
+         * {@inheritDoc}.
+         *
+         * @return {@inheritDoc}
+         */
+        @Override
+        public JsonValue toJson() {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add(JSON_KEY_LOCAL_REPORT, localReport.toJson());
+
+            JsonArray contextsJson = new JsonArray();
+            for (IServiceContext serviceContext : contexts) {
+                if (serviceContext instanceof SimpleServiceContext) {
+                    contextsJson.add(((SimpleServiceContext) serviceContext).toJson());
+                } else if (serviceContext instanceof CountryServiceContext) {
+                    contextsJson.add(((CountryServiceContext) serviceContext).toJson());
+                }
+            }
+            jsonObject.add(JSON_KEY_CONTEXTS, contextsJson);
+
+            jsonObject.add(JSON_KEY_COUNTRY_SPECIFIC_LOTL, countrySpecificLotl.toJson());
+            return jsonObject;
+        }
+
+        /**
+         * Deserializes {@link JsonValue} into {@link CountrySpecificLotlFetcher.Result}.
+         *
+         * @param jsonValue {@link JsonValue} to deserialize
+         *
+         * @return deserialized {@link CountrySpecificLotlFetcher.Result}
+         */
+        public static CountrySpecificLotlFetcher.Result fromJson(JsonValue jsonValue) {
+            JsonObject countrySpecificLotlFetcherResultJson = (JsonObject) jsonValue;
+            JsonObject localReportJson =
+                    (JsonObject) countrySpecificLotlFetcherResultJson.getField(JSON_KEY_LOCAL_REPORT);
+            ValidationReport validationReportFromJson = ValidationReport.fromJson(localReportJson);
+
+            JsonArray contextsJson = (JsonArray) countrySpecificLotlFetcherResultJson.getField(JSON_KEY_CONTEXTS);
+            List<IServiceContext> serviceContextsFromJson = new ArrayList<>();
+            for (JsonValue contextJson : contextsJson.getValues()) {
+                JsonObject contextJsonObject = (JsonObject) contextJson;
+                if (contextJsonObject.getField(JSON_KEY_SERVICE_CHRONOLOGICAL_INFOS) != null ||
+                        contextJsonObject.getField(JSON_KEY_SERVICE_TYPE) != null) {
+                    serviceContextsFromJson.add(CountryServiceContext.fromJson(contextJson));
+                } else {
+                    serviceContextsFromJson.add(SimpleServiceContext.fromJson(contextJson));
+                }
+            }
+
+            CountrySpecificLotl countrySpecificLotlFromJson = CountrySpecificLotl.fromJson(
+                    countrySpecificLotlFetcherResultJson.getField(JSON_KEY_COUNTRY_SPECIFIC_LOTL));
+
+            CountrySpecificLotlFetcher.Result resultFromJson = new Result();
+            resultFromJson.localReport = validationReportFromJson;
+            resultFromJson.contexts = serviceContextsFromJson;
+            resultFromJson.countrySpecificLotl = countrySpecificLotlFromJson;
+            return resultFromJson;
         }
     }
 

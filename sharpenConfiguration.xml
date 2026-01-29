@@ -478,9 +478,6 @@
                 <file path="com/itextpdf/signatures/validation/lotl/CertificateSelector.java" />
                 <file path="com/itextpdf/signatures/validation/lotl/xml/XmlSaxProcessor.java" />
             </fileset>
-            <fileset reason="Json handling is different in .NET">
-                <file path="com/itextpdf/signatures/validation/lotl/LotlCacheDataV1.java" />
-            </fileset>
             <fileset reason="uri handeling and certificate handeling is different">
                 <file path="com/itextpdf/signatures/validation/EuropeanTrustedCertificatesResourceLoader.java"/>
                 <file path="com/itextpdf/signatures/validation/LoadFromModuleEuropeanTrustedListConfigurationFactory.java"/>
@@ -560,9 +557,6 @@
                 <file path="com/itextpdf/signatures/validation/report/xml/XmlReportGenerator.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/ReportNamespaceContext.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
-            </fileset>
-            <fileset reason="LocalDateTime and DateTime have different constructors and parsing">
-                <file path="com/itextpdf/signatures/validation/lotl/ServiceChronologicalInfo.java"/>
             </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />
