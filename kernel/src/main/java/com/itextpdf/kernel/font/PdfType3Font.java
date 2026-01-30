@@ -115,7 +115,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         subset = true;
         embedded = true;
         fontProgram = new Type3Font(colorized);
-        fontEncoding = FontEncoding.createEmptyFontEncoding();
+        setFontEncoding(FontEncoding.createEmptyFontEncoding());
         setGlyphSpaceNormalizationFactor(1.0f);
     }
 
@@ -144,7 +144,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         subset = true;
         embedded = true;
         fontProgram = new Type3Font(false);
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
+        setFontEncoding(DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode));
 
         double[] fontMatrixArray = readFontMatrix();
         double[] fontBBoxRect = readFontBBox();
@@ -297,7 +297,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         int code = getFirstEmptyCode();
         glyph = new Type3Glyph(getDocument(), wx, llx, lly, urx, ury, ((Type3Font) getFontProgram()).isColorized());
         ((Type3Font) getFontProgram()).addGlyph(code, c, wx, new int[]{llx, lly, urx, ury}, glyph);
-        fontEncoding.addSymbol(code, c);
+        getFontEncoding().addSymbol(code, c);
 
         if (!((Type3Font) getFontProgram()).isColorized()) {
             if (fontProgram.countOfGlyphs() == 0) {
@@ -316,8 +316,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     @Override
     public Glyph getGlyph(int unicode) {
-        if (fontEncoding.canEncode(unicode) || unicode < 33) {
-            Glyph glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode));
+        if (getFontEncoding().canEncode(unicode) || unicode < 33) {
+            Glyph glyph = getFontProgram().getGlyph(getFontEncoding().getUnicodeDifference(unicode));
             if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
                 // Handle special layout characters like sfthyphen (00AD).
                 // This glyphs will be skipped while converting to bytes
@@ -331,8 +331,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
 
     @Override
     public boolean containsGlyph(int unicode) {
-        return (fontEncoding.canEncode(unicode) || unicode < 33)
-                && getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode)) != null;
+        return (getFontEncoding().canEncode(unicode) || unicode < 33)
+                && getFontProgram().getGlyph(getFontEncoding().getUnicodeDifference(unicode)) != null;
     }
 
     @Override
@@ -367,7 +367,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
             // reset both flags
             flags &= ~(FontDescriptorFlags.SYMBOLIC | FontDescriptorFlags.NONSYMBOLIC);
             // set fontSpecific based on font encoding
-            flags |= fontEncoding.isFontSpecific() ?
+            flags |= getFontEncoding().isFontSpecific() ?
                     FontDescriptorFlags.SYMBOLIC : FontDescriptorFlags.NONSYMBOLIC;
 
             fontDescriptor.put(PdfName.Flags, new PdfNumber(flags));
@@ -427,10 +427,10 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
                 // Skip glyphs with id greater than 255
             } else {
                 String glyphName = ((PdfName) obj).getValue();
-                int unicode = fontEncoding.getUnicode(currentNumber);
+                int unicode = getFontEncoding().getUnicode(currentNumber);
                 if (getFontProgram().getGlyphByCode(currentNumber) == null
                         && charProcsDic.containsKey(new PdfName(glyphName))) {
-                    fontEncoding.setDifference(currentNumber, glyphName);
+                    getFontEncoding().setDifference(currentNumber, glyphName);
                     ((Type3Font) getFontProgram()).addGlyph(currentNumber, unicode, widths[currentNumber], null,
                             new Type3Glyph(charProcsDic.getAsStream(new PdfName(glyphName)), getDocument()));
                 }
@@ -447,7 +447,7 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
     private int getFirstEmptyCode() {
         final int startFrom = 1;
         for (int i = startFrom; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {
-            if (!fontEncoding.canDecode(i) && fontProgram.getGlyphByCode(i) == null) {
+            if (!getFontEncoding().canDecode(i) && fontProgram.getGlyphByCode(i) == null) {
                 return i;
             }
         }
@@ -466,8 +466,8 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         for (PdfName glyphName : charProcsDic.keySet()) {
             int unicode = AdobeGlyphList.nameToUnicode(glyphName.getValue());
             int code = -1;
-            if (fontEncoding.canEncode(unicode)) {
-                code = fontEncoding.convertToByte(unicode);
+            if (getFontEncoding().canEncode(unicode)) {
+                code = getFontEncoding().convertToByte(unicode);
             } else if (unicodeToCode != null && unicodeToCode.containsKey(unicode)) {
                 code = (int) unicodeToCode.get(unicode);
             }
@@ -485,14 +485,14 @@ public class PdfType3Font extends PdfSimpleFont<Type3Font> {
         PdfDictionary charProcs = new PdfDictionary();
         for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; i++) {
             Type3Glyph glyph = null;
-            if (fontEncoding.canDecode(i)) {
-                glyph = getType3Glyph(fontEncoding.getUnicode(i));
+            if (getFontEncoding().canDecode(i)) {
+                glyph = getType3Glyph(getFontEncoding().getUnicode(i));
             }
             if (glyph == null) {
                 glyph = ((Type3Font) getFontProgram()).getType3GlyphByCode(i);
             }
             if (glyph != null) {
-                charProcs.put(new PdfName(fontEncoding.getDifference(i)), glyph.getContentStream());
+                charProcs.put(new PdfName(getFontEncoding().getDifference(i)), glyph.getContentStream());
                 glyph.getContentStream().flush();
             }
         }

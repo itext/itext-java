@@ -822,8 +822,7 @@ public class PdfCanvasProcessor {
 
             PdfDictionary fontsDictionary = processor.getResources().getResource(PdfName.Font);
             PdfDictionary fontDict = fontsDictionary.getAsDictionary(fontResourceName);
-            PdfFont font = null;
-            font = processor.getFont(fontDict);
+            PdfFont font = processor.getFont(fontDict);
 
             processor.getGraphicsState().setFont(font);
             processor.getGraphicsState().setFontSize(size);

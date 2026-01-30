@@ -267,7 +267,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
     private static class TestSimpleFont extends PdfSimpleFont<FontProgram> {
 
         public TestSimpleFont(FontEncoding fontEncoding) throws IOException {
-            this.fontEncoding = fontEncoding;
+            setFontEncoding(fontEncoding);
             setFontProgram(FontProgramFactory.createFont(StandardFonts.HELVETICA));
         }
 

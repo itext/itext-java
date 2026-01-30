@@ -32,7 +32,6 @@ import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Subpath;
 import com.itextpdf.kernel.geom.Vector;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
@@ -94,21 +93,22 @@ class ColorInfoListener implements IEventListener {
             if (checkForIndividualCharacters) {
                 for (TextRenderInfo characterRenderInfo : re.getCharacterRenderInfos()) {
                     Path p = buildPathFromTextRenderInfo(characterRenderInfo);
-                    final String text = getCorrectValue(characterRenderInfo.getPdfString(),
-                            characterRenderInfo.getText());
+                    final String text = characterRenderInfo.getText();
                     //skip empty text render infos
                     if (text == null || text.isEmpty() || text.trim().isEmpty()) {
                         continue;
                     }
                     TextColorInfo contrastInformationRenderInfo = new TextColorInfo(
-                            text, getCorrectValue(re.getPdfString(), re.getText()), characterRenderInfo.getFillColor(),
+                            text,
+                            re.getText(),
+                            characterRenderInfo.getFillColor(),
                             p,
                             characterRenderInfo.getFontSize());
                     renderInfoList.add(contrastInformationRenderInfo);
                 }
             } else {
                 Path p = buildPathFromTextRenderInfo(re);
-                final String text = getCorrectValue(re.getPdfString(), re.getText());
+                final String text = re.getText();
                 if (text == null || text.isEmpty() || text.trim().isEmpty()) {
                     return;
                 }
@@ -173,13 +173,6 @@ class ColorInfoListener implements IEventListener {
         return path;
     }
 
-    private static String getCorrectValue(PdfString pdfString, String text) {
-        String textPdfString = pdfString.toString();
-        if (!text.equals(textPdfString)) {
-            return textPdfString;
-        }
-        return text;
-    }
 
     /**
      * Flattens a Bezier curve into a series of line segments for geometric calculations.
