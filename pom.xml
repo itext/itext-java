@@ -1062,6 +1062,14 @@
                 <arg>
                   --initialize-at-build-time=org.junit.validator.PublicClassValidator
                   --initialize-at-build-time=org.junit.platform.engine.TestTag
+
+                  --initialize-at-build-time=org.junit.jupiter.engine
+                  --initialize-at-build-time=org.junit.platform.launcher
+                  --initialize-at-build-time=org.junit.jupiter.engine.extension.TimeoutExtension
+                  --initialize-at-build-time=org.junit.jupiter.engine.extension.RepeatedTestExtension
+                  --initialize-at-build-time=org.junit.platform.commons.util.LruCache
+                  --initialize-at-build-time=org.junit.jupiter.api.extension.ExtensionContext$Namespace
+
                   --initialize-at-run-time=org.bouncycastle.crypto.prng.SP800SecureRandom
                   --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV
                   --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default
