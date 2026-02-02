@@ -38,9 +38,9 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Security;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -65,7 +65,7 @@ public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
 
         int estimatedSize = 8079;
         SignerProperties signerProperties = new SignerProperties();
-        byte[] digest = signer.prepareDocumentForSignature(signerProperties, DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
+        signer.prepareDocumentForSignature(signerProperties, DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
                 PdfName.Adbe_pkcs7_detached, estimatedSize, false);
         String fieldName = signerProperties.getFieldName();
 
@@ -87,7 +87,7 @@ public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
         int estimatedSize = 8079;
         SignerProperties signerProperties = new SignerProperties();
         signer.setExternalDigest(new BouncyCastleDigest());
-        byte[] digest = signer.prepareDocumentForSignature(signerProperties,  DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
+        signer.prepareDocumentForSignature(signerProperties, DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
                 PdfName.Adbe_pkcs7_detached, estimatedSize, false);
 
         String fieldName = signerProperties.getFieldName();
@@ -156,6 +156,28 @@ public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void prepareDocumentSignatureCreatorTest() throws IOException, GeneralSecurityException {
+        PdfReader reader = new PdfReader(new ByteArrayInputStream(createSimpleDocument()));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfTwoPhaseSigner signer = new PdfTwoPhaseSigner(reader, outputStream);
+
+        int estimatedSize = 8079;
+        SignerProperties signerProperties = new SignerProperties();
+        signer.prepareDocumentForSignature(signerProperties, DigestAlgorithms.SHA256, PdfName.Adobe_PPKLite,
+                PdfName.Adbe_pkcs7_detached, estimatedSize, false);
+        String fieldName = signerProperties.getFieldName();
+
+        PdfReader resultReader = new PdfReader(new ByteArrayInputStream(outputStream.toByteArray()));
+        PdfDocument resultDoc = new PdfDocument(resultReader);
+        SignatureUtil signatureUtil = new SignatureUtil(resultDoc);
+        PdfSignature signature = signatureUtil.getSignature(fieldName);
+        String creator = signature.getPdfObject().getAsDictionary(PdfName.Prop_Build).getAsDictionary(PdfName.App)
+                .getAsName(PdfName.Name).getValue();
+
+        Assertions.assertEquals(resultDoc.getDocumentInfo().getProducer(), creator);
     }
 
     private static byte[] createSimpleDocument() {

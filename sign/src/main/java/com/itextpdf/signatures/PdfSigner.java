@@ -23,6 +23,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
@@ -644,7 +645,7 @@ public class PdfSigner {
                 : PdfName.Adbe_pkcs7_detached);
         dic.setReason(this.signerProperties.getReason());
         dic.setLocation(this.signerProperties.getLocation());
-        dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
+        dic.setSignatureCreator(getSignatureCreator());
         dic.setContact(this.signerProperties.getContact());
         Calendar claimedSignDate = this.signerProperties.getClaimedSignDate();
         if (claimedSignDate != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
@@ -785,6 +786,7 @@ public class PdfSigner {
 
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, PdfName.ETSI_RFC3161);
         dic.put(PdfName.Type, PdfName.DocTimeStamp);
+        dic.setSignatureCreator(getSignatureCreator());
         cryptoDictionary = dic;
 
         Map<PdfName, Integer> exc = new HashMap<>();
@@ -1385,7 +1387,7 @@ public class PdfSigner {
         PdfSignature dic = new PdfSignature();
         dic.setReason(this.signerProperties.getReason());
         dic.setLocation(this.signerProperties.getLocation());
-        dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
+        dic.setSignatureCreator(getSignatureCreator());
         dic.setContact(this.signerProperties.getContact());
         Calendar claimedSignDate = this.signerProperties.getClaimedSignDate();
         if (includeDate && claimedSignDate != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
@@ -1436,6 +1438,17 @@ public class PdfSigner {
             throw new PdfException(SignExceptionMessageConstant.NOT_POSSIBLE_TO_EMBED_MAC_TO_SIGNATURE, exception);
         }
         return signatureContainer;
+    }
+
+    private String getSignatureCreator() {
+        String signatureCreator = this.signerProperties.getSignatureCreator();
+        if (signatureCreator == null || !signatureCreator.isEmpty()) {
+            return signatureCreator;
+        }
+
+        GetSignatureCreatorEvent event = new GetSignatureCreatorEvent(document);
+        EventManager.getInstance().onEvent(event);
+        return event.getSignatureCreator();
     }
 
     private static String getSignerName(X509Certificate certificate) {

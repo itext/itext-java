@@ -169,6 +169,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
         configurator.addFullName("iText.StyledXmlParser.Resolver.Resource.IResourceRetriever");
         configurator.addFullName("iText.StyledXmlParser.Resolver.Resource.DefaultResourceRetriever");
+
+        configurator.keepInternalProtected("com.itextpdf.signatures.GetSignatureCreatorEvent.doAction");
     }
 
     @Override
