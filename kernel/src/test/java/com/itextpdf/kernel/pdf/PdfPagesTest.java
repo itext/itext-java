@@ -775,8 +775,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assertions.assertEquals(1,
                 pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
 
-        // TODO DEVSIX-5575 remove expected exception and add proper assertions
-        Assertions.assertThrows(NullPointerException.class, () -> pdfDocument.close());
+        AssertUtil.doesNotThrow(() -> pdfDocument.close());
     }
 
     @Test

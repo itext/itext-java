@@ -281,25 +281,16 @@ class PdfPagesTree {
 
         if (root == null) {
             while (parents.size() != 1) {
-                List<PdfPages> nextParents = new ArrayList<>();
-                //dynamicLeafSize helps to avoid PdfPages leaf with only one page
-                int dynamicLeafSize = leafSize;
-                PdfPages current = null;
-                for (int i = 0; i < parents.size(); i++) {
-                    PdfPages pages = parents.get(i);
-                    int pageCount = pages.getCount();
-                    if (i % dynamicLeafSize == 0) {
-                        if (pageCount <= 1) {
-                            dynamicLeafSize++;
-                        } else {
-                            current = new PdfPages(-1, document);
-                            nextParents.add(current);
-                            dynamicLeafSize = leafSize;
-                        }
+                List<PdfPages> newParents = new ArrayList<>();
+                PdfPages currentNewParent = null;
+                for (PdfPages parent : parents) {
+                    if (currentNewParent == null || currentNewParent.getKids().size() >= leafSize) {
+                        currentNewParent = new PdfPages(-1, document);
+                        newParents.add(currentNewParent);
                     }
-                    current.addPages(pages);
+                    currentNewParent.addPages(parent);
                 }
-                parents = nextParents;
+                parents = newParents;
             }
             root = parents.get(0);
         }
