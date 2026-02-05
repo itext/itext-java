@@ -171,7 +171,7 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
 
             PdfPage firstPage = resDoc.getFirstPage();
             PdfStream firstContentStream = firstPage.getFirstContentStream();
-            Assertions.assertEquals(testString, new String(firstContentStream.getBytes()));
+            Assertions.assertEquals(testString, new String(firstContentStream.getBytes(), StandardCharsets.UTF_8));
 
             Assertions.assertEquals(PdfName.BrotliDecode, firstContentStream.getAsName(PdfName.Filter));
 
