@@ -108,7 +108,6 @@ import org.slf4j.LoggerFactory;
  * @see OverlappingArea
  * @see ColorContrastCalculator
  */
-//TODO DEVSIX-9719 Improve layer handling in contrast analysis
 //TODO DEVSIX-9718 Improve clip path handling in contrast analysis
 public class ContrastAnalyzer {
 

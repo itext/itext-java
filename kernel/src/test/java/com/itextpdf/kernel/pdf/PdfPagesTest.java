@@ -57,7 +57,6 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -815,7 +814,6 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
-    @Disabled("DEVSIX-9719 ")
     public void layerOnAndOffStatePersistenceTest() throws IOException {
         String filename = DESTINATION_FOLDER + "layerStatePersistence.pdf";
 
@@ -877,6 +875,82 @@ public class PdfPagesTest extends ExtendedITextTest {
 
         Assertions.assertTrue(reopenedLayerOn.isOn(), "LayerOn should be ON after reopening");
         Assertions.assertFalse(reopenedLayerOff.isOn(), "LayerOff should be OFF after reopening");
+
+        reopenedDoc.close();
+    }
+
+    @Test
+    public void layerPropertiesPersistenceTest() throws IOException {
+        String filename = DESTINATION_FOLDER + "layerPropertiesPersistence.pdf";
+
+        // Create document with layers
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = pdfDocument.addNewPage();
+
+        // Create a layer that is ON
+        PdfLayer layerOn = new PdfLayer("LayerOn", pdfDocument);
+        layerOn.setOn(true);
+        layerOn.setOnPanel(true);
+        layerOn.setLocked(true);
+
+        PdfLayer childLayer = new PdfLayer("ChildLayer", pdfDocument);
+        childLayer.setOn(false);
+        layerOn.addChild(childLayer);
+
+        // Create a layer that is OFF
+        PdfLayer layerOff = new PdfLayer("LayerOff", pdfDocument);
+        layerOff.setOn(false);
+        layerOff.setOnPanel(false);
+        layerOff.setLocked(true);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Add content to the ON layer
+        canvas.beginLayer(layerOn);
+        canvas.setFillColor(ColorConstants.RED);
+        canvas.rectangle(100, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        // Add content to the OFF layer
+        canvas.beginLayer(layerOff);
+        canvas.setFillColor(ColorConstants.BLUE);
+        canvas.rectangle(350, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        pdfDocument.close();
+
+        // Reopen the document and verify layer states are persisted
+        PdfDocument reopenedDoc = new PdfDocument(new PdfReader(filename));
+
+        Assertions.assertEquals(2, reopenedDoc.getPage(1).getPdfLayers().size());
+
+        // Find the layers by name and verify their states
+        PdfLayer reopenedLayerOn = null;
+        PdfLayer reopenedLayerOff = null;
+
+        for (PdfLayer layer : reopenedDoc.getPage(1).getPdfLayers()) {
+            String layerName = layer.getPdfObject().getAsString(PdfName.Name).getValue();
+            if ("LayerOn".equals(layerName)) {
+                reopenedLayerOn = layer;
+            } else if ("LayerOff".equals(layerName)) {
+                reopenedLayerOff = layer;
+            }
+        }
+
+        Assertions.assertNotNull(reopenedLayerOn, "LayerOn should exist after reopening");
+        Assertions.assertNotNull(reopenedLayerOff, "LayerOff should exist after reopening");
+
+        Assertions.assertTrue(reopenedLayerOn.isOn());
+        Assertions.assertTrue(reopenedLayerOn.isOnPanel());
+        Assertions.assertTrue(reopenedLayerOn.isLocked());
+        Assertions.assertEquals(1, reopenedLayerOn.getChildren().size());
+        Assertions.assertFalse(reopenedLayerOn.getChildren().get(0).isOn());
+
+        Assertions.assertFalse(reopenedLayerOff.isOn());
+        Assertions.assertFalse(reopenedLayerOff.isOnPanel());
+        Assertions.assertTrue(reopenedLayerOff.isLocked());
 
         reopenedDoc.close();
     }
@@ -1007,7 +1081,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         }
     }
 
-    private class CustomPdfReader extends PdfReader {
+    private static class CustomPdfReader extends PdfReader {
 
         public boolean pagesAreRead = false;
 

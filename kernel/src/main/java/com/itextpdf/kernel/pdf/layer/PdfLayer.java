@@ -71,7 +71,13 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      * Creates a new layer by existing dictionary, which must be an indirect object.
      *
      * @param layerDictionary the layer dictionary, must have an indirect reference.
+     *
+     * @deprecated {@link PdfLayer} shall not be created from {@link PdfDictionary},
+     * since some of the properties are not part of that dictionary.
+     * Instead, already existing layers shall be accessed through {@link PdfOCProperties#getLayers()}.
      */
+    // Make package-private on next major release.
+    @Deprecated
     public PdfLayer(PdfDictionary layerDictionary) {
         super(layerDictionary);
         setForbidRelease();

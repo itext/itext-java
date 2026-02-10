@@ -423,14 +423,15 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      * @return set of pdf layers, associated with this page.
      */
     public Set<PdfLayer> getPdfLayers() {
-        Set<PdfIndirectReference> ocgs = OcgPropertiesCopier.getOCGsFromPage(this);
-        Set<PdfLayer> result = new LinkedHashSet<>();
-        for (PdfIndirectReference ocg : ocgs) {
-            if (ocg.getRefersTo() != null && ocg.getRefersTo().isDictionary()) {
-                result.add(new PdfLayer((PdfDictionary) ocg.getRefersTo()));
+        Set<PdfIndirectReference> ocgs = getOCGsFromPage(this);
+        List<PdfLayer> allLayers = getDocument().getCatalog().getOCProperties(false).getLayers();
+        Set<PdfLayer> pageLayers = new HashSet<>();
+        for (PdfLayer layer : allLayers) {
+            if (ocgs.contains(layer.getPdfObject().getIndirectReference())) {
+                pageLayers.add(layer);
             }
         }
-        return result;
+        return pageLayers;
     }
 
     /**
@@ -1635,6 +1636,26 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (tagAdded) {
             tagPointer.moveToParent();
         }
+    }
+
+    /**
+     * Get all OCGs from a given page annotations/xobjects/resources, including ones already stored in catalog
+     *
+     * @param page where to search for OCGs.
+     * @return set of indirect references pointing to found OCGs.
+     */
+    private static Set<PdfIndirectReference> getOCGsFromPage(PdfPage page) {
+        //Using linked hash set for elements order consistency (e.g. in tests)
+        final Set<PdfIndirectReference> ocgs = new LinkedHashSet<>();
+        final List<PdfAnnotation> annotations = page.getAnnotations();
+        for (PdfAnnotation annotation : annotations) {
+            //Pass null instead of catalog OCProperties value, to include ocg clashing with catalog
+            OcgPropertiesCopier.getUsedNonFlushedOCGsFromAnnotation(annotation, annotation, ocgs, null);
+        }
+        final PdfDictionary resources = page.getPdfObject().getAsDictionary(PdfName.Resources);
+        OcgPropertiesCopier.getUsedNonFlushedOCGsFromResources(resources, resources, ocgs,
+                null, new HashSet<>());
+        return ocgs;
     }
 
     private static PdfObject getInheritedValue(PdfPages parentPages, PdfName pdfName) {

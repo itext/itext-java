@@ -31,12 +31,17 @@ import com.itextpdf.kernel.geom.Path;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Subpath;
 import com.itextpdf.kernel.geom.Vector;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.parser.EventType;
 import com.itextpdf.kernel.pdf.canvas.parser.data.IEventData;
 import com.itextpdf.kernel.pdf.canvas.parser.data.PathRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.data.TextRenderInfo;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.IEventListener;
+import com.itextpdf.kernel.pdf.layer.PdfLayer;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -142,7 +147,21 @@ class ColorInfoListener implements IEventListener {
      * skipped
      */
     private boolean checkIfLayerAndNeedsToBeIncluded(PathRenderInfo pathRenderInfo, PdfPage page) {
-        //TODO DEVSIX-9719 if should be implemented when the ticket is fixed
+        for (CanvasTag canvasTag : pathRenderInfo.getCanvasTagHierarchy()) {
+            // Check if it's a layer tag
+            PdfDictionary dict = canvasTag.getProperties();
+            if (dict != null && PdfName.OCG.equals(dict.getAsName(PdfName.Type))) {
+                // We need to check if the layer is visible or not
+                PdfString layerName = dict.getAsString(PdfName.Name);
+                for (PdfLayer pdfLayer : page.getPdfLayers()) {
+                    PdfDictionary layerDict = pdfLayer.getPdfObject();
+                    PdfString layerDictName = layerDict.getAsString(PdfName.Name);
+                    if (layerDictName != null && layerDictName.equals(layerName)) {
+                        return pdfLayer.isOn();
+                    }
+                }
+            }
+        }
         return true;
     }
 

@@ -363,7 +363,6 @@ public class ContrastAnalyzerTest extends ExtendedITextTest {
     }
 
     @Test
-    @Disabled("DEVSIX-9719 should pass without changes after fixing layering issue")
     public void whiteTextOnOrangeBackGroundWithLayerOff() throws IOException {
         PdfDocument dummyDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfPage page = dummyDoc.addNewPage();
