@@ -23,6 +23,7 @@
 package com.itextpdf.forms;
 
 import com.itextpdf.forms.fields.PdfFormCreator;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -693,6 +694,21 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String sourceFileName = sourceFolder + "fieldThreeWidgets.pdf";
         String destFileName = destinationFolder + "widgetContainsNoTEntryTest.pdf";
         String cmpFileName = sourceFolder + "cmp_widgetContainsNoTEntryTest.pdf";
+        PdfDocument sourcePdfDocument = new PdfDocument(new PdfReader(sourceFileName));
+        PdfDocument resultPdfDocument = new PdfDocument(new PdfWriter(destFileName));
+        sourcePdfDocument.copyPagesTo(1, sourcePdfDocument.getNumberOfPages(), resultPdfDocument, new PdfPageFormCopier());
+        resultPdfDocument.close();
+        Assertions.assertNull(new CompareTool().compareByContent(destFileName, cmpFileName, destinationFolder, "diff_"));
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = FormsLogMessageConstants.ANNOTATION_WITHOUT_SUBTYPE_NOT_COPIED, count = 1)
+    })
+    public void copyWithNoSubtypeInAnnotationTest() throws Exception {
+        String sourceFileName = sourceFolder + "copyWithNoSubtypeInAnnotationTest.pdf";
+        String destFileName = destinationFolder + "copyWithNoSubtypeInAnnotationTest.pdf";
+        String cmpFileName = sourceFolder + "cmp_copyWithNoSubtypeInAnnotationTest.pdf";
         PdfDocument sourcePdfDocument = new PdfDocument(new PdfReader(sourceFileName));
         PdfDocument resultPdfDocument = new PdfDocument(new PdfWriter(destFileName));
         sourcePdfDocument.copyPagesTo(1, sourcePdfDocument.getNumberOfPages(), resultPdfDocument, new PdfPageFormCopier());

@@ -103,6 +103,11 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
 
         try {
             for (PdfAnnotation annot : annots) {
+                if (annot.getSubtype() == null) {
+                    logger.warn(MessageFormatUtil.format(FormsLogMessageConstants.ANNOTATION_WITHOUT_SUBTYPE_NOT_COPIED,
+                            annot.getPdfObject().getIndirectReference()));
+                    continue;
+                }
                 if (!annot.getSubtype().equals(PdfName.Widget)) {
                     continue;
                 }
