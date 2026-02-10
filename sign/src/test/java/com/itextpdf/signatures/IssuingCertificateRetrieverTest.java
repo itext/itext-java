@@ -62,7 +62,7 @@ class IssuingCertificateRetrieverTest extends ExtendedITextTest {
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     @Test
-    @Timeout(value = 10, unit = TimeUnit.SECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
+    @Timeout(value = 10000, unit = TimeUnit.MILLISECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
     public void infiniteloopTest()
             throws CertificateException, IOException {
         IssuingCertificateRetriever issuingCertificateRetriever =
