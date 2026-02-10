@@ -103,49 +103,27 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
      */
     @Override
     public Certificate[] retrieveMissingCertificates(Certificate[] chain) {
-        List<Certificate> fullChain = new ArrayList<>();
-        X509Certificate signingCertificate = (X509Certificate) chain[0];
-        fullChain.add(signingCertificate);
+        List<List<X509Certificate>> chains = buildCertificateChainsList(Arrays.stream(chain).map(
+                c-> (X509Certificate)c )
+                .toArray(i-> new X509Certificate[i]));
 
-        int i = 1;
-        X509Certificate lastAddedCert = signingCertificate;
-        while (!CertificateUtil.isSelfSigned(lastAddedCert)) {
-            // Check if there are any missing certificates with isSignedByNext
-            if (i < chain.length &&
-                    CertificateUtil.isIssuerCertificate(lastAddedCert, (X509Certificate) chain[i])) {
-                fullChain.add(chain[i]);
-                i++;
-            } else {
-                // Get missing certificates using AIA Extensions
-                String url = CertificateUtil.getIssuerCertURL(lastAddedCert);
-                Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
-                if (certificatesFromAIA != null) {
-                    addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
-                }
-                // Retrieve Issuer from the certificate store
-                Certificate issuer = getIssuerFromCertificateSet(lastAddedCert, trustedCertificatesStore
-                        .getKnownCertificates(lastAddedCert.getIssuerX500Principal().getName()));
-                if (issuer == null || !isSignedBy(lastAddedCert, issuer)) {
-                    issuer = getIssuerFromCertificateSet(lastAddedCert, knownCertificates.get(
-                            lastAddedCert.getIssuerX500Principal().getName()));
-                    if (issuer == null) {
-                        // Unable to retrieve missing certificates
-                        while (i < chain.length) {
-                            fullChain.add(chain[i]);
-                            i++;
-                        }
-                        return fullChain.toArray(new Certificate[0]);
-                    }
-                }
-                if (fullChain.contains(issuer)) {
-                    return fullChain.toArray(new Certificate[0]);
-                }
-                fullChain.add(issuer);
+        List<X509Certificate> result = new ArrayList<X509Certificate>();
+        chains.forEach( (List<X509Certificate> subChain) -> {
+                Collections.reverse(subChain);
+                subChain.forEach((X509Certificate c) -> {
+                            if (!result.contains(c)) {
+                                result.add(c);
+                            }
+                        });
             }
-            lastAddedCert = (X509Certificate) fullChain.get(fullChain.size() - 1);
+        );
+        // We want to add all the originally provided certificates, even if there is no path to them
+        for (Certificate c : chain) {
+            if (!result.contains(c)) {
+                result.add((X509Certificate)c);
+            }
         }
-
-        return fullChain.toArray(new Certificate[0]);
+        return result.stream().toArray(i-> new X509Certificate[i]);
     }
 
     /**
@@ -203,8 +181,9 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
     }
 
     private List<List<X509Certificate>> buildCertificateChainsList(X509Certificate[] certificates) {
+        addKnownCertificates(Arrays.asList(certificates));
         List<List<X509Certificate>> allChains =
-                new ArrayList<>(buildCertificateChainsList(certificates[certificates.length - 1], null));
+                new ArrayList<>(buildCertificateChainsList(certificates[0], null, null));
         for (List<X509Certificate> issuerChain : allChains) {
             for (int i = certificates.length - 2; i >= 0; --i) {
                 issuerChain.add(certificates[i]);
@@ -214,12 +193,18 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
     }
 
     private List<List<X509Certificate>> buildCertificateChainsList(X509Certificate certificate,
-            HashSet<X509Certificate> prevProcessed) {
+            HashSet<X509Certificate> prevProcessed, HashSet<String> prevProcessedUrls) {
         HashSet<X509Certificate> processed;
         if (prevProcessed == null) {
             processed = new HashSet<X509Certificate>();
         } else {
             processed = prevProcessed;
+        }
+        HashSet<String> processedUrls;
+        if (prevProcessedUrls == null) {
+            processedUrls = new HashSet<String>();
+        } else {
+            processedUrls = prevProcessedUrls;
         }
         if (!processed.add(certificate)) {
             //certificate is already being processed
@@ -237,9 +222,11 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         List<List<X509Certificate>> allChains = new ArrayList<>();
         // Get missing certificates using AIA Extensions
         String url = CertificateUtil.getIssuerCertURL(certificate);
-        Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
-        if (certificatesFromAIA != null) {
-            addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
+        if (processedUrls.add(url)) {
+            Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
+            if (certificatesFromAIA != null) {
+                addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
+            }
         }
         Set<Certificate> possibleIssuers = trustedCertificatesStore
                 .getKnownCertificates(certificate.getIssuerX500Principal().getName());
@@ -256,7 +243,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         }
         for (Certificate possibleIssuer : possibleIssuers) {
             List<List<X509Certificate>> issuerChains =
-                    buildCertificateChainsList((X509Certificate) possibleIssuer, processed);
+                    buildCertificateChainsList((X509Certificate) possibleIssuer, processed, processedUrls);
             for (List<X509Certificate> issuerChain : issuerChains) {
                 issuerChain.add(certificate);
                 allChains.add(issuerChain);

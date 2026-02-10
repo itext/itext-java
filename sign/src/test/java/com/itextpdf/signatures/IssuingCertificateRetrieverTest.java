@@ -89,6 +89,46 @@ class IssuingCertificateRetrieverTest extends ExtendedITextTest {
 
 
     @Test
+    @Timeout(value = 10000, unit = TimeUnit.MILLISECONDS, threadMode = ThreadMode.SEPARATE_THREAD)
+    public void certificateWithMultipleRootsTest()
+            throws CertificateException, IOException {
+        IssuingCertificateRetriever issuingCertificateRetriever =
+                new IssuingCertificateRetriever();
+        Certificate[] intialChain = PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/sign.cert.pem");
+        List<Certificate> certificates = new ArrayList<Certificate>();
+        certificates.add(PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca1.cert.pem")[0]);
+        certificates.add(PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca2a.cert.pem")[0]);
+        certificates.add(PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca2b.cert.pem")[0]);
+        certificates.add(PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca3a.cert.pem")[0]);
+        certificates.add(PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca3b.cert.pem")[0]);
+        certificates.add(PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca4.cert.pem")[0]);
+        certificates.add(PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/ca5.cert.pem")[0]);
+        certificates.add(PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/r1.cert.pem")[0]);
+        certificates.add(PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/r2.cert.pem")[0]);
+        issuingCertificateRetriever.addKnownCertificates(certificates);
+
+        Certificate[] result = issuingCertificateRetriever.retrieveMissingCertificates(intialChain);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals( 9, result.length);
+        Assertions.assertTrue(Arrays.stream(result).anyMatch(c-> ((X509Certificate)c).getSubjectX500Principal().getName().contains("CN=iTextTestSign")));
+        Assertions.assertTrue(Arrays.stream(result).anyMatch(c-> ((X509Certificate)c).getSubjectX500Principal().getName().contains("CN=iTextTestIntermediate1")));
+        Assertions.assertTrue(Arrays.stream(result).anyMatch(c->
+            ((X509Certificate)c).getSubjectX500Principal().getName().contains("CN=iTextTestIntermediate2")
+            && ((X509Certificate)c).getIssuerX500Principal().getName().contains("CN=iTextTestIntermediate5") ));
+        Assertions.assertTrue(Arrays.stream(result).anyMatch(c->
+            ((X509Certificate)c).getSubjectX500Principal().getName().contains("CN=iTextTestIntermediate2")
+            && ((X509Certificate)c).getIssuerX500Principal().getName().contains("CN=iTextTestIntermediate3") ));
+        Assertions.assertTrue(Arrays.stream(result).anyMatch(c->
+                ((X509Certificate)c).getSubjectX500Principal().getName().contains("CN=iTextTestIntermediate3")
+                && ((X509Certificate)c).getIssuerX500Principal().getName().contains("CN=iTextTestIntermediate4")));
+        Assertions.assertTrue(Arrays.stream(result).anyMatch(c-> ((X509Certificate)c).getSubjectX500Principal().getName().contains("CN=iTextTestIntermediate4")));
+        Assertions.assertTrue(Arrays.stream(result).anyMatch(c-> ((X509Certificate)c).getSubjectX500Principal().getName().contains("CN=iTextTestIntermediate5")));
+        Assertions.assertTrue(Arrays.stream(result).anyMatch(c-> ((X509Certificate)c).getSubjectX500Principal().getName().contains("CN=iTextTestRoot1")));
+        Assertions.assertTrue(Arrays.stream(result).anyMatch(c-> ((X509Certificate)c).getSubjectX500Principal().getName().contains("CN=iTextTestRoot2")));
+    }
+
+
+    @Test
     public void testResourceRetrieverUsage() throws CertificateException, IOException {
 
         Certificate[] cert = PemFileHelper.readFirstChain(CERTS_SRC + "intermediate.pem");

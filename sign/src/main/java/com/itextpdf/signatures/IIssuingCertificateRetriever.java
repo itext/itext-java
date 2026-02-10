@@ -32,12 +32,13 @@ import java.util.Collection;
  */
 public interface IIssuingCertificateRetriever {
     /**
-     * Retrieves missing certificates in chain using certificate Authority Information Access (AIA) Extension.
+     * Retrieves all possible chains using certificate Authority Information Access (AIA) Extension, known certificates
+     * and trust anchors.
      *
      * @param chain certificate chain to restore with at least signing certificate.
      *
-     * @return full chain of trust or maximum chain that could be restored in case missing certificates cannot be
-     * retrieved from AIA extension.
+     * @return all possible chains of trust or maximum chains that could be restored in case missing certificates cannot
+     * be retrieved from AIA extension, known certificates and trust anchors.
      */
     Certificate[] retrieveMissingCertificates(Certificate[] chain);
 
