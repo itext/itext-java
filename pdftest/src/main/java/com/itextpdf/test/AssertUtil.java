@@ -24,6 +24,7 @@ package com.itextpdf.test;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 
@@ -66,28 +67,53 @@ public class AssertUtil {
         }
     }
 
-
     /**
-     * Assert that the assertion passed within the timeout.
+     * Assert that the assertion passed within the timeout
      *
-     * @param assertion Callback to the actuals asserts to be safeguarded.
-     * @param timeout The maximum tilme it can take before passing the assertions.
-     * @throws Exception Any exception thrown by the assertion callback.
+     * @param assertion callback to the actual asserts to be safeguarded
+     * @param timeout the maximum time it can take before passing the assertions
+     *
+     * @throws Exception any exception thrown by the assertion callback
      */
     public static void assertPassedWithinTimeout(ThrowingRunnable assertion, Duration timeout) throws Exception {
         assertPassedWithinTimeout(assertion, timeout, Duration.ZERO);
     }
 
     /**
-     * Assert that the assertion passed within the timeout.
+     * Assert that the assertion passed within the timeout
      *
-     * @param assertion Callback to the actuals asserts to be safeguarded.
-     * @param timeout The maximum tilme it can take before passing the assertions.
-     * @param sleepTime The time to sleep between polls.
-     * @throws Exception Any exception thrown by the assertion callback.
+     * @param assertion callback to the actual asserts to be safeguarded
+     * @param timeout the maximum time it can take before passing the assertions
+     * @param sleepTime the time to sleep between polls
+     *
+     * @throws Exception any exception thrown by the assertion callback
      */
-    public static void assertPassedWithinTimeout(ThrowingRunnable assertion, Duration timeout, Duration sleepTime) throws Exception {
-        long sleepTimeInMillis = sleepTime.toMillis();
+    public static void assertPassedWithinTimeout(ThrowingRunnable assertion,
+            Duration timeout, Duration sleepTime) throws Exception {
+        assertPassedWithinTimeout(assertion, timeout, () -> sleepTime.toMillis());
+    }
+
+    /**
+     * Assert that the assertion passed within the random timeout.
+     *
+     * <p>
+     * This method may be useful when your tests fetch some stateful resources concurrently. It allows to de-synchronize
+     * access from different clients. It's exponential backoff with jitter but without 'exponential' part. Because
+     * it does not really care if tests become longer, the main goal is to pass the tests.
+     *
+     * @param assertion callback to the actual asserts to be safeguarded
+     * @param timeout the maximum time it can take before passing the assertions
+     * @param maxSleepTime the maximum time to sleep between polls
+     *
+     * @throws Exception any exception thrown by the assertion callback
+     */
+    public static void assertPassedWithinRandomTimeout(ThrowingRunnable assertion,
+            Duration timeout, Duration maxSleepTime) throws Exception {
+        assertPassedWithinTimeout(assertion, timeout, () -> Math.round(maxSleepTime.toMillis() * Math.random()));
+    }
+
+    private static void assertPassedWithinTimeout(ThrowingRunnable assertion,
+            Duration timeout, Supplier<Long> timeoutCalc) throws Exception {
         Instant start = Instant.now();
         boolean passed = false;
         while (!passed) {
@@ -100,8 +126,8 @@ public class AssertUtil {
                     throw e;
                 }
                 // If sleepTimeInMillis is 0 then the thread will attempt to yield
-                Thread.sleep(sleepTimeInMillis);
-                //ignore assertion failure if timeout not spent.
+                Thread.sleep(timeoutCalc.get());
+                // Ignore assertion failure if timeout has not passed
             }
         }
     }
