@@ -84,7 +84,6 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.pdfa.PdfADefaultFontStrategy;
 import com.itextpdf.pdfa.PdfADocument;
-import com.itextpdf.pdfa.PdfADocumentInfoHelper;
 import com.itextpdf.pdfa.PdfAPageFactory;
 import com.itextpdf.pdfa.checker.PdfAChecker;
 import com.itextpdf.signatures.cms.AlgorithmIdentifier;
@@ -263,7 +262,7 @@ public class PdfSigner {
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties properties)
             throws IOException {
         StampingProperties localProps = new StampingProperties(properties).preserveEncryption();
-        localProps.registerDependency(IMacContainerLocator.class, new SignatureMacContainerLocator());
+        localProps.registerDependency(IMacContainerLocator.class, () -> new SignatureMacContainerLocator());
         if (path == null) {
             this.temporaryOS = new ByteArrayOutputStream();
             this.document = initDocument(reader, new PdfWriter(temporaryOS), localProps);
@@ -1595,7 +1594,7 @@ public class PdfSigner {
 
         public void apply(ISignatureDataProvider signatureDataProvider) throws IOException, GeneralSecurityException {
             StampingProperties properties = new StampingProperties().preserveEncryption();
-            properties.registerDependency(IMacContainerLocator.class, new SignatureMacContainerLocator());
+            properties.registerDependency(IMacContainerLocator.class, () -> new SignatureMacContainerLocator());
             // This IdleOutputStream writer does nothing and only required to be able to apply MAC if needed.
             try (PdfWriter dummyWriter = new PdfWriter(new IdleOutputStream())) {
                 if (document == null) {

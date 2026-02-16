@@ -235,6 +235,7 @@ public final class KernelExceptionMessageConstant {
     public static final String INPUT_NOT_MULTIPLE_OF_RANGE_SIZE = "The size of the input array must be a multiple of "
             + "the range size";
     public static final String INSTANCE_SHOULD_NOT_BE_NULL = "Instance should not be null";
+    public static final String INSTANCE_SUPPLIER_SHOULD_NOT_BE_NULL = "Instance supplier should not be null";
     public static final String INVALID_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "Invalid cross reference entry "
             + "in this xref subsection.";
     public static final String INVALID_DATA_LENGTH = "Invalid data length, expected length = {0}, actual length = {1}";

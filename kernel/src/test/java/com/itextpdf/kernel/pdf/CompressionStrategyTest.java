@@ -134,7 +134,7 @@ public class CompressionStrategyTest extends ExtendedITextTest {
     public void addStreamCompressionStampingModeTest(IStreamCompressionStrategy strategy, String compressionName) throws IOException {
         String resultPath = DESTINATION_FOLDER + "stamped" + compressionName + "Streams.pdf";
         StampingProperties props = new StampingProperties();
-        props.registerDependency(IStreamCompressionStrategy.class, strategy);
+        props.registerDependency(IStreamCompressionStrategy.class, () -> strategy);
         int streamCount = 3;
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + compressionName + "ContentStream.pdf"),
                 new PdfWriter(resultPath), props)) {
@@ -171,7 +171,7 @@ public class CompressionStrategyTest extends ExtendedITextTest {
     public void twoFiltersInSingleStreamTest(IStreamCompressionStrategy firstStrategy, IStreamCompressionStrategy secondStrategy, String testName) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         StampingProperties props = new StampingProperties();
-        props.registerDependency(IStreamCompressionStrategy.class, firstStrategy);
+        props.registerDependency(IStreamCompressionStrategy.class, () -> firstStrategy);
 
         try (PdfDocument pdfDoc = new PdfDocument(
                 new PdfWriter(baos), props)) {
@@ -275,7 +275,7 @@ public class CompressionStrategyTest extends ExtendedITextTest {
     ) {
         DocumentProperties docProps = new DocumentProperties();
         if (strategy != null) {
-            docProps.registerDependency(IStreamCompressionStrategy.class, strategy);
+            docProps.registerDependency(IStreamCompressionStrategy.class, () -> strategy);
         }
         WriterProperties writerProps = new WriterProperties()
                 .setCompressionLevel(compressionLevel);

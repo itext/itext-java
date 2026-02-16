@@ -357,7 +357,7 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
 
         StampingProperties stampingProperties = new StampingProperties();
         stampingProperties.registerDependency(IMacContainerLocator.class,
-                new StandaloneMacContainerLocator() {
+                () -> new StandaloneMacContainerLocator() {
                     @Override
                     public void handleMacValidationError(MacValidationException exception) {
                         // do nothing
@@ -381,7 +381,7 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
 
         StampingProperties stampingProperties = new StampingProperties();
         stampingProperties.registerDependency(IMacContainerLocator.class,
-                new StandaloneMacContainerLocator() {
+                () -> new StandaloneMacContainerLocator() {
                     @Override
                     public void handleMacValidationError(MacValidationException exception) {
                         // do nothing
@@ -389,7 +389,7 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
                 });
         try (PdfDocument pdfDoc = new PdfDocument(
                 new PdfReader(SOURCE_FOLDER + "thirdPartyMacProtectedDocumentTampered.pdf",
-                new ReaderProperties().setPassword(PASSWORD)),
+                        new ReaderProperties().setPassword(PASSWORD)),
                 CompareTool.createTestPdfWriter(outputFileName), stampingProperties)) {
         }
 

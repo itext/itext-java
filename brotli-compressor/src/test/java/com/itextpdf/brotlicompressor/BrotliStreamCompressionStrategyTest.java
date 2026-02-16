@@ -182,7 +182,7 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
     public void addBrotliStreamsToFlateStampingModeTest() throws IOException {
         String resultPath = DESTINATION_FOLDER + "stampedBrotliStreams.pdf";
         StampingProperties props = new StampingProperties();
-        props.registerDependency(IStreamCompressionStrategy.class, new BrotliStreamCompressionStrategy());
+        props.registerDependency(IStreamCompressionStrategy.class, BrotliStreamCompressionStrategy::new);
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "flateBase.pdf"),
                 new PdfWriter(resultPath), props)) {
@@ -221,7 +221,7 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
     public void addBrotliStreamsStampingModeTest() throws IOException {
         String resultPath = DESTINATION_FOLDER + "stampedBrotliStreams2.pdf";
         StampingProperties props = new StampingProperties();
-        props.registerDependency(IStreamCompressionStrategy.class, new BrotliStreamCompressionStrategy());
+        props.registerDependency(IStreamCompressionStrategy.class, BrotliStreamCompressionStrategy::new);
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "brotliBase.pdf"),
                 new PdfWriter(resultPath), props)) {
@@ -254,7 +254,7 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
     public void replaceFlateContentStreamWithBrotliTest() throws IOException {
         String resultPath = DESTINATION_FOLDER + "replacedContentStream.pdf";
         StampingProperties props = new StampingProperties();
-        props.registerDependency(IStreamCompressionStrategy.class, new BrotliStreamCompressionStrategy());
+        props.registerDependency(IStreamCompressionStrategy.class, BrotliStreamCompressionStrategy::new);
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "flateBase.pdf"),
                 new PdfWriter(resultPath), props)) {
@@ -280,7 +280,7 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
     public void readAndDecodeStreamsTest() throws IOException {
         String sourcePdf = SOURCE_FOLDER + "mixedStreamFiltersDocument.pdf";
         StampingProperties props = new StampingProperties();
-        props.registerDependency(IStreamCompressionStrategy.class, new BrotliStreamCompressionStrategy());
+        props.registerDependency(IStreamCompressionStrategy.class, BrotliStreamCompressionStrategy::new);
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourcePdf))) {
             int numberOfPages = pdfDoc.getNumberOfPages();
@@ -348,7 +348,7 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
         byte[] contentBytes = "The quick brown fox jumps over the lazy dog.".getBytes(StandardCharsets.UTF_8);
 
         DocumentProperties props = new DocumentProperties();
-        props.registerDependency(IStreamCompressionStrategy.class, new BrotliStreamCompressionStrategy());
+        props.registerDependency(IStreamCompressionStrategy.class, BrotliStreamCompressionStrategy::new);
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(resultPath), props)) {
             PdfPage page = pdfDoc.addNewPage();
@@ -658,9 +658,7 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
         }
 
         StampingProperties props = new StampingProperties().useAppendMode();
-        props.registerDependency(
-                IStreamCompressionStrategy.class,
-                new BrotliStreamCompressionStrategy());
+        props.registerDependency(IStreamCompressionStrategy.class, BrotliStreamCompressionStrategy::new);
 
         PdfSigner signer = new PdfSigner(
                 new PdfReader(unsigned),
@@ -887,7 +885,7 @@ public class BrotliStreamCompressionStrategyTest extends ExtendedITextTest {
 
     private DocumentProperties createBrotliProperties() {
         DocumentProperties props = new DocumentProperties();
-        props.registerDependency(IStreamCompressionStrategy.class, new BrotliStreamCompressionStrategy());
+        props.registerDependency(IStreamCompressionStrategy.class, BrotliStreamCompressionStrategy::new);
         return props;
     }
 

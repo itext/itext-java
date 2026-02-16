@@ -2080,8 +2080,8 @@ public class PdfDocument implements Closeable {
      */
     protected void open(PdfVersion newPdfVersion) {
         if (properties != null) {
-            for (Class<?> aClass : properties.dependencies.keySet()) {
-                diContainer.register(aClass, properties.dependencies.get(aClass));
+            for (Class<?> aClass : properties.getRegisteredDependenciesClasses()) {
+                diContainer.register(aClass, properties.getDependencySupplier(aClass).get());
             }
         }
         this.fingerPrint = new FingerPrint();

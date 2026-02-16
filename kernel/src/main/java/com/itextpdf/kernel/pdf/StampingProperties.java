@@ -51,7 +51,6 @@ public class StampingProperties extends DocumentProperties {
         this.appendMode = other.appendMode;
         this.preserveEncryption = other.preserveEncryption;
         this.disableMac = other.disableMac;
-        this.dependencies = other.dependencies;
     }
 
     /**
@@ -61,7 +60,6 @@ public class StampingProperties extends DocumentProperties {
      */
     StampingProperties(DocumentProperties documentProperties) {
         super(documentProperties);
-        this.dependencies = documentProperties.dependencies;
     }
 
     /**
