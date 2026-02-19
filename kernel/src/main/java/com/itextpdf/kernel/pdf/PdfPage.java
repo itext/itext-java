@@ -1337,16 +1337,25 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         pageRotationInverseMatrixWritten = true;
     }
 
-    private boolean isPdfUA2Document() {
+    private boolean isPdfUA2OrWellTaggedDocument() {
         PdfUAConformance uaConformance = getDocument().getConformance().getUAConformance();
-        if (uaConformance == null) {
+        WellTaggedPdfConformance wtpdfConformance = getDocument().getConformance().getWtpdfConformance();
+        PdfConformance parsedConformance;
+        if (uaConformance == null || wtpdfConformance == null) {
             try {
-                uaConformance = PdfConformance.getConformance(getDocument().getXmpMetadata()).getUAConformance();
+                parsedConformance = PdfConformance.getConformance(getDocument().getXmpMetadata());
             } catch (XMPException e) {
                 return false;
             }
+            if (uaConformance == null) {
+                uaConformance = parsedConformance.getUAConformance();
+            }
+            if (wtpdfConformance == null) {
+                wtpdfConformance = parsedConformance.getWtpdfConformance();
+            }
         }
-        return PdfUAConformance.PDF_UA_2 == uaConformance;
+        return PdfUAConformance.PDF_UA_2 == uaConformance ||
+                WellTaggedPdfConformance.FOR_ACCESSIBILITY == wtpdfConformance;
     }
 
     private void checkIsoConformanceForAnnotation(PdfAnnotation annotation) {
@@ -1612,9 +1621,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     private void tagAnnotation(PdfAnnotation annotation) {
         boolean tagAdded = false;
         boolean presentInTagStructure = true;
-        boolean isUA2 = isPdfUA2Document();
+        boolean isUA2OrWellTagged = isPdfUA2OrWellTaggedDocument();
         TagTreePointer tagPointer = getDocument().getTagStructureContext().getAutoTaggingPointer();
-        if (isUA2 && isAnnotInvisible(annotation)) {
+        if (isUA2OrWellTagged && isAnnotInvisible(annotation)) {
             if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
                 if (!StandardRoles.ARTIFACT.equals(tagPointer.getRole())) {
                     tagPointer.addTag(StandardRoles.ARTIFACT);

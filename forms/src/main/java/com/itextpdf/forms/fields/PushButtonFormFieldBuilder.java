@@ -81,7 +81,7 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
         } else {
             annotation = new PdfWidgetAnnotation(getWidgetRectangle());
             field = PdfFormCreator.createButtonFormField(annotation, getDocument());
-            if (null != getConformance() && getConformance().isPdfAOrUa()) {
+            if (null != getConformance() && getConformance().isPdfAOrUaOrWtpdf()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
         }

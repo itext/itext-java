@@ -52,7 +52,7 @@ public class SignatureFormFieldBuilder extends TerminalFormFieldBuilder<Signatur
             signatureFormField = PdfFormCreator.createSignatureFormField(getDocument());
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
-            if (getConformance() != null && getConformance().isPdfAOrUa()) {
+            if (getConformance() != null && getConformance().isPdfAOrUaOrWtpdf()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
             signatureFormField = PdfFormCreator.createSignatureFormField(annotation, getDocument());

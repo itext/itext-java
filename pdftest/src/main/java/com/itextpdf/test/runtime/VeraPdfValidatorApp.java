@@ -151,7 +151,7 @@ public class VeraPdfValidatorApp {
 
     private void runCli(String pathB64) {
         //Don't log anything, as the output is parsed by the caller
-        VeraPdfValidator validator = new VeraPdfValidator();
+        VeraPdfValidator validator = new VeraPdfValidator(args.length >= 3 ? args[2] : null);
         validator.setLogToConsole(false);
         String decodedPath = new String(Base64.getDecoder().decode(pathB64), StandardCharsets.UTF_8);
         String result = validator.validate(decodedPath);
@@ -172,7 +172,7 @@ public class VeraPdfValidatorApp {
         void write(String message);
     }
 
-    static class VerifyHandler implements HttpHandler {
+    class VerifyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             final String paramPath = "pathB64";
@@ -189,10 +189,10 @@ public class VeraPdfValidatorApp {
             }
 
             String decodedPath = new String(Base64.getDecoder().decode(params.get(paramPath)), StandardCharsets.UTF_8);
-            VeraPdfValidator validator = new VeraPdfValidator();
+            VeraPdfValidator validator = new VeraPdfValidator(args.length >= 3 ? args[2] : null);
             String result = validator.validate(decodedPath);
             // If the result is null, the validation is ok, but we need to return an empty response and null is
-            // not a valid response for the HTTP server so we return no body.
+            // not a valid response for the HTTP server, so we return no body.
             if (result != null) {
                 byte[] responseB64 = Base64.getEncoder().encode(result.getBytes(StandardCharsets.UTF_8));
                 exchange.sendResponseHeaders(200, responseB64.length);

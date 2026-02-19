@@ -33,20 +33,8 @@ import com.itextpdf.pdfua.checkers.PdfUAChecker;
 /**
  * The class implements PDF page factory which is used for creating correct PDF/UA documents.
  */
-class PdfUAPageFactory implements IPdfPageFactory {
+public class PdfUAPageFactory implements IPdfPageFactory {
     private final PdfUAChecker checker;
-
-    /**
-     * Instantiates a new {@link PdfUAPageFactory} instance based on {@link PdfUA1Checker}.
-     *
-     * @param checker the PDF/UA checker
-     *
-     * @deprecated in favour of {@link #PdfUAPageFactory(PdfUAChecker)}
-     */
-    @Deprecated
-    public PdfUAPageFactory(PdfUA1Checker checker) {
-        this.checker = checker;
-    }
 
     /**
      * Instantiates a new {@link PdfUAPageFactory} instance based on {@link PdfUAChecker}.

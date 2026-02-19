@@ -98,21 +98,6 @@ public class UaValidationTestFramework {
         }
     }
 
-    public void assertITextValid(String fileName, PdfUAConformance pdfUAConformance) {
-        Exception e = checkErrorLayout("itext_" + fileName + getUAConformance(pdfUAConformance) + ".pdf",
-                pdfUAConformance);
-        if (e == null) {
-            return;
-        }
-        String sb = "No exception expected but was: "
-                + e.getClass().getName() + " \n"
-                + "Message: \n"
-                + e.getMessage() + '\n'
-                + "StackTrace:\n" + printStackTrace(e)
-                + '\n';
-        Assertions.fail(sb);
-    }
-
     public void assertBothValid(String fileName, PdfUAConformance pdfUAConformance) throws IOException {
         Exception e = checkErrorLayout("itext_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
         String veraPdf = veraPdfResult("vera_" + fileName + getUAConformance(pdfUAConformance) + ".pdf", false, pdfUAConformance);
@@ -153,10 +138,6 @@ public class UaValidationTestFramework {
         this.afterGeneratorHook.add(action);
     }
 
-    public void assertVeraPdfFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
-        veraPdfResult("vera_" + filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
-    }
-
     public void assertOnlyVeraPdfFail(String filename, PdfUAConformance pdfUAConformance) throws IOException {
         veraPdfResult("vera_" + filename + getUAConformance(pdfUAConformance) + ".pdf", true, pdfUAConformance);
         Exception e = checkErrorLayout("itext_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance);
@@ -174,6 +155,35 @@ public class UaValidationTestFramework {
     public void assertOnlyITextFail(String filename, String expectedMsg, PdfUAConformance pdfUAConformance) throws IOException {
         checkError(checkErrorLayout("itext_" + filename + getUAConformance(pdfUAConformance) + ".pdf", pdfUAConformance), expectedMsg);
         assertVeraPdfValid(filename, pdfUAConformance);
+    }
+
+    // Android-Conversion-Skip-Block-Start (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+    protected VeraPdfValidator getVerapdfValidator() {
+        return new VeraPdfValidator();
+    }
+    // Android-Conversion-Skip-Block-End
+
+    protected PdfDocument createPdfDocument(String filename, PdfUAConformance pdfUAConformance) throws IOException {
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            return new PdfUATestPdfDocument(new PdfWriter(filename));
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            return new PdfUA2TestPdfDocument(new PdfWriter(filename, new WriterProperties().setPdfVersion(
+                    PdfVersion.PDF_2_0)));
+        } else {
+            throw new IllegalArgumentException("Unsupported PdfUAConformance: " + pdfUAConformance);
+        }
+    }
+
+    protected PdfDocument createPdfDocument(String inputFile, String outputFile, PdfUAConformance pdfUAConformance)
+            throws IOException {
+        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            return new PdfUATestPdfDocument(new PdfReader(inputFile), new PdfWriter(outputFile));
+        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            return new PdfUA2TestPdfDocument(new PdfReader(inputFile),
+                    new PdfWriter(outputFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        } else {
+            throw new IllegalArgumentException("Unsupported PdfUAConformance: " + pdfUAConformance);
+        }
     }
 
     private String veraPdfResult(String filename, boolean failureExpected, PdfUAConformance pdfUAConformance)
@@ -194,7 +204,7 @@ public class UaValidationTestFramework {
                 pdfDocumentConsumer.accept(pdfDoc);
             }
         }
-        VeraPdfValidator validator = new VeraPdfValidator();// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        VeraPdfValidator validator = getVerapdfValidator();// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
         String validate = null;
         if (failureExpected) {
             validator.validateFailure(destinationFolder + filename); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
@@ -256,30 +266,7 @@ public class UaValidationTestFramework {
         return e.toString();
     }
 
-    private static PdfDocument createPdfDocument(String filename, PdfUAConformance pdfUAConformance) throws IOException {
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            return new PdfUATestPdfDocument(new PdfWriter(filename));
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            return new PdfUA2TestPdfDocument(new PdfWriter(filename, new WriterProperties().setPdfVersion(
-                    PdfVersion.PDF_2_0)));
-        } else {
-            throw new IllegalArgumentException("Unsupported PdfUAConformance: " + pdfUAConformance);
-        }
-    }
-
-    private static PdfDocument createPdfDocument(String inputFile, String outputFile, PdfUAConformance pdfUAConformance)
-            throws IOException {
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            return new PdfUATestPdfDocument(new PdfReader(inputFile), new PdfWriter(outputFile));
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            return new PdfUA2TestPdfDocument(new PdfReader(inputFile),
-                    new PdfWriter(outputFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
-        } else {
-            throw new IllegalArgumentException("Unsupported PdfUAConformance: " + pdfUAConformance);
-        }
-    }
-
-    public static interface Generator<IBlockElement> {
+    public interface Generator<IBlockElement> {
         IBlockElement generate();
     }
 

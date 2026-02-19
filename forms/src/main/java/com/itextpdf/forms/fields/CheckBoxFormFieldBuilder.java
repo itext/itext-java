@@ -78,7 +78,7 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
             annotation.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
-            if (getConformance() != null && getConformance().isPdfAOrUa()) {
+            if (getConformance() != null && getConformance().isPdfAOrUaOrWtpdf()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
             check = PdfFormCreator.createButtonFormField(annotation, getDocument());

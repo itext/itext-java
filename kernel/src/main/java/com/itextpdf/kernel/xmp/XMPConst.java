@@ -95,6 +95,10 @@ public interface XMPConst
     /** */
     String NS_PDFUA_ID = "http://www.aiim.org/pdfua/ns/id/";
 	/** */
+	String NS_WTPDF_ACCESSIBILITY_ID = "http://pdfa.org/declarations/wtpdf#accessibility1.0";
+	/** */
+	String NS_DECLARATIONS = "http://pdfa.org/declarations/";
+	/** */
 	String NS_PDFA_EXTENSION = "http://www.aiim.org/pdfa/ns/extension/";
 	/** The XML namespace for the Photoshop custom schema. */
 	String NS_PHOTOSHOP = "http://ns.adobe.com/photoshop/1.0/";
@@ -206,7 +210,8 @@ public interface XMPConst
 	/** XMP meta tag version old */
 	String TAG_XAPMETA = "xapmeta";
 
-
+	String DECLARATIONS = "pdfd:declarations";
+	String CONFORMS_TO = "pdfd:conformsTo";
 	/**
      * Part, 1, 2, or 3
      */

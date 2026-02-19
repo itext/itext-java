@@ -89,7 +89,7 @@ public final class PdfUAExceptionMessageConstants {
             + "levels.";
     public static final String IMAGE_SHALL_HAVE_ALT = "Figure tags shall include an alternative representation or "
             + "replacement text. call com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setActualText or com"
-            + ".itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setAlternateDescription to be PDF/UA compliant.";
+            + ".itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setAlternateDescription to be compliant.";
     public static final String INCORRECT_NOTE_TYPE_VALUE
             = "The value of the NoteType attribute shall be either \"Footnote\", \"Endnote\" or \"None\".";
     public static final String INVALID_PDF_VERSION
@@ -222,7 +222,8 @@ public final class PdfUAExceptionMessageConstants {
             "FormField#setAlternativeDescription(\"Your contents description\").";
     public static final String WIDGET_WITH_ZERO_HEIGHT_SHALL_BE_AN_ARTIFACT = "Widget annotation of zero height " +
             "and width shall be an artifact.";
-    public static final String XFA_FORMS_SHALL_NOT_BE_PRESENT = "XFA forms shall not be present in PDF/UA-2 document.";
+    public static final String XFA_FORMS_SHALL_NOT_BE_PRESENT =
+            "XFA forms shall not be present in a compliant document.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor.

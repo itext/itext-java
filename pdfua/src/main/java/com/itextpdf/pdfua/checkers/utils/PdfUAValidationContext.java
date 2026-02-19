@@ -144,6 +144,11 @@ public class PdfUAValidationContext {
      * @return {@link PdfUAConformance} value
      */
     public PdfUAConformance getUAConformance() {
-        return this.pdfDocument.getConformance().getUAConformance();
+        PdfUAConformance uaConformance = this.pdfDocument.getConformance().getUAConformance();
+        if (uaConformance == null) {
+            // In case of WTPDF being set, checkers should behave as if UA-2 is set.
+            return this.pdfDocument.getConformance().getWtpdfConformance() == null ? null : PdfUAConformance.PDF_UA_2;
+        }
+        return uaConformance;
     }
 }

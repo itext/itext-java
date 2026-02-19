@@ -1155,7 +1155,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         framework.assertBothValid("tableCustomRoles", pdfUAConformance);
     }
 
-    static class TableBuilder implements Generator<IBlockElement> {
+    public static class TableBuilder implements Generator<IBlockElement> {
         private final int amountOfColumns;
         private final List<Generator<Cell>> headerCells = new ArrayList<>();
 
@@ -1163,7 +1163,7 @@ public class PdfUATableTest extends ExtendedITextTest {
 
         private final List<Generator<Cell>> footerCells = new ArrayList<>();
 
-        TableBuilder(int amountOfColumns) {
+        public TableBuilder(int amountOfColumns) {
             this.amountOfColumns = amountOfColumns;
         }
 
@@ -1198,7 +1198,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
     }
 
-    static class DataCellSupplier implements Generator<Cell> {
+    public static class DataCellSupplier implements Generator<Cell> {
 
         private final String content;
 
@@ -1249,7 +1249,7 @@ public class PdfUATableTest extends ExtendedITextTest {
         }
     }
 
-    static class HeaderCellSupplier implements Generator<Cell> {
+    public static class HeaderCellSupplier implements Generator<Cell> {
 
         private final String id;
 

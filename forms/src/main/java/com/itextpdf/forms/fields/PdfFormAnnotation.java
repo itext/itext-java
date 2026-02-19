@@ -1099,7 +1099,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         final Canvas canvasOff = new Canvas(xObjectOff, getDocument());
         setMetaInfoToCanvas(canvasOff);
         canvasOff.add(formFieldElement);
-        if (getPdfConformance() == null || !getPdfConformance().isPdfAOrUa()) {
+        if (getPdfConformance() == null || !getPdfConformance().isPdfAOrUaOrWtpdf()) {
             xObjectOff.getResources().addFont(getDocument(), getFont());
         }
         normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());

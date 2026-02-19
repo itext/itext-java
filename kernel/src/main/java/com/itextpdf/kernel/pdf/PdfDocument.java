@@ -2132,9 +2132,10 @@ public class PdfDocument implements Closeable {
             }
             xref.initFreeReferencesList(this);
             if (writer != null) {
-                if (writer.properties.addPdfAXmpMetadata != null || writer.properties.addPdfUaXmpMetadata != null) {
+                if (writer.properties.addPdfAXmpMetadata != null || writer.properties.addPdfUaXmpMetadata != null ||
+                        writer.properties.addWtpdfXmpMetadata != null) {
                     pdfConformance = new PdfConformance(writer.properties.addPdfAXmpMetadata,
-                            writer.properties.addPdfUaXmpMetadata);
+                            writer.properties.addPdfUaXmpMetadata, writer.properties.addWtpdfXmpMetadata);
                 }
                 enableByteArrayWritingMode();
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {

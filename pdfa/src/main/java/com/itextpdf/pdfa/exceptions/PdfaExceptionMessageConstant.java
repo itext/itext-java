@@ -169,8 +169,9 @@ public final class PdfaExceptionMessageConstant {
                     + " graphic state dictionary or an annotation dictionary.";
     public static final String XMP_METADATA_HEADER_PACKET_MAY_NOT_CONTAIN_BYTES_OR_ENCODING_ATTRIBUTE = "XMP metadata"
             + " header packet may not contain bytes or encoding attribute.";
-    public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART = "XMP metadata header shall"
-            + " contain version identifier pdfaid:part with value {0}";
+
+    @Deprecated
+    public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART = "XMP metadata header shall";
 
     public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV = "XMP metadata header shall"
             + " contain version identifier pdfaid:rev with four digit integer value";

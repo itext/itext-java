@@ -52,10 +52,28 @@ public class PdfConformance {
     public static final PdfConformance PDF_UA_1 = new PdfConformance(PdfUAConformance.PDF_UA_1);
     public static final PdfConformance PDF_UA_2 = new PdfConformance(PdfUAConformance.PDF_UA_2);
 
+    public static final PdfConformance WELL_TAGGED_PDF_FOR_ACCESSIBILITY =
+            new PdfConformance(WellTaggedPdfConformance.FOR_ACCESSIBILITY);
+
     public static final PdfConformance PDF_NONE_CONFORMANCE = new PdfConformance();
 
     private final PdfAConformance aConformance;
     private final PdfUAConformance uaConformance;
+    private final WellTaggedPdfConformance wtpdfConformance;
+
+    /**
+     * Creates a new {@link PdfConformance} instance based on PDF/A, PDF/UA and Well Tagged PDF conformance.
+     *
+     * @param aConformance the PDF/A conformance
+     * @param uaConformance the PDF/UA conformance
+     * @param wtpdfConformance the Well Tagged PDF conformance
+     */
+    public PdfConformance(PdfAConformance aConformance, PdfUAConformance uaConformance,
+                          WellTaggedPdfConformance wtpdfConformance) {
+        this.aConformance = aConformance;
+        this.uaConformance = uaConformance;
+        this.wtpdfConformance = wtpdfConformance;
+    }
 
     /**
      * Creates a new {@link PdfConformance} instance based on PDF/A and PDF/UA conformance.
@@ -66,6 +84,7 @@ public class PdfConformance {
     public PdfConformance(PdfAConformance aConformance, PdfUAConformance uaConformance) {
         this.aConformance = aConformance;
         this.uaConformance = uaConformance;
+        this.wtpdfConformance = null;
     }
 
     /**
@@ -76,6 +95,7 @@ public class PdfConformance {
     public PdfConformance(PdfAConformance aConformance) {
         this.aConformance = aConformance;
         this.uaConformance = null;
+        this.wtpdfConformance = null;
     }
 
     /**
@@ -86,14 +106,27 @@ public class PdfConformance {
     public PdfConformance(PdfUAConformance uaConformance) {
         this.uaConformance = uaConformance;
         this.aConformance = null;
+        this.wtpdfConformance = null;
     }
 
     /**
-     * Creates a new {@link PdfConformance} instance without PDF/A or PDF/UA conformance.
+     * Creates a new {@link PdfConformance} instance based on only Well Tagged PDF conformance.
+     *
+     * @param wtpdfConformance the Well Tagged PDF conformance
+     */
+    public PdfConformance(WellTaggedPdfConformance wtpdfConformance) {
+        this.wtpdfConformance = wtpdfConformance;
+        this.uaConformance = null;
+        this.aConformance = null;
+    }
+
+    /**
+     * Creates a new {@link PdfConformance} instance without any conformance.
      */
     public PdfConformance() {
         this.aConformance = null;
         this.uaConformance = null;
+        this.wtpdfConformance = null;
     }
 
     /**
@@ -115,12 +148,30 @@ public class PdfConformance {
     }
 
     /**
+     * Checks if any Well Tagged PDF conformance is specified.
+     *
+     * @return {@code true} if Well Tagged PDF conformance is specified, otherwise {@code false}
+     */
+    public boolean isWtpdf() {
+        return wtpdfConformance != null;
+    }
+
+    /**
      * Checks if any PDF/A or PDF/UA conformance is specified.
      *
      * @return {@code true} if PDF/A or PDF/UA conformance is specified, otherwise {@code false}
      */
     public boolean isPdfAOrUa() {
         return isPdfA() || isPdfUA();
+    }
+
+    /**
+     * Checks if any of PDF/A, PDF/UA or Well Tagged PDF conformance is specified
+     *
+     * @return {@code true} if PDF/A, PDF/UA or Well Tagged PDF conformance is specified, otherwise {@code false}
+     */
+    public boolean isPdfAOrUaOrWtpdf() {
+        return isPdfAOrUa() || isWtpdf();
     }
 
     /**
@@ -141,6 +192,15 @@ public class PdfConformance {
         return uaConformance;
     }
 
+    /**
+     * Gets the {@link WellTaggedPdfConformance} instance if specified.
+     *
+     * @return the specified {@link WellTaggedPdfConformance} instance or {@code null}.
+     */
+    public WellTaggedPdfConformance getWtpdfConformance() {
+        return wtpdfConformance;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -150,13 +210,15 @@ public class PdfConformance {
             return false;
         }
         PdfConformance that = (PdfConformance) o;
-        return aConformance == that.aConformance && uaConformance == that.uaConformance;
+        return aConformance == that.aConformance && uaConformance == that.uaConformance &&
+                wtpdfConformance == that.wtpdfConformance;
     }
 
     @Override
     public int hashCode() {
         int result = aConformance == null ? 0 : aConformance.hashCode();
         result = 31 * result + (uaConformance == null ? 0 : uaConformance.hashCode());
+        result = 31 * result + (wtpdfConformance == null ? 0 : wtpdfConformance.hashCode());
         return result;
     }
 
@@ -193,8 +255,18 @@ public class PdfConformance {
         if (partUAXmpProperty != null) {
             uaLevel = getUAConformance(partUAXmpProperty.getValue());
         }
+        WellTaggedPdfConformance wellTaggedPdfConformance = null;
+        XMPProperty wtpdfProperty = null;
+        try {
+            wtpdfProperty = meta.getProperty(
+                    XMPConst.NS_DECLARATIONS, XMPConst.DECLARATIONS + "/[1]/" + XMPConst.CONFORMS_TO);
+        } catch (Exception ignored) {
+        }
+        if (wtpdfProperty != null && XMPConst.NS_WTPDF_ACCESSIBILITY_ID.equals(wtpdfProperty.getValue())) {
+            wellTaggedPdfConformance = WellTaggedPdfConformance.FOR_ACCESSIBILITY;
+        }
 
-        return new PdfConformance(aLevel, uaLevel);
+        return new PdfConformance(aLevel, uaLevel, wellTaggedPdfConformance);
     }
 
     /**
@@ -221,6 +293,14 @@ public class PdfConformance {
             if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2 &&
                     xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.REV) == null) {
                 xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.REV, 2024);
+            }
+        }
+        if (conformance.getWtpdfConformance() == WellTaggedPdfConformance.FOR_ACCESSIBILITY ||
+                conformance.getUAConformance() == PdfUAConformance.PDF_UA_2) {
+            if (xmpMeta.getProperty(XMPConst.NS_DECLARATIONS,
+                    XMPConst.DECLARATIONS + "/[1]/" + XMPConst.CONFORMS_TO) == null) {
+                XMPMeta wtpdfMeta = XMPMetaFactory.parseFromString(WELL_TAGGED_SCHEMA);
+                XMPUtils.appendProperties(wtpdfMeta, xmpMeta, true, false, true);
             }
         }
         if (conformance.isPdfA()) {
@@ -310,6 +390,21 @@ public class PdfConformance {
         }
         return null;
     }
+
+    private static final String WELL_TAGGED_SCHEMA =
+            " <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +
+                    "  <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
+                    "   <rdf:Description rdf:about=\"\" xmlns:pdfd=\"http://pdfa.org/declarations/\">\n" +
+                    "    <pdfd:declarations>\n" +
+                    "     <rdf:Bag>\n" +
+                    "      <rdf:li rdf:parseType=\"Resource\">\n" +
+                    "       <pdfd:conformsTo>http://pdfa.org/declarations/wtpdf#accessibility1.0</pdfd:conformsTo>\n" +
+                    "      </rdf:li>\n" +
+                    "     </rdf:Bag>\n" +
+                    "    </pdfd:declarations>\n" +
+                    "   </rdf:Description>\n" +
+                    "  </rdf:RDF>\n" +
+                    " </x:xmpmeta>";
 
     private static final String PDF_UA_EXTENSION =
             "    <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +

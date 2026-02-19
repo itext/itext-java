@@ -54,11 +54,31 @@ public class VeraPdfValidator {
     private static final boolean isNative = System.getProperty("org.graalvm.nativeimage.imagecode") != null;
 
     private boolean logToConsole = true;
+    private final String specification;
+
+    /**
+     * Creates new instance of {@link VeraPdfValidator}.
+     */
+    public VeraPdfValidator() {
+        this.specification = null;
+    }
+
+    /**
+     * Creates new instance of {@link VeraPdfValidator} with a required specification.
+     *
+     * @param specification {@link String} specification, which will be used in validation
+     */
+    public VeraPdfValidator(String specification) {
+        this.specification = specification;
+    }
 
     /**
      * @return the {@link PDFAFlavour} to use for validation
      */
     protected PDFAFlavour getSpecification() {
+        if ("WTPDF".equals(specification)) {
+            return PDFAFlavour.WTPDF_1_0_ACCESSIBILITY;
+        }
         return PDFAFlavour.NO_FLAVOUR;
     }
 

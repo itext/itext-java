@@ -44,6 +44,7 @@ public class WriterProperties {
     protected boolean addXmpMetadata;
     protected PdfAConformance addPdfAXmpMetadata = null;
     protected PdfUAConformance addPdfUaXmpMetadata = null;
+    protected WellTaggedPdfConformance addWtpdfXmpMetadata = null;
     protected PdfVersion pdfVersion;
     protected EncryptionProperties encryptionProperties;
     /**
@@ -139,6 +140,29 @@ public class WriterProperties {
      */
     public WriterProperties addPdfUaXmpMetadata(PdfUAConformance uaConformance) {
         this.addPdfUaXmpMetadata = uaConformance;
+        addXmpMetadata();
+        return this;
+    }
+
+    /**
+     * Adds Well Tagged PDF XMP metadata to the PDF document.
+     *
+     * <p>
+     * This method calls {@link #addXmpMetadata()} implicitly.
+     *
+     * <p>
+     * NOTE: Calling this method only affects the XMP metadata, but doesn't enable any additional checks that the
+     * created document meets all Well Tagged PDF requirements.
+     * When using this method make sure you are familiar with Well Tagged PDF
+     * document requirements.
+     * If you are not sure, use dedicated iText PDF/UA module to create valid Well Tagged PDF documents.
+     *
+     * @param wtpdfConformance the Well Tagged PDF conformance which will be added to XMP metadata
+     *
+     * @return this {@link WriterProperties} instance
+     */
+    public WriterProperties addWtpdfXmpMetadata(WellTaggedPdfConformance wtpdfConformance) {
+        this.addWtpdfXmpMetadata = wtpdfConformance;
         addXmpMetadata();
         return this;
     }

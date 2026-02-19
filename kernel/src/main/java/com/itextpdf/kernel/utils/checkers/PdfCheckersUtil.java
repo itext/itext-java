@@ -31,6 +31,7 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfStream;
+import com.itextpdf.kernel.pdf.WellTaggedPdfConformance;
 import com.itextpdf.kernel.xmp.XMPConst;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
@@ -94,22 +95,42 @@ public final class PdfCheckersUtil {
 
             final String NS_ID = conformance.isPdfA() ? XMPConst.NS_PDFA_ID : XMPConst.NS_PDFUA_ID;
 
-            XMPProperty actualPart = metadata.getProperty(NS_ID, XMPConst.PART);
-            String expectedPart = conformance.isPdfA() ? conformance.getAConformance().getPart() :
-                    conformance.getUAConformance().getPart();
-            if (actualPart == null || !expectedPart.equals(actualPart.getValue())) {
-                throw exceptionSupplier.apply(MessageFormatUtil.format(KernelExceptionMessageConstant
-                        .XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, expectedPart,
-                        (actualPart != null && actualPart.getValue().isEmpty()) ? null : actualPart));
+            if (conformance.isPdfAOrUa()) {
+                XMPProperty actualPart = metadata.getProperty(NS_ID, XMPConst.PART);
+                String expectedPart = conformance.isPdfA() ? conformance.getAConformance().getPart() :
+                        conformance.getUAConformance().getPart();
+                if (actualPart == null || !expectedPart.equals(actualPart.getValue())) {
+                    throw exceptionSupplier.apply(MessageFormatUtil.format(KernelExceptionMessageConstant
+                                    .XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART, expectedPart,
+                            (actualPart != null && actualPart.getValue().isEmpty()) ? null : actualPart));
+                }
+
+                XMPProperty rev = metadata.getProperty(NS_ID, XMPConst.REV);
+                if (rev == null || !isValidXmpRevision(rev.getValue())) {
+                    throw exceptionSupplier.apply(KernelExceptionMessageConstant
+                            .XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV);
+                }
             }
 
-            XMPProperty rev = metadata.getProperty(NS_ID, XMPConst.REV);
-            if (rev == null || !isValidXmpRevision(rev.getValue())) {
-                throw exceptionSupplier.apply(KernelExceptionMessageConstant
-                        .XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV);
-            }
+            checkWellTaggedMetadata(metadata, conformance, exceptionSupplier);
         } catch (XMPException e) {
             throw exceptionSupplier.apply(KernelExceptionMessageConstant.INVALID_METADATA_VALUE);
+        }
+    }
+
+    private static void checkWellTaggedMetadata(XMPMeta metadata, PdfConformance conformance,
+                                         Function<String, PdfException> exceptionSupplier) {
+        if (WellTaggedPdfConformance.FOR_ACCESSIBILITY == conformance.getWtpdfConformance()) {
+            XMPProperty wtpdfProperty = null;
+            try {
+                wtpdfProperty = metadata.getProperty(
+                        XMPConst.NS_DECLARATIONS, XMPConst.DECLARATIONS + "/[1]/" + XMPConst.CONFORMS_TO);
+            } catch (Exception ignored) {
+            }
+            if (wtpdfProperty == null || !XMPConst.NS_WTPDF_ACCESSIBILITY_ID.equals(wtpdfProperty.getValue())) {
+                throw exceptionSupplier.apply(
+                        KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_METADATA);
+            }
         }
     }
 

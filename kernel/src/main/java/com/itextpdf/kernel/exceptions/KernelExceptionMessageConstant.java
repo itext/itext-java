@@ -489,6 +489,8 @@ public final class KernelExceptionMessageConstant {
             + "arguments";
     public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_PART = "XMP metadata header shall"
             + " contain version identifier pdfaid:part with value {0} instead of {1}.";
+    public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_METADATA = "XMP metadata header shall"
+            + " contain declaration for Well Tagged PDF For Accessibility.";
     public static final String XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV = "XMP metadata header shall"
             + " contain version identifier pdfaid:rev with four digit integer value";
     public static final String XOBJECT_STRUCT_PARENT_INDEX_MISSED = "XObject has no StructParents index in its stream.";

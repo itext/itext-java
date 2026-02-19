@@ -766,6 +766,23 @@ public class PdfStructElemTest extends ExtendedITextTest {
     }
 
     @Test
+    public void addAnnotationTaggedAsArtifactInWtpdfTest() throws Exception {
+        try (PdfDocument document = new PdfDocument(
+                CompareTool.createTestPdfWriter(destinationFolder + "addAnnotationTaggedAsArtifactInWtpdf.pdf",
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)
+                                .addWtpdfXmpMetadata(WellTaggedPdfConformance.FOR_ACCESSIBILITY)))) {
+            document.setTagged();
+
+            PdfPage page = document.addNewPage();
+            PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(80, 508, 40, 18));
+            linkAnnotation.setFlag(PdfAnnotation.INVISIBLE);
+            page.addAnnotation(linkAnnotation);
+        }
+
+        compareResult("addAnnotationTaggedAsArtifactInWtpdf.pdf", "cmp_addAnnotationTaggedAsArtifact.pdf");
+    }
+
+    @Test
     public void addNotTaggedAnnotationTest() throws Exception {
         try (PdfDocument document = new PdfDocument(
                 CompareTool.createTestPdfWriter(destinationFolder + "addNotTaggedAnnotation.pdf",

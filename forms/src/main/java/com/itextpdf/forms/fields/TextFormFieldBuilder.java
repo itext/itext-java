@@ -58,7 +58,7 @@ public class TextFormFieldBuilder extends TerminalFormFieldBuilder<TextFormField
             field = PdfFormCreator.createTextFormField(getDocument());
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
-            if (null != getConformance() && getConformance().isPdfAOrUa()) {
+            if (null != getConformance() && getConformance().isPdfAOrUaOrWtpdf()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
             field = PdfFormCreator.createTextFormField(annotation, getDocument());
