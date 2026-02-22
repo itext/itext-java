@@ -28,7 +28,6 @@ import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.security.Security;
@@ -249,10 +248,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         Assertions.assertEquals("TestCity", pkcs7.getLocation());
         // The number corresponds to 18 May, 2021 17:23:59.
         double expectedMillis = (double) 1621347839000L;
-        Assertions.assertEquals(
-                TimeTestUtil.getFullDaysMillis(expectedMillis),
-                TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(pkcs7.getSignDate())),
-                EPS);
+        Assertions.assertEquals(expectedMillis, DateTimeUtil.getUtcMillisFromEpoch(pkcs7.getSignDate()), EPS);
     }
 
     @Test
@@ -269,10 +265,7 @@ public class SignatureUtilTest extends ExtendedITextTest {
         Assertions.assertEquals("TestCity", pkcs7.getLocation());
         // The number corresponds to 18 May, 2021 11:28:40.
         double expectedMillis = (double) 1621326520000L;
-        Assertions.assertEquals(
-                TimeTestUtil.getFullDaysMillis(expectedMillis),
-                TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(pkcs7.getSignDate())),
-                EPS);
+        Assertions.assertEquals(expectedMillis, DateTimeUtil.getUtcMillisFromEpoch(pkcs7.getSignDate()), EPS);
     }
 
     @Test
