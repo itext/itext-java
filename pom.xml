@@ -110,6 +110,7 @@
     <surefire.version>3.0.0-M3</surefire.version>
     <apache.santuario.version>3.0.6</apache.santuario.version>
 
+    <sharpen.version>1.0</sharpen.version>
     <sharpen.builddotnet>false</sharpen.builddotnet>
     <sharpen.showdiff>false</sharpen.showdiff>
     <sharpen.phase>none</sharpen.phase>
@@ -222,7 +223,7 @@
       <plugin>
         <groupId>sharpen</groupId>
         <artifactId>sharpen-maven-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${sharpen.version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
@@ -820,13 +821,13 @@
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>sharpen-config</artifactId>
-          <version>1.0-SNAPSHOT</version>
+          <version>${sharpen.version}</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>standard-framework-mapping</artifactId>
-          <version>1.0-SNAPSHOT</version>
+          <version>${sharpen.version}</version>
         </dependency>
       </dependencies>
       <build>
@@ -887,13 +888,13 @@
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>sharpen-config</artifactId>
-          <version>1.0-SNAPSHOT</version>
+          <version>${sharpen.version}</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>standard-framework-mapping</artifactId>
-          <version>1.0-SNAPSHOT</version>
+          <version>${sharpen.version}</version>
         </dependency>
       </dependencies>
       <build>
