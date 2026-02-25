@@ -587,16 +587,26 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     private void drawColorBackground(Background background, DrawContext drawContext, Rectangle colorBackgroundArea) {
+        double backgroundRectangleWidth = (double) colorBackgroundArea.getWidth() +
+                background.getExtraLeft() + background.getExtraRight();
+        double backgroundRectangleHeight = (double) colorBackgroundArea.getHeight() +
+                background.getExtraTop() + background.getExtraBottom();
+        if (backgroundRectangleWidth < EPS || backgroundRectangleHeight < EPS) {
+            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
+            logger.info(MessageFormatUtil.format(
+                    IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
+            return;
+        }
         final TransparentColor backgroundColor = new TransparentColor(background.getColor(),
                 background.getOpacity());
         drawContext.getCanvas().saveState().setFillColor(backgroundColor.getColor());
         backgroundColor.applyFillTransparency(drawContext.getCanvas());
-        drawContext.getCanvas().rectangle((double) colorBackgroundArea.getX() - background.getExtraLeft(),
+        drawContext.getCanvas().rectangle(
+                (double) colorBackgroundArea.getX() - background.getExtraLeft(),
                 (double) colorBackgroundArea.getY() - background.getExtraBottom(),
-                (double) colorBackgroundArea.getWidth() +
-                        background.getExtraLeft() + background.getExtraRight(),
-                (double) colorBackgroundArea.getHeight() +
-                        background.getExtraTop() + background.getExtraBottom()).fill().restoreState();
+                backgroundRectangleWidth,
+                backgroundRectangleHeight
+        ).fill().restoreState();
     }
 
     private Rectangle applyBackgroundBoxProperty(Rectangle rectangle, BackgroundBox clip) {
