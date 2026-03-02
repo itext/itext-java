@@ -54,7 +54,9 @@ public final class NamespaceConstant {
     public static final String PDF_SWEEP = ITEXT + ".pdfcleanup";
     public static final String PDF_OCR = ITEXT + ".pdfocr";
     public static final String PDF_OCR_TESSERACT4 = PDF_OCR + ".tesseract4";
+    @Deprecated
     public static final String PDF_OCR_ONNXTR = PDF_OCR + ".onnxtr";
+    public static final String PDF_OCR_ONNX = PDF_OCR + ".onnx";
 
     public static final List<String> ITEXT_CORE_NAMESPACES = Collections.unmodifiableList(Arrays.asList(
             NamespaceConstant.CORE_COMMONS,
