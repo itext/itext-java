@@ -193,6 +193,7 @@ public final class PdfUAExceptionMessageConstants {
             + "have the same amount of columns when taking into account spanning.";
     public static final String TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING =
             "Tag hasn't been added before adding content to the canvas.";
+    @Deprecated
     public static final String TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE =
             "\"{0}\" tag mapping does not terminate with a standard type.";
     public static final String TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO = "10th bit of P value of " +

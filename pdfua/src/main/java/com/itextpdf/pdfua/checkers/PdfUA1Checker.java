@@ -22,7 +22,6 @@
  */
 package com.itextpdf.pdfua.checkers;
 
-import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.kernel.pdf.EncryptionConstants;
@@ -35,11 +34,8 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfVersion;
-import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
-import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.IRoleMappingResolver;
-import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.kernel.validation.IValidationContext;
@@ -69,7 +65,6 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * The class defines the requirements of the PDF/UA-1 standard and contains
@@ -81,7 +76,6 @@ import java.util.Stack;
 public class PdfUA1Checker extends PdfUAChecker {
 
     private final PdfDocument pdfDocument;
-    private final TagStructureContext tagStructureContext;
     private final PdfUA1HeadingsChecker headingsChecker;
 
     private final PdfUAValidationContext context;
@@ -94,7 +88,6 @@ public class PdfUA1Checker extends PdfUAChecker {
     public PdfUA1Checker(PdfDocument pdfDocument) {
         super();
         this.pdfDocument = pdfDocument;
-        this.tagStructureContext = new TagStructureContext(pdfDocument);
         this.context = new PdfUAValidationContext(pdfDocument);
         this.headingsChecker = new PdfUA1HeadingsChecker(context);
     }
@@ -212,13 +205,6 @@ public class PdfUA1Checker extends PdfUAChecker {
         super.checkOCProperties(ocProperties);
     }
 
-    @Override
-    void checkLogicalStructureInBMC(Stack<Tuple2<PdfName, PdfDictionary>> stack,
-            Tuple2<PdfName, PdfDictionary> currentBmc, PdfDocument document) {
-        checkStandardRoleMapping(currentBmc);
-        super.checkLogicalStructureInBMC(stack, currentBmc, document);
-    }
-
     /**
      * For all non-symbolic TrueType fonts used for rendering, the embedded TrueType font program shall contain one or
      * several non-symbolic cmap entries such that all necessary glyph lookups can be carried out.
@@ -248,17 +234,6 @@ public class PdfUA1Checker extends PdfUAChecker {
         if (!fontProgram.isCmapPresent(3, 0) && fontProgram.getNumberOfCmaps() != 1) {
             throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.
                     SYMBOLIC_TTF_SHALL_CONTAIN_EXACTLY_ONE_OR_AT_LEAST_MICROSOFT_SYMBOL_CMAP);
-        }
-    }
-
-    private void checkStandardRoleMapping(Tuple2<PdfName, PdfDictionary> tag) {
-        final PdfNamespace namespace = tagStructureContext.getDocumentDefaultNamespace();
-        final String role = tag.getFirst().getValue();
-        if (!StandardRoles.ARTIFACT.equals(role) && !tagStructureContext.checkIfRoleShallBeMappedToStandardRole(role,
-                namespace)) {
-            throw new PdfUAConformanceException(
-                    MessageFormatUtil.format(
-                            PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, role));
         }
     }
 
