@@ -65,6 +65,12 @@ import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -311,5 +317,33 @@ public class CompareToolTest extends ExtendedITextTest {
             Assert.assertEquals("new job", docInfo[3]);
             Assert.assertEquals("Adobe Acrobat Pro DC (64-bit) <version>", docInfo[4]);
                 }
+    }
+
+    @Test
+    public void compareVisuallyWithFuzzValueTest() throws IOException, InterruptedException {
+        String outPdf = sourceFolder + "fuzz.pdf";
+        String cmpPdf = sourceFolder + "cmp_fuzz.pdf";
+        String outPath = destinationFolder + "compareVisuallyWithFuzzValueTest/";
+
+        CompareTool compareTool = new CompareTool();
+
+        Assert.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0));
+        Assert.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 3));
+        Assert.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 15));
+    }
+
+    @Test
+    public void compareVisuallyWithFuzzAndIgnoredAreasTest() throws IOException, InterruptedException {
+        String outPdf = sourceFolder + "fuzzAndIgnoredAreas.pdf";
+        String cmpPdf = sourceFolder + "cmp_fuzzAndIgnoredAreas.pdf";
+        String outPath = destinationFolder + "compareVisuallyWithFuzzValueTest/";
+        Map<Integer, List<Rectangle>> ignoredAreas = new HashMap<Integer, List<Rectangle>>();
+        ignoredAreas.put(1, Arrays.asList(new Rectangle(300, 0, 295, 842)));
+
+        CompareTool compareTool = new CompareTool();
+
+        Assert.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0));
+        Assert.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0.8));
+        Assert.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, null,  ignoredAreas, 0.4));
     }
 }
