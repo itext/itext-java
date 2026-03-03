@@ -54,6 +54,8 @@ public class PdfConformance {
 
     public static final PdfConformance WELL_TAGGED_PDF_FOR_ACCESSIBILITY =
             new PdfConformance(WellTaggedPdfConformance.FOR_ACCESSIBILITY);
+    public static final PdfConformance WELL_TAGGED_PDF_FOR_REUSE =
+            new PdfConformance(WellTaggedPdfConformance.FOR_REUSE);
 
     public static final PdfConformance PDF_NONE_CONFORMANCE = new PdfConformance();
 
@@ -262,8 +264,12 @@ public class PdfConformance {
                     XMPConst.NS_DECLARATIONS, XMPConst.DECLARATIONS + "/[1]/" + XMPConst.CONFORMS_TO);
         } catch (Exception ignored) {
         }
-        if (wtpdfProperty != null && XMPConst.NS_WTPDF_ACCESSIBILITY_ID.equals(wtpdfProperty.getValue())) {
-            wellTaggedPdfConformance = WellTaggedPdfConformance.FOR_ACCESSIBILITY;
+        if (wtpdfProperty != null) {
+            if (XMPConst.NS_WTPDF_ACCESSIBILITY_ID.equals(wtpdfProperty.getValue())) {
+                wellTaggedPdfConformance = WellTaggedPdfConformance.FOR_ACCESSIBILITY;
+            } else if (XMPConst.NS_WTPDF_REUSE_ID.equals(wtpdfProperty.getValue())) {
+                wellTaggedPdfConformance = WellTaggedPdfConformance.FOR_REUSE;
+            }
         }
 
         return new PdfConformance(aLevel, uaLevel, wellTaggedPdfConformance);
@@ -295,11 +301,14 @@ public class PdfConformance {
                 xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.REV, 2024);
             }
         }
-        if (conformance.getWtpdfConformance() == WellTaggedPdfConformance.FOR_ACCESSIBILITY ||
-                conformance.getUAConformance() == PdfUAConformance.PDF_UA_2) {
-            if (xmpMeta.getProperty(XMPConst.NS_DECLARATIONS,
-                    XMPConst.DECLARATIONS + "/[1]/" + XMPConst.CONFORMS_TO) == null) {
-                XMPMeta wtpdfMeta = XMPMetaFactory.parseFromString(WELL_TAGGED_SCHEMA);
+        if (xmpMeta.getProperty(
+                XMPConst.NS_DECLARATIONS, XMPConst.DECLARATIONS + "/[1]/" + XMPConst.CONFORMS_TO) == null) {
+            if (conformance.getWtpdfConformance() == WellTaggedPdfConformance.FOR_ACCESSIBILITY ||
+                    conformance.getUAConformance() == PdfUAConformance.PDF_UA_2) {
+                XMPMeta wtpdfMeta = XMPMetaFactory.parseFromString(WELL_TAGGED_FOR_ACCESSIBILITY_SCHEMA);
+                XMPUtils.appendProperties(wtpdfMeta, xmpMeta, true, false, true);
+            } else if (conformance.getWtpdfConformance() == WellTaggedPdfConformance.FOR_REUSE) {
+                XMPMeta wtpdfMeta = XMPMetaFactory.parseFromString(WELL_TAGGED_FOR_REUSE_SCHEMA);
                 XMPUtils.appendProperties(wtpdfMeta, xmpMeta, true, false, true);
             }
         }
@@ -391,7 +400,7 @@ public class PdfConformance {
         return null;
     }
 
-    private static final String WELL_TAGGED_SCHEMA =
+    private static final String WELL_TAGGED_FOR_ACCESSIBILITY_SCHEMA =
             " <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +
                     "  <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
                     "   <rdf:Description rdf:about=\"\" xmlns:pdfd=\"http://pdfa.org/declarations/\">\n" +
@@ -399,6 +408,20 @@ public class PdfConformance {
                     "     <rdf:Bag>\n" +
                     "      <rdf:li rdf:parseType=\"Resource\">\n" +
                     "       <pdfd:conformsTo>http://pdfa.org/declarations/wtpdf#accessibility1.0</pdfd:conformsTo>\n" +
+                    "      </rdf:li>\n" +
+                    "     </rdf:Bag>\n" +
+                    "    </pdfd:declarations>\n" +
+                    "   </rdf:Description>\n" +
+                    "  </rdf:RDF>\n" +
+                    " </x:xmpmeta>";
+    private static final String WELL_TAGGED_FOR_REUSE_SCHEMA =
+            " <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +
+                    "  <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
+                    "   <rdf:Description rdf:about=\"\" xmlns:pdfd=\"http://pdfa.org/declarations/\">\n" +
+                    "    <pdfd:declarations>\n" +
+                    "     <rdf:Bag>\n" +
+                    "      <rdf:li rdf:parseType=\"Resource\">\n" +
+                    "       <pdfd:conformsTo>http://pdfa.org/declarations/wtpdf#reuse1.0</pdfd:conformsTo>\n" +
                     "      </rdf:li>\n" +
                     "     </rdf:Bag>\n" +
                     "    </pdfd:declarations>\n" +

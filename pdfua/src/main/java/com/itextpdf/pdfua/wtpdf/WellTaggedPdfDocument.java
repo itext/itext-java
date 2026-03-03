@@ -78,7 +78,7 @@ public class WellTaggedPdfDocument extends PdfDocument {
 
         setupWtpdfConfiguration(config);
         final ValidationContainer validationContainer = new ValidationContainer();
-        final List<IValidationChecker> checkers = createCheckers();
+        final List<IValidationChecker> checkers = createCheckers(config.getConformance());
         for (IValidationChecker checker : checkers) {
             validationContainer.addChecker(checker);
         }
@@ -116,7 +116,7 @@ public class WellTaggedPdfDocument extends PdfDocument {
         setupWtpdfConfiguration(config);
 
         final ValidationContainer validationContainer = new ValidationContainer();
-        final List<IValidationChecker> checkers = createCheckers();
+        final List<IValidationChecker> checkers = createCheckers(config.getConformance());
         for (IValidationChecker checker : checkers) {
             validationContainer.addChecker(checker);
         }
@@ -130,10 +130,14 @@ public class WellTaggedPdfDocument extends PdfDocument {
      *
      * @return list of Well Tagged related checkers
      */
-    protected List<IValidationChecker> createCheckers() {
+    protected List<IValidationChecker> createCheckers(WellTaggedPdfConformance conformance) {
         List<IValidationChecker> checkers = new ArrayList<>();
         final ColorContrastChecker contrastChecker = new ColorContrastChecker(false, false);
-        checkers.add(new WellTaggedPdfChecker(this));
+        if (WellTaggedPdfConformance.FOR_REUSE == conformance) {
+            checkers.add(new WellTaggedPdfForReuseChecker(this));
+        } else if (WellTaggedPdfConformance.FOR_ACCESSIBILITY == conformance) {
+            checkers.add(new WellTaggedPdfForAccessibilityChecker(this));
+        }
         checkers.add(new Pdf20Checker(this));
         checkers.add(contrastChecker);
         return checkers;
@@ -158,10 +162,10 @@ public class WellTaggedPdfDocument extends PdfDocument {
         return writer;
     }
 
-    private static WellTaggedPdfChecker getWtpdfChecker(List<IValidationChecker> checkers) {
+    private static WellTaggedPdfForAccessibilityChecker getWtpdfChecker(List<IValidationChecker> checkers) {
         for (IValidationChecker checker : checkers) {
-            if (checker instanceof WellTaggedPdfChecker) {
-                return (WellTaggedPdfChecker) checker;
+            if (checker instanceof WellTaggedPdfForAccessibilityChecker) {
+                return (WellTaggedPdfForAccessibilityChecker) checker;
             }
         }
         return null;

@@ -95,7 +95,7 @@ public abstract class PdfUAChecker implements IValidationChecker {
      *
      * @param catalog {@link PdfCatalog} document catalog dictionary
      */
-    void checkLang(PdfCatalog catalog) {
+    protected void checkLang(PdfCatalog catalog) {
         PdfDictionary catalogDict = catalog.getPdfObject();
         PdfObject lang = catalogDict.get(PdfName.Lang);
         if (!(lang instanceof PdfString)) {
@@ -114,7 +114,7 @@ public abstract class PdfUAChecker implements IValidationChecker {
      *
      * @param catalog {@link PdfCatalog} document catalog dictionary
      */
-    void checkViewerPreferences(PdfCatalog catalog) {
+    protected void checkViewerPreferences(PdfCatalog catalog) {
         PdfDictionary viewerPreferences = catalog.getPdfObject().getAsDictionary(PdfName.ViewerPreferences);
         if (viewerPreferences == null) {
             throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.MISSING_VIEWER_PREFERENCES);
@@ -167,7 +167,7 @@ public abstract class PdfUAChecker implements IValidationChecker {
      * @param currentBmc the current BMC
      * @param document   {@link PdfDocument} to check
      */
-    void checkLogicalStructureInBMC(Stack<Tuple2<PdfName, PdfDictionary>> stack,
+    protected void checkLogicalStructureInBMC(Stack<Tuple2<PdfName, PdfDictionary>> stack,
                                     Tuple2<PdfName, PdfDictionary> currentBmc, PdfDocument document) {
         if (stack.isEmpty()) {
             return;
@@ -190,7 +190,7 @@ public abstract class PdfUAChecker implements IValidationChecker {
      * @param tagStack tag structure stack
      * @param document {@link PdfDocument} to check
      */
-    void checkContentInCanvas(Stack<Tuple2<PdfName, PdfDictionary>> tagStack, PdfDocument document) {
+    protected void checkContentInCanvas(Stack<Tuple2<PdfName, PdfDictionary>> tagStack, PdfDocument document) {
         if (tagStack.isEmpty()) {
             throw new PdfUAConformanceException(
                     PdfUAExceptionMessageConstants.TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING);
@@ -217,7 +217,7 @@ public abstract class PdfUAChecker implements IValidationChecker {
      *
      * @param fontsInDocument collection of fonts used in the document
      */
-    void checkFonts(Collection<PdfFont> fontsInDocument) {
+    protected void checkFonts(Collection<PdfFont> fontsInDocument) {
         Set<String> fontNamesThatAreNotEmbedded = new HashSet<>();
         for (PdfFont font : fontsInDocument) {
             if (!font.isEmbedded()) {
@@ -265,7 +265,7 @@ public abstract class PdfUAChecker implements IValidationChecker {
      * @param str  the text to check
      * @param font the font to check
      */
-    void checkText(String str, PdfFont font) {
+    protected void checkText(String str, PdfFont font) {
         int index = FontCheckUtil.checkGlyphsOfText(str, font, new PdfUAChecker.UaCharacterChecker());
 
         if (index != -1) {

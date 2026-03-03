@@ -100,6 +100,14 @@ public class PdfUA2Checker extends PdfUAChecker {
         this.context = new PdfUAValidationContext(this.pdfDocument);
     }
 
+    protected PdfUAValidationContext getUAValidationContext() {
+        return context;
+    }
+
+    protected PdfDocument getPdfDocument() {
+        return pdfDocument;
+    }
+
     @Override
     public void validate(IValidationContext context) {
         switch (context.getType()) {
@@ -140,7 +148,7 @@ public class PdfUA2Checker extends PdfUAChecker {
                 break;
             case ANNOTATION:
                 PdfAnnotationContext annotationContext = (PdfAnnotationContext) context;
-                PdfUA2AnnotationChecker.checkAnnotation(annotationContext.getAnnotation(), this.context);
+                new PdfUA2AnnotationChecker().checkAnnotation(annotationContext.getAnnotation(), this.context);
                 break;
             case CANVAS_TEXT_ADDITION:
                 CanvasTextAdditionContext canvasTextAdditionContext = (CanvasTextAdditionContext) context;
@@ -210,7 +218,7 @@ public class PdfUA2Checker extends PdfUAChecker {
         }
     }
 
-    private void checkPdfObject(PdfObject obj) {
+    protected void checkPdfObject(PdfObject obj) {
         switch (obj.getType()) {
             case PdfObject.STRING:
                 PdfUA2StringChecker.checkPdfString((PdfString) obj);
@@ -248,7 +256,7 @@ public class PdfUA2Checker extends PdfUAChecker {
      *
      * @param catalog {@link PdfCatalog} document catalog dictionary to check
      */
-    private void checkCatalog(PdfCatalog catalog) {
+    protected void checkCatalog(PdfCatalog catalog) {
         checkLang(catalog);
         checkMetadata(catalog);
         checkViewerPreferences(catalog);
@@ -262,12 +270,12 @@ public class PdfUA2Checker extends PdfUAChecker {
      *
      * @param catalog {@link PdfCatalog} to check form fields present in the acroform
      */
-    private void checkFormFieldsAndAnnotations(PdfCatalog catalog) {
+    protected void checkFormFieldsAndAnnotations(PdfCatalog catalog) {
         PdfUA2FormChecker formChecker = new PdfUA2FormChecker(context);
         formChecker.checkFormFields(catalog.getPdfObject().getAsDictionary(PdfName.AcroForm));
         formChecker.checkWidgetAnnotations(this.pdfDocument);
         PdfUA2LinkChecker.checkLinkAnnotations(this.pdfDocument);
-        PdfUA2AnnotationChecker.checkAnnotations(this.pdfDocument);
+        new PdfUA2AnnotationChecker().checkAnnotations(this.pdfDocument);
     }
 
     /**
@@ -280,7 +288,7 @@ public class PdfUA2Checker extends PdfUAChecker {
      *
      * @param structTreeRoot {@link PdfStructTreeRoot} structure tree root dictionary to check
      */
-    private void checkStructureTreeRoot(PdfStructTreeRoot structTreeRoot) {
+    protected void checkStructureTreeRoot(PdfStructTreeRoot structTreeRoot) {
         List<PdfNamespace> namespaces = structTreeRoot.getNamespaces();
         for (PdfNamespace namespace : namespaces) {
             PdfDictionary roleMap = namespace.getNamespaceRoleMap();
@@ -310,7 +318,17 @@ public class PdfUA2Checker extends PdfUAChecker {
                 }
             }
         }
+        createTagTreeIterator(structTreeRoot).traverse();
+    }
 
+    /**
+     * Creates {@link TagTreeIterator} responsible for validation of tag tree elements.
+     *
+     * @param structTreeRoot {@link PdfStructTreeRoot} to be validated
+     *
+     * @return {@link TagTreeIterator} responsible for validation of tag tree elements
+     */
+    protected TagTreeIterator createTagTreeIterator(PdfStructTreeRoot structTreeRoot) {
         TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
         tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
         tagTreeIterator.addHandler(new PdfUA2HeadingsChecker.PdfUA2HeadingHandler(context));
@@ -322,6 +340,6 @@ public class PdfUA2Checker extends PdfUAChecker {
         tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(context));
         tagTreeIterator.addHandler(new PdfUA2FormulaChecker.PdfUA2FormulaTagHandler(context));
         tagTreeIterator.addHandler(new PdfUA2LinkChecker.PdfUA2LinkAnnotationHandler(context, pdfDocument));
-        tagTreeIterator.traverse();
+        return tagTreeIterator;
     }
 }

@@ -30,5 +30,9 @@ public enum WellTaggedPdfConformance {
     /**
      * Well Tagged PDF Document conformance level 'for accessibility'.
      */
-    FOR_ACCESSIBILITY
+    FOR_ACCESSIBILITY,
+    /**
+     * Well Tagged PDF Document conformance level 'for reuse'.
+     */
+    FOR_REUSE
 }

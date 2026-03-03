@@ -76,8 +76,10 @@ public class VeraPdfValidator {
      * @return the {@link PDFAFlavour} to use for validation
      */
     protected PDFAFlavour getSpecification() {
-        if ("WTPDF".equals(specification)) {
+        if ("WTPDF_ACCESSIBILITY".equals(specification)) {
             return PDFAFlavour.WTPDF_1_0_ACCESSIBILITY;
+        } else if ("WTPDF_REUSE".equals(specification)) {
+            return PDFAFlavour.WTPDF_1_0_REUSE;
         }
         return PDFAFlavour.NO_FLAVOUR;
     }

@@ -201,7 +201,7 @@ public class PdfCheckerTest extends ExtendedITextTest {
             Exception e = Assertions.assertThrows(PdfException.class, () ->
                     PdfCheckersUtil.checkMetadata(catalog.getPdfObject(), PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY, EXCEPTION_SUPPLIER));
             Assertions.assertEquals(
-                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_METADATA,
+                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_ACCESSIBILITY_METADATA,
                     e.getMessage());
         }
     }

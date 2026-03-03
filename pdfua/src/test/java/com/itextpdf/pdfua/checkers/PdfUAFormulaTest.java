@@ -27,6 +27,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
+import com.itextpdf.kernel.pdf.WellTaggedPdfConformance;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -35,8 +36,8 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.pdfua.UaValidationTestFramework;
-import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
+import com.itextpdf.pdfua.UaValidationTestFramework2;
+import com.itextpdf.pdfua.UaValidationTestFramework2.Generator;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -59,15 +60,15 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static List<PdfUAConformance> data() {
-        return UaValidationTestFramework.getConformanceList();
+    public static List<Object> data() {
+        return UaValidationTestFramework2.getConformanceList();
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest01(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+    public void layoutTest01(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -76,18 +77,18 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("layout01", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("layout01", pdfUAConformance);
+        if (conformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("layout01");
+        } else if (conformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("layout01");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest02(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+    public void layoutTest02(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -96,14 +97,14 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothValid("layout02", pdfUAConformance);
+        framework.assertBothValid("layout02");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest03(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+    public void layoutTest03(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -112,14 +113,14 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothValid("layout03", pdfUAConformance);
+        framework.assertBothValid("layout03");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest04(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+    public void layoutTest04(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -129,18 +130,20 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("layout04", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("layout04", pdfUAConformance);
+        if (conformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("layout04");
+        } else if (conformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("layout04");
+        } else if (conformance == WellTaggedPdfConformance.FOR_REUSE) {
+            framework.assertBothValid("layout04");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest05(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+    public void layoutTest05(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -149,14 +152,14 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                 return p;
             }
         });
-        framework.assertBothValid("layout05", pdfUAConformance);
+        framework.assertBothValid("layout05");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest06(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+    public void layoutTest06(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("⫊").setFont(loadFont(FONT));
@@ -167,14 +170,14 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         });
         framework.assertBothFail("layout06",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
-                false, pdfUAConformance);
+                false);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest07(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+    public void layoutTest07(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("⫊").setFont(loadFont(FONT));
@@ -185,14 +188,14 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         });
         framework.assertBothFail("layout07",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
-                false, pdfUAConformance);
+                false);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutWithValidRole(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+    public void layoutWithValidRole(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
@@ -202,7 +205,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
         framework.addBeforeGenerationHook(pdfDocument -> {
-            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            if (conformance == PdfUAConformance.PDF_UA_2 || conformance == WellTaggedPdfConformance.FOR_REUSE) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
                 pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
                 pdfDocument.getStructTreeRoot().addNamespace(namespace);
@@ -212,14 +215,14 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             PdfStructTreeRoot tagStructureContext = pdfDocument.getStructTreeRoot();
             tagStructureContext.addRoleMapping("BING", StandardRoles.FORMULA);
         });
-        framework.assertBothValid("layoutWithValidRole", pdfUAConformance);
+        framework.assertBothValid("layoutWithValidRole");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutWithValidRoleButNoAlternateDescription(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+    public void layoutWithValidRoleButNoAlternateDescription(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
@@ -228,7 +231,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
         framework.addBeforeGenerationHook(pdfDocument -> {
-            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            if (conformance == PdfUAConformance.PDF_UA_2 || conformance == WellTaggedPdfConformance.FOR_REUSE) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
                 pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
                 pdfDocument.getStructTreeRoot().addNamespace(namespace);
@@ -239,18 +242,20 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             tagStructureContext.addRoleMapping("BING", StandardRoles.FORMULA);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("layoutWithValidRoleButNoDescription", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("layoutWithValidRoleButNoDescription", pdfUAConformance);
+        if (conformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("layoutWithValidRoleButNoDescription");
+        } else if (conformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("layoutWithValidRoleButNoDescription");
+        } else if (conformance == WellTaggedPdfConformance.FOR_REUSE) {
+            framework.assertBothValid("layoutWithValidRoleButNoDescription");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canvasTest01(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addBeforeGenerationHook(pdfDoc -> {
+    public void canvasTest01(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
@@ -263,18 +268,20 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                     .endText().closeTag();
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("canvasTest01", PdfUAExceptionMessageConstants.FORMULA_SHALL_HAVE_ALT, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("canvasTest01", pdfUAConformance);
+        if (conformance == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("canvasTest01", PdfUAExceptionMessageConstants.FORMULA_SHALL_HAVE_ALT);
+        } else if (conformance == PdfUAConformance.PDF_UA_2) {
+            framework.assertBothValid("canvasTest01");
+        } else if (conformance == WellTaggedPdfConformance.FOR_REUSE) {
+            framework.assertBothValid("canvasTest01");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canvasTest02(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addBeforeGenerationHook(pdfDoc -> {
+    public void canvasTest02(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
@@ -288,14 +295,14 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12).showText("E=mc²")
                     .endText().closeTag();
         });
-        framework.assertBothValid("canvasTest02", pdfUAConformance);
+        framework.assertBothValid("canvasTest02");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canvasTest03(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addBeforeGenerationHook(pdfDoc -> {
+    public void canvasTest03(Object conformance) throws IOException {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+        framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
@@ -310,13 +317,13 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         });
         framework.assertBothFail("canvasTest03",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
-                false, pdfUAConformance);
+                false);
     }
 
     @Test
     public void mathStructureElementInvalidUA2Test() throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new Generator<IBlockElement>() {
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, PdfUAConformance.PDF_UA_2);
+        framework.addSuppliers(new Generator<IBlockElement>() {
             @Override
             public IBlockElement generate() {
                 Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
@@ -326,13 +333,12 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             }
         });
 
-        framework.assertBothFail("mathStructureElementInvalidUA2Test",
-                PdfUAExceptionMessageConstants.MATH_NOT_CHILD_OF_FORMULA, PdfUAConformance.PDF_UA_2);
+        framework.assertBothFail("mathStructureElementInvalidUA2Test", PdfUAExceptionMessageConstants.MATH_NOT_CHILD_OF_FORMULA);
     }
 
     @Test
     public void mathStructureElementValidUA2Test() throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, PdfUAConformance.PDF_UA_2);
         framework        .addAfterGenerationHook(pdfDocument -> {
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -349,7 +355,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
                     .endText().closeTag();
         });
 
-        framework.assertBothValid("mathStructureElementValidUA2Test", PdfUAConformance.PDF_UA_2);
+        framework.assertBothValid("mathStructureElementValidUA2Test");
     }
 
     private static PdfFont loadFont(String fontPath) {

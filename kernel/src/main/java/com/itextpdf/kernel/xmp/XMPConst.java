@@ -97,6 +97,8 @@ public interface XMPConst
 	/** */
 	String NS_WTPDF_ACCESSIBILITY_ID = "http://pdfa.org/declarations/wtpdf#accessibility1.0";
 	/** */
+	String NS_WTPDF_REUSE_ID = "http://pdfa.org/declarations/wtpdf#reuse1.0";
+	/** */
 	String NS_DECLARATIONS = "http://pdfa.org/declarations/";
 	/** */
 	String NS_PDFA_EXTENSION = "http://www.aiim.org/pdfa/ns/extension/";
