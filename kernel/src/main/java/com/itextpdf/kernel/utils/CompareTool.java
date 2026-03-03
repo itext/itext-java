@@ -116,6 +116,8 @@ public class CompareTool {
     private static final String UNEXPECTED_NUMBER_OF_PAGES = "Unexpected number of pages for <filename>.";
     private static final String DIFFERENT_PAGES = "File " + FILE_PROTOCOL + "<filename> differs on page <pagenumber>.";
     private static final String IGNORED_AREAS_PREFIX = "ignored_areas_";
+    private static final String OUT_PDF_LOG_PREFIX = "Out pdf: ";
+    private static final String CMP_PDF_LOG_PREFIX = "Cmp pdf: ";
 
     private static final String VERSION_REGEXP = "(\\d+\\.)+\\d+(-SNAPSHOT)?";
     private static final String VERSION_REPLACEMENT = "<version>";
@@ -408,64 +410,145 @@ public class CompareTool {
     }
 
     /**
-     * Compares two documents visually. For the comparison two external tools are used: Ghostscript and ImageMagick.
+     * Compares two PDF documents visually using external tools (Ghostscript and ImageMagick).
+     * <p>
+     * During comparison an image file is created for each page of both documents in the directory specified by
+     * {@code outPath}. Then the corresponding page images are compared. If a page differs visually, a difference image
+     * with marked changes is created.
+     * <p>
      * For more info about needed configuration for visual comparison process see {@link CompareTool} class description.
-     * <p>
-     * Note, that this method uses {@link ImageMagickHelper} and {@link GhostscriptHelper} classes and therefore may
-     * create temporary files and directories.
-     * <p>
-     * During comparison for every page of the two documents an image file will be created in the folder specified by
-     * outPath parameter. Then those page images will be compared and if there are any differences for some pages,
-     * another image file will be created with marked differences on it.
      *
-     * @param outPdf                the absolute path to the output file, which is to be compared to cmp-file.
-     * @param cmpPdf                the absolute path to the cmp-file, which is to be compared to output file.
-     * @param outPath               the absolute path to the folder, which will be used to store image files for visual comparison.
+     * @param outPdf                the absolute path to the output PDF file to compare.
+     * @param cmpPdf                the absolute path to the reference (cmp) PDF file.
+     * @param outPath               the absolute path to the directory used to store generated page images and diff
+     *                              images.
      * @param differenceImagePrefix file name prefix for image files with marked differences if there is any.
-     * @return string containing list of the pages that are visually different, or null if there are no visual differences.
-     * @throws InterruptedException if the current thread is interrupted by another thread while it is waiting
-     *                              for ghostscript or imagemagic processes, then the wait is ended and
-     *                              an {@link InterruptedException} is thrown.
-     * @throws IOException          is thrown if any of the input files are missing or any of the auxiliary files
-     *                              that are created during comparison process weren't possible to be created.
+     *
+     * @return a string containing a list of page numbers that are visually different, or {@code null} if there are
+     *                              no visual differences.
+     *
+     * @throws InterruptedException if the current thread is interrupted while waiting for Ghostscript or ImageMagick
+     *                              processes to finish.
+     * @throws IOException          if any input files are missing, or if auxiliary files/directories required for the
+     *                              comparison process cannot be created or accessed.
      */
-    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix) throws InterruptedException, IOException {
+    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix)
+            throws InterruptedException, IOException {
         return compareVisually(outPdf, cmpPdf, outPath, differenceImagePrefix, null);
     }
 
     /**
-     * Compares two documents visually. For the comparison two external tools are used: Ghostscript and ImageMagick.
+     * Compares two PDF documents visually using external tools (Ghostscript and ImageMagick).
+     * <p>
+     * It is possible to ignore certain areas of the document pages during visual comparison (for example, dynamically
+     * generated dates or timestamps). Ignored areas are provided as a map with one-based page numbers as keys and lists
+     * of rectangles to ignore as values. For pages with ignored areas, temporary PDF documents may be created with
+     * masked regions prior to performing visual comparison.
+     * <p>
+     * During comparison an image file is created for each page of both documents in the directory specified by
+     * {@code outPath}. Then the corresponding page images are compared. If a page differs visually, a difference image
+     * with marked changes is created.
+     * <p>
      * For more info about needed configuration for visual comparison process see {@link CompareTool} class description.
-     * <p>
-     * Note, that this method uses {@link ImageMagickHelper} and {@link GhostscriptHelper} classes and therefore may
-     * create temporary files and directories.
-     * <p>
-     * During comparison for every page of two documents an image file will be created in the folder specified by
-     * outPath parameter. Then those page images will be compared and if there are any differences for some pages,
-     * another image file will be created with marked differences on it.
-     * <p>
-     * It is possible to ignore certain areas of the document pages during visual comparison. This is useful for example
-     * in case if documents should be the same except certain page area with date on it. In this case, in the folder
-     * specified by the outPath, new pdf documents will be created with the black rectangles at the specified ignored
-     * areas, and visual comparison will be performed on these new documents.
      *
-     * @param outPdf                the absolute path to the output file, which is to be compared to cmp-file.
-     * @param cmpPdf                the absolute path to the cmp-file, which is to be compared to output file.
-     * @param outPath               the absolute path to the folder, which will be used to store image files for visual comparison.
+     * @param outPdf                the absolute path to the output PDF file to compare.
+     * @param cmpPdf                the absolute path to the reference (cmp) PDF file.
+     * @param outPath               the absolute path to the directory used to store generated page images and diff
+     *                              images.
      * @param differenceImagePrefix file name prefix for image files with marked differences if there is any.
-     * @param ignoredAreas          a map with one-based page numbers as keys and lists of ignored rectangles as values.
-     * @return string containing list of the pages that are visually different, or null if there are no visual differences.
-     * @throws InterruptedException if the current thread is interrupted by another thread while it is waiting
-     *                              for ghostscript or imagemagic processes, then the wait is ended and
-     *                              an {@link InterruptedException} is thrown.
-     * @throws IOException          is thrown if any of the input files are missing or any of the auxiliary files
-     *                              that are created during comparison process weren't possible to be created.
+     * @param ignoredAreas          a map with one-based page numbers as keys and lists of ignored rectangles as values;
+     *                              may be {@code null} if no areas should be ignored.
+     *
+     * @return a string containing a list of page numbers that are visually different, or {@code null} if there are no
+     * visual differences.
+     *
+     * @throws InterruptedException if the current thread is interrupted while waiting for Ghostscript or ImageMagick
+     *                              processes to finish.
+     * @throws IOException          if any input files are missing, or if auxiliary files/directories required for the
+     *                              comparison process cannot be created or accessed.
      */
-    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
+    public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix,
+            Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
+        return compareVisually(outPdf, cmpPdf, outPath, differenceImagePrefix, ignoredAreas, 0);
+    }
+
+    /**
+     * Compares two PDF documents visually using external tools (Ghostscript and ImageMagick) with a given ImageMagick
+     * {@code fuzz} value.
+     * <p>
+     * During comparison an image file is created for each page of both documents in the directory specified by
+     * {@code outPath}. Then the corresponding page images are compared. If a page differs visually, a difference image
+     * with marked changes is created.
+     * <p>
+     * For more info about needed configuration for visual comparison process see {@link CompareTool} class description.
+     *
+     * @param outPdf    the absolute path to the output PDF file to compare.
+     * @param cmpPdf    the absolute path to the reference (cmp) PDF file.
+     * @param outPath   the absolute path to the directory used to store generated page images and diff images.
+     * @param fuzzValue ImageMagick fuzz value used for visual comparison; allows a tolerance for small color
+     *                  differences. The value is interpreted as a percentage. For example, {@code 1} corresponds
+     *                  to a 1% allowed color tolerance. If {@code 0}, the default ImageMagick behavior/configuration
+     *                  is used.
+     *
+     * @return a string containing a list of page numbers that are visually different, or {@code null} if there are no
+     * visual differences.
+     *
+     * @throws InterruptedException if the current thread is interrupted while waiting for Ghostscript or ImageMagick
+     *                              processes to finish.
+     * @throws IOException          if any input files are missing, or if auxiliary files/directories required for the
+     *                              comparison process cannot be created or accessed.
+     */
+    public String compareVisually(String outPdf, String cmpPdf, String outPath,
+            double fuzzValue)
+            throws InterruptedException, IOException {
+        return compareVisually(outPdf, cmpPdf, outPath, null, null, fuzzValue);
+    }
+
+    /**
+     * Compares two PDF documents visually using external tools (Ghostscript and ImageMagick) with optional ignored
+     * areas and a given ImageMagick {@code fuzz} value.
+     * <p>
+     * It is possible to ignore certain areas of the document pages during visual comparison (for example, dynamically
+     * generated dates or timestamps). Ignored areas are provided as a map with one-based page numbers as keys and lists
+     * of rectangles to ignore as values. For pages with ignored areas, temporary PDF documents may be created with
+     * masked regions prior to performing visual comparison.
+     * <p>
+     * During comparison an image file is created for each page of both documents in the directory specified by
+     * {@code outPath}. Then the corresponding page images are compared. If a page differs visually, a difference image
+     * with marked changes is created.
+     * <p>
+     * For more info about needed configuration for visual comparison process see {@link CompareTool} class
+     * description.
+     *
+     * @param outPdf       the absolute path to the output PDF file to compare.
+     * @param cmpPdf       the absolute path to the reference (cmp) PDF file.
+     * @param outPath      the absolute path to the directory used to store generated page images and diff images.
+     * @param differenceImagePrefix file name prefix for image files with marked differences if there is any.
+     * @param ignoredAreas a map with one-based page numbers as keys and lists of ignored rectangles as values;
+     *                     may be {@code null} if no areas should be ignored.
+     * @param fuzzValue    ImageMagick fuzz value used for visual comparison; allows a tolerance for small color
+     *                     differences. The value is interpreted as a percentage. For example, {@code 1} corresponds
+     *                     to a 1% allowed color tolerance. If {@code 0}, the default ImageMagick behavior/configuration
+     *                     is used.
+     *
+     * @return a string containing a list of page numbers that are visually different, or {@code null} if there are no
+     * visual differences.
+     * @throws InterruptedException if the current thread is interrupted while waiting for Ghostscript or ImageMagick
+     *                              processes to finish.
+     * @throws IOException          if any input files are missing, or if auxiliary files/directories required for the
+     *                              comparison process cannot be created or accessed.
+     */
+    public String compareVisually(String outPdf, String cmpPdf, String outPath,
+            String differenceImagePrefix,
+            Map<Integer, List<Rectangle>> ignoredAreas,
+            double fuzzValue)
+            throws InterruptedException, IOException {
+
         init(outPdf, cmpPdf);
-        System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outPdf));
-        System.out.println("Cmp pdf: " + UrlUtil.getNormalizedFileUriString(cmpPdf)+ "\n");
-        return compareVisually(outPath, differenceImagePrefix, ignoredAreas);
+        System.out.println(OUT_PDF_LOG_PREFIX + UrlUtil.getNormalizedFileUriString(outPdf));
+        System.out.println(CMP_PDF_LOG_PREFIX + UrlUtil.getNormalizedFileUriString(cmpPdf) + "\n");
+
+        return compareVisually(outPath, differenceImagePrefix, ignoredAreas, null, fuzzValue);
     }
 
     /**
@@ -613,8 +696,8 @@ public class CompareTool {
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
-        System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outPdf));
-        System.out.println("Cmp pdf: " + UrlUtil.getNormalizedFileUriString(cmpPdf)+ "\n");
+        System.out.println(OUT_PDF_LOG_PREFIX + UrlUtil.getNormalizedFileUriString(outPdf));
+        System.out.println(CMP_PDF_LOG_PREFIX + UrlUtil.getNormalizedFileUriString(cmpPdf)+ "\n");
         setPassword(outPass, cmpPass);
         return compareByContent(outPath, differenceImagePrefix, ignoredAreas);
     }
@@ -1074,15 +1157,13 @@ public class CompareTool {
             getOutReaderProperties().setPassword(outPass);
         }
         if (cmpPass != null) {
-            getCmpReaderProperties().setPassword(outPass);
+            getCmpReaderProperties().setPassword(cmpPass);
         }
     }
 
-    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
-        return compareVisually(outPath, differenceImagePrefix, ignoredAreas, null);
-    }
-
-    private String compareVisually(String outPath, String differenceImagePrefix, Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages) throws IOException, InterruptedException {
+    private String compareVisually(String outPath, String differenceImagePrefix,
+            Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages, double fuzzValue)
+            throws IOException, InterruptedException {
         if (!outPath.endsWith("/")) {
             outPath = outPath + "/";
         }
@@ -1112,10 +1193,11 @@ public class CompareTool {
 
         ghostscriptHelper.runGhostScriptImageGeneration(outPdf, outPath, outImage);
         ghostscriptHelper.runGhostScriptImageGeneration(cmpPdf, outPath, cmpImage);
-        return compareImagesOfPdfs(outPath, differenceImagePrefix, equalPages);
+        return compareImagesOfPdfs(outPath, differenceImagePrefix, equalPages, fuzzValue);
     }
 
-    private String compareImagesOfPdfs(String outPath, String differenceImagePrefix, List<Integer> equalPages) throws IOException, InterruptedException {
+    private String compareImagesOfPdfs(String outPath, String differenceImagePrefix, List<Integer> equalPages,
+            double fuzzValue) throws IOException, InterruptedException {
         File[] imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngFileFilter(outPdfName));
         File[] cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new CmpPngFileFilter(cmpPdfName));
         boolean bUnexpectedNumberOfPages = false;
@@ -1148,26 +1230,48 @@ public class CompareTool {
         for (int i = 0; i < cnt; i++) {
             if (equalPages != null && equalPages.contains(i))
                 continue;
-            System.out.println("Comparing page " + Integer.toString(i + 1) + ": " + UrlUtil.getNormalizedFileUriString(imageFiles[i].getName()) + " ...");
-            System.out.println("Comparing page " + Integer.toString(i + 1) + ": " + UrlUtil.getNormalizedFileUriString(imageFiles[i].getName()) + " ...");
+            System.out.println("Comparing page " + (i + 1) + ": " + UrlUtil.getNormalizedFileUriString(
+                    imageFiles[i].getAbsolutePath()) + " ...");
+            System.out.println("Against page " + (i + 1) + ": " + UrlUtil.getNormalizedFileUriString(
+                    cmpImageFiles[i].getAbsolutePath()) + " ...");
             InputStream is1 = FileUtil.getInputStreamForFile(imageFiles[i].getAbsolutePath());
             InputStream is2 = FileUtil.getInputStreamForFile(cmpImageFiles[i].getAbsolutePath());
             boolean cmpResult = compareStreams(is1, is2);
             is1.close();
             is2.close();
             if (!cmpResult) {
-                differentPagesFail = "Page is different!";
-                diffPages.add(i + 1);
+                boolean pageIsEqualVisually = false;
+
                 if (compareExecIsOk) {
                     String diffName = outPath + differenceImagePrefix + Integer.toString(i + 1) + ".png";
-                    if (!imageMagickHelper.runImageMagickImageCompare(imageFiles[i].getAbsolutePath(),
-                            cmpImageFiles[i].getAbsolutePath(), diffName)) {
+
+                    pageIsEqualVisually = imageMagickHelper.runImageMagickImageCompare(
+                            imageFiles[i].getAbsolutePath(),
+                            cmpImageFiles[i].getAbsolutePath(),
+                            diffName,
+                            Double.toString(fuzzValue)
+                    );
+
+                    if (!pageIsEqualVisually) {
+                        differentPagesFail = "Page is different!";
+                        if (fuzzValue != 0) {
+                            differentPagesFail += " With fuzziness set to " + fuzzValue;
+                        }
+                        diffPages.add(i + 1);
+
                         File diffFile = new File(diffName);
                         differentPagesFail += "\nPlease, examine " + FILE_PROTOCOL
                                 + UrlUtil.toNormalizedURI(diffFile).getPath() + " for more details.";
+
+                        System.out.println(differentPagesFail);
+                    } else {
+                        System.out.println(" done." + (fuzzValue == 0 ? "" : " With fuzziness set to " + fuzzValue));
                     }
+                } else {
+                    differentPagesFail = "Page is different!";
+                    diffPages.add(i + 1);
+                    System.out.println(differentPagesFail);
                 }
-                System.out.println(differentPagesFail);
             } else {
                 System.out.println(" done.");
             }
@@ -1363,7 +1467,7 @@ public class CompareTool {
         String compareByContentReport = "Compare by content report:\n" + compareByFailContentReason;
         System.out.println(compareByContentReport);
         System.out.flush();
-        String message = compareVisually(outPath, differenceImagePrefix, ignoredAreas, equalPages);
+        String message = compareVisually(outPath, differenceImagePrefix, ignoredAreas, equalPages, 0);
         if (message == null || message.length() == 0)
             return "Compare by content fails. No visual differences";
         return message;
