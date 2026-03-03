@@ -29,23 +29,23 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.InetAddress;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 class DefaultResourceRetrieverTest extends ExtendedITextTest {
@@ -130,7 +130,7 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    @Disabled("TODO DEVSIX-9797 Investigate 403 response in tests with requests to itextpdf.com")
     public void loadWithRequestAndHeaders() throws IOException {
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
         Map<String, String> headers = new HashMap<>(1);
