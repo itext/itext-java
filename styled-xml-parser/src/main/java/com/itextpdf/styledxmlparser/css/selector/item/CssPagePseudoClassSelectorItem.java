@@ -65,4 +65,12 @@ public class CssPagePseudoClassSelectorItem implements ICssSelectorItem {
         }
         return ((PageContextNode) node).getPageClasses().contains(pagePseudoClass);
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return ":" + pagePseudoClass;
+    }
 }

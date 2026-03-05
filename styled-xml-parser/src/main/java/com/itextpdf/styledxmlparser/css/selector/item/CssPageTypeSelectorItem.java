@@ -63,4 +63,12 @@ public class CssPageTypeSelectorItem implements ICssSelectorItem {
         return !CommonCssConstants.AUTO.equals(StringNormalizer.toLowerCase(pageTypeName)) &&
                 pageTypeName.equals(((PageContextNode) node).getPageTypeName());
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return pageTypeName;
+    }
 }
