@@ -83,6 +83,16 @@ public class GCMBlockCipherBC implements IGCMBlockCipher {
      * {@inheritDoc}
      */
     @Override
+    public byte[] processBytes(byte[] input, int inputOffset, int len) {
+        byte[] output = new byte[getUpdateOutputSize(len)];
+        processBytes(input, inputOffset, len, output, 0);
+        return output;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int getOutputSize(int len) {
         return cipher.getOutputSize(len);
     }
@@ -97,6 +107,16 @@ public class GCMBlockCipherBC implements IGCMBlockCipher {
         } catch (InvalidCipherTextException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] doFinal() {
+        byte[] plainText = new byte[getOutputSize(0)];
+        doFinal(plainText, 0);
+        return plainText;
     }
 
     /**

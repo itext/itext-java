@@ -85,7 +85,30 @@ public class AESCipherCBCnoPad {
         }
     }
 
+    /**
+     * Performs a multiple-part encryption or decryption operation (depending on how this cipher was initialized),
+     * processing another data part.
+     *
+     * @param inp the input buffer
+     * @param inpOff the offset in input where the input starts
+     * @param inpLen the input length
+     *
+     * @return byte array with the result
+     */
     public byte[] processBlock(byte[] inp, int inpOff, int inpLen) {
         return cipher.update(inp, inpOff, inpLen);
+    }
+
+    /**
+     * Finishes a multiple-part encryption or decryption operation, depending on how this cipher was initialized.
+     *
+     * @return byte array with the result
+     */
+    public byte[] doFinal() {
+        try {
+            return cipher.doFinal();
+        } catch (GeneralSecurityException | IllegalArgumentException e) {
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
+        }
     }
 }

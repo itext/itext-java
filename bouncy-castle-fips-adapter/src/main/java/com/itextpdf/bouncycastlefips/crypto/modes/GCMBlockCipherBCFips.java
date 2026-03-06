@@ -94,6 +94,14 @@ public class GCMBlockCipherBCFips implements IGCMBlockCipher {
      * {@inheritDoc}
      */
     @Override
+    public byte[] processBytes(byte[] input, int inputOffset, int len) {
+        return cipher.update(input, inputOffset, len);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int getOutputSize(int len) {
         return cipher.getOutputSize(len);
     }
@@ -104,6 +112,14 @@ public class GCMBlockCipherBCFips implements IGCMBlockCipher {
     @Override
     public void doFinal(byte[] plainText, int i) throws GeneralSecurityException {
         cipher.doFinal(plainText, i);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] doFinal() throws GeneralSecurityException {
+        return cipher.doFinal();
     }
 
     /**

@@ -22,6 +22,12 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
  * Creates an AES Cipher with CBC and no padding.
  */
@@ -52,7 +58,51 @@ class AESCipherCBCnoPad {
         aESCipherCBCnoPad = new com.itextpdf.kernel.crypto.AESCipherCBCnoPad(forEncryption, key, initVector);
     }
 
+    /**
+     * Performs a multiple-part encryption or decryption operation (depending on how this cipher was initialized),
+     * processing another data part.
+     *
+     * @param inp the input buffer
+     * @param inpOff the offset in input where the input starts
+     * @param inpLen the input length
+     */
     byte[] processBlock(byte[] inp, int inpOff, int inpLen) {
         return aESCipherCBCnoPad.processBlock(inp, inpOff, inpLen);
+    }
+
+    /**
+     * Finishes a multiple-part encryption or decryption operation, depending on how this cipher was initialized.
+     *
+     * @return byte array with the result
+     */
+    byte[] doFinal() {
+        return aESCipherCBCnoPad.doFinal();
+    }
+
+    /**
+     * Performs a multiple-part encryption or decryption operation (depending on how this cipher was initialized),
+     * processing the full block with finalizing.
+     *
+     * @param inp the input buffer
+     * @param inpOff the offset in input where the input starts
+     * @param inpLen the input length
+     */
+    byte[] processFullBlock(byte[] inp, int inpOff, int inpLen) {
+        try {
+            ByteArrayOutputStream ba = new ByteArrayOutputStream();
+            byte[] processRes = processBlock(inp, inpOff, inpLen);
+            if (processRes != null) {
+                ba.write(processRes);
+            }
+
+            byte[] doFinalRes = doFinal();
+            if (doFinalRes != null) {
+                ba.write(doFinalRes);
+            }
+
+            return ba.toByteArray();
+        } catch (IOException e) {
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
+        }
     }
 }
