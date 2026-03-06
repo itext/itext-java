@@ -67,7 +67,7 @@ public class SelectFieldListBoxRendererTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         SelectFieldListBoxRenderer renderer = new SelectFieldListBoxRenderer(new ListBoxField("", 1, false));
         Assertions.assertNotNull(renderer.getConformance(pdfDocument));
-        Assertions.assertFalse(renderer.getConformance(pdfDocument).isPdfAOrUa());
+        Assertions.assertFalse(renderer.getConformance(pdfDocument).conformsToAny());
     }
 
     @Test

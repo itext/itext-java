@@ -48,7 +48,7 @@ public final class PdfUA1NotesChecker {
         /**
          * Creates a new {@link  PdfUA1NotesChecker.PdfUA1NotesTagHandler} instance.
          *
-         * @param context The validation context.
+         * @param context The validation context
          */
         public PdfUA1NotesTagHandler(PdfUAValidationContext context) {
             super(context);

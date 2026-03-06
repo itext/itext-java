@@ -1338,24 +1338,16 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     }
 
     private boolean isPdfUA2OrWellTaggedDocument() {
-        PdfUAConformance uaConformance = getDocument().getConformance().getUAConformance();
-        WellTaggedPdfConformance wtpdfConformance = getDocument().getConformance().getWtpdfConformance();
-        PdfConformance parsedConformance;
-        if (uaConformance == null || wtpdfConformance == null) {
+        PdfConformance conformance = getDocument().getConformance();
+        if (conformance == null) {
             try {
-                parsedConformance = PdfConformance.getConformance(getDocument().getXmpMetadata());
+                conformance = PdfConformance.getConformance(getDocument().getXmpMetadata());
             } catch (XMPException e) {
                 return false;
             }
-            if (uaConformance == null) {
-                uaConformance = parsedConformance.getUAConformance();
-            }
-            if (wtpdfConformance == null) {
-                wtpdfConformance = parsedConformance.getWtpdfConformance();
-            }
         }
-        return PdfUAConformance.PDF_UA_2 == uaConformance ||
-                WellTaggedPdfConformance.FOR_ACCESSIBILITY == wtpdfConformance;
+        return conformance.conformsTo(PdfConformance.PDF_UA_2, PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY,
+                PdfConformance.WELL_TAGGED_PDF_FOR_REUSE);
     }
 
     private void checkIsoConformanceForAnnotation(PdfAnnotation annotation) {

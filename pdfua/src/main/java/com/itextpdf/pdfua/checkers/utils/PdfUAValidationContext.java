@@ -52,9 +52,9 @@ public class PdfUAValidationContext {
     /**
      * Resolves the node's role to a standard role.
      *
-     * @param node The node you want to resolve the standard role for.
+     * @param node The node you want to resolve the standard role for
      *
-     * @return The role.
+     * @return The role
      */
     public String resolveToStandardRole(IStructureNode node) {
         if (node == null) {
@@ -106,10 +106,10 @@ public class PdfUAValidationContext {
      * Note: This  method will not check recursive mapping. So either the node's role is the provided role,
      * or the standard role is the provided role. So we do not take into account the roles in between the mappings.
      *
-     * @param role          The role we want to check against.
-     * @param structureNode The structure node we want to check.
+     * @param role          The role we want to check against
+     * @param structureNode The structure node we want to check
      *
-     * @return The {@link PdfStructElem} if the role matches.
+     * @return The {@link PdfStructElem} if the role matches
      */
     public PdfStructElem getElementIfRoleMatches(PdfName role, IStructureNode structureNode) {
         if (structureNode == null) {
@@ -147,7 +147,7 @@ public class PdfUAValidationContext {
         PdfUAConformance uaConformance = this.pdfDocument.getConformance().getUAConformance();
         if (uaConformance == null) {
             // In case of WTPDF being set, checkers should behave as if UA-2 is set.
-            return this.pdfDocument.getConformance().getWtpdfConformance() == null ? null : PdfUAConformance.PDF_UA_2;
+            return !this.pdfDocument.getConformance().isWtpdf() ? null : PdfUAConformance.PDF_UA_2;
         }
         return uaConformance;
     }

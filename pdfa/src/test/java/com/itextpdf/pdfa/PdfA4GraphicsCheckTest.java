@@ -69,7 +69,7 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -120,7 +120,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -142,7 +142,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -1386,7 +1386,7 @@ public class PdfA4GraphicsCheckTest extends ExtendedITextTest {
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);

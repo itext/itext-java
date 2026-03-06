@@ -23,9 +23,11 @@
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
@@ -33,7 +35,6 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.ListNumberingType;
@@ -53,115 +54,103 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PdfUAListTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAListTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-    
+
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static List<PdfUAConformance> testSources() {
+    public static List<PdfConformance> testSources() {
         return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void validListTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
-                list.add(new ListItem("item1"));
-                list.add(new ListItem("item2"));
-                list.add(new ListItem("item3"));
-                list.setFont(loadFont());
-                return list;
-            }
+    public void validListTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers( pdfDocument -> {
+            com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
+            list.add(new ListItem("item1"));
+            list.add(new ListItem("item2"));
+            list.add(new ListItem("item3"));
+            list.setFont(loadFont());
+            return list;
         });
 
-        framework.assertBothValid("validListTest", pdfUAConformance);
+        framework.assertBothValid("validListTest");
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void lblAndLBodyInListItemTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Div list = new Div();
-                list.getAccessibilityProperties().setRole(StandardRoles.L);
-                Div item = new Div();
-                item.getAccessibilityProperties().setRole(StandardRoles.LI);
+    public void lblAndLBodyInListItemTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers( pdfDocument -> {
+            Div list = new Div();
+            list.getAccessibilityProperties().setRole(StandardRoles.L);
+            Div item = new Div();
+            item.getAccessibilityProperties().setRole(StandardRoles.LI);
 
-                Paragraph lbl = new Paragraph("label");
-                lbl.getAccessibilityProperties().setRole(StandardRoles.LBL);
+            Paragraph lbl = new Paragraph("label");
+            lbl.getAccessibilityProperties().setRole(StandardRoles.LBL);
 
-                Paragraph lBody = new Paragraph("body");
-                lBody.getAccessibilityProperties().setRole(StandardRoles.LBODY);
+            Paragraph lBody = new Paragraph("body");
+            lBody.getAccessibilityProperties().setRole(StandardRoles.LBODY);
 
-                item.add(lbl);
-                item.add(lBody);
-                list.add(item);
+            item.add(lbl);
+            item.add(lBody);
+            list.add(item);
 
-                list.setFont(loadFont());
-                return list;
-            }
+            list.setFont(loadFont());
+            return list;
         });
 
-        framework.assertBothValid("lblAndLBodyInListItemTest", pdfUAConformance);
+        framework.assertBothValid("lblAndLBodyInListItemTest");
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void invalidListItemRoleTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
-                ListItem item1 = new ListItem("item1");
-                item1.getAccessibilityProperties().setRole(StandardRoles.P);
-                list.add(item1);
-                list.add(new ListItem("item2"));
-                list.add(new ListItem("item3"));
-                list.setFont(loadFont());
-                return list;
-            }
+    public void invalidListItemRoleTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers( pdf -> {
+            com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
+            ListItem item1 = new ListItem("item1");
+            item1.getAccessibilityProperties().setRole(StandardRoles.P);
+            list.add(item1);
+            list.add(new ListItem("item2"));
+            list.add(new ListItem("item3"));
+            list.setFont(loadFont());
+            return list;
         });
 
         framework.assertBothFail("invalidListItemRoleTest",
-                PdfUAExceptionMessageConstants.LIST_ITEM_CONTENT_HAS_INVALID_TAG, pdfUAConformance);
+                PdfUAExceptionMessageConstants.LIST_ITEM_CONTENT_HAS_INVALID_TAG);
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void artifactInListItemTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
-                ListItem item1 = new ListItem("item1");
-                item1.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
-                list.add(item1);
-                list.add(new ListItem("item2"));
-                list.add(new ListItem("item3"));
-                list.setFont(loadFont());
-                return list;
-            }
+    public void artifactInListItemTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers( pdfDocument -> {
+            com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
+            ListItem item1 = new ListItem("item1");
+            item1.getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
+            list.add(item1);
+            list.add(new ListItem("item2"));
+            list.add(new ListItem("item3"));
+            list.setFont(loadFont());
+            return list;
         });
 
-        framework.assertBothValid("artifactInListItemTest", pdfUAConformance);
+        framework.assertBothValid("artifactInListItemTest");
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void noListNumberingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addBeforeGenerationHook(pdfDoc -> {
+    public void noListNumberingTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
-            PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+            PdfStructElem list = conformance.getUAConformance() == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
                     ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0))
                             .addKid(new PdfStructElem(pdfDoc, PdfName.L));
@@ -169,21 +158,21 @@ public class PdfUAListTest extends ExtendedITextTest {
             listItem1.addKid(new PdfStructElem(pdfDoc, PdfName.Lbl));
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("noListNumberingTest", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+        if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("noListNumberingTest");
+        } else {
             framework.assertBothFail("noListNumberingTest",
-                    PdfUAExceptionMessageConstants.LIST_NUMBERING_IS_NOT_SPECIFIED, pdfUAConformance);
+                    PdfUAExceptionMessageConstants.LIST_NUMBERING_IS_NOT_SPECIFIED);
         }
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void noneListNumberingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addBeforeGenerationHook(pdfDoc -> {
+    public void noneListNumberingTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
-            PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+            PdfStructElem list = conformance.getUAConformance() == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
                     ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0))
                             .addKid(new PdfStructElem(pdfDoc, PdfName.L));
@@ -197,21 +186,21 @@ public class PdfUAListTest extends ExtendedITextTest {
             listItem1.addKid(new PdfStructElem(pdfDoc, PdfName.Lbl));
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("noneListNumberingTest", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+        if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("noneListNumberingTest");
+        } else {
             framework.assertBothFail("noneListNumberingTest",
-                    PdfUAExceptionMessageConstants.LIST_NUMBERING_IS_NOT_SPECIFIED, pdfUAConformance);
+                    PdfUAExceptionMessageConstants.LIST_NUMBERING_IS_NOT_SPECIFIED);
         }
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void noListNumberingNoLblTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addBeforeGenerationHook(pdfDoc -> {
+    public void noListNumberingNoLblTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
-            PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+            PdfStructElem list = conformance.getUAConformance() == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
                     ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0))
                             .addKid(new PdfStructElem(pdfDoc, PdfName.L));
@@ -219,75 +208,70 @@ public class PdfUAListTest extends ExtendedITextTest {
             listItem1.addKid(new PdfStructElem(pdfDoc, PdfName.LBody));
         });
 
-        framework.assertBothValid("noListNumberingNoLblTest", pdfUAConformance);
+        framework.assertBothValid("noListNumberingNoLblTest");
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void invalidNestedListTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Div list = new Div();
-                list.getAccessibilityProperties().setRole(StandardRoles.L);
-                PdfDictionary attributes = new PdfDictionary();
-                attributes.put(PdfName.O, PdfName.List);
-                attributes.put(PdfName.ListNumbering, PdfName.Unordered);
-                list.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributes));
+    public void invalidNestedListTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers( pdfDocument -> {
+            Div list = new Div();
+            list.getAccessibilityProperties().setRole(StandardRoles.L);
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfName.List);
+            attributes.put(PdfName.ListNumbering, PdfName.Unordered);
+            list.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributes));
 
-                com.itextpdf.layout.element.List nestedList = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
-                ListItem nestedItem = new ListItem("item4");
-                nestedItem.getAccessibilityProperties().setRole(StandardRoles.P);
-                nestedList.add(nestedItem);
+            com.itextpdf.layout.element.List nestedList = new com.itextpdf.layout.element.List(
+                    ListNumberingType.DECIMAL);
+            ListItem nestedItem = new ListItem("item4");
+            nestedItem.getAccessibilityProperties().setRole(StandardRoles.P);
+            nestedList.add(nestedItem);
 
-                list.add(new ListItem("item1"));
-                list.add(new ListItem("item2"));
-                list.add(new ListItem("item3"));
-                list.add(nestedList);
-                list.setFont(loadFont());
-                return list;
-            }
+            list.add(new ListItem("item1"));
+            list.add(new ListItem("item2"));
+            list.add(new ListItem("item3"));
+            list.add(nestedList);
+            list.setFont(loadFont());
+            return list;
         });
 
         framework.assertBothFail("invalidNestedListTest",
-                PdfUAExceptionMessageConstants.LIST_ITEM_CONTENT_HAS_INVALID_TAG, pdfUAConformance);
+                PdfUAExceptionMessageConstants.LIST_ITEM_CONTENT_HAS_INVALID_TAG);
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void severalListNumberingsFirstValidTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
-                list.add(new ListItem("item1"));
-                list.add(new ListItem("item2"));
-                list.add(new ListItem("item3"));
-                list.setFont(loadFont());
+    public void severalListNumberingsFirstValidTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers( document -> {
+            com.itextpdf.layout.element.List list = new com.itextpdf.layout.element.List(ListNumberingType.DECIMAL);
+            list.add(new ListItem("item1"));
+            list.add(new ListItem("item2"));
+            list.add(new ListItem("item3"));
+            list.setFont(loadFont());
 
-                PdfDictionary attributes = new PdfDictionary();
-                attributes.put(PdfName.O, PdfName.List);
-                attributes.put(PdfName.ListNumbering, PdfName.None);
-                // ListNumbering Decimal will be added to the beginning when processing List layout element.
-                list.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributes));
-                list.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributes));
-                list.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributes));
-                return list;
-            }
+            PdfDictionary attributes = new PdfDictionary();
+            attributes.put(PdfName.O, PdfName.List);
+            attributes.put(PdfName.ListNumbering, PdfName.None);
+            // ListNumbering Decimal will be added to the beginning when processing List layout element.
+            list.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributes));
+            list.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributes));
+            list.getAccessibilityProperties().addAttributes(new PdfStructureAttributes(attributes));
+            return list;
         });
 
-        framework.assertBothValid("severalListNumberingsFirstValidTest", pdfUAConformance);
+        framework.assertBothValid("severalListNumberingsFirstValidTest");
     }
 
     @ParameterizedTest
     @MethodSource("testSources")
-    public void severalListNumberingsFirstInvalidTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework        .addBeforeGenerationHook(pdfDoc -> {
+    public void severalListNumberingsFirstInvalidTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addBeforeGenerationHook(pdfDoc -> {
             pdfDoc.getTagStructureContext().normalizeDocumentRootTag();
-            PdfStructElem list = pdfUAConformance == PdfUAConformance.PDF_UA_1 ?
+            PdfStructElem list = conformance.getUAConformance() == PdfUAConformance.PDF_UA_1 ?
                     pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.L)) :
                     ((PdfStructElem) pdfDoc.getStructTreeRoot().getKids().get(0))
                             .addKid(new PdfStructElem(pdfDoc, PdfName.L));
@@ -310,19 +294,20 @@ public class PdfUAListTest extends ExtendedITextTest {
             listItem1.addKid(new PdfStructElem(pdfDoc, PdfName.Lbl));
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("severalListNumberingsFirstInvalidTest", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+        if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothValid("severalListNumberingsFirstInvalidTest");
+        } else {
             framework.assertBothFail("severalListNumberingsFirstInvalidTest",
-                    PdfUAExceptionMessageConstants.LIST_NUMBERING_IS_NOT_SPECIFIED, pdfUAConformance);
+                    PdfUAExceptionMessageConstants.LIST_NUMBERING_IS_NOT_SPECIFIED);
         }
     }
 
     private static PdfFont loadFont() {
         try {
-            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
+            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI,
+                    PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PdfException(e.getMessage());
         }
     }
 }

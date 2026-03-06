@@ -19,7 +19,7 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 package com.itextpdf.pdfua;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -32,6 +32,7 @@ import com.itextpdf.forms.fields.PushButtonFormFieldBuilder;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
@@ -39,6 +40,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -47,7 +49,6 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.action.PdfMediaClipData;
 import com.itextpdf.kernel.pdf.action.PdfRendition;
@@ -75,24 +76,21 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUAAnnotationsTest extends ExtendedITextTest {
@@ -105,45 +103,34 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static List<PdfUAConformance> data() {
+    public static List<PdfConformance> data() {
         return UaValidationTestFramework.getConformanceList();
     }
 
-    private static PdfFont loadFont() {
-        try {
-            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
     @ParameterizedTest
     @MethodSource("data")
-    public void linkAnnotNotDirectChildOfAnnotLayoutTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Rectangle rect = new Rectangle(100, 650, 400, 100);
-                PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
-                        PdfAction.createURI("https://itextpdf.com/"));
-                annot.setContents("link annot");
-                Link link = new Link("Link to iText", annot);
+    public void linkAnnotNotDirectChildOfAnnotLayoutTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(pdfDoc -> {
+            Rectangle rect = new Rectangle(100, 650, 400, 100);
+            PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
+                    PdfAction.createURI("https://itextpdf.com/"));
+            annot.setContents("link annot");
+            Link link = new Link("Link to iText", annot);
 
-                Paragraph paragraph = new Paragraph();
-                paragraph.setFont(loadFont());
-                paragraph.add(link);
+            Paragraph paragraph = new Paragraph();
+            paragraph.setFont(loadFont());
+            paragraph.add(link);
 
-                return paragraph;
-            }
+            return paragraph;
         });
-        framework.assertBothValid("linkAnnotNotDirectChildOfAnnotLayoutTest", pdfUAConformance);
+        framework.assertBothValid("linkAnnotNotDirectChildOfAnnotLayoutTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void linkAnnotNotDirectChildOfAnnotKernelTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void linkAnnotNotDirectChildOfAnnotKernelTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Rectangle rect = new Rectangle(100, 650, 400, 100);
             PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
@@ -152,13 +139,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfDoc.addNewPage();
             pdfDoc.getPage(1).addAnnotation(annot);
         });
-        framework.assertBothValid("linkAnnotNotDirectChildOfAnnotKernelTest", pdfUAConformance);
+        framework.assertBothValid("linkAnnotNotDirectChildOfAnnotKernelTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void widgetAnnotNoDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void widgetAnnotNoDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
             PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox")
@@ -171,14 +158,14 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             acroForm.addField(checkBox);
         });
 
-        framework.assertBothValid("widgetAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
+        framework.assertBothValid("widgetAnnotNoDirectChildOfAnnotTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void widgetAnnotNoDirectChildOfAnnotAutomaticConformanceLevelTest(PdfUAConformance pdfUAConformance)
+    public void widgetAnnotNoDirectChildOfAnnotAutomaticConformanceLevelTest(PdfConformance conformance)
             throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
             PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox")
@@ -191,13 +178,16 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             acroForm.addField(checkBox);
         });
 
-        framework.assertBothValid("widgetAnnotNoDirectChildAutoConformanceLvl", pdfUAConformance);
+        framework.assertBothValid("widgetAnnotNoDirectChildAutoConformanceLvl");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void printerMAnnotNoDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void printerMAnnotNoDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        if (!conformance.isPdfUA()) {
+            return;
+        }
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
 
@@ -219,17 +209,18 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(annot);
         });
 
-        framework.assertBothValid("printerMAnnotNoDirectChildOfAnnotTest", pdfUAConformance);
+        framework.assertBothValid("printerMAnnotNoDirectChildOfAnnotTest");
         String layoutPdf =
-                "itext_printerMAnnotNoDirectChildOfAnnotTest" + "_UA_" + pdfUAConformance.getPart() + ".pdf";
+                "itext_printerMAnnotNoDirectChildOfAnnotTest" + "_UA_" + conformance.getUAConformance().getPart()
+                        + ".pdf";
         try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(DESTINATION_FOLDER + layoutPdf))) {
             final IStructureNode docNode = pdfDoc.getStructTreeRoot().getKids().get(0);
             Assertions.assertEquals(PdfName.Document, docNode.getRole());
 
-            if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+            if (conformance.equals(PdfConformance.PDF_UA_1)) {
                 Assertions.assertEquals(PdfName.PrinterMark,
                         ((PdfObjRef) docNode.getKids().get(0)).getReferencedObject().get(PdfName.Subtype));
-            } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            } else {
                 final IStructureNode artifactNode = docNode.getKids().get(0);
                 Assertions.assertEquals(PdfName.Artifact, artifactNode.getRole());
                 Assertions.assertEquals(PdfName.PrinterMark,
@@ -240,8 +231,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void fileAnnotDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void fileAnnotDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             Rectangle rect = new Rectangle(100, 650, 400, 100);
@@ -253,13 +244,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
             pdfPage.addAnnotation(annot);
         });
-        framework.assertBothValid("fileAnnotDirectChildOfAnnotTest", pdfUAConformance);
+        framework.assertBothValid("fileAnnotDirectChildOfAnnotTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void stampAnnotDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void stampAnnotDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
@@ -268,65 +259,64 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             stamp.getPdfObject().put(PdfName.Type, PdfName.Annot);
             pdfPage.addAnnotation(stamp);
         });
-        framework.assertBothValid("stampAnnotDirectChildOfAnnotTest", pdfUAConformance);
+        framework.assertBothValid("stampAnnotDirectChildOfAnnotTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
             screen.setContents("screen annotation");
             pdfPage.addAnnotation(screen);
         });
-        framework.assertBothValid("screenAnnotDirectChildOfAnnotTest", pdfUAConformance);
+        framework.assertBothValid("screenAnnotDirectChildOfAnnotTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotWithoutContentsAndAltTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotWithoutContentsAndAltTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
             pdfPage.addAnnotation(screen);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             framework.assertBothFail("screenAnnotWithoutContentsAndAltTest", MessageFormatUtil.format(
-                            PdfUAExceptionMessageConstants.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_OR_ALT_KEY,
-                            "Screen"),
-                    pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                    PdfUAExceptionMessageConstants.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_OR_ALT_KEY,
+                    "Screen"));
+        } else {
             framework.assertBothFail("screenAnnotWithoutContentsAndAltTest",
-                    PdfUAExceptionMessageConstants.ANNOT_CONTENTS_IS_NULL_OR_EMPTY, pdfUAConformance);
+                    PdfUAExceptionMessageConstants.ANNOT_CONTENTS_IS_NULL_OR_EMPTY);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void popupWithoutContentOrAltTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void popupWithoutContentOrAltTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfPopupAnnotation popup = new PdfPopupAnnotation(new Rectangle(0f, 0f));
             pdfPage.addAnnotation(popup);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("popupWithoutContentOrAltTest", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
+            framework.assertBothValid("popupWithoutContentOrAltTest");
+        } else {
             framework.assertBothFail("popupWithoutContentOrAltTest",
-                    PdfUAExceptionMessageConstants.POPUP_ANNOTATIONS_ARE_NOT_ALLOWED, pdfUAConformance);
+                    PdfUAExceptionMessageConstants.POPUP_ANNOTATIONS_ARE_NOT_ALLOWED);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void stampAnnotWithAltTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void stampAnnotWithAltTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
@@ -338,13 +328,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             tagPointer.moveToKid(0);
             tagPointer.getProperties().setAlternateDescription("Alt description");
         });
-        framework.assertBothValid("stampAnnotWithAltTest", pdfUAConformance);
+        framework.assertBothValid("stampAnnotWithAltTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotWithAltTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotWithAltTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfScreenAnnotation screen = new PdfScreenAnnotation(new Rectangle(100, 100));
@@ -354,42 +344,42 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             tagPointer.getProperties().setAlternateDescription("Alt description");
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("screenAnnotWithAltTest", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothFail("screenAnnotWithAltTest", PdfUAExceptionMessageConstants.ANNOT_CONTENTS_IS_NULL_OR_EMPTY,
-                    pdfUAConformance);
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
+            framework.assertBothValid("screenAnnotWithAltTest");
+        } else {
+            framework.assertBothFail("screenAnnotWithAltTest", PdfUAExceptionMessageConstants
+                    .ANNOT_CONTENTS_IS_NULL_OR_EMPTY);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void inkAnnotDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void inkAnnotDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfInkAnnotation ink = createInkAnnotation();
             pdfPage.addAnnotation(ink);
         });
-        framework.assertBothValid("inkAnnotDirectChildOfAnnotTest", pdfUAConformance);
+        framework.assertBothValid("inkAnnotDirectChildOfAnnotTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void redactAnnotDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void redactAnnotDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfRedactAnnotation redact = createRedactionAnnotation();
             pdfPage.addAnnotation(redact);
         });
-        framework.assertBothValid("redactAnnotDirectChildOfAnnotTest", pdfUAConformance);
+        framework.assertBothValid("redactAnnotDirectChildOfAnnotTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void ua3DAnnotDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void ua3DAnnotDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             Pdf3DAnnotation annot = create3DAnnotation();
@@ -398,26 +388,26 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             tagPointer.addTag(StandardRoles.ANNOT);
             pdfPage.addAnnotation(annot);
         });
-        framework.assertBothValid("ua3DAnnotDirectChildOfAnnotTest", pdfUAConformance);
+        framework.assertBothValid("ua3DAnnotDirectChildOfAnnotTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void richAnnotDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void richAnnotDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfTextAnnotation annot = createRichTextAnnotation();
             pdfDoc.getTagStructureContext().getAutoTaggingPointer().addTag(StandardRoles.SECT);
             pdfPage.addAnnotation(annot);
         });
-        framework.assertBothValid("richAnnotDirectChildOfAnnotTest", pdfUAConformance);
+        framework.assertBothValid("richAnnotDirectChildOfAnnotTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void trapNetAnnotNotPermittedTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void trapNetAnnotNotPermittedTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfFormXObject form = new PdfFormXObject(PageSize.A4);
@@ -435,20 +425,20 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(annot);
         });
 
-        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+        if (PdfConformance.PDF_UA_1.equals(conformance)) {
             framework.assertBothFail("trapNetAnnotNotPermittedTest",
-                    PdfUAExceptionMessageConstants.ANNOT_TRAP_NET_IS_NOT_PERMITTED, pdfUAConformance);
-        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+                    PdfUAExceptionMessageConstants.ANNOT_TRAP_NET_IS_NOT_PERMITTED);
+        } else {
             framework.assertBothFail("trapNetAnnotNotPermittedTest", MessageFormatUtil.format(
-                            PdfUAExceptionMessageConstants.DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED, PdfName.TrapNet.getValue()),
-                    pdfUAConformance);
+                    PdfUAExceptionMessageConstants.DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED, PdfName.TrapNet
+                            .getValue()));
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void invisibleTrapNetAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void invisibleTrapNetAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfFormXObject form = new PdfFormXObject(PageSize.A4);
@@ -467,19 +457,19 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(annot);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("invisibleTrapNetAnnotTest", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
+            framework.assertBothValid("invisibleTrapNetAnnotTest");
+        } else {
             framework.assertBothFail("invisibleTrapNetAnnotTest", MessageFormatUtil.format(
-                            PdfUAExceptionMessageConstants.DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED, PdfName.TrapNet.getValue()),
-                    pdfUAConformance);
+                    PdfUAExceptionMessageConstants.DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED, PdfName.TrapNet
+                            .getValue()));
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void soundAnnotDirectChildOfAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void soundAnnotDirectChildOfAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfAnnotation annot = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), new PdfStream());
@@ -488,19 +478,19 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(annot);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothValid("soundAnnotDirectChildOfAnnotTest", pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
+            framework.assertBothValid("soundAnnotDirectChildOfAnnotTest");
+        } else {
             framework.assertBothFail("soundAnnotDirectChildOfAnnotTest", MessageFormatUtil.format(
-                            PdfUAExceptionMessageConstants.DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED, PdfName.Sound.getValue()),
-                    pdfUAConformance);
+                    PdfUAExceptionMessageConstants.DEPRECATED_ANNOTATIONS_ARE_NOT_ALLOWED, PdfName.Sound
+                            .getValue()));
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void pushBtnNestedWithinFormTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void pushBtnNestedWithinFormTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, true);
             // The rest of the tests for widgets can be found in com.itextpdf.pdfua.checkers.PdfUAFormFieldsTest
@@ -513,13 +503,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             button.getFirstFormAnnotation().setAlternativeDescription("widget");
             acroForm.addField(button);
         });
-        framework.assertBothValid("pushBtnNestedWithinFormTest", pdfUAConformance);
+        framework.assertBothValid("pushBtnNestedWithinFormTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void linkAnnotNotDirectChildOfLinkTest2(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void linkAnnotNotDirectChildOfLinkTest2(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Rectangle rect = new Rectangle(100, 650, 400, 100);
             PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
@@ -531,7 +521,6 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             p1.setFont(loadFont());
             p1.getAccessibilityProperties().setRole(StandardRoles.LINK);
 
-
             Paragraph p2 = new Paragraph("Text");
             p2.setFont(loadFont());
             p2.getAccessibilityProperties().setRole(StandardRoles.H1);
@@ -540,13 +529,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             p1.add(p2);
             doc.add(p1);
         });
-        framework.assertBothValid("linkAnnotNotDirectChildOfLinkTest2", pdfUAConformance);
+        framework.assertBothValid("linkAnnotNotDirectChildOfLinkTest2");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void linkAnnotNestedWithinLinkTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void linkAnnotNestedWithinLinkTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Rectangle rect = new Rectangle(100, 650, 400, 100);
             PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
@@ -561,13 +550,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
             doc.add(p2);
         });
-        framework.assertBothValid("linkAnnotNestedWithinLinkTest", pdfUAConformance);
+        framework.assertBothValid("linkAnnotNestedWithinLinkTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void linkAnnotWithoutContentsTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void linkAnnotWithoutContentsTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Rectangle rect = new Rectangle(100, 650, 400, 100);
             PdfLinkAnnotation annot = new PdfLinkAnnotation(rect).setAction(
@@ -582,18 +571,18 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             doc.add(p2);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             framework.assertBothFail("linkAnnotNestedWithinLinkWithAnAltDescr",
-                    PdfUAExceptionMessageConstants.LINK_ANNOTATION_SHOULD_HAVE_CONTENTS_KEY, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("linkAnnotNestedWithinLinkWithAnAltDescr", pdfUAConformance);
+                    PdfUAExceptionMessageConstants.LINK_ANNOTATION_SHOULD_HAVE_CONTENTS_KEY);
+        } else {
+            framework.assertBothValid("linkAnnotNestedWithinLinkWithAnAltDescr");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void linkAnnotNotDirectChildOfLinkButHiddenTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void linkAnnotNotDirectChildOfLinkButHiddenTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
 
@@ -604,13 +593,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             annot.setFlag(PdfAnnotation.HIDDEN);
             page.addAnnotation(annot);
         });
-        framework.assertBothValid("linkAnnotNotDirectChildOfLinkButHiddenTest", pdfUAConformance);
+        framework.assertBothValid("linkAnnotNotDirectChildOfLinkButHiddenTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void linkAnnotNotDirectChildOfLinkButOutsideTest1(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void linkAnnotNotDirectChildOfLinkButOutsideTest1(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
 
@@ -620,13 +609,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             annot.setContents("link annot");
             page.addAnnotation(annot);
         });
-        framework.assertBothValid("linkAnnotNotDirectChildOfLinkButOutsideTest1", pdfUAConformance);
+        framework.assertBothValid("linkAnnotNotDirectChildOfLinkButOutsideTest1");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void linkAnnotNotDirectChildOfLinkButOutsideTest2(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void linkAnnotNotDirectChildOfLinkButOutsideTest2(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             page.setCropBox(new Rectangle(1000, 1000, 500, 500));
@@ -637,13 +626,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             annot.setContents("link annot");
             page.addAnnotation(annot);
         });
-        framework.assertBothValid("linkAnnotNotDirectChildOfLinkButOutsideTest2", pdfUAConformance);
+        framework.assertBothValid("linkAnnotNotDirectChildOfLinkButOutsideTest2");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotationWithMediaDataTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotationWithMediaDataTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, SOURCE_FOLDER + "sample.wav");
@@ -656,13 +645,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                     .put(PdfName.Alt, new PdfArray());
             page.addAnnotation(screen);
         });
-        framework.assertBothValid("screenAnnotationWithValidMediaDataTest", pdfUAConformance);
+        framework.assertBothValid("screenAnnotationWithValidMediaDataTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotationAsAAWithMediaDataTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotationAsAAWithMediaDataTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, SOURCE_FOLDER + "sample.wav");
@@ -675,13 +664,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
                     .put(PdfName.Alt, new PdfArray());
             page.addAnnotation(screen);
         });
-        framework.assertBothValid("screenAnnotationAAWithValidMediaDataTest", pdfUAConformance);
+        framework.assertBothValid("screenAnnotationAAWithValidMediaDataTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotationWithBEMediaDataTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotationWithBEMediaDataTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             String file = "sample.wav";
@@ -707,13 +696,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             screen.setContents("screen annotation");
             page.addAnnotation(screen);
         });
-        framework.assertBothValid("screenAnnotationWithBEMediaDataTest", pdfUAConformance);
+        framework.assertBothValid("screenAnnotationWithBEMediaDataTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotationWithMHMediaDataTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotationWithMHMediaDataTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             String file = "sample.wav";
@@ -739,13 +728,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             screen.setContents("screen annotation");
             page.addAnnotation(screen);
         });
-        framework.assertBothValid("screenAnnotationWithMHMediaDataTest", pdfUAConformance);
+        framework.assertBothValid("screenAnnotationWithMHMediaDataTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotationWithMHWithoutAltMediaDataTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotationWithMHWithoutAltMediaDataTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             String file = "sample.wav";
@@ -771,19 +760,19 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             page.addAnnotation(screen);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             // Verapdf doesn't fail here but it should
             framework.assertOnlyITextFail("screenAnnotationWithInvalidMHMediaDataTest",
-                    PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("screenAnnotationWithInvalidMHMediaDataTest", pdfUAConformance);
+                    PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP);
+        } else {
+            framework.assertBothValid("screenAnnotationWithInvalidMHMediaDataTest");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotationWithoutAltInMediaDataTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotationWithoutAltInMediaDataTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, SOURCE_FOLDER + "sample.wav");
@@ -795,18 +784,18 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             page.addAnnotation(screen);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             framework.assertBothFail("screenAnnotationWOAltMediaDataTest",
-                    PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("screenAnnotationWOAltMediaDataTest", pdfUAConformance);
+                    PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP);
+        } else {
+            framework.assertBothValid("screenAnnotationWOAltMediaDataTest");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotationAsAAWithoutAltInMediaDataTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotationAsAAWithoutAltInMediaDataTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, SOURCE_FOLDER + "sample.wav");
@@ -818,18 +807,18 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             page.addAnnotation(screen);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             framework.assertBothFail("screenAnnotationAaWoAltMediaDataTest",
-                    PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("screenAnnotationAaWoAltMediaDataTest", pdfUAConformance);
+                    PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP);
+        } else {
+            framework.assertBothValid("screenAnnotationAaWoAltMediaDataTest");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void screenAnnotationWithoutCTInMediaDataTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void screenAnnotationWithoutCTInMediaDataTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfFileSpec spec = PdfFileSpec.createExternalFileSpec(pdfDoc, SOURCE_FOLDER + "sample.wav");
@@ -844,18 +833,18 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             page.addAnnotation(screen);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             framework.assertBothFail("screenAnnotationWoCtMediaDataTest",
-                    PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertBothValid("screenAnnotationWoCtMediaDataTest", pdfUAConformance);
+                    PdfUAExceptionMessageConstants.CT_OR_ALT_ENTRY_IS_MISSING_IN_MEDIA_CLIP);
+        } else {
+            framework.assertBothValid("screenAnnotationWoCtMediaDataTest");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void undefinedAnnotTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void undefinedAnnotTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
 
@@ -863,13 +852,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             annot.setContents("Content of unique annot");
             page.addAnnotation(annot);
         });
-        framework.assertBothValid("undefinedAnnotTest", pdfUAConformance);
+        framework.assertBothValid("undefinedAnnotTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void tabsEntryAbsentInPageTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void tabsEntryAbsentInPageTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfTextAnnotation annot = createRichTextAnnotation();
@@ -877,20 +866,19 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.getPdfObject().remove(PdfName.Tabs);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             framework.assertBothFail("tabsEntryAbsentInPageTest",
-                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S);
+        } else {
             framework.assertBothFail("tabsEntryAbsentInPageTest",
-                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT,
-                    pdfUAConformance);
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void tabsEntryNotSInPageTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void tabsEntryNotSInPageTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfTextAnnotation annot = createRichTextAnnotation();
@@ -898,20 +886,19 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.setTabOrder(PdfName.O);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             framework.assertBothFail("tabsEntryNotSInPageTest",
-                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S);
+        } else {
             framework.assertBothFail("tabsEntryNotSInPageTest",
-                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT,
-                    pdfUAConformance);
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void invalidTabsEntryButAnnotInvisibleTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void invalidTabsEntryButAnnotInvisibleTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfTextAnnotation annot = createRichTextAnnotation();
@@ -920,20 +907,19 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.setTabOrder(PdfName.O);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             framework.assertBothFail("invalidTabsEntryButAnnotInvisibleTest",
-                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_S);
+        } else {
             framework.assertBothFail("invalidTabsEntryButAnnotInvisibleTest",
-                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT,
-                    pdfUAConformance);
+                    PdfUAExceptionMessageConstants.PAGE_WITH_ANNOT_DOES_NOT_HAVE_TABS_WITH_VALID_CONTENT);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void printerMAnnotIsInLogicalStructureTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void printerMAnnotIsInLogicalStructureTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
 
@@ -956,19 +942,19 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             pdfPage.getPdfObject().put(PdfName.Annots, new PdfArray(annot.setPage(pdfPage).getPdfObject()));
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.equals(PdfConformance.PDF_UA_1)) {
             framework.assertBothFail("printerMAnnotIsInLogicalStructureTest",
-                    PdfUAExceptionMessageConstants.PRINTER_MARK_IS_NOT_PERMITTED, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+                    PdfUAExceptionMessageConstants.PRINTER_MARK_IS_NOT_PERMITTED);
+        } else {
             framework.assertBothFail("printerMAnnotIsInLogicalStructureTest",
-                    PdfUAExceptionMessageConstants.PRINTER_MARK_SHALL_BE_AN_ARTIFACT, pdfUAConformance);
+                    PdfUAExceptionMessageConstants.PRINTER_MARK_SHALL_BE_AN_ARTIFACT);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void printerMAnnotNotInTagStructureTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void printerMAnnotNotInTagStructureTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
 
@@ -987,11 +973,9 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             // Put false as 3rd parameter to not tag annotation
             pdfPage.addAnnotation(-1, annot, false);
 
-
             PdfCustomAnnot annot2 = new PdfCustomAnnot(new Rectangle(100, 650, 400, 100));
             annot2.setContents("Content of unique annot");
             pdfPage.addAnnotation(annot2);
-
 
             PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(0, 0, 100, 50));
             stamp.setStampName(PdfName.Approved);
@@ -999,13 +983,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             stamp.getPdfObject().put(PdfName.Type, PdfName.Annot);
             pdfPage.addAnnotation(stamp);
         });
-        framework.assertBothValid("printerMAnnotNotInTagStructureTest", pdfUAConformance);
+        framework.assertBothValid("printerMAnnotNotInTagStructureTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void invisibleAnnotationArtifactTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void invisibleAnnotationArtifactTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfWatermarkAnnotation annotation = new PdfWatermarkAnnotation(new Rectangle(100, 100));
@@ -1013,13 +997,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             annotation.setFlag(PdfAnnotation.INVISIBLE);
             pdfPage.addAnnotation(annotation);
         });
-        framework.assertBothValid("invisibleAnnotationArtifact", pdfUAConformance);
+        framework.assertBothValid("invisibleAnnotationArtifact");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void invisibleAnnotationTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void invisibleAnnotationTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(100, 100));
@@ -1031,18 +1015,18 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             tagPointer.addTag(StandardRoles.ANNOT);
             tagPointer.setPageForTagging(pdfPage).addAnnotationTag(stamp);
         });
-        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
-            framework.assertBothValid("invisibleAnnotation", pdfUAConformance);
-        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+        if (PdfConformance.PDF_UA_1.equals(conformance)) {
+            framework.assertBothValid("invisibleAnnotation");
+        } else {
             framework.assertBothFail("invisibleAnnotation", PdfUAExceptionMessageConstants.
-                    INVISIBLE_ANNOT_SHALL_BE_AN_ARTIFACT, false, pdfUAConformance);
+                    INVISIBLE_ANNOT_SHALL_BE_AN_ARTIFACT, false);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void noViewAnnotationArtifactTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void noViewAnnotationArtifactTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfWatermarkAnnotation annotation = new PdfWatermarkAnnotation(new Rectangle(100, 100));
@@ -1050,13 +1034,13 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             annotation.setFlag(PdfAnnotation.NO_VIEW);
             pdfPage.addAnnotation(annotation);
         });
-        framework.assertBothValid("noViewAnnotationArtifact", pdfUAConformance);
+        framework.assertBothValid("noViewAnnotationArtifact");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void noViewAnnotationTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void noViewAnnotationTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(100, 100));
@@ -1068,18 +1052,18 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             tagPointer.addTag(StandardRoles.ANNOT);
             tagPointer.setPageForTagging(pdfPage).addAnnotationTag(stamp);
         });
-        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
-            framework.assertBothValid("noViewAnnotation", pdfUAConformance);
-        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+        if (PdfConformance.PDF_UA_1.equals(conformance)) {
+            framework.assertBothValid("noViewAnnotation");
+        } else {
             framework.assertBothFail("noViewAnnotation", PdfUAExceptionMessageConstants.
-                    NO_VIEW_ANNOT_SHALL_BE_AN_ARTIFACT, false, pdfUAConformance);
+                    NO_VIEW_ANNOT_SHALL_BE_AN_ARTIFACT, false);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void toggleNoViewAnnotationTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void toggleNoViewAnnotationTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage pdfPage = pdfDoc.addNewPage();
             PdfStampAnnotation stamp = new PdfStampAnnotation(new Rectangle(100, 100));
@@ -1089,10 +1073,10 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             stamp.setFlag(PdfAnnotation.TOGGLE_NO_VIEW);
             pdfPage.addAnnotation(stamp);
         });
-        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
-            framework.assertBothValid("noViewAnnotation", pdfUAConformance);
-        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
-            framework.assertBothValid("toggleNoViewAnnotation", pdfUAConformance);
+        if (PdfConformance.PDF_UA_1.equals(conformance)) {
+            framework.assertBothValid("noViewAnnotation");
+        } else {
+            framework.assertBothValid("toggleNoViewAnnotation");
         }
     }
 
@@ -1139,7 +1123,7 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
         dict3D.put(new PdfName("IN"), new PdfString("Unnamed"));
         dict3D.put(new PdfName("MS"), PdfName.M);
         dict3D.put(new PdfName("C2W"),
-                new PdfArray(new float[]{1, 0, 0, 0, 0, -1, 0, 1, 0, 3, -235, 28}));
+                new PdfArray(new float[] {1, 0, 0, 0, 0, -1, 0, 1, 0, 3, -235, 28}));
         dict3D.put(PdfName.CO, new PdfNumber(235));
 
         annot.setDefaultInitialView(dict3D);
@@ -1159,6 +1143,14 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
 
         redact.setContents("redact annotation");
         return redact;
+    }
+
+    private static PdfFont loadFont() {
+        try {
+            return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        } catch (IOException e) {
+            throw new PdfException(e.getMessage());
+        }
     }
 
     private static class PdfCustomAnnot extends PdfAnnotation {

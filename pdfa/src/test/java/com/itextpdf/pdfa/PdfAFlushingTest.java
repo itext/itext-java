@@ -51,7 +51,7 @@ import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -172,7 +172,7 @@ public class PdfAFlushingTest extends ExtendedITextTest {
         document.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test

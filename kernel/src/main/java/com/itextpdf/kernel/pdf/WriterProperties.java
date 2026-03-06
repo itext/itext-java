@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.kernel.mac.MacProperties;
 
 import java.security.cert.Certificate;
+import java.util.List;
 
 public class WriterProperties {
 
@@ -42,20 +43,36 @@ public class WriterProperties {
      */
     protected boolean smartMode;
     protected boolean addXmpMetadata;
+
+    /**
+     * The following field is deprecated, because it doesn't affect the behavior of the writer in any way.
+     * They are kept for backward compatibility, but they are not used anymore, use
+     * {@link PdfConformance} instead to specify the PDF conformance that will be added to XMP metadata.
+     *
+     * @deprecated in favor of {@link #conformance}
+     */
+    @Deprecated
     protected PdfAConformance addPdfAXmpMetadata = null;
+    /**
+     * The following field is deprecated, because it doesn't affect the behavior of the writer in any way.
+     * They are kept for backward compatibility, but they are not used anymore, use
+     * {@link PdfConformance} instead to specify the PDF conformance that will be added to XMP metadata.
+     *
+     * @deprecated in favor of {@link #conformance}
+     */
+    @Deprecated
     protected PdfUAConformance addPdfUaXmpMetadata = null;
-    protected WellTaggedPdfConformance addWtpdfXmpMetadata = null;
     protected PdfVersion pdfVersion;
     protected EncryptionProperties encryptionProperties;
     /**
      * The ID entry that represents the initial identifier.
      */
     protected PdfString initialDocumentId;
-
     /**
      * The ID entry that represents a change in a document.
      */
     protected PdfString modifiedDocumentId;
+    private PdfConformance conformance = PdfConformance.PDF_NONE_CONFORMANCE;
 
     public WriterProperties() {
         smartMode = false;
@@ -118,7 +135,8 @@ public class WriterProperties {
      * @return this {@link WriterProperties} instance
      */
     public WriterProperties addPdfAXmpMetadata(PdfAConformance aConformance) {
-        this.addPdfAXmpMetadata = aConformance;
+        this.conformance = new PdfConformance(aConformance, this.conformance.getUAConformance(), this.conformance
+                .getWtpdfConformances());
         addXmpMetadata();
         return this;
     }
@@ -139,9 +157,19 @@ public class WriterProperties {
      * @return this {@link WriterProperties} instance
      */
     public WriterProperties addPdfUaXmpMetadata(PdfUAConformance uaConformance) {
-        this.addPdfUaXmpMetadata = uaConformance;
+        this.conformance = new PdfConformance(this.conformance.getAConformance(), uaConformance,
+                this.conformance.getWtpdfConformances());
         addXmpMetadata();
         return this;
+    }
+
+    /**
+     * Gets the PDF conformance that will be added to XMP metadata.
+     *
+     * @return the PDF conformance that will be added to XMP metadata, or null if no PDF conformance will be added
+     */
+    public PdfConformance getPdfConformance() {
+        return conformance;
     }
 
     /**
@@ -157,12 +185,13 @@ public class WriterProperties {
      * document requirements.
      * If you are not sure, use dedicated iText PDF/UA module to create valid Well Tagged PDF documents.
      *
-     * @param wtpdfConformance the Well Tagged PDF conformance which will be added to XMP metadata
+     * @param wtpdfConformanceList the Well Tagged PDF conformance which will be added to XMP metadata
      *
      * @return this {@link WriterProperties} instance
      */
-    public WriterProperties addWtpdfXmpMetadata(WellTaggedPdfConformance wtpdfConformance) {
-        this.addWtpdfXmpMetadata = wtpdfConformance;
+    public WriterProperties addWtpdfXmpMetadata(List<WellTaggedPdfConformance> wtpdfConformanceList) {
+        this.conformance = new PdfConformance(this.conformance.getAConformance(), this.conformance.getUAConformance(),
+                wtpdfConformanceList);
         addXmpMetadata();
         return this;
     }
@@ -349,7 +378,7 @@ public class WriterProperties {
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
      * @param macProperties       {@link MacProperties} class to configure MAC integrity protection properties.
-     *                                           Pass {@code null} if you want to disable MAC protection for any reason
+     *                            Pass {@code null} if you want to disable MAC protection for any reason
      *
      * @return this {@link WriterProperties} instance
      */

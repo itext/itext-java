@@ -57,8 +57,8 @@ public class TableStructElementIterator implements ITableIterator<PdfStructElem>
     /**
      * Creates a new {@link TableStructElementIterator} instance.
      *
-     * @param tableStructElem the root table struct element.
-     * @param context         the validation context.
+     * @param tableStructElem the root table struct element
+     * @param context         the validation context
      */
     public TableStructElementIterator(PdfStructElem tableStructElem, PdfUAValidationContext context) {
         this.context = context;

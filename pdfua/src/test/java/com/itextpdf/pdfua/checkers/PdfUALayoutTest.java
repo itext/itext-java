@@ -19,7 +19,7 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.io.font.PdfEncodings;
@@ -31,6 +31,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -44,23 +45,18 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DottedBorder;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.PdfUADocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -78,77 +74,83 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static List<PdfUAConformance> data() {
+    public static List<PdfConformance> data() {
         return UaValidationTestFramework.getConformanceList();
     }
 
-    public static Object[] roleData() {
-        return new Object[] {
-                // Parent role, child role, expected exception
-                new Object[] {StandardRoles.FORM, StandardRoles.FORM, false},
-                new Object[] {StandardRoles.H1, StandardRoles.H1, true},
-                new Object[] {StandardRoles.P, StandardRoles.P, false},
-                new Object[] {StandardRoles.DIV, StandardRoles.P, false},
-        };
+    public static List<Object[]> roleData() {
+        List<Object[]> data = new ArrayList<>();
+        for (PdfConformance pdfConformance : UaValidationTestFramework.getConformanceList()) {
+            for (Object o : new Object[] {
+                    // Parent role, child role, expected exception
+                    new Object[] {StandardRoles.FORM, StandardRoles.FORM, false},
+                    new Object[] {StandardRoles.H1, StandardRoles.H1, true},
+                    new Object[] {StandardRoles.P, StandardRoles.P, false},
+                    new Object[] {StandardRoles.DIV, StandardRoles.P, false},
+            }) {
+                Object[] roles = (Object[]) o;
+                data.add(new Object[] {pdfConformance, roles[0], roles[1], roles[2]});
+            }
+        }
+        return data;
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simpleParagraphTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void simpleParagraphTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = loadFont();
             Document doc = new Document(pdfDoc);
             doc.add(new Paragraph("Simple layout PDF UA test").setFont(font));
         });
-        framework.assertBothValid("simpleParagraph", pdfUAConformance);
+        framework.assertBothValid("simpleParagraph");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simpleParagraphWithUnderlineTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void simpleParagraphWithUnderlineTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = loadFont();
             Document doc = new Document(pdfDoc);
             doc.add(new Paragraph("Simple layout PDF UA with underline test").setFont(font).setUnderline());
         });
-        framework.assertBothValid("simpleParagraphWithUnderline", pdfUAConformance);
+        framework.assertBothValid("simpleParagraphWithUnderline");
 
     }
 
     @ParameterizedTest
     @MethodSource("roleData")
-    public void testOfIllegalRelations(String parentRole, String childRole, boolean expectException)
+    public void testOfIllegalRelations(PdfConformance conformance, String parentRole, String childRole,
+            boolean expectException)
             throws IOException {
+        if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
+            return;
+        }
         //expectException should take into account repair mechanism
         // in example P:P will be replaced as P:Span so no exceptions should be thrown
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework.addSuppliers(new UaValidationTestFramework.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Div div1 = new Div();
-                div1.getAccessibilityProperties().setRole(parentRole);
-                Div div2 = new Div();
-                div2.getAccessibilityProperties().setRole(childRole);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers( document -> {
+            Div div1 = new Div();
+            div1.getAccessibilityProperties().setRole(parentRole);
+            Div div2 = new Div();
+            div2.getAccessibilityProperties().setRole(childRole);
 
-                div1.add(div2);
-                return div1;
-            }
+            div1.add(div2);
+            return div1;
         });
         if (expectException) {
-            framework.assertBothFail("testOfIllegalRelation_" + parentRole + "_" + childRole, false,
-                    PdfUAConformance.PDF_UA_2);
+            framework.assertBothFail("testOfIllegalRelation_" + parentRole + "_" + childRole, false);
         } else {
-            framework.assertBothValid("testOfIllegalRelation_" + parentRole + "_" + childRole,
-                    PdfUAConformance.PDF_UA_2);
+            framework.assertBothValid("testOfIllegalRelation_" + parentRole + "_" + childRole);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simpleBorderTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void simpleBorderTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -157,13 +159,13 @@ public class PdfUALayoutTest extends ExtendedITextTest {
             new DottedBorder(DeviceRgb.GREEN, 5).draw(canvas, new Rectangle(350, 700, 100, 100));
             canvas.closeTag();
         });
-        framework.assertBothValid("simpleBorder", pdfUAConformance);
+        framework.assertBothValid("simpleBorder");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simpleTableTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void simpleTableTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document doc = new Document(pdfDocument);
 
@@ -173,17 +175,20 @@ public class PdfUALayoutTest extends ExtendedITextTest {
                     .addCell(new Cell().add(new Paragraph("cell 1, 2").setFont(font)));
             doc.add(table);
         });
-        framework.assertBothValid("simpleTable", pdfUAConformance);
+        framework.assertBothValid("simpleTable");
     }
 
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simpleParagraphBadContrastThrowsWcagAAAU(PdfUAConformance pdfUAConformance) throws IOException {
+    public void simpleParagraphBadContrastThrowsWcagAAAU(PdfConformance conformance) {
+        if (!conformance.isPdfUA()) {
+            return;
+        }
         PdfDocument pdfDoc = new PdfUADocument(new PdfWriter(new ByteArrayOutputStream()),
-                new com.itextpdf.pdfua.PdfUAConfig(pdfUAConformance, "Hello", "en-US")) {
+                new com.itextpdf.pdfua.PdfUAConfig(conformance.getUAConformance(), "Hello", "en-US")) {
             @Override
-            protected List<IValidationChecker> createCheckers(PdfUAConformance uaConformance) {
+            protected List<IValidationChecker> createCheckers(PdfUAConformance conformance) {
                 ColorContrastChecker contrastChecker = new ColorContrastChecker(false, true);
                 contrastChecker.setCheckWcagAA(false);
                 List<IValidationChecker> validationCheckers = new ArrayList<>();
@@ -205,9 +210,13 @@ public class PdfUALayoutTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simpleParagraphBadContrastThrowsWcagAA(PdfUAConformance pdfUAConformance) throws IOException {
-        PdfDocument pdfDoc = new PdfUADocument(new PdfWriter(new ByteArrayOutputStream()),
-                new com.itextpdf.pdfua.PdfUAConfig(pdfUAConformance, "Hello", "en-US")) {
+    public void simpleParagraphBadContrastThrowsWcagAA(PdfConformance conformance) {
+        if (!conformance.isPdfUA()) {
+            return;
+        }
+        PdfUADocument pdfDoc = new PdfUADocument(new PdfWriter(new ByteArrayOutputStream()),
+                new com.itextpdf.pdfua.PdfUAConfig(conformance.getUAConformance(), "Hello", "en-US")) {
+
             @Override
             protected List<IValidationChecker> createCheckers(PdfUAConformance uaConformance) {
                 ColorContrastChecker contrastChecker = new ColorContrastChecker(false, true);
@@ -217,6 +226,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
                 validationCheckers.add(contrastChecker);
                 return validationCheckers;
             }
+
         };
         PdfFont font = loadFont();
         Document doc = new Document(pdfDoc);
@@ -237,8 +247,8 @@ public class PdfUALayoutTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = "Page 1: Text: 'Simple layout PDF UA test', with font size: {0} pt "
                     + "has contrast ratio: {1}. It is not WCAG AAA compliant. ", count = 2)
     })
-    public void simpleParagraphBadContrastLogsByDefaultTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void simpleParagraphBadContrastLogsByDefaultTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font = loadFont();
             Document doc = new Document(pdfDoc);
@@ -246,7 +256,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
             p.setBackgroundColor(ColorConstants.RED);
             doc.add(p);
         });
-        framework.assertBothValid("simpleParagraphAbc", pdfUAConformance);
+        framework.assertBothValid("simpleParagraphAbc");
     }
 
 
@@ -254,7 +264,7 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         try {
             return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PdfException(e.getMessage());
         }
     }
 }

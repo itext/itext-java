@@ -45,11 +45,10 @@ import com.itextpdf.pdfua.checkers.PdfUAChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates a Pdf/UA document.
@@ -62,8 +61,8 @@ public class PdfUADocument extends PdfDocument {
     /**
      * Creates a PdfUADocument instance.
      *
-     * @param writer The writer to write the PDF document.
-     * @param config The configuration for the PDF/UA document.
+     * @param writer The writer to write the PDF document
+     * @param config The configuration for the PDF/UA document
      */
     public PdfUADocument(PdfWriter writer, PdfUAConfig config) {
         this(writer, new DocumentProperties(), config);
@@ -72,9 +71,9 @@ public class PdfUADocument extends PdfDocument {
     /**
      * Creates a PdfUADocument instance.
      *
-     * @param writer     The writer to write the PDF document.
-     * @param properties The properties for the PDF document.
-     * @param config     The configuration for the PDF/UA document.
+     * @param writer     The writer to write the PDF document
+     * @param properties The properties for the PDF document
+     * @param config     The configuration for the PDF/UA document
      */
     public PdfUADocument(PdfWriter writer, DocumentProperties properties, PdfUAConfig config) {
         super(configureWriterProperties(writer, config.getConformance()), properties);
@@ -94,9 +93,9 @@ public class PdfUADocument extends PdfDocument {
     /**
      * Creates a PdfUADocument instance.
      *
-     * @param reader The reader to read the PDF document.
-     * @param writer The writer to write the PDF document.
-     * @param config The configuration for the PDF/UA document.
+     * @param reader The reader to read the PDF document
+     * @param writer The writer to write the PDF document
+     * @param config The configuration for the PDF/UA document
      */
     public PdfUADocument(PdfReader reader, PdfWriter writer, PdfUAConfig config) {
         this(reader, writer, new StampingProperties(), config);
@@ -105,10 +104,10 @@ public class PdfUADocument extends PdfDocument {
     /**
      * Creates a PdfUADocument instance.
      *
-     * @param reader     The reader to read the PDF document.
-     * @param writer     The writer to write the PDF document.
-     * @param properties The properties for the PDF document.
-     * @param config     The configuration for the PDF/UA document.
+     * @param reader     The reader to read the PDF document
+     * @param writer     The writer to write the PDF document
+     * @param properties The properties for the PDF document
+     * @param config     The configuration for the PDF/UA document
      */
     public PdfUADocument(PdfReader reader, PdfWriter writer, StampingProperties properties, PdfUAConfig config) {
         super(reader, writer, properties);

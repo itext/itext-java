@@ -109,7 +109,7 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
         Assertions.assertNotNull(inputFieldRenderer.getConformance(pdfDocument));
-        Assertions.assertFalse(inputFieldRenderer.getConformance(pdfDocument).isPdfAOrUa());
+        Assertions.assertFalse(inputFieldRenderer.getConformance(pdfDocument).conformsToAny());
     }
 
     @Test

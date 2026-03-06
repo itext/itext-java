@@ -27,7 +27,6 @@ import com.itextpdf.kernel.pdf.IPdfPageFactory;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 import com.itextpdf.pdfua.checkers.PdfUAChecker;
 
 /**
@@ -48,7 +47,7 @@ public class PdfUAPageFactory implements IPdfPageFactory {
     /**
      * @param pdfObject the {@link PdfDictionary} object on which the {@link PdfPage} will be based
      *
-     * @return The pdf page.
+     * @return The {@link PdfPage} based on the {@link PdfDictionary}
      */
     @Override
     public PdfPage createPdfPage(PdfDictionary pdfObject) {
@@ -59,7 +58,7 @@ public class PdfUAPageFactory implements IPdfPageFactory {
      * @param pdfDocument {@link PdfDocument} to add page
      * @param pageSize    {@link PageSize} of the created page
      *
-     * @return The Pdf page.
+     * @return The {@link PdfPage} based on the {@link PdfDocument} and {@link PageSize}
      */
     @Override
     public PdfPage createPdfPage(PdfDocument pdfDocument, PageSize pageSize) {

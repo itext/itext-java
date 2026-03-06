@@ -51,7 +51,7 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -87,7 +87,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -110,7 +110,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         document.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -200,7 +200,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         // This is required to check if ModDate is inside Info dictionary
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -229,7 +229,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
             doc.addNewPage();
         }
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -239,7 +239,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         PdfReader reader = new PdfReader(SOURCE_FOLDER + "pdfs/simplePdfA4.pdf");
         PdfDocument document = new PdfADocument(reader, writer);
         document.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -345,7 +345,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
 
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -448,7 +448,7 @@ public class PdfA4CatalogCheckTest  extends ExtendedITextTest {
         doc.addNewPage();
         doc.getCatalog().setLang(new PdfString(""));
         doc.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test

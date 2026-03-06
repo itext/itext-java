@@ -32,7 +32,7 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 import com.itextpdf.test.utils.FileUtil;
 
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class PdfUAXfaTest extends ExtendedITextTest {
 
         FileUtil.copy(input, output);
         // VeraPdf also complains only about the dynamic XFA forms
-        new VeraPdfValidator().validateFailure(output);  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        new VeraPdfValidator().validateFailure(output);  
     }
 
     @Test
@@ -80,8 +80,8 @@ public class PdfUAXfaTest extends ExtendedITextTest {
 
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
 
-        final String result = new VeraPdfValidator().validate(output);  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-        Assertions.assertNull(result); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        final String result = new VeraPdfValidator().validate(output);  
+        Assertions.assertNull(result); 
     }
 
     @Test
@@ -96,6 +96,6 @@ public class PdfUAXfaTest extends ExtendedITextTest {
 
         FileUtil.copy(input, output);
         // VeraPdf also complains only about the presence of the XFA forms
-        new VeraPdfValidator().validateFailure(output);  // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        new VeraPdfValidator().validateFailure(output);  
     }
 }

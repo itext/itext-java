@@ -298,7 +298,7 @@ public class Document extends RootElement<Document> {
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.FONT:
-                if (getPdfDocument().getConformance().isPdfAOrUaOrWtpdf()) {
+                if (getPdfDocument().getConformance() != null && getPdfDocument().getConformance().conformsToAny()) {
                     return (T1) (Object) getPdfDocument().getDefaultFont();
                 }
                 return super.<T1>getDefaultProperty(property);

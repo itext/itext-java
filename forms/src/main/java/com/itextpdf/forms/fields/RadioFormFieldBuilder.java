@@ -84,7 +84,7 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
         final PdfName appearancePdfName = new PdfName(appearanceName);
         final PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(widgetRectangle);
         annotation.setAppearanceState(appearancePdfName);
-        if (getConformance() != null && getConformance().isPdfAOrUaOrWtpdf()) {
+        if (getConformance() != null && getConformance().conformsToAny()) {
             annotation.setFlag(PdfAnnotation.PRINT);
         }
         PdfFormAnnotation radio = PdfFormCreator.createFormAnnotation(annotation, getDocument());

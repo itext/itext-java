@@ -39,7 +39,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,7 +88,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
 
         doc.close();
         Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, DESTINATION_FOLDER, diff));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPath)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPath)); 
 
     }
 
@@ -120,7 +120,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
 
         doc.close();
         Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, DESTINATION_FOLDER, diff));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPath)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPath)); 
     }
 
     @Test
@@ -150,7 +150,7 @@ public class PdfAPushbuttonfieldTest extends ExtendedITextTest {
         form.addField(button);
         doc.close();
         Assertions.assertNull(new CompareTool().compareByContent(outPath, cmpPath, DESTINATION_FOLDER, diff));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPath)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPath)); 
 
     }
 }

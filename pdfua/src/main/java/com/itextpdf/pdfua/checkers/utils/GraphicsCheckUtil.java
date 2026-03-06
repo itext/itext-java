@@ -43,7 +43,7 @@ public final class GraphicsCheckUtil {
     /**
      * Creates a new {@link GraphicsCheckUtil} instance.
      *
-     * @param context The validation context.
+     * @param context The validation context
      */
     public GraphicsCheckUtil(PdfUAValidationContext context) {
         this.context = context;

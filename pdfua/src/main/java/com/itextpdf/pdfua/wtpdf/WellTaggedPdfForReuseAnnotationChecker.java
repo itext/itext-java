@@ -8,6 +8,10 @@ import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2AnnotationChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
+/**
+ * A specialized annotation checker for well-tagged PDFs intended for reuse, which extends the standard
+ * PdfUA2AnnotationChecker to enforce additional requirements specific to this specification.
+ */
 public class WellTaggedPdfForReuseAnnotationChecker extends PdfUA2AnnotationChecker {
     /**
      * Creates a new instance of the {@link WellTaggedPdfForReuseAnnotationChecker}.

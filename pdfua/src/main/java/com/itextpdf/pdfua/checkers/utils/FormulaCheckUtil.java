@@ -64,7 +64,7 @@ public final class FormulaCheckUtil {
 
         /**
          * Creates a new {@link  FormulaTagHandler} instance.
-         * @param context The validation context.
+         * @param context The validation context
          */
         public FormulaTagHandler(PdfUAValidationContext context) {
             super(context);

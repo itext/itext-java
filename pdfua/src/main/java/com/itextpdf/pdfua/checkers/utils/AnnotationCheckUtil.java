@@ -59,7 +59,7 @@ public final class AnnotationCheckUtil {
         /**
          * Creates a new instance of the {@link AnnotationCheckUtil.AnnotationHandler}.
          *
-         * @param context The validation context.
+         * @param context The validation context
          */
         public AnnotationHandler(PdfUAValidationContext context) {
             super(context);

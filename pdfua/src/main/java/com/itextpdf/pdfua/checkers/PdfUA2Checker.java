@@ -70,11 +70,11 @@ import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2XfaChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class defines the requirements of the PDF/UA-2 standard and contains
@@ -98,14 +98,6 @@ public class PdfUA2Checker extends PdfUAChecker {
         super();
         this.pdfDocument = pdfDocument;
         this.context = new PdfUAValidationContext(this.pdfDocument);
-    }
-
-    protected PdfUAValidationContext getUAValidationContext() {
-        return context;
-    }
-
-    protected PdfDocument getPdfDocument() {
-        return pdfDocument;
     }
 
     @Override
@@ -148,7 +140,7 @@ public class PdfUA2Checker extends PdfUAChecker {
                 break;
             case ANNOTATION:
                 PdfAnnotationContext annotationContext = (PdfAnnotationContext) context;
-                new PdfUA2AnnotationChecker().checkAnnotation(annotationContext.getAnnotation(), this.context);
+                new PdfUA2AnnotationChecker().checkSingleAnnotation(annotationContext.getAnnotation(), this.context);
                 break;
             case CANVAS_TEXT_ADDITION:
                 CanvasTextAdditionContext canvasTextAdditionContext = (CanvasTextAdditionContext) context;
@@ -160,6 +152,24 @@ public class PdfUA2Checker extends PdfUAChecker {
     @Override
     public boolean isPdfObjectReadyToFlush(PdfObject object) {
         return false;
+    }
+
+    /**
+     * Gets the PDF/UA validation context which contains common information and utilities used for PDF/UA validation.
+     *
+     * @return the PDF/UA validation context
+     */
+    protected PdfUAValidationContext getUAValidationContext() {
+        return context;
+    }
+
+    /**
+     * Gets the PDF document being validated.
+     *
+     * @return the PDF document being validated
+     */
+    protected PdfDocument getPdfDocument() {
+        return pdfDocument;
     }
 
     /**
@@ -187,37 +197,11 @@ public class PdfUA2Checker extends PdfUAChecker {
     }
 
     /**
-     * For all non-symbolic TrueType fonts used for rendering, the embedded TrueType font program shall contain
-     * at least the Microsoft Unicode (3, 1 – Platform ID = 3, Encoding ID = 1),
-     * or the Macintosh Roman (1, 0 – Platform ID = 1, Encoding ID = 0) “cmap” subtable.
+     * Checks that the given PDF object and all its descendant objects recursively (if any) are compliant with PDF/UA-2
+     * standard. The check is performed on all objects except for indirect objects.
      *
-     * @param fontProgram the embedded TrueType font program to check
+     * @param obj the PDF object to check
      */
-    @Override
-    void checkNonSymbolicCmapSubtable(TrueTypeFont fontProgram) {
-        if (!fontProgram.isCmapPresent(3, 1) && !fontProgram.isCmapPresent(1, 0)) {
-            throw new PdfUAConformanceException(
-                    PdfUAExceptionMessageConstants.NON_SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_UNI_CMAP);
-        }
-    }
-
-    /**
-     * Checks cmap entries present in the embedded TrueType font program of the symbolic TrueType font.
-     *
-     * <p>
-     * The “cmap” subtable in the embedded font program shall either contain the Microsoft Symbol
-     * (3, 0 – Platform ID = 3, Encoding ID = 0) or the Mac Roman (1, 0 – Platform ID = 1, Encoding ID = 1) encoding.
-     *
-     * @param fontProgram the embedded TrueType font program to check
-     */
-    @Override
-    void checkSymbolicCmapSubtable(TrueTypeFont fontProgram) {
-        if (!fontProgram.isCmapPresent(3, 0) && !fontProgram.isCmapPresent(1, 0)) {
-            throw new PdfUAConformanceException(
-                    PdfUAExceptionMessageConstants.SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_SYMBOL_CMAP);
-        }
-    }
-
     protected void checkPdfObject(PdfObject obj) {
         switch (obj.getType()) {
             case PdfObject.STRING:
@@ -230,24 +214,6 @@ public class PdfUA2Checker extends PdfUAChecker {
             case PdfObject.STREAM:
                 checkDictionaryRecursively((PdfDictionary) obj);
                 break;
-        }
-    }
-
-    private void checkArrayRecursively(PdfArray array) {
-        for (int i = 0; i < array.size(); i++) {
-            PdfObject object = array.get(i, false);
-            if (object != null && !object.isIndirect()) {
-                checkPdfObject(object);
-            }
-        }
-    }
-
-    private void checkDictionaryRecursively(PdfDictionary dictionary) {
-        for (PdfName name : dictionary.keySet()) {
-            PdfObject object = dictionary.get(name, false);
-            if (object != null && !object.isIndirect()) {
-                checkPdfObject(object);
-            }
         }
     }
 
@@ -275,7 +241,7 @@ public class PdfUA2Checker extends PdfUAChecker {
         formChecker.checkFormFields(catalog.getPdfObject().getAsDictionary(PdfName.AcroForm));
         formChecker.checkWidgetAnnotations(this.pdfDocument);
         PdfUA2LinkChecker.checkLinkAnnotations(this.pdfDocument);
-        new PdfUA2AnnotationChecker().checkAnnotations(this.pdfDocument);
+        new PdfUA2AnnotationChecker().checkAllAnnotations(this.pdfDocument);
     }
 
     /**
@@ -341,5 +307,55 @@ public class PdfUA2Checker extends PdfUAChecker {
         tagTreeIterator.addHandler(new PdfUA2FormulaChecker.PdfUA2FormulaTagHandler(context));
         tagTreeIterator.addHandler(new PdfUA2LinkChecker.PdfUA2LinkAnnotationHandler(context, pdfDocument));
         return tagTreeIterator;
+    }
+
+    /**
+     * For all non-symbolic TrueType fonts used for rendering, the embedded TrueType font program shall contain
+     * at least the Microsoft Unicode (3, 1 – Platform ID = 3, Encoding ID = 1),
+     * or the Macintosh Roman (1, 0 – Platform ID = 1, Encoding ID = 0) “cmap” subtable.
+     *
+     * @param fontProgram the embedded TrueType font program to check
+     */
+    @Override
+    void checkNonSymbolicCmapSubtable(TrueTypeFont fontProgram) {
+        if (!fontProgram.isCmapPresent(3, 1) && !fontProgram.isCmapPresent(1, 0)) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.NON_SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_UNI_CMAP);
+        }
+    }
+
+    /**
+     * Checks cmap entries present in the embedded TrueType font program of the symbolic TrueType font.
+     *
+     * <p>
+     * The “cmap” subtable in the embedded font program shall either contain the Microsoft Symbol
+     * (3, 0 – Platform ID = 3, Encoding ID = 0) or the Mac Roman (1, 0 – Platform ID = 1, Encoding ID = 1) encoding.
+     *
+     * @param fontProgram the embedded TrueType font program to check
+     */
+    @Override
+    void checkSymbolicCmapSubtable(TrueTypeFont fontProgram) {
+        if (!fontProgram.isCmapPresent(3, 0) && !fontProgram.isCmapPresent(1, 0)) {
+            throw new PdfUAConformanceException(
+                    PdfUAExceptionMessageConstants.SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_SYMBOL_CMAP);
+        }
+    }
+
+    private void checkArrayRecursively(PdfArray array) {
+        for (int i = 0; i < array.size(); i++) {
+            PdfObject object = array.get(i, false);
+            if (object != null && !object.isIndirect()) {
+                checkPdfObject(object);
+            }
+        }
+    }
+
+    private void checkDictionaryRecursively(PdfDictionary dictionary) {
+        for (PdfName name : dictionary.keySet()) {
+            PdfObject object = dictionary.get(name, false);
+            if (object != null && !object.isIndirect()) {
+                checkPdfObject(object);
+            }
+        }
     }
 }

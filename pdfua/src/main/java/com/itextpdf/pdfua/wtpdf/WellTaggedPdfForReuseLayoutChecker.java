@@ -7,6 +7,10 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.checkers.utils.tables.TableCheckUtil;
 
+/**
+ * Performs layout checks for a PDF document being validated against the Well Tagged PDF for Reuse standard.
+ *
+ */
 public class WellTaggedPdfForReuseLayoutChecker {
     private final PdfUAValidationContext context;
 
@@ -38,7 +42,7 @@ public class WellTaggedPdfForReuseLayoutChecker {
         }
     }
 
-    private boolean isPartOfSignatureAppearance(IRenderer renderer) {
+    private static boolean isPartOfSignatureAppearance(IRenderer renderer) {
         IRenderer parent = renderer.getParent();
         while (parent != null) {
             if (parent instanceof SignatureAppearanceRenderer) {

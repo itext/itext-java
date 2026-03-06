@@ -80,7 +80,7 @@ public final class PdfUA1FormulaChecker {
 
         /**
          * Creates a new {@link PdfUA1FormulaTagHandler} instance.
-         * @param context The validation context.
+         * @param context The validation context
          */
         public PdfUA1FormulaTagHandler(PdfUAValidationContext context) {
             super(context);

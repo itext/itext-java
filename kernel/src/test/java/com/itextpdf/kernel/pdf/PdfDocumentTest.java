@@ -615,7 +615,9 @@ public class PdfDocumentTest extends ExtendedITextTest {
     public void getDefaultConformanceLevelTest() {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Assertions.assertNotNull(document.getConformance());
-        Assertions.assertFalse(document.getConformance().isPdfAOrUa());
+        Assertions.assertFalse(document.getConformance().isWtpdf());
+        Assertions.assertFalse(document.getConformance().isPdfA());
+        Assertions.assertFalse(document.getConformance().isPdfUA());
     }
 
     @Test

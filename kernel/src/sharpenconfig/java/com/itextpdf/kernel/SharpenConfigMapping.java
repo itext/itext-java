@@ -77,7 +77,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.kernel.pdf.canvas.parser.clipper.IClipper.ClipType", "iText.Kernel.Pdf.Canvas.Parser.ClipperLib.ClipType");
         configurator.mapType("com.itextpdf.kernel.pdf.canvas.parser.clipper.DefaultClipper", "iText.Kernel.Pdf.Canvas.Parser.ClipperLib.Clipper");
         configurator.mapType("com.itextpdf.kernel.pdf.canvas.parser.clipper.Path", "System.Collections.Generic.List<IntPoint>");
-        configurator.mapType("com.itextpdf.kernel.pdf.WellTaggedPdfConformance", "iText.Kernel.Pdf.WellTaggedPdfConformance?");
         configurator.mapMethod("com.itextpdf.kernel.pdf.canvas.parser.clipper.Paths.makePolyTreeToPaths", "iText.Kernel.Pdf.Canvas.Parser.ClipperLib.Clipper.PolyTreeToPaths");
         configurator.mapProperty("com.itextpdf.kernel.pdf.canvas.parser.clipper.PolyNode.getContour", "Contour");
         configurator.mapProperty("com.itextpdf.kernel.pdf.canvas.parser.clipper.PolyNode.isOpen", "IsOpen");

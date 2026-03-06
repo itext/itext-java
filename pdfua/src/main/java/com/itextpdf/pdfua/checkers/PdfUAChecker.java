@@ -46,13 +46,13 @@ import com.itextpdf.kernel.validation.IValidationChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Function;
+import org.slf4j.LoggerFactory;
 
 /**
  * An abstract class that will run through all necessary checks defined in the different PDF/UA standards. A number of

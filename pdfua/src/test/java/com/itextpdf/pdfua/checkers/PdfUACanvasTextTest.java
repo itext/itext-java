@@ -24,10 +24,12 @@ package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
@@ -37,9 +39,9 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.pdfua.UaValidationTestFramework2;
+import com.itextpdf.pdfua.UaValidationTestFramework;
+import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -62,46 +64,44 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static Iterable<Object[]> textRepresentation() {
-        return Arrays.asList(new Object[][]{
-                {"text", PdfUAConformance.PDF_UA_2},
-                {"array", PdfUAConformance.PDF_UA_2},
-                {"glyphs", PdfUAConformance.PDF_UA_2},
-                {"text", WellTaggedPdfConformance.FOR_REUSE},
-                {"array", WellTaggedPdfConformance.FOR_REUSE},
-                {"glyphs", WellTaggedPdfConformance.FOR_REUSE}
-        });
+    public static List<Object[]> textRepresentation() {
+        List<Object[]> data = new java.util.ArrayList<>();
+        for (PdfConformance pdfConformance : UaValidationTestFramework.getConformanceList(false)) {
+            data.add(new Object[] {"text", pdfConformance});
+            data.add(new Object[] {"array", pdfConformance});
+            data.add(new Object[] {"glyphs", pdfConformance});
+        }
+        return data;
     }
-    
-    public static List<Object> conformances() {
-        return Arrays.asList(PdfUAConformance.PDF_UA_2, WellTaggedPdfConformance.FOR_REUSE);
+
+    public static List<PdfConformance> conformances() {
+        return Arrays.asList(new PdfConformance(PdfUAConformance.PDF_UA_2),
+                new PdfConformance(WellTaggedPdfConformance.FOR_REUSE));
     }
 
     @ParameterizedTest
     @MethodSource("conformances")
-    public void puaValueInLayoutTest(Object conformance) throws IOException {
+    public void puaValueInLayoutTest(PdfConformance conformance) throws IOException {
         String filename = "puaValueInLayoutTest";
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, false, conformance);
-        framework.addSuppliers(new UaValidationTestFramework2.Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph paragraph = new Paragraph("hello_" + "\uE001");
-                paragraph.setFont(loadFont());
-                return paragraph;
-            }
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false,conformance);
+        framework.addSuppliers(document -> {
+            Paragraph paragraph = new Paragraph("hello_" + "\uE001");
+            paragraph.setFont(loadFont());
+            return paragraph;
         });
-        if (conformance instanceof PdfUAConformance) {
+        if (conformance.isPdfUA()) {
             framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT);
-        } else if (conformance instanceof WellTaggedPdfConformance) {
+        } else if (conformance.isWtpdf()) {
             framework.assertBothValid(filename);
         }
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
-    public void puaValueWithoutAttributesTest(String textRepresentation, Object conformance) throws IOException {
+    public void puaValueWithoutAttributesTest(String textRepresentation, PdfConformance conformance)
+            throws IOException {
         String filename = "puaValueWithoutAttributesTest_" + textRepresentation;
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, false, conformance);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false,conformance);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -115,60 +115,77 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.closeTag();
             canvas.endText();
         });
-        assertResult(false, true, textRepresentation, filename, framework, conformance);
+
+        if (conformance.conformsTo(PdfConformance.PDF_UA_2, PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
+            if (textRepresentation.equals("array")) {
+                // In case of "array" PdfCanvas#showText(PdfArray) is used. In this method we don't have this
+                // check, because
+                // of the complications regarding not symbolic fonts.
+                framework.assertOnlyVeraPdfFail(filename);
+            } else {
+                framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT);
+            }
+        }else{
+            framework.assertBothValid(filename);
+        }
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
-    public void puaValueWithAltOnTagTest(String textRepresentation, Object conformance) throws IOException {
+    public void puaValueWithAltOnTagTest(String textRepresentation, PdfConformance conformance) throws IOException {
         String filename = "puaValueWithAltOnTagTest_" + textRepresentation;
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, false, conformance);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false, conformance);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
             pointer.addTag(StandardRoles.P);
             pointer.setPageForTagging(document.getFirstPage());
-            pointer.applyProperties(new DefaultAccessibilityProperties(StandardRoles.P).setAlternateDescription("alt description"));
+            pointer.applyProperties(
+                    new DefaultAccessibilityProperties(StandardRoles.P).setAlternateDescription("alt description"));
             canvas.beginText();
             PdfFont font = loadFont();
             canvas.setFontAndSize(font, 24);
-            CanvasTag canvasTag = new CanvasTag(pointer.getTagReference().getRole(), pointer.getTagReference().createNextMcid());
+            CanvasTag canvasTag = new CanvasTag(pointer.getTagReference().getRole(),
+                    pointer.getTagReference().createNextMcid());
             canvas.openTag(canvasTag);
             addPuaTextToCanvas(canvas, textRepresentation, font);
             canvas.closeTag();
             canvas.endText();
         });
-        assertResult(true, true, textRepresentation, filename, framework, conformance);
+        framework.assertBothValid(filename);
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
-    public void puaValueWithActualTextOnTagTest(String textRepresentation, Object conformance) throws IOException {
+    public void puaValueWithActualTextOnTagTest(String textRepresentation, PdfConformance conformance)
+            throws IOException {
         String filename = "puaValueWithActualTextOnTagTest_" + textRepresentation;
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, false, conformance);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false,conformance);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
             pointer.addTag(StandardRoles.P);
             pointer.setPageForTagging(document.getFirstPage());
-            pointer.applyProperties(new DefaultAccessibilityProperties(StandardRoles.P).setActualText("alt description"));
+            pointer.applyProperties(
+                    new DefaultAccessibilityProperties(StandardRoles.P).setActualText("alt description"));
             canvas.beginText();
             PdfFont font = loadFont();
             canvas.setFontAndSize(font, 24);
-            CanvasTag canvasTag = new CanvasTag(pointer.getTagReference().getRole(), pointer.getTagReference().createNextMcid());
+            CanvasTag canvasTag = new CanvasTag(pointer.getTagReference().getRole(),
+                    pointer.getTagReference().createNextMcid());
             canvas.openTag(canvasTag);
             addPuaTextToCanvas(canvas, textRepresentation, font);
             canvas.closeTag();
             canvas.endText();
         });
-        assertResult(true, true, textRepresentation, filename, framework, conformance);
+        framework.assertBothValid(filename);
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
-    public void puaValueWithAltOnCanvasTest(String textRepresentation, Object conformance) throws IOException {
+    public void puaValueWithAltOnCanvasTest(String textRepresentation, PdfConformance conformance) throws IOException {
         String filename = "puaValueWithAltOnCanvasTest_" + textRepresentation;
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, false, conformance);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false,conformance);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -177,21 +194,23 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.beginText();
             PdfFont font = loadFont();
             canvas.setFontAndSize(font, 24);
-            CanvasTag canvasTag = new CanvasTag(pointer.getTagReference().getRole(), pointer.getTagReference().createNextMcid());
+            CanvasTag canvasTag = new CanvasTag(pointer.getTagReference().getRole(),
+                    pointer.getTagReference().createNextMcid());
             canvasTag.addProperty(PdfName.Alt, new PdfString("alt description"));
             canvas.openTag(canvasTag);
             addPuaTextToCanvas(canvas, textRepresentation, font);
             canvas.closeTag();
             canvas.endText();
         });
-        assertResult(true, true, textRepresentation, filename, framework, conformance);
+        framework.assertBothValid(filename);
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
-    public void puaValueWithActualTextOnCanvasTest(String textRepresentation, Object conformance) throws IOException {
+    public void puaValueWithActualTextOnCanvasTest(String textRepresentation, PdfConformance conformance)
+            throws IOException {
         String filename = "puaValueWithActualTextOnCanvasTest_" + textRepresentation;
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, false, conformance);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false,conformance);
         framework.addBeforeGenerationHook(document -> {
             PdfCanvas canvas = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer = document.getTagStructureContext().getAutoTaggingPointer();
@@ -200,32 +219,35 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvas.beginText();
             PdfFont font = loadFont();
             canvas.setFontAndSize(font, 24);
-            CanvasTag canvasTag = new CanvasTag(pointer.getTagReference().getRole(), pointer.getTagReference().createNextMcid());
+            CanvasTag canvasTag = new CanvasTag(pointer.getTagReference().getRole(),
+                    pointer.getTagReference().createNextMcid());
             canvasTag.addProperty(PdfName.ActualText, new PdfString("alt description"));
             canvas.openTag(canvasTag);
             addPuaTextToCanvas(canvas, textRepresentation, font);
             canvas.closeTag();
             canvas.endText();
         });
-        assertResult(true, true, textRepresentation, filename, framework, conformance);
+        framework.assertBothValid(filename);
     }
 
     @ParameterizedTest
     @MethodSource("textRepresentation")
-    public void puaValueOnTwoPagesTest(String textRepresentation, Object conformance) throws IOException {
+    public void puaValueOnTwoPagesTest(String textRepresentation, PdfConformance conformance) throws IOException {
         String filename = "puaValueOnTwoPagesTest_" + textRepresentation;
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, false, conformance);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false,conformance);
         framework.addBeforeGenerationHook(document -> {
             // Text on page 1 contains PUA and alt, which is valid.
             PdfCanvas canvasOnPageOne = new PdfCanvas(document.addNewPage());
             TagTreePointer pointer1 = document.getTagStructureContext().getAutoTaggingPointer();
             pointer1.addTag(StandardRoles.P);
             pointer1.setPageForTagging(document.getFirstPage());
-            pointer1.applyProperties(new DefaultAccessibilityProperties(StandardRoles.P).setAlternateDescription("alt description"));
+            pointer1.applyProperties(
+                    new DefaultAccessibilityProperties(StandardRoles.P).setAlternateDescription("alt description"));
             canvasOnPageOne.beginText();
             PdfFont font = loadFont();
             canvasOnPageOne.setFontAndSize(font, 24);
-            CanvasTag canvasTag = new CanvasTag(pointer1.getTagReference().getRole(), pointer1.getTagReference().createNextMcid());
+            CanvasTag canvasTag = new CanvasTag(pointer1.getTagReference().getRole(),
+                    pointer1.getTagReference().createNextMcid());
             canvasOnPageOne.openTag(canvasTag);
             addPuaTextToCanvas(canvasOnPageOne, textRepresentation, font);
             canvasOnPageOne.closeTag();
@@ -244,35 +266,17 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
             canvasOnPageTwo.closeTag();
             canvasOnPageTwo.endText();
         });
-        assertResult(false, true, textRepresentation, filename, framework, conformance);
-    }
-
-    private void assertResult(boolean uaValidity, boolean wtpdfValidity, String textRepresentation, String filename,
-            UaValidationTestFramework2 framework, Object conformance) throws IOException {
-        if (conformance instanceof PdfUAConformance) {
-            if (uaValidity) {
-                framework.assertBothValid(filename);
+        if (conformance.conformsTo(PdfConformance.PDF_UA_2, PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
+            if (textRepresentation.equals("array")) {
+                // In case of "array" PdfCanvas#showText(PdfArray) is used. In this method we don't have this
+                // check, because
+                // of the complications regarding not symbolic fonts.
+                framework.assertOnlyVeraPdfFail(filename);
             } else {
-                if ("array".equals(textRepresentation)) {
-                    // In case of "array" PdfCanvas#showText(PdfArray) is used. In this method we don't have this check, because
-                    // of the complications regarding not symbolic fonts.
-                    framework.assertOnlyVeraPdfFail(filename);
-                } else {
-                    framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT);
-                }
+                framework.assertBothFail(filename);
             }
-        } else if (conformance instanceof WellTaggedPdfConformance) {
-            if (wtpdfValidity) {
-                framework.assertBothValid(filename);
-            } else {
-                if ("array".equals(textRepresentation)) {
-                    // In case of "array" PdfCanvas#showText(PdfArray) is used. In this method we don't have this check, because
-                    // of the complications regarding not symbolic fonts.
-                    framework.assertOnlyVeraPdfFail(filename);
-                } else {
-                    framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT);
-                }
-            }
+        } else {
+            framework.assertBothValid(filename);
         }
     }
 
@@ -298,7 +302,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
         try {
             return PdfFontFactory.createFont(FONT, PdfEncodings.IDENTITY_H, EmbeddingStrategy.FORCE_EMBEDDED);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PdfException(e.getMessage());
         }
     }
 }

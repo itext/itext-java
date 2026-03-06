@@ -44,8 +44,8 @@ final class CellResultMatrix extends AbstractResultMatrix<Cell> {
     /**
      * Creates a new {@link CellResultMatrix} instance.
      *
-     * @param table   The table that needs to be checked.
-     * @param context The validation context.
+     * @param table   The table that needs to be checked
+     * @param context The validation context
      */
     public CellResultMatrix(Table table, PdfUAValidationContext context) {
         super(new TableCellIterator(table, context), context.getUAConformance());

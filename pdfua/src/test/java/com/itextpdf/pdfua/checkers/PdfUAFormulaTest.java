@@ -23,8 +23,10 @@
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.WellTaggedPdfConformance;
@@ -34,10 +36,8 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.pdfua.UaValidationTestFramework2;
-import com.itextpdf.pdfua.UaValidationTestFramework2.Generator;
+import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -54,119 +54,101 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PdfUAFormulaTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAFormulaTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-    
+
     @BeforeAll
     public static void before() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static List<Object> data() {
-        return UaValidationTestFramework2.getConformanceList();
+    public static List<PdfConformance> data() {
+        return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest01(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
-                return p;
-            }
+    public void layoutTest01(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
+            return p;
         });
 
-        if (conformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("layout01");
-        } else if (conformance == PdfUAConformance.PDF_UA_2) {
+        } else if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2) {
             framework.assertBothValid("layout01");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest02(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
-                p.getAccessibilityProperties().setActualText("Einstein smart boy formula");
-                return p;
-            }
+    public void layoutTest02(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
+            p.getAccessibilityProperties().setActualText("Einstein smart boy formula");
+            return p;
         });
         framework.assertBothValid("layout02");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest03(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
-                p.getAccessibilityProperties().setAlternateDescription("Einstein smart boy " + "formula");
-                return p;
-            }
+    public void layoutTest03(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
+            p.getAccessibilityProperties().setAlternateDescription("Einstein smart boy " + "formula");
+            return p;
         });
         framework.assertBothValid("layout03");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest04(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
-                p.getAccessibilityProperties().setAlternateDescription("");
-                return p;
-            }
+    public void layoutTest04(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
+            p.getAccessibilityProperties().setAlternateDescription("");
+            return p;
         });
 
-        if (conformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("layout04");
-        } else if (conformance == PdfUAConformance.PDF_UA_2) {
+        } else if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2) {
             framework.assertBothValid("layout04");
-        } else if (conformance == WellTaggedPdfConformance.FOR_REUSE) {
+        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
             framework.assertBothValid("layout04");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest05(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
-                p.getAccessibilityProperties().setActualText("");
-                return p;
-            }
+    public void layoutTest05(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
+            p.getAccessibilityProperties().setActualText("");
+            return p;
         });
         framework.assertBothValid("layout05");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest06(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("⫊").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
-                p.getAccessibilityProperties().setActualText("Some character that is not embeded in the font");
-                return p;
-            }
+    public void layoutTest06(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("⫊").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
+            p.getAccessibilityProperties().setActualText("Some character that is not embeded in the font");
+            return p;
         });
         framework.assertBothFail("layout06",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
@@ -175,16 +157,13 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutTest07(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("⫊").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
-                p.getAccessibilityProperties().setAlternateDescription("Alternate " + "description");
-                return p;
-            }
+    public void layoutTest07(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("⫊").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setRole(StandardRoles.FORMULA);
+            p.getAccessibilityProperties().setAlternateDescription("Alternate " + "description");
+            return p;
         });
         framework.assertBothFail("layout07",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "⫊"),
@@ -193,19 +172,18 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutWithValidRole(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setRole("BING");
-                p.getAccessibilityProperties().setAlternateDescription("Alternate " + "description");
-                return p;
-            }
+    public void layoutWithValidRole(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setRole("BING");
+            p.getAccessibilityProperties().setAlternateDescription("Alternate " + "description");
+            return p;
         });
         framework.addBeforeGenerationHook(pdfDocument -> {
-            if (conformance == PdfUAConformance.PDF_UA_2 || conformance == WellTaggedPdfConformance.FOR_REUSE) {
+            if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2
+                    || conformance.isWtpdf()
+            ) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
                 pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
                 pdfDocument.getStructTreeRoot().addNamespace(namespace);
@@ -220,18 +198,16 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void layoutWithValidRoleButNoAlternateDescription(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setRole("BING");
-                return p;
-            }
+    public void layoutWithValidRoleButNoAlternateDescription(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("e = mc^2").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setRole("BING");
+            return p;
         });
         framework.addBeforeGenerationHook(pdfDocument -> {
-            if (conformance == PdfUAConformance.PDF_UA_2 || conformance == WellTaggedPdfConformance.FOR_REUSE) {
+            if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2
+                    || conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
                 pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
                 pdfDocument.getStructTreeRoot().addNamespace(namespace);
@@ -242,19 +218,19 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             tagStructureContext.addRoleMapping("BING", StandardRoles.FORMULA);
         });
 
-        if (conformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("layoutWithValidRoleButNoDescription");
-        } else if (conformance == PdfUAConformance.PDF_UA_2) {
+        } else if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2) {
             framework.assertBothValid("layoutWithValidRoleButNoDescription");
-        } else if (conformance == WellTaggedPdfConformance.FOR_REUSE) {
+        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
             framework.assertBothValid("layoutWithValidRoleButNoDescription");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canvasTest01(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+    public void canvasTest01(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -264,23 +240,24 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc);
             tagPointer.setPageForTagging(pdfDoc.getFirstPage());
             tagPointer.addTag(StandardRoles.FORMULA);
-            canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12).showText("E=mc²")
+            canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12)
+                    .showText("E=mc²")
                     .endText().closeTag();
         });
 
-        if (conformance == PdfUAConformance.PDF_UA_1) {
+        if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("canvasTest01", PdfUAExceptionMessageConstants.FORMULA_SHALL_HAVE_ALT);
-        } else if (conformance == PdfUAConformance.PDF_UA_2) {
+        } else if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2) {
             framework.assertBothValid("canvasTest01");
-        } else if (conformance == WellTaggedPdfConformance.FOR_REUSE) {
+        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
             framework.assertBothValid("canvasTest01");
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canvasTest02(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+    public void canvasTest02(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -292,7 +269,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
             tagPointer.addTag(StandardRoles.FORMULA);
 
             tagPointer.getProperties().setActualText("Einstein smart boy");
-            canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12).showText("E=mc²")
+            canvas.openTag(tagPointer.getTagReference()).saveState().beginText().setFontAndSize(font, 12)
+                    .showText("E=mc²")
                     .endText().closeTag();
         });
         framework.assertBothValid("canvasTest02");
@@ -300,8 +278,8 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void canvasTest03(Object conformance) throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, conformance);
+    public void canvasTest03(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfPage page = pdfDoc.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
@@ -322,24 +300,24 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
 
     @Test
     public void mathStructureElementInvalidUA2Test() throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, PdfUAConformance.PDF_UA_2);
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
-                p.getAccessibilityProperties().setNamespace(new PdfNamespace(StandardNamespaces.MATH_ML));
-                p.getAccessibilityProperties().setRole("math");
-                return p;
-            }
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER,
+                new PdfConformance(PdfUAConformance.PDF_UA_2));
+        framework.addSuppliers(document -> {
+            Paragraph p = new Paragraph("E=mc²").setFont(loadFont(FONT));
+            p.getAccessibilityProperties().setNamespace(new PdfNamespace(StandardNamespaces.MATH_ML));
+            p.getAccessibilityProperties().setRole("math");
+            return p;
         });
 
-        framework.assertBothFail("mathStructureElementInvalidUA2Test", PdfUAExceptionMessageConstants.MATH_NOT_CHILD_OF_FORMULA);
+        framework.assertBothFail("mathStructureElementInvalidUA2Test",
+                PdfUAExceptionMessageConstants.MATH_NOT_CHILD_OF_FORMULA);
     }
 
     @Test
     public void mathStructureElementValidUA2Test() throws IOException {
-        UaValidationTestFramework2 framework = new UaValidationTestFramework2(DESTINATION_FOLDER, PdfUAConformance.PDF_UA_2);
-        framework        .addAfterGenerationHook(pdfDocument -> {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER,
+                new PdfConformance(PdfUAConformance.PDF_UA_2));
+        framework.addAfterGenerationHook(pdfDocument -> {
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
@@ -362,7 +340,7 @@ public class PdfUAFormulaTest extends ExtendedITextTest {
         try {
             return PdfFontFactory.createFont(fontPath);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PdfException(e.getMessage());
         }
     }
 }

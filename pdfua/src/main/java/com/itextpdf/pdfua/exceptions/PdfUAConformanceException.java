@@ -40,8 +40,8 @@ public class PdfUAConformanceException extends PdfException {
     /**
      * Creates a PdfUAConformanceException.
      *
-     * @param message the detail message.
-     * @param cause   the cause.
+     * @param message the detail message
+     * @param cause   the cause
      */
     public PdfUAConformanceException(String message, Exception cause) {
         super(message, cause);

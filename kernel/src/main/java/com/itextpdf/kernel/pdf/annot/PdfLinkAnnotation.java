@@ -358,7 +358,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
      * @return link annotation tag role
      */
     public String getRoleBasedOnDestination(PdfDocument document) {
-        if (document != null && PdfUAConformance.PDF_UA_1 == document.getConformance().getUAConformance()) {
+        if (document != null &&  document.getConformance().conformsTo(PdfUAConformance.PDF_UA_1)) {
             return StandardRoles.LINK;
         }
         PdfObject dest = null;

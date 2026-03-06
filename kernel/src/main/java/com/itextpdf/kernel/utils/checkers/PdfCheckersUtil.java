@@ -95,7 +95,7 @@ public final class PdfCheckersUtil {
 
             final String NS_ID = conformance.isPdfA() ? XMPConst.NS_PDFA_ID : XMPConst.NS_PDFUA_ID;
 
-            if (conformance.isPdfAOrUa()) {
+            if (conformance.isPdfA() || conformance.isPdfUA()) {
                 XMPProperty actualPart = metadata.getProperty(NS_ID, XMPConst.PART);
                 String expectedPart = conformance.isPdfA() ? conformance.getAConformance().getPart() :
                         conformance.getUAConformance().getPart();
@@ -126,16 +126,14 @@ public final class PdfCheckersUtil {
                     XMPConst.NS_DECLARATIONS, XMPConst.DECLARATIONS + "/[1]/" + XMPConst.CONFORMS_TO);
         } catch (Exception ignored) {
         }
-        if (WellTaggedPdfConformance.FOR_ACCESSIBILITY == conformance.getWtpdfConformance()) {
-            if (wtpdfProperty == null || !XMPConst.NS_WTPDF_ACCESSIBILITY_ID.equals(wtpdfProperty.getValue())) {
-                throw exceptionSupplier.apply(
-                        KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_ACCESSIBILITY_METADATA);
-            }
-        } else if (WellTaggedPdfConformance.FOR_REUSE == conformance.getWtpdfConformance()) {
-            if (wtpdfProperty == null || !XMPConst.NS_WTPDF_REUSE_ID.equals(wtpdfProperty.getValue())) {
-                throw exceptionSupplier.apply(
-                        KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_REUSE_METADATA);
-            }
+        if (conformance.conformsTo(WellTaggedPdfConformance.FOR_ACCESSIBILITY)
+                && (wtpdfProperty == null || !XMPConst.NS_WTPDF_ACCESSIBILITY_ID.equals(wtpdfProperty.getValue()))) {
+            throw exceptionSupplier.apply(
+                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_ACCESSIBILITY_METADATA);
+        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)
+                && (wtpdfProperty == null || !XMPConst.NS_WTPDF_REUSE_ID.equals(wtpdfProperty.getValue()))) {
+            throw exceptionSupplier.apply(
+                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_REUSE_METADATA);
         }
     }
 

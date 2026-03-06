@@ -123,7 +123,7 @@ public class ChoiceFormFieldBuilder extends TerminalFormFieldBuilder<ChoiceFormF
             field = PdfFormCreator.createChoiceFormField(getDocument());
         } else {
             annotation = new PdfWidgetAnnotation(getWidgetRectangle());
-            if (null != getConformance() && getConformance().isPdfAOrUaOrWtpdf()) {
+            if (null != getConformance() && getConformance().conformsToAny()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
             field = PdfFormCreator.createChoiceFormField(annotation, getDocument());

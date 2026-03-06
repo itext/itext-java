@@ -51,7 +51,7 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -97,7 +97,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
         showText(chapter, page1);
 
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -125,7 +125,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
         showText(chapter, page1);
 
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -155,7 +155,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
         showText(expression, page1);
 
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -180,7 +180,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
         showText(chapter, page1);
 
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -212,7 +212,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
         showText(chapter, page1);
 
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
 
@@ -242,7 +242,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
         showText(chapter, page1);
 
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     // UA-2 rule check: structure type with explicit namespace is role mapped to other structure type in the same NS:
@@ -465,7 +465,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
 
         // This case is valid according to VeraPDF.
         AssertUtil.doesNotThrow(() -> pdfDoc.close());
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
@@ -606,7 +606,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
         try {
             font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         } catch (IOException e) {
-            throw new RuntimeException();
+            throw new PdfException(e);
         }
         canvas
                 .openTag(new CanvasTag(mcr))

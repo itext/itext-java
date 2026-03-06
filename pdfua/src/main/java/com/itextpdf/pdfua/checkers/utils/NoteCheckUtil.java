@@ -36,6 +36,14 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
  */
 @Deprecated
 public class NoteCheckUtil {
+
+    /**
+     * Creates a new instance of {@link NoteCheckUtil}.
+     */
+    public NoteCheckUtil(){
+       //empty constructor
+    }
+
     /**
      * Handler for checking Note elements in the TagTree.
      *
@@ -46,7 +54,7 @@ public class NoteCheckUtil {
 
         /**
          * Creates a new {@link  NoteCheckUtil.NoteTagHandler} instance.
-         * @param context The validation context.
+         * @param context The validation context
          */
         public NoteTagHandler(PdfUAValidationContext context) {
             super(context);

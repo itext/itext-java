@@ -37,7 +37,7 @@ public abstract class ContextAwareTagTreeIteratorHandler implements ITagTreeIter
     /**
      * Creates a new instance of the {@link ContextAwareTagTreeIteratorHandler}.
      *
-     * @param context The validation context.
+     * @param context The validation context
      */
     protected ContextAwareTagTreeIteratorHandler(PdfUAValidationContext context) {
         this.context = context;

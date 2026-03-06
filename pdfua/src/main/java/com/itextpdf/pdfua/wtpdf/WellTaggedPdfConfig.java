@@ -22,13 +22,18 @@
  */
 package com.itextpdf.pdfua.wtpdf;
 
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.WellTaggedPdfConformance;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class that holds the configuration for the Well Tagged PDF document.
  */
 public class WellTaggedPdfConfig {
-    private final WellTaggedPdfConformance conformance;
+    private final List<WellTaggedPdfConformance> conformance = new ArrayList<>();
     private final String title;
     private final String language;
 
@@ -36,11 +41,31 @@ public class WellTaggedPdfConfig {
      * Creates a new WellTaggedPdfConfig instance.
      *
      * @param conformance the conformance of the Well Tagged PDF document
-     * @param title the title of the Well Tagged PDF document
-     * @param language the language of the Well Tagged PDF document
+     * @param title       the title of the Well Tagged PDF document
+     * @param language    the language of the Well Tagged PDF document
      */
     public WellTaggedPdfConfig(WellTaggedPdfConformance conformance, String title, String language) {
-        this.conformance = conformance;
+        if (conformance == null) {
+            throw new PdfException("Conformance cannot be null");
+        }
+        this.conformance.add(conformance);
+        this.title = title;
+        this.language = language;
+    }
+
+
+    /**
+     * Creates a new WellTaggedPdfConfig instance.
+     *
+     * @param conformanceList the conformance of the Well Tagged PDF document
+     * @param title       the title of the Well Tagged PDF document
+     * @param language    the language of the Well Tagged PDF document
+     */
+    public WellTaggedPdfConfig(List<WellTaggedPdfConformance> conformanceList, String title, String language) {
+        if (conformanceList == null || conformanceList.isEmpty()) {
+            throw new PdfException("Conformance list cannot be null or empty");
+        }
+        this.conformance.addAll(conformanceList);
         this.title = title;
         this.language = language;
     }
@@ -48,16 +73,16 @@ public class WellTaggedPdfConfig {
     /**
      * Gets the Well Tagged PDF conformance.
      *
-     * @return The {@link WellTaggedPdfConformance}.
+     * @return The {@link PdfConformance}
      */
-    public WellTaggedPdfConformance getConformance() {
-        return conformance;
+    public List<WellTaggedPdfConformance> getConformance() {
+        return new ArrayList<>(conformance);
     }
 
     /**
      * Gets the title.
      *
-     * @return The title.
+     * @return The title
      */
     public String getTitle() {
         return title;
@@ -66,7 +91,7 @@ public class WellTaggedPdfConfig {
     /**
      * Gets the language.
      *
-     * @return The language.
+     * @return The language
      */
     public String getLanguage() {
         return language;

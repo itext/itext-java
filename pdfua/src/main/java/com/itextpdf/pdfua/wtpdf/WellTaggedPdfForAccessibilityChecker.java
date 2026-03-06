@@ -34,14 +34,16 @@ import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
 /**
- * The class defines the requirements of the Well Tagged PDF standard.
+ * Checker that validates a PDF document against the Well Tagged PDF for Accessibility standard.
  */
 public class WellTaggedPdfForAccessibilityChecker extends PdfUA2Checker {
     /**
-     * Creates {@link WellTaggedPdfForAccessibilityChecker} instance,
-     * which will be validated against WTPDF For Accessibility standard.
+     * Creates a new {@link WellTaggedPdfForAccessibilityChecker} instance.
+     * <p>
+     * The created checker will validate the provided document against the
+     * WTPDF for Accessibility standard.
      *
-     * @param pdfDocument the document to validate
+     * @param pdfDocument the {@link PdfDocument} to validate; must not be {@code null}
      */
     public WellTaggedPdfForAccessibilityChecker(PdfDocument pdfDocument) {
         super(pdfDocument);

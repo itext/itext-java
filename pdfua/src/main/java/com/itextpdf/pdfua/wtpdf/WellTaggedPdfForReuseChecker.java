@@ -33,6 +33,9 @@ import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2XfaChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 
+/**
+ * {@link WellTaggedPdfForReuseChecker} class performs validation of a PDF document against WTPDF For Reuse standard.
+ */
 public class WellTaggedPdfForReuseChecker extends WellTaggedPdfForAccessibilityChecker {
     /**
      * Creates {@link WellTaggedPdfForReuseChecker} instance which will be validated against WTPDF For Reuse standard.
@@ -47,43 +50,32 @@ public class WellTaggedPdfForReuseChecker extends WellTaggedPdfForAccessibilityC
     public void validate(IValidationContext context) {
         switch (context.getType()) {
             case PDF_DOCUMENT:
-                PdfDocumentValidationContext pdfDocContext = (PdfDocumentValidationContext) context;
-                checkCatalog(pdfDocContext.getPdfDocument().getCatalog());
-                checkStructureTreeRoot(pdfDocContext.getPdfDocument().getStructTreeRoot());
-                checkFonts(pdfDocContext.getDocumentFonts());
-                new PdfUA2DestinationsChecker(pdfDocContext.getPdfDocument()).checkDestinations();
-                PdfUA2XfaChecker.check(pdfDocContext.getPdfDocument());
+                validatePdfDocument((PdfDocumentValidationContext) context);
                 break;
             case FONT:
                 FontValidationContext fontContext = (FontValidationContext) context;
                 checkText(fontContext.getText(), fontContext.getFont());
                 break;
             case CANVAS_BEGIN_MARKED_CONTENT:
-                CanvasBmcValidationContext bmcContext = (CanvasBmcValidationContext) context;
-                checkLogicalStructureInBMC(bmcContext.getTagStructureStack(), bmcContext.getCurrentBmc(),
-                        getPdfDocument());
+                validateCanvasBmc((CanvasBmcValidationContext) context);
                 break;
             case CANVAS_WRITING_CONTENT:
-                CanvasWritingContentValidationContext writingContext = (CanvasWritingContentValidationContext) context;
-                checkContentInCanvas(writingContext.getTagStructureStack(), getPdfDocument());
+                validateCanvasWriting((CanvasWritingContentValidationContext) context);
                 break;
             case LAYOUT:
-                LayoutValidationContext layoutContext = (LayoutValidationContext) context;
-                new WellTaggedPdfForReuseLayoutChecker(getUAValidationContext()).checkRenderer(layoutContext.getRenderer());
-                new PdfUA2HeadingsChecker(getUAValidationContext()).checkLayoutElement(layoutContext.getRenderer());
+                validateLayout((LayoutValidationContext) context);
                 break;
             case DESTINATION_ADDITION:
-                PdfDestinationAdditionContext destinationAdditionContext = (PdfDestinationAdditionContext) context;
-                new PdfUA2DestinationsChecker(destinationAdditionContext, getPdfDocument()).checkDestinationsOnCreation();
+                validateDestinationAddition((PdfDestinationAdditionContext) context);
                 break;
             case PDF_OBJECT:
                 PdfObjectValidationContext validationContext = (PdfObjectValidationContext) context;
                 checkPdfObject(validationContext.getObject());
                 break;
             case ANNOTATION:
-                PdfAnnotationContext annotationContext = (PdfAnnotationContext) context;
-                new WellTaggedPdfForReuseAnnotationChecker().checkAnnotation(
-                        annotationContext.getAnnotation(), getUAValidationContext());
+                validateAnnotation((PdfAnnotationContext) context);
+                break;
+            default:
                 break;
         }
     }
@@ -112,7 +104,7 @@ public class WellTaggedPdfForReuseChecker extends WellTaggedPdfForAccessibilityC
         formChecker.checkFormFields(catalog.getPdfObject().getAsDictionary(PdfName.AcroForm));
         formChecker.checkWidgetAnnotations(getPdfDocument());
         PdfUA2LinkChecker.checkLinkAnnotations(getPdfDocument());
-        new WellTaggedPdfForReuseAnnotationChecker().checkAnnotations(getPdfDocument());
+        new WellTaggedPdfForReuseAnnotationChecker().checkAllAnnotations(getPdfDocument());
     }
 
     @Override
@@ -125,7 +117,8 @@ public class WellTaggedPdfForReuseChecker extends WellTaggedPdfForAccessibilityC
                 getUAValidationContext()));
         tagTreeIterator.addHandler(new PdfUA2ListChecker.PdfUA2ListHandler(getUAValidationContext()));
         tagTreeIterator.addHandler(new PdfUA2NotesChecker.PdfUA2NotesHandler(getUAValidationContext()));
-        tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(getUAValidationContext()));
+        tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(
+                getUAValidationContext()));
         tagTreeIterator.addHandler(new PdfUA2FormulaChecker.PdfUA2FormulaTagHandler(getUAValidationContext()));
         tagTreeIterator.addHandler(new PdfUA2LinkChecker.PdfUA2LinkAnnotationHandler(
                 getUAValidationContext(), getPdfDocument()));
@@ -155,5 +148,39 @@ public class WellTaggedPdfForReuseChecker extends WellTaggedPdfForAccessibilityC
         } catch (XMPException e) {
             throw new PdfUAConformanceException(e.getMessage(), e);
         }
+    }
+
+    private void validatePdfDocument(PdfDocumentValidationContext pdfDocContext) {
+        checkCatalog(pdfDocContext.getPdfDocument().getCatalog());
+        checkStructureTreeRoot(pdfDocContext.getPdfDocument().getStructTreeRoot());
+        checkFonts(pdfDocContext.getDocumentFonts());
+        new PdfUA2DestinationsChecker(pdfDocContext.getPdfDocument()).checkDestinations();
+        PdfUA2XfaChecker.check(pdfDocContext.getPdfDocument());
+    }
+
+    private void validateCanvasBmc(CanvasBmcValidationContext bmcContext) {
+        checkLogicalStructureInBMC(
+                bmcContext.getTagStructureStack(), bmcContext.getCurrentBmc(), getPdfDocument());
+    }
+
+    private void validateCanvasWriting(CanvasWritingContentValidationContext writingContext) {
+        checkContentInCanvas(writingContext.getTagStructureStack(), getPdfDocument());
+    }
+
+    private void validateLayout(LayoutValidationContext layoutContext) {
+        new WellTaggedPdfForReuseLayoutChecker(getUAValidationContext())
+                .checkRenderer(layoutContext.getRenderer());
+        new PdfUA2HeadingsChecker(getUAValidationContext())
+                .checkLayoutElement(layoutContext.getRenderer());
+    }
+
+    private void validateDestinationAddition(PdfDestinationAdditionContext ctx) {
+        new PdfUA2DestinationsChecker(ctx, getPdfDocument())
+                .checkDestinationsOnCreation();
+    }
+
+    private void validateAnnotation(PdfAnnotationContext annotationContext) {
+        new WellTaggedPdfForReuseAnnotationChecker().checkSingleAnnotation(
+                annotationContext.getAnnotation(), getUAValidationContext());
     }
 }

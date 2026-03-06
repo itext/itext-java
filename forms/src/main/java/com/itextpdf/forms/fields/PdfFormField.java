@@ -1126,7 +1126,7 @@ public class PdfFormField extends AbstractPdfFormField {
             checkType = CheckBoxType.CROSS;
         }
         this.checkType = new NullableContainer<>(checkType);
-        if (getPdfConformance() != null && getPdfConformance().isPdfAOrUaOrWtpdf()) {
+        if (getPdfConformance() != null && getPdfConformance().conformsToAny()) {
             return this;
         }
         try {

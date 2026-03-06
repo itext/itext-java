@@ -47,8 +47,8 @@ final class TableCellIterator implements ITableIterator<Cell> {
     /**
      * Creates a new {@link TableCellIterator} instance.
      *
-     * @param table the table that will be iterated.
-     * @param context the validation context.
+     * @param table the table that will be iterated
+     * @param context the validation context
      */
     public TableCellIterator(Table table, PdfUAValidationContext context) {
         this.context = context;

@@ -41,8 +41,8 @@ class StructTreeResultMatrix extends AbstractResultMatrix<PdfStructElem> {
     /**
      * Creates a new {@link StructTreeResultMatrix} instance.
      *
-     * @param elem a table structure element.
-     * @param context The validation context.
+     * @param elem a table structure element
+     * @param context The validation context
      */
     public StructTreeResultMatrix(PdfStructElem elem, PdfUAValidationContext context) {
         super(new TableStructElementIterator(elem, context), context.getUAConformance());

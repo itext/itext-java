@@ -51,7 +51,7 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -113,7 +113,7 @@ public class PdfASigningTest extends ExtendedITextTest {
                 DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false,
                 AccessPermissions.UNSPECIFIED, 12f);
 
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(dest)); 
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(dest, sourceFolder + "cmp_" + fileName));
         Assertions.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
                 "diff_", getTestMap(new Rectangle(27, 620, 195, 40))));
@@ -135,7 +135,7 @@ public class PdfASigningTest extends ExtendedITextTest {
                 new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Assertions.assertNull(new VeraPdfValidator().validate(out)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(out)); 
     }
 
     @Test
@@ -170,7 +170,7 @@ public class PdfASigningTest extends ExtendedITextTest {
                 getTestMap(rect)));
 
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test

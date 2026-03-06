@@ -49,7 +49,7 @@ public class PdfUAConfig {
     /**
      * Gets the UA conformance.
      *
-     * @return The {@link PdfUAConformance}.
+     * @return The {@link PdfUAConformance}
      */
     public PdfUAConformance getConformance() {
         return conformance;
@@ -58,7 +58,7 @@ public class PdfUAConfig {
     /**
      * Gets the title.
      *
-     * @return The title.
+     * @return The title
      */
     public String getTitle() {
         return title;
@@ -67,7 +67,7 @@ public class PdfUAConfig {
     /**
      * Gets the language.
      *
-     * @return The language.
+     * @return The language
      */
     public String getLanguage() {
         return language;

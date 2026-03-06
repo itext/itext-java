@@ -41,11 +41,11 @@ import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.layout.tagging.ProhibitedTagRelationsResolver;
 import com.itextpdf.pdfua.PdfUAPageFactory;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates a Well Tagged PDF document.
@@ -58,8 +58,8 @@ public class WellTaggedPdfDocument extends PdfDocument {
     /**
      * Creates a WellTaggedPdfDocument instance.
      *
-     * @param writer The writer to write the PDF document.
-     * @param config The configuration for the Well Tagged document.
+     * @param writer The writer to write the PDF document
+     * @param config The configuration for the Well Tagged document
      */
     public WellTaggedPdfDocument(PdfWriter writer, WellTaggedPdfConfig config) {
         this(writer, new DocumentProperties(), config);
@@ -68,9 +68,9 @@ public class WellTaggedPdfDocument extends PdfDocument {
     /**
      * Creates a WellTaggedPdfDocument instance.
      *
-     * @param writer     The writer to write the PDF document.
-     * @param properties The properties for the PDF document.
-     * @param config     The configuration for the Well Tagged document.
+     * @param writer     The writer to write the PDF document
+     * @param properties The properties for the PDF document
+     * @param config     The configuration for the Well Tagged document
      */
     public WellTaggedPdfDocument(PdfWriter writer, DocumentProperties properties, WellTaggedPdfConfig config) {
         super(configureWriterProperties(writer, config.getConformance()), properties);
@@ -78,7 +78,7 @@ public class WellTaggedPdfDocument extends PdfDocument {
 
         setupWtpdfConfiguration(config);
         final ValidationContainer validationContainer = new ValidationContainer();
-        final List<IValidationChecker> checkers = createCheckers(config.getConformance());
+        final List<IValidationChecker> checkers = createCheckers(this.pdfConformance);
         for (IValidationChecker checker : checkers) {
             validationContainer.addChecker(checker);
         }
@@ -90,9 +90,9 @@ public class WellTaggedPdfDocument extends PdfDocument {
     /**
      * Creates a WellTaggedPdfDocument instance.
      *
-     * @param reader The reader to read the PDF document.
-     * @param writer The writer to write the PDF document.
-     * @param config The configuration for the Well Tagged document.
+     * @param reader The reader to read the PDF document
+     * @param writer The writer to write the PDF document
+     * @param config The configuration for the Well Tagged document
      */
     public WellTaggedPdfDocument(PdfReader reader, PdfWriter writer, WellTaggedPdfConfig config) {
         this(reader, writer, new StampingProperties(), config);
@@ -101,22 +101,21 @@ public class WellTaggedPdfDocument extends PdfDocument {
     /**
      * Creates a WellTaggedPdfDocument instance.
      *
-     * @param reader     The reader to read the PDF document.
-     * @param writer     The writer to write the PDF document.
-     * @param properties The properties for the PDF document.
-     * @param config     The configuration for the Well Tagged document.
+     * @param reader     The reader to read the PDF document
+     * @param writer     The writer to write the PDF document
+     * @param properties The properties for the PDF document
+     * @param config     The configuration for the Well Tagged document
      */
     public WellTaggedPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties,
-                                 WellTaggedPdfConfig config) {
+            WellTaggedPdfConfig config) {
         super(reader, writer, properties);
         if (!getConformance().isWtpdf()) {
             LOGGER.warn(PdfUALogMessageConstants.PDF_TO_WTPDF_CONVERSION_IS_NOT_SUPPORTED);
         }
-
         setupWtpdfConfiguration(config);
 
         final ValidationContainer validationContainer = new ValidationContainer();
-        final List<IValidationChecker> checkers = createCheckers(config.getConformance());
+        final List<IValidationChecker> checkers = createCheckers(new PdfConformance(config.getConformance()));
         for (IValidationChecker checker : checkers) {
             validationContainer.addChecker(checker);
         }
@@ -128,14 +127,16 @@ public class WellTaggedPdfDocument extends PdfDocument {
      * Creates a list of {@link IValidationChecker} for Well Tagged conformance.
      * If you want to enable/disable specific checks, you can override the implementation.
      *
+     * @param conformance the Well Tagged PDF conformance for which the checkers should be created
+     *
      * @return list of Well Tagged related checkers
      */
-    protected List<IValidationChecker> createCheckers(WellTaggedPdfConformance conformance) {
+    protected List<IValidationChecker> createCheckers(PdfConformance conformance) {
         List<IValidationChecker> checkers = new ArrayList<>();
         final ColorContrastChecker contrastChecker = new ColorContrastChecker(false, false);
-        if (WellTaggedPdfConformance.FOR_REUSE == conformance) {
+        if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
             checkers.add(new WellTaggedPdfForReuseChecker(this));
-        } else if (WellTaggedPdfConformance.FOR_ACCESSIBILITY == conformance) {
+        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_ACCESSIBILITY)) {
             checkers.add(new WellTaggedPdfForAccessibilityChecker(this));
         }
         checkers.add(new Pdf20Checker(this));
@@ -152,7 +153,8 @@ public class WellTaggedPdfDocument extends PdfDocument {
         info.setTitle(config.getTitle());
     }
 
-    private static PdfWriter configureWriterProperties(PdfWriter writer, WellTaggedPdfConformance wtpdfConformance) {
+    private static PdfWriter configureWriterProperties(PdfWriter writer,
+            List<WellTaggedPdfConformance> wtpdfConformance) {
         writer.getProperties().addWtpdfXmpMetadata(wtpdfConformance);
         if (writer.getPdfVersion() != null && !PdfVersion.PDF_2_0.equals(writer.getPdfVersion())) {
             LOGGER.warn(MessageFormatUtil.format(

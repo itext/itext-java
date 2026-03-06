@@ -36,7 +36,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -76,8 +76,8 @@ public class PdfAAppendModeTest extends ExtendedITextTest {
                 .restoreState();
         canvas.release();
         pdfADocument.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(inputFile)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
-        Assertions.assertNull(new VeraPdfValidator().validate(outputFile)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(inputFile)); 
+        Assertions.assertNull(new VeraPdfValidator().validate(outputFile)); 
         Assertions.assertNull(new CompareTool().compareByContent(outputFile, cmpFile, DESTINATION_FOLDER, "diff_"));
     }
 

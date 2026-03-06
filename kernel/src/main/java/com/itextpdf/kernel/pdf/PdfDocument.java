@@ -994,8 +994,7 @@ public class PdfDocument implements Closeable {
                 // The following 2 operators prevent the possible inconsistency between root and info
                 // entries existing in the trailer object and corresponding fields. This inconsistency
                 // may appear when user gets trailer and explicitly sets new root or info dictionaries.
-                PdfAConformance pdfAConformance = this.getConformance().getAConformance();
-                if (pdfAConformance != null && "4".equals(pdfAConformance.getPart())) {
+                if (pdfConformance.isPdfA() && "4".equals(pdfConformance.getAConformance().getPart())) {
                     if (this.getCatalog().getPdfObject().get(PdfName.PieceInfo) != null) {
                         // Leave only ModDate as required by 6.1.3 File trailer of pdf/a-4 spec
                         getDocumentInfo().removeCreationDate();
@@ -2132,10 +2131,10 @@ public class PdfDocument implements Closeable {
             }
             xref.initFreeReferencesList(this);
             if (writer != null) {
-                if (writer.properties.addPdfAXmpMetadata != null || writer.properties.addPdfUaXmpMetadata != null ||
-                        writer.properties.addWtpdfXmpMetadata != null) {
-                    pdfConformance = new PdfConformance(writer.properties.addPdfAXmpMetadata,
-                            writer.properties.addPdfUaXmpMetadata, writer.properties.addWtpdfXmpMetadata);
+                //if the writer requested a specific pdf flavour then we need to overwrite the pdfconformance
+                //so that we append the correct xmp metadata on the closing of the document of the requested flavor
+                if (writer.properties.getPdfConformance().conformsToAny()) {
+                    pdfConformance =  writer.properties.getPdfConformance();
                 }
                 enableByteArrayWritingMode();
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
@@ -2295,7 +2294,7 @@ public class PdfDocument implements Closeable {
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = getXmpMetadata(true);
         XmpMetaInfoConverter.appendDocumentInfoToMetadata(getDocumentInfo(), xmpMeta);
-        PdfConformance.setConformanceToXmp(xmpMeta, pdfConformance);
+        pdfConformance.setConformanceToXmp(xmpMeta);
         return xmpMeta;
     }
 
