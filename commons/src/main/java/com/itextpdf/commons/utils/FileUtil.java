@@ -45,6 +45,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.slf4j.LoggerFactory;
@@ -132,7 +133,8 @@ public final class FileUtil {
     public static String[] listFilesInDirectory(String path, boolean recursive) {
         if (path != null) {
             File root = new File(path);
-            if (root.exists() && root.isDirectory()) {
+            boolean isRootCorrect = root.exists() && root.isDirectory();
+            if (isRootCorrect) {
                 File[] files = root.listFiles();
                 if (files != null) {
                     // Guarantee invariant order in all environments
@@ -150,6 +152,40 @@ public final class FileUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * Lists all the directories located at the provided directory.
+     *
+     * @param path path to the directory
+     * @param recursive if {@code true}, directories from all the subdirectories will be returned
+     *
+     * @return all the directories located at the provided directory
+     */
+    public static String[] listDirectoriesInDirectory(String path, boolean recursive) {
+        if (path != null) {
+            File root = new File(path);
+            if (root.exists() || root.isDirectory()) {
+                File[] entries = root.listFiles();
+                if (entries != null) {
+                    Arrays.sort(entries, new CaseSensitiveFileComparator());
+                    List<String> dirs = new ArrayList<>();
+                    for (File entry : entries) {
+                        if (entry.isDirectory()) {
+                            dirs.add(entry.getAbsolutePath());
+                            if (recursive) {
+                                String[] sub = listDirectoriesInDirectory(entry.getAbsolutePath(), true);
+                                if (sub != null) {
+                                    Collections.addAll(dirs, sub);
+                                }
+                            }
+                        }
+                    }
+                    return dirs.toArray(new String[0]);
+                }
+            }
+        }
+        return new String[0];
     }
 
     /**

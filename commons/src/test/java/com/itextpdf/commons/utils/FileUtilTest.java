@@ -24,6 +24,10 @@ package com.itextpdf.commons.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,14 +35,11 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class FileUtilTest extends ExtendedITextTest {
 
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/commons/utils/SystemUtilTest/";
     public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/commons/utils/FileUtilTest/";
 
     @BeforeAll
@@ -71,5 +72,59 @@ public class FileUtilTest extends ExtendedITextTest {
 
         byte[] resultBytes = Files.readAllBytes(Paths.get(filePath));
         Assertions.assertEquals(text, new String(resultBytes, StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void directoryExistsFalseTest() {
+        boolean dirExists = FileUtil.directoryExists(null);
+        Assertions.assertFalse(dirExists);
+    }
+
+    @Test
+    public void getDirectoriesTest() {
+        String[] dirs = FileUtil.listDirectoriesInDirectory(SOURCE_FOLDER, false);
+        Assertions.assertEquals(1, dirs.length);
+    }
+
+    @Test
+    public void getDirectoriesRecursiveTest() {
+        String[] dirs = FileUtil.listDirectoriesInDirectory(SOURCE_FOLDER, true);
+        Assertions.assertEquals(1, dirs.length);
+    }
+
+    @Test
+    public void getDirectoriesNullPathTest() {
+        String[] dirs = FileUtil.listDirectoriesInDirectory(null, true);
+        Assertions.assertEquals(0, dirs.length);
+    }
+
+    @Test
+    public void getFileListTest() {
+        String[] files = FileUtil.listFilesInDirectory(SOURCE_FOLDER, false);
+        Assertions.assertTrue(files.length >= 2);
+    }
+
+    @Test
+    public void getFileListRecursiveTest() {
+        String[] files = FileUtil.listFilesInDirectory(SOURCE_FOLDER, true);
+        Assertions.assertEquals(3, files.length);
+    }
+
+    @Test
+    public void getFileListNullPathTest() {
+        String[] files = FileUtil.listFilesInDirectory(null, false);
+        Assertions.assertNull(files);
+    }
+
+    @Test
+    public void getFontsDirTest() {
+        String fontsDir = FileUtil.getFontsDir();
+        Assertions.assertNotNull(fontsDir);
+    }
+
+    @Test
+    public void constructFileByDirectoryAndNameTest() {
+        Assertions.assertNotNull(FileUtil.constructFileByDirectoryAndName(
+                SOURCE_FOLDER, ""));
     }
 }

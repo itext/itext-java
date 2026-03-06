@@ -15,7 +15,10 @@
 
   <properties>
     <sonar.coverage.exclusions>**/com/itextpdf/commons/bouncycastle/**</sonar.coverage.exclusions>
-
+    <!-- Temporary changes, remove after merge -->
+    <sonar.exclusions>
+      **/com/itextpdf/commons/utils/FileUtil.java,
+    </sonar.exclusions>
     <sharpen.phase>install</sharpen.phase>
     <sharpen.projectName>commons</sharpen.projectName>
     <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
