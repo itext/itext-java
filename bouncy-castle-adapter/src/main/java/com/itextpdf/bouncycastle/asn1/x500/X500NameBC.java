@@ -52,14 +52,25 @@ public class X500NameBC extends ASN1EncodableBC implements IX500Name {
     }
 
 
-    // expected format CN=iTextTestOcspResponder,O=iText,C=BY
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public String getName(){
+        // expected format CN=iTextTestOcspResponder,O=iText,C=BY
         try {
             return new X500Principal(getX500Name().getEncoded()).getName();
         } catch (IOException e) {
             // should never happen
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public byte[] getEncoded() throws IOException {
+        return getX500Name().getEncoded();
     }
 }

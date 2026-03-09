@@ -68,6 +68,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
+import com.itextpdf.commons.bouncycastle.asn1.pkix.IPKIXConstraintValidator;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
@@ -84,6 +85,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IIssuingDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
+import com.itextpdf.commons.bouncycastle.asn1.x509.INameConstraints;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
@@ -1081,6 +1083,15 @@ public interface IBouncyCastleFactory {
     IGeneralName createGeneralName();
 
     /**
+     * Creates General Name wrapper from the provided ASN1 Encodable wrapper.
+     *
+     * @param encodable ASN1 Encodable wrapper
+     *
+     * @return General Name wrapper
+     */
+    IGeneralName createGeneralName(IASN1Encodable encodable);
+
+    /**
      * Create other hash alg and value wrapper from algorithm identifier wrapper and ASN1 Octet string wrapper.
      *
      * @param algorithmIdentifier algorithm identifier wrapper to create other hash alg and value wrapper from
@@ -1807,4 +1818,20 @@ public interface IBouncyCastleFactory {
      * @throws IOException in case of Input-Output exceptions
      */
     List<IQCStatement> parseQcStatement(byte[] qcStatementsExtensionValue) throws IOException;
+
+    /**
+     * Creates name constraint validator wrapper.
+     *
+     * @return {@link IPKIXConstraintValidator} name constraint validator wrapper
+     */
+    IPKIXConstraintValidator createNameConstraintValidator();
+
+    /**
+     * Creates name constraints wrapper out of {@link IASN1Primitive}.
+     *
+     * @param primitive {@link IASN1Primitive} from which name constraints wrapper is created
+     *
+     * @return {@link INameConstraints} name constraints wrapper
+     */
+    INameConstraints createNameConstraints(IASN1Primitive primitive);
 }

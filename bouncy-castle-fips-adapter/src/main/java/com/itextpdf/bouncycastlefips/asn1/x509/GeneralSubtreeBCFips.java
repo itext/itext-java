@@ -20,29 +20,31 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.commons.bouncycastle.asn1.x500;
+package com.itextpdf.bouncycastlefips.asn1.x509;
 
-import com.itextpdf.commons.bouncycastle.asn1.IASN1Encodable;
-
-import java.io.IOException;
+import com.itextpdf.bouncycastlefips.asn1.ASN1EncodableBCFips;
+import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralSubtree;
+import org.bouncycastle.asn1.x509.GeneralSubtree;
 
 /**
- * This interface represents the wrapper for X500Name that provides the ability
- * to switch between bouncy-castle and bouncy-castle FIPS implementations.
+ * Wrapper class for {@link GeneralSubtree}.
  */
-public interface IX500Name extends IASN1Encodable {
+public class GeneralSubtreeBCFips extends ASN1EncodableBCFips implements IGeneralSubtree {
     /**
-     * Gets the RFC2253 name.
+     * Creates new wrapper instance for {@link GeneralSubtree}.
      *
-     * @return the RFC2253 name
+     * @param subtree {@link GeneralSubtree} to be wrapped
      */
-    String getName();
+    public GeneralSubtreeBCFips(GeneralSubtree subtree) {
+        super(subtree);
+    }
 
     /**
-     * Gets byte array representation of a wrapped X500Name.
+     * Gets actual org.bouncycastle object being wrapped.
      *
-     * @return byte array representation of a wrapped X500Name
-     * @throws IOException in case of I/O Exceptions
+     * @return wrapped {@link GeneralSubtree}
      */
-    byte[] getEncoded() throws IOException;
+    public GeneralSubtree getGeneralSubtree() {
+        return (GeneralSubtree) getEncodable();
+    }
 }

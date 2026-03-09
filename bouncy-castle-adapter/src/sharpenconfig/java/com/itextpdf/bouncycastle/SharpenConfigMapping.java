@@ -122,6 +122,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.bouncycastle.asn1.x509.KeyPurposeIdBC", "iText.Bouncycastle.Asn1.X509.KeyPurposeIDBC");
         configurator.mapProperty("org.bouncycastle.asn1.x509.qualified.QCStatement.getStatementId", "StatementId");
         configurator.mapProperty("org.bouncycastle.asn1.x509.qualified.QCStatement.getStatementInfo", "StatementInfo");
+        configurator.mapType("org.bouncycastle.pkix.PKIXNameConstraintValidatorException", "Org.BouncyCastle.Pkix.PkixNameConstraintValidatorException");
     }
 
     @Override

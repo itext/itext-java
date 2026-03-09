@@ -84,6 +84,7 @@ import com.itextpdf.bouncycastlefips.asn1.x509.GeneralNamesBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.IssuingDistributionPointBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.KeyPurposeIdBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.KeyUsageBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.NameConstraintsBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.ReasonFlagsBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.SubjectPublicKeyInfoBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.TBSCertificateBCFips;
@@ -123,6 +124,7 @@ import com.itextpdf.bouncycastlefips.openssl.jcajce.JceOpenSSLPKCS8DecryptorProv
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaContentSignerBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaContentVerifierProviderBuilderBCFips;
 import com.itextpdf.bouncycastlefips.operator.jcajce.JcaDigestCalculatorProviderBuilderBCFips;
+import com.itextpdf.bouncycastlefips.pkix.PKIXNameConstraintValidatorBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TSPExceptionBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampRequestBCFips;
 import com.itextpdf.bouncycastlefips.tsp.TimeStampRequestGeneratorBCFips;
@@ -179,6 +181,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
+import com.itextpdf.commons.bouncycastle.asn1.pkix.IPKIXConstraintValidator;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
@@ -195,6 +198,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IIssuingDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
+import com.itextpdf.commons.bouncycastle.asn1.x509.INameConstraints;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
@@ -307,10 +311,12 @@ import org.bouncycastle.asn1.x509.CertificatePolicies;
 import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.NameConstraints;
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.bouncycastle.asn1.x509.TBSCertificate;
@@ -352,6 +358,7 @@ import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.pkix.PKIXNameConstraintValidator;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
@@ -1326,6 +1333,14 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IGeneralName createGeneralName(IASN1Encodable encodable) {
+        return new GeneralNameBCFips(GeneralName.getInstance(((ASN1EncodableBCFips) encodable).getEncodable()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
                                                             IASN1OctetString octetString) {
         return new OtherHashAlgAndValueBCFips(algorithmIdentifier, octetString);
@@ -2034,5 +2049,21 @@ public class BouncyCastleFipsFactory implements IBouncyCastleFactory {
             }
         }
         return qcStatements;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPKIXConstraintValidator createNameConstraintValidator() {
+        return new PKIXNameConstraintValidatorBCFips(new PKIXNameConstraintValidator());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public INameConstraints createNameConstraints(IASN1Primitive primitive) {
+        return new NameConstraintsBCFips(NameConstraints.getInstance(((ASN1PrimitiveBCFips) primitive).getPrimitive()));
     }
 }

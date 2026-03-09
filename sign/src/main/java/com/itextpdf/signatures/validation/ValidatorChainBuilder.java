@@ -55,6 +55,8 @@ import java.util.function.Supplier;
 /**
  * A builder class to construct all necessary parts of a validation chain.
  * The builder can be reused to create multiple instances of a validator.
+ * <p>
+ * Same instance of {@link ValidatorChainBuilder} shall not be used in multithreaded environment.
  */
 public class ValidatorChainBuilder {
     private SignatureValidationProperties properties = new SignatureValidationProperties();

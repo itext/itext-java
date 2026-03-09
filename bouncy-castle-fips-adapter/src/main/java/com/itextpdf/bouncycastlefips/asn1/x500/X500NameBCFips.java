@@ -51,6 +51,9 @@ public class X500NameBCFips extends ASN1EncodableBCFips implements IX500Name {
         return (X500Name) getEncodable();
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public String getName(){
         try {
@@ -59,5 +62,13 @@ public class X500NameBCFips extends ASN1EncodableBCFips implements IX500Name {
             // should never happen
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public byte[] getEncoded() throws IOException {
+        return getX500Name().getEncoded();
     }
 }
