@@ -25,7 +25,7 @@ package com.itextpdf.pdfa.checker;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.colors.IccProfile;
-import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.image.Jpeg2000ImageData;
@@ -34,6 +34,7 @@ import com.itextpdf.kernel.colors.PatternColor;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
+import com.itextpdf.kernel.font.Type3Font;
 import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfAConformance;
@@ -1258,9 +1259,10 @@ public class PdfA2Checker extends PdfA1Checker {
 
     private void checkType3FontGlyphs(PdfType3Font font, PdfStream contentStream) {
         for (int i = 0; i <= PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE; ++i) {
-            FontEncoding fontEncoding = font.getFontEncoding();
-            if (fontEncoding.canDecode(i)) {
-                Type3Glyph type3Glyph = font.getType3Glyph(fontEncoding.getUnicode(i));
+            FontProgram fontProgram = font.getFontProgram();
+            if (fontProgram instanceof Type3Font) {
+                Type3Font type3Font = (Type3Font) fontProgram;
+                Type3Glyph type3Glyph = type3Font.getType3GlyphByCode(i);
                 if (type3Glyph != null) {
                     checkFormXObject(type3Glyph.getContentStream(), contentStream);
                 }

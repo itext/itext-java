@@ -71,7 +71,7 @@ public class Type3FontTest extends ExtendedITextTest {
         font.addGlyph(1, 1, 600, null, null);
         font.addGlyph(2, 1, 600, null, null);
 
-        Assertions.assertEquals(1, font.getNumberOfGlyphs());
+        Assertions.assertEquals(2, font.getNumberOfGlyphs());
         Assertions.assertEquals(2, font.getGlyph(1).getCode());
     }
 
