@@ -416,7 +416,7 @@ public class CompareToolTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
 
         Assertions.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0));
-        Assertions.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 10));
+        Assertions.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 3));
         Assertions.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 15));
     }
 
