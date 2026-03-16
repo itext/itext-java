@@ -23,6 +23,7 @@
 package com.itextpdf.layout.splitting;
 
 import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.util.TextUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -89,6 +90,9 @@ public class DefaultSplitCharacters implements ISplitCharacters {
             return false;
         }
         int charCode = text.get(glyphPos).getUnicode();
+        if (TextUtil.isNewLine(charCode)) {
+            return true;
+        }
 
         if (text.size() - 1 > glyphPos) {
             // Check if a hyphen precedes a digit to denote negative value
