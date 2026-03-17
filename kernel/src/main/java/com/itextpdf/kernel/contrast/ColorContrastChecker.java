@@ -207,10 +207,10 @@ public class ColorContrastChecker implements IValidationChecker {
                 }
 
                 // Only check compliance levels that are enabled
-                boolean isCompliantAAA = !checkWcagAAA || WCagChecker.isTextWcagAAACompliant(
+                boolean isCompliantAAA = WCagChecker.isTextWcagAAACompliant(
                         textContrastInformation.getFontSize(), overlappingArea.getContrastRatio());
-                boolean isCompliantAA = isCompliantAAA && (!checkWcagAA || WCagChecker.isTextWcagAACompliant(
-                        textContrastInformation.getFontSize(), overlappingArea.getContrastRatio()));
+                boolean isCompliantAA = WCagChecker.isTextWcagAACompliant(
+                        textContrastInformation.getFontSize(), overlappingArea.getContrastRatio());
 
                 // Report only if at least one enabled check fails
                 if (!isCompliantAA || !isCompliantAAA) {

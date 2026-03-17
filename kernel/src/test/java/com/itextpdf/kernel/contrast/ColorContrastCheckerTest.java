@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.contrast;
 
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -507,9 +508,31 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
         PdfPageValidationContext context = new PdfPageValidationContext(page);
 
         // Should throw exception for low contrast with small font
-        assertThrows(PdfException.class, () -> checker.validate(context));
+        Exception e = assertThrows(PdfException.class, () -> checker.validate(context));
+        Assertions.assertTrue(e.getMessage().contains("It is not WCAG AA compliant. It is not WCAG AAA compliant. "));
+    }
 
-        pdfDoc.close();
+    @Test
+    public void testValidateWithSmallFontAndAAContrastPassAAAFails() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfPage page = pdfDoc.addNewPage();
+
+        // Small font with insufficient contrast
+        PdfCanvas canvas = new PdfCanvas(page);
+        canvas.beginText();
+        canvas.setColor(new DeviceRgb(160,90,90), true);
+        canvas.setFontAndSize(PdfFontFactory.createFont(), 8); // Small font
+        canvas.moveText(100, 100);
+        canvas.showText("Test");
+        canvas.endText();
+
+        ColorContrastChecker checker = new ColorContrastChecker(false, true);
+        PdfPageValidationContext context = new PdfPageValidationContext(page);
+
+        // Should throw exception for low contrast with small font
+        Exception e = assertThrows(PdfException.class, () -> checker.validate(context));
+        Assertions.assertTrue(e.getMessage().contains(" It is not WCAG AAA compliant. "));
+        Assertions.assertFalse(e.getMessage().contains(" It is not WCAG AA compliant. "));
     }
 
     @Test
@@ -581,7 +604,6 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
         PdfPageValidationContext context = new PdfPageValidationContext(page);
 
         Exception e = Assertions.assertThrows(PdfException.class, () -> checker.validate(context));
-        System.out.println(e.getMessage());
         Assertions.assertTrue(e.getMessage().contains("parent text: 'Test'"));
     }
 
@@ -636,8 +658,6 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
         canvas.moveText(100, 80);
         canvas.showText("Test");
         canvas.endText();
-
-        PdfPageValidationContext context = new PdfPageValidationContext(page);
 
         Exception exception = assertThrows(PdfException.class, () -> pdfDoc.close());
         assertTrue(exception.getMessage().contains("WCAG AAA compliant"));
