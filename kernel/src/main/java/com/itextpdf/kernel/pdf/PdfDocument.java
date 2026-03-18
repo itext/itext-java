@@ -2229,7 +2229,7 @@ public class PdfDocument implements Closeable {
                         // to the
                         // version specified in the header.
 
-                        // So only update the version if it is older than the one in the header
+                        // So only update the version if it is newer than the one in the header
                         if (newPdfVersion.compareTo(reader.headerPdfVersion) > 0) {
                             catalog.put(PdfName.Version, newPdfVersion.toPdfName());
                             catalog.setModified();
@@ -2479,7 +2479,10 @@ public class PdfDocument implements Closeable {
                 ((PdfWidgetAnnotation) annot).releaseFormFieldFromWidgetAnnotation();
                 if (fields != null) {
                     fields.remove(annot.getPdfObject());
+                    fields.setModified();
                 }
+
+                acroForm.setModified();
             }
         }
     }

@@ -1813,9 +1813,10 @@ public class CompareTool {
     }
 
     private boolean compareStreamsExtended(PdfStream outStream, PdfStream cmpStream, ObjectPath currentPath, CompareResult compareResult) {
-        boolean toDecode = PdfName.FlateDecode.equals(outStream.get(PdfName.Filter));
-        byte[] outStreamBytes = outStream.getBytes(toDecode);
-        byte[] cmpStreamBytes = cmpStream.getBytes(toDecode);
+        final boolean toDecodeOut = PdfName.FlateDecode.equals(outStream.get(PdfName.Filter));
+        final boolean toDecodeCmp = PdfName.FlateDecode.equals(cmpStream.get(PdfName.Filter));
+        byte[] outStreamBytes = outStream.getBytes(toDecodeOut);
+        byte[] cmpStreamBytes = cmpStream.getBytes(toDecodeCmp);
         if (Arrays.equals(outStreamBytes, cmpStreamBytes)) {
             return compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
         } else {
