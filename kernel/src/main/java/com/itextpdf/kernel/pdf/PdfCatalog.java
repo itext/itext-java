@@ -731,9 +731,15 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 d = createDestinationFromPageRef(dest, page2page, toDocument, pageObject);
             }
         } else if (dest.isString() || dest.isName()) {
+            PdfString srcDestName;
+            if (dest.isName()) {
+                srcDestName = new PdfString(((PdfName) dest).getValue());
+            } else {
+                srcDestName = new PdfString(((PdfString) dest).getValueBytes());
+            }
+
             PdfNameTree destsTree = getNameTree(PdfName.Dests);
             Map<PdfString, PdfObject> dests = destsTree.getNames();
-            PdfString srcDestName = dest.isString() ? (PdfString) dest : new PdfString(((PdfName) dest).getValue());
             PdfArray srcDestArray = (PdfArray) dests.get(srcDestName);
             if (srcDestArray != null) {
                 PdfObject pageObject = srcDestArray.get(0);
