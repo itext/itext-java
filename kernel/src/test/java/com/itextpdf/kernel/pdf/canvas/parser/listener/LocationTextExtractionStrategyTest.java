@@ -25,6 +25,7 @@ package com.itextpdf.kernel.pdf.canvas.parser.listener;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
+import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -32,7 +33,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
-public class LocationTextExtractionStrategyTest {
+public class LocationTextExtractionStrategyTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/parser/listener"
             + "/LocationTextExtractionStrategyTest/";
