@@ -13,3 +13,4 @@ on:
 jobs:
     call-licensecheck:
       uses: XodoDocs/itext-github-workflows/.github/workflows/licensecheck.yml@master
+      secrets: inherit
