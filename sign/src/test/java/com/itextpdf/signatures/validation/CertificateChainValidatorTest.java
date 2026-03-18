@@ -119,16 +119,19 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
         X509Certificate signingCert =
                 (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/sign.cert.pem")[0];
         X509Certificate rootCert =
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/r1.cert.pem")[0];
+        certificateRetriever.addTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+        rootCert =
                 (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/r2.cert.pem")[0];
+        certificateRetriever.addTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
 
         ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
         CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
         certificateRetriever.addKnownCertificates(Arrays.asList(certificateChain));
-        certificateRetriever.setTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
 
-        AssertUtil.doesNotThrow( () ->
-                validator.validateCertificate(baseContext, signingCert, TimeTestUtil.TEST_DATE_TIME)
-        );
+        ValidationReport report = validator.validateCertificate(baseContext, signingCert,
+                TimeTestUtil.TEST_DATE_TIME);
+        Assertions.assertEquals(ValidationResult.VALID, report.getValidationResult());
     }
 
     @Test
