@@ -221,11 +221,13 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
 
         List<List<X509Certificate>> allChains = new ArrayList<>();
         // Get missing certificates using AIA Extensions
-        String url = CertificateUtil.getIssuerCertURL(certificate);
-        if (processedUrls.add(url)) {
-            Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
-            if (certificatesFromAIA != null) {
-                addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
+        List<String> urls = CertificateUtil.getIssuerCertURLs(certificate);
+        for (String url : urls) {
+            if (processedUrls.add(url)) {
+                Collection<Certificate> certificatesFromAIA = processCertificatesFromAIA(url);
+                if (certificatesFromAIA != null) {
+                    addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
+                }
             }
         }
         Set<Certificate> possibleIssuers = trustedCertificatesStore
@@ -344,10 +346,12 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
 
         // AIA Extension
         ArrayList<Certificate[]> matches = new ArrayList<Certificate[]>();
-        String url = CertificateUtil.getIssuerCertURL(crl);
-        List<Certificate> certificatesFromAIA = (List<Certificate>) processCertificatesFromAIA(url);
-        if (certificatesFromAIA != null) {
-            addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
+        List<String> urls = CertificateUtil.getIssuerCertURLs(crl);
+        for (String url : urls) {
+            List<Certificate> certificatesFromAIA = (List<Certificate>) processCertificatesFromAIA(url);
+            if (certificatesFromAIA != null) {
+                addKnownCertificates(certificatesFromAIA, CertificateOrigin.OTHER);
+            }
         }
         // Retrieve Issuer from the certificate store
         Set<Certificate> issuers = trustedCertificatesStore

@@ -29,6 +29,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.builder.TestOcspResponseBuilder;
 import com.itextpdf.signatures.testutils.client.TestOcspClient;
@@ -37,8 +38,12 @@ import com.itextpdf.signatures.validation.mocks.MockResourceRetriever;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.PrivateKey;
+import java.security.cert.CRLException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -48,6 +53,9 @@ import java.util.List;
 import java.util.Set;
 
 import java.util.concurrent.TimeUnit;
+
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -57,6 +65,7 @@ import org.junit.jupiter.api.Timeout.ThreadMode;
 @Tag("BouncyCastleIntegrationTest")
 class IssuingCertificateRetrieverTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/IssuingCertificateRetrieverTest/";
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
@@ -166,5 +175,41 @@ class IssuingCertificateRetrieverTest extends ExtendedITextTest {
 
         Assertions.assertEquals(1, retrievers.size());
         Assertions.assertTrue(retrievers.contains(cert));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.UNABLE_TO_PARSE_AIA_CERT, count = 3))
+    public void multipleAiaExtensionsCertificateTest() throws CertificateException, IOException {
+        X509Certificate multipleAiaCert = (X509Certificate) PemFileHelper.readFirstChain(SOURCE_FOLDER + "multiple_aia_cert.pem")[0];
+
+        final int[] counter = {0};
+        IssuingCertificateRetriever issuingCertificateRetriever = new IssuingCertificateRetriever() {
+            @Override
+            protected InputStream getIssuerCertByURI(String uri) throws IOException {
+                ++counter[0];
+                return null;
+            }
+        };
+        issuingCertificateRetriever.retrieveIssuerCertificate(multipleAiaCert);
+
+        Assertions.assertEquals(3, counter[0]);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.UNABLE_TO_PARSE_AIA_CERT, count = 3))
+    public void multipleAiaExtensionsCrlTest() throws CertificateException, IOException, CRLException {
+        byte[] crlBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "multiple_aia.crl"));
+
+        final int[] counter = {0};
+        IssuingCertificateRetriever issuingCertificateRetriever = new IssuingCertificateRetriever() {
+            @Override
+            protected InputStream getIssuerCertByURI(String uri) throws IOException {
+                ++counter[0];
+                return null;
+            }
+        };
+        issuingCertificateRetriever.getCrlIssuerCertificates(CertificateUtil.parseCrlFromBytes(crlBytes));
+
+        Assertions.assertEquals(3, counter[0]);
     }
 }

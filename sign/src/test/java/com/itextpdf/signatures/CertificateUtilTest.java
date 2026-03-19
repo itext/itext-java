@@ -26,6 +26,8 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
@@ -40,6 +42,7 @@ import java.util.List;
 public class CertificateUtilTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/CertificateUtilTest/";
 
     @Test
     public void getTSAURLAdobeExtensionTest() throws Exception {
@@ -79,5 +82,22 @@ public class CertificateUtilTest extends ExtendedITextTest {
         List<CRL> crls = CertificateUtil.getCRLs(tsaCert);
 
         Assertions.assertTrue(crls.isEmpty());
+    }
+
+    @Test
+    public void getCertificateIssuerMultipleIssuersTest() throws CertificateException, IOException {
+        X509Certificate multipleIssuersCert = (X509Certificate)
+                PemFileHelper.readFirstChain(SOURCE_FOLDER + "multiple_aia_cert.pem")[0];
+        String url = CertificateUtil.getIssuerCertURL(multipleIssuersCert);
+
+        Assertions.assertEquals("location1", url);
+    }
+
+    @Test
+    public void getCrlIssuerMultipleIssuersTest() throws CertificateException, IOException, CRLException {
+        byte[] crlBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "multiple_aia.crl"));
+        String url = CertificateUtil.getIssuerCertURL(CertificateUtil.parseCrlFromBytes(crlBytes));
+
+        Assertions.assertEquals("http:location1", url);
     }
 }
