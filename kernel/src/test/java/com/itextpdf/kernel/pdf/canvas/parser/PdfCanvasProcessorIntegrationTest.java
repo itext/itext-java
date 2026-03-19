@@ -297,7 +297,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         PathRenderInfo renderInfo = listener.getEncounteredPath();
         PdfColorSpace colorSpace = renderInfo.getGraphicsState().getFillColor().getColorSpace();
 
-        Assertions.assertEquals("Pattern", colorSpace.getName().getValue());
+        Assertions.assertEquals("Pattern", colorSpace.getColorspaceName().getValue());
     }
 
     @Test
@@ -310,7 +310,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         pdfDoc.close();
         PathRenderInfo renderInfo = listener.getEncounteredPath();
         PdfColorSpace colorSpace = renderInfo.getGraphicsState().getFillColor().getColorSpace();
-        Assertions.assertEquals("UncoloredTilingPattern",colorSpace.getName().getValue() );
+        Assertions.assertEquals("UncoloredTilingPattern", colorSpace.getColorspaceName().getValue() );
     }
 
     private static class ColorParsingEventListener implements IEventListener {

@@ -107,7 +107,7 @@ class ImagePdfBytesInfo {
         if (channels > 1 && colorDepth != 8 && colorDepth != 16) {
             throw new com.itextpdf.io.exceptions.IOException(
                     KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE)
-                    .setMessageParams(colorDepth, sourceColorSpace.getName());
+                    .setMessageParams(colorDepth, sourceColorSpace.getColorspaceName());
         }
 
         byte[] data = PdfReader.decodeBytes(intialBytes, imageXObject.getPdfObject());
@@ -225,8 +225,8 @@ class ImagePdfBytesInfo {
                         if (properties.isApplyTintTransformations()) {
                             colorTransformations.add(separationCs.getTintTransformation());
                             targetColorSpace = separationCs.getBaseCs();
-                            if (targetColorSpace.getName() != PdfName.DeviceRGB
-                                    && targetColorSpace.getName() != PdfName.CalRGB
+                            if (targetColorSpace.getColorspaceName() != PdfName.DeviceRGB
+                                    && targetColorSpace.getColorspaceName() != PdfName.CalRGB
                             ) {
                                 throw new UnsupportedOperationException(
                                         KernelExceptionMessageConstant
@@ -236,7 +236,7 @@ class ImagePdfBytesInfo {
                                 throw new com.itextpdf.io.exceptions.IOException(
                                         KernelExceptionMessageConstant
                                                 .COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_SEPARATION_ALTERNATE_COLORSPACE)
-                                        .setMessageParams(colorDepth, targetColorSpace.getName());
+                                        .setMessageParams(colorDepth, targetColorSpace.getColorspaceName());
                             }
                         } else {
                             targetColorSpace = new Gray();

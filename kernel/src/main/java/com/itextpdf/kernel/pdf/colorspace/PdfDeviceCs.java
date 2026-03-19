@@ -52,7 +52,7 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
          * {@inheritDoc}
          */
         @Override
-        public PdfName getName() {
+        public PdfName getColorspaceName() {
             return PdfName.DeviceGray;
         }
     }
@@ -73,7 +73,7 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
          * {@inheritDoc}
          */
         @Override
-        public PdfName getName() {
+        public PdfName getColorspaceName() {
             return PdfName.DeviceRGB;
         }
     }
@@ -94,7 +94,7 @@ public abstract class PdfDeviceCs extends PdfColorSpace {
          * {@inheritDoc}
          */
         @Override
-        public PdfName getName() {
+        public PdfName getColorspaceName() {
             return PdfName.DeviceCMYK;
         }
     }
