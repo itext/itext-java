@@ -326,9 +326,9 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             }
         });
         if (framework.isPdf2Based(conformance)) {
-            framework.assertBothValid("manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContent");
+            framework.assertBothValid("manuallyCanvasCorrectFontAndArtifact");
         } else {
-            framework.assertOnlyVeraPdfFail("manuallyAddToCanvasAndCorrectFontAndArtifactTaggedContent");
+            framework.assertOnlyVeraPdfFail("manuallyCanvasCorrectFontAndArtifact");
         }
     }
 
