@@ -1,0 +1,15 @@
+Please notice that the following fonts are used with the mentioned below licenses.
+
+NotoSansArabic-Regular.ttf | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Sans+Arabic" (26.01.2026)
+RobotoSerif-Bold.ttf | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Roboto+Serif" (30.01.2026)
+RobotoSerif-BoldItalic.ttf | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Roboto+Serif" (30.01.2026)
+RobotoSerif-Italic.ttf | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Roboto+Serif" (30.01.2026)
+RobotoSerif-Regular.ttf | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Roboto+Serif" (30.01.2026)
+Amaranth-Regular.woff | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Amaranth" (26.01.2026)
+NotoSansCJK-Regular.ttc | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "Based on "https://github.com/googlefonts/noto-cjk"
+NotoSansCJK-Regular.woff2 | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "Based on "https://github.com/googlefonts/noto-cjk"
+NotoSansJPThin-Regular.woff2 | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Sans+JP" (08.02.2026)
+NotoSerifCJKjp-Regular.otf | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on commit 9b0f1436e455d902de067a2501422e5dc71ad16b (30.06.2024) from repository "Based on "https://github.com/notofonts/noto-cjk/tree"
+OpenSans-Regular.ttf | SIL Open Font License v1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Open+Sans" (30.01.2026)
+
+All fonts under w3c-test-fonts directory | BSD-3 | BSD-3.txt | w3c.org (27.01.2026)

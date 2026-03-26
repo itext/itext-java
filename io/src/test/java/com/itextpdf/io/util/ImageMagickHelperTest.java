@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -303,22 +303,18 @@ public class ImageMagickHelperTest extends ExtendedITextTest {
         Object storedPrintStream = System.out;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();) {
             System.setOut(new PrintStream(baos));
-            boolean result = imageMagickHelper.runImageMagickImageCompare(
+            ImageMagickCompareResult result = imageMagickHelper.runImageMagickImageCompareAndGetResult(
                     image,
                     image,
                     diff, "1");
 
-            Assertions.assertTrue(result);
+            Assertions.assertTrue(result.isComparingResultSuccessful());
             Assertions.assertTrue(FileUtil.fileExists(diff));
 
             System.out.flush();
             String output = new String(baos.toByteArray()).trim();
 
-            // This check is implemented in such a peculiar way because of .NET autoporting
-            Assertions.assertEquals('0', output.charAt(output.length() - 1));
-            if (output.length() > 1) {
-                Assertions.assertFalse(Character.isDigit(output.charAt(output.length() - 2)));
-            }
+            Assertions.assertEquals(0L, result.getDiffPixels());
         } catch (Exception e) {
             Assertions.fail("No exception is expected here.");
         } finally {

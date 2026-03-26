@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,17 +22,27 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonArray;
+import com.itextpdf.commons.json.JsonNull;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonString;
+import com.itextpdf.commons.json.JsonValue;
+import com.itextpdf.commons.utils.DateTimeUtil;
+import com.itextpdf.signatures.TimestampConstants;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Class representing ServiceHistory entry in a country specific Trusted List.
  */
-public class ServiceChronologicalInfo {
+public class ServiceChronologicalInfo implements IJsonSerializable {
     static final String GRANTED = "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted";
     static final String GRANTED_NATIONALLY =
             "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel";
@@ -42,9 +52,17 @@ public class ServiceChronologicalInfo {
     static final String SUPERVISION_IN_CESSATION =
             "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionincessation";
     private static final Set<String> VALID_STATUSES = new HashSet<>();
+    private static final String JSON_KEY_QUALIFIER_EXTENSIONS = "qualifierExtensions";
+    private static final String JSON_KEY_SERVICE_EXTENSIONS = "serviceExtensions";
+    private static final String JSON_KEY_SERVICE_STATUS = "serviceStatus";
+    private static final String JSON_KEY_SERVICE_STATUS_STARTING_TIME = "serviceStatusStartingTime";
+
     private final List<AdditionalServiceInformationExtension> serviceExtensions = new ArrayList<>();
     private final List<QualifierExtension> qualifierExtensions = new ArrayList<>();
-    private final DateTimeFormatter statusStartDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    private static final List<String> statusDateFormats = Arrays.asList(
+            "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss"
+    );
     private String serviceStatus;
     //Local time is used here because it is required to use UTC in a trusted lists, so no offset shall be presented.
     private LocalDateTime serviceStatusStartingTime;
@@ -103,6 +121,93 @@ public class ServiceChronologicalInfo {
         return qualifierExtensions;
     }
 
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add(JSON_KEY_SERVICE_STATUS, new JsonString(getServiceStatus()));
+        if (getServiceStatusStartingTime() != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
+            for (String formattingPattern : statusDateFormats) {
+                try {
+                    jsonObject.add(JSON_KEY_SERVICE_STATUS_STARTING_TIME, new JsonString(
+                            DateTimeUtil.parseLocalDateTime(getServiceStatusStartingTime(), formattingPattern)));
+                } catch (Exception ignored) {
+                    // Try other format
+                }
+            }
+        } else {
+            jsonObject.add(JSON_KEY_SERVICE_STATUS_STARTING_TIME, JsonNull.JSON_NULL);
+        }
+
+        if (getServiceExtensions() != null) {
+            List<JsonValue> jsonExtensionValues = getServiceExtensions().stream().map(extension -> extension.toJson())
+                    .collect(Collectors.toList());
+            jsonObject.add(JSON_KEY_SERVICE_EXTENSIONS, new JsonArray(jsonExtensionValues));
+        } else {
+            jsonObject.add(JSON_KEY_SERVICE_EXTENSIONS, JsonNull.JSON_NULL);
+        }
+
+        JsonArray qualifierExtensionsJson = new JsonArray(getQualifierExtensions().stream().map(
+                qualifierExtension -> qualifierExtension.toJson()).collect(Collectors.toList()));
+        jsonObject.add(JSON_KEY_QUALIFIER_EXTENSIONS, qualifierExtensionsJson);
+        return jsonObject;
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link ServiceChronologicalInfo}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link ServiceChronologicalInfo}
+     */
+    public static ServiceChronologicalInfo fromJson(JsonValue jsonValue) {
+        JsonObject serviceChronologicalInfoJson = (JsonObject) jsonValue;
+        String serviceStatusFromJson =
+                ((JsonString) serviceChronologicalInfoJson.getField(JSON_KEY_SERVICE_STATUS)).getValue();
+
+        JsonValue serviceStatusStartingTimeJson =
+                serviceChronologicalInfoJson.getField(JSON_KEY_SERVICE_STATUS_STARTING_TIME);
+        LocalDateTime serviceStatusStartingTimeFromJson = (LocalDateTime) TimestampConstants.UNDEFINED_TIMESTAMP_DATE;
+        if (JsonNull.JSON_NULL != serviceStatusStartingTimeJson) {
+            for (String formattingPattern : statusDateFormats) {
+                try {
+                    serviceStatusStartingTimeFromJson = DateTimeUtil.parseToLocalDateTime(
+                            ((JsonString) serviceStatusStartingTimeJson).getValue(), formattingPattern);
+                } catch (Exception ignored) {
+                    // Try other format
+                }
+            }
+        }
+        ServiceChronologicalInfo serviceChronologicalInfoFromJson =
+                new ServiceChronologicalInfo(serviceStatusFromJson, serviceStatusStartingTimeFromJson);
+
+        JsonValue serviceExtensionsJson =
+                serviceChronologicalInfoJson.getField(JSON_KEY_SERVICE_EXTENSIONS);
+        if (JsonNull.JSON_NULL != serviceExtensionsJson) {
+            List<AdditionalServiceInformationExtension> serviceExtensionsFromJson =
+                    ((JsonArray) serviceExtensionsJson).getValues().stream().map(serviceExtensionJson ->
+                            AdditionalServiceInformationExtension.fromJson(serviceExtensionJson))
+                            .collect(Collectors.toList());
+            for (AdditionalServiceInformationExtension informationExtensionFromJson : serviceExtensionsFromJson) {
+                serviceChronologicalInfoFromJson.addServiceExtension(informationExtensionFromJson);
+            }
+        }
+
+        JsonArray qualifierExtensionsJson =
+                (JsonArray) serviceChronologicalInfoJson.getField(JSON_KEY_QUALIFIER_EXTENSIONS);
+        List<QualifierExtension> qualifierExtensionsFromJson = qualifierExtensionsJson.getValues().stream().map(
+                qualifierExtensionJson -> QualifierExtension.fromJson(qualifierExtensionJson))
+                .collect(Collectors.toList());
+        for (QualifierExtension qualifierExtensionFromJson : qualifierExtensionsFromJson) {
+            serviceChronologicalInfoFromJson.addQualifierExtension(qualifierExtensionFromJson);
+        }
+        return serviceChronologicalInfoFromJson;
+    }
+
     static boolean isStatusValid(String status) {
         return VALID_STATUSES.contains(status);
     }
@@ -112,7 +217,14 @@ public class ServiceChronologicalInfo {
     }
 
     void setServiceStatusStartingTime(String timeString) {
-        this.serviceStatusStartingTime = statusStartDateFormat.parse(timeString, LocalDateTime::from);
+        for (String statusDateFormat : statusDateFormats) {
+            try {
+                this.serviceStatusStartingTime = DateTimeUtil.parseToLocalDateTime(timeString, statusDateFormat);
+                return;
+            } catch (Exception e) {
+                //try next format
+            }
+        }
     }
 
     void setServiceStatusStartingTime(LocalDateTime serviceStatusStartingTime) {

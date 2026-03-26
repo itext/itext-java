@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,7 +41,7 @@ public class FontCacheTest extends ExtendedITextTest {
 
     @Test
     public void clearFontCacheTest() {
-        String fontName = "FreeSans.ttf";
+        String fontName = "NotoSans-Regular.ttf";
         Assertions.assertNull(FontCache.getFont(fontName));
 
         FontProgram fontProgram = new FontProgramMock();

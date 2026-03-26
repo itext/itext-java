@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -42,8 +42,6 @@ import com.itextpdf.pdfua.checkers.utils.ContextAwareTagTreeIteratorHandler;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -51,11 +49,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Class that provides methods for checking PDF/UA-2 compliance of annotations.
  */
-public final class PdfUA2AnnotationChecker {
+public class PdfUA2AnnotationChecker {
     private static final Set<PdfName> markupAnnotationTypes = new HashSet<>(Arrays.asList(
             PdfName.Text, PdfName.FreeText,
             PdfName.Line, PdfName.Square, PdfName.Circle, PdfName.Polygon, PdfName.PolyLine,
@@ -65,8 +65,34 @@ public final class PdfUA2AnnotationChecker {
     /**
      * Creates a new instance of the {@link PdfUA2AnnotationChecker}.
      */
-    private PdfUA2AnnotationChecker() {
+    public PdfUA2AnnotationChecker() {
         // Empty constructor.
+    }
+
+    /**
+     * Checks PDF/UA-2 compliance of the annotations in the document.
+     *
+     * @param pdfDocument {@link PdfDocument} to check annotations for
+     *
+     * @deprecated Use {@link #checkAllAnnotations(PdfDocument)} instead.
+     */
+    @Deprecated
+    public static void checkAnnotations(PdfDocument pdfDocument) {
+        new PdfUA2AnnotationChecker().checkAllAnnotations(pdfDocument);
+    }
+
+    /**
+     * Checks PDF/UA-2 compliance of the annotation.
+     *
+     * @param annotation the annotation dictionary to check
+     * @param context    {@link PdfUAValidationContext} used to find the structure node enclosing the annotation
+     *                   using its {@code StructParent} value
+     *
+     * @deprecated Use {@link #checkSingleAnnotation(PdfDictionary, PdfUAValidationContext)} instead.
+     */
+    @Deprecated
+    public static void checkAnnotation(PdfDictionary annotation, PdfUAValidationContext context) {
+        new PdfUA2AnnotationChecker().checkSingleAnnotation(annotation, context);
     }
 
     /**
@@ -74,7 +100,7 @@ public final class PdfUA2AnnotationChecker {
      *
      * @param pdfDocument {@link PdfDocument} to check annotations for
      */
-    public static void checkAnnotations(PdfDocument pdfDocument) {
+    public void checkAllAnnotations(PdfDocument pdfDocument) {
         int amountOfPages = pdfDocument.getNumberOfPages();
         for (int i = 1; i <= amountOfPages; ++i) {
             PdfPage page = pdfDocument.getPage(i);
@@ -90,7 +116,7 @@ public final class PdfUA2AnnotationChecker {
             for (final PdfAnnotation annot : annotations) {
                 // Check annotations that are not tagged here, other annotations will be checked in the structure tree.
                 if (!annot.getPdfObject().containsKey(PdfName.StructParent)) {
-                    checkAnnotation(annot.getPdfObject(), (PdfStructElem) null);
+                    checkSingleAnnotation(annot.getPdfObject(), (PdfStructElem) null);
                 }
             }
         }
@@ -103,7 +129,7 @@ public final class PdfUA2AnnotationChecker {
      * @param context    {@link PdfUAValidationContext} used to find the structure node enclosing the annotation
      *                   using its {@code StructParent} value
      */
-    public static void checkAnnotation(PdfDictionary annotation, PdfUAValidationContext context) {
+    public void checkSingleAnnotation(PdfDictionary annotation, PdfUAValidationContext context) {
         PdfStructElem parent = null;
         if (annotation.getAsNumber(PdfName.StructParent) != null) {
             int structParentIndex = annotation.getAsNumber(PdfName.StructParent).intValue();
@@ -113,7 +139,36 @@ public final class PdfUA2AnnotationChecker {
                 parent = (PdfStructElem) objRef.getParent();
             }
         }
-        checkAnnotation(annotation, parent);
+        checkSingleAnnotation(annotation, parent);
+    }
+
+    /**
+     * Checks the PDF/UA-2 requirements related to the Contents entry for specific annotation types.
+     *
+     * @param subtype    the annotation subtype
+     * @param annotation the annotation dictionary
+     */
+    protected void checkRequiredContentsEntry(PdfName subtype, PdfDictionary annotation) {
+        if (PdfName.Ink.equals(subtype) || PdfName.Screen.equals(subtype) ||
+                PdfName._3D.equals(subtype) || PdfName.RichMedia.equals(subtype)) {
+            PdfString contents = annotation.getAsString(PdfName.Contents);
+            if (contents == null || contents.getValue().isEmpty()) {
+                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ANNOT_CONTENTS_IS_NULL_OR_EMPTY);
+            }
+        }
+    }
+
+    static String getRichTextStringValue(PdfObject rv) {
+        String richText = PdfFormField.getStringValue(rv);
+        if (richText.isEmpty()) {
+            return richText;
+        }
+        try {
+            return parseRichText(XmlUtil.initXmlDocument(new ByteArrayInputStream(
+                    richText.getBytes(StandardCharsets.UTF_8))));
+        } catch (Exception e) {
+            throw new PdfException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -122,7 +177,7 @@ public final class PdfUA2AnnotationChecker {
      * @param annotation the annotation dictionary to check
      * @param parent     the parent structure element
      */
-    static void checkAnnotation(PdfDictionary annotation, PdfStructElem parent) {
+    void checkSingleAnnotation(PdfDictionary annotation, PdfStructElem parent) {
         if (parent != null) {
             PdfString alt = parent.getAlt();
             PdfString contents = annotation.getAsString(PdfName.Contents);
@@ -156,13 +211,7 @@ public final class PdfUA2AnnotationChecker {
             }
         }
 
-        if (PdfName.Ink.equals(subtype) || PdfName.Screen.equals(subtype) ||
-                PdfName._3D.equals(subtype) || PdfName.RichMedia.equals(subtype)) {
-            PdfString contents = annotation.getAsString(PdfName.Contents);
-            if (contents == null || contents.getValue().isEmpty()) {
-                throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.ANNOT_CONTENTS_IS_NULL_OR_EMPTY);
-            }
-        }
+        checkRequiredContentsEntry(subtype, annotation);
 
         if (PdfName.Popup.equals(subtype) && parent != null) {
             throw new PdfUAConformanceException(PdfUAExceptionMessageConstants.POPUP_ANNOTATIONS_ARE_NOT_ALLOWED);
@@ -212,19 +261,6 @@ public final class PdfUA2AnnotationChecker {
         }
     }
 
-    static String getRichTextStringValue(PdfObject rv) {
-        String richText = PdfFormField.getStringValue(rv);
-        if (richText.isEmpty()) {
-            return richText;
-        }
-        try {
-            return parseRichText(XmlUtil.initXmlDocument(new ByteArrayInputStream(
-                    richText.getBytes(StandardCharsets.UTF_8))));
-        } catch (Exception e) {
-            throw new PdfException(e.getMessage(), e);
-        }
-    }
-
     private static String parseRichText(Node node) {
         StringBuilder richText = new StringBuilder();
         NodeList allChildren = node.getChildNodes();
@@ -256,6 +292,7 @@ public final class PdfUA2AnnotationChecker {
      * Handler for checking annotation elements in the tag tree.
      */
     public static class PdfUA2AnnotationHandler extends ContextAwareTagTreeIteratorHandler {
+        protected PdfUA2AnnotationChecker checker;
 
         /**
          * Creates a new instance of the {@link PdfUA2AnnotationHandler}.
@@ -264,6 +301,7 @@ public final class PdfUA2AnnotationChecker {
          */
         public PdfUA2AnnotationHandler(PdfUAValidationContext context) {
             super(context);
+            checker = new PdfUA2AnnotationChecker();
         }
 
         @Override
@@ -281,7 +319,7 @@ public final class PdfUA2AnnotationChecker {
                 return;
             }
             PdfStructElem parent = (PdfStructElem) elem.getParent();
-            checkAnnotation(annotObj, parent);
+            checker.checkSingleAnnotation(annotObj, parent);
         }
     }
 }

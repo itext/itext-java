@@ -1,0 +1,983 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns4="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" Id="TrustServiceStatusList-MK" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>5</TSLVersionIdentifier>
+        <TSLSequenceNumber>3</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/MKlist</TSLType>
+        <SchemeOperatorName>
+            <Name xml:lang="en">Republic of North Macedonia, Ministry of information society and administration</Name>
+            <Name xml:lang="mk">Република Северна Македонија, Министерство за информатичко општество и администрација</Name>
+            <Name xml:lang="al">Republika e Maqedonisë së Veriut, Ministria e Shoqërisë Informatike dhe Administratës</Name>
+        </SchemeOperatorName>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>Bul. "Ss. Cyril and Methodius" No.54</StreetAddress>
+                    <Locality>Skopje</Locality>
+                    <PostalCode>1000</PostalCode>
+                    <CountryName>MK</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="mk">
+                    <StreetAddress>Бул. „Св.Кирил и Методиј“ бр.54</StreetAddress>
+                    <Locality>Скопје</Locality>
+                    <PostalCode>1000</PostalCode>
+                    <CountryName>MK</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="al">
+                    <StreetAddress>Bulevardi "Shën Qirili dhe Metodi", nr.54</StreetAddress>
+                    <Locality>Shkup</Locality>
+                    <PostalCode>1000</PostalCode>
+                    <CountryName>MK</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="en">mailto:trusteid@mioa.gov.mk</URI>
+                <URI xml:lang="en">https://trusteid.mioa.gov.mk</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeName>
+            <Name xml:lang="en">MK:List of qualified trust service providers and qualified trust services with information related to qualified trust service providers supervised by the Republic of North Macedonia, including information on qualified trust services they provide, in accordance with the relevant provisions prescribed by Law on electronic documents, electronic identification and trust services.</Name>
+            <Name xml:lang="mk">MK:Листа на даватели на квалификувани доверливи услуги и на квалификувани доверливи услуги со вклучени информации поврзани со давателите на квалификувани доверливи услуги врз кои врши надзор Република Северна Македонија, заедно со информациите за квалификуваните доверливи услуги кои тие ги обезбедуваат, во согласност со соодветните одредби пропишани со Законот за електронски документи, електронска идентификација и доверливи услуги.</Name>
+        </SchemeName>
+        <SchemeInformationURI>
+            <URI xml:lang="en">https://trusteid.mioa.gov.mk/schemeinformationuri/</URI>
+            <URI xml:lang="mk">https://trusteid.mioa.gov.mk/schemeinformationuri/</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>http://uri.etsi.org/TrstSvc/TrustedList/StatusDetn/MKdetermination</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/МК</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>MK</SchemeTerritory>
+        <PolicyOrLegalNotice>
+            <TSLLegalNotice xml:lang="en">The applicable legal framework for the present List of Qualified Trust Service Providers and Qualified Trust Services is Law on electronic documents, electronic identification and trust services.</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="mk">За оваа Листа на даватели на квалификувани доверливи услуги и на квалификувани доверливи услуги применлива правна рамка е Законот за електронски документи, електронска идентификација и доверливи услуги.</TSLLegalNotice>
+        </PolicyOrLegalNotice>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <PointersToOtherTSL>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIEcTCCA1mgAwIBAgIQfIBv/B2DSZFLux7xYZHQkTANBgkqhkiG9w0BAQ0FADCBuDELMAkGA1UEBhMCUlMxFzAVBgNVBGEMDk1COlJTLTE3ODU1MTMxMRgwFgYDVQRhDA9WQVRSUy0xMDg1MDgyMDYxTjBMBgNVBAoMRVJlcHVibGljIG9mIFNlcmJpYSwgTWluaXN0cnkgb2YgVHJhZGUsIFRvdXJpc20gYW5kIFRlbGVjb21tdW5pY2F0aW9uczEmMCQGA1UEAwwdU2VyYmlhbiBUcnVzdGVkIExpc3QgU2lnbmVyIDEwHhcNMjAwMzE5MTE0NzA4WhcNMjMwMzE5MTE1NzA5WjCBuDELMAkGA1UEBhMCUlMxFzAVBgNVBGEMDk1COlJTLTE3ODU1MTMxMRgwFgYDVQRhDA9WQVRSUy0xMDg1MDgyMDYxTjBMBgNVBAoMRVJlcHVibGljIG9mIFNlcmJpYSwgTWluaXN0cnkgb2YgVHJhZGUsIFRvdXJpc20gYW5kIFRlbGVjb21tdW5pY2F0aW9uczEmMCQGA1UEAwwdU2VyYmlhbiBUcnVzdGVkIExpc3QgU2lnbmVyIDEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDJZFS1bl5m+NzD2kLKpwsWtxVPZvklobp+UsjmpRyBjlSzwVUNCE7rk3mURB7/99G55R3OXJpQDMadD01d1ceH4TcXL46PQwfk5AsI5OF+2xApA+GZIB8Xk/WnPAW2++5A6ePdyZJ+VIxUWf165/EkanZEebh8f49resH+pAY4WUBwzMJGilM9F4M2z6kD/1uD6a1WOWVl9Q4oecVup+VAgAK1VoJJr5nTkh6L7GH8bObjl8igWa4Ra2s24xSG4MZeZRq2ee4LBtl6yut4BmauAXYQ32JrfFxfvG2sHsPb4Gh9CierwjBg6xrZC/l51Klbr3WjgjwWBkSpf6K8qivjAgMBAAGjdTBzMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgZAMBEGA1UdJQQKMAgGBgQAkTcDADAnBgNVHREEIDAegRx1c2x1Z2VvZHBvdmVyZW5qYUBtdHQuZ292LnJzMB0GA1UdDgQWBBTHwnfR/itjgQx26aZU0TutSMhyHTANBgkqhkiG9w0BAQ0FAAOCAQEAxWdk5rTl3LqPRlqFgbw3U3kOviAz3zL5VMAypFaIpQrzluo2Fp5Lmo7Hrmgobr7/LQRhSy4lLoGmdAzMy9rW8YusSIWKOiAC8jSOy1LimUYGXAfu+6C8a6g6/6VMuvMYz8dPYBu97HP+oGo9RTzer/57ACNLo6HWgZ33t9CMDwHXmzLHCaHmAfgeNVMXNc6XHKlQuNrDjRZMy37XYX9koIfrNWISdBV+tw/3TF7sTGJQe8l1iIs7ZLx/5Jp65Ukl+2OQl9DNwusbTkd73PtprWkZqL2zr2xMDhc823WuQ8wKe5Ynl2kFqSPinrJ3SAoWa+9njFVoIQ1EUKM22XUP3Q==</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIEcTCCA1mgAwIBAgIQaZU9qb7svrBICO1TLTJAZzANBgkqhkiG9w0BAQ0FADCBuDELMAkGA1UEBhMCUlMxFzAVBgNVBGEMDk1COlJTLTE3ODU1MTMxMRgwFgYDVQRhDA9WQVRSUy0xMDg1MDgyMDYxTjBMBgNVBAoMRVJlcHVibGljIG9mIFNlcmJpYSwgTWluaXN0cnkgb2YgVHJhZGUsIFRvdXJpc20gYW5kIFRlbGVjb21tdW5pY2F0aW9uczEmMCQGA1UEAwwdU2VyYmlhbiBUcnVzdGVkIExpc3QgU2lnbmVyIDIwHhcNMjAwMzE5MTE0NzM4WhcNMjMwNDE5MTE1NzM4WjCBuDELMAkGA1UEBhMCUlMxFzAVBgNVBGEMDk1COlJTLTE3ODU1MTMxMRgwFgYDVQRhDA9WQVRSUy0xMDg1MDgyMDYxTjBMBgNVBAoMRVJlcHVibGljIG9mIFNlcmJpYSwgTWluaXN0cnkgb2YgVHJhZGUsIFRvdXJpc20gYW5kIFRlbGVjb21tdW5pY2F0aW9uczEmMCQGA1UEAwwdU2VyYmlhbiBUcnVzdGVkIExpc3QgU2lnbmVyIDIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDs0S+JFA9AGpM4+IaIXnTsnnIRVoK68OSw9jDfm6bhdFwpO6rKeFhNAZ3RpIb5/VASGIFNpyyYKMvd053TfX84Fs0UGzCcwr3LQcKjwjiR2n0BqnP8ThLaxjdfsJQFhYHDdwqjuQFYG1iJzMjgjWTuZ+N6yorJI6iYbl6jyoHtOCccFssdGBn9MtZ91fldlo86Hdd/mMm62AFfuqFMTovl+8ThDvpHx328V5Ehd04YsjHT8d5c5Jl3M+/lKlLP9g5XNizT3fHeYGSnWgVsaPNnHW+ux1BB1+fsARgkursZtwNY/h3eWyhmxA9E8ECEk7Qkj6zlzghFDzV66HQPPdhzAgMBAAGjdTBzMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgZAMBEGA1UdJQQKMAgGBgQAkTcDADAnBgNVHREEIDAegRx1c2x1Z2VvZHBvdmVyZW5qYUBtdHQuZ292LnJzMB0GA1UdDgQWBBQ1xT9YLyOCDTesUQ2p2Y+dhPr7PDANBgkqhkiG9w0BAQ0FAAOCAQEA5y9YFdfPQmKtNEQ5ImzcJCuao8UmTmdpskx2oF6tJqdbXV3Gvxw2dGPip+R3ZrYwT8ZZc7BI3EMrX0nNDr7/y8mmpWqGgA9XIgSxaDcyk+HwnOoKj4Exrg5vmkH3apgUC4fUA410fb2yjvTHX1GvSQsN4ezdk4MMkDP+nNwR8bBrWtn+Xo741ZphlocncHH/5z54iaZHuKeCjzq3XK97B1SntBDZ6pRt20XIUitxbtz+NpV4hvoK3SDz0vW4xl8XI410lbrbAlj6wnK8UjdSPPf3pSYAeeIIR2abUYm5u4mUSivr568VuLcRDxP5qChoVM5LIz+yIw957q7Ad0BtRQ==</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://epotpis.mtt.gov.rs/TrustedList/TSL-RS.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/RSlist</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>RS</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns4:MimeType>application/vnd.etsi.tsl+xml</ns4:MimeType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="en">Republic of Serbia, Ministry of Trade, Tourism and Telecommunications</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTypeCommunityRules>
+                            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/RS</URI>
+                        </SchemeTypeCommunityRules>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+        </PointersToOtherTSL>
+        <ListIssueDateTime>2022-01-10T09:00:00Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2022-06-01T08:00:00Z</dateTime>
+        </NextUpdate>
+        <DistributionPoints>
+            <URI>https://trusteid.mioa.gov.mk/TrustedList/TL-MK.xml</URI>
+        </DistributionPoints>
+    </SchemeInformation>
+    <TrustServiceProviderList>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">KIBS AD Skopje</Name>
+                    <Name xml:lang="mk">КИБС АД Скопје</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">Clearing House KIBS AD Skopje</Name>
+                    <Name xml:lang="mk">Клириншка куќа Клириншки интербанкарски системи АД Скопје (КИБС АД Скопје)</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>bul. „Kuzman Josifovski Pitu“ 1</StreetAddress>
+                            <Locality>Skopje</Locality>
+                            <PostalCode>1000</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="mk">
+                            <StreetAddress>бул. „Кузман Јосифовски Питу“ бр. 1</StreetAddress>
+                            <Locality>Скопје</Locality>
+                            <PostalCode>1000</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:helpdesk@kibstrust.mk</URI>
+                        <URI xml:lang="en">https://www.kibstrust.com</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">https://www.kibstrust.mk/en-GB/Home/Dokumenti/</URI>
+                    <URI xml:lang="mk">https://www.kibstrust.mk/mk-MK/Home/Dokumenti/</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">KIBSTrust Issuing CA for e-Signatures</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIG0TCCBbmgAwIBAgIQD18S0/w2Ht62EcWtLy3QsjANBgkqhkiG9w0BAQsFADBaMQswCQYDVQQGEwJJRTESMBAGA1UEChMJQmFsdGltb3JlMRMwEQYDVQQLEwpDeWJlclRydXN0MSIwIAYDVQQDExlCYWx0aW1vcmUgQ3liZXJUcnVzdCBSb290MB4XDTE5MDYyNDEyMTI1N1oXDTI1MDUxMjIzNTg1OVowgdAxCzAJBgNVBAYTAk1LMRcwFQYDVQQKEw5LSUJTIEFEIFNrb3BqZTEWMBQGA1UEYRMNTlRSTUstNTUyOTU4MTE/MD0GA1UECxM2Q2xhc3MgMiBEaWdpQ2VydCBQS0kgUGxhdGZvcm0gSW5kaXZpZHVhbCBTdWJzY3JpYmVyIENBMR8wHQYDVQQLExZLSUJTIEFEIFRydXN0IFNlcnZpY2VzMS4wLAYDVQQDEyVLSUJTVHJ1c3QgSXNzdWluZyBDQSBmb3IgZS1TaWduYXR1cmVzMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAyoyrrH2/WM1nKLhTja9bBJmuIuVRZbrcmDOTvUFTzSUj35Psbg+vJHNfX7Q0a4+XYVMTsfYieYqOqzuBUF+8FK6lJdVZjuusTKYkb+CYIPWWyR3rOw1no9y7Ewhl8GWS5N9dtVo4VFa2378gdxeAjk6HYHqIlslVRijuSt3JVC2ao2QFSatfVNeRaV3QMEYDrYq3LoLbNY55+9tK5wWLe7MpDk4vuA839s1aqaS9VDP89SbGeYcCjOXeXwS49POLw8g1WFIMzy0lpegw4ed9uA5uXV7N3+X1z4s5ARzwB1BaE9/+lJO8npxzypnuj/O2V7fP8PI8ssshv49a4wlU8eM1dsLxUO+bz5v3TMIfYWrnHgtYs/vWp8xFsVt5ooKdvY8n18ZFkW80eC11zNaymDKMs7Yfnv17YGjabtdzlDBq4YOcNXz3BBIyOFv6cOlBG+zEABsc03RJD6AXtW3Gf6nPFGkmUOzcaOlPH2Lu2EyPf7DVv4u2m5OGMgEN/z/6w71gQEYaFreoragNayThRZOSmVCcjLoRIyJHCDJDXDuVpZ8TFzz7hOWwR3B/rFPBTndlvWJvX0BJQO4gEkFnUQ+D+xDymSWxjolLqrb+g9DfX0Yg8Kc2jvJpL6viG7Xi9o+tV7CfvPgOGIXFXJg2GU8rAPPZldnaEAU63Uo85XcCAwEAAaOCAhowggIWMB0GA1UdDgQWBBRUisoGu7GF4/A0APknfxLG+NdcUTAfBgNVHSMEGDAWgBTlnVkwgkdYzKz6CFQ2hns6tQRN8DAOBgNVHQ8BAf8EBAMCAQYwEwYDVR0lBAwwCgYIKwYBBQUHAwIwEgYDVR0TAQH/BAgwBgEB/wIBADCBhgYIKwYBBQUHAQEEejB4MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wUAYIKwYBBQUHMAKGRGh0dHA6Ly93d3cua2lic3RydXN0Lm1rL3JlcG9zaXRvcnkvY2VydHMvQmFsdGltb3JlQ3liZXJUcnVzdFJvb3QuY3J0MDoGA1UdHwQzMDEwL6AtoCuGKWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9PbW5pcm9vdDIwMjUuY3JsMIGwBgNVHSAEgagwgaUweQYJYIZIAYb9bAYCMGwwMwYIKwYBBQUHAgEWJ2h0dHBzOi8vd3d3LmtpYnN0cnVzdC5tay9yZXBvc2l0b3J5L2NwczA1BggrBgEFBQcCAjApDCdodHRwczovL3d3dy5raWJzdHJ1c3QubWsvcmVwb3NpdG9yeS9ycGEwCQYHBACL7EABADAJBgcEAIvsQAECMAgGBgQAj3oBATAIBgYEAI96AQIwIwYDVR0RBBwwGqQYMBYxFDASBgNVBAMTC0MxQzItNDA5Ni01MA0GCSqGSIb3DQEBCwUAA4IBAQAOnmyIfMHWRnvcAJUCIkANgT/JYFTF7LpebE4dAmhqBS9RvV1YEh+MbLATKymsr0IX3OZVkXLPlLeluPd5kh1VYw5zcuCkNsQ5/6b6Q/Mim272LMIQWNPUSnkxpVoUqiIvkrft/aiVsFWMHxxt/EBAy1rxU0Fjh11eC8cX80ixtBaOlu7ydWCeMvD3wJzM7vg5F8joT7dJhzzHDw4Ama45Y/jchgh/HQxNz5y50DZLQ9TSdITyo8UoXpTzoAzkY+AU1PYRzrYj+UKGlDtf+ek5SgZ7X252/bNZ92rxWNwIMpmUzghK46KAtF0lHvRR+N85nQ+adL/FVH4m6ScPVW2T</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=KIBSTrust Issuing CA for e-Signatures, OU=KIBS AD Trust Services, OU=Class 2 DigiCert PKI Platform Individual Subscriber CA, OID.2.5.4.97=NTRMK-5529581, O=KIBS AD Skopje, C=MK</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>VIrKBruxhePwNAD5J38SxvjXXFE=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-03-12T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESig"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.3</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESig"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.4</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">KIBSTrust Issuing CA for e-Seals</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=KIBSTrust Issuing CA for e-Seals, OU=KIBS AD Trust Services, OU=Class 2 DigiCert PKI Platform Individual Subscriber CA, OID.2.5.4.97=NTRMK-5529581, O=KIBS AD Skopje, C=MK</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>LRIt9fFbfRy33UPomL/Niw/nKQc=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-03-12T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.3</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="false">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.4</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/TSA/QTST</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">KIBS Momentum</Name>
+                            <Name xml:lang="mk">КИБС Momentum</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509SubjectName>CN=KIBSTrust Momentum Timestamp Responder 2016 10 05 1,O=Clearing House Klirinski interbankarski sistemi AD SKOPJE,C=MK</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2020-08-31T22:00:00Z</StatusStartingTime>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">KIBSTrust Root CA G2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIGNDCCBBygAwIBAgIQSHuEHLeb843rMJ53N6dtqTANBgkqhkiG9w0BAQsFADB6MQswCQYDVQQGEwJNSzEXMBUGA1UEChMOS0lCUyBBRCBTa29wamUxGzAZBgNVBAsTEktJQlNUcnVzdCBTZXJ2aWNlczEWMBQGA1UEYRMNTlRSTUstNTUyOTU4MTEdMBsGA1UEAxMUS0lCU1RydXN0IFJvb3QgQ0EgRzIwHhcNMjEwMzA0MDAwMDAwWhcNNDEwMzA0MjM1OTU5WjB6MQswCQYDVQQGEwJNSzEXMBUGA1UEChMOS0lCUyBBRCBTa29wamUxGzAZBgNVBAsTEktJQlNUcnVzdCBTZXJ2aWNlczEWMBQGA1UEYRMNTlRSTUstNTUyOTU4MTEdMBsGA1UEAxMUS0lCU1RydXN0IFJvb3QgQ0EgRzIwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYq5U9By9sw5N9WipUr2UQl29BVGAQjOZBACt5dLXYOGUT68xRr97GkKasZ1JtCZwKAUkzf9PKSspAXev4y/WBxv0XmNgK6yS1FM0MV3Tm+oJf0p5FuHcK90r/ZB4hRlEohYMIRGSnuq0gsX+v2ttCfWtl19uwKW/l2OrNfKO9Afa3iRzXLSjPMwlEUkGorqiRt8hGvZf03GoSfGrBvqq9Thmpq3PylEhW6zzuS06NwuHGnnR7EH+WnhKLbClmp/1OGjJhJ1Knijl/j7LR8+7InyvvECGAxPMXzJfv/IQEY5W8hzXdlKv8sw8BPCtaLfzfy9fxSO7pxCGQujcHHahfciSp30uuzDbyZlwgQT9gIfE3DQgEAFgF4he9wkApTKrGmKdxNsMoJONPLlSTdLsHt65Mifvjighv+gns3r43KRmk/sJ7ZVAmww5fopcrVDQFi96To+hVAg+9uoIw3XhnStSvoRSKWDszcpE6/h0WeMb9KHlqFHLjQkvqA2w+aBhCmnIieZzf/x/6H17iiB50iDmrFRELgzDdfkf4+mnp8wacUxCtgSIPjkOanLNl7i5qrn61Q4fv2e1kDw2V3evm+i01c3wMA7dZ4b9oKpRB8zNQZdu0n+8SRj9Gjj5xRy+zWGs8XQSAqx5/Vv4IQ4wQHnKccDvGcteW3y7bjRVAOQIDAQABo4G1MIGyMA8GA1UdEwEB/wQFMAMBAf8wTwYDVR0gBEgwRjBEBgorBgEEAf8xAQEFMDYwNAYIKwYBBQUHAgEWKGh0dHBzOi8vcGtpLmtpYnN0cnVzdC5jb20vcmVwb3NpdG9yeS9jcHMwDgYDVR0PAQH/BAQDAgEGMB0GA1UdDgQWBBTU6cZ1jtv+pjInocTamgQ1rky8WDAfBgNVHSMEGDAWgBTU6cZ1jtv+pjInocTamgQ1rky8WDANBgkqhkiG9w0BAQsFAAOCAgEAW330S95RKdjcPHcs2sU89QXXXaZCoX+DepAIs+fteaau3wdgGuvis+M0pv4FFPWN11+r42RZ2SNbisHwE6SxQeK2LAzuknbyO8aOo1rirkATyUmH9w38aN+IIjXsFDi0PfM8dYaVb+j3+XCpaayOOF5YkeybgswbWnh49QZpfbnKfrWEMoa6/90dfEVwm2XKLmfuqo91ZEPCJiYMjjnH+euPuehr2/7lUZ1BclqN6XDDluEW7mKpGBUrvzDfVY9HoQvXAdIxomA26MAWYIWz2UfbeOFFTJX+79YqNUjj15tgvMokgZ7ECUclR8K5ZbR9fIURgvetZkc7o18ICEji223G3iQIrhk6AO5tn/5MfO2zDXCOu/zzMrO01DMGzgpMgwx3nfM5s8RqQcyjdriwQdTcVAWXBVUkQnUtVuFZUqMym48RD+/HV9mNHl8QzklhGEyqjvtcT6JZQTMuhL8jbNa8g+tyuh7874zRp0YT7SPiuWLhQA/lpEmt1V5dotJHEU/X0AIlPheTmSOVBa6CWtm3UmKWvo0ew0wLP08lorzRI3Bg7qb9eUUy233IxwSEppGLio4Uj+ngqproLvefqKMly4I+WDK/AL9mqhpDS0xfwSdCgpDvz/8S5lyG5OvuFodmKgl54b2JVddleRDRyTdR1sLaF2nDcjgSCvHmE6k=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=KIBSTrust Root CA G2, OID.2.5.4.97=NTRMK-5529581, OU=KIBSTrust Services, O=KIBS AD Skopje, C=MK</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>1OnGdY7b/qYyJ6HE2poENa5MvFg=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-03-31T22:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/RootCA-QC</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">KIBSTrust Issuing Qsig CA G2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=KIBSTrust Issuing Qsig CA G2, OID.2.5.4.97=NTRMK-5529581, OU=KIBSTrust Services, O=KIBS AD Skopje, C=MK</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>indI8/TgMiHqntUryWM9JajOJLU=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-03-31T22:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESig"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.3</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESig"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.3</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESig"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.4</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name>KIBSTrust Issuing Qseal CA G2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=KIBSTrust Issuing Qseal CA G2, OID.2.5.4.97=NTRMK-5529581, OU=KIBSTrust Services, O=KIBS AD Skopje, C=MK</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>Jkqr0wao6dJw2nEEtjFQR4WpCU0=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-03-31T22:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.3</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="false">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.3</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.16305.1.2.5.1.4</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/IdV</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">OneID</Name>
+                            <Name xml:lang="mk">OneID</Name>
+                        </ServiceName>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2021-12-20T23:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">https://trusteid.mioa.gov.mk/idHLA</URI>
+                        </SchemeServiceDefinitionURI>
+                        <ServiceSupplyPoints>
+                            <ServiceSupplyPoint>https://oneid.mk</ServiceSupplyPoint>
+                        </ServiceSupplyPoints>
+                    </ServiceInformation>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">Makedonski Telekom AD - Skopje</Name>
+                    <Name xml:lang="mk">Македонски Телеком АД - Скопје </Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">Makedonski Telekom AD - Skopje</Name>
+                    <Name xml:lang="en">VATMK-4030997339640</Name>
+                    <Name xml:lang="en">MB:MK-5168660</Name>
+                    <Name xml:lang="mk">Македонски Телеком Акционерско друштво за електронски комуникации - Скопје</Name>
+                    <Name xml:lang="mk">VATMK-4030997339640</Name>
+                    <Name xml:lang="mk">MB:MK-5168660</Name>
+                    <Name xml:lang="en">Makedonski Telekom</Name>
+                    <Name xml:lang="en">Makedonski Telekom joint stock company for electronic communications – Skopje</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Kej 13 Noemvri No. 6</StreetAddress>
+                            <Locality>Skopje</Locality>
+                            <PostalCode>1000</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="mk">
+                            <StreetAddress>ул. Кеј 13-ти Ноември бр. 6</StreetAddress>
+                            <Locality>Скопје</Locality>
+                            <PostalCode>1000</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:biznis.kontakt@telekom.mk</URI>
+                        <URI xml:lang="en">http://www.telekom.mk</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://www.telekom.mk/CPS</URI>
+                    <URI xml:lang="en">http://ict.telekom.mk/digitalni-sertifikati.nspx</URI>
+                    <URI xml:lang="en">http://ict.telekom.mk/vremenski-pecat.nspx</URI>
+                    <URI xml:lang="mk">http://www.telekom.mk/CPS</URI>
+                    <URI xml:lang="mk">http://ict.telekom.mk/digitalni-sertifikati.nspx</URI>
+                    <URI xml:lang="mk">http://ict.telekom.mk/vremenski-pecat.nspx</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Makedonski Telekom Root CA</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIEwzCCAyugAwIBAgIQdg9Ay7k+qVQAAAAAXyKiNDANBgkqhkiG9w0BAQsFADB3MQswCQYDVQQGEwJNSzFDMBoGA1UEYRMTVkFUTUstNDAzMDk5NzMzOTY0MDAlBgNVBAoTHk1ha2Vkb25za2kgVGVsZWtvbSBBRCAtIFNrb3BqZTEjMCEGA1UEAxMaTWFrZWRvbnNraSBUZWxla29tIFJvb3QgQ0EwHhcNMjAwNzMwMTAwNDQ4WhcNNDUxMDMwMTAzNDQ4WjB3MQswCQYDVQQGEwJNSzFDMBoGA1UEYRMTVkFUTUstNDAzMDk5NzMzOTY0MDAlBgNVBAoTHk1ha2Vkb25za2kgVGVsZWtvbSBBRCAtIFNrb3BqZTEjMCEGA1UEAxMaTWFrZWRvbnNraSBUZWxla29tIFJvb3QgQ0EwggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQC2T6Dxz4szQPmkiE9rEH2lfK+6yjyLe/bIWcfrT2fizC7SDfz0ezXZKOl51x0rGBxdxPkP5lqM1QpKPS53TvETO0emi1SfwYpS1hs5GQlEpwlKAO77fPIYpsNqvfeyLefFKtJYDSyUvSnQsxjQW4uDYCsz3jaNySImstvl2xO/+alvQ6tFJCFenvDousikPvm5w5ALDjrhh/bls0lKMAO72RnRBljXGU1h/of5EzOsfGS5dDRT7GYhi3wvhIedEorXg3Zutn7xlMUaj7ZVD2KBxgKYzv4/Na0CI59WgnF05hEPSnReDswgg3iK2jUk0S89IFure1RrrxWPHYeoFvhrCMqj1luHJUpRGNM90kFk9A32AoLWPtzQyz7qcR0c/iQeRPr07fAdAZOpNofJhbLcUcsS59x4oO20lCbehhAIJSAdDnSuo95WyQgjH50JtZs5ObMje+6D4lqG9WmZ+zUOv6MJqAyXhZTGPoLScCiyePDsTk9s8EZB5xJKyqLNkI8CAwEAAaNLMEkwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMCAQYwEwYDVR0jBAwwCoAITv6cN9hXFFcwEQYDVR0OBAoECE7+nDfYVxRXMA0GCSqGSIb3DQEBCwUAA4IBgQBfFq7XSu6JazmHHEDkqL3fE/Himfy70e77DNhRqbqIoV1LdWW+Rp2qbhfQA+TiD/nldpn7U0hmR6K8RJwptRVGhsv+Q5R7gBLY0+/T/sZfqc5ez8NqrK87hqg6xMkOuNjOSDvCc/DRHY58KtYCB3n/vFeM+IRlb42zRXG51BKRaTbvbQlMkucKX+Z8XmHdElBx693jU+zucQ0Hu92NMVwxvsuGq8FHJSadZzWYmfLLNo6/5gX8aFGDyApmVoeIFU+vfwwWgHj0AVnoIb91O/AbclPvxjzS/WmUL8555neR7vFg0gJ3sAQt/mNM++kQOqODe7KTJy7IPhYud6MtFTboGA/e8b2ceg/37KSE+PQznAtKu617FBdCI8MYTOUZoJr7xDK8+M3jsL9AZXC9+Tn9ukA6zsNQquQnpX6vieKobacfAhnOLaQpKV3t9kHUZbc4fIz2VwKuY7s+Y1Zb7lfjBJnUB6Tt7kvM11uwrPAuSc+NvaIyJTYaNN9p1Mbp/vw=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Makedonski Telekom Root CA, OID.2.5.4.97=VATMK-4030997339640 + O=Makedonski Telekom AD - Skopje, C=MK</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>Tv6cN9hXFFc=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2020-01-04T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/RootCA-QC</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Makedonski Telekom CA</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIFpDCCBAygAwIBAgIQQHbMsxDMRLcAAAAAXyKl9jANBgkqhkiG9w0BAQsFADB3MQswCQYDVQQGEwJNSzFDMBoGA1UEYRMTVkFUTUstNDAzMDk5NzMzOTY0MDAlBgNVBAoTHk1ha2Vkb25za2kgVGVsZWtvbSBBRCAtIFNrb3BqZTEjMCEGA1UEAxMaTWFrZWRvbnNraSBUZWxla29tIFJvb3QgQ0EwHhcNMjAwODMxMTEwMTM3WhcNNDAxMTMwMTEzMTM3WjBKMQswCQYDVQQGEwJNSzEbMBkGA1UEChMSTWFrZWRvbnNraSBUZWxla29tMR4wHAYDVQQDExVNYWtlZG9uc2tpIFRlbGVrb20gQ0EwggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQDFgpMsA1L1U8LiUyQ8Y55ywZN78+20bE9P3rsT1XGH+0n5eCqX5K2MKTGWusISaJDUwRm4yBvf55cja2DhFEl4hqB2m4JiddjO6LLqgOkYqPpYrVb/ZIlF4PrAN7c0oerOa73egbYJMW1mAqn6YkCMy6tvudK/KPo9CYjfe0dmSj7EYY+vsYFg7bvJA4EpQWRlNsGx7Z+gPy45goT6RlwavIAkM0XR3SgQWev8On6v5gHJIKzgPf/kMbXJAcr6alGyUrezJVJ66RyicsbRa40Z7uVMupAxSqbFI+dZeqxRASLE0owHWTrhgLEBcGZxK/giBkz2K/b6XZp+ciTcAualEeKttv3voG/eQ4HcqlFq3vHA3+3HH2JFL0bygZ/2x6jXs9G39+Hxmbki8Q0HCCVpF0/qbXTftkPG3duaWINdJ7NYoz+nsFsTq4kEYkC7x58j12KZ8tP04W6VMiuPLG9oG7RRhXnlgdIcsshPCjkkjEL2EVaXjUYiswFo0vQ1bvUCAwEAAaOCAVcwggFTMBIGA1UdEwEB/wQIMAYBAf8CAQAwDgYDVR0PAQH/BAQDAgEGMDoGA1UdIAQzMDEwLwYEVR0gADAnMCUGCCsGAQUFBwIBFhlodHRwOi8vd3d3LnRlbGVrb20ubWsvQ1BTMH4GCCsGAQUFBwEBBHIwcDBHBggrBgEFBQcwAoY7aHR0cDovL3d3dy5jYS50ZWxla29tLm1rL2NhY2VydC9NYWtlZG9uc2tpVGVsZWtvbVJvb3RDQS5jZXIwJQYIKwYBBQUHMAGGGWh0dHA6Ly9vY3NwLmNhLnRlbGVrb20ubWswEQYDVR0OBAoECE9ljuR1wMsnMEkGA1UdHwRCMEAwPqA8oDqGOGh0dHA6Ly93d3cuY2EudGVsZWtvbS5tay9DUkwvTWFrZWRvbnNraVRlbGVrb21Sb290Q0EuY3JsMBMGA1UdIwQMMAqACE7+nDfYVxRXMA0GCSqGSIb3DQEBCwUAA4IBgQBOyVNkrRNERenm4k8xV2x0S7PJRiqVyxqimmCvfqa/jIr1bdy9deKDQxjvxV3oHKlHZPJfaklJ8D1zlYENu+/FpKxW73uDMcgK35uZu0IDLMGk3VWoHipJ1ocxybgLBTqeD21Pcsyk8eAtu6YqGzeWDOKC3RWOC2Xc5DB5bnJKOg40wlTweuP2th2xr4tI75ybm0i+4xehZUj9xj6Ir5pzvOc79Yt+B7CpdaV9jId/4wB1vIXP3AWavXW5GfkKDcN05t1cGwdacsV6L/MU0krBOjUWm3F0zuwZtErLbxVPJi9h66+fp+wMt4pDjRxRBJiXBN+gCES0ihLZQYuuA9hlqDurvz9mmoJQZZnAQvct6FKStBkR418ghsJWqxvkN8tsccmInpcdvAR5sn/HWybQvIoWsg89Y3yh5aMLNkTPvQs7Z0t356U0HrvOn+gPILZnm2MNE0t15vdjrWcVO+jgsBVDnSyqADMnSK1fMPtPbpfFolNtdWpzEoyHA6cCJBM=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Makedonski Telekom CA, O=Makedonski Telekom, C=MK</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>T2WO5HXAyyc=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-01-04T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESig"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.18560.1.5.1.0.0.0</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.18560.1.5.3.0.0.0</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESig"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.18560.1.5.2.0.0.0</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.18560.1.5.5.0.0.0</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Timestamp Authority MKT TSA 2.</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=TimeStamp Authority MKT TSA 2, OID.2.5.4.97=VATMK-4030997339640 + O=Makedonski Telekom AD - Skopje, C=MK</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>TBUO9TfOQPs=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-01-04T23:00:00Z</StatusStartingTime>
+                    </ServiceInformation>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">Evrotrust Technolgies DOOEL Skopje</Name>
+                    <Name xml:lang="mk">Евротруст Технолоџис ДООЕЛ Скопје</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">Evrotrust Technolgies DOOEL Skopje</Name>
+                    <Name xml:lang="en">VATMK-4080020591119</Name>
+                    <Name xml:lang="en">MB:MK-7435800</Name>
+                    <Name xml:lang="mk">Друштво за трговија и услуги ЕВРОТРУСТ ТЕХНОЛОЏИС ДООЕЛ Скопје</Name>
+                    <Name xml:lang="mk">VATMK-4080020591119</Name>
+                    <Name xml:lang="mk">MB:MK-7435800</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Bul. Filip Vtori Makedonski no.3</StreetAddress>
+                            <Locality>Skopje</Locality>
+                            <PostalCode>1000</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="mk">
+                            <StreetAddress>Бул. Филип Втори Македонски број 3</StreetAddress>
+                            <Locality>Скопје</Locality>
+                            <PostalCode>1000</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">https://eid.com.mk</URI>
+                        <URI xml:lang="en">mailto:nm@evrotrust.com</URI>
+                        <URI xml:lang="mk">mailto:nm@evrotrust.com</URI>
+                        <URI xml:lang="mk">https://eid.com.mk</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">https://eid.com.mk/</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/IdV/nothavingPKIid</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Digital identity service</Name>
+                            <Name xml:lang="mk">Услуга за дитигален идентитет</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity/>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2021-01-04T23:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">https://trusteid.mioa.gov.mk/idHLA</URI>
+                        </SchemeServiceDefinitionURI>
+                        <ServiceSupplyPoints>
+                            <ServiceSupplyPoint>http://www.eid.com.mk</ServiceSupplyPoint>
+                        </ServiceSupplyPoints>
+                    </ServiceInformation>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">INBOX DOOEL - Skopje</Name>
+                    <Name xml:lang="mk">Инбох ДООЕЛ - Скопје</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">INBOX DOOEL - Skopje</Name>
+                    <Name xml:lang="en">VATMK-4057010510682</Name>
+                    <Name xml:lang="en">MB:MK-6661955</Name>
+                    <Name xml:lang="mk">Трговско друштво за канцелариско административни дејности ИНБОХ ДООЕЛ Скопје</Name>
+                    <Name xml:lang="mk">VATMK-4057010510682</Name>
+                    <Name xml:lang="mk">MB:MK-6661955</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Street 32, No 15</StreetAddress>
+                            <Locality>Ilinden, Skopje</Locality>
+                            <PostalCode>1041</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="mk">
+                            <StreetAddress>ул. 32 бр. 15</StreetAddress>
+                            <Locality>Илинден, Скопје</Locality>
+                            <PostalCode>1041</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:contact@inbox-datacenter.mk</URI>
+                        <URI xml:lang="en">https://www.inbox.com.mk/en/</URI>
+                        <URI xml:lang="mk">https://www.inbox.com.mk</URI>
+                        <URI xml:lang="mk">mailto:contact@inbox-datacenter.mk</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://www.inbox.com.mk/en/</URI>
+                    <URI xml:lang="mk">http://www.inbox.com.mk</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/unspecified</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Electronic preservation of documents</Name>
+                            <Name xml:lang="mk">Електронско складирање на документи</Name>
+                        </ServiceName>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2021-02-19T23:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">https://trusteid.mioa.gov.mk/EPD</URI>
+                            <URI xml:lang="mk">https://trusteid.mioa.gov.mk/EPD</URI>
+                        </SchemeServiceDefinitionURI>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/unspecified</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Qualified electronic preservation of documents</Name>
+                            <Name xml:lang="mk">Квалификувано електронско складирање на документи</Name>
+                        </ServiceName>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-03-12T23:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">https://trusteid.mioa.gov.mk/QEPD</URI>
+                            <URI xml:lang="mk">https://trusteid.mioa.gov.mk/QEPD</URI>
+                        </SchemeServiceDefinitionURI>
+                    </ServiceInformation>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">Kontego d.o.o. Skopje</Name>
+                    <Name xml:lang="mk">Контего ДОО - Скопје</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">Kontego d.o.o. Skopje</Name>
+                    <Name xml:lang="en">VATMK-4080010516216</Name>
+                    <Name xml:lang="en">MB:MK-6643051</Name>
+                    <Name xml:lang="mk">Друштво за скенирање, обработка и складирање на документи КОНТЕГО ДОО Скопје</Name>
+                    <Name xml:lang="mk">VATMK-4080010516216</Name>
+                    <Name xml:lang="mk">MB:MK-6643051</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Steet 1551 No.11А</StreetAddress>
+                            <Locality>Vizbegovo, PO box 33, Skopje</Locality>
+                            <PostalCode>1012</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="mk">
+                            <StreetAddress>ул. 1551 бр.11А</StreetAddress>
+                            <Locality>Визбегово П.фах 33, Скопје</Locality>
+                            <PostalCode>1012</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:contact@kontego.mk</URI>
+                        <URI xml:lang="mk">mailto:contact@kontego.mk</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">https://www.kontego.mk/</URI>
+                    <URI xml:lang="mk">https://www.kontego.mk/</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/unspecified</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Electronic preservation of documents</Name>
+                            <Name xml:lang="mk">Електронско складирање на документи</Name>
+                        </ServiceName>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2021-06-16T22:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">https://trusteid.mioa.gov.mk/EPD</URI>
+                            <URI xml:lang="mk">https://trusteid.mioa.gov.mk/EPD</URI>
+                        </SchemeServiceDefinitionURI>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/unspecified</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Qualified service for electronic preservation of documents</Name>
+                            <Name xml:lang="mk">Квалификувана услуга за електронско складирање на документи</Name>
+                        </ServiceName>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2021-10-15T22:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">https://trusteid.mioa.gov.mk/QEPD</URI>
+                            <URI xml:lang="mk">https://trusteid.mioa.gov.mk/QEPD</URI>
+                        </SchemeServiceDefinitionURI>
+                    </ServiceInformation>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">Republic of North Macedonia, Ministry of information society and administration</Name>
+                    <Name xml:lang="mk">Република Северна Македонија, Министерство за информатичко општество и администрација</Name>
+                    <Name xml:lang="al">Republika e Maqedonisë së Veriut, Ministria e Shoqërisë Informatike dhe Administratës</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">Republic of North Macedonia, Ministry of information society and administration</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Bul. "Ss. Cyril and Methodius" No.54</StreetAddress>
+                            <Locality>Skopje</Locality>
+                            <PostalCode>1000</PostalCode>
+                            <CountryName>MK</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:cabinet@mioa.gov,mk</URI>
+                        <URI xml:lang="en">https://mioa.gov.mk</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">https://mioa.gov.mk</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/IdV</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">National scheme for eID on low level of assurance</Name>
+                            <Name xml:lang="mk">Национална шема за електронска идентификација на ниско ниво #МИОАШЕМА-Ф1</Name>
+                        </ServiceName>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-01-13T23:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">https://trusteid.mioa.gov.mk/idLLA</URI>
+                        </SchemeServiceDefinitionURI>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/IdV</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">National scheme for eID on high level of assurance</Name>
+                            <Name xml:lang="mk">Национална шема за електронска идентификација на високо ниво #МИОАШЕМА-Ф2</Name>
+                        </ServiceName>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-01-13T23:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">https://trusteid.mioa.gov.mk/idHLA</URI>
+                        </SchemeServiceDefinitionURI>
+                    </ServiceInformation>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+    </TrustServiceProviderList>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="id-14e22999da9d02b82592fddbb7501887"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><ds:Reference Id="xml_ref_id" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>mlZpMcr1U7SQ6s2LHqswFMEg+P21Isdmh5gVJwtI4kQ=</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xades-id-14e22999da9d02b82592fddbb7501887"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>Wim6pX91NnUDdYrDcjwaGvpuARWMiz57IxB+asmHR+Q=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="value-id-14e22999da9d02b82592fddbb7501887">n1VTJ3pb7boTgN7EpF1qHoktLVoipuW5pOA4zk3JvNftQFW6PkJFLSQJE5RfJ5RsTNofKtMeHLubOdl3QruHugj7GUvlbVooj4PhS6uUS2qIJrfHNk6QMMqByBx7EXl6+clZK8069KOxZPjEIDRJL62Iy6UtxPJAwj4aW/Q7ft0WSZ2vI5/HBwJ64MOozJQEKIj19QzHDbjiNO9lPOw0U/PpXcjx4hzwjb6ztkf/vIYqcKTfAAM1ObE43X6+oP5/+Dg/GJx+h/gfJZatW0dUuC/cbmqfTR+qfkP4LOvbJrFS6u5/HCF6uh0UQy9mJV4LGyR49XuE4mY1qj8xDelM2A==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIErzCCA5egAwIBAgIQcZPNPOnDxYZB0HRR1FxZaTANBgkqhkiG9w0BAQsFADCBnDELMAkGA1UEBhMCTUsxWDBWBgNVBAoMT1JlcHVibGljIG9mIE5vcnRoIE1hY2Vkb25pYSwgTWluaXN0cnkgb2YgaW5mb3JtYXRpb24gc29jaWV0eSBhbmQgYWRtaW5pc3RyYXRpb24xMzAxBgNVBAMMKlRydXN0ZWQgTGlzdCBBZG1pbmlzdHJhdG9yIE5vcnRoIE1hY2Vkb25pYTAeFw0yMjAxMTQxMzA2MjVaFw0yNDAxMTQxMzE2MjVaMIGcMQswCQYDVQQGEwJNSzFYMFYGA1UECgxPUmVwdWJsaWMgb2YgTm9ydGggTWFjZWRvbmlhLCBNaW5pc3RyeSBvZiBpbmZvcm1hdGlvbiBzb2NpZXR5IGFuZCBhZG1pbmlzdHJhdGlvbjEzMDEGA1UEAwwqVHJ1c3RlZCBMaXN0IEFkbWluaXN0cmF0b3IgTm9ydGggTWFjZWRvbmlhMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6pEiVlpY83NVgWWNpItk75524Ar2WKnYc08ad9es/gwSK0PGQUkKociAIcyKb5D96LRBgEHHYcWRE7VKoY8KTikU9hy+Ikk4PopuCpZbAHhGkNkPa9Nn2/VNbo/rLmc9gIAHLGC214E7ROrbSxnKFYeM+33mtX1FemZhspvTBk9Qm2ilUkGMfekbMvYEyjE5YmOCuQeusQek6F32J22fvARjrhmt/No0GVFEGxlkwj1i7gMkKXyDDCOmZXn0mVy/U7B0Dv2FSaRZGlJXyC8HgUy9/4DmBwLlmsEjq9pxO9qzCdRbddBsxV6nNjzlVhhq95AXtMkRrwaGU7sAXc6XsQIDAQABo4HqMIHnMA4GA1UdDwEB/wQEAwIGQDARBgNVHSUECjAIBgYEAJE3AwAwDAYDVR0TAQH/BAIwADCBlAYJKoZIhvcNAQkPBIGGMIGDMAsGCWCGSAFlAwQBKjALBglghkgBZQMEAS0wCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBGTALBglghkgBZQMEAQIwCwYJYIZIAWUDBAEFMAoGCCqGSIb3DQMHMAcGBSsOAwIHMA4GCCqGSIb3DQMCAgIAgDAOBggqhkiG9w0DBAICAgAwHQYDVR0OBBYEFDlvWbOlCWHwnjvByxCXIeIxReScMA0GCSqGSIb3DQEBCwUAA4IBAQCo5Xb7+TgcA2J+W+ndLr+4kZpNwaWq4XHdKp5HSTpu1+yFKXIAIVYdSEn3x3oBaswjz4htlyfbBU18KhvnUhJYL6gmsSsVZ4TPaSZ7Ib/sJ0Wz1DyaDbeOryVEdyUuhQ7GaPF3/JTTluLG+t9EI0pxJeOZgE3dM3aLtUE4fl1JpDabuCX40EL0fdT8p7aDU9YjKpoQL15qtQKpfjWe2yU3nqVv5j/JG2IhPh+VhowStYuL2w1ZfFhEWS9y/dGntUKWJf7qCG4jZoOw8Ui6wO2U+x0Y3DESGq6jRd0PckLYEeE4UKUoI+bYmpeX0L3hz9VUoH28fGwiOEN61keyPN8d</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#id-14e22999da9d02b82592fddbb7501887"><xades:SignedProperties Id="xades-id-14e22999da9d02b82592fddbb7501887"><xades:SignedSignatureProperties><xades:SigningTime>2022-01-14T13:21:25Z</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>lzWshaDINiT+U1gzK4kok7Pb+Ow=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>CN=Trusted List Administrator North Macedonia,O=Republic of North Macedonia\, Ministry of information society and administration,C=MK</ds:X509IssuerName><ds:X509SerialNumber>150970193881905293353822848772778776937</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#xml_ref_id"><xades:MimeType>text/xml</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></TrustServiceStatusList>

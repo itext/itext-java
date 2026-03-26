@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -45,7 +45,7 @@ import java.io.IOException;
 @Tag("IntegrationTest")
 public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
 
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/PdfTextExtractorEncodingsTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     /**
      * Basic Latin characters, with Unicode values less than 128
@@ -103,7 +103,7 @@ public class PdfTextExtractorEncodingsTest extends ExtendedITextTest {
     }
 
     protected static PdfFont getTTFont(String encoding, EmbeddingStrategy embeddingStrategy) throws IOException {
-        return PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf", encoding, embeddingStrategy);
+        return PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf", encoding, embeddingStrategy);
     }
 
     private static byte[] createPdf(PdfFont font) {

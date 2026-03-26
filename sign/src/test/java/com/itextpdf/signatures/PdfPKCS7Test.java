@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -38,7 +38,6 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.PdfSigner.CryptoStandard;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.testutils.SignTestPortUtil;
-import com.itextpdf.signatures.testutils.TimeTestUtil;
 import com.itextpdf.signatures.testutils.client.TestTsaClient;
 
 import java.io.IOException;
@@ -186,16 +185,10 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
 
         // The number corresponds to 3 September, 2021 13:32:33.
         double expectedMillis = (double) 1630675953000L;
-        Assertions.assertEquals(
-                TimeTestUtil.getFullDaysMillis(expectedMillis),
-                TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(
-                        DateTimeUtil.getCalendar(timeStampTokenInfo.getGenTime()))),
-                EPS);
-        Assertions.assertEquals(
-                TimeTestUtil.getFullDaysMillis(expectedMillis),
-                TimeTestUtil.getFullDaysMillis(DateTimeUtil.getUtcMillisFromEpoch(
-                        DateTimeUtil.getCalendar(pkcs7.getOcsp().getProducedAtDate()))),
-                EPS);
+        Assertions.assertEquals(expectedMillis, DateTimeUtil.getUtcMillisFromEpoch(
+                DateTimeUtil.getCalendar(timeStampTokenInfo.getGenTime())), EPS);
+        Assertions.assertEquals(expectedMillis, DateTimeUtil.getUtcMillisFromEpoch(
+                DateTimeUtil.getCalendar(pkcs7.getOcsp().getProducedAtDate())), EPS);
     }
 
     @Test
@@ -296,7 +289,7 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
         pkcs7.basicResp = BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(
                 BOUNCY_CASTLE_FACTORY.createASN1InputStream(
                         Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject());
-        pkcs7.signCerts = Arrays.asList(new Certificate[] {null, null});
+        pkcs7.signCerts = Arrays.asList(new Certificate[]{null, null});
         Assertions.assertFalse(pkcs7.isRevocationValid());
     }
 
@@ -352,7 +345,7 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
         PdfPKCS7 pkcs7 = new PdfPKCS7(pk, chain, hashAlgorithm, null, new BouncyCastleDigest(), true);
         pkcs7.getSignedDataCRLs().add(SignTestPortUtil.parseCrlFromStream(FileUtil.getInputStreamForFile(SOURCE_FOLDER + "firstCrl.bin")));
         pkcs7.getSignedDataOcsps().add(BOUNCY_CASTLE_FACTORY.createBasicOCSPResponse(BOUNCY_CASTLE_FACTORY.createASN1InputStream(
-                        Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
+                Files.readAllBytes(Paths.get(SOURCE_FOLDER, "simpleOCSPResponse.bin"))).readObject()));
         byte[] bytes = pkcs7.getEncodedPKCS7();
         byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "cmpBytesPkcs7WithRevInfo.txt"));
         Assertions.assertEquals("SHA256withRSA", pkcs7.getSignatureMechanismName());

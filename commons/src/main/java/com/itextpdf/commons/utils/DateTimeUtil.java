@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -56,6 +57,17 @@ public final class DateTimeUtil {
             calendar = new GregorianCalendar();
         }
         return calendar.getTimeInMillis();
+    }
+
+    /**
+     * Gets the {@link LocalDateTime} from UTC seconds from the epoch.
+     *
+     * @param epochSecond the UTC milliseconds from the epoch
+     *
+     * @return local time from UTC seconds
+     */
+    public static LocalDateTime ofEpochSecondUTC(long epochSecond) {
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneOffset.UTC);
     }
 
     /**
@@ -92,6 +104,16 @@ public final class DateTimeUtil {
      */
     public static Date getCurrentTimeDate() {
         return new Date();
+    }
+
+
+    /**
+     * Gets local current time consistently.
+     *
+     * @return {@link LocalDateTime} at which it was allocated, measured to the nearest millisecond
+     */
+    public static LocalDateTime getLocalDateTime() {
+        return LocalDateTime.now();
     }
 
     /**
@@ -203,6 +225,30 @@ public final class DateTimeUtil {
     }
 
     /**
+     * Parses date with specified format into {@link LocalDateTime}.
+     *
+     * @param date {@link String} date to parse
+     * @param format {@link String} parsing format
+     *
+     * @return {@link LocalDateTime} parsed date
+     */
+    public static LocalDateTime parseToLocalDateTime(String date, String format) {
+        return DateTimeFormatter.ofPattern(format).parse(date, LocalDateTime::from);
+    }
+
+    /**
+     * Parses {@link LocalDateTime} local date time according to specified format.
+     *
+     * @param dateTime {@link LocalDateTime} to parse
+     * @param format {@link String} parsing format
+     *
+     * @return parse date time as {@link String}
+     */
+    public static String parseLocalDateTime(LocalDateTime dateTime, String format) {
+        return dateTime.format(DateTimeFormatter.ofPattern(format));
+    }
+
+    /**
      * Format passing date with default yyyy-MM-dd pattern.
      *
      * @param date the date to be formatted
@@ -276,6 +322,18 @@ public final class DateTimeUtil {
         GregorianCalendar calendar = new GregorianCalendar(year, month, day, hour, minute, second);
         calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
         return calendar.getTime();
+    }
+
+    /**
+     * Serialize time using format YYYY-MM-DDTHH-MM-SS
+     *
+     * @param dateTime local time to be converted
+     *
+     * @return serialized time
+     */
+    public static String serializeDateToISO8601(LocalDateTime dateTime) {
+        return String.format("%04d-%02d-%02dT%02d:%02d:%02d", dateTime.getYear(), dateTime.getMonthValue(),
+                dateTime.getDayOfMonth(), dateTime.getHour(), dateTime.getMinute(), dateTime.getSecond());
     }
 
     private static DateFormat initParserSDF(String pattern) {

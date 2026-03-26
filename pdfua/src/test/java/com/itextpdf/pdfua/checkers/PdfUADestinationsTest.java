@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,12 +24,12 @@ package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfOutline;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
@@ -47,11 +47,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -66,14 +66,22 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static List<String> destinationWrapperType() {
-        return Arrays.asList("GoTo", "Destination", "Outline", "OutlineWithAction", "GoToR", "Manual", "GoToInRandomPlace");
+    public static List<Object[]> destinationWrapperType() {
+        List<Object[]> result = new ArrayList<>();
+        for (PdfConformance pdfConformance : UaValidationTestFramework.getConformanceList(false)) {
+            for (String s : Arrays.asList("GoTo", "Destination", "Outline", "OutlineWithAction", "GoToR", "Manual",
+                    "GoToInRandomPlace")) {
+                result.add(new Object[] {pdfConformance, s});
+            }
+        }
+        return result;
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void pureStructureDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void pureStructureDestinationTest(PdfConformance conformance, String destinationWrapType)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "pureStructureDestinationTest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -85,22 +93,24 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "Outline":
             case "GoToR":
             case "GoToInRandomPlace":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
             case "GoTo":
             case "OutlineWithAction":
-                // Verapdf doesn't allow actions with structure destination being placed in D entry. Instead, it requires
-                // structure destination to be added into special SD entry. There is no such requirement in released PDF 2.0 spec.
+                // Verapdf doesn't allow actions with structure destination being placed in D entry. Instead, it
+                // requires
+                // structure destination to be added into special SD entry. There is no such requirement in released
+                // PDF 2.0 spec.
                 // Although it is already mentioned in errata version.
-                framework.assertOnlyVeraPdfFail(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertOnlyVeraPdfFail(filename);
                 break;
         }
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void pureExplicitDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void pureExplicitDestinationTest(PdfConformance conformance, String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "pureExplicitDestinationTest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -112,41 +122,46 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "Outline":
             case "OutlineWithAction":
             case "GoTo":
-                framework.assertBothFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                framework.assertBothFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
             case "GoToR":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
             case "GoToInRandomPlace":
                 // iText fails because of the way we search for goto actions.
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
-                // That's why in this particular example we fail, however in reality GoTo action cannot be added directly to catalog.
-                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                // That's why in this particular example we fail, however in reality GoTo action cannot be added
+                // directly to catalog.
+                framework.assertOnlyITextFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
         }
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void namedDestinationWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void namedDestinationWithStructureDestinationTest(PdfConformance conformance, String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "namedDestWithStructureDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createNamedDestination(document, "destination",
                     createStructureDestination(document)));
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        framework.assertBothValid(filename);
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void namedDestinationWithDictionaryWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void namedDestinationWithDictionaryWithStructureDestinationTest(PdfConformance conformance, String destinationWrapType)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "namedDestWithDictWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
-            addDestinationToDocument(document, destinationWrapType, createNamedDestinationWithDictionary(document, createStructureDestination(document)));
+            addDestinationToDocument(document, destinationWrapType,
+                    createNamedDestinationWithDictionary(document, createStructureDestination(document)));
         });
         switch (destinationWrapType) {
             case "Destination":
@@ -156,32 +171,33 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "OutlineWithAction":
                 // Verapdf doesn't allow name destination to contain dictionary with structure destination in D entry.
                 // Instead, it wants it to be in special SD entry.
-                framework.assertOnlyVeraPdfFail(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertOnlyVeraPdfFail(filename);
                 break;
             case "GoToR":
             case "GoToInRandomPlace":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
         }
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void namedDestinationWithDictionaryAndSDWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void namedDestinationWithDictionaryAndSDWithStructureDestinationTest(PdfConformance conformance, String destinationWrapType)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "namedDestWithDictAndSDWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType,
                     createNamedDestinationWithDictionaryAndSD(document, createStructureDestination(document)));
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        framework.assertBothValid(filename);
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void namedDestinationWithExplicitDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void namedDestinationWithExplicitDestinationTest(PdfConformance conformance, String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "namedDestWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -194,24 +210,28 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "Outline":
             case "GoTo":
             case "OutlineWithAction":
-                framework.assertBothFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                framework.assertBothFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
             case "GoToR":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
             case "GoToInRandomPlace":
                 // iText fails because of the way we search for goto actions.
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
-                // That's why in this particular example we fail, however in reality GoTo action cannot be added directly to catalog.
-                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                // That's why in this particular example we fail, however in reality GoTo action cannot be added
+                // directly to catalog.
+                framework.assertOnlyITextFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
         }
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void namedDestinationWithDictionaryAndSDWithExplicitDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void namedDestinationWithDictionaryAndSDWithExplicitDestinationTest(PdfConformance conformance, String destinationWrapType)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "namedDestWithDictAndSDWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -229,19 +249,20 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // SD is specifically reserved for structure destinations,
                 // that's why placing not structure destination in there is wrong in the first place.
                 // However, if one is placed there, UA-2 exception is expected.
-                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION,
-                        PdfUAConformance.PDF_UA_2);
+                framework.assertOnlyITextFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
             case "GoToR":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
         }
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void namedDestinationWithNamedDestinationWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void namedDestinationWithNamedDestinationWithStructureDestinationTest(PdfConformance conformance, String destinationWrapType)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "namedDestWithNamedDestWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -254,20 +275,21 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "Outline":
             case "GoTo":
             case "OutlineWithAction":
-                // Verapdf doesn't allow named destination inside named destination, because it contradicts PDF 2.0 spec.
-                framework.assertOnlyVeraPdfFail(filename, PdfUAConformance.PDF_UA_2);
+                // Verapdf doesn't allow named destination inside named destination, because it contradicts PDF 2.0
+                // spec.
+                framework.assertOnlyVeraPdfFail(filename);
                 break;
             case "GoToR":
             case "GoToInRandomPlace":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
         }
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void namedDestinationWithCyclicReferenceTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void namedDestinationWithCyclicReferenceTest(PdfConformance conformance, String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "namedDestWithCyclicReference_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -280,42 +302,46 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "Outline":
             case "GoTo":
             case "OutlineWithAction":
-                framework.assertBothFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION,
-                        PdfUAConformance.PDF_UA_2);
+                framework.assertBothFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
             case "GoToR":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
             case "GoToInRandomPlace":
                 // iText fails because of the way we search for goto actions.
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
-                // That's why in this particular example we fail, however in reality GoTo action cannot be added directly to catalog.
-                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                // That's why in this particular example we fail, however in reality GoTo action cannot be added
+                // directly to catalog.
+                framework.assertOnlyITextFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
         }
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void stringDestinationWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void stringDestinationWithStructureDestinationTest(PdfConformance conformance, String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "stringDestWithStructureDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType, createStringDestination(document,
                     createStructureDestination(document)));
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        framework.assertBothValid(filename);
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void stringDestinationWithDictionaryWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void stringDestinationWithDictionaryWithStructureDestinationTest(PdfConformance conformance, String destinationWrapType)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "stringDestWithDictWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
-            addDestinationToDocument(document, destinationWrapType, createStringDestinationWithDictionary(document, createStructureDestination(document)));
+            addDestinationToDocument(document, destinationWrapType,
+                    createStringDestinationWithDictionary(document, createStructureDestination(document)));
         });
         switch (destinationWrapType) {
             case "Destination":
@@ -325,32 +351,33 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "OutlineWithAction":
                 // Verapdf doesn't allow name destination to contain dictionary with structure destination in D entry.
                 // Instead, it wants it to be in special SD entry.
-                framework.assertOnlyVeraPdfFail(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertOnlyVeraPdfFail(filename);
                 break;
             case "GoToR":
             case "GoToInRandomPlace":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
         }
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void stringDestinationWithDictionaryAndSDWithStructureDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void stringDestinationWithDictionaryAndSDWithStructureDestinationTest(PdfConformance conformance, String destinationWrapType)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "stringDestWithDictAndSDWithStructDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
             addDestinationToDocument(document, destinationWrapType,
                     createStringDestinationWithDictionaryAndSD(document, createStructureDestination(document)));
         });
-        framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+        framework.assertBothValid(filename);
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void stringDestinationWithExplicitDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void stringDestinationWithExplicitDestinationTest(PdfConformance conformance, String destinationWrapType) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "stringDestWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -363,24 +390,29 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "Outline":
             case "GoTo":
             case "OutlineWithAction":
-                framework.assertBothFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                framework.assertBothFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
             case "GoToR":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
             case "GoToInRandomPlace":
                 // iText fails because of the way we search for goto actions.
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
-                // That's why in this particular example we fail, however in reality GoTo action cannot be added directly to catalog.
-                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION, PdfUAConformance.PDF_UA_2);
+                // That's why in this particular example we fail, however in reality GoTo action cannot be added
+                // directly to catalog.
+                framework.assertOnlyITextFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
         }
     }
 
     @ParameterizedTest
     @MethodSource("destinationWrapperType")
-    public void stringDestinationWithDictionaryAndSDWithExplicitDestinationTest(String destinationWrapType) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false);
+    public void stringDestinationWithDictionaryAndSDWithExplicitDestinationTest(PdfConformance conformance,
+            String destinationWrapType)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         String filename = "stringDestWithDictAndSDWithExplicitDest_" + destinationWrapType;
         framework.addBeforeGenerationHook(document -> {
             document.addNewPage();
@@ -398,16 +430,17 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // SD is specifically reserved for structure destinations,
                 // that's why placing not structure destination in there is wrong in the first place.
                 // However, if one is placed there, UA-2 exception is expected.
-                framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION,
-                        PdfUAConformance.PDF_UA_2);
+                framework.assertOnlyITextFail(filename,
+                        PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
             case "GoToR":
-                framework.assertBothValid(filename, PdfUAConformance.PDF_UA_2);
+                framework.assertBothValid(filename);
                 break;
         }
     }
 
-    private void addDestinationToDocument(PdfDocument document, String destinationWrapType, PdfDestination destination) {
+    private void addDestinationToDocument(PdfDocument document, String destinationWrapType,
+            PdfDestination destination) {
         switch (destinationWrapType) {
             case "GoTo":
                 PdfLinkAnnotation goToLinkAnnotation = new PdfLinkAnnotation(RECTANGLE);
@@ -518,7 +551,8 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
         return new PdfStringDestination("destination_name");
     }
 
-    private PdfDestination createStringDestinationWithDictionaryAndSD(PdfDocument document, PdfDestination destination) {
+    private PdfDestination createStringDestinationWithDictionaryAndSD(PdfDocument document,
+            PdfDestination destination) {
         PdfDictionary destinationDictionary = new PdfDictionary();
         destinationDictionary.put(PdfName.SD, destination.getPdfObject());
         document.getCatalog().getNameTree(PdfName.Dests)

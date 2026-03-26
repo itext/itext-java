@@ -1,0 +1,16 @@
+name: LicenseCheck
+
+on:
+  push:
+    # 'branches-ignore' or 'branches' can be used to filter specific branches.
+    # By default, without any filters, it runs on every push to all branches.
+    # To be explicit, you can use:
+    branches-ignore:
+      - 'develop'
+      - 'master'
+      - 'rebased/*'
+  
+jobs:
+    call-licensecheck:
+      uses: XodoDocs/itext-github-workflows/.github/workflows/licensecheck.yml@master
+      secrets: inherit

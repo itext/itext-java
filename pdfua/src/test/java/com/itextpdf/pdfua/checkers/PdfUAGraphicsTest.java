@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -19,12 +19,16 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -35,12 +39,10 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.UaValidationTestFramework;
-import com.itextpdf.pdfua.UaValidationTestFramework.Generator;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.AssertUtil;
@@ -70,20 +72,25 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static List<PdfUAConformance> data() {
+    public static List<PdfConformance> data() {
         return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageWithoutAlternativeDescription_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageWithoutAlternativeDescription_ThrowsInLayout(PdfConformance pdfConformance)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             Image img = loadImage();
             document.add(img);
         });
-        framework.assertBothFail("imageNoAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("imageNoAltDescription");
+        } else {
+            framework.assertBothFail("imageNoAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
+        }
     }
 
     @Test
@@ -93,8 +100,9 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageWithEmptyAlternativeDescription_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageWithEmptyAlternativeDescription_ThrowsInLayout(PdfConformance pdfConformance)
+            throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
 
@@ -103,19 +111,23 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             document.add(img);
         });
 
-        if (pdfUAConformance == PdfUAConformance.PDF_UA_1) {
-            framework.assertBothFail("imageWithEmptyAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
-        } else if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyITextFail("imageWithEmptyAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("imageWithEmptyAltDescription");
+        } else if (pdfConformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
+            framework.assertBothFail("imageWithEmptyAltDescription",
+                    PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
+        } else if (pdfConformance.getUAConformance() == PdfUAConformance.PDF_UA_2) {
+            framework.assertOnlyITextFail("imageWithEmptyAltDescription",
+                    PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageCustomRole_Ok(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageCustomRole_Ok(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
-            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            if (framework.isPdf2Based(pdfConformance)) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
                 pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
                 pdfDocument.getStructTreeRoot().addNamespace(namespace);
@@ -124,78 +136,21 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
         });
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Image img = loadImage();
-                img.getAccessibilityProperties().setRole("CustomImage");
-                img.getAccessibilityProperties().setAlternateDescription("ff");
-                return new Div().add(img);
-            }
+        framework.addSuppliers( document -> {
+            Image img = loadImage();
+            img.getAccessibilityProperties().setRole("CustomImage");
+            img.getAccessibilityProperties().setAlternateDescription("ff");
+            return new Div().add(img);
         });
-        framework.assertBothValid("imageWithCustomRoleOk", pdfUAConformance);
+        framework.assertBothValid("imageWithCustomRoleOk");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageCustomDoubleMapping_Ok(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageCustomDoubleMapping_Ok(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
-            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
-                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
-                pdfDocument.getStructTreeRoot().addNamespace(namespace);
-                namespace.addNamespaceRoleMapping("CustomImage", StandardRoles.FIGURE);
-                namespace.addNamespaceRoleMapping("CustomImage2", "CustomImage");
-            }
-            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
-            root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
-            root.addRoleMapping("CustomImage2", "CustomImage");
-        });
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Image img = loadImage();
-                img.getAccessibilityProperties().setRole("CustomImage2");
-                img.getAccessibilityProperties().setAlternateDescription("ff");
-                return new Div().add(img);
-            }
-        });
-        framework.assertBothValid("imageWithDoubleMapping", pdfUAConformance);
-    }
-
-    @ParameterizedTest
-    @MethodSource("data")
-    public void imageCustomRoleNoAlternateDescription_Throws(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework.addBeforeGenerationHook(pdfDocument -> {
-            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
-                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
-                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
-                pdfDocument.getStructTreeRoot().addNamespace(namespace);
-                namespace.addNamespaceRoleMapping("CustomImage", StandardRoles.FIGURE);
-            }
-            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
-            root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
-        });
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Image img = loadImage();
-                img.getAccessibilityProperties().setRole("CustomImage");
-                return new Div().add(img);
-            }
-        });
-
-        framework.assertBothFail("imageWithCustomRoleAndNoDescription", pdfUAConformance);
-    }
-
-    @ParameterizedTest
-    @MethodSource("data")
-    public void imageCustomDoubleMapping_Throws(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
-        framework.addBeforeGenerationHook(pdfDocument -> {
-            if (pdfUAConformance == PdfUAConformance.PDF_UA_2) {
+            if (framework.isPdf2Based(pdfConformance)) {
                 PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
                 pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
                 pdfDocument.getStructTreeRoot().addNamespace(namespace);
@@ -206,48 +161,101 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
             root.addRoleMapping("CustomImage2", "CustomImage");
         });
-        framework.addSuppliers(new Generator<IBlockElement>() {
-            @Override
-            public IBlockElement generate() {
-                Image img = loadImage();
-                img.getAccessibilityProperties().setRole("CustomImage2");
-                return new Div().add(img);
-            }
+        framework.addSuppliers( document -> {
+            Image img = loadImage();
+            img.getAccessibilityProperties().setRole("CustomImage2");
+            img.getAccessibilityProperties().setAlternateDescription("ff");
+            return new Div().add(img);
         });
-
-        framework.assertBothFail("imageCustomDoubleMapping_Throws", pdfUAConformance);
+        framework.assertBothValid("imageWithDoubleMapping");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageWithValidAlternativeDescription_OK(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageCustomRoleNoAlternateDescription_Throws(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
+        framework.addBeforeGenerationHook(pdfDocument -> {
+            if (framework.isPdf2Based(pdfConformance)) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("CustomImage", StandardRoles.FIGURE);
+            }
+            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
+        });
+        framework.addSuppliers( document -> {
+            Image img = loadImage();
+            img.getAccessibilityProperties().setRole("CustomImage");
+            return new Div().add(img);
+        });
+
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("imageWithCustomRoleAndNoDescription");
+        } else {
+            framework.assertBothFail("imageWithCustomRoleAndNoDescription");
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageCustomDoubleMapping_Throws(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
+        framework.addBeforeGenerationHook(pdfDocument -> {
+            if (framework.isPdf2Based(pdfConformance)) {
+                PdfNamespace namespace = new PdfNamespace(StandardNamespaces.PDF_2_0);
+                pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(namespace);
+                pdfDocument.getStructTreeRoot().addNamespace(namespace);
+                namespace.addNamespaceRoleMapping("CustomImage", StandardRoles.FIGURE);
+                namespace.addNamespaceRoleMapping("CustomImage2", "CustomImage");
+            }
+            PdfStructTreeRoot root = pdfDocument.getStructTreeRoot();
+            root.addRoleMapping("CustomImage", StandardRoles.FIGURE);
+            root.addRoleMapping("CustomImage2", "CustomImage");
+        });
+        framework.addSuppliers( document -> {
+            Image img = loadImage();
+            img.getAccessibilityProperties().setRole("CustomImage2");
+            return new Div().add(img);
+        });
+
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("imageCustomDoubleMapping_Throws");
+        } else {
+            framework.assertBothFail("imageCustomDoubleMapping_Throws");
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void imageWithValidAlternativeDescription_OK(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             Image img = loadImage();
             img.getAccessibilityProperties().setAlternateDescription("Alternative description");
             document.add(img);
         });
-        framework.assertBothValid("imageWithValidAltDescr", pdfUAConformance);
+        framework.assertBothValid("imageWithValidAltDescr");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageWithValidActualText_OK(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageWithValidActualText_OK(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             Image img = loadImage();
             img.getAccessibilityProperties().setActualText("Actual text");
             document.add(img);
         });
-        framework.assertBothValid("imageWithValidActualText", pdfUAConformance);
+        framework.assertBothValid("imageWithValidActualText");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageWithCaption_OK(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageWithCaption_OK(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
 
@@ -258,9 +266,9 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             img.setNeutralRole();
             Paragraph caption = new Paragraph("Caption");
             try {
-                caption.setFont(PdfFontFactory.createFont(FONT));
+                caption.setFont(PdfFontFactory.createFont(FONT, EmbeddingStrategy.FORCE_EMBEDDED));
             } catch (IOException e) {
-                throw new RuntimeException(e.getMessage());
+                throw new PdfException(e.getMessage());
             }
             caption.getAccessibilityProperties().setRole(StandardRoles.CAPTION);
             imgWithCaption.add(img);
@@ -268,14 +276,14 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
             document.add(imgWithCaption);
         });
-        framework.assertBothValid("imageWithCaption_OK", pdfUAConformance);
+        framework.assertBothValid("imageWithCaption_OK");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageWithCaptionWithoutAlternateDescription_Throws(PdfUAConformance pdfUAConformance)
+    public void imageWithCaptionWithoutAlternateDescription_Throws(PdfConformance pdfConformance)
             throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
 
@@ -287,7 +295,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             try {
                 caption.setFont(PdfFontFactory.createFont(FONT));
             } catch (IOException e) {
-                throw new RuntimeException(e.getMessage());
+                throw new PdfException(e.getMessage());
             }
             caption.getAccessibilityProperties().setRole(StandardRoles.CAPTION);
             imgWithCaption.add(img);
@@ -296,26 +304,35 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             // will not throw in layout but will throw on close this is expected
             document.add(imgWithCaption);
         });
-        framework.assertBothFail("imageWithCaptionWithoutAltDescr", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("imageWithCaptionWithoutAltDescr");
+        } else {
+            framework.assertBothFail("imageWithCaptionWithoutAltDescr",
+                    PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
+        }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageWithoutActualText_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageWithoutActualText_ThrowsInLayout(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDocument -> {
             Document document = new Document(pdfDocument);
             Image img = loadImage();
             img.getAccessibilityProperties().setActualText(null);
             document.add(img);
         });
-        framework.assertBothFail("imageWithoutActualText", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("imageWithoutActualText");
+        } else {
+            framework.assertBothFail("imageWithoutActualText", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
+        }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageWithEmptyActualText_ThrowsInLayout(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageWithEmptyActualText_ThrowsInLayout(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
 
@@ -324,13 +341,13 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             document.add(img);
 
         });
-        framework.assertBothValid("imageWithEmptyActualText", pdfUAConformance);
+        framework.assertBothValid("imageWithEmptyActualText");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageDirectlyOnCanvas_OK(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void imageDirectlyOnCanvas_OK(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             try {
                 Document document = new Document(pdfDoc);
@@ -358,18 +375,18 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
                 canvas.openTag(ttp.getTagReference());
                 canvas.addImageAt(ImageDataFactory.create(DOG), 200, 200, false);
                 canvas.closeTag();
-            } catch (MalformedURLException e){
-                throw new RuntimeException(e.getMessage());
+            } catch (MalformedURLException e) {
+                throw new PdfException(e.getMessage());
             }
         });
-        framework.assertBothValid("imageDirectlyOnCanvas", pdfUAConformance);
+        framework.assertBothValid("imageDirectlyOnCanvas");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageDirectlyOnCanvasWithoutAlternateDescription_ThrowsOnClose(PdfUAConformance pdfUAConformance)
+    public void imageDirectlyOnCanvasWithoutAlternateDescription_ThrowsOnClose(PdfConformance pdfConformance)
             throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
             PdfPage page = pdfDoc.addNewPage();
@@ -380,18 +397,22 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             try {
                 canvas.addImageAt(ImageDataFactory.create(DOG), 200, 200, false);
             } catch (MalformedURLException e) {
-                throw new RuntimeException(e.getMessage());
+                throw new PdfException(e.getMessage());
             }
             canvas.closeTag();
         });
-        framework.assertBothFail("canvasWithoutAltDescr", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("canvasWithoutAltDescr");
+        } else {
+            framework.assertBothFail("canvasWithoutAltDescr", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
+        }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void imageDirectlyOnCanvasWithEmptyActualText_OK(PdfUAConformance pdfUAConformance)
+    public void imageDirectlyOnCanvasWithEmptyActualText_OK(PdfConformance pdfConformance)
             throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             TagTreePointer pointerForImage = new TagTreePointer(pdfDoc);
             PdfPage page = pdfDoc.addNewPage();
@@ -403,48 +424,62 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             try {
                 canvas.addImageAt(ImageDataFactory.create(DOG), 200, 200, false);
             } catch (MalformedURLException e) {
-                throw new RuntimeException(e.getMessage());
+                throw new PdfException(e.getMessage());
             }
             canvas.closeTag();
         });
 
-        framework.assertBothValid("imageOnCanvasEmptyActualText",  pdfUAConformance);
+        framework.assertBothValid("imageOnCanvasEmptyActualText");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testOverflowImage(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void testOverflowImage(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Image img = loadImage();
             Document document = new Document(pdfDoc);
             document.add(new Div().setHeight(730).setBackgroundColor(ColorConstants.CYAN));
             document.add(img);
         });
-        framework.assertBothFail("overflowImage",  pdfUAConformance);
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("overflowImage");
+        } else {
+            framework.assertBothFail("overflowImage");
+        }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testEmbeddedImageInTable(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void testEmbeddedImageInTable(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Image img = loadImage();
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONT, EmbeddingStrategy.FORCE_EMBEDDED);
+            } catch (IOException e) {
+                throw new PdfException(e.getMessage());
+            }
             Document document = new Document(pdfDoc);
             Table table = new Table(2);
             for (int i = 0; i <= 20; i++) {
-                table.addCell(new Paragraph("Cell " + i));
+                table.addCell(new Paragraph("Cell " + i).setFont(font));
             }
             table.addCell(img);
             document.add(table);
         });
-        framework.assertBothFail("embeddedImageInTable", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("embeddedImageInTable");
+        } else {
+            framework.assertBothFail("embeddedImageInTable", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
+        }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testEmbeddedImageInDiv(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void testEmbeddedImageInDiv(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Image img = loadImage();
             Document document = new Document(pdfDoc);
@@ -452,13 +487,17 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             div.add(img);
             document.add(div);
         });
-        framework.assertBothFail("embeddedImageInDiv", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("embeddedImageInDiv");
+        } else {
+            framework.assertBothFail("embeddedImageInDiv", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
+        }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testEmbeddedImageInParagraph(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void testEmbeddedImageInParagraph(PdfConformance pdfConformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, pdfConformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Image img = loadImage();
             Document document = new Document(pdfDoc);
@@ -466,14 +505,18 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             paragraph.add(img);
             document.add(paragraph);
         });
-        framework.assertBothFail("embeddedImageInParagraph", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT, pdfUAConformance);
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+            framework.assertBothValid("embeddedImageInParagraph");
+        } else {
+            framework.assertBothFail("embeddedImageInParagraph", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
+        }
     }
 
     private static Image loadImage() {
         try {
             return new Image(ImageDataFactory.create(DOG));
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PdfException(e.getMessage());
         }
     }
 }

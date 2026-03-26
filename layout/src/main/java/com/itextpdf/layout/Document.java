@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -298,7 +298,7 @@ public class Document extends RootElement<Document> {
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
             case Property.FONT:
-                if (getPdfDocument().getConformance().isPdfAOrUa()) {
+                if (getPdfDocument().getConformance() != null && getPdfDocument().getConformance().conformsToAny()) {
                     return (T1) (Object) getPdfDocument().getDefaultFont();
                 }
                 return super.<T1>getDefaultProperty(property);

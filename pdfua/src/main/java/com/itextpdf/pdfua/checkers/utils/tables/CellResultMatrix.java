@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -44,8 +44,8 @@ final class CellResultMatrix extends AbstractResultMatrix<Cell> {
     /**
      * Creates a new {@link CellResultMatrix} instance.
      *
-     * @param table   The table that needs to be checked.
-     * @param context The validation context.
+     * @param table   The table that needs to be checked
+     * @param context The validation context
      */
     public CellResultMatrix(Table table, PdfUAValidationContext context) {
         super(new TableCellIterator(table, context), context.getUAConformance());

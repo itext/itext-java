@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,7 +33,7 @@ import org.opentest4j.AssertionFailedError;
 class AssertUtilTest extends ExtendedITextTest{
 
     @Test
-    void assertPassedWithinTimeoutTestKeepsFailing() throws InterruptedException {
+    void assertPassedWithinTimeoutTestKeepsFailing() {
         AtomicInteger callCount = new AtomicInteger();
         Assertions.assertThrows(AssertionFailedError.class, () ->
         AssertUtil.assertPassedWithinTimeout(()->{
@@ -46,7 +46,7 @@ class AssertUtilTest extends ExtendedITextTest{
 
 
     @Test
-    void assertPassedWithinTimeoutTestFailsFirstTime() throws InterruptedException {
+    void assertPassedWithinTimeoutTestFailsFirstTime() {
         AtomicInteger callCount = new AtomicInteger();
         Assertions.assertDoesNotThrow(() ->
                 AssertUtil.assertPassedWithinTimeout(()->{
@@ -59,7 +59,7 @@ class AssertUtilTest extends ExtendedITextTest{
     }
 
     @Test
-    void assertPassedWithinTimeoutTestFailsFirstTimes() throws InterruptedException {
+    void assertPassedWithinTimeoutTestFailsFirstTimes() {
         AtomicInteger callCount = new AtomicInteger();
         Assertions.assertDoesNotThrow(() ->
                 AssertUtil.assertPassedWithinTimeout(()->{
@@ -67,6 +67,19 @@ class AssertUtilTest extends ExtendedITextTest{
                         Assertions.fail();
                     }
                 }, Duration.ofMillis(500)));
+
+        Assertions.assertTrue(callCount.get() > 1);
+    }
+
+    @Test
+    void assertPassedWithinRandomTimeoutTestFailsFirstTimes() {
+        AtomicInteger callCount = new AtomicInteger();
+        Assertions.assertDoesNotThrow(() ->
+                AssertUtil.assertPassedWithinRandomTimeout(()->{
+                    if (callCount.getAndIncrement() < 2) {
+                        Assertions.fail();
+                    }
+                }, Duration.ofMillis(500), Duration.ofMillis(100)));
 
         Assertions.assertTrue(callCount.get() > 1);
     }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,8 +26,10 @@ import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.css.selector.item.CssPagePseudoClassSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssPageTypeSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem;
+import com.itextpdf.styledxmlparser.node.INode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,10 +38,11 @@ import java.util.regex.Pattern;
  * Utilities class to parse CSS page selectors.
  */
 public final class CssPageSelectorParser {
-    
+
     /** The pattern string for page selectors. */
     private static final String PAGE_SELECTOR_PATTERN_STR =
             "(^-?[_a-zA-Z][\\w-]*)|(:(?i)(left|right|first|blank))";
+    private static final Pattern WHITESPACE_ONLY_OR_EMPTY_REGEX = Pattern.compile("\\s*");
 
     /** The pattern for page selectors. */
     private static final Pattern selectorPattern = Pattern.compile(PAGE_SELECTOR_PATTERN_STR);
@@ -53,7 +56,12 @@ public final class CssPageSelectorParser {
     public static List<ICssSelectorItem> parseSelectorItems(String selectorItemsStr) {
         List<ICssSelectorItem> selectorItems = new ArrayList<>();
         Matcher itemMatcher = selectorPattern.matcher(selectorItemsStr);
+        int previousEnd = 0;
         while (itemMatcher.find()) {
+            String betweenLastAndCurrentMatches = selectorItemsStr.substring(previousEnd, itemMatcher.start());
+            if (!WHITESPACE_ONLY_OR_EMPTY_REGEX.matcher(betweenLastAndCurrentMatches).matches()) {
+                return Collections.<ICssSelectorItem>singletonList(new NeverMatchSelectorItem());
+            }
             String selectorItem = itemMatcher.group(0);
             if (selectorItem.charAt(0) == ':') {
                 selectorItems.add(new CssPagePseudoClassSelectorItem(
@@ -61,7 +69,29 @@ public final class CssPageSelectorParser {
             } else {
                 selectorItems.add(new CssPageTypeSelectorItem(selectorItem));
             }
+            previousEnd = itemMatcher.end();
+        }
+        String afterLastMatch = selectorItemsStr.substring(previousEnd);
+        if (!WHITESPACE_ONLY_OR_EMPTY_REGEX.matcher(afterLastMatch).matches()) {
+            return Collections.<ICssSelectorItem>singletonList(new NeverMatchSelectorItem());
         }
         return selectorItems;
+    }
+
+    static class NeverMatchSelectorItem implements ICssSelectorItem {
+
+        public NeverMatchSelectorItem() {
+            // Empty constructor
+        }
+
+        @Override
+        public boolean matches(INode node) {
+            return false;
+        }
+
+        @Override
+        public int getSpecificity() {
+            return 0;
+        }
     }
 }

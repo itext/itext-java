@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -56,7 +56,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     static final String OC_CONFIG_NAME_PATTERN = "OCConfigName";
 
-    private List<PdfLayer> layers = new ArrayList<>();
+    private final List<PdfLayer> layers = new ArrayList<>();
 
     /**
      * Creates a new PdfOCProperties instance.
@@ -94,7 +94,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             if (layer.getTitle() == null)
                 ar.add(layer.getPdfObject().getIndirectReference());
         }
-        if (ar.size() != 0) {
+        if (!ar.isEmpty()) {
             PdfDictionary d = getPdfObject().getAsDictionary(PdfName.D);
             if (d == null) {
                 d = new PdfDictionary();
@@ -168,20 +168,19 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         }
 
         PdfArray order = new PdfArray();
-        for (Object element : docOrder) {
-            PdfLayer layer = (PdfLayer) element;
-            getOCGOrder(order, layer);
+        for (PdfLayer element : docOrder) {
+            getOCGOrder(order, element);
         }
         filledDDictionary.put(PdfName.Order, order);
 
         PdfArray off = new PdfArray();
-        for (Object element : layers) {
-            PdfLayer layer = (PdfLayer) element;
-            if (layer.getTitle() == null && !layer.isOn())
-                off.add(layer.getIndirectReference());
+        for (PdfLayer element : layers) {
+            if (element.getTitle() == null && !element.isOn()) {
+                off.add(element.getIndirectReference());
+            }
         }
 
-        if (off.size() > 0) {
+        if (!off.isEmpty()) {
             filledDDictionary.put(PdfName.OFF, off);
         }
 
@@ -190,7 +189,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
             if (layer.getTitle() == null && layer.isLocked())
                 locked.add(layer.getIndirectReference());
         }
-        if (locked.size() > 0) {
+        if (!locked.isEmpty()) {
             filledDDictionary.put(PdfName.Locked, locked);
         }
 
@@ -220,10 +219,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         if (PdfName.BaseState.equals(field) && !PdfName.ON.equals(value)) {
             return false;
             //for dictionary D Intent should have the value View
-        } else if (PdfName.Intent.equals(field) && !PdfName.View.equals(value)) {
-            return false;
+        } else {
+            return !PdfName.Intent.equals(field) || PdfName.View.equals(value);
         }
-        return true;
     }
 
     @Override
@@ -287,8 +285,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         for (PdfLayer child : children) {
             getOCGOrder(kids, child);
         }
-        if (kids.size() > 0)
+        if (!kids.isEmpty()) {
             order.add(kids);
+        }
     }
 
     private static void copyDDictionaryField(PdfName fieldToAdd, PdfDictionary fromDictionary, PdfDictionary toDictionary) {
@@ -345,7 +344,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
                     arr.add(layer.getPdfObject().getIndirectReference());
             }
         }
-        if (arr.size() == 0)
+        if (arr.isEmpty())
             return;
         PdfDictionary d = getPdfObject().getAsDictionary(PdfName.D);
         PdfArray arras = d.getAsArray(PdfName.AS);
@@ -370,7 +369,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         if (ocgs == null || ocgs.isEmpty())
             return;
 
-        Map<PdfIndirectReference, PdfLayer> layerMap = new TreeMap<PdfIndirectReference, PdfLayer>();
+        Map<PdfIndirectReference, PdfLayer> layerMap = new TreeMap<>();
         for (int ind = 0; ind < ocgs.size(); ind++) {
             PdfLayer currentLayer = new PdfLayer((PdfDictionary) ocgs.getAsDictionary(ind).makeIndirect(getDocument()));
             // We will set onPanel to true later for the objects present in /D->/Order entry.
@@ -443,7 +442,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
                     parent.addChild(layer);
                 if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.ARRAY) {
                     final PdfArray nextArray = orderArray.getAsArray(i + 1);
-                    if (nextArray.size() > 0 && nextArray.get(0).getType() != PdfObject.STRING) {
+                    if (!nextArray.isEmpty() && nextArray.get(0).getType() != PdfObject.STRING) {
                         readOrderFromDictionary(layer, orderArray.getAsArray(i + 1), layerMap, layerReferences,
                                 titleLayers);
                         i++;

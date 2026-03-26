@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -303,7 +303,16 @@ public final class ClipperBridge {
      */
     public boolean addPolygonToClipper(IClipper clipper, com.itextpdf.kernel.geom.Point[] polyVertices,
                                        IClipper.PolyType polyType) {
-        return clipper.addPath(new Path(convertToLongPoints(new ArrayList<>(Arrays.asList(polyVertices)))), polyType, true);
+        List<Point.LongPoint> convertedPoints = new ArrayList<>(polyVertices.length);
+
+        for (com.itextpdf.kernel.geom.Point point : polyVertices) {
+            convertedPoints.add(new Point.LongPoint(
+                    getFloatMultiplier() * point.getX(),
+                    getFloatMultiplier() * point.getY()
+            ));
+        }
+
+        return clipper.addPath(new Path(convertedPoints), polyType, true);
     }
 
     /**

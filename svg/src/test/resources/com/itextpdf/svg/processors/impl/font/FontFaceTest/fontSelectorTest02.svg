@@ -2,7 +2,7 @@
     <style>
         @font-face {
           font-family: 'Amaranth Woff Test';
-          src: url('../fonts/Amaranth-Regular.woff') format('woff');
+          src: url('../../../../fonts/Amaranth-Regular.woff') format('woff');
         }
     </style >
     <text x="20" y="200" font-family="Amaranth Woff Test" font-size="20" font-style="italic">Amaranth</text>

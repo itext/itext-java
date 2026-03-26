@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -53,8 +53,15 @@ public final class ProductNameConstant {
     public static final String PDF_OCR_TESSERACT4 = "pdfOcr-tesseract4";
     /**
      * pdfocr-onnxtr constant.
+     *
+     * @deprecated in favour of {@link #PDF_OCR_ONNX}
      */
+    @Deprecated
     public static final String PDF_OCR_ONNXTR = "pdfOcr-onnxtr";
+    /**
+     * pdfocr-onnx constant.
+     */
+    public static final String PDF_OCR_ONNX = "pdfOcr-onnx";
 
     /**
      * set of product names.
@@ -65,7 +72,7 @@ public final class ProductNameConstant {
                     ProductNameConstant.PDF_HTML,
                     ProductNameConstant.PDF_SWEEP,
                     ProductNameConstant.PDF_OCR_TESSERACT4,
-                    ProductNameConstant.PDF_OCR_ONNXTR
+                    ProductNameConstant.PDF_OCR_ONNX
             )));
 
     private ProductNameConstant() {}

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -28,10 +28,15 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PadesTwoPhaseSigningHelper;
+import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.cms.CMSContainer;
@@ -50,6 +55,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -114,17 +120,17 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
     public static Iterable<Object[]> createParameters() {
         return Arrays.asList(
-                new Object[] {true, DigestAlgorithms.SHA256, "RSA", 1},
-                new Object[] {false, DigestAlgorithms.SHA256, "RSASSA", 2},
-                new Object[] {false, DigestAlgorithms.SHAKE256, "ED448", 3},
-                new Object[] {false, DigestAlgorithms.SHA3_384, "RSA", 4});
+                new Object[]{true, DigestAlgorithms.SHA256, "RSA", 1},
+                new Object[]{false, DigestAlgorithms.SHA256, "RSASSA", 2},
+                new Object[]{false, DigestAlgorithms.SHAKE256, "ED448", 3},
+                new Object[]{false, DigestAlgorithms.SHA3_384, "RSA", 4});
     }
 
     @ParameterizedTest(name = "{3}: folder path: {0}; digest algorithm: {1}; signature algorithm: {2}")
     @MethodSource("createParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineBTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
-            Integer comparisonPdfId) throws Exception {
+                                            Integer comparisonPdfId) throws Exception {
         String fileName = "twoStepSigningBaselineBTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
@@ -134,11 +140,11 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
-        Certificate[] certChain = new X509Certificate[] {signCert, rootCert};
+        Certificate[] certChain = new X509Certificate[]{signCert, rootCert};
         PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
 
         PadesTwoPhaseSigningHelper twoPhaseSigningHelper = new PadesTwoPhaseSigningHelper();
-        
+
         if ((boolean) useTempFolder) {
             twoPhaseSigningHelper.setTemporaryDirectoryPath(destinationFolder);
         }
@@ -153,7 +159,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
             } else {
                 externalSignature = new PrivateKeySignature(signPrivateKey, digestAlgorithm, FACTORY.getProviderName());
             }
-            
+
             twoPhaseSigningHelper.signCMSContainerWithBaselineBProfile(externalSignature,
                     new PdfReader(new ByteArrayInputStream(preparedDoc.toByteArray())),
                     FileUtil.getFileOutputStream(outFileName), "Signature1", container);
@@ -166,7 +172,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     @MethodSource("createParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
-            Integer comparisonPdfId) throws Exception {
+                                            Integer comparisonPdfId) throws Exception {
         String fileName = "twoStepSigningBaselineTTest" + comparisonPdfId + ".pdf";
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
@@ -177,7 +183,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
-        Certificate[] certChain = new X509Certificate[] {signCert, rootCert};
+        Certificate[] certChain = new X509Certificate[]{signCert, rootCert};
         PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, PASSWORD);
@@ -213,7 +219,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     @MethodSource("createParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineLTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
-            Integer comparisonPdfId) throws Exception {
+                                             Integer comparisonPdfId) throws Exception {
         String fileName = "twoStepSigningBaselineLTTest" + comparisonPdfId +
                 (FIPS_MODE && ("RSASSA".equals(signAlgorithm) || "ED448".equals(signAlgorithm)) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
@@ -226,7 +232,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
-        Certificate[] certChain = new X509Certificate[] {signCert, rootCert};
+        Certificate[] certChain = new X509Certificate[]{signCert, rootCert};
         PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, PASSWORD);
@@ -269,7 +275,7 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     @MethodSource("createParameters")
     // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
     public void twoStepSigningBaselineLTATest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
-            Integer comparisonPdfId) throws Exception {
+                                              Integer comparisonPdfId) throws Exception {
         String fileName = "twoStepSigningBaselineLTATest" + comparisonPdfId +
                 (FIPS_MODE && ("RSASSA".equals(signAlgorithm) || "ED448".equals(signAlgorithm)) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
@@ -277,12 +283,72 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
         String signCertFileName = certsSrc + getSignCertName(signAlgorithm);
         String tsaCertFileName = certsSrc + "tsCertRsa.pem";
-        String caCertFileName = certsSrc + "rootRsa.pem";;
+        String caCertFileName = certsSrc + "rootRsa.pem";
         String rootCertFileName = certsSrc + getRootCertName(signAlgorithm);
 
+        executeTwoStepSigning(signCertFileName, rootCertFileName, tsaCertFileName, caCertFileName, digestAlgorithm,
+                signAlgorithm, srcFileName, outFileName, useTempFolder);
+
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
+        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+    }
+
+    public static Iterable<Object[]> createSignatureCreatorParameters() {
+        return Arrays.asList(
+                new Object[]{null},
+                new Object[]{"Custom Signature creator"});
+    }
+
+    @ParameterizedTest(name = "signature creator : {0}")
+    @MethodSource("createSignatureCreatorParameters")
+    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    public void twoStepSigningSignatureCreatorTest(String signatureCreator) throws Exception {
+        String signAlgorithm = "RSA";
+        String digestAlgorithm = DigestAlgorithms.SHA256;
+        String fileName = "twoStepSigningBaselineLTATest"
+                + (signatureCreator == null ? "NoSignatureCreator" : "CustomSignatureCreator") + ".pdf";
+        String outFileName = destinationFolder + fileName;
+        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
+        String signCertFileName = certsSrc + getSignCertName(signAlgorithm);
+        String tsaCertFileName = certsSrc + "tsCertRsa.pem";
+        String caCertFileName = certsSrc + "rootRsa.pem";
+        String rootCertFileName = certsSrc + getRootCertName(signAlgorithm);
+
+        executeTwoStepSigning(signCertFileName, rootCertFileName, tsaCertFileName, caCertFileName, digestAlgorithm,
+                signAlgorithm, srcFileName, outFileName,  false, signatureCreator);
+
+        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
+        SignatureUtil signatureUtil = new SignatureUtil(new PdfDocument(new PdfReader(outFileName)));
+        String actualTimeStampCreator = getSignatureCreator(signatureUtil.getSignature("timestampSig1"));
+        Assertions.assertEquals("", actualTimeStampCreator);
+        String actualSignatureCreator = getSignatureCreator(signatureUtil.getSignature("Signature1"));
+        if (signatureCreator == null) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PdfDocument doc = new PdfDocument(new PdfWriter(outputStream));
+            doc.addNewPage();
+            doc.close();
+            try (PdfDocument regularPdf = new PdfDocument(new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())))) {
+                Assertions.assertEquals(regularPdf.getDocumentInfo().getProducer(), actualSignatureCreator);
+            }
+        } else {
+            Assertions.assertEquals(signatureCreator, actualSignatureCreator);
+        }
+    }
+
+    private void executeTwoStepSigning(String signCertFileName, String rootCertFileName, String tsaCertFileName,
+                                       String caCertFileName, String digestAlgorithm, String signAlgorithm,
+                                       String srcFileName, String outFileName, Boolean useTempFolder) throws Exception {
+        executeTwoStepSigning(signCertFileName, rootCertFileName, tsaCertFileName, caCertFileName, digestAlgorithm,
+                signAlgorithm, srcFileName, outFileName, useTempFolder, null);
+    }
+
+    private void executeTwoStepSigning(String signCertFileName, String rootCertFileName, String tsaCertFileName,
+                                       String caCertFileName, String digestAlgorithm, String signAlgorithm,
+                                       String srcFileName, String outFileName, Boolean useTempFolder,
+                                       String signatureCreator) throws Exception {
         X509Certificate signCert = (X509Certificate) PemFileHelper.readFirstChain(signCertFileName)[0];
         X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(rootCertFileName)[0];
-        Certificate[] certChain = new X509Certificate[] {signCert, rootCert};
+        Certificate[] certChain = new X509Certificate[]{signCert, rootCert};
         PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, PASSWORD);
         Certificate[] tsaChain = PemFileHelper.readFirstChain(tsaCertFileName);
         PrivateKey tsaPrivateKey = PemFileHelper.readFirstKey(tsaCertFileName, PASSWORD);
@@ -299,26 +365,38 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
 
         twoPhaseSigningHelper.setCrlClient(crlClient).setOcspClient(ocspClient).setTSAClient(testTsa)
                 .setTimestampSignatureName("timestampSig1");
-        if ((boolean) useTempFolder) {
+
+        twoPhaseSigningHelper.setTemporaryDirectoryPath(destinationFolder);
+        SignerProperties prop = new SignerProperties();
+        if (signatureCreator != null) {
+            prop.setSignatureCreator(signatureCreator);
+        }
+
+        if (useTempFolder) {
             twoPhaseSigningHelper.setTemporaryDirectoryPath(destinationFolder);
         }
-        
+
         try (ByteArrayOutputStream preparedDoc = new ByteArrayOutputStream()) {
             CMSContainer container = twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain,
-                    digestAlgorithm, new PdfReader(srcFileName), preparedDoc, createSignerProperties());
+                    digestAlgorithm, new PdfReader(srcFileName), preparedDoc, prop);
 
             IExternalSignature externalSignature;
             if ("RSASSA".equals(signAlgorithm)) {
-                externalSignature = new PrivateKeySignature(signPrivateKey, digestAlgorithm, "RSASSA-PSS", FACTORY.getProviderName(), null);
+                externalSignature = new PrivateKeySignature(signPrivateKey, digestAlgorithm, "RSASSA-PSS",
+                        FACTORY.getProviderName(), null);
             } else {
                 externalSignature = new PrivateKeySignature(signPrivateKey, digestAlgorithm, FACTORY.getProviderName());
             }
+
             twoPhaseSigningHelper.signCMSContainerWithBaselineLTAProfile(externalSignature,
                     new PdfReader(new ByteArrayInputStream(preparedDoc.toByteArray())),
                     FileUtil.getFileOutputStream(outFileName), "Signature1", container);
         }
-        TestSignUtils.basicCheckSignedDoc(outFileName, "Signature1");
-        Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
+    }
+
+    private String getSignatureCreator(PdfSignature signature) {
+        return signature.getPdfObject().getAsDictionary(PdfName.Prop_Build).getAsDictionary(PdfName.App)
+                .getAsName(PdfName.Name).getValue();
     }
 
     private SignerProperties createSignerProperties() {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -382,5 +382,14 @@ public class AffineTransformTest extends ExtendedITextTest {
         affineTransform.inverseTransform(src, 1, dest, 1, 2);
 
         Assertions.assertArrayEquals(expected, dest, 0);
+    }
+
+    @Test
+    public void getMatrixNoArgumentTest() {
+        float[] expected = new float[]{0f, 1f, 2f, 3f, 4f, 5f};
+        AffineTransform affineTransform = new AffineTransform(expected);
+        float[] result = affineTransform.getMatrix();
+
+        Assertions.assertArrayEquals(expected, result, 0);
     }
 }

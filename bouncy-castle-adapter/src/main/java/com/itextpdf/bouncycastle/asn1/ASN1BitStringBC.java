@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -62,5 +62,13 @@ public class ASN1BitStringBC extends ASN1PrimitiveBC implements IASN1BitString {
     @Override
     public int intValue() {
         return getASN1BitString().intValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getBytes() {
+        return getASN1BitString().getBytes();
     }
 }

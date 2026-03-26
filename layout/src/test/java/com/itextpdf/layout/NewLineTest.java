@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -83,7 +83,31 @@ public class NewLineTest extends ExtendedITextTest {
         test("\r\n\r\n", "rnrn.pdf");
     }
 
+    @Test
+    public void dotAfterNTest() throws IOException, InterruptedException {
+        test("\n", "0123", ".com", "ndot.pdf");
+    }
+
+    @Test
+    public void dotAfterRNTest() throws IOException, InterruptedException {
+        test("\r\n", "0123", ".com", "rndot.pdf");
+    }
+
+    @Test
+    public void dotAfterNRTest() throws IOException, InterruptedException {
+        test("\n\r", "0123", ".com", "nrdot.pdf");
+    }
+
+    @Test
+    public void dotAfterRTest() throws IOException, InterruptedException {
+        test("\r", "0123", ".com", "rdot.pdf");
+    }
+
     private void test(String newlineCharacters, String fileName) throws IOException, InterruptedException {
+        test(newlineCharacters, "This line is before.", "This line is after.", fileName);
+    }
+
+    private void test(String newlineCharacters, String pre, String post, String fileName) throws IOException, InterruptedException {
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
         String diffPrefix = "diff_" + fileName + "_";
@@ -92,9 +116,8 @@ public class NewLineTest extends ExtendedITextTest {
                 new WriterProperties().setCompressionLevel(0)));
         Document document = new Document(pdf);
 
-        Paragraph paragraph = new Paragraph().add(
-                "This line is before." + newlineCharacters + "This line is after.");
-                
+        Paragraph paragraph = new Paragraph().add(new StringBuilder(pre).append(newlineCharacters).append(post).toString());
+
         document.add(paragraph);
         document.close();
 

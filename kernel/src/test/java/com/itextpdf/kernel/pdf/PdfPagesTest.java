@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -34,6 +34,8 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.layer.PdfLayer;
+import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -772,9 +774,190 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assertions.assertEquals(1,
                 pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
 
-        // TODO DEVSIX-5575 remove expected exception and add proper assertions
-        Assertions.assertThrows(NullPointerException.class, () -> pdfDocument.close());
+        AssertUtil.doesNotThrow(() -> pdfDocument.close());
     }
+
+    @Test
+    public void layerOnAndOffStateTest() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfPage page = pdfDocument.addNewPage();
+
+        // Create a layer that is ON
+        PdfLayer layerOn = new PdfLayer("LayerOn", pdfDocument);
+        layerOn.setOn(true);
+
+        // Create a layer that is OFF
+        PdfLayer layerOff = new PdfLayer("LayerOff", pdfDocument);
+        layerOff.setOn(false);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Add content to the ON layer
+        canvas.beginLayer(layerOn);
+        canvas.setFillColor(ColorConstants.RED);
+        canvas.rectangle(100, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        // Add content to the OFF layer
+        canvas.beginLayer(layerOff);
+        canvas.setFillColor(ColorConstants.BLUE);
+        canvas.rectangle(350, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        // Verify layer states before closing
+        Assertions.assertTrue(layerOn.isOn(), "LayerOn should be ON");
+        Assertions.assertFalse(layerOff.isOn(), "LayerOff should be OFF");
+
+        pdfDocument.close();
+    }
+
+    @Test
+    public void layerPropertiesPersistenceTest() throws IOException {
+        String filename = DESTINATION_FOLDER + "layerPropertiesPersistence.pdf";
+
+        // Create document with layers
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = pdfDocument.addNewPage();
+
+        // Create a layer that is ON
+        PdfLayer layerOn = new PdfLayer("LayerOn", pdfDocument);
+        layerOn.setOn(true);
+        layerOn.setOnPanel(true);
+        layerOn.setLocked(true);
+
+        PdfLayer childLayer = new PdfLayer("ChildLayer", pdfDocument);
+        childLayer.setOn(false);
+        layerOn.addChild(childLayer);
+
+        // Create a layer that is OFF
+        PdfLayer layerOff = new PdfLayer("LayerOff", pdfDocument);
+        layerOff.setOn(false);
+        layerOff.setOnPanel(false);
+        layerOff.setLocked(true);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Add content to the ON layer
+        canvas.beginLayer(layerOn);
+        canvas.setFillColor(ColorConstants.RED);
+        canvas.rectangle(100, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        // Add content to the OFF layer
+        canvas.beginLayer(layerOff);
+        canvas.setFillColor(ColorConstants.BLUE);
+        canvas.rectangle(350, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        pdfDocument.close();
+
+        // Reopen the document and verify layer states are persisted
+        PdfDocument reopenedDoc = new PdfDocument(new PdfReader(filename));
+
+        Assertions.assertEquals(2, reopenedDoc.getPage(1).getPdfLayers().size());
+
+        // Find the layers by name and verify their states
+        PdfLayer reopenedLayerOn = null;
+        PdfLayer reopenedLayerOff = null;
+
+        for (PdfLayer layer : reopenedDoc.getPage(1).getPdfLayers()) {
+            String layerName = layer.getPdfObject().getAsString(PdfName.Name).getValue();
+            if ("LayerOn".equals(layerName)) {
+                reopenedLayerOn = layer;
+            } else if ("LayerOff".equals(layerName)) {
+                reopenedLayerOff = layer;
+            }
+        }
+
+        Assertions.assertNotNull(reopenedLayerOn, "LayerOn should exist after reopening");
+        Assertions.assertNotNull(reopenedLayerOff, "LayerOff should exist after reopening");
+
+        Assertions.assertTrue(reopenedLayerOn.isOn());
+        Assertions.assertTrue(reopenedLayerOn.isOnPanel());
+        Assertions.assertTrue(reopenedLayerOn.isLocked());
+        Assertions.assertEquals(1, reopenedLayerOn.getChildren().size());
+        Assertions.assertFalse(reopenedLayerOn.getChildren().get(0).isOn());
+
+        Assertions.assertFalse(reopenedLayerOff.isOn());
+        Assertions.assertFalse(reopenedLayerOff.isOnPanel());
+        Assertions.assertTrue(reopenedLayerOff.isLocked());
+
+        reopenedDoc.close();
+    }
+
+    @Test
+    public void layerOnAndOffStatePersistenceViaOCPropertiesTest() throws IOException {
+        String filename = DESTINATION_FOLDER + "layerStatePersistenceViaOCProperties.pdf";
+
+        // Create document with layers
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = pdfDocument.addNewPage();
+
+        // Create a layer that is ON
+        PdfLayer layerOn = new PdfLayer("LayerOn", pdfDocument);
+        layerOn.setOn(true);
+
+        // Create a layer that is OFF
+        PdfLayer layerOff = new PdfLayer("LayerOff", pdfDocument);
+        layerOff.setOn(false);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        // Add content to the ON layer
+        canvas.beginLayer(layerOn);
+        canvas.setFillColor(ColorConstants.RED);
+        canvas.rectangle(100, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        // Add content to the OFF layer
+        canvas.beginLayer(layerOff);
+        canvas.setFillColor(ColorConstants.BLUE);
+        canvas.rectangle(350, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        // Verify layer states before closing
+        Assertions.assertTrue(layerOn.isOn(), "LayerOn should be ON before close");
+        Assertions.assertFalse(layerOff.isOn(), "LayerOff should be OFF before close");
+
+        pdfDocument.close();
+
+        // Reopen the document and verify layer states are persisted via OCProperties
+        PdfDocument reopenedDoc = new PdfDocument(new PdfReader(filename));
+
+        PdfOCProperties ocProperties = reopenedDoc.getCatalog().getOCProperties(false);
+        Assertions.assertNotNull(ocProperties, "OCProperties should exist after reopening");
+
+        List<PdfLayer> layers = ocProperties.getLayers();
+        Assertions.assertEquals(2, layers.size(), "Should have 2 layers");
+
+        // Find the layers by name and verify their states
+        PdfLayer reopenedLayerOn = null;
+        PdfLayer reopenedLayerOff = null;
+
+        for (PdfLayer layer : layers) {
+            String layerName = layer.getPdfObject().getAsString(PdfName.Name).getValue();
+            if ("LayerOn".equals(layerName)) {
+                reopenedLayerOn = layer;
+            } else if ("LayerOff".equals(layerName)) {
+                reopenedLayerOff = layer;
+            }
+        }
+
+        Assertions.assertNotNull(reopenedLayerOn, "LayerOn should be found after reopening");
+        Assertions.assertNotNull(reopenedLayerOff, "LayerOff should be found after reopening");
+
+        Assertions.assertTrue(reopenedLayerOn.isOn(), "LayerOn should still be ON after reopening");
+        Assertions.assertFalse(reopenedLayerOff.isOn(), "LayerOff should still be OFF after reopening");
+
+        reopenedDoc.close();
+    }
+
 
     private static void findAndAssertNullPages(PdfDocument pdfDocument, Set<Integer> nullPages) {
         for (Integer nullPage : nullPages) {
@@ -832,7 +1015,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         }
     }
 
-    private class CustomPdfReader extends PdfReader {
+    private static class CustomPdfReader extends PdfReader {
 
         public boolean pagesAreRead = false;
 

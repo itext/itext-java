@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -85,12 +85,24 @@ public abstract class PdfColorSpace extends PdfObjectWrapper<PdfObject> {
     }
 
     /**
-     * Returns the {@link PdfName} of the namespace
+     * Returns the {@link PdfName} of the colorspace
      *
-     * @return the PdfName of the namespace
+     * @return the PdfName of the colorspace
      */
-    public PdfName getName() {
+    public PdfName getColorspaceName() {
         return new PdfName(this.getClass().getSimpleName());
     }
 
+    /**
+     * Returns the {@link PdfName} of the colorspace or in case separation color spaces
+     * the separation color name.
+     *
+     * @return the PdfName of the namespace
+     *
+     * @deprecated in favour of {@link #getColorspaceName}
+     */
+    @Deprecated
+    public PdfName getName() {
+        return getColorspaceName();
+    }
 }

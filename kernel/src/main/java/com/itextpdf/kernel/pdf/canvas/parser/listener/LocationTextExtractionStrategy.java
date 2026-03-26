@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -57,6 +57,10 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
 
     private TextRenderInfo lastTextRenderInfo;
 
+    private String outputChunkSeparator = " ";
+
+    private String outputNewline = "\n";
+
     /**
      * Creates a new text extraction renderer.
      */
@@ -98,6 +102,30 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
      */
     public LocationTextExtractionStrategy setRightToLeftRunDirection(boolean rightToLeftRunDirection) {
         this.rightToLeftRunDirection = rightToLeftRunDirection;
+        return this;
+    }
+
+    /**
+     * Sets the string value used to separate chunks when formatting output.
+     *
+     * @param outputChunkSeparator the string that will be used as a separator between chunks. Must not be {@code null}
+     *
+     * @return this object
+     */
+    public LocationTextExtractionStrategy setOutputChunkSeparator(String outputChunkSeparator) {
+        this.outputChunkSeparator = outputChunkSeparator;
+        return this;
+    }
+
+    /**
+     * Sets the string value used to separate lines when formatting output.
+     *
+     * @param outputNewline the string that will be used to represent a new line. Must not be {@code null}
+     *
+     * @return this object
+     */
+    public LocationTextExtractionStrategy setOutputNewline(String outputNewline) {
+        this.outputNewline = outputNewline;
         return this;
     }
 
@@ -174,12 +202,12 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
                 if (chunk.sameLine(lastChunk)) {
                     // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
                     if (isChunkAtWordBoundary(chunk, lastChunk) && !startsWithSpace(chunk.text) && !endsWithSpace(lastChunk.text)) {
-                        sb.append(' ');
+                        sb.append(outputChunkSeparator);
                     }
 
                     sb.append(chunk.text);
                 } else {
-                    sb.append('\n');
+                    sb.append(outputNewline);
                     sb.append(chunk.text);
                 }
             }

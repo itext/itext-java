@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -59,7 +59,7 @@ public class DestinationResolverCopyFilter implements ICopyFilter {
         if (workRef.getType() == PdfObject.DICTIONARY) {
             final PdfDictionary dict = (PdfDictionary) workRef;
             // a goto action
-            if (dict.getAsName(PdfName.S) == PdfName.GoTo) {
+            if (PdfName.GoTo.equals(dict.getAsName(PdfName.S))) {
                 processAction(newParent, name, dict);
                 return false;
             }

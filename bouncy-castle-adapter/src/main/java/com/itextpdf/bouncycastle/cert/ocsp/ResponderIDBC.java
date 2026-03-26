@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -49,6 +49,14 @@ public class ResponderIDBC implements IResponderID {
     @Override
     public IX500Name getName() {
         return new X500NameBC(responderID.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getKeyHash() {
+        return responderID.getKeyHash();
     }
 
     /**

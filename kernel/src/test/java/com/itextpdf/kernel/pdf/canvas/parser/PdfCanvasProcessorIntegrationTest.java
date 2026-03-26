@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,9 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Matrix;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -137,7 +135,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX, count = 1))
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX, count = 1))
     public void testNoninvertibleMatrix() throws IOException {
         String fileName = "noninvertibleMatrix.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName));
@@ -163,26 +161,6 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             PdfPage page = pdfDocument.getFirstPage();
 
             Assertions.assertThrows(StackOverflowError.class, () -> processor.processPageContent(page));
-        }
-    }
-
-    @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE))
-    public void patternColorParsingNotValidPdfTest() throws IOException {
-        String inputFile = SOURCE_FOLDER + "patternColorParsingNotValidPdfTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFile));
-
-        for (int i = 1; i <= pdfDocument.getNumberOfPages(); ++i) {
-            PdfPage page = pdfDocument.getPage(i);
-
-            ColorParsingEventListener colorParsingEventListener = new ColorParsingEventListener();
-
-            PdfCanvasProcessor processor = new PdfCanvasProcessor(colorParsingEventListener);
-            processor.processPageContent(page);
-
-            Color renderInfo = colorParsingEventListener.getEncounteredPath().getFillColor();
-
-            Assertions.assertNull(renderInfo);
         }
     }
 
@@ -254,6 +232,85 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
         parser.processContent(document.getPage(1).getContentBytes(), document.getPage(1).getResources());
         Assertions.assertEquals(listener.getResultantText(), "test 1\ntest 2");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS)
+    })
+    public void smallerNumberOfOperandsTmTest() throws IOException {
+        SimpleTextExtractionStrategy listener = new SimpleTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "smallerNumberOfOperandsTm.pdf")))) {
+            parser.processPageContent(pdfDocument.getPage(1));
+        }
+        Assertions.assertEquals("ABCD", listener.getResultantText());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS)
+    })
+    public void biggerNumberOfOperandsTmTest() throws IOException {
+        SimpleTextExtractionStrategy listener = new SimpleTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "biggerNumberOfOperandsTm.pdf")))) {
+            parser.processPageContent(pdfDocument.getPage(1));
+        }
+        Assertions.assertEquals("ABCD", listener.getResultantText());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS)
+    })
+    public void smallerNumberOfOperandsMTest() throws IOException {
+        LocationTextExtractionStrategy listener = new LocationTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "smallerNumberOfOperandsM.pdf")))) {
+            parser.processPageContent(pdfDocument.getPage(1));
+        }
+        Assertions.assertEquals("ABCD", listener.getResultantText());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS)
+    })
+    public void biggerNumberOfOperandsMTest() throws IOException {
+        LocationTextExtractionStrategy listener = new LocationTextExtractionStrategy();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new File(SOURCE_FOLDER + "biggerNumberOfOperandsM.pdf")))) {
+            parser.processPageContent(pdfDocument.getPage(1));
+        }
+        Assertions.assertEquals("ABCD", listener.getResultantText());
+    }
+
+    @Test
+    public void coloredPatternTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "coloredPatternParsingTest.pdf"));
+        ColorParsingEventListener listener = new ColorParsingEventListener();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        AssertUtil.doesNotThrow(()->
+            parser.processPageContent(pdfDoc.getFirstPage()));
+        pdfDoc.close();
+        PathRenderInfo renderInfo = listener.getEncounteredPath();
+        PdfColorSpace colorSpace = renderInfo.getGraphicsState().getFillColor().getColorSpace();
+
+        Assertions.assertEquals("Pattern", colorSpace.getColorspaceName().getValue());
+    }
+
+    @Test
+    public void unColoredPatternTest() throws IOException {
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "unColoredPatternParsingTest.pdf"));
+        ColorParsingEventListener listener = new ColorParsingEventListener();
+        PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
+        AssertUtil.doesNotThrow(()->
+                parser.processPageContent(pdfDoc.getFirstPage()));
+        pdfDoc.close();
+        PathRenderInfo renderInfo = listener.getEncounteredPath();
+        PdfColorSpace colorSpace = renderInfo.getGraphicsState().getFillColor().getColorSpace();
+        Assertions.assertEquals("UncoloredTilingPattern", colorSpace.getColorspaceName().getValue() );
     }
 
     private static class ColorParsingEventListener implements IEventListener {

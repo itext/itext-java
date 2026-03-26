@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,8 +41,8 @@ class StructTreeResultMatrix extends AbstractResultMatrix<PdfStructElem> {
     /**
      * Creates a new {@link StructTreeResultMatrix} instance.
      *
-     * @param elem a table structure element.
-     * @param context The validation context.
+     * @param elem a table structure element
+     * @param context The validation context
      */
     public StructTreeResultMatrix(PdfStructElem elem, PdfUAValidationContext context) {
         super(new TableStructElementIterator(elem, context), context.getUAConformance());
@@ -120,7 +120,7 @@ class StructTreeResultMatrix extends AbstractResultMatrix<PdfStructElem> {
      */
     @Override
     String getRole(PdfStructElem cell) {
-        return ((TableStructElementIterator)iterator).context.resolveToStandardRole(cell);
+        return ((TableStructElementIterator) iterator).context.resolveToStandardRole(cell);
     }
 
 }

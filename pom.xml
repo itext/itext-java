@@ -4,7 +4,7 @@
 
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>9.5.0</version>
+  <version>9.6.0</version>
   <packaging>pom</packaging>
 
   <name>iText</name>
@@ -84,7 +84,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.81</bouncycastle.version>
+    <bouncycastle.version>1.83</bouncycastle.version>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <jacoco.version>0.8.4</jacoco.version>
@@ -92,11 +92,11 @@
     <javadoc-additionalOptions />
     <javadoc-link>https://docs.oracle.com/javase/8/docs/api/</javadoc-link>
     <javadoc.version>3.7.0</javadoc.version>
-    <junit.jupiter.version>5.10.2</junit.jupiter.version>
-    <junit.platform.version>1.10.2</junit.platform.version>
+    <junit.jupiter.version>5.14.2</junit.jupiter.version>
+    <junit.platform.version>1.14.2</junit.platform.version>
     <junitparams.version>1.0.4</junitparams.version>
-    <logback.version>1.3.14</logback.version>
-    <jackson.core.version>2.17.0</jackson.core.version>
+    <logback.version>1.3.16</logback.version>
+    <jackson.core.version>2.21.1</jackson.core.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.jar.version>3.1.0</maven.jar.version>
@@ -110,6 +110,7 @@
     <surefire.version>3.0.0-M3</surefire.version>
     <apache.santuario.version>3.0.6</apache.santuario.version>
 
+    <sharpen.version>1.0</sharpen.version>
     <sharpen.builddotnet>false</sharpen.builddotnet>
     <sharpen.showdiff>false</sharpen.showdiff>
     <sharpen.phase>none</sharpen.phase>
@@ -222,7 +223,7 @@
       <plugin>
         <groupId>sharpen</groupId>
         <artifactId>sharpen-maven-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${sharpen.version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
@@ -820,13 +821,13 @@
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>sharpen-config</artifactId>
-          <version>1.0-SNAPSHOT</version>
+          <version>${sharpen.version}</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>standard-framework-mapping</artifactId>
-          <version>1.0-SNAPSHOT</version>
+          <version>${sharpen.version}</version>
         </dependency>
       </dependencies>
       <build>
@@ -887,13 +888,13 @@
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>sharpen-config</artifactId>
-          <version>1.0-SNAPSHOT</version>
+          <version>${sharpen.version}</version>
           <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>standard-framework-mapping</artifactId>
-          <version>1.0-SNAPSHOT</version>
+          <version>${sharpen.version}</version>
         </dependency>
       </dependencies>
       <build>
@@ -1062,6 +1063,14 @@
                 <arg>
                   --initialize-at-build-time=org.junit.validator.PublicClassValidator
                   --initialize-at-build-time=org.junit.platform.engine.TestTag
+
+                  --initialize-at-build-time=org.junit.jupiter.engine
+                  --initialize-at-build-time=org.junit.platform.launcher
+                  --initialize-at-build-time=org.junit.jupiter.engine.extension.TimeoutExtension
+                  --initialize-at-build-time=org.junit.jupiter.engine.extension.RepeatedTestExtension
+                  --initialize-at-build-time=org.junit.platform.commons.util.LruCache
+                  --initialize-at-build-time=org.junit.jupiter.api.extension.ExtensionContext$Namespace
+
                   --initialize-at-run-time=org.bouncycastle.crypto.prng.SP800SecureRandom
                   --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV
                   --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,6 +32,7 @@ import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -46,8 +47,6 @@ import java.util.List;
  * must be indirect.
  */
 public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG {
-
-
 	/**
      * Creates a new, empty membership layer.
      *
@@ -78,15 +77,33 @@ public class PdfLayerMembership extends PdfObjectWrapper<PdfDictionary> implemen
      */
     public Collection<PdfLayer> getLayers() {
         final PdfObject layers = getPdfObject().get(PdfName.OCGs);
+        List<PdfLayer> allLayers = getDocument().getCatalog().getOCProperties(false).getLayers();
         if (layers instanceof PdfDictionary) {
-            List<PdfLayer> list = new ArrayList<>();
-            list.add(new PdfLayer((PdfDictionary) ((PdfDictionary) layers).makeIndirect(getDocument())));
-            return list;
+            for (PdfLayer layer : allLayers) {
+                if (layer.getPdfObject().getIndirectReference().equals(layers.getIndirectReference())) {
+                    return Collections.singleton(layer);
+                }
+            }
+            // This logic should only be triggered if layer is not in the document yet.
+            return Collections.singletonList(new PdfLayer((PdfDictionary) layers.makeIndirect(getDocument())));
         }
         else if (layers instanceof PdfArray) {
             List<PdfLayer> layerList = new ArrayList<>();
             for (int ind = 0; ind < ((PdfArray) layers).size(); ind++) {
-                layerList.add(new PdfLayer(((PdfArray) (((PdfArray) layers).makeIndirect(getDocument()))).getAsDictionary(ind)));
+                boolean layerFound = false;
+                for (PdfLayer layer : allLayers) {
+                    if (layer.getPdfObject().getIndirectReference().equals(
+                            ((PdfArray) layers).get(ind).getIndirectReference())) {
+                        layerList.add(layer);
+                        layerFound = true;
+                        break;
+                    }
+                }
+                if (layerFound) {
+                    continue;
+                }
+                // This logic should only be triggered if layer is not in the document yet.
+                layerList.add(new PdfLayer(((PdfArray) layers.makeIndirect(getDocument())).getAsDictionary(ind)));
             }
             return layerList;
         }

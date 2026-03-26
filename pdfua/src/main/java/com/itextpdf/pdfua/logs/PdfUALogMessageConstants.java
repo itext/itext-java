@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,6 +32,8 @@ public final class PdfUALogMessageConstants {
     public static final String PAGE_FLUSHING_DISABLED = "Page flushing is disabled in PDF/UA mode to allow UA checks "
             + "to be applied. Page will only be flushed on closing.";
     public static final String PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED = "PDF to PDF/UA conversion is not supported.";
+    public static final String PDF_TO_WTPDF_CONVERSION_IS_NOT_SUPPORTED =
+            "PDF to WellTagged PDF conversion is not supported.";
     public static final String WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN =
             "Pdf version from writer properties isn't compatible with specified PDF/UA conformance, it was overridden to {0} version.";
 

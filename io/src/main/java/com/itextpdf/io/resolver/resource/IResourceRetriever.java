@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -31,19 +31,23 @@ import java.net.URL;
  */
 public interface IResourceRetriever {
     /**
-     * Gets the {@link InputStream} that connect with source URL for retrieving data from that connection.
+     * Gets the {@link InputStream} with the data from a provided URL by instantiating an HTTP connection to the URL.
      *
      * @param url the source URL
-     * @return the input stream or null if the retrieving failed
+     *
+     * @return the input stream with the retrieved data
+     *
      * @throws IOException if any input/output issue occurs
      */
     InputStream getInputStreamByUrl(URL url) throws IOException;
 
     /**
-     * Gets the byte array that are retrieved from the source URL.
+     * Gets the byte array with the data from a provided URL by instantiating an HTTP connection to the URL.
      *
      * @param url the source URL
-     * @return the byte array or null if the retrieving failed
+     *
+     * @return the byte array with the retrieved data
+     *
      * @throws IOException if any input/output issue occurs
      */
     byte[] getByteArrayByUrl(URL url) throws IOException;

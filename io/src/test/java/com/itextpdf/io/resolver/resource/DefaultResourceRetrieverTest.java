@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,21 +24,27 @@ package com.itextpdf.io.resolver.resource;
 
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.InetAddress;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 class DefaultResourceRetrieverTest extends ExtendedITextTest {
@@ -47,13 +53,14 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void retrieveResourceReadTimeoutTest() throws IOException, InterruptedException {
 
-        TestResource thread = new TestResource();
+        TestResource thread = new TestResource(1000);
         thread.start();
         while (!thread.isStarted() && !thread.isFailed()) {
             Thread.sleep(250);
         }
+        Assertions.assertNull(thread.getException());
         Assertions.assertFalse(thread.failed);
-        URL url = new URL("http://127.0.0.1:" + thread.port + "/");
+        URL url = new URL("http://127.0.0.1:" + thread.getPort() + "/");
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
         resourceRetriever.setReadTimeout(500);
 
@@ -101,13 +108,15 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {
             @LogMessage(
-                    messageTemplate = IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT)
+                    messageTemplate = IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, count = 2)
     })
     public void filterOutFilteredResourcesTest() throws IOException {
         DefaultResourceRetriever resourceRetriever = new FilteredResourceRetriever();
         Assertions.assertFalse(resourceRetriever.urlFilter(new URL("https://example.com/resource")));
 
         Assertions.assertNull(resourceRetriever.getInputStreamByUrl(new URL("https://example.com/resource")));
+        Assertions.assertNull(resourceRetriever.get(new URL("https://example.com/resource"), new byte[0],
+                new HashMap<>(0)));
     }
 
     @Test
@@ -117,6 +126,78 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
         byte[] data = resourceRetriever.getByteArrayByUrl(new URL("https://itextpdf.com/blog/itext-news-technical-notes/get-excited-itext-8-here"));
         Assertions.assertNotNull(data);
         Assertions.assertTrue(data.length > 0);
+    }
+
+    @Test
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    public void loadWithRequestAndHeaders() throws IOException {
+        DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36");
+        InputStream is = resourceRetriever.get(
+                new URL("https://itextpdf.com/blog/itext-news-technical-notes/get-excited-itext-8-here"),
+                new byte[0], headers);
+        byte[] data = StreamUtil.inputStreamToArray(is);
+
+        Assertions.assertNotNull(data);
+        Assertions.assertTrue(data.length > 0);
+    }
+
+    @Test
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    public void loadWithRequestAndMixedHeaders() throws IOException, InterruptedException {
+        TestResource thread = new TestResource();
+        thread.start();
+        while (!thread.isStarted() && !thread.isFailed()) {
+            Thread.sleep(250);
+        }
+        Assertions.assertNull(thread.getException());
+        Assertions.assertFalse(thread.failed);
+        URL url = new URL("http://127.0.0.1:" + thread.getPort() + "/");
+        DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
+        Map<String, String> defaultHeaders = new HashMap<>(3);
+        defaultHeaders.put("User-Agent","DEFAULT User Agent");
+        defaultHeaders.put("TEST-HEADER","DEFAULT test header");
+        resourceRetriever.setRequestHeaders(defaultHeaders);
+        Map<String, String> getHeaders = Collections.singletonMap("User-Agent","TEST User Agent");
+        try {
+            resourceRetriever.get(url, new byte[0], getHeaders);
+        } catch (Exception e) {
+            // exception is expected here, but we do not care
+        }
+        while (thread.getException() == null && thread.getLastRequest() == null) {
+            Thread.sleep(100);
+        }
+        Assertions.assertNull(thread.getException());
+        Assertions.assertTrue(thread.getLastRequest().contains("User-Agent: TEST User Agent"));
+        Assertions.assertTrue(thread.getLastRequest().contains("TEST-HEADER: DEFAULT test header"));
+    }
+
+    @Test
+    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
+    public void userAgentTest() throws InterruptedException, MalformedURLException {
+        TestResource thread = new TestResource();
+        thread.start();
+        while (!thread.isStarted() && !thread.isFailed()) {
+            Thread.sleep(250);
+        }
+        Assertions.assertNull(thread.getException());
+        Assertions.assertFalse(thread.failed);
+        URL url = new URL("http://127.0.0.1:" + thread.getPort() + "/");
+        DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
+        Map<String, String> headers = Collections.singletonMap("User-Agent","TEST User Agent");
+        resourceRetriever.setRequestHeaders(headers);
+
+        try {
+            resourceRetriever.getInputStreamByUrl(url);
+        } catch (Exception e) {
+            // exception is expected here, but we do not care
+        }
+        while (thread.getException() == null && thread.getLastRequest() == null) {
+            Thread.sleep(100);
+        }
+        Assertions.assertNull(thread.getException());
+        Assertions.assertTrue(thread.getLastRequest().contains("User-Agent: TEST User Agent"));
     }
 
 
@@ -130,9 +211,21 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
 
     private static class TestResource extends Thread {
 
-        private int port = 8000;
-        private boolean started = false;
-        private boolean failed = false;
+        private final int responseWaitTime;
+        private volatile int port = 8000;
+        private volatile boolean started = false;
+        private volatile boolean failed = false;
+        private volatile String request;
+        private volatile Exception exception;
+
+        public TestResource(int responseWaitTime) {
+            this.responseWaitTime = responseWaitTime;
+        }
+
+        public TestResource() {
+            this.responseWaitTime = 0;
+        }
+
         @Override
         public void run() {
             try {
@@ -156,6 +249,14 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
             return failed;
         }
 
+        public String getLastRequest() {
+            return request;
+        }
+
+        public Exception getException() {
+            return exception;
+        }
+
         private void startServer() throws IOException, InterruptedException {
             int tryCount = 0;
             while (!started) {
@@ -165,7 +266,9 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
                     server.setSoTimeout(20000);
                     started = true;
                     try (Socket clientSocket = server.accept()){
-                        Thread.sleep(1000);
+                        if (responseWaitTime > 0) {
+                            Thread.sleep(responseWaitTime);
+                        }
                         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                         String response = "HTTP/1.1 OK OKrnContent-Type: text/html; charset=UTF-8rnrn" +
                                 "<!DOCTYPE html>\n" +
@@ -176,14 +279,38 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
                                 "</html>\n";
                         out.print(response);
                         out.flush();
-                        server.accept();
+
+                        try {
+                            int attempt = 0;
+                            while (attempt < 10 && request == null){
+                                attempt++;
+                                if (clientSocket.getInputStream().available() > 0) {
+                                    byte[] buff = new byte[clientSocket.getInputStream().available()];
+                                    clientSocket.getInputStream().read(buff);
+                                    request = new String(buff, StandardCharsets.UTF_8);
+                                } else {
+                                    Thread.sleep(100);
+                                }
+                            }
+                            if (request == null) {
+                                exception = new IllegalStateException("No request data available");
+                            }
+                        } catch (Exception e) {
+                            exception = e;
+                            request = e.toString();
+                        }
                     }
                 } catch (BindException ex) {
                     if (tryCount > 100) {
                         failed = true;
+                        exception = ex;
                         throw ex;
                     }
                     port++;
+                } catch (Exception e) {
+                    failed = true;
+                    exception = e;
+                    throw e;
                 }
             }
         }

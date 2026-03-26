@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -35,11 +35,11 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class GposLookupType1Test extends ExtendedITextTest {
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType1Test/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void verifyXAdvanceIsAppliedSubFormat1() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansMyanmar-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "NotoSansMyanmar-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType1 lookup = (GposLookupType1) gposTableReader.getLookupTable(29);
         List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(174)),
@@ -57,7 +57,7 @@ public class GposLookupType1Test extends ExtendedITextTest {
 
     @Test
     public void verifyPositionIsNotAppliedForIrrelevantGlyphSubFormat1() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansMyanmar-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "NotoSansMyanmar-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType1 lookup = (GposLookupType1) gposTableReader.getLookupTable(29);
         List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(5)),
@@ -75,7 +75,7 @@ public class GposLookupType1Test extends ExtendedITextTest {
 
     @Test
     public void verifyDifferentXAdvanceIsAppliedSubFormat2() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansMyanmar-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "NotoSansMyanmar-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType1 lookup = (GposLookupType1) gposTableReader.getLookupTable(16);
 

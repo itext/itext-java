@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -51,7 +51,7 @@ import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -104,8 +104,8 @@ public class PdfASigningTest extends ExtendedITextTest {
 
         int x = 36;
         int y = 548;
-        int w = 200;
-        int h = 100;
+        int w = 300;
+        int h = 200;
         Rectangle rect = new Rectangle(x, y, w, h);
 
         String fieldName = "Signature1";
@@ -113,10 +113,10 @@ public class PdfASigningTest extends ExtendedITextTest {
                 DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "Test 1", "TestCity", rect, false, false,
                 AccessPermissions.UNSPECIFIED, 12f);
 
-        Assertions.assertNull(new VeraPdfValidator().validate(dest)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(dest)); 
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(dest, sourceFolder + "cmp_" + fileName));
         Assertions.assertNull(new CompareTool().compareVisually(dest, sourceFolder + "cmp_" + fileName, destinationFolder,
-                "diff_", getTestMap(new Rectangle(27, 550, 195, 40))));
+                "diff_", getTestMap(new Rectangle(27, 620, 195, 40))));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class PdfASigningTest extends ExtendedITextTest {
                 new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
         signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        Assertions.assertNull(new VeraPdfValidator().validate(out)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(out)); 
     }
 
     @Test
@@ -160,7 +160,7 @@ public class PdfASigningTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_signPdfCades.pdf";
         String outPdf = destinationFolder + "signPdfCades.pdf";
 
-        Rectangle rect = new Rectangle(30, 200, 200, 100);
+        Rectangle rect = new Rectangle(30, 200, 300, 200);
 
         String fieldName = "Signature1";
         sign(srcFile, fieldName, outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES,
@@ -170,7 +170,7 @@ public class PdfASigningTest extends ExtendedITextTest {
                 getTestMap(rect)));
 
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test

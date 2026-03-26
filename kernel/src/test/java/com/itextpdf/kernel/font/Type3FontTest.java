@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -71,7 +71,7 @@ public class Type3FontTest extends ExtendedITextTest {
         font.addGlyph(1, 1, 600, null, null);
         font.addGlyph(2, 1, 600, null, null);
 
-        Assertions.assertEquals(1, font.getNumberOfGlyphs());
+        Assertions.assertEquals(2, font.getNumberOfGlyphs());
         Assertions.assertEquals(2, font.getGlyph(1).getCode());
     }
 

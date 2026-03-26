@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -103,6 +103,11 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
 
         try {
             for (PdfAnnotation annot : annots) {
+                if (annot.getSubtype() == null) {
+                    logger.warn(MessageFormatUtil.format(FormsLogMessageConstants.ANNOTATION_WITHOUT_SUBTYPE_NOT_COPIED,
+                            annot.getPdfObject().getIndirectReference()));
+                    continue;
+                }
                 if (!annot.getSubtype().equals(PdfName.Widget)) {
                     continue;
                 }

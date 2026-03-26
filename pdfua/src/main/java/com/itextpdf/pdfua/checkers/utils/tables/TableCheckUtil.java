@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -39,7 +39,7 @@ public final class TableCheckUtil {
     /**
      * Creates a new {@link TableCheckUtil} instance.
      *
-     * @param context the validation context.
+     * @param context the validation context
      */
     public TableCheckUtil(PdfUAValidationContext context) {
         this.context = context;
@@ -48,7 +48,7 @@ public final class TableCheckUtil {
     /**
      * Checks if the table is pdf/ua compliant.
      *
-     * @param table the table to check.
+     * @param table the table to check
      */
     public void checkTable(Table table) {
         new CellResultMatrix(table, this.context);

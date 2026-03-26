@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -34,8 +34,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class GposLookupType2Test extends ExtendedITextTest {
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType2Test/";
-    private static final String DEJAVU_FONT_PATH = RESOURCE_FOLDER + "DejaVuSans.ttf";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
+    private static final String DEJAVU_FONT_PATH =FONT_FOLDER + "DejaVuSans.ttf";
     @Test
     public void idxEqualToEndLineGpos2Test() throws IOException {
         TrueTypeFont font = new TrueTypeFont(DEJAVU_FONT_PATH);

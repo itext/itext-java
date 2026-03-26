@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -495,7 +495,7 @@ public class XfdfObjectFactory {
             PdfPage page = pdfDoc.getPage(i);
             List<PdfAnnotation> pdfAnnots = page.getAnnotations();
             for (PdfAnnotation pdfAnnot : pdfAnnots) {
-                if (pdfAnnot.getSubtype() == PdfName.Popup) {
+                if (PdfName.Popup.equals(pdfAnnot.getSubtype())) {
                     addPopup(pdfAnnot, annots, i);
                 } else {
                     addAnnotation(pdfAnnot, annots, i);

@@ -1,0 +1,1575 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns4="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>5</TSLVersionIdentifier>
+        <TSLSequenceNumber>34</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/UKlist</TSLType>
+        <SchemeOperatorName>
+            <Name xml:lang="en">Information Commissioner's Office</Name>
+        </SchemeOperatorName>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>Wycliffe House;Water Lane</StreetAddress>
+                    <Locality>Wilmslow</Locality>
+                    <StateOrProvince>Cheshire</StateOrProvince>
+                    <PostalCode>SK9 5AF</PostalCode>
+                    <CountryName>UK</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="en">mailto:eidas@ico.org.uk</URI>
+                <URI xml:lang="en">https://ico.org.uk/</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeName>
+            <Name xml:lang="en">UK:Trusted list including information related to the qualified trust service providers that are supervised by the UK, together with information related to the qualified trust services provided by them. The applicable legal framework for the present trusted list is Regulation (EU) No 910/2014 of the European Parliament and of the Council of 23 July 2014 on electronic identification and trust services for electronic transactions in the internal market and repealing Directive 1999/93/EC (UK version - https://www.legislation.gov.uk/eur/2014/910/contents#)</Name>
+        </SchemeName>
+        <SchemeInformationURI>
+            <URI xml:lang="en">https://ico.org.uk/for-organisations/guide-to-eidas/uk-trusted-list</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>http://uri.etsi.org/TrstSvc/TrustedList/StatusDetn/UKdetermination</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="en">https://ico.org.uk/for-organisations/guide-to-eidas/uk-trusted-list/</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>UK</SchemeTerritory>
+        <PolicyOrLegalNotice>
+            <TSLLegalNotice xml:lang="en">The applicable legal framework for the present trusted list is Regulation (EU) No 910/2014 of the European Parliament and of the Council of 23 July 2014 on electronic identification and trust services for electronic transactions in the internal market and repealing Directive 1999/93/EC (UK version - https://www.legislation.gov.uk/eur/2014/910/contents#)</TSLLegalNotice>
+        </PolicyOrLegalNotice>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <PointersToOtherTSL/>
+        <ListIssueDateTime>2025-08-18T00:00:00Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2026-02-18T00:00:00Z</dateTime>
+        </NextUpdate>
+        <DistributionPoints>
+            <URI>https://tl.ico.org.uk/uktrustedlist/UKTL.xml</URI>
+        </DistributionPoints>
+    </SchemeInformation>
+    <TrustServiceProviderList>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">Royal Bank of Scotland Plc</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">NTRUK-SC090312</Name>
+                    <Name xml:lang="en">The Royal Bank of Scotland plc</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>2nd Floor</StreetAddress>
+                            <Locality>280 Bishopsgate</Locality>
+                            <StateOrProvince>London</StateOrProvince>
+                            <PostalCode> EC2M 4RB </PostalCode>
+                            <CountryName>UK</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:simon.hobby@rbs.co.uk</URI>
+                        <URI xml:lang="en">http://www.trustAssured.co.uk/</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://www.rbs.co.uk/corporate/electronic-services/g6/trustassured/policy-documents.ashx</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Trustassured</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIFhjCCBG6gAwIBAgIQCgFBQgAAAUGeGJqcAAAAAjANBgkqhkiG9w0BAQUFADB3MRcwFQYDVQQKEw5JZGVuVHJ1c3QgSW5jLjEtMCsGA1UECxMkSWRlblRydXN0IFJvb3QgQ2VydGlmaWNhdGUgQXV0aG9yaXR5MS0wKwYDVQQDEyRJZGVuVHJ1c3QgUm9vdCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkwHhcNMTMxMDA5MTY0MTU0WhcNMjAxMDA5MTY0MTU0WjCBpzEnMCUGA1UECgweVGhlIFJveWFsIEJhbmsgb2YgU2NvdGxhbmQgcGxjMUMwQQYDVQQLDDpUaGUgUm95YWwgQmFuayBvZiBTY290bGFuZCBwbGMgVHJ1c3RBc3N1cmVkIEluZnJhc3RydWN0dXJlMTcwNQYDVQQDDC5UaGUgUm95YWwgQmFuayBvZiBTY290bGFuZCBQbGMgVHJ1c3RBc3N1cmVkIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy5C5Iakf+xvCZWeWFA2xb+UTWA2wfEzautGAowIYehdc/Cv0YbUEQ+ItOX21+5ceXGqensQgkOmoeIbr66EO6kulg7aL8mYESsosj+SWMclWQKwn7C+A5cQ37WhzRXBsU0OSpB184EP10FSdpk1+4AWDiVG68KXZFbn504njiertLbN20GW7Ao65E3QRlddLi4m/f25/mCqM684slz035/1lbRz+7aNAt9HoD3PL1Xv647uSGI4wzkM0EF8SaTqeNatnU7YOPOtTkspYSohrMdxYpEZ96cFMFG/RLA7qIc2VH5IXIteIIwJGTyYqDEDooioqjfTfVQEkNsiZ4+mWTQIDAQABo4IB2zCCAdcwDgYDVR0PAQH/BAQDAgH+MBIGA1UdEwEB/wQIMAYBAf8CAQcwgfIGA1UdIASB6jCB5zCB5AYJKoZIhvplAQYBMIHWMIHTBggrBgEFBQcCAjCBxhqBw1RoaXMgY2VydGlmaWNhdGUgaXMgZm9yIHRoZSBzb2xlIHVzZSBvZiBJZGVuVHJ1c3QsIGl0cyBQYXJ0aWNpcGFudHMgYW5kIHRoZWlyIGN1c3RvbWVycy4gSWRlblRydXN0IGFjY2VwdHMgbm8gbGlhYmlsaXR5IGZvciBhbnkgY2xhaW0gZXhjZXB0IGFzIGV4cHJlc3NseSBwcm92aWRlZCBpbiBpdHMgT3BlcmF0aW5nIFJ1bGVzIElMLU9QUlVMLjAdBgNVHQ4EFgQUYxfAgdS/D6lmMZb6F8GwytoXAtAwfAYIKwYBBQUHAQEEcDBuMDYGCCsGAQUFBzABhipodHRwczovL2lkZW50cnVzdHJvb3Qub2NzcHRuLmlkZW50cnVzdC5jb20wNAYIKoZIhvplBAGGKGh0dHBzOi8vaWRlbnRydXN0cm9vdC50Y3RuLmlkZW50cnVzdC5jb20wHwYDVR0jBBgwFoAUdNgJ9kknmwQaGWP6YStz/51uST0wDQYJKoZIhvcNAQEFBQADggEBALuwYMmj9fKWas3YR++PKLVbbuI6ig9+xWABhn9QZto+O9wyaf/EkTYoEL9IUih0vzmQS6cKMGSoHx5vX0fZD2Cex3+UWG3mcbjj2hunE86zgWxFJlJpp1aMEudqOZJ0aZNtBfe72Z2/8iu+Ealwb5N7TuQ2a+Zuo/Xel+vIpdn56TGJf8lnv8D50IRUL61Iah4NYFrV95fZO5VRxKsJV2hhU1uugo5An3jCOw3uKaGHka02r3jTBCXhbisLDMvr4knhVda3icKO2u64oIjSMAgMxmZ0JizFniyVHh+grbJVlc1z1GObSr0pvkB0lAL0v/iQqDGaBjEJxUGyG3c3WSU=</X509Certificate>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2017-06-30T22:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">http://www.tscheme.eu/directory/rbsg/index.html</URI>
+                        </SchemeServiceDefinitionURI>
+                        <ServiceSupplyPoints>
+                            <ServiceSupplyPoint>http://www.trustassured.co.uk/</ServiceSupplyPoint>
+                        </ServiceSupplyPoints>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="en">http://www.trustassured.co.uk/</URI>
+                        </TSPServiceDefinitionURI>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Trustassured</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=The Royal Bank of Scotland Plc TrustAssured CA, OU=The Royal Bank of Scotland plc TrustAssured Infrastructure, O=The Royal Bank of Scotland plc</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>YxfAgdS/D6lmMZb6F8GwytoXAtA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Trustassured</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=The Royal Bank of Scotland Plc TrustAssured CA, OU=The Royal Bank of Scotland plc TrustAssured Infrastructure, O=The Royal Bank of Scotland plc</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>YxfAgdS/D6lmMZb6F8GwytoXAtA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited</ServiceStatus>
+                            <StatusStartingTime>2002-02-11T12:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">Exostar UK Limited</Name>
+                    <Name xml:lang="en">Exostar</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">VATUK-800969916</Name>
+                    <Name xml:lang="en">NTRUK-9999998</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>The Broadgate Tower Third Floor</StreetAddress>
+                            <Locality>20 Primrose Street</Locality>
+                            <StateOrProvince>London</StateOrProvince>
+                            <PostalCode>EC2A 2RS</PostalCode>
+                            <CountryName>UK</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">http://www.myexostar.com/Digital-Certificate-Service/</URI>
+                        <URI xml:lang="en">mailto:richard.trevorah@tscheme.org</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://www.myexostar.com/Federated-Identity-Service/Policy_and_Compliance/</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Digital Certificate Service</Name>
+                            <Name xml:lang="en">DCS</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIEwTCCA6mgAwIBAgITLgAAAAXH9qOzdieVdAAAAAAABTANBgkqhkiG9w0BAQsFADB+MQswCQYDVQQGEwJVUzEUMBIGA1UEChMLRXhvc3RhciBMTEMxIjAgBgNVBAsTGUNlcnRpZmljYXRpb24gQXV0aG9yaXRpZXMxNTAzBgNVBAMTLEV4b3N0YXIgRmVkZXJhdGVkIElkZW50aXR5IFNlcnZpY2UgUm9vdCBDQSAyMB4XDTE2MDUyNjE1MjE0MVoXDTI2MDUyNjE1MjE0MVowZTELMAkGA1UEBhMCR0IxGzAZBgNVBAoTEkV4b3N0YXIgVUsgTGltaXRlZDE5MDcGA1UEAxMwRXhvc3RhciBEaWdpdGFsIENlcnRpZmljYXRlIFNlcnZpY2UgU2lnbmluZyBDQSAxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArgZBZ2t7uhxTVGbRHSu+mCXHpGXVcuCVAnLtv0r/LZjZwjD9pIqINV0Sy0We7nZGDKYVqfCUftW1XBrJ22OQxSmCBSwS0UwYcVyLY1p71y9K4/hxWfdo73pcM+oKaYSBHaHfU26soa3R3KVsul3s8N8NcbyCZfA0mxh8LHnsUg9X1faUdx+sTAOcfsTvzkFjl15Z12cNA28i687YqE4N24Ejy7HsDKHz+0X7sgV6raV3VuDF3+U9wuZFzx6VWbxEOdxBWv4Wk4OhHwXv8rAQls4gRLrB2mUEaO07M5WcKf5kLixsrJaiLOrIYHz2d4Gu0SFLn+ANnK9DUe0nbAkTUwIDAQABo4IBTzCCAUswHQYDVR0OBBYEFEUMw2tZp/iXD9t28oEazC7Gc9JzMA4GA1UdDwEB/wQEAwIBxjASBgNVHRMBAf8ECDAGAQH/AgEAMB8GA1UdIwQYMBaAFFQLEbAd+VfPsHotUlLzs6eMUvSsMEIGA1UdHwQ7MDkwN6A1oDOGMWh0dHA6Ly93d3cuZmlzLmV2aW5jaWJsZS5jb20vZmlzL3B1YmxpYy9FUkNBMi5jcmwwVQYIKwYBBQUHAQEESTBHMEUGCCsGAQUFBzAChjlodHRwOi8vd3d3LmZpcy5ldmluY2libGUuY29tL2Zpcy9wdWJsaWMvaXNzdWVkdG9FUkNBMi5wN2MwSgYDVR0gBEMwQTANBgsrBgEEAex8AQEBHTANBgsrBgEEAex8AQEBFzANBgsrBgEEAex8AQEBGDAIBgYEAIswAQIwCAYGBACLMAEBMA0GCSqGSIb3DQEBCwUAA4IBAQDGtKIZYaSeOAxW6twQVQ4juYKI5bzxO13Rk949jRshhEuGiVdthWIWmlnOPX9AxzJET6ERAku+YwHLMbHfUUesp6m9xEU721t4Y03S1HaJAV3vdKS7GLEyh9XuJYTGyz3EyFJQRCaGP33pB0j02UdIy9t2Ji0MfDkgZOF7fUyLZxPv22N7w1FK8aubZmXvNKKeBi/JmMdMP11csWCCN66ISagssDkTfvWjb7zyfU7UtLOM40jbYgqeT5NVI+mASpi8tL7F7wVU7fpKammnKaKEirRz9W0yrd7UqtsJx4Tstv41OaS184IheHrtuKsGw9eQRzgNSJJmQQT3lMyc6CXT</X509Certificate>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2018-05-03T11:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">https://www.tscheme.org/digital-certificate-service-exostar-uk-ltd</URI>
+                        </SchemeServiceDefinitionURI>
+                        <ServiceSupplyPoints>
+                            <ServiceSupplyPoint>http://www.myexostar.com/Digital-Certificate-Service/</ServiceSupplyPoint>
+                        </ServiceSupplyPoints>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="en">http://www.myexostar.com/Digital-Certificate-Service/</URI>
+                        </TSPServiceDefinitionURI>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDStatusAsInCert"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="none">
+            <ns5:KeyUsage>
+                <ns5:KeyUsageBit name="digitalSignature">true</ns5:KeyUsageBit>
+            </ns5:KeyUsage>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Digital Certificate Service</Name>
+<Name xml:lang="en">DCS</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Exostar Digital Certificate Service Signing CA 1, O=Exostar UK Limited, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>RQzDa1mn+JcP23bygRrMLsZz0nM=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDStatusAsInCert"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="none">
+                <ns5:KeyUsage>
+                    <ns5:KeyUsageBit name="digitalSignature">true</ns5:KeyUsageBit>
+                </ns5:KeyUsage>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Digital Certificate Service</Name>
+<Name xml:lang="en">DCS</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Exostar Digital Certificate Service Signing CA 1, O=Exostar UK Limited, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>RQzDa1mn+JcP23bygRrMLsZz0nM=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited</ServiceStatus>
+                            <StatusStartingTime>2016-06-29T23:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCSSCDStatusAsInCert"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="none">
+                <ns5:KeyUsage>
+                    <ns5:KeyUsageBit name="digitalSignature">true</ns5:KeyUsageBit>
+                </ns5:KeyUsage>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">GMO GlobalSign Ltd</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">NTRGB-04705639</Name>
+                    <Name xml:lang="en">GlobalSign</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Springfield House, Sandling Road</StreetAddress>
+                            <Locality>Maidstone</Locality>
+                            <StateOrProvince>Kent</StateOrProvince>
+                            <PostalCode>ME14 2LP</PostalCode>
+                            <CountryName>UK</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">https://www.globalsign.com</URI>
+                        <URI xml:lang="en">mailto:sales@globalsign.com</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">https://www.globalsign.com/en/repository</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC R45 UK Qualified QSCD Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC R45 UK Qualified QSCD Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>R1yP5cTk5p6CE3vn2BDomk9oLb4=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.36.1</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC R45 UK Qualified QSCD Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC R45 UK Qualified QSCD Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>R1yP5cTk5p6CE3vn2BDomk9oLb4=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.36.1</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC R45 UK Qualified QSCD Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC R45 UK Qualified QSCD Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>R1yP5cTk5p6CE3vn2BDomk9oLb4=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.36.2</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC R45 UK Qualified QSCD Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC R45 UK Qualified QSCD Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>R1yP5cTk5p6CE3vn2BDomk9oLb4=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.36.2</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC E45 UK Qualified QSCD Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDtTCCAzugAwIBAgIQeEqpGcQFLUdvrerJ3ttZuzAKBggqhkjOPQQDAzBXMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEtMCsGA1UEAxMkR2xvYmFsU2lnbiBEb2N1bWVudCBTaWduaW5nIFJvb3QgRTQ1MB4XDTIwMDkxNjAwMDAwMFoXDTMwMDkxNjAwMDAwMFowgYIxCzAJBgNVBAYTAkdCMRswGQYDVQQKExJHTU8gR2xvYmFsU2lnbiBMdGQxPTA7BgNVBAMTNEdsb2JhbFNpZ24gR0NDIEU0NSBVSyBRdWFsaWZpZWQgUVNDRCBTaWduaW5nIENBIDIwMjAxFzAVBgNVBGETDk5UUkdCLTA0NzA1NjM5MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEnxHqYK9/XOUW8IdiTyeZCI8i3w9pUTZbMtRWGkUtl1BO7Kxd0NnEI6PhMTgJ6VEY8CkdN5XezuqbutNmQ3rNBchNvMDCEqKP8vHMCjbmv8SmdoUI4n15Pnpe5cUZ4SlSo4IBnjCCAZowDgYDVR0PAQH/BAQDAgGGMCAGA1UdJQQZMBcGCisGAQQBgjcKAwwGCSqGSIb3LwEBBTASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBT8TIQKhmV19SgaM68YFLIra8o+FTAfBgNVHSMEGDAWgBRhmQK0EP8QPNt62mw6cCQDYPHnjjCBiQYIKwYBBQUHAQEEfTB7MDUGCCsGAQUFBzABhilodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9kb2NzaWducm9vdGU0NTBCBggrBgEFBQcwAoY2aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZG9jc2lnbnJvb3RlNDUuY3J0MD0GA1UdHwQ2MDQwMqAwoC6GLGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZG9jc2lnbnJvb3RlNDUuY3JsMEcGA1UdIARAMD4wPAYEVR0gADA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAKBggqhkjOPQQDAwNoADBlAjBIvUes0NzwtD5Liy8WacbyiWDEI8D02rYg6EwTjEsRa6E+YF9BxG9LuTv1zYzgEBYCMQCLjThKVYVMZx4TjD+86WleL8EHnxBc14IwRUwk5pw2u2rZvos4MG5k140iSvPLlQc=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC E45 UK Qualified QSCD Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>/EyECoZldfUoGjOvGBSyK2vKPhU=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.36.1</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC E45 UK Qualified QSCD Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC E45 UK Qualified QSCD Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>/EyECoZldfUoGjOvGBSyK2vKPhU=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.36.1</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC E45 UK Qualified QSCD Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDtTCCAzugAwIBAgIQeEqpGcQFLUdvrerJ3ttZuzAKBggqhkjOPQQDAzBXMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEtMCsGA1UEAxMkR2xvYmFsU2lnbiBEb2N1bWVudCBTaWduaW5nIFJvb3QgRTQ1MB4XDTIwMDkxNjAwMDAwMFoXDTMwMDkxNjAwMDAwMFowgYIxCzAJBgNVBAYTAkdCMRswGQYDVQQKExJHTU8gR2xvYmFsU2lnbiBMdGQxPTA7BgNVBAMTNEdsb2JhbFNpZ24gR0NDIEU0NSBVSyBRdWFsaWZpZWQgUVNDRCBTaWduaW5nIENBIDIwMjAxFzAVBgNVBGETDk5UUkdCLTA0NzA1NjM5MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEnxHqYK9/XOUW8IdiTyeZCI8i3w9pUTZbMtRWGkUtl1BO7Kxd0NnEI6PhMTgJ6VEY8CkdN5XezuqbutNmQ3rNBchNvMDCEqKP8vHMCjbmv8SmdoUI4n15Pnpe5cUZ4SlSo4IBnjCCAZowDgYDVR0PAQH/BAQDAgGGMCAGA1UdJQQZMBcGCisGAQQBgjcKAwwGCSqGSIb3LwEBBTASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBT8TIQKhmV19SgaM68YFLIra8o+FTAfBgNVHSMEGDAWgBRhmQK0EP8QPNt62mw6cCQDYPHnjjCBiQYIKwYBBQUHAQEEfTB7MDUGCCsGAQUFBzABhilodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9kb2NzaWducm9vdGU0NTBCBggrBgEFBQcwAoY2aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZG9jc2lnbnJvb3RlNDUuY3J0MD0GA1UdHwQ2MDQwMqAwoC6GLGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZG9jc2lnbnJvb3RlNDUuY3JsMEcGA1UdIARAMD4wPAYEVR0gADA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAKBggqhkjOPQQDAwNoADBlAjBIvUes0NzwtD5Liy8WacbyiWDEI8D02rYg6EwTjEsRa6E+YF9BxG9LuTv1zYzgEBYCMQCLjThKVYVMZx4TjD+86WleL8EHnxBc14IwRUwk5pw2u2rZvos4MG5k140iSvPLlQc=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC E45 UK Qualified QSCD Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>/EyECoZldfUoGjOvGBSyK2vKPhU=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.36.2</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC E45 UK Qualified QSCD Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC E45 UK Qualified QSCD Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>/EyECoZldfUoGjOvGBSyK2vKPhU=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.36.2</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign Atlas R45 UK Qualified Remote Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas R45 UK Qualified Remote Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>V681L7Xf0ymXzyPI17NBGlwkYFQ=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.38.1</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign Atlas R45 UK Qualified Remote Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas R45 UK Qualified Remote Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>V681L7Xf0ymXzyPI17NBGlwkYFQ=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.38.1</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign Atlas R45 UK Qualified Remote Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas R45 UK Qualified Remote Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>V681L7Xf0ymXzyPI17NBGlwkYFQ=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.38.2</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign Atlas R45 UK Qualified Remote Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas R45 UK Qualified Remote Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>V681L7Xf0ymXzyPI17NBGlwkYFQ=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.38.2</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign Atlas E45 UK Qualified Remote Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDujCCAz+gAwIBAgIQeEqpHXXRT60h/F8OiioNxTAKBggqhkjOPQQDAzBXMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEtMCsGA1UEAxMkR2xvYmFsU2lnbiBEb2N1bWVudCBTaWduaW5nIFJvb3QgRTQ1MB4XDTIwMDkxNjAwMDAwMFoXDTMwMDkxNjAwMDAwMFowgYYxCzAJBgNVBAYTAkdCMRswGQYDVQQKExJHTU8gR2xvYmFsU2lnbiBMdGQxQTA/BgNVBAMTOEdsb2JhbFNpZ24gQXRsYXMgRTQ1IFVLIFF1YWxpZmllZCBSZW1vdGUgU2lnbmluZyBDQSAyMDIwMRcwFQYDVQRhEw5OVFJHQi0wNDcwNTYzOTB2MBAGByqGSM49AgEGBSuBBAAiA2IABNR7vvohzuE5vk5A0icwGvOytP3TrlFVFpkitzMav1GaqYVdwBqT0SRIyBFum+dgfAcI7z86oBgzdwLLY2OqsBUi208ZHNyHK5hzigJiOlxnjGX7FtigXDwhSn2bV90sJ6OCAZ4wggGaMA4GA1UdDwEB/wQEAwIBhjAgBgNVHSUEGTAXBgorBgEEAYI3CgMMBgkqhkiG9y8BAQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUzodfcTi9b0MBPy1T3nG0i+dY+lwwHwYDVR0jBBgwFoAUYZkCtBD/EDzbetpsOnAkA2Dx544wgYkGCCsGAQUFBwEBBH0wezA1BggrBgEFBQcwAYYpaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZG9jc2lnbnJvb3RlNDUwQgYIKwYBBQUHMAKGNmh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2RvY3NpZ25yb290ZTQ1LmNydDA9BgNVHR8ENjA0MDKgMKAuhixodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2RvY3NpZ25yb290ZTQ1LmNybDBHBgNVHSAEQDA+MDwGBFUdIAAwNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCgYIKoZIzj0EAwMDaQAwZgIxANLVYDkUL731xMHWdTOhEx+/hgjixPyyUQjD5I3ng3pszuyyieTRnMmb8540IlqB/QIxAObmDGAyqwmHs/VRKp5kLEb3zRzS9JH6mjjaMoMx+Evga2uhd3zEHMzC8bWAMjc6mQ==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas E45 UK Qualified Remote Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>zodfcTi9b0MBPy1T3nG0i+dY+lw=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.38.1</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign Atlas E45 UK Qualified Remote Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas E45 UK Qualified Remote Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>zodfcTi9b0MBPy1T3nG0i+dY+lw=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2020-10-21T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.38.1</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign Atlas E45 UK Qualified Remote Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDujCCAz+gAwIBAgIQeEqpHXXRT60h/F8OiioNxTAKBggqhkjOPQQDAzBXMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEtMCsGA1UEAxMkR2xvYmFsU2lnbiBEb2N1bWVudCBTaWduaW5nIFJvb3QgRTQ1MB4XDTIwMDkxNjAwMDAwMFoXDTMwMDkxNjAwMDAwMFowgYYxCzAJBgNVBAYTAkdCMRswGQYDVQQKExJHTU8gR2xvYmFsU2lnbiBMdGQxQTA/BgNVBAMTOEdsb2JhbFNpZ24gQXRsYXMgRTQ1IFVLIFF1YWxpZmllZCBSZW1vdGUgU2lnbmluZyBDQSAyMDIwMRcwFQYDVQRhEw5OVFJHQi0wNDcwNTYzOTB2MBAGByqGSM49AgEGBSuBBAAiA2IABNR7vvohzuE5vk5A0icwGvOytP3TrlFVFpkitzMav1GaqYVdwBqT0SRIyBFum+dgfAcI7z86oBgzdwLLY2OqsBUi208ZHNyHK5hzigJiOlxnjGX7FtigXDwhSn2bV90sJ6OCAZ4wggGaMA4GA1UdDwEB/wQEAwIBhjAgBgNVHSUEGTAXBgorBgEEAYI3CgMMBgkqhkiG9y8BAQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUzodfcTi9b0MBPy1T3nG0i+dY+lwwHwYDVR0jBBgwFoAUYZkCtBD/EDzbetpsOnAkA2Dx544wgYkGCCsGAQUFBwEBBH0wezA1BggrBgEFBQcwAYYpaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZG9jc2lnbnJvb3RlNDUwQgYIKwYBBQUHMAKGNmh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2RvY3NpZ25yb290ZTQ1LmNydDA9BgNVHR8ENjA0MDKgMKAuhixodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2RvY3NpZ25yb290ZTQ1LmNybDBHBgNVHSAEQDA+MDwGBFUdIAAwNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCgYIKoZIzj0EAwMDaQAwZgIxANLVYDkUL731xMHWdTOhEx+/hgjixPyyUQjD5I3ng3pszuyyieTRnMmb8540IlqB/QIxAObmDGAyqwmHs/VRKp5kLEb3zRzS9JH6mjjaMoMx+Evga2uhd3zEHMzC8bWAMjc6mQ==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas E45 UK Qualified Remote Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>zodfcTi9b0MBPy1T3nG0i+dY+lw=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.38.2</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign Atlas E45 UK Qualified Remote Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas E45 UK Qualified Remote Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>zodfcTi9b0MBPy1T3nG0i+dY+lw=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCQSCDManagedOnBehalf"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.38.2</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC R45 UK Qualified Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC R45 UK Qualified Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>8BXlMG8wKKETlWrapQUq02j9DqA=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.1</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC R45 UK Qualified Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC R45 UK Qualified Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>8BXlMG8wKKETlWrapQUq02j9DqA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.1</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC R45 UK Qualified Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC R45 UK Qualified Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>8BXlMG8wKKETlWrapQUq02j9DqA=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.2</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.3</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC R45 UK Qualified Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC R45 UK Qualified Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>8BXlMG8wKKETlWrapQUq02j9DqA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.2</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.3</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC E45 UK Qualified Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDrzCCAzWgAwIBAgIQeEqpIbS34KrOlcgz1LdkPzAKBggqhkjOPQQDAzBXMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEtMCsGA1UEAxMkR2xvYmFsU2lnbiBEb2N1bWVudCBTaWduaW5nIFJvb3QgRTQ1MB4XDTIwMDkxNjAwMDAwMFoXDTMwMDkxNjAwMDAwMFowfTELMAkGA1UEBhMCR0IxGzAZBgNVBAoTEkdNTyBHbG9iYWxTaWduIEx0ZDE4MDYGA1UEAxMvR2xvYmFsU2lnbiBHQ0MgRTQ1IFVLIFF1YWxpZmllZCBTaWduaW5nIENBIDIwMjAxFzAVBgNVBGETDk5UUkdCLTA0NzA1NjM5MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEZ+Nl0QdHyZUqmRxDKtWQQSN5OaT8Io8q2UweOvd3puAy47x6DPaHFVozqPIuSORGU85u+wU5g92yH2KCByf9fO8y7ATO40+P7un9lQ+zIW+B6PaPjihnsGxiITPDZXF9o4IBnjCCAZowDgYDVR0PAQH/BAQDAgGGMCAGA1UdJQQZMBcGCisGAQQBgjcKAwwGCSqGSIb3LwEBBTASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBSTY19erde41kzH58YjXUzqttBAJDAfBgNVHSMEGDAWgBRhmQK0EP8QPNt62mw6cCQDYPHnjjCBiQYIKwYBBQUHAQEEfTB7MDUGCCsGAQUFBzABhilodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9kb2NzaWducm9vdGU0NTBCBggrBgEFBQcwAoY2aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZG9jc2lnbnJvb3RlNDUuY3J0MD0GA1UdHwQ2MDQwMqAwoC6GLGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZG9jc2lnbnJvb3RlNDUuY3JsMEcGA1UdIARAMD4wPAYEVR0gADA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAKBggqhkjOPQQDAwNoADBlAjAN1+kf5Zo50hCU35B4hdAAxjBbnPCI734RIlBv4afLdE1fEWFyixcogFklEBOhLWACMQDsfiRqaCFYKa+/mLyPsgJRtJC609gYM8NRB1Y5z+EoWVGDYu4ps/EG51Gsc2LHJZc=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC E45 UK Qualified Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>k2NfXq3XuNZMx+fGI11M6rbQQCQ=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.1</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC E45 UK Qualified Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC E45 UK Qualified Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>k2NfXq3XuNZMx+fGI11M6rbQQCQ=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.1</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC E45 UK Qualified Signing CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDrzCCAzWgAwIBAgIQeEqpIbS34KrOlcgz1LdkPzAKBggqhkjOPQQDAzBXMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEtMCsGA1UEAxMkR2xvYmFsU2lnbiBEb2N1bWVudCBTaWduaW5nIFJvb3QgRTQ1MB4XDTIwMDkxNjAwMDAwMFoXDTMwMDkxNjAwMDAwMFowfTELMAkGA1UEBhMCR0IxGzAZBgNVBAoTEkdNTyBHbG9iYWxTaWduIEx0ZDE4MDYGA1UEAxMvR2xvYmFsU2lnbiBHQ0MgRTQ1IFVLIFF1YWxpZmllZCBTaWduaW5nIENBIDIwMjAxFzAVBgNVBGETDk5UUkdCLTA0NzA1NjM5MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEZ+Nl0QdHyZUqmRxDKtWQQSN5OaT8Io8q2UweOvd3puAy47x6DPaHFVozqPIuSORGU85u+wU5g92yH2KCByf9fO8y7ATO40+P7un9lQ+zIW+B6PaPjihnsGxiITPDZXF9o4IBnjCCAZowDgYDVR0PAQH/BAQDAgGGMCAGA1UdJQQZMBcGCisGAQQBgjcKAwwGCSqGSIb3LwEBBTASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBSTY19erde41kzH58YjXUzqttBAJDAfBgNVHSMEGDAWgBRhmQK0EP8QPNt62mw6cCQDYPHnjjCBiQYIKwYBBQUHAQEEfTB7MDUGCCsGAQUFBzABhilodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9kb2NzaWducm9vdGU0NTBCBggrBgEFBQcwAoY2aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZG9jc2lnbnJvb3RlNDUuY3J0MD0GA1UdHwQ2MDQwMqAwoC6GLGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZG9jc2lnbnJvb3RlNDUuY3JsMEcGA1UdIARAMD4wPAYEVR0gADA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAKBggqhkjOPQQDAwNoADBlAjAN1+kf5Zo50hCU35B4hdAAxjBbnPCI734RIlBv4afLdE1fEWFyixcogFklEBOhLWACMQDsfiRqaCFYKa+/mLyPsgJRtJC609gYM8NRB1Y5z+EoWVGDYu4ps/EG51Gsc2LHJZc=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC E45 UK Qualified Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>k2NfXq3XuNZMx+fGI11M6rbQQCQ=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="true">
+<ns5:Qualifications>
+    <ns5:QualificationElement>
+        <ns5:Qualifiers>
+            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+        </ns5:Qualifiers>
+        <ns5:CriteriaList assert="atLeastOne">
+            <ns5:PolicySet>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.2</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+                <ns5:PolicyIdentifier>
+                    <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.3</ns3:Identifier>
+                </ns5:PolicyIdentifier>
+            </ns5:PolicySet>
+            <ns5:Description/>
+        </ns5:CriteriaList>
+    </ns5:QualificationElement>
+</ns5:Qualifications>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC E45 UK Qualified Signing CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign GCC E45 UK Qualified Signing CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>k2NfXq3XuNZMx+fGI11M6rbQQCQ=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2021-07-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+    </AdditionalServiceInformation>
+</Extension>
+<Extension Critical="true">
+    <ns5:Qualifications>
+        <ns5:QualificationElement>
+            <ns5:Qualifiers>
+                <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCNoQSCD"/>
+            </ns5:Qualifiers>
+            <ns5:CriteriaList assert="atLeastOne">
+                <ns5:PolicySet>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.2</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                    <ns5:PolicyIdentifier>
+                        <ns3:Identifier>1.3.6.1.4.1.4146.1.44.37.3</ns3:Identifier>
+                    </ns5:PolicyIdentifier>
+                </ns5:PolicySet>
+                <ns5:Description/>
+            </ns5:CriteriaList>
+        </ns5:QualificationElement>
+    </ns5:Qualifications>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC R3 UK EV QWAC 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIFtTCCBJ2gAwIBAgIQeEqpJrbnW++td7NIAblS0DANBgkqhkiG9w0BAQsFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFkxCzAJBgNVBAYTAkdCMRswGQYDVQQKExJHTU8gR2xvYmFsU2lnbiBMdGQxLTArBgNVBAMTJEdsb2JhbFNpZ24gR0NDIFIzIFVLIEVWIFFXQUMgQ0EgMjAyMDCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANb8rtddi5/yjm2toox7VSaHcs1oda93dEOEaLfEtyxwg72oNvwgR48PxufwfoKwCLq8RYmGzGDFFamw1Ff3+7eBsj9Y1yt4/2HqBPBzkTZk96gvUpQ90EHwMbat0Nsxagess1WrDXUv9U4NYwBeZo52MqFYvny2uuu+T41RPmNqbfzMNgBSamqvqEIDGr3XZ5xRviLG+d6HnYyy+zIENDoBpzSNV5ni4y0KTs7A5r7bsZAveiAu2mO69jKDHxegisLutWzbOElfKWQ0w+xuh46gb/d5/6CF/uGCohWOJZKB+cb8JYMUENH8fNu3ZcLJNihynxONLlmMdT30wW6vUe/1vKpoZJhVLpi+yJ9Bt5Y3zQRLVge52qvaRuVqccydyTTR8N0VuvyDf7WJXJ2lE4cmwoXMB4O4YxCnQZLfrCtQRXkjh6UVzWmIkTzFIWRi8b/tM7Q8/h7zcoFMdNR8iH2msYN5dHFai5w4a4isbnSxX8QU4lgROh5SQTyWKSEwY4N0LFUA9YWoU9v76ucTr9Nq/gJJG02ue2ZN6mYzY34qSQyBrwW4lp3z7wReFKZ54SKzzuWbXnd2MG9i18n5W36PjXZlYtG86Dlhiwyr5MUihtA3k0PLdlIeBfxL/puxjJB/lH3TpPdgkSxwUGo0Jl65tUGGtdKwRUvw488Nx0PJAgMBAAGjggGEMIIBgDAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFAeUNkpRlUn97ioGeTZ/wjc7Ttu/MB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHoGCCsGAQUFBwEBBG4wbDAtBggrBgEFBQcwAYYhaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vcm9vdHIzMDsGCCsGAQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXIzLmNydDA2BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjMuY3JsMEcGA1UdIARAMD4wPAYEVR0gADA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG9w0BAQsFAAOCAQEAYTUdDFCkY6pGCgQWAI7Y/n1Dpk5BqieG7dYxX8e3uKMAVEObEpboNixYe4tnICApgFay9FERbc4QIJjCfLKpcgJGn5oWg0WRUSiuuwx5oATplUn012wxSfBPRUzEYTQVzihSGiDa1u/4Y55WE7hzf34DRfPi8a4pQfHc+TMdL10lMbIZdUTOp84lkKnHza4bze+p+TCwJxJmrMvI+9m5Ml9+dStsbEG+wXkPLNxPYEAlFT/IrvUj6uMLhsUMlogMUC07e6kz7G/XuXVIYTFsvkwPvwO2VGPL2ScSfeb5dS93QzWHYWyt34qNN2lYl2srnoCe5T0AAE3EL7SQuqEubw==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=GlobalSign GCC R3 UK EV QWAC CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>B5Q2SlGVSf3uKgZ5Nn/CNztO278=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC R3 UK EV QWAC 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=GlobalSign GCC R3 UK EV QWAC CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>B5Q2SlGVSf3uKgZ5Nn/CNztO278=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2023-02-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign GCC E5 UK EV QWAC CA 2021</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDbDCCAvGgAwIBAgIQeSmbhHLMt1IRJtmqS3w+HjAKBggqhkjOPQQDAzBQMSQwIgYDVQQLExtHbG9iYWxTaWduIEVDQyBSb290IENBIC0gUjUxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wHhcNMjEwMzI0MDAwMDAwWhcNMzAwMzI0MDAwMDAwWjBZMQswCQYDVQQGEwJHQjEbMBkGA1UEChMSR01PIEdsb2JhbFNpZ24gTHRkMS0wKwYDVQQDEyRHbG9iYWxTaWduIEdDQyBFNSBVSyBFViBRV0FDIENBIDIwMjEwdjAQBgcqhkjOPQIBBgUrgQQAIgNiAATwCvlBqms9apNbpwFwLjHiiq3jSIC54A1bhLws9uDfx9vpz8ejiVsVmWvp6omZc/kYk192N3JjFK/tSOLhlJH0lKLk1A6W1AxU6cX2US7jKJFAaPiaBpW6nrU1Qmcmz+WjggGFMIIBgTAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFKy9fdAZr4SGpz7/UQE88y0CcOPOMB8GA1UdIwQYMBaAFD3mKUib6gfKIURKJt5u3tKD0J9ZMHsGCCsGAQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3RyNTA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1yNS5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXI1LmNybDBHBgNVHSAEQDA+MDwGBFUdIAAwNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCgYIKoZIzj0EAwMDaQAwZgIxAIawO5O+AdVuSe5K8HmtNwcRXxk6W+0c11/koPJqx+1HUMDHEs0Own1NCJjDdmQkkQIxALjy9QQYnNAddDU4uPB5F3AkCNFjoU6sinvJzMQKsIYSdD1UHU9OK5v+yALw8gPwIw==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=GlobalSign GCC E5 UK EV QWAC CA 2021, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>rL190BmvhIanPv9RATzzLQJw484=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign GCC E5 UK EV QWAC CA 2021</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=GlobalSign GCC E5 UK EV QWAC CA 2021, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>rL190BmvhIanPv9RATzzLQJw484=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2023-02-27T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForWebSiteAuthentication</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>https://uri.etsi.org/TrstSvc/Svctype/TSA/QTST/</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign Atlas R45 UK Qualified Timestamping CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas R45 UK Qualified Timestamping CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>u66PzppIK0goOk9Yt9X+w5aZ99I=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>https://uri.etsi.org/TrstSvc/Svctype/TSA/QTST/</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign Atlas R45 UK Qualified Timestamping CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas R45 UK Qualified Timestamping CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>u66PzppIK0goOk9Yt9X+w5aZ99I=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2023-02-27T00:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>https://uri.etsi.org/TrstSvc/Svctype/TSA/QTST/</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GlobalSign Atlas ECCR5 UK Qualified Timestamping CA 2020</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDjzCCAxWgAwIBAgIQeEqpJTCasEkxbAgK79xiATAKBggqhkjOPQQDAzBQMSQwIgYDVQQLExtHbG9iYWxTaWduIEVDQyBSb290IENBIC0gUjUxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wHhcNMjAwOTE2MDAwMDAwWhcNMzUwOTE2MDAwMDAwWjCBhjELMAkGA1UEBhMCR0IxGzAZBgNVBAoTEkdNTyBHbG9iYWxTaWduIEx0ZDFBMD8GA1UEAxM4R2xvYmFsU2lnbiBBdGxhcyBFQ0NSNSBVSyBRdWFsaWZpZWQgVGltZXN0YW1waW5nIENBIDIwMjAxFzAVBgNVBGETDk5UUkdCLTA0NzA1NjM5MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEfk+RmB26/d5dEibpDWdVoEtDf0J05OGj55aOMQlq4LEQU9DcI0cga3oA05J9B+AK6va9bY/Ci8qZcg0+vuxwjm7EwBjC8Y/o81T2hylNPPyfJuvcYMMWwRMGZRGPUfQ2o4IBezCCAXcwDgYDVR0PAQH/BAQDAgGGMBMGA1UdJQQMMAoGCCsGAQUFBwMIMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFN4R2f/PZGP66qnyHRRjH0WlHEu4MB8GA1UdIwQYMBaAFD3mKUib6gfKIURKJt5u3tKD0J9ZMHsGCCsGAQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3RyNTA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1yNS5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXI1LmNybDBHBgNVHSAEQDA+MDwGBFUdIAAwNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCgYIKoZIzj0EAwMDaAAwZQIwEr0HdL7Z/67L5gT3fGzLGbUsi1Y0+TKqoq+PrCHfwWZZ8eZKsOrvhT5xyZ0RaR31AjEA1/scYIVF3DUCU4uI60Fuw5D01ApcRbSn0zztQWLpWDy7xu3kUyQzpvD1DM//Or4y</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas ECCR5 UK Qualified Timestamping CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>3hHZ/89kY/rqqfIdFGMfRaUcS7g=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2024-03-20T00:00:00Z</StatusStartingTime>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>https://uri.etsi.org/TrstSvc/Svctype/TSA/QTST/</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">GlobalSign Atlas ECCR5 UK Qualified Timestamping CA 2020</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>OID.2.5.4.97=NTRGB-04705639, CN=GlobalSign Atlas ECCR5 UK Qualified Timestamping CA 2020, O=GMO GlobalSign Ltd, C=GB</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>3hHZ/89kY/rqqfIdFGMfRaUcS7g=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2023-02-27T00:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+    </TrustServiceProviderList>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="id-740a37ffca972c76ff43b04831735f35"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><ds:Reference Id="xml_ref_id" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>cb16i4e1OhEvUxvuzTiMqzVqKRqKyOQOmoDkOW0Ef/4=</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xades-id-740a37ffca972c76ff43b04831735f35"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>niRkOGndMkxpnwnvxU4xjLixGD7XLun3D1StyXLptN8=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="value-id-740a37ffca972c76ff43b04831735f35">PwSz29XOxrsAkcF6BA9l1RqdOtc3IouJVSqwHiOuPFQQSnKWi7XhHFQhjGaQfselTF1I2EenvUvGE+yf/phpN60A3ZzniB4KZ7p+/yIijvG4upeqSMOwAZb1MfF+ZQF85D12xSObUqChplDNx8EYiLHZWYaXXbUjdP9jlcUtrBA7nbrUYz9RICx7my4yfSZW6RkgIfclaXOz7w+AYeyf8DEkxgYz6/dg5awB7iH9TpuTWNjfj0n/nyhG+jintxPAbMMFHmxFhxs4bDuY2XM9Y/Fzs+lGT2gPu8Wc9v5lOGrQhe8ETIF4V++ps5OY3N9nmKQiJNkQagsiETmbmpvyq+m9zo53tG2HL+Drz/NAwxkJ16b4/raa/4GpB6qusLX44WMVEtcGZyIX2Ht25BWoPNbBIA9+eemIfQj8B1mp6IgqvxQn6OzniK3IC9tnyb9joLjmtZKWHObea2sVUMvmz6L4Lpmv3eRV3iK1R3+vEFq/jSJxTET8Uv3ghX3QM/T1</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIEdjCCAt6gAwIBAgIEYy22yDANBgkqhkiG9w0BAQsFADBTMQswCQYDVQQGEwJVSzEsMCoGA1UECgwjSW5mb3JtYXRpb24gQ29tbWlzc2lvbmVy4oCZcyBPZmZpY2UxFjAUBgNVBAMMDVRMIFNpZ25pbmcgMDEwHhcNMjIwOTIzMTMzODE2WhcNMjgwOTIzMTMzODE2WjBTMQswCQYDVQQGEwJVSzEsMCoGA1UECgwjSW5mb3JtYXRpb24gQ29tbWlzc2lvbmVy4oCZcyBPZmZpY2UxFjAUBgNVBAMMDVRMIFNpZ25pbmcgMDEwggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQCW2DauxDAvJsHGQcR+AMWE9L5p69pb7z50O7OLxNv/PMnTZCEaXwru2VQND6w39HZ0fF0RpNixJDOM8+oCSIdK6OhXozOZQwM/FsLDF3rQQMpKwYp76YFJo7C4CVVTN1mKo1HdZr3XE3KjI6rfqe1eeRr8zFy+IZIC0lLhoU/I6XYQqdaus5Mlp4yWswmTmkeFRYij7eLyPA5bQj2LG2svp/kVQ75uIZifJQbvzQSzbv8nOqMSPPTTrypcjIL7OQKk3TQa7ejsHo3jQOpjV3uVbJcj+EATpDqZ5c5ELOWpUJ5lW1oR2Jke7uNeMrcsrLLOBw+KyGsAq5YSs9hFM5whdwP7ZVHjUvKV0pBfVmsmSg0XDODrUtZY2mG9NfJCi8S079AWByeoFpzIKyEbeRBkAZX24f/BM1KX2/6JFFxv3JUTuFOA1t+ZjlcZxOXIePI/RVBrpbew/tOgTPEdrJPe/Ye2VGr8Ih/7iTTCfXA2hf7asBv9fhWom7YfgBa1e0kCAwEAAaNSMFAwDAYDVR0TAQH/BAIwADAOBgNVHQ8BAf8EBAMCBkAwHQYDVR0OBBYEFL83w5OEBK4qbQEKUIxmn5zWHqLpMBEGA1UdJQQKMAgGBgQAkTcDADANBgkqhkiG9w0BAQsFAAOCAYEATxzQSuhdfPQSmtvbgIO33cOoTYz9344G+WKtl/wrsy5NrmVuAaHdckDz4BOY1mWx0b0VQ4Y9GDJL1ZfIEuSzUbAbSSagHcDRiC4sRVSq1g/y06neKVPz+/uWUiNsJRf/4OkZaOEQmi1a/Mf7fRZnnLVTsudJRJhgPGVRFM6hkpWbPDKRH+pa9TZcRHhcv3EGFlGZ+w5M4+ly5PCeCeXJ7cHX6Lpp73IUSDMLfjgDoLJFuxs0a5YI9E5uJRJNrm8r4BFhZuiBL1XYAGdNKk/2UKRBjg9XZXFYOrzZPJQs/rgE3iq/ysxbE3+6upAYJalmHeok7R1oaUsQLzoPDkieopDWuBjryx6h2Ewh1PisvDP2Rq37ErLxDbv+0bhn6l3CmkWxEunKsnX1qo2C+C1v7ig2uMLb63uFKvkmtx5qRUafIR6FB1snc9Gjd7PVx+MYIHsIzbO+fqJVPyAJEJwWspJRwP6vJZFFeF6Q6j2WB3ntxFTNI7IWLD8CRuveAv3m</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#id-740a37ffca972c76ff43b04831735f35"><xades:SignedProperties Id="xades-id-740a37ffca972c76ff43b04831735f35"><xades:SignedSignatureProperties><xades:SigningTime>2025-08-19T13:41:39Z</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>o602T3+v1Xv3DOA94PSJM9cSB6I=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>CN=TL Signing 01,O=Information Commissioner’s Office,C=UK</ds:X509IssuerName><ds:X509SerialNumber>1663940296</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#xml_ref_id"><xades:MimeType>text/xml</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></TrustServiceStatusList>

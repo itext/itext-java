@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -29,7 +29,6 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -72,9 +71,7 @@ import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -91,8 +88,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Tag("IntegrationTest")
 public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PdfUA2AnnotationsTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/PdfUA2AnnotationsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PdfUA2AnnotationsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/PdfUA2AnnotationsTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -107,7 +105,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
             createSimplePdfUA2Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
             Link link = createLinkAnnotation();
             Paragraph paragraph = new Paragraph();
@@ -127,7 +125,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
             createSimplePdfUA2Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
             Link link = createLinkAnnotation();
             link.getLinkAnnotation().getPdfObject().remove(PdfName.Contents);
@@ -139,10 +137,6 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
         compareAndValidate(outFile, cmpFile);
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    KernelLogMessageConstant.DUPLICATE_STRUCT_PARENT_INDEX_IN_TAGGED_OBJECT_REFERENCES, count = 1)
-    })
     @Test
     public void pdfUA2FileAttachmentAnnotTest() throws IOException, XMPException, InterruptedException {
         String outFile = DESTINATION_FOLDER + "pdfuaFileAttachmentAnnotTest.pdf";
@@ -158,11 +152,8 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfFileAttachmentAnnotation annot = new PdfFileAttachmentAnnotation(rect, fs);
             annot.setContents("Hello world");
             annot.getPdfObject().put(PdfName.Type, PdfName.Annot);
-            pdfPage.addAnnotation(annot);
-
             PdfFormXObject xObject = new PdfFormXObject(rect);
             annot.setNormalAppearance(xObject.getPdfObject());
-
             pdfPage.addAnnotation(annot);
         }
         compareAndValidate(outFile, cmpFile);
@@ -184,7 +175,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             annot.setContents("Hello world");
             pdfPage.addAnnotation(annot);
         }
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
 
@@ -254,7 +245,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(screen);
             pdfPage.flush();
         }
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
     @Test
@@ -288,7 +279,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
     @Test
@@ -358,7 +349,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
     @Test
@@ -392,7 +383,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
     @Test
@@ -434,7 +425,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfTrapNetworkAnnotation annot = new PdfTrapNetworkAnnotation(PageSize.A4, form);
             pdfPage.addAnnotation(annot);
         }
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
     @Test
@@ -448,7 +439,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfAnnotation annot = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), new PdfStream());
             pdfPage.addAnnotation(annot);
         }
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
     @Test
@@ -459,7 +450,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
             createSimplePdfUA2Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
             Link link = createLinkAnnotation();
             link.getAccessibilityProperties().setAlternateDescription("some description");
@@ -469,7 +460,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             new Document(pdfDocument).add(paragraph);
         }
 
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
     @Test
@@ -513,7 +504,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
     @Test
@@ -533,7 +524,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        new VeraPdfValidator().validateFailure(outFile);// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        new VeraPdfValidator().validateFailure(outFile);
     }
 
     private void createSimplePdfUA2Document(PdfDocument pdfDocument) throws IOException, XMPException {
@@ -548,7 +539,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
     }
 
     private void compareAndValidate(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);

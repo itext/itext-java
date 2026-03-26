@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -44,6 +44,9 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
+import java.util.Arrays;
+import java.util.Collections;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -763,6 +766,24 @@ public class PdfStructElemTest extends ExtendedITextTest {
         }
 
         compareResult("addAnnotationTaggedAsArtifact.pdf", "cmp_addAnnotationTaggedAsArtifact.pdf");
+    }
+
+    @Test
+    public void addAnnotationTaggedAsArtifactInWtpdfTest() throws Exception {
+        try (PdfDocument document = new PdfDocument(
+                CompareTool.createTestPdfWriter(destinationFolder + "addAnnotationTaggedAsArtifactInWtpdf.pdf",
+                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)
+                                .addWtpdfXmpMetadata(
+                                        Collections.singletonList(WellTaggedPdfConformance.FOR_ACCESSIBILITY))))) {
+            document.setTagged();
+
+            PdfPage page = document.addNewPage();
+            PdfLinkAnnotation linkAnnotation = new PdfLinkAnnotation(new Rectangle(80, 508, 40, 18));
+            linkAnnotation.setFlag(PdfAnnotation.INVISIBLE);
+            page.addAnnotation(linkAnnotation);
+        }
+
+        compareResult("addAnnotationTaggedAsArtifactInWtpdf.pdf", "cmp_addAnnotationTaggedAsArtifact.pdf");
     }
 
     @Test

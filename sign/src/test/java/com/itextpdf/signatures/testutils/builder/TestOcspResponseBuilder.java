@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -57,7 +57,7 @@ public class TestOcspResponseBuilder {
     private static final String SIGN_ALG = "SHA256withRSA";
 
     private final String signatureAlgorithm;
-    private final IBasicOCSPRespBuilder responseBuilder;
+    private IBasicOCSPRespBuilder responseBuilder;
     private final X509Certificate issuerCert;
     private final PrivateKey issuerPrivateKey;
     private ICertificateStatus certificateStatus;
@@ -94,6 +94,10 @@ public class TestOcspResponseBuilder {
     public TestOcspResponseBuilder(X509Certificate issuerCert, PrivateKey issuerPrivateKey)
             throws CertificateEncodingException {
         this(issuerCert, issuerPrivateKey, FACTORY.createCertificateStatus().getGood());
+    }
+
+    public void setResponseBuilder(IBasicOCSPRespBuilder responseBuilder) {
+        this.responseBuilder = responseBuilder;
     }
 
     public X509Certificate getIssuerCert() {

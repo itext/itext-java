@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -204,6 +204,21 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
         }
         List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
         Assertions.assertTrue(annotations.isEmpty(), "Annotation is copied");
+    }
+
+    @Test
+    public void namedIndirectDestTest() throws IOException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "namedIndirectDest.pdf";
+        String inFile = SOURCE_FOLDER + "namedIndirectDest.pdf";
+
+        try (PdfDocument out = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
+            try (PdfDocument input = new PdfDocument(new PdfReader(inFile))) {
+                input.copyPagesTo(1, 1, out);
+            }
+        }
+        List<PdfAnnotation> annotations = getAnnotationsFromPdf(outFile, 1);
+        Assertions.assertFalse(annotations.isEmpty());
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, inFile, DESTINATION_FOLDER));
     }
 
     private List<PdfAnnotation> getAnnotationsFromPdf(String outFilePath, int pageNumber) throws IOException {

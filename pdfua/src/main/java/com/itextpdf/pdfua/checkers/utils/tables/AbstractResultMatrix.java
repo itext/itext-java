@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -237,7 +237,7 @@ abstract class AbstractResultMatrix<T> {
     private static <Z> List<Z> createFixedSizedList(int capacity, Object defaultValue) {
         List<Z> arr = new ArrayList<>(capacity);
         for (int i = 0; i < capacity; i++) {
-            arr.add((Z)defaultValue);
+            arr.add((Z) defaultValue);
         }
         return arr;
     }

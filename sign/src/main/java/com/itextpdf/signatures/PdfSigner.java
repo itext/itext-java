@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,6 +23,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1EncodableVector;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Sequence;
@@ -84,7 +85,6 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.pdfa.PdfADefaultFontStrategy;
 import com.itextpdf.pdfa.PdfADocument;
-import com.itextpdf.pdfa.PdfADocumentInfoHelper;
 import com.itextpdf.pdfa.PdfAPageFactory;
 import com.itextpdf.pdfa.checker.PdfAChecker;
 import com.itextpdf.signatures.cms.AlgorithmIdentifier;
@@ -263,7 +263,7 @@ public class PdfSigner {
     public PdfSigner(PdfReader reader, OutputStream outputStream, String path, StampingProperties properties)
             throws IOException {
         StampingProperties localProps = new StampingProperties(properties).preserveEncryption();
-        localProps.registerDependency(IMacContainerLocator.class, new SignatureMacContainerLocator());
+        localProps.registerDependency(IMacContainerLocator.class, () -> new SignatureMacContainerLocator());
         if (path == null) {
             this.temporaryOS = new ByteArrayOutputStream();
             this.document = initDocument(reader, new PdfWriter(temporaryOS), localProps);
@@ -645,7 +645,7 @@ public class PdfSigner {
                 : PdfName.Adbe_pkcs7_detached);
         dic.setReason(this.signerProperties.getReason());
         dic.setLocation(this.signerProperties.getLocation());
-        dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
+        dic.setSignatureCreator(getSignatureCreator());
         dic.setContact(this.signerProperties.getContact());
         Calendar claimedSignDate = this.signerProperties.getClaimedSignDate();
         if (claimedSignDate != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
@@ -786,6 +786,7 @@ public class PdfSigner {
 
         PdfSignature dic = new PdfSignature(PdfName.Adobe_PPKLite, PdfName.ETSI_RFC3161);
         dic.put(PdfName.Type, PdfName.DocTimeStamp);
+        dic.setSignatureCreator(getSignatureCreator());
         cryptoDictionary = dic;
 
         Map<PdfName, Integer> exc = new HashMap<>();
@@ -1386,7 +1387,7 @@ public class PdfSigner {
         PdfSignature dic = new PdfSignature();
         dic.setReason(this.signerProperties.getReason());
         dic.setLocation(this.signerProperties.getLocation());
-        dic.setSignatureCreator(this.signerProperties.getSignatureCreator());
+        dic.setSignatureCreator(getSignatureCreator());
         dic.setContact(this.signerProperties.getContact());
         Calendar claimedSignDate = this.signerProperties.getClaimedSignDate();
         if (includeDate && claimedSignDate != TimestampConstants.UNDEFINED_TIMESTAMP_DATE) {
@@ -1437,6 +1438,17 @@ public class PdfSigner {
             throw new PdfException(SignExceptionMessageConstant.NOT_POSSIBLE_TO_EMBED_MAC_TO_SIGNATURE, exception);
         }
         return signatureContainer;
+    }
+
+    private String getSignatureCreator() {
+        String signatureCreator = this.signerProperties.getSignatureCreator();
+        if (signatureCreator == null || !signatureCreator.isEmpty()) {
+            return signatureCreator;
+        }
+
+        GetSignatureCreatorEvent event = new GetSignatureCreatorEvent(document);
+        EventManager.getInstance().onEvent(event);
+        return event.getSignatureCreator();
     }
 
     private static String getSignerName(X509Certificate certificate) {
@@ -1595,7 +1607,7 @@ public class PdfSigner {
 
         public void apply(ISignatureDataProvider signatureDataProvider) throws IOException, GeneralSecurityException {
             StampingProperties properties = new StampingProperties().preserveEncryption();
-            properties.registerDependency(IMacContainerLocator.class, new SignatureMacContainerLocator());
+            properties.registerDependency(IMacContainerLocator.class, () -> new SignatureMacContainerLocator());
             // This IdleOutputStream writer does nothing and only required to be able to apply MAC if needed.
             try (PdfWriter dummyWriter = new PdfWriter(new IdleOutputStream())) {
                 if (document == null) {

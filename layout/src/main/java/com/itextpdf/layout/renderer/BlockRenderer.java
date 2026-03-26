@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -69,6 +69,10 @@ import org.slf4j.LoggerFactory;
  * Represents a renderer for block elements.
  */
 public abstract class BlockRenderer extends AbstractRenderer {
+
+    // Use that value so that layout is independent of whether we are in the bottom of the page or in the
+    // top of the page
+    private static final float POSITIONED_CHILDREN_LAYOUT_MIN_HEIGHT = 1000F;
 
     /**
      * Creates a BlockRenderer from its corresponding layout object.
@@ -421,23 +425,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             updateHeightsOnSplit(usedHeight, wasHeightClipped, splitRenderer, overflowRenderer, includeFloatsInOccupiedArea);
         }
 
-        if (!positionedRenderers.isEmpty()) {
-            for (IRenderer childPositionedRenderer : positionedRenderers) {
-                Rectangle fullBbox = occupiedArea.getBBox().clone();
-
-                // Use that value so that layout is independent of whether we are in the bottom of the page or in the
-                // top of the page
-                float layoutMinHeight = 1000;
-                fullBbox.moveDown(layoutMinHeight).setHeight(layoutMinHeight + fullBbox.getHeight());
-                LayoutArea parentArea = new LayoutArea(occupiedArea.getPageNumber(), occupiedArea.getBBox().clone());
-                applyPaddings(parentArea.getBBox(), paddings, true);
-
-                preparePositionedRendererAndAreaForLayout(childPositionedRenderer, fullBbox, parentArea.getBBox());
-                childPositionedRenderer.layout(
-                        new PositionedLayoutContext(new LayoutArea(occupiedArea.getPageNumber(), fullBbox),
-                                parentArea));
-            }
-        }
+        layoutPositionedChildrenIfAny(this, paddings);
 
         if (isPositioned) {
             correctFixedLayout();
@@ -673,6 +661,18 @@ public abstract class BlockRenderer extends AbstractRenderer {
             overflowRenderer.addChildRenderer(childResult.getOverflowRenderer());
         }
         overflowRenderer.childRenderers.addAll(childRenderers.subList(childPos + 1, childRenderers.size()));
+
+        // Keep absolutely positioned descendants anchored to the FIRST fragment.
+        // If the first fragment is actually NOTHING, then the overflow is the first placed fragment.
+        if (!this.positionedRenderers.isEmpty()) {
+            AbstractRenderer positionedRenderersNewParent = layoutStatus == LayoutResult.NOTHING
+                    ? overflowRenderer
+                    : splitRenderer;
+            positionedRenderersNewParent.positionedRenderers = new ArrayList<>(this.positionedRenderers);
+            for (IRenderer positionedChild : positionedRenderersNewParent.positionedRenderers) {
+                positionedChild.setParent(positionedRenderersNewParent);
+            }
+        }
 
         if (layoutStatus != LayoutResult.NOTHING) {
             ContinuousContainer.clearPropertiesFromOverFlowRenderer(overflowRenderer);
@@ -910,6 +910,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
                 correctFixedLayout();
 
+                // Ensure positioned children are laid out for the split part before returning early.
+                layoutPositionedChildrenIfAny(splitRenderer, paddings);
+
                 LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
                 if (wasHeightClipped) {
                     return new LayoutResult(LayoutResult.FULL, editedArea, splitRenderer, null);
@@ -931,10 +934,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
             AbstractRenderer splitRenderer = splitAndOverflowRenderers[0];
             AbstractRenderer overflowRenderer = splitAndOverflowRenderers[1];
 
-            if (isRelativePosition() && !positionedRenderers.isEmpty()) {
-                overflowRenderer.positionedRenderers = new ArrayList<>(positionedRenderers);
-            }
-
             updateHeightsOnSplit(wasHeightClipped, splitRenderer, overflowRenderer);
 
             if (keepTogether) {
@@ -950,6 +949,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyMargins(occupiedArea.getBBox(), true);
 
             applyAbsolutePositionIfNeeded(layoutContext);
+
+            // Ensure positioned children are laid out (if any exists) for the split part before returning early.
+            layoutPositionedChildrenIfAny(splitRenderer, paddings);
 
             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) || wasHeightClipped) {
                 LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
@@ -1180,6 +1182,37 @@ public abstract class BlockRenderer extends AbstractRenderer {
             } else {
                 canvas.restoreState().endVariableText();
             }
+        }
+    }
+
+    /**
+     * Layout positioned children for the specified renderer instance.
+     * This is needed because some split/overflow code steps return early from layout(),
+     * skipping the normal positioned-children layout step at the end of layout().
+     *
+     * @param parent renderer which positioned children to layout
+     * @param paddings current renderer paddings to apply
+     */
+    private static void layoutPositionedChildrenIfAny(AbstractRenderer parent, UnitValue[] paddings) {
+        if (parent == null || parent.positionedRenderers == null || parent.positionedRenderers.isEmpty()
+                || parent.occupiedArea == null) {
+            return;
+        }
+
+        for (IRenderer childPositionedRenderer : parent.positionedRenderers) {
+            Rectangle fullBbox = parent.occupiedArea.getBBox().clone();
+
+            fullBbox.moveDown(POSITIONED_CHILDREN_LAYOUT_MIN_HEIGHT)
+                    .setHeight(POSITIONED_CHILDREN_LAYOUT_MIN_HEIGHT + fullBbox.getHeight());
+
+            LayoutArea parentArea = new LayoutArea(parent.occupiedArea.getPageNumber(),
+                    parent.occupiedArea.getBBox().clone());
+            parent.applyPaddings(parentArea.getBBox(), paddings, true);
+
+            parent.preparePositionedRendererAndAreaForLayout(childPositionedRenderer, fullBbox, parentArea.getBBox());
+            childPositionedRenderer.layout(
+                    new PositionedLayoutContext(new LayoutArea(parent.occupiedArea.getPageNumber(), fullBbox),
+                            parentArea));
         }
     }
 }

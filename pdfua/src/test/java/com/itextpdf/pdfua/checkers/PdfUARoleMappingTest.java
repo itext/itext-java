@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -35,23 +35,18 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.CanvasTag;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.tagging.PdfMcr;
-import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
-import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
-import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
-import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -127,43 +122,35 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
     }
 
     @Test
-    public void nonStandardMappingViaPdfName_02_001_Test() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "nonStandardMappingViaPdfNameTest.pdf";
+    public void nonStandardMappingViaPdfNameInContentStream_02_001_Test() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "nonStandardMappingViaPdfNameInContentStreamTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_nonStandardMappingViaPdfNameInContentStreamTest.pdf";
 
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
+        try (PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
+                new PdfWriter(outPdf))) {
+            PdfFont font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
 
-        PdfPage page1 = pdfDoc.addNewPage();
-        PdfCanvas canvas = new PdfCanvas(page1);
+            PdfPage page1 = pdfDoc.addNewPage();
+            PdfCanvas canvas = new PdfCanvas(page1);
 
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(page1)
+                    .addTag(StandardRoles.SECT);
 
-        // Another attempts of PDF/UA document creation with non-standard tags see in PdfUACanvasTest class
-        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> canvas.openTag(new CanvasTag(new PdfName("chapter"))));
-        Assertions.assertEquals(
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, "chapter"),
-                e.getMessage());
-    }
+            canvas.openTag(tagPointer.getTagReference())
+                    .openTag(new CanvasTag(new PdfName("chapter")))
+                    .beginText()
+                    .setFontAndSize(font, 12)
+                    .moveText(200, 200)
+                    .showText("Hello World!")
+                    .endText()
+                    .closeTag()
+                    .closeTag();
 
-    @Test
-    public void nonStandardMappingViaPdfMcr_02_001_Test() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "nonStandardMappingViaPdfMcrTest.pdf";
+        }
 
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-
-        PdfPage page1 = pdfDoc.addNewPage();
-
-        PdfStructElem doc = pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.Document));
-        PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDoc, new PdfName("chapter"), page1));
-        PdfMcr mcr = paragraph.addKid(new PdfMcrNumber(page1, paragraph));
-
-        PdfCanvas canvas = new PdfCanvas(page1);
-
-        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> canvas.openTag(new CanvasTag(mcr)));
-        Assertions.assertEquals(
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, "chapter"),
-                e.getMessage());
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test
@@ -197,39 +184,7 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         pdfDoc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
-    }
-
-    @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, count = 2, logLevel = LogLevelConstants.WARN)
-    })
-    public void standardMappingViaNamespace_02_001_Test() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "standardMappingViaNamespaceTest.pdf";
-
-        PdfUATestPdfDocument pdfDoc = new PdfUATestPdfDocument(
-                new PdfWriter(outPdf));
-        PdfPage page1 = pdfDoc.addNewPage();
-
-        PdfStructElem doc = pdfDoc.getStructTreeRoot().addKid(new PdfStructElem(pdfDoc, PdfName.Document));
-        PdfStructElem paragraph = doc.addKid(new PdfStructElem(pdfDoc, PdfName.P));
-        PdfStructElem chapter = paragraph.addKid(new PdfStructElem(pdfDoc, new PdfName("chapter"), page1));
-
-        // Namespaces are actual only for PDF-2.0, which is actual only for PDF/UA-2
-        PdfNamespace namespace = new PdfNamespace("http://www.w3.org/1999/xhtml");
-        chapter.setNamespace(namespace);
-        namespace.addNamespaceRoleMapping("chapter", StandardRoles.SPAN);
-        pdfDoc.getStructTreeRoot().addNamespace(namespace);
-
-        PdfMcr mcr = chapter.addKid(new PdfMcrNumber(page1, chapter));
-
-        PdfCanvas canvas = new PdfCanvas(page1);
-
-        // VeraPdf also complains about non-standard mapping
-        Exception e = Assertions.assertThrows(PdfUAConformanceException.class, () -> canvas.openTag(new CanvasTag(mcr)));
-        Assertions.assertEquals(
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE, "chapter"),
-                e.getMessage());
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test

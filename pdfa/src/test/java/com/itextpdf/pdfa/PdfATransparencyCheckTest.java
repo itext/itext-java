@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -55,13 +55,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
 public class PdfATransparencyCheckTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfATransparencyCheckTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfATransparencyCheckTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String CMP_FOLDER = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfATransparencyCheckTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfATransparencyCheckTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
@@ -69,7 +70,7 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         PdfWriter writer = new PdfWriter(new java.io.ByteArrayOutputStream());
         PdfDocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_3B, null);
 
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page1 = pdfDocument.addNewPage();
@@ -93,11 +94,11 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
 
     @Test
     public void transparentTextWithGroupColorSpaceTest() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "transparencyAndCS.pdf";
-        String cmpPdf = cmpFolder + "cmp_transparencyAndCS.pdf";
+        String outPdf = DESTINATION_FOLDER + "transparencyAndCS.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_transparencyAndCS.pdf";
 
         PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformance.PDF_A_3B, null);
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfPage page = pdfDocument.addNewPage();
@@ -145,7 +146,7 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
         page.getResources().setDefaultRgb(new PdfCieBasedCs.CalRgb(new float[]{0.3f, 0.4f, 0.5f}));
 
         canvas.saveState();
-        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(sourceFolder + "itext.png"),
+        canvas.addImageFittedIntoRectangle(ImageDataFactory.create(SOURCE_FOLDER + "itext.png"),
                 new Rectangle(0, 0, page.getPageSize().getWidth() / 2, page.getPageSize().getHeight() / 2), false);
         canvas.restoreState();
 
@@ -192,12 +193,12 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
 
     @Test
     public void testTransparencyObjectsAbsence() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "transparencyObjectsAbsence.pdf";
-        String cmpPdf = cmpFolder + "cmp_transparencyObjectsAbsence.pdf";
+        String outPdf = DESTINATION_FOLDER + "transparencyObjectsAbsence.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_transparencyObjectsAbsence.pdf";
 
         PdfDocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformance.PDF_A_3B, null);
         PdfPage page = pdfDocument.addNewPage();
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED);
 
         PdfCanvas canvas = new PdfCanvas(page);
@@ -218,7 +219,7 @@ public class PdfATransparencyCheckTest extends ExtendedITextTest {
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        String result = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);
         }

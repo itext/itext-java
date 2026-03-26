@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -29,14 +29,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class SimpleWoff2DecodeTest extends Woff2DecodeTest {
-
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/io/font/woff2/SimpleWoff2Decode/";
-    private static final String targetFolder = TestUtil.getOutputPath() + "/io/font/woff2/SimpleWoff2Decode/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/io/font/woff2/SimpleWoff2Decode/";
 
     @BeforeAll
     public static void setUp() {
         if (DEBUG) {
-            createOrClearDestinationFolder(targetFolder);
+            createOrClearDestinationFolder(DESTINATION_FOLDER);
         }
     }
 
@@ -51,6 +50,6 @@ public class SimpleWoff2DecodeTest extends Woff2DecodeTest {
     }
 
     private void runTest(String fontName) throws IOException {
-        runTest(fontName, sourceFolder, targetFolder, true);
+        runTest(fontName, FONTS_FOLDER, DESTINATION_FOLDER, true);
     }
 }

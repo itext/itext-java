@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,21 +22,21 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.source.HighPrecisionOutputStream;
 import com.itextpdf.io.source.IFinishable;
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.IOException;
 
 public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> {
 
@@ -602,7 +602,7 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
                             assert pdfStream.getOutputStream() != null : "Error in outputStream";
                             ((ByteArrayOutputStream) pdfStream.getOutputStream().getOutputStream()).writeTo(zip);
                         }
-                        if (zip instanceof IFinishable){
+                        if (zip instanceof IFinishable) {
                             ((IFinishable) zip).finish();
                         }
                     } else {

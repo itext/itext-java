@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -64,33 +64,33 @@ public class FontFaceTest extends SvgIntegrationTest {
     }
 
     @Test
-    public void droidSerifSingleQuotesTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "droidSerifSingleQuotesTest");
+    public void robotoSerifSingleQuotesTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifSingleQuotesTest");
     }
 
     @Test
-    public void droidSerifWebFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "droidSerifWebFontTest");
+    public void robotoSerifWebFontTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifWebFontTest");
     }
 
     @Test
-    public void droidSerifLocalFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "droidSerifLocalFontTest");
+    public void robotoSerifLocalFontTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifLocalFontTest");
     }
 
     @Test
-    public void droidSerifLocalLocalFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "droidSerifLocalLocalFontTest");
+    public void robotoSerifLocalLocalFontTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifLocalLocalFontTest");
     }
 
     @Test
-    public void droidSerifLocalWithMediaFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "droidSerifLocalWithMediaFontTest");
+    public void robotoSerifLocalWithMediaFontTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifLocalWithMediaFontTest");
     }
 
     @Test
-    public void droidSerifLocalWithMediaRuleFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "droidSerifLocalWithMediaRuleFontTest");
+    public void robotoSerifLocalWithMediaRuleFontTest() throws IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifLocalWithMediaRuleFontTest");
     }
 
     @Test

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -322,6 +322,17 @@ public class AffineTransform implements Cloneable {
      */
     public boolean isIdentity() {
         return getType() == TYPE_IDENTITY;
+    }
+
+    /**
+     * Gets an array filled with the values of this {@link AffineTransform} instance.
+     *
+     * @return an array filled with the values of this {@link AffineTransform} instance.
+     */
+    public float[] getMatrix() {
+        float[] matrix = new float[6];
+        getMatrix(matrix);
+        return matrix;
     }
 
     /**

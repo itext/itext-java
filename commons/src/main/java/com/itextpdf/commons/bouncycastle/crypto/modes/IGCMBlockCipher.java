@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -67,6 +67,18 @@ public interface IGCMBlockCipher {
             throws GeneralSecurityException;
 
     /**
+     * Perform a multiple-part encryption or decryption operation (depending on how this cipher was initialized),
+     * processing another data part.
+     *
+     * @param input the input buffer
+     * @param inputOffset the offset in input where the input starts
+     * @param len the input length
+     *
+     * @return byte array with the result
+     */
+    byte[] processBytes(byte[] input, int inputOffset, int len);
+
+    /**
      * Returns the length in bytes that an output buffer would need to be in order to hold the result of
      * the next doFinal operation, given the input length (in bytes).
      *
@@ -87,4 +99,15 @@ public interface IGCMBlockCipher {
      * @throws GeneralSecurityException in case any error during encryption or decryption
      */
     void doFinal(byte[] plainText, int i) throws GeneralSecurityException;
+
+    /**
+     * Finishes a multiple-part encryption or decryption operation, depending on how this cipher was initialized.
+     * Input data that may have been buffered during a previous update operation is processed, also
+     * the authentication tag is appended in the case of encryption, or verified in the case of decryption.
+     *
+     * @return byte array with the result
+     *
+     * @throws GeneralSecurityException in case any error during encryption or decryption
+     */
+    byte[] doFinal() throws GeneralSecurityException;
 }

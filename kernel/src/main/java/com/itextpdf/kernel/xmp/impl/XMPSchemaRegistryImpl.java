@@ -231,6 +231,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 		registerNamespace(NS_PDFA_FIELD, "pdfaField");
 		registerNamespace(NS_PDFA_ID, "pdfaid");
         registerNamespace(NS_PDFUA_ID, "pdfuaid");
+		registerNamespace(NS_DECLARATIONS, "pdfd");
 		registerNamespace(NS_PDFA_EXTENSION, "pdfaExtension");
 		registerNamespace(NS_PHOTOSHOP, "photoshop");
 		registerNamespace(NS_PSALBUM, "album");

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,8 +40,8 @@ public class PdfUAConformanceException extends PdfException {
     /**
      * Creates a PdfUAConformanceException.
      *
-     * @param message the detail message.
-     * @param cause   the cause.
+     * @param message the detail message
+     * @param cause   the cause
      */
     public PdfUAConformanceException(String message, Exception cause) {
         super(message, cause);

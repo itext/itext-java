@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -664,7 +664,7 @@ public class AlignmentTest extends ExtendedITextTest {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
             Document document = new Document(pdfDoc);
 
-            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "Open_Sans/OpenSans-Bold.ttf");
+            PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "OpenSans-Bold.ttf");
             document.setFont(font);
 
             Paragraph p = new Paragraph();

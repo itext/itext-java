@@ -5,7 +5,7 @@
 <style  type="text/css" media="print">
 @font-face {
 font-family: "not WOFF Test TTF";
-  src: url("w3c-test-fonts/valid-005.ttf") format("TrueType");
+  src: url("../../../../fonts/w3c-test-fonts/valid-005.ttf") format("TrueType");
 }
 </style >
 

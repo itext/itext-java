@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -86,7 +86,7 @@ public class FontSelectorTestsUtil {
         // 'd', 'e' and 'f' are in that interval
         fontProvider.getFontSet().addFont(FONTS_FOLDER + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(100, 102).create());
         // 'x', 'y' and 'z' are in that interval
-        fontProvider.getFontSet().addFont(FONTS_FOLDER + "Puritan2.otf", null, "FontAlias", new RangeBuilder(120, 122).create());
+        fontProvider.getFontSet().addFont(FONTS_FOLDER + "Puritan-Regular.ttf", null, "FontAlias", new RangeBuilder(120, 122).create());
 
         fontProvider.setFontSelectorStrategyFactory(factory);
         List<String> fontFamilies = new ArrayList<>();

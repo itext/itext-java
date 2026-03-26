@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -151,5 +151,17 @@ public class ConcurrentHashSetTest extends ExtendedITextTest {
         HashSet<String> anotherSet = new HashSet<>();
         anotherSet.add("2");
         Assertions.assertNotEquals(set.hashCode(), anotherSet.hashCode());
+    }
+
+    @Test
+    public void toArrayTest() {
+        ConcurrentHashSet<String> set = new ConcurrentHashSet<>();
+        set.add("1");
+        set.add("2");
+
+        Object[] arr = set.toArray();
+        Assertions.assertEquals(2, arr.length);
+        Assertions.assertTrue(arr[0].equals("1") || arr[0].equals("2"));
+        Assertions.assertTrue(arr[1].equals("1") || arr[1].equals("2"));
     }
 }

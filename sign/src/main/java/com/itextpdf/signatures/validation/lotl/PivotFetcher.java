@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,11 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonArray;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonString;
+import com.itextpdf.commons.json.JsonValue;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -163,7 +168,9 @@ public class PivotFetcher {
     /**
      * Result class encapsulates the result of the pivot fetching and validation process.
      */
-    public static class Result {
+    public static class Result implements IJsonSerializable {
+        private static final String JSON_KEY_LOCAL_REPORT = "localReport";
+        private static final String JSON_KEY_PIVOT_URLS = "pivotUrls";
         private ValidationReport localReport = new ValidationReport();
         private List<String> pivotsUrlList = new ArrayList<>();
 
@@ -217,6 +224,43 @@ public class PivotFetcher {
          */
         public String generateUniqueIdentifier() {
             return String.join("_", pivotsUrlList);
+        }
+
+        /**
+         * {@inheritDoc}.
+         *
+         * @return {@inheritDoc}
+         */
+        @Override
+        public JsonValue toJson() {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add(JSON_KEY_LOCAL_REPORT, localReport.toJson());
+            jsonObject.add(JSON_KEY_PIVOT_URLS, new JsonArray(pivotsUrlList.stream().map(
+                    pivotUrl -> (JsonValue) new JsonString(pivotUrl)).collect(Collectors.toList())));
+            return jsonObject;
+        }
+
+        /**
+         * Deserializes {@link JsonValue} into {@link PivotFetcher.Result}.
+         *
+         * @param jsonValue {@link JsonValue} to deserialize
+         *
+         * @return deserialized {@link PivotFetcher.Result}
+         */
+        public static PivotFetcher.Result fromJson(JsonValue jsonValue) {
+            JsonObject pivotFetcherResultJson = (JsonObject) jsonValue;
+            JsonObject localReportJson = (JsonObject) pivotFetcherResultJson.getField(JSON_KEY_LOCAL_REPORT);
+            ValidationReport validationReportFromJson = ValidationReport.fromJson(localReportJson);
+
+            JsonArray urlsJson = (JsonArray) pivotFetcherResultJson.getField(JSON_KEY_PIVOT_URLS);
+            List<String> pivotsUrlListFromJson = urlsJson.getValues().stream().map(
+                    urlJson -> ((JsonString) urlJson).getValue()).collect(Collectors.toList());
+
+            PivotFetcher.Result resultFromJson = new Result();
+            resultFromJson.localReport = validationReportFromJson;
+            resultFromJson.pivotsUrlList = pivotsUrlListFromJson;
+
+            return resultFromJson;
         }
     }
 }

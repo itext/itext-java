@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -57,7 +57,7 @@ public class FormCheckUtil {
         /**
          * Creates a new {@link FormCheckUtil.FormTagHandler} instance.
          *
-         * @param context The validation context.
+         * @param context The validation context
          */
         public FormTagHandler(PdfUAValidationContext context) {
             super(context);
@@ -101,8 +101,9 @@ public class FormCheckUtil {
         /**
          * Gets a widget annotation kid if it exists.
          *
-         * @param structElem Parent structure element.
-         * @return Kid as PdfDictionary.
+         * @param structElem Parent structure element
+         *
+         * @return Kid as PdfDictionary
          */
         private static PdfDictionary getInteractiveKidForm(PdfStructElem structElem) {
             PdfDictionary object = structElem.getPdfObject();

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -36,12 +36,11 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class GposLookupType5Test extends ExtendedITextTest {
-
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType5Test/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void verifyMarkToBaseAttachment() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoSansKhmer-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(FONT_FOLDER + "NotoSansKhmer-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(25);
         List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(445)), new Glyph(fontProgram.getGlyphByCode(394)));
@@ -61,7 +60,7 @@ public class GposLookupType5Test extends ExtendedITextTest {
     //  since we will have to emulate previous substitutions and populate the substitution info
     //  to the glyph line so that mark is attached to the correct component of a ligature
     public void testSelectingCorrectAttachmentAlternative() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoNaskhArabic-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(FONT_FOLDER + "NotoNaskhArabic-Regular.ttf");
         GlyphLine glyphLine = new GlyphLine(Arrays.asList(fontProgram.getGlyphByCode(513), fontProgram.getGlyphByCode(75)));
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(3);
@@ -78,7 +77,7 @@ public class GposLookupType5Test extends ExtendedITextTest {
 
     @Test
     public void testThatNoTransformationsAppliedForNonRelevantGlyphs() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoNaskhArabic-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(FONT_FOLDER + "NotoNaskhArabic-Regular.ttf");
         GlyphLine glyphLine = new GlyphLine(Arrays.asList(fontProgram.getGlyph('1'), fontProgram.getGlyphByCode(75)));
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(3);
@@ -95,7 +94,7 @@ public class GposLookupType5Test extends ExtendedITextTest {
 
     @Test
     public void idxBiggerThanLineEndTest() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(RESOURCE_FOLDER + "NotoNaskhArabic-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(FONT_FOLDER + "NotoNaskhArabic-Regular.ttf");
         GlyphLine glyphLine = new GlyphLine(Collections.singletonList(fontProgram.getGlyph(203)));
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType5 lookup = (GposLookupType5) gposTableReader.getLookupTable(3);

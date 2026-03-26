@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -123,7 +123,7 @@ public class CheckBoxRenderer extends AbstractFormFieldRenderer {
         // html rendering is PDFA compliant this means we don't have to check if its PDFA.
         ICheckBoxRenderingStrategy renderingStrategy;
         final PdfConformance conformance = this.<PdfConformance>getProperty(FormProperty.FORM_CONFORMANCE_LEVEL);
-        boolean isConformantPdfDocument = conformance != null && conformance.isPdfAOrUa();
+        boolean isConformantPdfDocument = conformance != null && conformance.conformsToAny();
         if (getRenderingMode() == RenderingMode.HTML_MODE) {
             renderingStrategy = new HtmlCheckBoxRenderingStrategy();
         } else if (getRenderingMode() == RenderingMode.DEFAULT_LAYOUT_MODE && isConformantPdfDocument) {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -39,6 +39,8 @@ public final class MessageFormatUtil {
      * This method provides a generic way for formatting strings.
      * Indexed arguments can be referred with {index},
      * to escape curly braces you have to double them.
+     *
+     * Warning!: Do not use this method in a performance sensitive context.
      *
      * <p>
      * Only basic escaping is allowed, single quotes in a set of curly braces are not supported and

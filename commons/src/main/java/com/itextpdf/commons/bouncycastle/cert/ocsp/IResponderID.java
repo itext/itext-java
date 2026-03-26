@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,7 +32,14 @@ public interface IResponderID {
     /**
      * Calls actual {@code getName} method for the wrapped BasicOCSPResp object.
      *
-     * @return wrapped X500NAme.
+     * @return wrapped X500NAme
      */
     IX500Name getName();
+
+    /**
+     * Calls actual {@code getKeyHash} method for the wrapped BasicOCSPResp object.
+     *
+     * @return {@code byte[]} representing corresponding key hash
+     */
+    byte[] getKeyHash();
 }

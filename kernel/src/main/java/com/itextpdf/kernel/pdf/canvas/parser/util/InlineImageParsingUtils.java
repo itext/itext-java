@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -241,7 +241,7 @@ public final class InlineImageParsingUtils {
      * Otherwise, value is returned without modification
      */
     private static PdfObject getAlternateValue(PdfName key, PdfObject value) {
-        if (key == PdfName.Filter) {
+        if (PdfName.Filter.equals(key)) {
             if (value instanceof PdfName) {
                 PdfName altValue = inlineImageFilterAbbreviationMap.get((PdfName) value);
                 if (altValue != null) {
@@ -256,7 +256,7 @@ public final class InlineImageParsingUtils {
                 }
                 return altArray;
             }
-        } else if (key == PdfName.ColorSpace && value instanceof PdfName) {
+        } else if (PdfName.ColorSpace.equals(key) && value instanceof PdfName) {
             PdfName altValue = inlineImageColorSpaceAbbreviationMap.get((PdfName) value);
             if (altValue != null) {
                 return altValue;

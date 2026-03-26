@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -231,6 +231,4 @@ public class LotlFetchingProperties {
     List<String> getSchemaNames() {
         return Collections.unmodifiableList(Arrays.asList(schemaNames.toArray(new String[0])));
     }
-
-
 }

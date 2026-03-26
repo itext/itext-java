@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -43,9 +43,9 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
         }
         if (encoding != null &&
                 StringNormalizer.toLowerCase(FontEncoding.FONT_SPECIFIC).equals(StringNormalizer.toLowerCase(encoding))) {
-            fontEncoding = FontEncoding.createFontSpecificEncoding();
+            setFontEncoding(FontEncoding.createFontSpecificEncoding());
         } else {
-            fontEncoding = FontEncoding.createFontEncoding(encoding);
+            setFontEncoding(FontEncoding.createFontEncoding(encoding));
         }
     }
 
@@ -56,8 +56,8 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
     PdfType1Font(PdfDictionary fontDictionary) {
         super(fontDictionary);
         newFont = false;
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
-        fontProgram = DocType1Font.createFontProgram(fontDictionary, fontEncoding, toUnicode);
+        setFontEncoding(DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode));
+        fontProgram = DocType1Font.createFontProgram(fontDictionary, getFontEncoding(), toUnicode);
 
         if (fontProgram instanceof IDocFontProgram) {
             embedded = ((IDocFontProgram) fontProgram).getFontFile() != null;
@@ -87,12 +87,12 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     public Glyph getGlyph(int unicode) {
-        if (fontEncoding.canEncode(unicode)) {
+        if (getFontEncoding().canEncode(unicode)) {
             Glyph glyph;
-            if (fontEncoding.isFontSpecific()) {
+            if (getFontEncoding().isFontSpecific()) {
                 glyph = getFontProgram().getGlyphByCode(unicode);
             } else {
-                glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode));
+                glyph = getFontProgram().getGlyph(getFontEncoding().getUnicodeDifference(unicode));
                 if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
                     // Handle special layout characters like sfthyphen (00AD).
                     // This glyphs will be skipped while converting to bytes
@@ -107,11 +107,11 @@ public class PdfType1Font extends PdfSimpleFont<Type1Font> {
 
     @Override
     public boolean containsGlyph(int unicode) {
-        if (fontEncoding.canEncode(unicode)) {
-            if (fontEncoding.isFontSpecific()) {
+        if (getFontEncoding().canEncode(unicode)) {
+            if (getFontEncoding().isFontSpecific()) {
                 return getFontProgram().getGlyphByCode(unicode) != null;
             } else {
-                return getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode)) != null;
+                return getFontProgram().getGlyph(getFontEncoding().getUnicodeDifference(unicode)) != null;
             }
         } else {
             return false;

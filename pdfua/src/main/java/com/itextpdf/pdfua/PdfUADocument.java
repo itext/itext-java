@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,6 +23,7 @@
 package com.itextpdf.pdfua;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.contrast.ColorContrastChecker;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -43,11 +44,11 @@ import com.itextpdf.pdfua.checkers.PdfUA2Checker;
 import com.itextpdf.pdfua.checkers.PdfUAChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates a Pdf/UA document.
@@ -60,8 +61,8 @@ public class PdfUADocument extends PdfDocument {
     /**
      * Creates a PdfUADocument instance.
      *
-     * @param writer The writer to write the PDF document.
-     * @param config The configuration for the PDF/UA document.
+     * @param writer The writer to write the PDF document
+     * @param config The configuration for the PDF/UA document
      */
     public PdfUADocument(PdfWriter writer, PdfUAConfig config) {
         this(writer, new DocumentProperties(), config);
@@ -70,9 +71,9 @@ public class PdfUADocument extends PdfDocument {
     /**
      * Creates a PdfUADocument instance.
      *
-     * @param writer     The writer to write the PDF document.
-     * @param properties The properties for the PDF document.
-     * @param config     The configuration for the PDF/UA document.
+     * @param writer     The writer to write the PDF document
+     * @param properties The properties for the PDF document
+     * @param config     The configuration for the PDF/UA document
      */
     public PdfUADocument(PdfWriter writer, DocumentProperties properties, PdfUAConfig config) {
         super(configureWriterProperties(writer, config.getConformance()), properties);
@@ -80,7 +81,7 @@ public class PdfUADocument extends PdfDocument {
 
         setupUAConfiguration(config);
         final ValidationContainer validationContainer = new ValidationContainer();
-        final List<IValidationChecker> checkers = getCorrectCheckerFromConformance(config.getConformance());
+        final List<IValidationChecker> checkers = createCheckers(config.getConformance());
         for (IValidationChecker checker : checkers) {
             validationContainer.addChecker(checker);
         }
@@ -92,9 +93,9 @@ public class PdfUADocument extends PdfDocument {
     /**
      * Creates a PdfUADocument instance.
      *
-     * @param reader The reader to read the PDF document.
-     * @param writer The writer to write the PDF document.
-     * @param config The configuration for the PDF/UA document.
+     * @param reader The reader to read the PDF document
+     * @param writer The writer to write the PDF document
+     * @param config The configuration for the PDF/UA document
      */
     public PdfUADocument(PdfReader reader, PdfWriter writer, PdfUAConfig config) {
         this(reader, writer, new StampingProperties(), config);
@@ -103,10 +104,10 @@ public class PdfUADocument extends PdfDocument {
     /**
      * Creates a PdfUADocument instance.
      *
-     * @param reader     The reader to read the PDF document.
-     * @param writer     The writer to write the PDF document.
-     * @param properties The properties for the PDF document.
-     * @param config     The configuration for the PDF/UA document.
+     * @param reader     The reader to read the PDF document
+     * @param writer     The writer to write the PDF document
+     * @param properties The properties for the PDF document
+     * @param config     The configuration for the PDF/UA document
      */
     public PdfUADocument(PdfReader reader, PdfWriter writer, StampingProperties properties, PdfUAConfig config) {
         super(reader, writer, properties);
@@ -117,7 +118,7 @@ public class PdfUADocument extends PdfDocument {
         setupUAConfiguration(config);
 
         final ValidationContainer validationContainer = new ValidationContainer();
-        final List<IValidationChecker> checkers = getCorrectCheckerFromConformance(config.getConformance());
+        final List<IValidationChecker> checkers = createCheckers(config.getConformance());
         for (IValidationChecker checker : checkers) {
             validationContainer.addChecker(checker);
         }
@@ -125,15 +126,54 @@ public class PdfUADocument extends PdfDocument {
         this.pdfPageFactory = new PdfUAPageFactory(getUaChecker(checkers));
     }
 
+    /**
+     * Creates a list of {@link PdfUAChecker} for specified PDF/UA conformance.
+     * If you want to enable/disable specific checks, you can override the implementation.
+     *
+     * @param uaConformance the conformance for which checker is needed
+     *
+     * @return the correct list of PDF/UA checkers
+     */
+    protected List<IValidationChecker> createCheckers(PdfUAConformance uaConformance) {
+        List<IValidationChecker> checkers = new ArrayList<>();
+        final ColorContrastChecker contrastChecker = new ColorContrastChecker(false, false);
+        contrastChecker.setCheckWcagAA(false);
+        contrastChecker.setCheckWcagAAA(true);
+        switch (uaConformance.getPart()) {
+            case "1":
+                checkers.add(new PdfUA1Checker(this));
+                checkers.add(contrastChecker);
+                break;
+            case "2":
+                checkers.add(new PdfUA2Checker(this));
+                checkers.add(new Pdf20Checker(this));
+                checkers.add(contrastChecker);
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        PdfUAExceptionMessageConstants.CANNOT_FIND_PDF_UA_CHECKER_FOR_SPECIFIED_CONFORMANCE);
+        }
+        return checkers;
+    }
+
+    private void setupUAConfiguration(PdfUAConfig config) {
+        // Basic configuration.
+        this.setTagged();
+        this.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
+        this.getCatalog().setLang(new PdfString(config.getLanguage()));
+        final PdfDocumentInfo info = this.getDocumentInfo();
+        info.setTitle(config.getTitle());
+    }
+
     private static PdfWriter configureWriterProperties(PdfWriter writer, PdfUAConformance uaConformance) {
         writer.getProperties().addPdfUaXmpMetadata(uaConformance);
         if (writer.getPdfVersion() != null) {
-            if (uaConformance == PdfUAConformance.PDF_UA_1 && !writer.getPdfVersion().equals(PdfVersion.PDF_1_7)) {
+            if (uaConformance == PdfUAConformance.PDF_UA_1 && !PdfVersion.PDF_1_7.equals(writer.getPdfVersion())) {
                 LOGGER.warn(MessageFormatUtil.format(
                         PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_1_7));
                 writer.getProperties().setPdfVersion(PdfVersion.PDF_1_7);
             }
-            if (uaConformance == PdfUAConformance.PDF_UA_2 && !writer.getPdfVersion().equals(PdfVersion.PDF_2_0)) {
+            if (uaConformance == PdfUAConformance.PDF_UA_2 && !PdfVersion.PDF_2_0.equals(writer.getPdfVersion())) {
                 LOGGER.warn(MessageFormatUtil.format(
                         PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_2_0));
                 writer.getProperties().setPdfVersion(PdfVersion.PDF_2_0);
@@ -149,37 +189,5 @@ public class PdfUADocument extends PdfDocument {
             }
         }
         return null;
-    }
-
-    private void setupUAConfiguration(PdfUAConfig config) {
-        // Basic configuration.
-        this.setTagged();
-        this.getCatalog().setViewerPreferences(new PdfViewerPreferences().setDisplayDocTitle(true));
-        this.getCatalog().setLang(new PdfString(config.getLanguage()));
-        final PdfDocumentInfo info = this.getDocumentInfo();
-        info.setTitle(config.getTitle());
-    }
-
-    /**
-     * Gets correct {@link PdfUAChecker} for specified PDF/UA conformance.
-     *
-     * @param uaConformance the conformance for which checker is needed
-     * @return the correct PDF/UA checker
-     */
-    private List<IValidationChecker> getCorrectCheckerFromConformance(PdfUAConformance uaConformance) {
-        List<IValidationChecker> checkers = new ArrayList<>();
-        switch (uaConformance.getPart()) {
-            case "1":
-                checkers.add(new PdfUA1Checker(this));
-                break;
-            case "2":
-                checkers.add(new PdfUA2Checker(this));
-                checkers.add(new Pdf20Checker(this));
-                break;
-            default:
-                throw new IllegalArgumentException(
-                        PdfUAExceptionMessageConstants.CANNOT_FIND_PDF_UA_CHECKER_FOR_SPECIFIED_CONFORMANCE);
-        }
-        return checkers;
     }
 }

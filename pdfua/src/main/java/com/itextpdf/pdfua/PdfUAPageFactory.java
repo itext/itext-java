@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -27,26 +27,13 @@ import com.itextpdf.kernel.pdf.IPdfPageFactory;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 import com.itextpdf.pdfua.checkers.PdfUAChecker;
 
 /**
  * The class implements PDF page factory which is used for creating correct PDF/UA documents.
  */
-class PdfUAPageFactory implements IPdfPageFactory {
+public class PdfUAPageFactory implements IPdfPageFactory {
     private final PdfUAChecker checker;
-
-    /**
-     * Instantiates a new {@link PdfUAPageFactory} instance based on {@link PdfUA1Checker}.
-     *
-     * @param checker the PDF/UA checker
-     *
-     * @deprecated in favour of {@link #PdfUAPageFactory(PdfUAChecker)}
-     */
-    @Deprecated
-    public PdfUAPageFactory(PdfUA1Checker checker) {
-        this.checker = checker;
-    }
 
     /**
      * Instantiates a new {@link PdfUAPageFactory} instance based on {@link PdfUAChecker}.
@@ -60,7 +47,7 @@ class PdfUAPageFactory implements IPdfPageFactory {
     /**
      * @param pdfObject the {@link PdfDictionary} object on which the {@link PdfPage} will be based
      *
-     * @return The pdf page.
+     * @return The {@link PdfPage} based on the {@link PdfDictionary}
      */
     @Override
     public PdfPage createPdfPage(PdfDictionary pdfObject) {
@@ -71,7 +58,7 @@ class PdfUAPageFactory implements IPdfPageFactory {
      * @param pdfDocument {@link PdfDocument} to add page
      * @param pageSize    {@link PageSize} of the created page
      *
-     * @return The Pdf page.
+     * @return The {@link PdfPage} based on the {@link PdfDocument} and {@link PageSize}
      */
     @Override
     public PdfPage createPdfPage(PdfDocument pdfDocument, PageSize pageSize) {

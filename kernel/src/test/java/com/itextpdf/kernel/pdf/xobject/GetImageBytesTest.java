@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -933,6 +933,11 @@ public class GetImageBytesTest extends ExtendedITextTest {
         ImageBytesRetrievalProperties properties = ImageBytesRetrievalProperties.getApplyFiltersOnly();
         properties.setApplyTransparency(true);
         testFile("indexed8bitSMask.pdf", "Im0", "png", ".trans", properties);
+    }
+
+    @Test
+    public void oneColorPalletIndexedTest() throws Exception {
+        testFile("oneColorPalette.pdf", "Im1", "png");
     }
 
     @Test

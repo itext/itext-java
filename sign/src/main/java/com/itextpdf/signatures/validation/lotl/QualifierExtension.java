@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,17 +22,26 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonArray;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonString;
+import com.itextpdf.commons.json.JsonValue;
 import com.itextpdf.signatures.validation.lotl.criteria.CriteriaList;
 
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class representing Qualifications entry from a country specific Trusted List.
  */
-public class QualifierExtension {
+public class QualifierExtension implements IJsonSerializable {
+    private static final String JSON_KEY_QUALIFIERS = "qualifiers";
+    private static final String JSON_KEY_CRITERIA_LIST = "criteriaList";
+
     private final List<String> qualifiers = new ArrayList<>();
     private CriteriaList criteriaList;
 
@@ -69,5 +78,46 @@ public class QualifierExtension {
 
     void addQualifier(String qualifier) {
         this.qualifiers.add(qualifier);
+    }
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        JsonObject qualifiersJson = new JsonObject();
+        qualifiersJson.add(JSON_KEY_QUALIFIERS, new JsonArray(getQualifiers().stream().map(
+                qualifier -> (JsonValue) new JsonString(qualifier)).collect(Collectors.toList())));
+
+        if (getCriteriaList() != null) {
+            qualifiersJson.add(JSON_KEY_CRITERIA_LIST, getCriteriaList().toJson());
+        }
+        return qualifiersJson;
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link QualifierExtension}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link QualifierExtension}
+     */
+    public static QualifierExtension fromJson(JsonValue jsonValue) {
+        QualifierExtension qualifierExtensionFromJson = new QualifierExtension();
+        JsonObject qualifierExtensionJsonObject = (JsonObject) jsonValue;
+        JsonArray qualifiersArray = (JsonArray) qualifierExtensionJsonObject.getField(JSON_KEY_QUALIFIERS);
+        List<String> qualifiersFromJson = qualifiersArray.getValues().stream().map(
+                qualifierJson -> ((JsonString) qualifierJson).getValue()).collect(Collectors.toList());
+        for (String qualifierFromJson : qualifiersFromJson) {
+            qualifierExtensionFromJson.addQualifier(qualifierFromJson);
+        }
+
+        JsonObject criteriaListJson = (JsonObject) qualifierExtensionJsonObject.getField(JSON_KEY_CRITERIA_LIST);
+        if (criteriaListJson != null) {
+            qualifierExtensionFromJson.setCriteriaList(CriteriaList.fromJson(criteriaListJson));
+        }
+        return qualifierExtensionFromJson;
     }
 }

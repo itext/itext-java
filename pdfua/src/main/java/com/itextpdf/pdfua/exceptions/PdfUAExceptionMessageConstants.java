@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -89,7 +89,7 @@ public final class PdfUAExceptionMessageConstants {
             + "levels.";
     public static final String IMAGE_SHALL_HAVE_ALT = "Figure tags shall include an alternative representation or "
             + "replacement text. call com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setActualText or com"
-            + ".itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setAlternateDescription to be PDF/UA compliant.";
+            + ".itextpdf.kernel.pdf.tagutils.AccessibilityProperties#setAlternateDescription to be compliant.";
     public static final String INCORRECT_NOTE_TYPE_VALUE
             = "The value of the NoteType attribute shall be either \"Footnote\", \"Endnote\" or \"None\".";
     public static final String INVALID_PDF_VERSION
@@ -193,6 +193,7 @@ public final class PdfUAExceptionMessageConstants {
             + "have the same amount of columns when taking into account spanning.";
     public static final String TAG_HASNT_BEEN_ADDED_BEFORE_CONTENT_ADDING =
             "Tag hasn't been added before adding content to the canvas.";
+    @Deprecated
     public static final String TAG_MAPPING_DOESNT_TERMINATE_WITH_STANDARD_TYPE =
             "\"{0}\" tag mapping does not terminate with a standard type.";
     public static final String TENTH_BIT_OF_P_VALUE_IN_ENCRYPTION_SHOULD_BE_NON_ZERO = "10th bit of P value of " +
@@ -222,7 +223,8 @@ public final class PdfUAExceptionMessageConstants {
             "FormField#setAlternativeDescription(\"Your contents description\").";
     public static final String WIDGET_WITH_ZERO_HEIGHT_SHALL_BE_AN_ARTIFACT = "Widget annotation of zero height " +
             "and width shall be an artifact.";
-    public static final String XFA_FORMS_SHALL_NOT_BE_PRESENT = "XFA forms shall not be present in PDF/UA-2 document.";
+    public static final String XFA_FORMS_SHALL_NOT_BE_PRESENT =
+            "XFA forms shall not be present in a compliant document.";
 
     private PdfUAExceptionMessageConstants() {
         // Empty constructor.

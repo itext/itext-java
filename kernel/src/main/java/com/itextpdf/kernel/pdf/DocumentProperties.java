@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,6 +26,9 @@ import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Class with additional properties for {@link PdfDocument} processing.
@@ -33,10 +36,9 @@ import java.util.HashMap;
  */
 public class DocumentProperties {
 
+    private final Map<Class<?>, Supplier<Object>> dependencies = new HashMap<>();
 
     protected IMetaInfo metaInfo = null;
-
-    HashMap<Class<?>, Object> dependencies = new HashMap<>();
 
     /**
      * Default constructor, use provided setters for configuration options.
@@ -51,6 +53,7 @@ public class DocumentProperties {
      */
     public DocumentProperties(DocumentProperties other) {
         this.metaInfo = other.metaInfo;
+        this.dependencies.putAll(other.dependencies);
     }
 
     /**
@@ -78,16 +81,57 @@ public class DocumentProperties {
      *
      * @param clazz    Type of the dependency.
      * @param instance The instance of the dependency.
+     *
      * @return this {@link DocumentProperties} instance
+     *
+     * @deprecated in favor of {@link DocumentProperties#registerDependency(Class, Supplier)}
      */
+    @Deprecated
     public DocumentProperties registerDependency(Class<?> clazz, Object instance) {
-        if (clazz == null) {
-            throw new IllegalArgumentException(KernelExceptionMessageConstant.TYPE_SHOULD_NOT_BE_NULL);
-        }
         if (instance == null) {
             throw new IllegalArgumentException(KernelExceptionMessageConstant.INSTANCE_SHOULD_NOT_BE_NULL);
         }
-        dependencies.put(clazz, instance);
+        registerDependency(clazz, () -> instance);
         return this;
+    }
+
+    /**
+     * Register custom dependency for the document.
+     *
+     * @param clazz    type of the dependency
+     * @param instanceSupplier the instance of the supplier for the dependency
+     *
+     * @return this {@link DocumentProperties} instance
+     */
+    public DocumentProperties registerDependency(Class<?> clazz, Supplier<Object> instanceSupplier) {
+        if (clazz == null) {
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.TYPE_SHOULD_NOT_BE_NULL);
+        }
+        if (instanceSupplier == null) {
+            throw new IllegalArgumentException(KernelExceptionMessageConstant.INSTANCE_SUPPLIER_SHOULD_NOT_BE_NULL);
+        }
+        dependencies.put(clazz, instanceSupplier);
+        return this;
+    }
+
+    /**
+     * Get all registered dependencies classes.
+     *
+     * @return the set of registered dependencies classes
+     */
+    Set<Class<?>> getRegisteredDependenciesClasses() {
+        return dependencies.keySet();
+    }
+
+    /**
+     * Get specific registered dependency supplier.
+     *
+     * @param clazz the dependency class to return supplier for
+     *
+     * @return registered supplier for the dependency.
+     * May return {code null} if no dependency supplier has been registered for specified class.
+     */
+    Supplier<Object> getDependencySupplier(Class<?> clazz) {
+        return dependencies.get(clazz);
     }
 }

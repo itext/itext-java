@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -46,6 +46,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.BackgroundBox;
 import com.itextpdf.layout.properties.BackgroundImage;
@@ -57,6 +58,7 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -66,9 +68,22 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("UnitTest")
 public class AbstractRendererUnitTest extends ExtendedITextTest {
+
+    public static Iterable<Object[]> provideZeroWidthAndHeightRectangleSizes() {
+        return Arrays.asList(new Object[][] {
+                {0.0f, 40.0f},
+                {100.0f, 0.0f},
+                {0.0f, 0.0f},
+                {0.00001f, 50.0f},
+                {90.0f, 0.00001f},
+                {0.00001f, 0.00001f},
+        });
+    }
 
     @Test
     public void createXObjectTest() {
@@ -675,5 +690,36 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
         RootRenderer renderer = document.getRenderer();
         Rectangle rect = new Rectangle(0, 0);
         Assertions.assertThrows(ClassCastException.class, () -> renderer.applyMargins(rect, false));
+    }
+
+    @ParameterizedTest(name = "width={0}, height={1}")
+    @MethodSource("provideZeroWidthAndHeightRectangleSizes")
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES,
+                    logLevel = LogLevelConstants.INFO)
+    })
+    public void drawColorBackgroundWithWidthOrHeightClippedToZeroTest(float width, float height) {
+        try (PdfDocument document = new PdfDocument(new PdfWriter(new java.io.ByteArrayOutputStream()))) {
+            document.addNewPage();
+            DrawContext context = new DrawContext(document, new PdfCanvas(document, 1));
+
+            float unclippedRectangleWidth = 100.0f;
+            float unclippedRectangleHeight = 50.0f;
+            Div div = new Div();
+            div.setWidth(unclippedRectangleWidth);
+            div.setHeight(unclippedRectangleHeight);
+            div.setPaddingRight(unclippedRectangleWidth - width);
+            div.setPaddingBottom(unclippedRectangleHeight - height);
+
+            AbstractRenderer renderer = (AbstractRenderer) div.getRenderer();
+            Background background = new Background(ColorConstants.RED, 1, BackgroundBox.CONTENT_BOX);
+            renderer.setProperty(Property.BACKGROUND, background);
+            renderer.layout(new LayoutContext(
+                    new LayoutArea(1, new Rectangle(unclippedRectangleWidth, unclippedRectangleHeight))));
+
+            renderer.drawBackground(context);
+
+            Assertions.assertEquals(0, document.getPage(1).getContentStream(0).getBytes().length);
+        }
     }
 }

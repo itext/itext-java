@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -47,8 +47,8 @@ final class TableCellIterator implements ITableIterator<Cell> {
     /**
      * Creates a new {@link TableCellIterator} instance.
      *
-     * @param table the table that will be iterated.
-     * @param context the validation context.
+     * @param table the table that will be iterated
+     * @param context the validation context
      */
     public TableCellIterator(Table table, PdfUAValidationContext context) {
         this.context = context;
@@ -147,10 +147,10 @@ final class TableCellIterator implements ITableIterator<Cell> {
     public int getRow() {
         PdfName location = getLocation();
         int row = currentCell.getRow();
-        if (location == PdfName.TBody) {
+        if (PdfName.TBody.equals(location)) {
             row += this.getAmountOfRowsHeader();
         }
-        if (location == PdfName.TFoot) {
+        if (PdfName.TFoot.equals(location)) {
             row += this.getAmountOfRowsHeader();
             row += this.getAmountOfRowsBody();
         }

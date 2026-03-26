@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -81,7 +81,7 @@ public class PushButtonFormFieldBuilder extends TerminalFormFieldBuilder<PushBut
         } else {
             annotation = new PdfWidgetAnnotation(getWidgetRectangle());
             field = PdfFormCreator.createButtonFormField(annotation, getDocument());
-            if (null != getConformance() && getConformance().isPdfAOrUa()) {
+            if (null != getConformance() && getConformance().conformsToAny()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
         }

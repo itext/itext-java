@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -36,11 +36,11 @@ import org.junit.jupiter.api.Tag;
 @Tag("IntegrationTest")
 public class GposLookupType4Test extends ExtendedITextTest {
 
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GposLookupType4Test/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void verifyMarkToBaseAttachment() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(RESOURCE_FOLDER + "Padauk-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont)FontProgramFactory.createFont(FONT_FOLDER + "Padauk-Regular.ttf");
         GlyphPositioningTableReader gposTableReader = fontProgram.getGposTable();
         GposLookupType4 lookup = (GposLookupType4) gposTableReader.getLookupTable(192);
         List<Glyph> glyphs = Arrays.asList(new Glyph(fontProgram.getGlyphByCode(163)), new Glyph(fontProgram.getGlyphByCode(207)),

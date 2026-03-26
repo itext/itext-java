@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -292,7 +292,7 @@ public class RadioFormFieldBuilderTest extends ExtendedITextTest {
             }
         }
 
-        if (radioButtonFormField.pdfConformance != null && radioButtonFormField.pdfConformance.isPdfAOrUa()) {
+        if (!radioButtonFormField.pdfConformance.equals(PdfConformance.PDF_NONE_CONFORMANCE)) {
             putIfAbsent(expectedDictionary, PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
         }
         // for the AS key if it's added to the group we expect it to be off or the value if the radiogroup was selected

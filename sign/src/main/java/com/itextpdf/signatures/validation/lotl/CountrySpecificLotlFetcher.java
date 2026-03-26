@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,10 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonArray;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonValue;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.MultiThreadingUtil;
 import com.itextpdf.io.resolver.resource.IResourceRetriever;
@@ -43,7 +47,7 @@ import java.util.concurrent.Callable;
 import static com.itextpdf.signatures.validation.lotl.LotlValidator.LOTL_VALIDATION;
 
 /**
- * This class fetches and validates country-specific List of Trusted Lists (Lotls).
+ * This class fetches and validates country-specific List of Trusted Lists (LOTLs).
  */
 public class CountrySpecificLotlFetcher {
     private final LotlService service;
@@ -51,7 +55,7 @@ public class CountrySpecificLotlFetcher {
     /**
      * Creates a new instance of {@link CountrySpecificLotlFetcher}.
      *
-     * @param service the LotlService used to retrieve resources
+     * @param service the {@link LotlService} used to retrieve resources
      */
     public CountrySpecificLotlFetcher(LotlService service) {
         this.service = service;
@@ -59,13 +63,14 @@ public class CountrySpecificLotlFetcher {
 
 
     /**
-     * Fetches and validates country-specific Lotls from the provided Lotl XML.
+     * Fetches and validates country-specific LOTLs from the provided LOTL XML.
      *
-     * @param lotlXml the byte array of the Lotl XML
+     * @param lotlXml the byte array of the LOTL XML
      * @param lotlService the {@link LotlService} used to build this fetcher
      *
-     * @return a map of results containing validated country-specific Lotls and their contexts
+     * @return a map of results containing validated country-specific LOTLs and their contexts
      */
+    // TODO DEVSIX-9710: remove lotlService parameter when LotlService will be accessible from this.service
     public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml, LotlService lotlService) {
         XmlCertificateRetriever certificateRetriever = new XmlCertificateRetriever(new XmlDefaultCertificateHandler());
         List<Certificate> lotlTrustedCertificates = certificateRetriever.getCertificates(
@@ -75,32 +80,46 @@ public class CountrySpecificLotlFetcher {
                 .getAllCountriesLotlFilesLocation(new ByteArrayInputStream(lotlXml),
                         lotlService.getLotlFetchingProperties());
 
-        final TrustedCertificatesStore certificatesStore = new TrustedCertificatesStore();
-        certificatesStore.addGenerallyTrustedCertificates(lotlTrustedCertificates);
-        final XmlSignatureValidator validator = lotlService.getXmlSignatureValidator(certificatesStore);
-
-        final List<Callable<Result>> tasks = getTasks(lotlService, countrySpecificLotl, validator);
-
-        HashMap<String, Result> countrySpecificCacheEntries = new HashMap<>();
-        for (Result result : executeTasks(tasks)) {
-            countrySpecificCacheEntries.put(result.createUniqueIdentifier(), result);
-        }
-        return countrySpecificCacheEntries;
+        return  validateCountrySpecificFiles(lotlTrustedCertificates, countrySpecificLotl, lotlService) ;
     }
 
-
     /**
-     * Creates an ExecutorService for downloading country-specific Lotls.
+     * Creates an ExecutorService for downloading country-specific LOTLs.
      * By default, it creates a fixed thread pool with a number of threads equal to the number of available
      * processors or the number of files to download, whichever is smaller.
      * If you require a different configuration with other executor services, you can override this method.
      *
      * @param tasks the list of tasks to be executed
      *
-     * @return an ExecutorService instance configured for downloading Lotls
+     * @return an ExecutorService instance configured for downloading LOTLs
      */
     protected List<Result> executeTasks(List<Callable<Result>> tasks) {
         return MultiThreadingUtil.<Result>runActionsParallel(tasks, tasks.size());
+    }
+
+    /**
+     * Fetches and validates country-specific LOTLs from the provided {@link CountrySpecificLotl}.
+     *
+     * @param certificates certificates used for validation
+     * @param countrySpecificInfo a list of {@link CountrySpecificLotl} to retrieve
+     * @param lotlService the {@link LotlService} used to build this fetcher
+     *
+     * @return a map of results containing validated country-specific LOTLs and their contexts
+     */
+    // TODO DEVSIX-9710: remove lotlService parameter when LotlService will be accessible from this.service
+    Map<String, Result> validateCountrySpecificFiles(List<Certificate> certificates,
+            List<CountrySpecificLotl> countrySpecificInfo, LotlService lotlService) {
+        final TrustedCertificatesStore certificatesStore = new TrustedCertificatesStore();
+        certificatesStore.addGenerallyTrustedCertificates(certificates);
+        final XmlSignatureValidator validator = lotlService.getXmlSignatureValidator(certificatesStore);
+
+        final List<Callable<Result>> tasks = getTasks(lotlService, countrySpecificInfo, validator);
+
+        HashMap<String, Result> countrySpecificCacheEntries = new HashMap<>();
+        for (Result result : executeTasks(tasks)) {
+            countrySpecificCacheEntries.put(result.createUniqueIdentifier(), result);
+        }
+        return countrySpecificCacheEntries;
     }
 
     private List<Callable<Result>> getTasks(LotlService lotlService, List<CountrySpecificLotl> countrySpecificLotl,
@@ -127,9 +146,14 @@ public class CountrySpecificLotlFetcher {
     }
 
     /**
-     * Represents the result of fetching and validating country-specific Lotls.
+     * Represents the result of fetching and validating country-specific LOTLs.
      */
-    public static class Result {
+    public static class Result implements IJsonSerializable {
+        private static final String JSON_KEY_SERVICE_TYPE = "serviceType";
+        private static final String JSON_KEY_SERVICE_CHRONOLOGICAL_INFOS = "serviceChronologicalInfos";
+        private static final String JSON_KEY_LOCAL_REPORT = "localReport";
+        private static final String JSON_KEY_CONTEXTS = "contexts";
+        private static final String JSON_KEY_COUNTRY_SPECIFIC_LOTL = "countrySpecificLotl";
         private ValidationReport localReport;
         private List<IServiceContext> contexts;
         private CountrySpecificLotl countrySpecificLotl;
@@ -163,7 +187,7 @@ public class CountrySpecificLotlFetcher {
         }
 
         /**
-         * Gets the list of service contexts associated with the country-specific Lotl.
+         * Gets the list of service contexts associated with the country-specific LOTL.
          *
          * @return a list of IServiceContext objects representing the service contexts
          */
@@ -172,7 +196,7 @@ public class CountrySpecificLotlFetcher {
         }
 
         /**
-         * Sets the list of service contexts associated with the country-specific Lotl.
+         * Sets the list of service contexts associated with the country-specific LOTL.
          *
          * @param contexts a list of IServiceContext objects to set
          */
@@ -181,16 +205,16 @@ public class CountrySpecificLotlFetcher {
         }
 
         /**
-         * Gets the country-specific Lotl that was fetched and validated.
+         * Gets the country-specific LOTL that was fetched and validated.
          *
-         * @return the CountrySpecificLotl object representing the country-specific Lotl
+         * @return the CountrySpecificLotl object representing the country-specific LOTL
          */
         public CountrySpecificLotl getCountrySpecificLotl() {
             return countrySpecificLotl;
         }
 
         /**
-         * Sets the country-specific Lotl that was fetched and validated.
+         * Sets the country-specific LOTL that was fetched and validated.
          *
          * @param countrySpecificLotl the CountrySpecificLotl object to set
          *
@@ -202,17 +226,76 @@ public class CountrySpecificLotlFetcher {
         }
 
         /**
-         * Creates a unique identifier for the country-specific Lotl based on its scheme territory and TSL location.
+         * Creates a unique identifier for the country-specific LOTL based on its scheme territory and TSL location.
          *
-         * @return a string representing the unique identifier for the country-specific Lotl
+         * @return a string representing the unique identifier for the country-specific LOTL
          */
         public String createUniqueIdentifier() {
             return countrySpecificLotl.getSchemeTerritory() + "_" + countrySpecificLotl.getTslLocation();
         }
+
+        /**
+         * {@inheritDoc}.
+         *
+         * @return {@inheritDoc}
+         */
+        @Override
+        public JsonValue toJson() {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add(JSON_KEY_LOCAL_REPORT, localReport.toJson());
+
+            JsonArray contextsJson = new JsonArray();
+            for (IServiceContext serviceContext : contexts) {
+                if (serviceContext instanceof SimpleServiceContext) {
+                    contextsJson.add(((SimpleServiceContext) serviceContext).toJson());
+                } else if (serviceContext instanceof CountryServiceContext) {
+                    contextsJson.add(((CountryServiceContext) serviceContext).toJson());
+                }
+            }
+            jsonObject.add(JSON_KEY_CONTEXTS, contextsJson);
+
+            jsonObject.add(JSON_KEY_COUNTRY_SPECIFIC_LOTL, countrySpecificLotl.toJson());
+            return jsonObject;
+        }
+
+        /**
+         * Deserializes {@link JsonValue} into {@link CountrySpecificLotlFetcher.Result}.
+         *
+         * @param jsonValue {@link JsonValue} to deserialize
+         *
+         * @return deserialized {@link CountrySpecificLotlFetcher.Result}
+         */
+        public static CountrySpecificLotlFetcher.Result fromJson(JsonValue jsonValue) {
+            JsonObject countrySpecificLotlFetcherResultJson = (JsonObject) jsonValue;
+            JsonObject localReportJson =
+                    (JsonObject) countrySpecificLotlFetcherResultJson.getField(JSON_KEY_LOCAL_REPORT);
+            ValidationReport validationReportFromJson = ValidationReport.fromJson(localReportJson);
+
+            JsonArray contextsJson = (JsonArray) countrySpecificLotlFetcherResultJson.getField(JSON_KEY_CONTEXTS);
+            List<IServiceContext> serviceContextsFromJson = new ArrayList<>();
+            for (JsonValue contextJson : contextsJson.getValues()) {
+                JsonObject contextJsonObject = (JsonObject) contextJson;
+                if (contextJsonObject.getField(JSON_KEY_SERVICE_CHRONOLOGICAL_INFOS) != null ||
+                        contextJsonObject.getField(JSON_KEY_SERVICE_TYPE) != null) {
+                    serviceContextsFromJson.add(CountryServiceContext.fromJson(contextJson));
+                } else {
+                    serviceContextsFromJson.add(SimpleServiceContext.fromJson(contextJson));
+                }
+            }
+
+            CountrySpecificLotl countrySpecificLotlFromJson = CountrySpecificLotl.fromJson(
+                    countrySpecificLotlFetcherResultJson.getField(JSON_KEY_COUNTRY_SPECIFIC_LOTL));
+
+            CountrySpecificLotlFetcher.Result resultFromJson = new Result();
+            resultFromJson.localReport = validationReportFromJson;
+            resultFromJson.contexts = serviceContextsFromJson;
+            resultFromJson.countrySpecificLotl = countrySpecificLotlFromJson;
+            return resultFromJson;
+        }
     }
 
     private static final class CountryFetcher {
-        static final String COUNTRY_SPECIFIC_LOTL_NOT_VALIDATED = "Country specific Lotl file: {0}, {1} wasn't " +
+        static final String COUNTRY_SPECIFIC_LOTL_NOT_VALIDATED = "Country specific LOTL file: {0}, {1} wasn't " +
                 "successfully validated. It will be ignored.";
         static final String COULD_NOT_RESOLVE_URL = "Couldn't resolve {0} url. This TSL Location will be ignored.";
 

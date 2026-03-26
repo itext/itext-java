@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -36,12 +36,15 @@ import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfPadesSigner;
+import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TestSignUtils;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -292,17 +295,6 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(outFileName, cmpFileName));
     }
 
-    private SignerProperties createSignerProperties() {
-        SignerProperties signerProperties = new SignerProperties();
-        signerProperties.setFieldName("Signature1");
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
-                .setContent("Approval test signature.\nCreated by iText.");
-        signerProperties.setPageRect(new Rectangle(50, 650, 200, 100))
-                .setSignatureAppearance(appearance);
-
-        return signerProperties;
-    }
-
     @Test
     public void producerLineWithMetaInfoUsedTest()
             throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
@@ -336,7 +328,7 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
 
         byte[] docBytes;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            new PdfDocument(new PdfReader(srcFileName) ,new PdfWriter(outputStream)).close();
+            new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outputStream)).close();
             docBytes = outputStream.toByteArray();
         }
 
@@ -353,6 +345,48 @@ public class PdfPadesSignerTest extends ExtendedITextTest {
                 Assertions.assertTrue(actualProducerLine.contains(newlyAddedProducer));
             }
         }
+    }
+
+    @Test
+    public void padesSignatureCreatorTest()
+            throws IOException, GeneralSecurityException, AbstractOperatorCreationException, AbstractPKCSException {
+        String fileName = "padesSignatureCreatorTest.pdf";
+        String outFileName = destinationFolder + fileName;
+        String srcFileName = sourceFolder + "helloWorldDoc.pdf";
+        String signCertFileName = certsSrc + "signCertRsa01.pem";
+
+        Certificate[] signChain = PemFileHelper.readFirstChain(signCertFileName);
+        PrivateKey signPrivateKey = PemFileHelper.readFirstKey(signCertFileName, password);
+
+        SignerProperties signerProperties = createSignerProperties();
+        PdfPadesSigner padesSigner = createPdfPadesSigner(srcFileName, outFileName);
+        padesSigner.signWithBaselineBProfile(signerProperties, signChain, signPrivateKey);
+
+        SignatureUtil signatureUtil = new SignatureUtil(new PdfDocument(new PdfReader(outFileName)));
+        PdfSignature signature = signatureUtil.getSignature(signerProperties.getFieldName());
+        String creator = signature.getPdfObject().getAsDictionary(PdfName.Prop_Build).getAsDictionary(PdfName.App)
+                .getAsName(PdfName.Name).getValue();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfDocument doc = new PdfDocument(new PdfWriter(outputStream));
+        doc.addNewPage();
+        doc.close();
+
+        try (PdfDocument regularPdf = new PdfDocument(new PdfReader(new ByteArrayInputStream(outputStream.toByteArray())))) {
+            String regularProducerLine = regularPdf.getDocumentInfo().getProducer();
+            Assertions.assertEquals(regularProducerLine, creator);
+        }
+    }
+
+    private SignerProperties createSignerProperties() {
+        SignerProperties signerProperties = new SignerProperties();
+        signerProperties.setFieldName("Signature1");
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID)
+                .setContent("Approval test signature.\nCreated by iText.");
+        signerProperties.setPageRect(new Rectangle(50, 650, 200, 100))
+                .setSignatureAppearance(appearance);
+
+        return signerProperties;
     }
 
     private PdfPadesSigner createPdfPadesSigner(String srcFileName, String outFileName) throws IOException {

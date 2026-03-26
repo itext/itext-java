@@ -7,7 +7,7 @@
 
         font-family: "abyrvalg";
 
-        src: url("w3c-test-fonts/valid-005.ttf")
+        src: url("../../../../fonts/w3c-test-fonts/valid-005.ttf")
         format("TrueType");
         }
     </style>

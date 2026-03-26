@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -46,10 +46,10 @@ import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class Utf8FormsTest extends ExtendedITextTest {
-
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/Utf8FormsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/Utf8FormsTest/";
-    public static final String FONT = "./src/test/resources/com/itextpdf/forms/Utf8FormsTest/NotoSansCJKsc-Regular.otf";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
+    private static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/Utf8FormsTest/";
+    private static final String destinationFolder = TestUtil.getOutputPath() + "/forms/Utf8FormsTest/";
+    private static final String FONT = FONT_FOLDER + "NotoSansCJKsc-Regular.otf";
 
     @BeforeEach
     public void before() {

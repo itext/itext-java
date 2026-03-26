@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -52,7 +52,7 @@ public class SignatureFormFieldBuilder extends TerminalFormFieldBuilder<Signatur
             signatureFormField = PdfFormCreator.createSignatureFormField(getDocument());
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
-            if (getConformance() != null && getConformance().isPdfAOrUa()) {
+            if (getConformance() != null && getConformance().conformsToAny()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
             signatureFormField = PdfFormCreator.createSignatureFormField(annotation, getDocument());

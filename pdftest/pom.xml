@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>9.5.0</version>
+    <version>9.6.0</version>
   </parent>
 
   <artifactId>pdftest</artifactId>
@@ -31,6 +31,22 @@
       <groupId>org.verapdf</groupId>
       <artifactId>validation-model</artifactId>
       <version>${verapdf.version}</version>
+      <!-- verapdf brings jackson-databind 2.15.0 (CVE-2023-35116); -->
+      <!-- remove after verapdf upgrades Jackson -->
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -41,6 +57,11 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junit.jupiter.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>${junit.platform.version}</version>
     </dependency>
   </dependencies>
 

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -57,6 +57,17 @@ public final class JsonObject extends JsonValue {
      */
     public Map<String, JsonValue> getFields() {
         return new LinkedHashMap<>(fields);
+    }
+
+    /**
+     * Gets particular json object field.
+     *
+     * @param fieldName {@link String} name of the field
+     *
+     * @return field as {@link JsonValue}
+     */
+    public JsonValue getField(String fieldName) {
+        return fields.get(fieldName);
     }
 
     /**

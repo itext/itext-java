@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -28,58 +28,50 @@ import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.io.resolver.resource.IResourceRetriever;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.TrustedCertificatesStore;
-import com.itextpdf.signatures.validation.lotl.CountrySpecificLotlFetcher.Result;
-import com.itextpdf.signatures.validation.report.ReportItem;
-import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
-import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
+import com.itextpdf.signatures.validation.report.ValidationReport;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.function.LongUnaryOperator;
 
-
 /**
- * This class provides services for managing the List of Trusted Lists (Lotl) and related resources.
- * It includes methods for fetching, validating, and caching Lotl data, as well as managing the European Resource
- * Fetcher and Country-Specific Lotl Fetcher.
+ * This class provides API for managing the List of Trusted Lists (LOTL) and related resources.
+ * It includes API for fetching, validating, and caching LOTL data, as well as managing the European Resource
+ * Fetcher and Country-Specific LOTL Fetcher.
  * It also allows for setting custom resource retrievers and cache timeouts.
  */
+// TODO DEVSIX-9710: Make this class abstract and remove EuropeanLotlService specific methods to EuropeanLotlService
 public class LotlService implements AutoCloseable {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LotlService.class);
     private static final Object GLOBAL_SERVICE_LOCK = new Object();
+    private static final String DEFAULT_USER_AGENT = "iText-lotl-retriever/1.0";
+    protected final LotlFetchingProperties lotlFetchingProperties;
+
     // Global service
     static LotlService GLOBAL_SERVICE;
-    private final LotlFetchingProperties lotlFetchingProperties;
-    //Services
-    private LotlServiceCache cache;
-    private EuropeanResourceFetcher europeanResourceFetcher = new EuropeanResourceFetcher();
-    private EuropeanLotlFetcher lotlByteFetcher;
-    private PivotFetcher pivotFetcher;
-    private CountrySpecificLotlFetcher countrySpecificLotlFetcher;
+
+    private static final String ABSTRACT_CLASS_EXCEPTION = "Treat this method as abstract so you need to implement "
+            + "it on your own. It will become abstract in the next major release.";
+    private static final String NOT_USABLE_METHOD_EXCEPTION = "You are using the method which will be removed "
+            + "in the next major release. You probably need to extend EuropeanLotlService but not LotlService.";
+
     private boolean cacheInitialized = false;
     private Timer cacheTimer = null;
-    private IResourceRetriever resourceRetriever = new LoggableResourceRetriever();
+    private IResourceRetriever resourceRetriever;
     private Function<TrustedCertificatesStore, XmlSignatureValidator> xmlSignatureValidatorFactory;
     private Supplier<LotlValidator> lotlValidatorFactory;
 
+    private EuropeanLotlService defaultImpl;
 
     /**
      * Creates a new instance of {@link LotlService}.
@@ -88,28 +80,31 @@ public class LotlService implements AutoCloseable {
      */
     public LotlService(LotlFetchingProperties lotlFetchingProperties) {
         this.lotlFetchingProperties = lotlFetchingProperties;
-        this.cache = new InMemoryLotlServiceCache(lotlFetchingProperties.getCacheStalenessInMilliseconds(),
-                lotlFetchingProperties.getOnCountryFetchFailureStrategy());
-        this.lotlByteFetcher = new EuropeanLotlFetcher(this);
-        this.pivotFetcher = new PivotFetcher(this);
-        this.countrySpecificLotlFetcher = new CountrySpecificLotlFetcher(this);
-        this.xmlSignatureValidatorFactory = trustedCertificatesStore -> buildXmlSignatureValidator(
-                trustedCertificatesStore);
-        this.lotlValidatorFactory = () -> buildLotlValidator();
+
+        if (this.getClass() == LotlService.class) {
+            defaultImpl = new EuropeanLotlService(lotlFetchingProperties);
+        } else {
+            this.xmlSignatureValidatorFactory = trustedCertificatesStore -> buildXmlSignatureValidator(
+                    trustedCertificatesStore);
+            this.lotlValidatorFactory = () -> buildLotlValidator();
+            this.resourceRetriever = new LoggableResourceRetriever();
+            ((LoggableResourceRetriever) this.resourceRetriever).setRequestHeaders(
+                    Collections.singletonMap("User-Agent",DEFAULT_USER_AGENT));
+        }
     }
 
     /**
-     * Initializes the global cache with the provided LotlFetchingProperties.
-     * This method must be called before using the LotlService to ensure that the cache is set up.
+     * Initializes the global service with the provided {@link LotlFetchingProperties}.
+     * This method must be called before using the {@link LotlService} to ensure that the cache is set up.
      * <p>
      * If you are using a custom implementation of {@link LotlService} you can use the instance method.
      *
-     * @param lotlFetchingProperties the LotlFetchingProperties to use for initializing the cache
+     * @param lotlFetchingProperties the {@link LotlFetchingProperties} to use for initializing the cache
      */
     public static void initializeGlobalCache(LotlFetchingProperties lotlFetchingProperties) {
         synchronized (GLOBAL_SERVICE_LOCK) {
             if (GLOBAL_SERVICE == null) {
-                GLOBAL_SERVICE = new LotlService(lotlFetchingProperties);
+                GLOBAL_SERVICE = new EuropeanLotlService(lotlFetchingProperties);
                 GLOBAL_SERVICE.initializeCache();
             } else {
                 throw new PdfException(SignExceptionMessageConstant.CACHE_ALREADY_INITIALIZED);
@@ -127,46 +122,106 @@ public class LotlService implements AutoCloseable {
     }
 
     /**
-     * Sets the cache for the LotlService.
+     * Sets the cache for the {@link LotlService}.
      * <p>
      * This method allows you to provide a custom implementation of {@link LotlServiceCache} to be used
-     * for caching Lotl data, pivot files, and country-specific Lotls.
+     * for caching LOTL data, pivot files, and country-specific LOTLs.
      *
-     * @param cache the custom cache to be used for caching Lotl data
+     * @param cache the custom cache to be used for caching LOTL data
      *
      * @return the current instance of {@link LotlService} for method chaining
      */
+    // TODO DEVSIX-9710: Remove this method to EuropeanLotlService
     public LotlService withLotlServiceCache(LotlServiceCache cache) {
-        this.cache = cache;
-        return this;
+        if (defaultImpl != null) {
+            return defaultImpl.withLotlServiceCache(cache);
+        }
+
+        throw new UnsupportedOperationException(NOT_USABLE_METHOD_EXCEPTION);
     }
 
     /**
      * Sets a custom resource retriever for fetching resources.
      * <p>
      * This method allows you to provide a custom implementation of {@link IResourceRetriever} to be used
-     * for fetching resources such as the Lotl XML, pivot files, and country-specific Lotls.
+     * for fetching resources such as the LOTL XML, pivot files, and country-specific LOTLs.
+     * <p>
+     * Multiple LOTL endpoints require a userAgent header to be sent. This should be taken into account
+     * when providing a custom  {@link IResourceRetriever}.
      *
      * @param resourceRetriever the custom resource retriever to be used for fetching resources
      *
      * @return the current instance of {@link LotlService} for method chaining
      */
     public final LotlService withCustomResourceRetriever(IResourceRetriever resourceRetriever) {
-        this.resourceRetriever = resourceRetriever;
+        if (defaultImpl == null) {
+            this.resourceRetriever = resourceRetriever;
+        } else {
+            defaultImpl.withCustomResourceRetriever(resourceRetriever);
+        }
+
         return this;
     }
 
-
     /**
-     * Initializes the cache with the latest Lotl data and related resources.
+     * Initializes the cache with the latest LOTL data and related resources.
      */
     public void initializeCache() {
-        initializeCache(null);
+        if (defaultImpl == null) {
+            initializeCache(null);
+        } else {
+            defaultImpl.initializeCache();
+        }
     }
 
+    /**
+     * Loads the cache from the provided input stream.
+     * <p>
+     * The input stream should contain serialized cache data, which can be created using the
+     * {@link #serializeCache(OutputStream)} method.
+     *
+     * @param stream the input stream to read the cached data from
+     */
+    // TODO DEVSIX-9710: Make this method abstract
+    public void loadFromCache(InputStream stream) {
+        if (defaultImpl != null) {
+            defaultImpl.loadFromCache(stream);
+            return;
+        }
+
+        throw new UnsupportedOperationException(ABSTRACT_CLASS_EXCEPTION);
+    }
 
     /**
-     * Initializes the cache with the latest Lotl data and related resources.
+     * Get the validation results for the List of Trusted Lists (LOTL).
+     *
+     * @return a {@link ValidationReport} containing the results of the LOTL validation
+     */
+    // TODO DEVSIX-9710: Make this method abstract
+    public ValidationReport getValidationResult() {
+        if (defaultImpl != null) {
+            return defaultImpl.getValidationResult();
+        }
+
+        throw new UnsupportedOperationException(ABSTRACT_CLASS_EXCEPTION);
+    }
+
+    /**
+     * Retrieves national trusted certificates.
+     *
+     * @return the list of the national trusted certificates
+     */
+    // TODO DEVSIX-9710: Make this method abstract
+    public List<IServiceContext> getNationalTrustedCertificates() {
+        if (defaultImpl != null) {
+            return defaultImpl.getNationalTrustedCertificates();
+        }
+
+        throw new UnsupportedOperationException(ABSTRACT_CLASS_EXCEPTION);
+    }
+
+    /**
+     * Initializes the cache with the latest LOTL data and related resources.
      * <p>
      * Important: By default when providing a stream, we will still set up a timer to refresh the cache periodically.
      * If you don't want this behavior, please set
@@ -176,123 +231,66 @@ public class LotlService implements AutoCloseable {
      *               The data can be serialized using {@link #serializeCache(OutputStream)} method.
      */
     public void initializeCache(InputStream stream) {
-        setupTimer();
-        if (stream != null) {
-            loadFromCache(stream);
+        if (defaultImpl == null) {
+            setupTimer();
+            if (stream != null) {
+                loadFromCache(stream);
+            } else {
+                loadFromNetwork();
+            }
+            cacheInitialized = true;
         } else {
-            loadFromNetwork();
-        }
-        cacheInitialized = true;
-    }
-
-    /**
-     * Loads the cache from the provided input stream.
-     * <p>
-     * The input stream should contain serialized cache data, which can be created using the
-     * {@link #serializeCache(OutputStream)} method.
-     *
-     * @param stream the input stream to read the cached data from.
-     */
-    public void loadFromCache(InputStream stream) {
-        try {
-            EuropeanLotlFetcher.Result mainLotlResult;
-            EuropeanResourceFetcher.Result europeanResourceFetcherEUJournalCertificates;
-            PivotFetcher.Result pivotsResult;
-            Map<String, CountrySpecificLotlFetcher.Result> resultToAddToCache;
-
-            LotlCacheDataV1 container = LotlCacheDataV1.deserialize(stream);
-            if (cache instanceof InMemoryLotlServiceCache) {
-                //Check if the data we have in the cache is older then the new one
-                Map<String, Long> newTimeStamps = container.getTimeStamps();
-                InMemoryLotlServiceCache inMemoryCache = (InMemoryLotlServiceCache) this.cache;
-                Map<String, Long> currentTimeStamps = inMemoryCache.getTimeStamps();
-
-                for (Entry<String, Long> entry : newTimeStamps.entrySet()) {
-                    Long newTimeStamp = entry.getValue();
-                    Long timeStampFromCache = currentTimeStamps.get(entry.getKey());
-                    if (timeStampFromCache != null && newTimeStamp <= timeStampFromCache) {
-                        throw new PdfException(SignExceptionMessageConstant.CACHE_INCOMING_DATA_IS_STALER);
-                    }
-                }
-                inMemoryCache.setTimeStamps(container.getTimeStamps());
-            }
-
-            mainLotlResult = container.getLotlCache();
-            europeanResourceFetcherEUJournalCertificates = container.getEuropeanResourceFetcherCache();
-            pivotsResult = container.getPivotCache();
-            resultToAddToCache = container.getCountrySpecificLotlCache();
-            if (mainLotlResult == null || europeanResourceFetcherEUJournalCertificates == null
-                    || pivotsResult == null || resultToAddToCache == null) {
-                throw new PdfException(SignExceptionMessageConstant.COULD_NOT_INITIALIZE_FROM_FILE);
-            }
-
-            Set<String> countriesInCache = new HashSet<>();
-            for (String key : new ArrayList<>(resultToAddToCache.keySet())) {
-                Result value = resultToAddToCache.get(key);
-                String countryCode = value.getCountrySpecificLotl().getSchemeTerritory();
-                if (lotlFetchingProperties.getSchemaNames().contains(countryCode) ||
-                        lotlFetchingProperties.getSchemaNames().isEmpty()) {
-                    countriesInCache.add(countryCode);
-                } else {
-                    resultToAddToCache.remove(key);
-                    LOGGER.warn(MessageFormatUtil.format(
-                            SignLogMessageConstant.COUNTRY_NOT_REQUIRED_BY_CONFIGURATION,
-                            countryCode));
-                }
-            }
-
-            for (String schemaName : lotlFetchingProperties.getSchemaNames()) {
-                if (countriesInCache.contains(schemaName)) {
-                    continue;
-                }
-                throw new PdfException(MessageFormatUtil.format(
-                        SignExceptionMessageConstant.INITIALIZED_CACHE_DOES_NOT_CONTAIN_REQUIRED_COUNTRY,
-                        schemaName));
-            }
-            this.cache.setAllValues(mainLotlResult, europeanResourceFetcherEUJournalCertificates, pivotsResult,
-                    resultToAddToCache);
-        } catch (PdfException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new PdfException(SignExceptionMessageConstant.COULD_NOT_INITIALIZE_FROM_FILE, e);
+            defaultImpl.initializeCache(stream);
         }
     }
 
     /**
-     * Sets the pivot fetcher for the Lotl service.
+     * Sets the pivot fetcher for the LOTL service.
      *
      * @param pivotFetcher the pivot fetcher to be used for fetching and validating pivot files
      *
      * @return the current instance of {@link LotlService} for method chaining
      */
+    // TODO DEVSIX-9710: Remove this method to EuropeanLotlService
     public LotlService withPivotFetcher(PivotFetcher pivotFetcher) {
-        this.pivotFetcher = pivotFetcher;
-        return this;
+        if (defaultImpl != null) {
+            return defaultImpl.withPivotFetcher(pivotFetcher);
+        }
+
+        throw new UnsupportedOperationException(NOT_USABLE_METHOD_EXCEPTION);
     }
 
     /**
-     * Sets the country-specific Lotl fetcher for the Lotl service.
+     * Sets the country-specific LOTL fetcher for the LOTL service.
      *
-     * @param countrySpecificLotlFetcher the country-specific Lotl fetcher to be used for fetching and validating
-     *                                   country-specific Lotls
+     * @param countrySpecificLotlFetcher the country-specific LOTL fetcher to be used for fetching and validating
+     *                                   country-specific LOTLs
      *
      * @return the current instance of {@link LotlService} for method chaining
      */
+    // TODO DEVSIX-9710: Remove this method to EuropeanLotlService
     public LotlService withCountrySpecificLotlFetcher(CountrySpecificLotlFetcher countrySpecificLotlFetcher) {
-        this.countrySpecificLotlFetcher = countrySpecificLotlFetcher;
-        return this;
+        if (defaultImpl != null) {
+            return defaultImpl.withCountrySpecificLotlFetcher(countrySpecificLotlFetcher);
+        }
+
+        throw new UnsupportedOperationException(NOT_USABLE_METHOD_EXCEPTION);
     }
 
     /**
-     * Sets the European List of Trusted Lists (Lotl) byte fetcher for the Lotl service.
+     * Sets the European List of Trusted Lists (LOTL) byte fetcher for the LOTL service.
      *
-     * @param fetcher the fetcher to be used for fetching the Lotl XML data
+     * @param fetcher the fetcher to be used for fetching the LOTL XML data
      *
      * @return the current instance of {@link LotlService} for method chaining
      */
+    // TODO DEVSIX-9710: Remove this method to EuropeanLotlService
     public LotlService withEuropeanLotlFetcher(EuropeanLotlFetcher fetcher) {
-        this.lotlByteFetcher = fetcher;
-        return this;
+        if (defaultImpl != null) {
+            return defaultImpl.withEuropeanLotlFetcher(fetcher);
+        }
+
+        throw new UnsupportedOperationException(NOT_USABLE_METHOD_EXCEPTION);
     }
 
     /**
@@ -304,7 +302,12 @@ public class LotlService implements AutoCloseable {
      */
     public LotlService withXmlSignatureValidator(
             Function<TrustedCertificatesStore, XmlSignatureValidator> xmlSignatureValidatorFactory) {
-        this.xmlSignatureValidatorFactory = xmlSignatureValidatorFactory;
+        if (defaultImpl == null) {
+            this.xmlSignatureValidatorFactory = xmlSignatureValidatorFactory;
+        } else {
+            defaultImpl.withXmlSignatureValidator(xmlSignatureValidatorFactory);
+        }
+
         return this;
     }
 
@@ -316,101 +319,91 @@ public class LotlService implements AutoCloseable {
      * @return this same instance of {@link LotlService}
      */
     public LotlService withLotlValidator(Supplier<LotlValidator> lotlValidatorFactory) {
-        this.lotlValidatorFactory = lotlValidatorFactory;
+        if (defaultImpl == null) {
+            this.lotlValidatorFactory = lotlValidatorFactory;
+        } else {
+            defaultImpl.withLotlValidator(lotlValidatorFactory);
+        }
+
         return this;
     }
 
     /**
-     * Sets the European Resource Fetcher for the LotlService.
+     * Sets the European Resource Fetcher for the {@link LotlService}.
      *
      * @param europeanResourceFetcher the European Resource Fetcher to be used for fetching EU journal certificates
      *
      * @return the current instance of {@link LotlService} for method chaining
      */
+    // TODO DEVSIX-9710: Remove this method to EuropeanLotlService
     public LotlService withEuropeanResourceFetcher(EuropeanResourceFetcher europeanResourceFetcher) {
-        this.europeanResourceFetcher = europeanResourceFetcher;
-        return this;
+        if (defaultImpl != null) {
+            return defaultImpl.withEuropeanResourceFetcher(europeanResourceFetcher);
+        }
+
+        throw new UnsupportedOperationException(NOT_USABLE_METHOD_EXCEPTION);
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     @Override
     public void close() {
-        cancelTimer();
+        if (defaultImpl == null) {
+            cancelTimer();
+        } else {
+            defaultImpl.close();
+        }
     }
 
     /**
      * Serializes the current state of the cache to the provided output stream.
      *
-     * @param outputStream the output stream to which the cache will be serialized.
+     * @param outputStream the output stream to which the cache will be serialized
      *
-     * @throws IOException if an I/O error occurs during serialization.
+     * @throws IOException if an I/O error occurs during serialization
      */
+    // TODO DEVSIX-9710: Make this method abstract
     public void serializeCache(OutputStream outputStream) throws IOException {
-        if (cache instanceof InMemoryLotlServiceCache) {
-            InMemoryLotlServiceCache inMemoryCache = (InMemoryLotlServiceCache) cache;
-            inMemoryCache.getAllData().serialize(outputStream);
-        } else {
-            throw new PdfException(SignExceptionMessageConstant.CACHE_CANNOT_BE_SERIALIZED);
+        if (defaultImpl != null) {
+            defaultImpl.serializeCache(outputStream);
+            return;
         }
+
+        throw new UnsupportedOperationException(ABSTRACT_CLASS_EXCEPTION);
     }
 
     /**
-     * Loads the cache from the network by fetching the latest Lotl data and related resources.
+     * Loads the cache from the network by fetching the latest LOTL data and related resources.
      * <p>
-     * This method fetches the main Lotl file, EU journal certificates, pivot files, and country-specific Lotls,
+     * This method fetches the main LOTL file, EU journal certificates, pivot files, and country-specific LOTLs,
      * validates them, and stores them in the cache.
-     * <p>
-     * If the main Lotl fetch fails, the method will throw a {@link PdfException} and will not proceed to fetch
-     * pivot files or country-specific Lotls. If a country-specific Lotl fetch fails, the
-     * {@link LotlFetchingProperties#getOnCountryFetchFailureStrategy()} will be used to handle the failure.
      * <p>
      * Note: This method is called during cache initialization and should not be called directly in normal
      * operation.
      */
+    // TODO DEVSIX-9710: Make this method abstract
     protected void loadFromNetwork() {
-        EuropeanLotlFetcher.Result mainLotlResult;
-        EuropeanResourceFetcher.Result europeanResourceFetcherEUJournalCertificates;
-        PivotFetcher.Result pivotsResult;
-        Map<String, CountrySpecificLotlFetcher.Result> resultToAddToCache;
-
-        mainLotlResult = lotlByteFetcher.fetch();
-        if (!mainLotlResult.getLocalReport().getFailures().isEmpty()) {
-            // We throw on main LOTL fetch failure, so we don't proceed to pivot and country specific LOTL fetches
-            final ReportItem reportItem = mainLotlResult.getLocalReport().getFailures().get(0);
-            throw new PdfException(reportItem.getMessage(), reportItem.getExceptionCause());
+        if (defaultImpl != null) {
+            defaultImpl.loadFromNetwork();
+            return;
         }
 
-        europeanResourceFetcherEUJournalCertificates = europeanResourceFetcher.getEUJournalCertificates();
-        pivotFetcher.setCurrentJournalUri(
-                europeanResourceFetcherEUJournalCertificates.getCurrentlySupportedPublication());
-        pivotsResult = pivotFetcher.downloadAndValidatePivotFiles(mainLotlResult.getLotlXml(),
-                europeanResourceFetcherEUJournalCertificates.getCertificates());
+        throw new UnsupportedOperationException(ABSTRACT_CLASS_EXCEPTION);
+    }
 
-        if (!pivotsResult.getLocalReport().getFailures().isEmpty()) {
-            ReportItem failure = pivotsResult.getLocalReport().getFailures().get(0);
-            throw new PdfException(failure.getMessage(), failure.getExceptionCause());
+    /**
+     * This method is intended to refresh the cache, it will try to download the latest LOTL data and update the
+     * cache accordingly.
+     */
+    // TODO DEVSIX-9710: Make this method abstract
+    protected void tryAndRefreshCache() {
+        if (defaultImpl != null) {
+            defaultImpl.tryAndRefreshCache();
+            return;
         }
 
-        Map<String, CountrySpecificLotlFetcher.Result> countrySpecificResults =
-                countrySpecificLotlFetcher.getAndValidateCountrySpecificLotlFiles(
-                        mainLotlResult.getLotlXml(), this);
-
-        resultToAddToCache = new HashMap<>(countrySpecificResults.size());
-        for (Entry<String, Result> entry : countrySpecificResults.entrySet()) {
-            final Result countrySpecificResult = entry.getValue();
-            if (countrySpecificResult.getLocalReport().getValidationResult() != ValidationResult.VALID) {
-                for (ReportItem log : countrySpecificResult.getLocalReport().getLogs()) {
-                    log.setStatus(ReportItemStatus.INFO);
-                }
-                lotlFetchingProperties.getOnCountryFetchFailureStrategy().onCountryFailure(countrySpecificResult);
-            }
-            resultToAddToCache.put(entry.getKey(), countrySpecificResult);
-        }
-
-        this.cache.setAllValues(mainLotlResult, europeanResourceFetcherEUJournalCertificates, pivotsResult,
-                resultToAddToCache);
+        throw new UnsupportedOperationException(ABSTRACT_CLASS_EXCEPTION);
     }
 
     /**
@@ -420,205 +413,50 @@ public class LotlService implements AutoCloseable {
      * If the cache is null, it will create a new instance of {@link InMemoryLotlServiceCache}.
      */
     protected void setupTimer() {
-        long staleNessInMillis = lotlFetchingProperties.getCacheStalenessInMilliseconds();
-        TimerUtil.stopTimer(cacheTimer);
-        LongUnaryOperator cacheRefreshTimer = lotlFetchingProperties.getRefreshIntervalCalculator();
-        long refreshInterval = cacheRefreshTimer.applyAsLong(staleNessInMillis);
-        cacheTimer = TimerUtil.newTimerWithRecurringTask(() -> tryAndRefreshCache(), refreshInterval, refreshInterval);
+        if (defaultImpl == null) {
+            long staleNessInMillis = lotlFetchingProperties.getCacheStalenessInMilliseconds();
+            TimerUtil.stopTimer(cacheTimer);
+            LongUnaryOperator cacheRefreshTimer = lotlFetchingProperties.getRefreshIntervalCalculator();
+            long refreshInterval = cacheRefreshTimer.applyAsLong(staleNessInMillis);
+            cacheTimer = TimerUtil.newTimerWithRecurringTask(() -> tryAndRefreshCache(), refreshInterval,
+                    refreshInterval);
+        } else {
+            defaultImpl.setupTimer();
+        }
     }
 
     /**
      * Cancels timer, if it was already set up.
      */
     protected void cancelTimer() {
-        if (cacheTimer != null) {
-            TimerUtil.stopTimer(cacheTimer);
-        }
-    }
-
-    /**
-     * This method is intended to refresh the cache, it will try to download the latest LOTL data and update the
-     * cache accordingly.
-     * <p>
-     * The rules taken into account are:
-     * Country specific LOTL files will be fetched, validated and updated per country. If country fails to fetch,
-     * {@link LotlFetchingProperties#getOnCountryFetchFailureStrategy()} will be used to perform corresponding action.
-     * <p>
-     * For the main LOTL file, if the fetch fails, the cache will not be updated. Also, we will NOT proceed to update
-     * the pivot files.
-     * If the main LOTL file is fetched successfully, the pivot files will be fetched, validated and stored in the
-     * cache.
-     */
-    protected void tryAndRefreshCache() {
-
-        String currentJournalUri;
-
-        //Data to update if everything goes well
-        EuropeanResourceFetcher.Result europeanResourceFetcherEUJournalCertificatesToUse;
-        EuropeanLotlFetcher.Result mainLotlResultToUse = null;
-        PivotFetcher.Result pivotResultToUse = null;
-        Map<String, CountrySpecificLotlFetcher.Result> countrySpecificLotlResultsToUse;
-
-        try {
-            EuropeanResourceFetcher.Result europeanResourceFetcherEUJournalCertificates =
-                    europeanResourceFetcher.getEUJournalCertificates();
-            currentJournalUri = europeanResourceFetcherEUJournalCertificates.getCurrentlySupportedPublication();
-            if (europeanResourceFetcherEUJournalCertificates.getLocalReport().getValidationResult()
-                    != ValidationResult.VALID) {
-                LOGGER.warn(MessageFormatUtil.format(
-                        SignLogMessageConstant.FAILED_TO_FETCH_EU_JOURNAL_CERTIFICATES,
-                        europeanResourceFetcherEUJournalCertificates.getLocalReport().getFailures().get(0)
-                                .getMessage()));
-                return;
-            }
-            europeanResourceFetcherEUJournalCertificatesToUse = europeanResourceFetcherEUJournalCertificates;
-        } catch (Exception e) {
-            LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.FAILED_TO_FETCH_EU_JOURNAL_CERTIFICATES,
-                    e.getMessage()));
-            return;
-        }
-
-        boolean mainLotlFetchSuccessful = false;
-        Exception mainLotlFetchException = null;
-
-        try {
-            mainLotlResultToUse = lotlByteFetcher.fetch();
-            mainLotlFetchSuccessful =
-                    mainLotlResultToUse.hasValidXml() && mainLotlResultToUse.getLocalReport().getFailures().isEmpty();
-        } catch (Exception e) {
-            mainLotlFetchException = e;
-        }
-
-        boolean fetchPivotFilesSuccessful = false;
-        Exception pivotFetchException = null;
-
-        if (mainLotlFetchSuccessful) {
-            //Only if the main Lotl was fetched successfully, we proceed to re-fetch the new pivot files.
-            try {
-                pivotFetcher.setCurrentJournalUri(currentJournalUri);
-                pivotResultToUse = pivotFetcher.downloadAndValidatePivotFiles(mainLotlResultToUse.getLotlXml(),
-                        europeanResourceFetcher.getEUJournalCertificates().getCertificates());
-                fetchPivotFilesSuccessful =
-                        pivotResultToUse.getLocalReport().getValidationResult() == ValidationResult.VALID;
-            } catch (Exception e) {
-                pivotFetchException = e;
+        if (defaultImpl == null) {
+            if (cacheTimer != null) {
+                TimerUtil.stopTimer(cacheTimer);
             }
         } else {
-            LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.UPDATING_MAIN_LOTL_TO_CACHE_FAILED,
-                    mainLotlFetchException == null ? "" : mainLotlFetchException.getMessage()));
+            defaultImpl.cancelTimer();
         }
-
-        //Only update main Lotl and pivot result if both are successful.
-        if (!fetchPivotFilesSuccessful) {
-            LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED,
-                    pivotFetchException == null ? "" : pivotFetchException.getMessage()));
-        }
-        if (!mainLotlFetchSuccessful) {
-            // if main lotl is null we do not proceed with country specific lotl fetch because it depends on main lotl
-            return;
-        }
-
-        Map<String, CountrySpecificLotlFetcher.Result> allCountries;
-        try {
-            //Try updating the country specific Lotl files.
-            allCountries = countrySpecificLotlFetcher.getAndValidateCountrySpecificLotlFiles(
-                    mainLotlResultToUse.getLotlXml(), this);
-        } catch (Exception e) {
-            LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.FAILED_TO_FETCH_COUNTRY_SPECIFIC_LOTL,
-                    e.getMessage()));
-            return;
-        }
-        //If an error happened don't update the cache value, if the warn is too stale we will throw an exception
-        if (allCountries == null || allCountries.isEmpty()) {
-            LOGGER.warn(SignLogMessageConstant.NO_COUNTRY_SPECIFIC_LOTL_FETCHED);
-            return;
-        }
-        countrySpecificLotlResultsToUse = new HashMap<>(allCountries.size());
-        for (Result countrySpecificResult : allCountries.values()) {
-            boolean wasCountryFetchedSuccessfully = countrySpecificResult.getLocalReport().getFailures().isEmpty();
-            if (!wasCountryFetchedSuccessfully) {
-                LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.COUNTRY_SPECIFIC_FETCHING_FAILED,
-                        countrySpecificResult.getCountrySpecificLotl().getSchemeTerritory(),
-                        countrySpecificResult.getLocalReport()));
-                continue;
-            }
-            countrySpecificLotlResultsToUse.put(countrySpecificResult.createUniqueIdentifier(), countrySpecificResult);
-        }
-        if (pivotResultToUse == null) {
-            // nothing to update
-            return;
-        }
-        cache.setAllValues(mainLotlResultToUse, europeanResourceFetcherEUJournalCertificatesToUse,
-                pivotResultToUse, countrySpecificLotlResultsToUse);
-
-    }
-
-    PivotFetcher.Result getAndValidatePivotFiles(byte[] lotlXml, List<Certificate> certificates,
-            String currentJournalUri) {
-        PivotFetcher.Result result = cache.getPivotResult();
-        if (result != null) {
-            return result;
-        }
-        pivotFetcher.setCurrentJournalUri(currentJournalUri);
-        PivotFetcher.Result newResult = pivotFetcher.downloadAndValidatePivotFiles(lotlXml, certificates);
-        cache.setPivotResult(newResult);
-        return newResult;
-    }
-
-    List<CountrySpecificLotlFetcher.Result> getCountrySpecificLotlFiles(byte[] lotlXml) {
-        final Map<String, CountrySpecificLotlFetcher.Result> result = cache.getCountrySpecificLotls();
-        if (result != null) {
-            return new ArrayList<>(result.values());
-        }
-        final Map<String, CountrySpecificLotlFetcher.Result> countrySpecificLotlResults =
-                countrySpecificLotlFetcher.getAndValidateCountrySpecificLotlFiles(
-                        lotlXml, this);
-        for (Map.Entry<String, CountrySpecificLotlFetcher.Result> s : countrySpecificLotlResults.entrySet()) {
-            boolean successful = s.getValue().getLocalReport().getValidationResult() == ValidationResult.VALID;
-            if (successful || s.getValue().getLocalReport().getLogs().isEmpty()) {
-                cache.setCountrySpecificLotlResult(s.getValue());
-            }
-        }
-        return new ArrayList<>(countrySpecificLotlResults.values());
     }
 
     boolean isCacheInitialized() {
-        return cacheInitialized;
-    }
-
-    HashMap<String, Result> getCachedCountrySpecificLotls() {
-        return new HashMap<>(cache.getCountrySpecificLotls());
-    }
-
-    EuropeanLotlFetcher.Result getLotlBytes() {
-        EuropeanLotlFetcher.Result cachedData = cache.getLotlResult();
-        if (cachedData != null) {
-            return cachedData;
+        if (defaultImpl == null) {
+            return cacheInitialized;
+        } else {
+            return defaultImpl.isCacheInitialized();
         }
-        EuropeanLotlFetcher.Result data = lotlByteFetcher.fetch();
-        cache.setLotlResult(data);
-        return data;
-    }
-
-
-    EuropeanResourceFetcher.Result getEUJournalCertificates() {
-        EuropeanResourceFetcher.Result cachedResult = cache.getEUJournalCertificates();
-        if (cachedResult != null) {
-            return cachedResult;
-        }
-
-        EuropeanResourceFetcher.Result result = europeanResourceFetcher.getEUJournalCertificates();
-        cache.setEuropeanResourceFetcherResult(result);
-        return result;
     }
 
     /**
-     * Gets the resource retriever used by the Lotl service.
+     * Gets the resource retriever used by the LOTL service.
      *
      * @return the {@link IResourceRetriever} instance used for fetching resources
      */
     IResourceRetriever getResourceRetriever() {
-        return resourceRetriever;
+        if (defaultImpl == null) {
+            return resourceRetriever;
+        } else {
+            return defaultImpl.getResourceRetriever();
+        }
     }
 
     /**
@@ -627,11 +465,19 @@ public class LotlService implements AutoCloseable {
      * @return explicitly added or automatically created {@link XmlSignatureValidator} instance.
      */
     XmlSignatureValidator getXmlSignatureValidator(TrustedCertificatesStore trustedCertificatesStore) {
-        return xmlSignatureValidatorFactory.apply(trustedCertificatesStore);
+        if (defaultImpl == null) {
+            return xmlSignatureValidatorFactory.apply(trustedCertificatesStore);
+        } else {
+            return defaultImpl.getXmlSignatureValidator(trustedCertificatesStore);
+        }
     }
 
     LotlFetchingProperties getLotlFetchingProperties() {
-        return lotlFetchingProperties;
+        if (defaultImpl == null) {
+            return lotlFetchingProperties;
+        } else {
+            return defaultImpl.getLotlFetchingProperties();
+        }
     }
 
     /**
@@ -640,7 +486,11 @@ public class LotlService implements AutoCloseable {
      * @return explicitly added or automatically created {@link LotlValidator} instance
      */
     LotlValidator getLotlValidator() {
-        return lotlValidatorFactory.get();
+        if (defaultImpl == null) {
+            return lotlValidatorFactory.get();
+        } else {
+            return defaultImpl.getLotlValidator();
+        }
     }
 
     private LotlValidator buildLotlValidator() {
@@ -650,6 +500,7 @@ public class LotlService implements AutoCloseable {
     private static XmlSignatureValidator buildXmlSignatureValidator(TrustedCertificatesStore trustedCertificatesStore) {
         return new XmlSignatureValidator(trustedCertificatesStore);
     }
+
 
     private static final class LoggableResourceRetriever extends DefaultResourceRetriever {
         private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LotlService.class);
@@ -665,4 +516,3 @@ public class LotlService implements AutoCloseable {
         }
     }
 }
-

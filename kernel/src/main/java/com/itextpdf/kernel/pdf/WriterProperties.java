@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.kernel.mac.MacProperties;
 
 import java.security.cert.Certificate;
+import java.util.List;
 
 public class WriterProperties {
 
@@ -42,7 +43,24 @@ public class WriterProperties {
      */
     protected boolean smartMode;
     protected boolean addXmpMetadata;
+
+    /**
+     * The following field is deprecated, because it doesn't affect the behavior of the writer in any way.
+     * They are kept for backward compatibility, but they are not used anymore, use
+     * {@link PdfConformance} instead to specify the PDF conformance that will be added to XMP metadata.
+     *
+     * @deprecated in favor of {@link #conformance}
+     */
+    @Deprecated
     protected PdfAConformance addPdfAXmpMetadata = null;
+    /**
+     * The following field is deprecated, because it doesn't affect the behavior of the writer in any way.
+     * They are kept for backward compatibility, but they are not used anymore, use
+     * {@link PdfConformance} instead to specify the PDF conformance that will be added to XMP metadata.
+     *
+     * @deprecated in favor of {@link #conformance}
+     */
+    @Deprecated
     protected PdfUAConformance addPdfUaXmpMetadata = null;
     protected PdfVersion pdfVersion;
     protected EncryptionProperties encryptionProperties;
@@ -50,11 +68,11 @@ public class WriterProperties {
      * The ID entry that represents the initial identifier.
      */
     protected PdfString initialDocumentId;
-
     /**
      * The ID entry that represents a change in a document.
      */
     protected PdfString modifiedDocumentId;
+    private PdfConformance conformance = PdfConformance.PDF_NONE_CONFORMANCE;
 
     public WriterProperties() {
         smartMode = false;
@@ -117,7 +135,8 @@ public class WriterProperties {
      * @return this {@link WriterProperties} instance
      */
     public WriterProperties addPdfAXmpMetadata(PdfAConformance aConformance) {
-        this.addPdfAXmpMetadata = aConformance;
+        this.conformance = new PdfConformance(aConformance, this.conformance.getUAConformance(), this.conformance
+                .getWtpdfConformances());
         addXmpMetadata();
         return this;
     }
@@ -138,7 +157,41 @@ public class WriterProperties {
      * @return this {@link WriterProperties} instance
      */
     public WriterProperties addPdfUaXmpMetadata(PdfUAConformance uaConformance) {
-        this.addPdfUaXmpMetadata = uaConformance;
+        this.conformance = new PdfConformance(this.conformance.getAConformance(), uaConformance,
+                this.conformance.getWtpdfConformances());
+        addXmpMetadata();
+        return this;
+    }
+
+    /**
+     * Gets the PDF conformance that will be added to XMP metadata.
+     *
+     * @return the PDF conformance that will be added to XMP metadata, or null if no PDF conformance will be added
+     */
+    public PdfConformance getPdfConformance() {
+        return conformance;
+    }
+
+    /**
+     * Adds Well Tagged PDF XMP metadata to the PDF document.
+     *
+     * <p>
+     * This method calls {@link #addXmpMetadata()} implicitly.
+     *
+     * <p>
+     * NOTE: Calling this method only affects the XMP metadata, but doesn't enable any additional checks that the
+     * created document meets all Well Tagged PDF requirements.
+     * When using this method make sure you are familiar with Well Tagged PDF
+     * document requirements.
+     * If you are not sure, use dedicated iText PDF/UA module to create valid Well Tagged PDF documents.
+     *
+     * @param wtpdfConformanceList the Well Tagged PDF conformance which will be added to XMP metadata
+     *
+     * @return this {@link WriterProperties} instance
+     */
+    public WriterProperties addWtpdfXmpMetadata(List<WellTaggedPdfConformance> wtpdfConformanceList) {
+        this.conformance = new PdfConformance(this.conformance.getAConformance(), this.conformance.getUAConformance(),
+                wtpdfConformanceList);
         addXmpMetadata();
         return this;
     }
@@ -325,7 +378,7 @@ public class WriterProperties {
      *                            {@link EncryptionConstants#STANDARD_ENCRYPTION_128} implicitly sets
      *                            {@link EncryptionConstants#EMBEDDED_FILES_ONLY} as false;
      * @param macProperties       {@link MacProperties} class to configure MAC integrity protection properties.
-     *                                           Pass {@code null} if you want to disable MAC protection for any reason
+     *                            Pass {@code null} if you want to disable MAC protection for any reason
      *
      * @return this {@link WriterProperties} instance
      */
@@ -344,6 +397,7 @@ public class WriterProperties {
      * To help ensure the uniqueness of file identifiers,
      * it is recommended to be computed by means of a message digest algorithm such as MD5.
      *
+     * <p>
      * iText will by default keep the existing initial id.
      * But if you'd like you can set this id yourself using this setter.
      *

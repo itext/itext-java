@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 public class FontAttributesTest extends SvgIntegrationTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/FontAttributesTest/";
     public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/FontAttributesTest/";
-    public static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/svg/css/fonts/";
+    public static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/svg/fonts/";
 
     @BeforeAll
     public static void beforeClass() {

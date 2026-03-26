@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -47,28 +47,29 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfA1LayoutListTest extends ExtendedITextTest {
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA1LayoutListTest/";
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String cmpFolder = sourceFolder + "cmp/PdfA1LayoutListTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA1LayoutListTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA1LayoutListTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void listTest01() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "pdfA1b_listTest01.pdf";
-        String cmpPdf = cmpFolder + "cmp_pdfA1b_listTest01.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA1b_listTest01.pdf";
+        String cmpPdf = CMP_FOLDER + "cmp_pdfA1b_listTest01.pdf";
 
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is);
         PdfADocument pdfDocument = new PdfADocument(new PdfWriter(outPdf), PdfAConformance.PDF_A_1B, outputIntent);
 
         Document doc = new Document(pdfDocument);
         pdfDocument.setTagged();
 
-        PdfFont textfont = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont textfont = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         textfont.setSubset(true);
 
@@ -84,7 +85,7 @@ public class PdfA1LayoutListTest extends ExtendedITextTest {
 
         doc.close();
 
-        String result = new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff_");
+        String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             Assertions.fail(result);
         }

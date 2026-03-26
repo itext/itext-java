@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -51,7 +51,7 @@ import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,25 +64,26 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
 public class PdfAFlushingTest extends ExtendedITextTest {
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfAFlushingTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfAFlushingTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = PdfALogMessageConstant.PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED)})
     public void flushingTest01() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "pdfA1b_flushingTest01.pdf";
-        String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA1b_flushingTest01.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA1b_flushingTest01.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFlushingTest/cmp_pdfA1b_flushingTest01.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "Desert.jpg"));
         imageXObject.makeIndirect(doc);
         canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(30, 300, 300, 300));
 
@@ -99,14 +100,14 @@ public class PdfAFlushingTest extends ExtendedITextTest {
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = PdfALogMessageConstant.PDFA_PAGE_FLUSHING_WAS_NOT_PERFORMED)})
     public void flushingTest02() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "pdfA2b_flushingTest02.pdf";
-        String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA2b_flushingTest02.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA2b_flushingTest02.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFlushingTest/cmp_pdfA2b_flushingTest02.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_2B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "Desert.jpg"));
         imageXObject.makeIndirect(doc);
         canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(30, 300, 300, 300));
 
@@ -123,14 +124,14 @@ public class PdfAFlushingTest extends ExtendedITextTest {
 
     @Test
     public void flushingTest03() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "pdfA3b_flushingTest03.pdf";
-        String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA3b_flushingTest03.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA3b_flushingTest03.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFlushingTest/cmp_pdfA3b_flushingTest03.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_3B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfCanvas canvas = new PdfCanvas(doc.addNewPage());
-        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
+        PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "Desert.jpg"));
         canvas.addXObjectFittedIntoRectangle(imageXObject, new Rectangle(30, 300, 300, 300));
 
         PdfPage lastPage = doc.getLastPage();
@@ -149,13 +150,13 @@ public class PdfAFlushingTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = PdfALogMessageConstant.PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED, logLevel = LogLevelConstants.WARN)
     })
     public void tryToFlushFontTest() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "tryToFlushFontTest.pdf";
-        String cmpPdf = sourceFolder + "cmp_tryToFlushFontTest.pdf";
+        String outPdf = DESTINATION_FOLDER + "tryToFlushFontTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFlushingTest/cmp_tryToFlushFontTest.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument pdfDoc = (PdfADocument) new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is)).setTagged();
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "FreeSans.ttf",
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf",
                 "WinAnsi", PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
         font.makeIndirect(pdfDoc);
         Document document = new Document(pdfDoc);
@@ -170,19 +171,19 @@ public class PdfAFlushingTest extends ExtendedITextTest {
         assertEquals(PdfVersion.PDF_2_0, pdfDoc.getTagStructureContext().getTagStructureTargetVersion());
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff"));
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
     @Test
     @LogMessages(messages = {@LogMessage(messageTemplate = PdfALogMessageConstant.PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED)})
     public void addUnusedStreamObjectsTest() throws IOException, InterruptedException {
-        String outPdf = destinationFolder + "pdfA1b_docWithUnusedObjects_3.pdf";
-        String cmpPdf = sourceFolder + "cmp/PdfAFlushingTest/cmp_pdfA1b_docWithUnusedObjects_3.pdf";
+        String outPdf = DESTINATION_FOLDER + "pdfA1b_docWithUnusedObjects_3.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFlushingTest/cmp_pdfA1b_docWithUnusedObjects_3.pdf";
 
         PdfWriter writer = new PdfWriter(outPdf);
 
-        InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm");
+        InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_1B, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         pdfDocument.addNewPage();
 
@@ -207,7 +208,7 @@ public class PdfAFlushingTest extends ExtendedITextTest {
     }
 
     private void compareResult(String outFile, String cmpFile) throws IOException, InterruptedException {
-        String differences = new CompareTool().compareByContent(outFile, cmpFile, destinationFolder, "diff_");
+        String differences = new CompareTool().compareByContent(outFile, cmpFile, DESTINATION_FOLDER, "diff_");
         if (differences != null) {
             fail(differences);
         }

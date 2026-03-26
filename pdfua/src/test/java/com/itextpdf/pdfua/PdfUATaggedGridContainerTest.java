@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,10 +24,11 @@ package com.itextpdf.pdfua;
 
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
-import com.itextpdf.kernel.pdf.PdfUAConformance;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
@@ -59,14 +60,14 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static List<PdfUAConformance> data() {
+    public static List<PdfConformance> data() {
         return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simpleBorderBoxSizingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void simpleBorderBoxSizingTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER,conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font = loadFont();
@@ -86,13 +87,13 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
 
             document.add(gridContainer1);
         });
-        framework.assertBothValid("border", pdfUAConformance);
+        framework.assertBothValid("border");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simpleMarginTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void simpleMarginTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER,conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font = loadFont();
@@ -106,13 +107,13 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
             gridContainer0.setMarginRight(10);
             document.add(gridContainer0);
         });
-        framework.assertBothValid("margin", pdfUAConformance);
+        framework.assertBothValid("margin");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simplePaddingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void simplePaddingTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER,conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font = loadFont();
@@ -126,13 +127,13 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
             gridContainer0.setPaddingRight(10);
             document.add(gridContainer0);
         });
-        framework.assertBothValid("padding", pdfUAConformance);
+        framework.assertBothValid("padding");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void simpleBackgroundTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void simpleBackgroundTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER,conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font = loadFont();
@@ -140,16 +141,16 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
 
             document.add(new Paragraph("Validate Grid Container with Background"));
             GridContainer gridContainer0 = createGridBoxWithText();
-            gridContainer0.setBackgroundColor(ColorConstants.RED);
+            gridContainer0.setBackgroundColor(ColorConstants.PINK);
             document.add(gridContainer0);
         });
-        framework.assertBothValid("background", pdfUAConformance);
+        framework.assertBothValid("background");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void emptyGridContainerTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void emptyGridContainerTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER,conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             GridContainer gridContainer0 = new GridContainer();
@@ -164,7 +165,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
             gridContainer0.setProperty(Property.COLUMN_GAP, 12.0f);
             document.add(gridContainer0);
         });
-        framework.assertBothValid("emptyGridContainer", pdfUAConformance);
+        framework.assertBothValid("emptyGridContainer");
     }
 
 
@@ -243,7 +244,7 @@ public class PdfUATaggedGridContainerTest extends ExtendedITextTest {
         try {
             return PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new PdfException(e.getMessage());
         }
     }
 }

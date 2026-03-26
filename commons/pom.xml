@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>9.5.0</version>
+    <version>9.6.0</version>
   </parent>
 
   <artifactId>commons</artifactId>
@@ -15,7 +15,6 @@
 
   <properties>
     <sonar.coverage.exclusions>**/com/itextpdf/commons/bouncycastle/**</sonar.coverage.exclusions>
-
     <sharpen.phase>install</sharpen.phase>
     <sharpen.projectName>commons</sharpen.projectName>
     <sharpen.cSharpTargetFolder>./../../../sharp/itextcore</sharpen.cSharpTargetFolder>
@@ -28,7 +27,6 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.core.version}</version>
-      <optional>true</optional>
     </dependency>
 
     <dependency>

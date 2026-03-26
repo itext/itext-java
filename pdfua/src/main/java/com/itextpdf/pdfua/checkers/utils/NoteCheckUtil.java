@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -36,6 +36,14 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
  */
 @Deprecated
 public class NoteCheckUtil {
+
+    /**
+     * Creates a new instance of {@link NoteCheckUtil}.
+     */
+    public NoteCheckUtil(){
+       //empty constructor
+    }
+
     /**
      * Handler for checking Note elements in the TagTree.
      *
@@ -46,7 +54,7 @@ public class NoteCheckUtil {
 
         /**
          * Creates a new {@link  NoteCheckUtil.NoteTagHandler} instance.
-         * @param context The validation context.
+         * @param context The validation context
          */
         public NoteTagHandler(PdfUAValidationContext context) {
             super(context);

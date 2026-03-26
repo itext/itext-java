@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -27,6 +27,9 @@ import com.itextpdf.io.exceptions.ReadingByteLimitException;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +41,14 @@ import java.net.URL;
  * Default implementation of the {@link IResourceRetriever} interface, which can set a limit
  * on the size of retrieved resources using input stream with a limit on the number of bytes read.
  */
-public class DefaultResourceRetriever implements IResourceRetriever {
+public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultResourceRetriever.class);
     private static final int DEFAULT_CONNECT_TIMEOUT = 300_000;
     private static final int DEFAULT_READ_TIMEOUT = 300_000;
     private long resourceSizeByteLimit;
     private int connectTimeout;
     private int readTimeout;
+    private Map<String, String> requestHeaders;
 
     /**
      * Creates a new {@link DefaultResourceRetriever} instance.
@@ -105,6 +109,24 @@ public class DefaultResourceRetriever implements IResourceRetriever {
     }
 
     /**
+     * Gets the request headers to use in the request.
+     *
+     * @return the request headers to use in the request
+     */
+    public Map<String, String> getRequestHeaders() {
+        return requestHeaders;
+    }
+
+    /**
+     * Sets the request headers to use in the request.
+     *
+     * @param headers the request headers to use in the request
+     */
+    public void setRequestHeaders(Map<String, String> headers) {
+        this.requestHeaders = headers;
+    }
+
+    /**
      * Gets the read timeout.
      * <p>
      * The read timeout is used to create input stream with a limited time to receive data from resource.
@@ -121,6 +143,7 @@ public class DefaultResourceRetriever implements IResourceRetriever {
      * The read timeout is used to create input stream with a limited time to receive data from resource.
      *
      * @param readTimeout the read timeout in milliseconds
+     *
      * @return the {@link IResourceRetriever} instance
      */
     public IResourceRetriever setReadTimeout(int readTimeout) {
@@ -129,15 +152,13 @@ public class DefaultResourceRetriever implements IResourceRetriever {
     }
 
     /**
-     * Gets the input stream with current limit on the number of bytes read,
-     * that connect with source URL for retrieving data from that connection.
-     *
-     * @param url the source URL
-     * @return the limited input stream or null if the URL was filtered
+     * {@inheritDoc}
      */
+    @Override
     public InputStream getInputStreamByUrl(URL url) throws IOException {
         if (urlFilter(url)) {
-            return new LimitedInputStream(UrlUtil.getInputStreamOfFinalConnection(url, connectTimeout, readTimeout),
+            return new LimitedInputStream(UrlUtil
+                    .getInputStreamOfFinalConnection(url, connectTimeout, readTimeout, requestHeaders),
                     resourceSizeByteLimit);
         }
         LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));
@@ -145,12 +166,9 @@ public class DefaultResourceRetriever implements IResourceRetriever {
     }
 
     /**
-     * Gets the byte array that are retrieved from the source URL.
-     *
-     * @param url the source URL
-     * @return the byte array or null if the retrieving failed or the
-     * URL was filtered or the resourceSizeByteLimit was violated
+     * {@inheritDoc}
      */
+    @Override
     public byte[] getByteArrayByUrl(URL url) throws IOException {
         try (InputStream stream = getInputStreamByUrl(url)) {
             if (stream != null) {
@@ -163,6 +181,26 @@ public class DefaultResourceRetriever implements IResourceRetriever {
                     url, resourceSizeByteLimit));
             return null;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public InputStream get(URL url, byte[] request, Map<String, String> headers) throws IOException {
+        HashMap<String, String> finalHeaders = new HashMap<String, String>();
+        if (requestHeaders != null) {
+            finalHeaders.putAll(requestHeaders);
+        }
+        if (headers != null) {
+            finalHeaders.putAll(headers);
+        }
+        if (urlFilter(url)) {
+            return new LimitedInputStream(UrlUtil.get(url, request, finalHeaders, connectTimeout, readTimeout),
+                    resourceSizeByteLimit);
+        }
+        LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));
+        return null;
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -615,7 +615,9 @@ public class PdfDocumentTest extends ExtendedITextTest {
     public void getDefaultConformanceLevelTest() {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Assertions.assertNotNull(document.getConformance());
-        Assertions.assertFalse(document.getConformance().isPdfAOrUa());
+        Assertions.assertFalse(document.getConformance().isWtpdf());
+        Assertions.assertFalse(document.getConformance().isPdfA());
+        Assertions.assertFalse(document.getConformance().isPdfUA());
     }
 
     @Test

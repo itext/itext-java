@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -19,7 +19,7 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 package com.itextpdf.pdfua;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -28,11 +28,12 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
+import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
@@ -41,15 +42,15 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+
+import java.io.IOException;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.IOException;
-import java.util.List;
 
 @Tag("IntegrationTest")
 public class PdfUAFontsTest extends ExtendedITextTest {
@@ -62,21 +63,21 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
-    public static List<PdfUAConformance> data() {
+    public static List<PdfConformance> data() {
         return UaValidationTestFramework.getConformanceList();
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void tryToUseType0Cid0FontTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void tryToUseType0Cid0FontTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont("KozMinPro-Regular", "UniJIS-UCS2-H", EmbeddingStrategy.PREFER_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
@@ -86,59 +87,59 @@ public class PdfUAFontsTest extends ExtendedITextTest {
 
         framework.assertBothFail("tryToUseType0Cid0FontTest",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "KozMinPro-Regular"),
-                false, pdfUAConformance);
+                false);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void type0Cid2FontTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void type0Cid2FontTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
             Paragraph paragraph = new Paragraph("Simple paragraph");
             document.add(paragraph);
         });
-        framework.assertBothValid("type0Cid2FontTest", pdfUAConformance);
+        framework.assertBothValid("type0Cid2FontTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void trueTypeFontTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void trueTypeFontTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
             Paragraph paragraph = new Paragraph("Simple paragraph");
             document.add(paragraph);
         });
-        framework.assertBothValid("trueTypeFontTest", pdfUAConformance);
+        framework.assertBothValid("trueTypeFontTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void trueTypeFontGlyphNotPresentTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void trueTypeFontGlyphNotPresentTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT, "# simple 32 0020 00C5 1987", EmbeddingStrategy.PREFER_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
@@ -156,19 +157,19 @@ public class PdfUAFontsTest extends ExtendedITextTest {
 
         framework.assertBothFail("trueTypeFontGlyphNotPresentTest",
                 MessageFormatUtil.format(PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "w"),
-                false, pdfUAConformance);
+                false);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void trueTypeFontWithDifferencesTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void trueTypeFontWithDifferencesTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT, "# simple 32 0077 006f 0072 006c 0064", EmbeddingStrategy.PREFER_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
             TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
@@ -185,20 +186,20 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         });
 
         framework.assertBothFail("trueTypeFontWithDifferencesTest", PdfUAExceptionMessageConstants.
-                NON_SYMBOLIC_TTF_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING, false, pdfUAConformance);
+                NON_SYMBOLIC_TTF_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING, false);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void tryToUseStandardFontsTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void tryToUseStandardFontsTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(StandardFonts.COURIER, "", EmbeddingStrategy.PREFER_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
@@ -207,14 +208,13 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         });
 
         framework.assertBothFail("tryToUseStandardFontsTest",
-                MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"), false,
-                pdfUAConformance);
+                MessageFormatUtil.format(PdfUAExceptionMessageConstants.FONT_SHOULD_BE_EMBEDDED, "Courier"), false);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void type1EmbeddedFontTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void type1EmbeddedFontTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -223,14 +223,14 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                         FontProgramFactory.createType1Font(FONT_FOLDER + "cmr10.afm", FONT_FOLDER + "cmr10.pfb"),
                         FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
             Paragraph paragraph = new Paragraph("Helloworld");
             document.add(paragraph);
         });
-        framework.assertBothValid("type1EmbeddedFontTest", pdfUAConformance);
+        framework.assertBothValid("type1EmbeddedFontTest");
     }
 
     @Test
@@ -243,35 +243,35 @@ public class PdfUAFontsTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void nonSymbolicTtfWithValidEncodingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void nonSymbolicTtfWithValidEncodingTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT, PdfEncodings.MACROMAN, EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
             Paragraph paragraph = new Paragraph("ABC");
             document.add(paragraph);
         });
-        framework.assertBothValid("nonSymbolicTtfWithValidEncodingTest", pdfUAConformance);
+        framework.assertBothValid("nonSymbolicTtfWithValidEncodingTest");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void nonSymbolicTtfWithIncompatibleEncodingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void nonSymbolicTtfWithIncompatibleEncodingTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(FONT, PdfEncodings.UTF8, EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
@@ -279,13 +279,13 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             document.add(paragraph);
         });
         framework.assertBothFail("nonSymbolicTtfWithIncompatibleEncoding", PdfUAExceptionMessageConstants.
-                NON_SYMBOLIC_TTF_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING, false, pdfUAConformance);
+                NON_SYMBOLIC_TTF_SHALL_SPECIFY_MAC_ROMAN_OR_WIN_ANSI_ENCODING, false);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void symbolicTtfTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void symbolicTtfTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -294,20 +294,20 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                 font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf", PdfEncodings.MACROMAN,
                         EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
             Paragraph paragraph = new Paragraph("ABC");
             document.add(paragraph);
         });
-        framework.assertBothValid("symbolicTtf", pdfUAConformance);
+        framework.assertBothValid("symbolicTtf");
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void symbolicTtfWithEncodingTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void symbolicTtfWithEncodingTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -316,7 +316,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                 font = PdfFontFactory.createFont(FONT_FOLDER + "Symbols1.ttf", PdfEncodings.MACROMAN,
                         EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             font.getPdfObject().put(PdfName.Encoding, PdfName.MacRomanEncoding);
             document.setFont(font);
@@ -326,13 +326,13 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         });
         // VeraPDF is valid since iText fixes symbolic flag to non-symbolic on closing.
         framework.assertOnlyITextFail("symbolicTtfWithEncoding",
-                PdfUAExceptionMessageConstants.SYMBOLIC_TTF_SHALL_NOT_CONTAIN_ENCODING, pdfUAConformance);
+                PdfUAExceptionMessageConstants.SYMBOLIC_TTF_SHALL_NOT_CONTAIN_ENCODING);
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void symbolicTtfWithInvalidCmapTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void symbolicTtfWithInvalidCmapTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -340,7 +340,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                 TrueTypeFont fontProgram = new CustomSymbolicTrueTypeFont(FONT);
                 font = PdfFontFactory.createFont(fontProgram, PdfEncodings.MACROMAN, EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
@@ -348,19 +348,19 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             document.add(paragraph);
         });
         // VeraPDF is valid since iText fixes symbolic flag to non-symbolic on closing.
-        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+        if (PdfConformance.PDF_UA_1.equals(conformance)) {
             framework.assertOnlyITextFail("symbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
-                    SYMBOLIC_TTF_SHALL_CONTAIN_EXACTLY_ONE_OR_AT_LEAST_MICROSOFT_SYMBOL_CMAP, pdfUAConformance);
-        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+                    SYMBOLIC_TTF_SHALL_CONTAIN_EXACTLY_ONE_OR_AT_LEAST_MICROSOFT_SYMBOL_CMAP);
+        } else {
             framework.assertOnlyITextFail("symbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
-                    SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_SYMBOL_CMAP, pdfUAConformance);
+                    SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_SYMBOL_CMAP);
         }
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void nonSymbolicTtfWithInvalidCmapTest(PdfUAConformance pdfUAConformance) throws IOException {
-        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER);
+    public void nonSymbolicTtfWithInvalidCmapTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         framework.addBeforeGenerationHook(pdfDoc -> {
             Document document = new Document(pdfDoc);
             PdfFont font;
@@ -368,7 +368,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                 TrueTypeFont fontProgram = new CustomNonSymbolicTrueTypeFont(FONT);
                 font = PdfFontFactory.createFont(fontProgram, PdfEncodings.MACROMAN, EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new PdfException(e);
             }
             document.setFont(font);
 
@@ -376,12 +376,12 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             document.add(paragraph);
         });
         // VeraPDF is valid since the file itself is valid, but itext code is modified for testing.
-        if (PdfUAConformance.PDF_UA_1 == pdfUAConformance) {
+        if (PdfConformance.PDF_UA_1.equals(conformance) ) {
             framework.assertOnlyITextFail("nonSymbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
-                    NON_SYMBOLIC_TTF_SHALL_CONTAIN_NON_SYMBOLIC_CMAP, pdfUAConformance);
-        } else if (PdfUAConformance.PDF_UA_2 == pdfUAConformance) {
+                    NON_SYMBOLIC_TTF_SHALL_CONTAIN_NON_SYMBOLIC_CMAP);
+        } else {
             framework.assertOnlyITextFail("nonSymbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
-                    NON_SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_UNI_CMAP, pdfUAConformance);
+                    NON_SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_UNI_CMAP);
         }
     }
 

@@ -6,7 +6,7 @@
         @font-face {
         font-family: "WOFF Test CFF";
         src:
-        url("w3c-test-fonts/header-reserved-001.woff2")
+        url("../../../../fonts/w3c-test-fonts/header-reserved-001.woff2")
         format("woff2");
         }
     </style>

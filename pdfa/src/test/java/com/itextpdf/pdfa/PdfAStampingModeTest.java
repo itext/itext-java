@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -29,7 +29,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
@@ -59,7 +59,7 @@ public class PdfAStampingModeTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         Assertions.assertNull(compareTool.compareByContent(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, destinationFolder, "diff_"));
         Assertions.assertNull(compareTool.compareXmp(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, true));
-        Assertions.assertNull(new VeraPdfValidator().validate(destinationFolder + fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(destinationFolder + fileName)); 
     }
 
     @Test
@@ -73,6 +73,6 @@ public class PdfAStampingModeTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         Assertions.assertNull(compareTool.compareByContent(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, destinationFolder, "diff_"));
         Assertions.assertNull(compareTool.compareXmp(destinationFolder + fileName, cmpFolder + "cmp_" + fileName, true));
-        Assertions.assertNull(new VeraPdfValidator().validate(destinationFolder + fileName)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(destinationFolder + fileName)); 
     }
 }

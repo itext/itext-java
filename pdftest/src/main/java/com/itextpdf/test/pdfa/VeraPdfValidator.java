@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,6 +23,8 @@
 package com.itextpdf.test.pdfa;
 
 import org.junit.jupiter.api.Assertions;
+
+// Android-Conversion-Skip-Block-Start (TODO DEVSIX-7372 investigate why a few tests related to PdfA in iTextCore and PdfHtml were cut)
 import org.verapdf.component.LogsSummary;
 import org.verapdf.component.LogsSummaryImpl;
 import org.verapdf.core.VeraPDFException;
@@ -39,6 +41,7 @@ import org.verapdf.processor.ProcessorFactory;
 import org.verapdf.processor.TaskType;
 import org.verapdf.processor.plugins.PluginsCollectionConfig;
 import org.verapdf.processor.reports.BatchSummary;
+// Android-Conversion-Skip-Block-End
 
 import java.io.File;
 import java.io.IOException;
@@ -49,17 +52,37 @@ import java.util.EnumSet;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-// Android-Conversion-Skip-File (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 public class VeraPdfValidator {
+
+    private static  boolean isAndroid = false;
+
+    static {
+        try {
+            Class.forName("android.os.Build");
+            isAndroid = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+    }
+
     private static final boolean isNative = System.getProperty("org.graalvm.nativeimage.imagecode") != null;
 
     private boolean logToConsole = true;
+    private final String specification;
 
     /**
-     * @return the {@link PDFAFlavour} to use for validation
+     * Creates new instance of {@link VeraPdfValidator}.
      */
-    protected PDFAFlavour getSpecification() {
-        return PDFAFlavour.NO_FLAVOUR;
+    public VeraPdfValidator() {
+        this.specification = null;
+    }
+
+    /**
+     * Creates new instance of {@link VeraPdfValidator} with a required specification.
+     *
+     * @param specification {@link String} specification, which will be used in validation
+     */
+    public VeraPdfValidator(String specification) {
+        this.specification = specification;
     }
 
     /**
@@ -68,8 +91,8 @@ public class VeraPdfValidator {
      * @param filePath file to validate
      */
     public void validateFailure(String filePath) {
-        // VeraPdf doesn't work in native mode so skip VeraPdf validation
-        if (isNative) {
+        // VeraPdf doesn't work in native and android mode so skip VeraPdf validation
+        if (isNative || isAndroid) {
             return;
         }
 
@@ -92,8 +115,8 @@ public class VeraPdfValidator {
      * @param expectedWarning expected VeraPdf warning
      */
     public void validateWarning(String filePath, String expectedWarning) {
-        // VeraPdf doesn't work in native mode so skip VeraPdf validation
-        if (isNative) {
+        // VeraPdf doesn't work in native and android mode so skip VeraPdf validation
+        if (isNative || isAndroid) {
             return;
         }
 
@@ -110,11 +133,13 @@ public class VeraPdfValidator {
      * @return error message if validation fails, null is validation succeeds
      */
     public String validate(String filePath) {
-        // VeraPdf doesn't work in native mode so skip VeraPdf validation
-        if (isNative) {
+        // VeraPdf doesn't work in native and android mode so skip VeraPdf validation
+        if (isNative || isAndroid) {
             return null;
         }
+        // Android-Conversion-Replace return null;
 
+        // Android-Conversion-Skip-Block-Start (TODO DEVSIX-7372 investigate why a few tests related to PdfA in iTextCore and PdfHtml were cut)
         synchronized(VeraPdfValidator.class) {
             String errorMessage = null;
             try {
@@ -124,7 +149,7 @@ public class VeraPdfValidator {
                 // Initializes default VeraPDF configurations
                 ProcessorConfig customProfile = ProcessorFactory.defaultConfig();
                 FeatureExtractorConfig featuresConfig = customProfile.getFeatureConfig();
-                ValidatorConfig valConfig = ValidatorFactory.createConfig(getSpecification(), false, -1, false, true,
+                ValidatorConfig valConfig = ValidatorFactory.createConfig(PDFAFlavour.NO_FLAVOUR, false, -1, false, true,
                         Level.WARNING, "", false);
                 PluginsCollectionConfig plugConfig = customProfile.getPluginsCollectionConfig();
                 MetadataFixerConfig metaConfig = customProfile.getFixerConfig();
@@ -172,5 +197,6 @@ public class VeraPdfValidator {
             }
             return errorMessage;
         }
+        // Android-Conversion-Skip-Block-End (TODO DEVSIX-7372 investigate why a few tests related to PdfA in iTextCore and PdfHtml were cut)
     }
 }

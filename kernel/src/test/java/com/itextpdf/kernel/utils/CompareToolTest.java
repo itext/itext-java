@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -45,6 +45,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -401,5 +405,33 @@ public class CompareToolTest extends ExtendedITextTest {
         Assertions.assertNotNull("CompareTool must return differences found between the files", result);
         String xmlReport = new String(Files.readAllBytes(Paths.get(destinationFolder + "basefont_absence.report.xml")));
         Assertions.assertTrue(xmlReport.contains("PdfDictionary /BaseFont entry: Expected: /Helvetica-Bold+ASAFAS. Found: null"));
+    }
+
+    @Test
+    public void compareVisuallyWithFuzzValueTest() throws IOException, InterruptedException {
+        String outPdf = sourceFolder + "fuzz.pdf";
+        String cmpPdf = sourceFolder + "cmp_fuzz.pdf";
+        String outPath = destinationFolder + "compareVisuallyWithFuzzValueTest/";
+
+        CompareTool compareTool = new CompareTool();
+
+        Assertions.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0));
+        Assertions.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 3));
+        Assertions.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 15));
+    }
+
+    @Test
+    public void compareVisuallyWithFuzzAndIgnoredAreasTest() throws IOException, InterruptedException {
+        String outPdf = sourceFolder + "fuzzAndIgnoredAreas.pdf";
+        String cmpPdf = sourceFolder + "cmp_fuzzAndIgnoredAreas.pdf";
+        String outPath = destinationFolder + "compareVisuallyWithFuzzValueTest/";
+        Map<Integer, List<Rectangle>> ignoredAreas = new HashMap<Integer, List<Rectangle>>();
+        ignoredAreas.put(1, Arrays.asList(new Rectangle(300, 0, 295, 842)));
+
+        CompareTool compareTool = new CompareTool();
+
+        Assertions.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0));
+        Assertions.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0.8));
+        Assertions.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, null,  ignoredAreas, 0.4));
     }
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -21,6 +21,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.itextpdf.signatures.validation.report;
+
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonValue;
+import com.itextpdf.signatures.SignJsonSerializerHelper;
 
 import java.security.cert.X509Certificate;
 
@@ -65,6 +69,36 @@ public class CertificateReportItem extends ReportItem {
      */
     public X509Certificate getCertificate() {
         return certificate;
+    }
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        JsonObject reportItemJson = (JsonObject) super.toJson();
+        reportItemJson.add("certificate", SignJsonSerializerHelper.serializeCertificate(certificate));
+        return reportItemJson;
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link CertificateReportItem}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link CertificateReportItem}
+     */
+    public static CertificateReportItem fromJson(JsonValue jsonValue) {
+        ReportItem reportItemFromJson = ReportItem.fromJson(jsonValue);
+        JsonObject certificateReportItemJson = (JsonObject) jsonValue;
+        JsonObject certificateJson = (JsonObject) certificateReportItemJson.getField("certificate");
+        X509Certificate certificateFromJson = SignJsonSerializerHelper.deserializeCertificate(certificateJson);
+
+        return new CertificateReportItem(certificateFromJson, reportItemFromJson.getCheckName(),
+                reportItemFromJson.getMessage(), reportItemFromJson.getExceptionCause(),
+                reportItemFromJson.getStatus());
     }
 
     /**

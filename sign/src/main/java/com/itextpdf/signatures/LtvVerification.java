@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -238,6 +238,8 @@ public class LtvVerification {
         if (used) {
             throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
         }
+
+        checkSignatureExists(signatureName);
         PdfPKCS7 pk = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         LOGGER.info("Adding verification for " + signatureName);
         Certificate[] certificateChain = pk.getCertificates();
@@ -286,6 +288,8 @@ public class LtvVerification {
         if (used) {
             throw new IllegalStateException(SignExceptionMessageConstant.VERIFICATION_ALREADY_OUTPUT);
         }
+
+        checkSignatureExists(signatureName);
         ValidationData vd = new ValidationData();
         if (ocsps != null) {
             for (byte[] ocsp : ocsps) {
@@ -363,6 +367,14 @@ public class LtvVerification {
             }
         }
         return null;
+    }
+
+    private void checkSignatureExists(String signatureName) {
+        PdfSignature sig = sgnUtil.getSignature(signatureName);
+        if (sig == null) {
+            throw new PdfException(MessageFormatUtil.format(SignExceptionMessageConstant.NO_SIGNATURE_WITH_THAT_NAME,
+                    signatureName));
+        }
     }
 
     private void addRevocationDataForChain(X509Certificate signingCert, Certificate[] certChain, IOcspClient ocsp,

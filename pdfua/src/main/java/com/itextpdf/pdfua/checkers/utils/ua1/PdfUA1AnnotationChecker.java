@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -83,8 +83,8 @@ public final class PdfUA1AnnotationChecker {
     /**
      * Checks the annotation element for PDF/UA-1 compliance.
      *
-     * @param context The validation context.
-     * @param elem    The structure element to check.
+     * @param context The validation context
+     * @param elem    The structure element to check
      */
     public static void checkElement(PdfUAValidationContext context, IStructureNode elem) {
         if (!(elem instanceof PdfObjRef)) {

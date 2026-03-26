@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -78,7 +78,7 @@ public class CheckBoxFormFieldBuilder extends TerminalFormFieldBuilder<CheckBoxF
         } else {
             PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(getWidgetRectangle());
             annotation.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
-            if (getConformance() != null && getConformance().isPdfAOrUa()) {
+            if (getConformance() != null && getConformance().conformsToAny()) {
                 annotation.setFlag(PdfAnnotation.PRINT);
             }
             check = PdfFormCreator.createButtonFormField(annotation, getDocument());

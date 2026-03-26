@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,6 +23,7 @@
 package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
+import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
@@ -68,12 +69,14 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Calendar;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -523,6 +526,110 @@ public class PdfSignerUnitTest extends ExtendedITextTest {
         Assertions.assertEquals(fieldName, signer.getSignerProperties().getFieldName());
 
         reader.close();
+    }
+
+    @Test
+    public void checkSignatureCreatorDefaultTest() throws IOException, GeneralSecurityException {
+        ByteArrayOutputStream signedOutputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(createSimpleDocument())), signedOutputStream, new StampingProperties());
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName("Signature1")
+                .setPageNumber(1);
+        signer.setSignerProperties(signerProperties);
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        signer.document.close();
+
+        PdfDocument signedDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(signedOutputStream.toByteArray())), new PdfWriter(new ByteArrayOutputStream()));
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signedDocument, true);
+        PdfFormField formField = acroForm.getField(signerProperties.getFieldName());
+        PdfDictionary formFieldDictionary = formField.getPdfObject();
+        Assertions.assertNotNull(formFieldDictionary);
+        PdfDictionary signatureDictionary = formFieldDictionary.getAsDictionary(PdfName.V);
+        Assertions.assertNotNull(signatureDictionary);
+        String creator = signatureDictionary.getAsDictionary(PdfName.Prop_Build)
+                .getAsDictionary(PdfName.App).getAsName(PdfName.Name).getValue();
+        Assertions.assertEquals(signedDocument.getDocumentInfo().getProducer(), creator);
+    }
+
+    @Test
+    public void checkSignatureCreatorNullTest() throws IOException, GeneralSecurityException {
+        ByteArrayOutputStream signedOutputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new PdfSigner(
+                new PdfReader(new ByteArrayInputStream(createSimpleDocument())), signedOutputStream, new StampingProperties());
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName("Signature1")
+                .setPageNumber(1);
+        signerProperties.setSignatureCreator(null);
+        signer.setSignerProperties(signerProperties);
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        signer.document.close();
+
+        PdfDocument signedDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(signedOutputStream.toByteArray())), new PdfWriter(new ByteArrayOutputStream()));
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signedDocument, true);
+        PdfFormField formField = acroForm.getField(signerProperties.getFieldName());
+        PdfDictionary formFieldDictionary = formField.getPdfObject();
+        Assertions.assertNotNull(formFieldDictionary);
+        PdfDictionary signatureDictionary = formFieldDictionary.getAsDictionary(PdfName.V);
+        Assertions.assertNotNull(signatureDictionary);
+        Assertions.assertFalse(signatureDictionary.containsKey(PdfName.Prop_Build));
+    }
+
+    @Test
+    public void checkSignatureCreatorZeroEventsTest() throws IOException, GeneralSecurityException {
+        ByteArrayOutputStream signedOutputStream = new ByteArrayOutputStream();
+        PdfSigner signer = new DummySigner(
+                new PdfReader(new ByteArrayInputStream(createSimpleDocument())), signedOutputStream, new StampingProperties());
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName("Signature1")
+                .setPageNumber(1);
+        signer.setSignerProperties(signerProperties);
+
+        IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, FACTORY.getProviderName());
+        signer.signDetached(new BouncyCastleDigest(), pks, chain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
+
+        signer.document.close();
+
+        PdfDocument signedDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(signedOutputStream.toByteArray())), new PdfWriter(new ByteArrayOutputStream()));
+        PdfAcroForm acroForm = PdfFormCreator.getAcroForm(signedDocument, true);
+        PdfFormField formField = acroForm.getField(signerProperties.getFieldName());
+        PdfDictionary formFieldDictionary = formField.getPdfObject();
+        Assertions.assertNotNull(formFieldDictionary);
+        PdfDictionary signatureDictionary = formFieldDictionary.getAsDictionary(PdfName.V);
+        Assertions.assertNotNull(signatureDictionary);
+        String creator = signatureDictionary.getAsDictionary(PdfName.Prop_Build)
+                .getAsDictionary(PdfName.App).getAsName(PdfName.Name).getValue();
+        Assertions.assertEquals("", creator);
+    }
+
+    private static class DummySigner extends PdfSigner {
+
+        public DummySigner(PdfReader reader, OutputStream outputStream, StampingProperties properties) throws IOException {
+            super(reader, outputStream, properties);
+        }
+
+        @Override
+        protected PdfDocument initDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
+            return new DummyPdfDocument(reader, writer, properties);
+        }
+    }
+
+    private static class DummyPdfDocument extends PdfDocument {
+
+        public DummyPdfDocument(PdfReader reader, PdfWriter writer, StampingProperties properties) {
+            super(reader, writer, properties);
+        }
+
+        @Override
+        public SequenceId getDocumentIdWrapper() {
+            return null;
+        }
     }
 
     private static byte[] createDocumentWithEmptyField() {

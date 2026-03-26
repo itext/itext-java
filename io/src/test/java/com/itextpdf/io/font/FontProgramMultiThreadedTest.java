@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,8 +32,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontProgramMultiThreadedTest extends ExtendedITextTest {
-
-    private static final String FONT = "./src/test/resources/com/itextpdf/io/font/otf/FreeSans.ttf";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
+    private static final String FONT = FONTS_FOLDER + "NotoSans-Regular.ttf";
 
     @Test
     public void fontSubsetTest() throws InterruptedException, IOException {
@@ -49,7 +49,7 @@ public class FontProgramMultiThreadedTest extends ExtendedITextTest {
         }
         for (TestThread thread : threads) {
             Assertions.assertFalse(thread.exceptionCaught, "Exception during font subsetting");
-            Assertions.assertEquals(2956, thread.subsetSize);
+            Assertions.assertEquals(3680, thread.subsetSize);
         }
     }
 

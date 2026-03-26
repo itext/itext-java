@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -64,5 +64,13 @@ public class CssPagePseudoClassSelectorItem implements ICssSelectorItem {
             return false;
         }
         return ((PageContextNode) node).getPageClasses().contains(pagePseudoClass);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return ":" + pagePseudoClass;
     }
 }

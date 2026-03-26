@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,14 +22,13 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.commons.utils.StringNormalizer;
-import com.itextpdf.kernel.xmp.XMPConst;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
-import com.itextpdf.kernel.xmp.XMPMetaFactory;
-import com.itextpdf.kernel.xmp.XMPUtils;
-import com.itextpdf.kernel.xmp.options.PropertyOptions;
-import com.itextpdf.kernel.xmp.properties.XMPProperty;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The class represents possible PDF document conformance.
@@ -52,15 +51,55 @@ public class PdfConformance {
     public static final PdfConformance PDF_UA_1 = new PdfConformance(PdfUAConformance.PDF_UA_1);
     public static final PdfConformance PDF_UA_2 = new PdfConformance(PdfUAConformance.PDF_UA_2);
 
+    public static final PdfConformance WELL_TAGGED_PDF_FOR_ACCESSIBILITY =
+            new PdfConformance(Collections.singletonList(WellTaggedPdfConformance.FOR_ACCESSIBILITY));
+    public static final PdfConformance WELL_TAGGED_PDF_FOR_REUSE =
+            new PdfConformance(Collections.singletonList(WellTaggedPdfConformance.FOR_REUSE));
+
     public static final PdfConformance PDF_NONE_CONFORMANCE = new PdfConformance();
+
+    private static final int WTPDF_FLAG_NONE = 0;
+    private static final int WTPDF_FLAG_ACCESSIBILITY = 1;
+    private static final int WTPDF_FLAG_REUSE = 2;
+    private static final int WTPDF_FLAG_ACCESSIBILITY_AND_REUSE = WTPDF_FLAG_ACCESSIBILITY | WTPDF_FLAG_REUSE;
 
     private final PdfAConformance aConformance;
     private final PdfUAConformance uaConformance;
+    private int wtpdfFlag = WTPDF_FLAG_NONE;
+
+    /**
+     * Creates a new {@link PdfConformance} instance based on PDF/A, PDF/UA and Well Tagged PDF conformance.
+     *
+     * @param aConformance     the PDF/A conformance
+     * @param uaConformance    the PDF/UA conformance
+     * @param wtpdfConformance the Well Tagged PDF conformance
+     */
+    public PdfConformance(PdfAConformance aConformance, PdfUAConformance uaConformance,
+            WellTaggedPdfConformance wtpdfConformance) {
+        this.aConformance = aConformance;
+        this.uaConformance = uaConformance;
+        setWtPdfFlag(wtpdfConformance);
+    }
+
+
+    /**
+     * Creates a new {@link PdfConformance} instance based on PDF/A, PDF/UA and Well Tagged PDF conformance.
+     *
+     * @param aConformance         the PDF/A conformance
+     * @param uaConformance        the PDF/UA conformance
+     * @param wtpdfConformanceList the Well Tagged PDF conformance
+     */
+    public PdfConformance(PdfAConformance aConformance, PdfUAConformance uaConformance,
+            List<WellTaggedPdfConformance> wtpdfConformanceList) {
+        this.aConformance = aConformance;
+        this.uaConformance = uaConformance;
+        setWtPdfFlag(wtpdfConformanceList);
+    }
 
     /**
      * Creates a new {@link PdfConformance} instance based on PDF/A and PDF/UA conformance.
      *
-     * @param aConformance the PDF/A conformance
+     * @param aConformance  the PDF/A conformance
      * @param uaConformance the PDF/UA conformance
      */
     public PdfConformance(PdfAConformance aConformance, PdfUAConformance uaConformance) {
@@ -89,11 +128,96 @@ public class PdfConformance {
     }
 
     /**
-     * Creates a new {@link PdfConformance} instance without PDF/A or PDF/UA conformance.
+     * Creates a new {@link PdfConformance} instance based on only Well Tagged PDF conformance.
+     *
+     * @param wtpdfConformance the Well Tagged PDF conformance
+     */
+    public PdfConformance(List<WellTaggedPdfConformance> wtpdfConformance) {
+        setWtPdfFlag(wtpdfConformance);
+        this.uaConformance = null;
+        this.aConformance = null;
+    }
+
+
+    /**
+     * Creates a new {@link PdfConformance} instance based on only Well Tagged PDF conformance.
+     *
+     * @param wtpdfConformance the Well Tagged PDF conformance
+     */
+    public PdfConformance(WellTaggedPdfConformance wtpdfConformance) {
+        setWtPdfFlag(wtpdfConformance);
+        this.uaConformance = null;
+        this.aConformance = null;
+    }
+
+    /**
+     * Creates a new {@link PdfConformance} instance without any conformance.
      */
     public PdfConformance() {
         this.aConformance = null;
         this.uaConformance = null;
+    }
+
+    /**
+     * Gets {@link PdfConformance} instance from {@link XMPMeta}.
+     *
+     * @param meta the meta data to parse
+     *
+     * @return the {@link PdfConformance} instance
+     */
+    public static PdfConformance getConformance(XMPMeta meta) {
+        if (meta == null) {
+            return PdfConformance.PDF_NONE_CONFORMANCE;
+        }
+        final PdfAConformance aLevel = PdfConformanceXmpMetaDataUtil.getAConformance(meta);
+        final PdfUAConformance uaLevel = PdfConformanceXmpMetaDataUtil.getUAConformanceFromXmp(meta);
+        final List<WellTaggedPdfConformance> wtpdfConformanceList =
+                PdfConformanceXmpMetaDataUtil.getWtpdfConformanceFromXmp(
+                        meta);
+
+        return new PdfConformance(aLevel, uaLevel, wtpdfConformanceList);
+    }
+
+    /**
+     * Sets required fields into XMP metadata according to passed PDF conformance.
+     *
+     * @param xmpMeta     the xmp metadata to which required PDF conformance fields will be set
+     * @param conformance the PDF conformance which fields should be set into XMP metadata.
+     *
+     * @throws XMPException if the file is not well-formed XML or if the parsing fails
+     * @deprecated Use {@link #setConformanceToXmp(XMPMeta)} method of {@link PdfConformance} instance instead.
+     */
+    @Deprecated()
+    public static void setConformanceToXmp(XMPMeta xmpMeta, PdfConformance conformance) throws XMPException {
+        if (conformance == null) {
+            return;
+        }
+        conformance.setConformanceToXmp(xmpMeta);
+    }
+
+    /**
+     * Gets an instance of {@link PdfAConformance} based on passed part and level.
+     *
+     * @param part  the part of PDF/A conformance
+     * @param level the level of PDF/A conformance
+     *
+     * @return the {@link PdfAConformance} instance or {@code null} if there is no PDF/A conformance for passed
+     * parameters
+     *
+     */
+    public static PdfAConformance getAConformance(String part, String level) {
+        return PdfConformanceXmpMetaDataUtil.getAConformance(part, level);
+    }
+
+    /**
+     * Sets required fields into XMP metadata according to passed PDF conformance.
+     *
+     * @param xmpMeta the xmp metadata to which required PDF conformance fields will be set
+     *
+     * @throws XMPException if the file is not well-formed XML or if the parsing fails
+     */
+    public void setConformanceToXmp(XMPMeta xmpMeta) throws XMPException {
+        PdfConformanceXmpMetaDataUtil.setConformanceToXmp(this, xmpMeta);
     }
 
     /**
@@ -115,12 +239,21 @@ public class PdfConformance {
     }
 
     /**
-     * Checks if any PDF/A or PDF/UA conformance is specified.
+     * Checks if any Well Tagged PDF conformance is specified.
      *
-     * @return {@code true} if PDF/A or PDF/UA conformance is specified, otherwise {@code false}
+     * @return {@code true} if Well Tagged PDF conformance is specified, otherwise {@code false}
      */
-    public boolean isPdfAOrUa() {
-        return isPdfA() || isPdfUA();
+    public boolean isWtpdf() {
+        return wtpdfFlag != 0;
+    }
+
+    /**
+     * Checks if any of PDF/A, PDF/UA or Well Tagged PDF conformance is specified
+     *
+     * @return {@code true} if PDF/A, PDF/UA or Well Tagged PDF conformance is specified, otherwise {@code false}
+     */
+    public boolean conformsToAny() {
+        return isPdfA() || isPdfUA() || isWtpdf();
     }
 
     /**
@@ -141,6 +274,104 @@ public class PdfConformance {
         return uaConformance;
     }
 
+    /**
+     * Gets the list of {@link WellTaggedPdfConformance} instances if specified.
+     *
+     * @return the list of specified {@link WellTaggedPdfConformance} instances or empty list.
+     */
+    public List<WellTaggedPdfConformance> getWtpdfConformances() {
+        List<WellTaggedPdfConformance> wtpdfConformanceList = new ArrayList<>();
+        if ((wtpdfFlag & WTPDF_FLAG_ACCESSIBILITY) != 0) {
+            wtpdfConformanceList.add(WellTaggedPdfConformance.FOR_ACCESSIBILITY);
+        }
+        if ((wtpdfFlag & WTPDF_FLAG_REUSE) != 0) {
+            wtpdfConformanceList.add(WellTaggedPdfConformance.FOR_REUSE);
+        }
+        return wtpdfConformanceList;
+    }
+
+    /**
+     * Gets the {@link WellTaggedPdfConformance} instance if specified.
+     *
+     * @param wtPdfConformance the Well Tagged PDF conformance to check
+     *
+     * @return the specified {@link WellTaggedPdfConformance} instance or {@code null}.
+     */
+    public boolean conformsTo(WellTaggedPdfConformance wtPdfConformance) {
+        switch (wtPdfConformance) {
+            case FOR_ACCESSIBILITY:
+                return (wtpdfFlag & WTPDF_FLAG_ACCESSIBILITY) != 0;
+            case FOR_REUSE:
+                return (wtpdfFlag & WTPDF_FLAG_REUSE) != 0;
+            default:
+                throw new IllegalArgumentException("Unknown Well Tagged PDF conformance: " + wtPdfConformance);
+        }
+
+    }
+
+    /**
+     * Checks if specified PDF/UA conformance is present in this {@link PdfConformance} instance.
+     *
+     * @param uaConformance the PDF/UA conformance to check
+     *
+     * @return {@code true} if specified PDF/UA conformance is present in this {@link PdfConformance} instance,
+     * otherwise
+     */
+    public boolean conformsTo(PdfUAConformance uaConformance) {
+        return this.uaConformance == uaConformance;
+    }
+
+    /**
+     * Checks if specified PDF/A conformance is present in this {@link PdfConformance} instance.
+     *
+     * @param aConformance the PDF/A conformance to check
+     *
+     * @return {@code true} if specified PDF/A conformance is present in this {@link PdfConformance} instance, otherwise
+     */
+    public boolean conformsTo(PdfAConformance aConformance) {
+        return this.aConformance == aConformance;
+    }
+
+    /**
+     * Checks if any of specified conformance is present in this {@link PdfConformance} instance.
+     *
+     * @param conformanceList the conformances to check
+     *
+     * @return {@code true} if any of specified conformances is present in this {@link PdfConformance} instance,
+     * otherwise {@code false}
+     */
+    public boolean conformsTo(PdfConformance... conformanceList) {
+        if (conformanceList == null) {
+            return false;
+        }
+        for (Object conformance : conformanceList) {
+            if (this.equals(conformance)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if any PDF/A or PDF/UA conformance is specified.
+     *
+     * @return {@code true} if PDF/A or PDF/UA conformance is specified, otherwise {@code false}
+     *
+     * @deprecated Use {@link #conformsToAny()} instead, which also checks for Well Tagged PDF conformance.
+     */
+    @Deprecated
+    public boolean isPdfAOrUa() {
+        return isPdfA() || isPdfUA();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = aConformance != null ? aConformance.hashCode() : 0;
+        result = 31 * result + (uaConformance != null ? uaConformance.hashCode() : 0);
+        result = 31 * result + wtpdfFlag;
+        return result;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -150,204 +381,71 @@ public class PdfConformance {
             return false;
         }
         PdfConformance that = (PdfConformance) o;
-        return aConformance == that.aConformance && uaConformance == that.uaConformance;
+        boolean checkConformance = aConformance == that.aConformance && uaConformance == that.uaConformance;
+        if (!checkConformance) {
+            return false;
+        }
+        if (this.wtpdfFlag != that.wtpdfFlag) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public int hashCode() {
-        int result = aConformance == null ? 0 : aConformance.hashCode();
-        result = 31 * result + (uaConformance == null ? 0 : uaConformance.hashCode());
-        return result;
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Conformance:");
+        if (isPdfA()) {
+            sb.append(" A-").append(aConformance.getPart());
+            if (aConformance.getLevel() != null) {
+                sb.append(aConformance.getLevel());
+            }
+        }
+        if (isPdfUA()) {
+            sb.append(" UA-").append(uaConformance.getPart());
+        }
+        if (isWtpdf()) {
+            sb.append(" WTPDF-");
+            switch (wtpdfFlag) {
+                case WTPDF_FLAG_ACCESSIBILITY:
+                    sb.append("FOR_ACCESSIBILITY");
+                    break;
+                case WTPDF_FLAG_REUSE:
+                    sb.append("FOR_REUSE");
+                    break;
+                case WTPDF_FLAG_ACCESSIBILITY_AND_REUSE:
+                    sb.append("FOR_ACCESSIBILITY_AND_REUSE");
+                    break;
+                default:
+                    sb.append("UNKNOWN");
+            }
+
+        }
+        return sb.toString().trim();
     }
 
-    /**
-     * Gets {@link PdfConformance} instance from {@link XMPMeta}.
-     *
-     * @param meta the meta data to parse
-     *
-     * @return the {@link PdfConformance} instance
-     */
-    public static PdfConformance getConformance(XMPMeta meta) {
-        if (meta == null) {
-            return PdfConformance.PDF_NONE_CONFORMANCE;
+    private void setWtPdfFlag(List<WellTaggedPdfConformance> wtpdfConformanceList) {
+        if (wtpdfConformanceList == null) {
+            throw new PdfException("Well Tagged PDF conformance list cannot be null");
         }
-        XMPProperty conformanceAXmpProperty = null;
-        XMPProperty partAXmpProperty = null;
-        PdfAConformance aLevel = null;
-        try {
-            conformanceAXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE);
-            partAXmpProperty = meta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
-        } catch (XMPException ignored) {
-        }
-        if (partAXmpProperty != null && (conformanceAXmpProperty != null || "4".equals(partAXmpProperty.getValue()))) {
-            aLevel = getAConformance(partAXmpProperty.getValue(),
-                    conformanceAXmpProperty == null ? null : conformanceAXmpProperty.getValue());
-        }
-
-        XMPProperty partUAXmpProperty = null;
-        PdfUAConformance uaLevel = null;
-        try {
-            partUAXmpProperty = meta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.PART);
-        } catch (XMPException ignored) {
-        }
-        if (partUAXmpProperty != null) {
-            uaLevel = getUAConformance(partUAXmpProperty.getValue());
-        }
-
-        return new PdfConformance(aLevel, uaLevel);
-    }
-
-    /**
-     * Sets required fields into XMP metadata according to passed PDF conformance.
-     *
-     * @param xmpMeta the xmp metadata to which required PDF conformance fields will be set
-     * @param conformance the PDF conformance according to which XMP will be updated
-     *
-     * @throws XMPException if the file is not well-formed XML or if the parsing fails
-     */
-    public static void setConformanceToXmp(XMPMeta xmpMeta, PdfConformance conformance) throws XMPException {
-        if (conformance == null) {
-            return;
-        }
-        // Don't set any property if property value was set, so if
-        // smth was invalid in source document, it will be left as is.
-        // But if e.g. for PDF/A-4 revision wasn't specified, we will fix it.
-        if (conformance.isPdfUA()) {
-            if (xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.PART) == null) {
-                xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART,
-                        Integer.parseInt(conformance.getUAConformance().getPart()),
-                        new PropertyOptions(PropertyOptions.SEPARATE_NODE));
-            }
-            if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_2 &&
-                    xmpMeta.getProperty(XMPConst.NS_PDFUA_ID, XMPConst.REV) == null) {
-                xmpMeta.setPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.REV, 2024);
-            }
-        }
-        if (conformance.isPdfA()) {
-            final PdfAConformance aLevel = conformance.getAConformance();
-            if (xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.PART) == null) {
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.PART, aLevel.getPart());
-            }
-            if (aLevel.getLevel() != null && xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE) == null) {
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE, aLevel.getLevel());
-            }
-            if ("4".equals(aLevel.getPart()) && xmpMeta.getProperty(XMPConst.NS_PDFA_ID, XMPConst.REV) == null) {
-                xmpMeta.setProperty(XMPConst.NS_PDFA_ID, XMPConst.REV, PdfConformance.PDF_A_4_REVISION);
-            }
-
-            if (xmpMeta.getPropertyInteger(XMPConst.NS_PDFUA_ID, XMPConst.PART) != null) {
-                XMPMeta taggedExtensionMeta = XMPMetaFactory.parseFromString(PDF_UA_EXTENSION);
-                XMPUtils.appendProperties(taggedExtensionMeta, xmpMeta, true, false);
-            }
+        for (WellTaggedPdfConformance wtpdfConformance : wtpdfConformanceList) {
+            setWtPdfFlag(wtpdfConformance);
         }
     }
 
-    /**
-     * Gets an instance of {@link PdfAConformance} based on passed part and level.
-     *
-     * @param part the part of PDF/A conformance
-     * @param level the level of PDF/A conformance
-     *
-     * @return the {@link PdfAConformance} instance or {@code null} if there is no PDF/A conformance for passed parameters
-     */
-    public static PdfAConformance getAConformance(String part, String level) {
-        String lowLetter = StringNormalizer.toUpperCase(level);
-        boolean aLevel = "A".equals(lowLetter);
-        boolean bLevel = "B".equals(lowLetter);
-        boolean uLevel = "U".equals(lowLetter);
-        boolean eLevel = "E".equals(lowLetter);
-        boolean fLevel = "F".equals(lowLetter);
-
-        switch (part) {
-            case "1":
-                if (aLevel) {
-                    return PdfAConformance.PDF_A_1A;
-                }
-                if (bLevel) {
-                    return PdfAConformance.PDF_A_1B;
-                }
+    private void setWtPdfFlag(WellTaggedPdfConformance wtpdfConformance) {
+        if (wtpdfConformance == null) {
+            throw new PdfException("Well Tagged PDF conformance list cannot be null");
+        }
+        switch (wtpdfConformance) {
+            case FOR_ACCESSIBILITY:
+                wtpdfFlag |= WTPDF_FLAG_ACCESSIBILITY;
                 break;
-            case "2":
-                if (aLevel) {
-                    return PdfAConformance.PDF_A_2A;
-                }
-                if (bLevel) {
-                    return PdfAConformance.PDF_A_2B;
-                }
-                if (uLevel) {
-                    return PdfAConformance.PDF_A_2U;
-                }
+            case FOR_REUSE:
+                wtpdfFlag |= WTPDF_FLAG_REUSE;
                 break;
-            case "3":
-                if (aLevel) {
-                    return PdfAConformance.PDF_A_3A;
-                }
-                if (bLevel) {
-                    return PdfAConformance.PDF_A_3B;
-                }
-                if (uLevel) {
-                    return PdfAConformance.PDF_A_3U;
-                }
-                break;
-            case "4":
-                if (eLevel) {
-                    return PdfAConformance.PDF_A_4E;
-                }
-                if (fLevel) {
-                    return PdfAConformance.PDF_A_4F;
-                }
-                return PdfAConformance.PDF_A_4;
+            default:
+                throw new IllegalArgumentException("Unknown Well Tagged PDF conformance: " + wtpdfConformance);
         }
-        return null;
     }
-
-    private static PdfUAConformance getUAConformance(String part) {
-        if ("1".equals(part)) {
-            return PdfUAConformance.PDF_UA_1;
-        }
-        if ("2".equals(part)) {
-            return PdfUAConformance.PDF_UA_2;
-        }
-        return null;
-    }
-
-    private static final String PDF_UA_EXTENSION =
-            "    <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +
-                    "      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
-                    "        <rdf:Description rdf:about=\"\" xmlns:pdfaExtension=\"http://www.aiim.org/pdfa/ns/extension/\" xmlns:pdfaSchema=\"http://www.aiim.org/pdfa/ns/schema#\" xmlns:pdfaProperty=\"http://www.aiim.org/pdfa/ns/property#\">\n" +
-                    "          <pdfaExtension:schemas>\n" +
-                    "            <rdf:Bag>\n" +
-                    "              <rdf:li rdf:parseType=\"Resource\">\n" +
-                    "                <pdfaSchema:namespaceURI rdf:resource=\"http://www.aiim.org/pdfua/ns/id/\"/>\n" +
-                    "                <pdfaSchema:prefix>pdfuaid</pdfaSchema:prefix>\n" +
-                    "                <pdfaSchema:schema>PDF/UA identification schema</pdfaSchema:schema>\n" +
-                    "                <pdfaSchema:property>\n" +
-                    "                  <rdf:Seq>\n" +
-                    "                    <rdf:li rdf:parseType=\"Resource\">\n" +
-                    "                      <pdfaProperty:category>internal</pdfaProperty:category>\n" +
-                    "                      <pdfaProperty:description>PDF/UA version identifier</pdfaProperty:description>\n" +
-                    "                      <pdfaProperty:name>part</pdfaProperty:name>\n" +
-                    "                      <pdfaProperty:valueType>Integer</pdfaProperty:valueType>\n" +
-                    "                    </rdf:li>\n" +
-                    "                    <rdf:li rdf:parseType=\"Resource\">\n" +
-                    "                      <pdfaProperty:category>internal</pdfaProperty:category>\n" +
-                    "                      <pdfaProperty:description>PDF/UA amendment identifier</pdfaProperty:description>\n" +
-                    "                      <pdfaProperty:name>amd</pdfaProperty:name>\n" +
-                    "                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" +
-                    "                    </rdf:li>\n" +
-                    "                    <rdf:li rdf:parseType=\"Resource\">\n" +
-                    "                      <pdfaProperty:category>internal</pdfaProperty:category>\n" +
-                    "                      <pdfaProperty:description>PDF/UA corrigenda identifier</pdfaProperty:description>\n" +
-                    "                      <pdfaProperty:name>corr</pdfaProperty:name>\n" +
-                    "                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" +
-                    "                    </rdf:li>\n" +
-                    "                  </rdf:Seq>\n" +
-                    "                </pdfaSchema:property>\n" +
-                    "              </rdf:li>\n" +
-                    "            </rdf:Bag>\n" +
-                    "          </pdfaExtension:schemas>\n" +
-                    "        </rdf:Description>\n" +
-                    "      </rdf:RDF>\n" +
-                    "    </x:xmpmeta>";
-
 }

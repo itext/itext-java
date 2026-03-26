@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -218,7 +218,7 @@ public class LocationTextExtractionStrategyTest extends SimpleTextExtractionStra
             byte[] bytes = Files.readAllBytes(java.nio.file.Paths.get(comparedTextFile));
 
             Assertions.assertEquals(new String(bytes, StandardCharsets.UTF_8), result);
-            Assertions.assertEquals(177, pdfType3Font.getNumberOfGlyphs());
+            Assertions.assertEquals(211, pdfType3Font.getNumberOfGlyphs());
 
             Assertions.assertEquals("gA", pdfType3Font.getFontEncoding().getDifference(10));
             Assertions.assertEquals(41, pdfType3Font.getFontProgram().getGlyphByCode(10).getUnicode());

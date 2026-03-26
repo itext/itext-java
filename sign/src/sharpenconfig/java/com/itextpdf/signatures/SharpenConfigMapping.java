@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -166,6 +166,12 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.signatures.validation.lotl.QualifiedValidator.QualificationConclusion", "QualificationConclusion?");
         configurator.mapType("com.itextpdf.signatures.validation.dataorigin.CertificateOrigin", "iText.Signatures.Validation.Dataorigin.CertificateOrigin?");
         configurator.mapType("com.itextpdf.signatures.validation.dataorigin.RevocationDataOrigin", "iText.Signatures.Validation.Dataorigin.RevocationDataOrigin?");
+
+        configurator.addFullName("iText.StyledXmlParser.Resolver.Resource.IResourceRetriever");
+        configurator.addFullName("iText.StyledXmlParser.Resolver.Resource.DefaultResourceRetriever");
+
+        configurator.keepInternalProtected("com.itextpdf.signatures.GetSignatureCreatorEvent.doAction");
+
     }
 
     @Override

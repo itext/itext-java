@@ -1,0 +1,41 @@
+This software uses the following test resources under the following licenses:
+
+BellefairRegularLatin.woff2 | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Bellefair" (22.01.2026)
+DejaVuSans.ttf | Bitstream Vera Fonts Copyright | BitstreamCopyright.txt | Based on "https://github.com/dejavu-fonts/dejavu-fonts" (05.02.2026)
+DejaVuSansMono.ttf | Bitstream Vera Fonts Copyright | BitstreamCopyright.txt | Based on "https://github.com/dejavu-fonts/dejavu-fonts" (05.02.2026)
+DejaVuSerif.ttf | Bitstream Vera Fonts Copyright | BitstreamCopyright.txt | | Based on "https://github.com/dejavu-fonts/dejavu-fonts" (05.02.2026)
+FreeSansBold.ttf | GPL license | GNU General Public License.txt | Based on "https://savannah.gnu.org/projects/freefont" (29.01.2026)
+glyphs.ttf, glyphs-fmt-6.ttf | MIT | MIT-license.txt | Based on commit 4ae8853286721f2605edb0a4e2741aec70aefe71 (01.07.2019) from repository: "https://github.com/RazrFalcon/ttf-parser/tree/337e7d1c08b06478a84c4345f4f289fc2cb9210c/tests/fonts-src"
+NotoNaskhArabic-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "https://github.com/googlefonts/noto-fonts"
+NotoSans-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "https://github.com/googlefonts/noto-fonts"
+NotoSansAndSpaceMono.ttc | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Space+Mono" and "https://fonts.google.com/noto/specimen/Noto+Sans" (26.01.2026)
+NotoSansCJK-Regular.woff2 | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
+NotoSansCJKjp-Bold.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
+NotoSansCJKtc-Regular.woff2 | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
+NotoSansJP-Regular_charsetDataFormat0.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Sans+JP" (23.03.2022)
+NotoSansKhmer-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "https://github.com/googlefonts/noto-fonts"
+NotoSansMyanmar-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "https://github.com/googlefonts/noto-fonts"
+NotoSansSC-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
+NotoSansTC-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
+Padauk-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Padauk" (26.01.2026)
+Puritan-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Puritan" (26.01.2026)
+SourceSerif4-Black.woff | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit a9eaef81588dddd479f2275d87b3707ed7ae2847 (26.01.2021) from "https://github.com/adobe-fonts/source-serif"
+cmr10.afm | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://www.ams.org/arc/resources/amsfonts-about.html" (13.09.2023)
+cmr10.pfb | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://www.ams.org/arc/resources/amsfonts-about.html" (13.09.2023)
+cmp_NotoSansCJK-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk" (05.02.2026)
+cmp_NotoSansCJKtc-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk" (05.02.2026)
+
+
+subset1.ttf (NotoSans-Regular subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subset2.ttf (NotoSans-Regular subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subsetNotoSansCJKjpBoldNoUsedGlyphs.cff (NotoSansCJKjpBold subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subsetNotoSansCJKjpBoldTwoUsedGlyphs.cff (NotoSansCJKjpBold subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subsetNotoSansJPRegularOneUsedGlyph.cff (NotoSansJPRegular subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subsetWithoutGlyfTable.ttf (NotoSans-Regular subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subsetWithoutOsTable.ttf (NotoSans-Regular subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subset_abc.ttf (NotoSans-Regular subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subset_abc_def_xyz.ttf (NotoSans-Regular subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subset_def.ttf (NotoSans-Regular subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+subset_xyz.ttf (NotoSans-Regular subset) | OFL-1.1 | LICENSE_OFL-1.1.txt
+
+All fonts under w3c directory | BSD-3 | BSD-3.txt | w3c.org (27.01.2026)

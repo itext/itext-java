@@ -2,33 +2,33 @@
 <svg width="500" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
     <style>
         @font-face {
-        font-family: DroidItalic;
-        src: url("web-fonts/droid-serif-italic.ttf");
+        font-family: RobotoItalic;
+        src: url("../../../../fonts/RobotoSerif-Italic.ttf");
         unicode-range:U+6A;
         }
 
         @font-face {
-        font-family: DroidBold;
-        src: url("web-fonts/droid-serif-bold.ttf");
+        font-family: RobotoBold;
+        src: url('../../../../fonts/RobotoSerif-Bold.ttf');
         unicode-range:U+75;
         }
 
         @font-face {
-        font-family: DroidBoldItalic;
-        src: url("web-fonts/droid-serif-bolditalic.ttf");
+        font-family: RobotoBoldItalic;
+        src: url("../../../../fonts/RobotoSerif-BoldItalic.ttf");
         unicode-range:U+77;
         }
 
-        text.droiditalic {
-        font-family: DroidItalic;
+        text.robotoitalic {
+        font-family: RobotoItalic;
         }
 
-        text.droidbold {
-        font-family: DroidBold;
+        text.robotobold {
+        font-family: RobotoBold;
         }
 
-        text.droidbolditalic {
-        font-family: DroidBoldItalic;
+        text.robotobolditalic {
+        font-family: RobotoBoldItalic;
         }
 
         text {
@@ -36,9 +36,9 @@
         }
     </style>
 
-    <text x="100" y="100" class="droidbold">j</text>
-    <text x="100" y="150" class="droiditalic">u</text>
-    <text x="100" y="200" class="droidbold">u</text>
-    <text x="100" y="250" class="droiditalic">j</text>
-    <text x="100" y="300" class="droidbolditalic">j</text>
+    <text x="100" y="100" class="robotobold">j</text>
+    <text x="100" y="150" class="robotoitalic">u</text>
+    <text x="100" y="200" class="robotobold">u</text>
+    <text x="100" y="250" class="robotoitalic">j</text>
+    <text x="100" y="300" class="robotobolditalic">j</text>
 </svg>

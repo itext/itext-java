@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -267,7 +267,7 @@ public class PdfSimpleFontTest extends ExtendedITextTest {
     private static class TestSimpleFont extends PdfSimpleFont<FontProgram> {
 
         public TestSimpleFont(FontEncoding fontEncoding) throws IOException {
-            this.fontEncoding = fontEncoding;
+            setFontEncoding(fontEncoding);
             setFontProgram(FontProgramFactory.createFont(StandardFonts.HELVETICA));
         }
 

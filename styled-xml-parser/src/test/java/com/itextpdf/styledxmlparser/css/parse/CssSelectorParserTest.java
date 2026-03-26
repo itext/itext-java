@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,9 +32,13 @@ import com.itextpdf.styledxmlparser.css.selector.item.CssPseudoElementSelectorIt
 import com.itextpdf.styledxmlparser.css.selector.item.CssSeparatorSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.CssTagSelectorItem;
 import com.itextpdf.styledxmlparser.css.selector.item.ICssSelectorItem;
+import com.itextpdf.styledxmlparser.css.selector.ICssSelector;
 import com.itextpdf.styledxmlparser.exceptions.StyledXmlParserExceptionMessage;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -210,7 +214,7 @@ public class CssSelectorParserTest extends ExtendedITextTest {
 
     @Test
     public void separatorAtStartTest() throws IOException {
-        String selector = "+test";
+        String selector = "+ test";
         Assertions.assertThrows(IllegalArgumentException.class, () -> CssSelectorParser.parseSelectorItems(selector));
     }
 
@@ -324,4 +328,75 @@ public class CssSelectorParserTest extends ExtendedITextTest {
         Assertions.assertTrue(parsedSelector.get(1) instanceof CssPseudoClassSelectorItem);
         Assertions.assertEquals(":nth-last-of-type(EvEn)", parsedSelector.get(1).toString());
     }
+
+    @Test
+    public void descendantCombinatorCollapsesMultipleSpacesTest() throws IOException {
+        String selector = "ul.my-things   li";
+        List<ICssSelectorItem> parsedSelector = CssSelectorParser.parseSelectorItems(selector);
+
+        Assertions.assertEquals(4, parsedSelector.size());
+        Assertions.assertTrue(parsedSelector.get(0) instanceof CssTagSelectorItem);
+        Assertions.assertEquals("ul", parsedSelector.get(0).toString());
+        Assertions.assertTrue(parsedSelector.get(1) instanceof CssClassSelectorItem);
+        Assertions.assertEquals(".my-things", parsedSelector.get(1).toString());
+
+        Assertions.assertTrue(parsedSelector.get(2) instanceof CssSeparatorSelectorItem);
+        // Multiple spaces must be treated as a single descendant combinator
+        Assertions.assertEquals(" ", parsedSelector.get(2).toString());
+
+        Assertions.assertTrue(parsedSelector.get(3) instanceof CssTagSelectorItem);
+        Assertions.assertEquals("li", parsedSelector.get(3).toString());
+    }
+
+    @Test
+    public void parseCommaSeparatedSelectorsNullInputTest() {
+        List<ICssSelector> selectors = CssSelectorParser.parseCommaSeparatedSelectors(null);
+        Assertions.assertNotNull(selectors);
+        Assertions.assertTrue(selectors.isEmpty());
+    }
+
+    @Test
+    public void parseCommaSeparatedSelectorsOnlyCommasTest() {
+        List<ICssSelector> selectors = CssSelectorParser.parseCommaSeparatedSelectors(",,,");
+        Assertions.assertNotNull(selectors);
+        Assertions.assertTrue(selectors.isEmpty());
+    }
+
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INCORRECT_CHARACTER_SEQUENCE))
+    @Test
+    public void parseCommaSeparatedSelectorsMalformedParenthesisDoesNotCrashTest() {
+        List<ICssSelector> selectors = CssSelectorParser.parseCommaSeparatedSelectors("a),b,c");
+
+        Assertions.assertEquals(3, selectors.size());
+        Assertions.assertEquals("a)", selectors.get(0).toString());
+        Assertions.assertEquals("b", selectors.get(1).toString());
+        Assertions.assertEquals("c", selectors.get(2).toString());
+    }
+
+    @Test
+    public void parseCommaSeparatedSelectorsBackslashBeforeCommaDoesNotCrashTest() {
+        List<ICssSelector> selectors = CssSelectorParser.parseCommaSeparatedSelectors("\\,a");
+
+        Assertions.assertEquals(2, selectors.size());
+        Assertions.assertEquals("\uFFFD", selectors.get(0).toString());
+        Assertions.assertEquals("a", selectors.get(1).toString());
+    }
+
+    @Test
+    public void whitespaceAfterChildCombinatorIsIgnoredTest() throws IOException {
+        // SeparatorState consumes whitespace following a non-space combinator without creating extra items.
+        String selector = "a>\n\t  b";
+        List<ICssSelectorItem> parsedSelector = CssSelectorParser.parseSelectorItems(selector);
+
+        Assertions.assertEquals(3, parsedSelector.size());
+        Assertions.assertTrue(parsedSelector.get(0) instanceof CssTagSelectorItem);
+        Assertions.assertEquals("a", parsedSelector.get(0).toString());
+
+        Assertions.assertTrue(parsedSelector.get(1) instanceof CssSeparatorSelectorItem);
+        Assertions.assertEquals(" > ", parsedSelector.get(1).toString());
+
+        Assertions.assertTrue(parsedSelector.get(2) instanceof CssTagSelectorItem);
+        Assertions.assertEquals("b", parsedSelector.get(2).toString());
+    }
+
 }

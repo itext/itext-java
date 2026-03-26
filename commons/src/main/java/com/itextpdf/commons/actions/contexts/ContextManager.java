@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -57,8 +57,8 @@ public class ContextManager {
         local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
                 Collections.singleton(ProductNameConstant.PDF_OCR_TESSERACT4));
 
-        local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_ONNXTR),
-                Collections.singleton(ProductNameConstant.PDF_OCR_ONNXTR));
+        local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_ONNX),
+                Collections.singleton(ProductNameConstant.PDF_OCR_ONNX));
 
         INSTANCE = local;
     }

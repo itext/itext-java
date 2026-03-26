@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,7 +40,7 @@ import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator;// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -157,7 +157,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         SvgConverter.drawOnDocument(FileUtil.getInputStreamForFile(source), pdfDocument, 1, properties);
         pdfDocument.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(destination)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(destination)); 
     }
 
 
@@ -179,7 +179,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         SvgConverter.drawOnDocument(FileUtil.getInputStreamForFile(source), pdfDocument, 1, properties);
         pdfDocument.close();
 
-        Assertions.assertNull(new VeraPdfValidator().validate(destination));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(destination));
     }
 
     @Test
@@ -199,7 +199,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         document.add(image);
 
         pdfDocument.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(destination));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(destination));
     }
 
     @Test
@@ -290,6 +290,6 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         PdfPage page = pdfDocument.addNewPage();
         SvgConverter.drawOnPage(FileUtil.getInputStreamForFile(source), page, converterProperties);
         pdfDocument.close();
-        Assertions.assertNull(new VeraPdfValidator().validate(destination));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(destination));
     }
 }

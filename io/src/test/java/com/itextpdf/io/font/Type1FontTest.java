@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Tag;
 @Tag("UnitTest")
 public class Type1FontTest extends ExtendedITextTest {
 
-    public static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/type1/testPackage/";
+    public static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/TestPackage/";
 
     @Test
     public void fillUsingEncodingTest() throws IOException {

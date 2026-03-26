@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -81,14 +81,6 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
             return makeColorSpace(((PdfArray)getPdfObject()).get(1));
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public PdfName getName() {
-            return ((PdfArray)getPdfObject()).getAsName(0);
-        }
-
         private static PdfArray getIndexedCsArray(PdfObject base, int hival, PdfString lookup) {
             PdfArray indexed = new PdfArray();
             indexed.add(PdfName.Indexed);
@@ -135,6 +127,28 @@ public abstract class PdfSpecialCs extends PdfColorSpace {
 
         public PdfColorSpace getBaseCs() {
             return makeColorSpace(((PdfArray)getPdfObject()).get(2));
+        }
+
+        /**
+         * Retrieves separation color name.
+         *
+         * @return separation color name
+         */
+        public PdfName getSeparationColorName() {
+            return ((PdfArray)getPdfObject()).getAsName(1);
+        }
+
+        /**
+         * Retrieves separation color name.
+         *
+         * @return separation color name
+         *
+         * @deprecated in favour of {@link #getSeparationColorName()}
+         */
+        @Deprecated
+        @Override
+        public PdfName getName() {
+            return getSeparationColorName();
         }
 
         /**

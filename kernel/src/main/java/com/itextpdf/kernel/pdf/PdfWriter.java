@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -54,11 +54,13 @@ public class PdfWriter extends PdfOutputStream {
     protected WriterProperties properties;
     //forewarned is forearmed
     protected boolean isUserWarnedAboutAcroFormCopying;
+
     /**
      * Currently active object stream.
      * Objects are written to the object stream if fullCompression set to true.
      */
     PdfObjectStream objectStream = null;
+
     /**
      * Is used to avoid duplications on object copying.
      * It stores hashes of the indirect reference from the source document and the corresponding
@@ -85,9 +87,9 @@ public class PdfWriter extends PdfOutputStream {
     }
 
     /**
-     * Create a PdfWriter writing to the passed outputstream and with default writer properties.
+     * Create a PdfWriter writing to the passed {@link OutputStream} and with default writer properties.
      *
-     * @param os Outputstream to write to.
+     * @param os {@link OutputStream} to write to.
      */
     public PdfWriter(java.io.OutputStream os) {
         this(os, new WriterProperties());

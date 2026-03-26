@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -84,7 +84,7 @@ public class RadioFormFieldBuilder extends TerminalFormFieldBuilder<RadioFormFie
         final PdfName appearancePdfName = new PdfName(appearanceName);
         final PdfWidgetAnnotation annotation = new PdfWidgetAnnotation(widgetRectangle);
         annotation.setAppearanceState(appearancePdfName);
-        if (getConformance() != null && getConformance().isPdfAOrUa()) {
+        if (getConformance() != null && getConformance().conformsToAny()) {
             annotation.setFlag(PdfAnnotation.PRINT);
         }
         PdfFormAnnotation radio = PdfFormCreator.createFormAnnotation(annotation, getDocument());

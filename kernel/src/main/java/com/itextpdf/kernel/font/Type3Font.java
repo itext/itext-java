@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -39,11 +39,7 @@ import java.util.Map;
  */
 public class Type3Font extends FontProgram {
 
-    private final Map<Integer, Type3Glyph> type3Glyphs = new HashMap<>();
-    /**
-     * Stores glyphs without associated unicode.
-     */
-    private final Map<Integer, Type3Glyph> type3GlyphsWithoutUnicode = new HashMap<>();
+    private final Map<Integer, Type3Glyph> codeToType3Glyphs = new HashMap<>();
     private boolean colorized = false;
     private int flags = 0;
 
@@ -66,7 +62,8 @@ public class Type3Font extends FontProgram {
      * @return {@link Type3Glyph} glyph, or {@code null} if this font does not contain glyph for the unicode
      */
     public Type3Glyph getType3Glyph(int unicode) {
-        return type3Glyphs.get(unicode);
+        Glyph glyph = unicodeToGlyph.get(unicode);
+        return glyph == null ? null : codeToType3Glyphs.get(glyph.getCode());
     }
 
     /**
@@ -77,11 +74,7 @@ public class Type3Font extends FontProgram {
      * @return {@link Type3Glyph} glyph, or {@code null} if this font does not contain glyph for the code
      */
     public Type3Glyph getType3GlyphByCode(int code) {
-        Type3Glyph glyph = type3GlyphsWithoutUnicode.get(code);
-        if (glyph == null && codeToGlyph.get(code) != null) {
-            glyph = type3Glyphs.get(codeToGlyph.get(code).getUnicode());
-        }
-        return glyph;
+        return codeToType3Glyphs.get(code);
     }
 
     @Override
@@ -106,13 +99,12 @@ public class Type3Font extends FontProgram {
 
     /**
      * Returns number of glyphs for this font.
-     * Its also count glyphs without unicode.
-     * See {@link #type3GlyphsWithoutUnicode}.
+     * Counts glyphs independent on whether the glyph has unicode mapping or not.
      *
      * @return {@code int} number off all glyphs
      */
     public int getNumberOfGlyphs() {
-        return type3Glyphs.size() + type3GlyphsWithoutUnicode.size();
+        return codeToType3Glyphs.size();
     }
 
     /**
@@ -213,11 +205,9 @@ public class Type3Font extends FontProgram {
         }
         Glyph glyph = new Glyph(code, width, unicode, bbox);
         codeToGlyph.put(code, glyph);
-        if (unicode < 0) {
-            type3GlyphsWithoutUnicode.put(code, type3Glyph);
-        } else {
+        codeToType3Glyphs.put(code, type3Glyph);
+        if (unicode >= 0) {
             unicodeToGlyph.put(unicode, glyph);
-            type3Glyphs.put(unicode, type3Glyph);
         }
         recalculateAverageWidth();
     }
@@ -227,12 +217,10 @@ public class Type3Font extends FontProgram {
         if (removed == null) {
             return;
         }
+        codeToType3Glyphs.remove(glyphCode);
         int unicode = removed.getUnicode();
-        if (unicode < 0) {
-            type3GlyphsWithoutUnicode.remove(glyphCode);
-        } else {
+        if (unicode >= 0) {
             unicodeToGlyph.remove(unicode);
-            type3Glyphs.remove(unicode);
         }
     }
 

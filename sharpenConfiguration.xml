@@ -165,6 +165,9 @@
             <fileset reason="HighPrecisionOutputStream is a manual class, and some tests for this class cannot be ported automatically">
                 <file path="com/itextpdf/io/source/HighPrecisionOutputStreamTest.java"/>
             </fileset>
+            <fileset reason="CloseableByteArrayOutputStream cannot be trivially ported into MemoryStream">
+                <file path="com/itextpdf/io/util/CloseableByteArrayOutputStream.java"/>
+            </fileset>
             <!-- barcodes -->
             <file path="com/itextpdf/barcodes/BarcodeMultiThreadingTest.java"/>
 
@@ -238,6 +241,9 @@
                 <file path="com/itextpdf/bouncycastle/tsp/TimeStampRequestBC.java"/>
                 <file path="com/itextpdf/bouncycastle/tsp/TimeStampTokenGeneratorBC.java"/>
                 <file path="com/itextpdf/bouncycastle/tsp/TimeStampTokenBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/x509/SubjectPublicKeyInfoBC.java"/>
+                <file path="com/itextpdf/bouncycastle/asn1/x509/NameConstraintsBC.java" />
+                <file path="com/itextpdf/bouncycastle/pkix/PKIXNameConstraintValidatorBC.java" />
                 <file path="com/itextpdf/bouncycastlefips/BouncyCastleFipsFactory.java"/>
                 <file path="com/itextpdf/bouncycastlefips/BouncyCastleFipsTestConstantsFactory.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1IntegerBCFips.java"/>
@@ -313,6 +319,9 @@
                 <file path="com/itextpdf/bouncycastlefips/tsp/TimeStampTokenInfoBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/tsp/TSPExceptionBCFips.java"/>
                 <file path="com/itextpdf/bouncycastlefips/crypto/modes/GCMBlockCipherBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/x509/SubjectPublicKeyInfoBCFips.java"/>
+                <file path="com/itextpdf/bouncycastlefips/asn1/x509/NameConstraintsBCFips.java" />
+                <file path="com/itextpdf/bouncycastlefips/pkix/PKIXNameConstraintValidatorBCFips.java" />
                 <file path="com/itextpdf/commons/bouncycastle/IBouncyCastleFactory.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/asn1/IASN1InputStream.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/asn1/IASN1Integer.java"/>
@@ -365,6 +374,7 @@
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampToken.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/tsp/ITimeStampTokenGenerator.java"/>
                 <file path="com/itextpdf/commons/bouncycastle/SecurityProviderProxy.java"/>
+                <file path="com/itextpdf/brotlicompressor/BrotliStreamCompressionStrategyTest.java"/>
             </fileset>
 
             <fileset reason="These classes are used only in Java.">
@@ -472,9 +482,6 @@
                 <file path="com/itextpdf/signatures/validation/lotl/CertificateSelector.java" />
                 <file path="com/itextpdf/signatures/validation/lotl/xml/XmlSaxProcessor.java" />
             </fileset>
-            <fileset reason="Json handling is different in .NET">
-                <file path="com/itextpdf/signatures/validation/lotl/LotlCacheDataV1.java" />
-            </fileset>
             <fileset reason="uri handeling and certificate handeling is different">
                 <file path="com/itextpdf/signatures/validation/EuropeanTrustedCertificatesResourceLoader.java"/>
                 <file path="com/itextpdf/signatures/validation/LoadFromModuleEuropeanTrustedListConfigurationFactory.java"/>
@@ -554,9 +561,6 @@
                 <file path="com/itextpdf/signatures/validation/report/xml/XmlReportGenerator.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/ReportNamespaceContext.java"/>
                 <file path="com/itextpdf/signatures/testutils/report/xml/XmlReportTestTool.java"/>
-            </fileset>
-            <fileset reason="LocalDateTime and DateTime have different constructors and parsing">
-                <file path="com/itextpdf/signatures/validation/lotl/ServiceChronologicalInfo.java"/>
             </fileset>
             <!-- jsoup -->
             <file path="com/itextpdf/styledxmlparser/jsoup/PortUtil.java" />
@@ -743,6 +747,10 @@
 			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleJsonEmbedded.pdf"/>
 			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_simpleEmbeddedFile.pdf"/>
 			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_embeddedFileAndContentStream.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_pushButton.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_radioButton.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_textField.pdf"/>
+			<file path="com/itextpdf/brotli-compressor/BrotliStreamCompressionStrategyTest/cmp_choiceField.pdf"/>
 		</fileset>
 		<!--Junit parallel settings-->
 		<fileset reason="Juunit specific files">

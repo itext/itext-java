@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -1099,7 +1099,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         final Canvas canvasOff = new Canvas(xObjectOff, getDocument());
         setMetaInfoToCanvas(canvasOff);
         canvasOff.add(formFieldElement);
-        if (getPdfConformance() == null || !getPdfConformance().isPdfAOrUa()) {
+        if (getPdfConformance() == null || !getPdfConformance().conformsToAny()) {
             xObjectOff.getResources().addFont(getDocument(), getFont());
         }
         normalAppearance.put(new PdfName(OFF_STATE_VALUE), xObjectOff.getPdfObject());

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -27,10 +27,13 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -43,7 +46,13 @@ import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.testutils.PemFileHelper;
 import com.itextpdf.signatures.testutils.SignaturesCompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.TestUtil;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -55,15 +64,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleIntegrationTest")
 public class AnnotationsSigningTest extends ExtendedITextTest {
-    
+
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/AnnotationsSigningTest/";
@@ -157,20 +161,63 @@ public class AnnotationsSigningTest extends ExtendedITextTest {
         Assertions.assertNull(SignaturesCompareTool.compareSignatures(outPdf, cmpPdf));
     }
 
+    @Test
+    public void signFieldWithDAEntryTest() throws GeneralSecurityException, IOException {
+        String srcFile = SOURCE_FOLDER + "signatureFieldWithDAEntry.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signedFieldWithDAEntry.pdf";
+        String outPdf = DESTINATION_FOLDER + "signedFieldWithDAEntry.pdf";
+        String[] signatureFieldNames = {"signature1"};
+
+        sign(srcFile, signatureFieldNames[0], outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "reason1",
+                "TestCity", null, false, true);
+
+        compareDAEntry(outPdf, cmpPdf, signatureFieldNames);
+    }
+
+    @Test
+    public void signTwiceDocWithDAEntryTest() throws GeneralSecurityException, IOException {
+        String srcFile = SOURCE_FOLDER + "signedOnceDocWithDAEntry.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_signedTwiceDocWithDAEntry.pdf";
+        String outPdf = DESTINATION_FOLDER + "signedTwiceDocWithDAEntry.pdf";
+        String[] signatureFieldNames = {"signature1", "signature2"};
+
+        sign(srcFile, signatureFieldNames[1], outPdf, chain, pk, DigestAlgorithms.SHA256, PdfSigner.CryptoStandard.CADES, "reason2",
+                "TestCity", null, false, true);
+
+        compareDAEntry(outPdf, cmpPdf, signatureFieldNames);
+    }
+
+    private void compareDAEntry(String outPdf, String cmpPdf, String[] signatureFieldNames) throws IOException {
+        ITextTest.printOutCmpPdfNameAndDir(outPdf, cmpPdf);
+        try (PdfDocument outDoc = new PdfDocument(new PdfReader(outPdf))) {
+            try (PdfDocument cmpDoc = new PdfDocument(new PdfReader(cmpPdf))) {
+                for (String signatureFieldName : signatureFieldNames) {
+                    String outDA = PdfFormCreator.getAcroForm(outDoc, false)
+                            .getField(signatureFieldName).getPdfObject()
+                            .getAsString(PdfName.DA).toString();
+                    String cmpDA = PdfFormCreator.getAcroForm(cmpDoc, false)
+                            .getField(signatureFieldName).getPdfObject()
+                            .getAsString(PdfName.DA).toString();
+                    Assertions.assertEquals(outDA, cmpDA);
+                }
+            }
+        }
+    }
+
     protected void sign(String src, String name, String dest,
-            Certificate[] chain, PrivateKey pk,
-            String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
-            String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
-            boolean isAppendMode) throws GeneralSecurityException, IOException {
+                        Certificate[] chain, PrivateKey pk,
+                        String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
+                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
+                        boolean isAppendMode) throws GeneralSecurityException, IOException {
         sign(src, name, dest, chain, pk, digestAlgorithm, subfilter, reason, location, rectangleForNewField,
                 setReuseAppearance, isAppendMode, AccessPermissions.UNSPECIFIED, null);
     }
 
     protected void sign(String src, String name, String dest,
-            Certificate[] chain, PrivateKey pk,
-            String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
-            String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
-            boolean isAppendMode, AccessPermissions certificationLevel, Float fontSize)
+                        Certificate[] chain, PrivateKey pk,
+                        String digestAlgorithm, PdfSigner.CryptoStandard subfilter,
+                        String reason, String location, Rectangle rectangleForNewField, boolean setReuseAppearance,
+                        boolean isAppendMode, AccessPermissions certificationLevel, Float fontSize)
             throws GeneralSecurityException, IOException {
 
         PdfReader reader = new PdfReader(src);

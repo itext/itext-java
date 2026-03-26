@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -62,9 +62,9 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         }
         if (encoding != null &&
                 StringNormalizer.toLowerCase(FontEncoding.FONT_SPECIFIC).equals(StringNormalizer.toLowerCase(encoding))) {
-            fontEncoding = FontEncoding.createFontSpecificEncoding();
+            setFontEncoding(FontEncoding.createFontSpecificEncoding());
         } else {
-            fontEncoding = FontEncoding.createFontEncoding(encoding);
+            setFontEncoding(FontEncoding.createFontEncoding(encoding));
         }
     }
 
@@ -72,7 +72,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
         super(fontDictionary);
         newFont = false;
         subset = false;
-        fontEncoding = DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode);
+        setFontEncoding(DocFontEncoding.createDocFontEncoding(fontDictionary.get(PdfName.Encoding), toUnicode));
 
         PdfName baseFontName = fontDictionary.getAsName(PdfName.BaseFont);
         // Section 9.6.3 (ISO-32000-1): A TrueType font dictionary may contain the same entries as a Type 1 font
@@ -89,7 +89,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 throw new PdfException(KernelExceptionMessageConstant.IO_EXCEPTION_WHILE_CREATING_FONT, e);
             }
         } else {
-            fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, fontEncoding, toUnicode);
+            fontProgram = DocTrueTypeFont.createFontProgram(fontDictionary, getFontEncoding(), toUnicode);
         }
 
         embedded = fontProgram instanceof IDocFontProgram && ((IDocFontProgram) fontProgram).getFontFile() != null;
@@ -97,8 +97,8 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     @Override
     public Glyph getGlyph(int unicode) {
-        if (fontEncoding.canEncode(unicode)) {
-            Glyph glyph = getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode));
+        if (getFontEncoding().canEncode(unicode)) {
+            Glyph glyph = getFontProgram().getGlyph(getFontEncoding().getUnicodeDifference(unicode));
             if (glyph == null && (glyph = notdefGlyphs.get(unicode)) == null) {
                 final Glyph notdef = getFontProgram().getGlyphByCode(0);
                 if (notdef != null) {
@@ -113,11 +113,11 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
     @Override
     public boolean containsGlyph(int unicode) {
-        if (fontEncoding.isFontSpecific()) {
+        if (getFontEncoding().isFontSpecific()) {
             return fontProgram.getGlyphByCode(unicode) != null;
         } else {
-            return fontEncoding.canEncode(unicode)
-                    && getFontProgram().getGlyph(fontEncoding.getUnicodeDifference(unicode)) != null;
+            return getFontEncoding().canEncode(unicode)
+                    && getFontProgram().getGlyph(getFontEncoding().getUnicodeDifference(unicode)) != null;
         }
     }
 
@@ -173,7 +173,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                 SortedSet<Integer> glyphs = new TreeSet<>();
                 for (int k = 0; k < usedGlyphs.length; k++) {
                     if (usedGlyphs[k] != 0) {
-                        int uni = fontEncoding.getUnicode(k);
+                        int uni = getFontEncoding().getUnicode(k);
                         Glyph glyph = uni > -1 ? fontProgram.getGlyph(uni) : fontProgram.getGlyphByCode(k);
                         if (glyph != null) {
                             glyphs.add(glyph.getCode());

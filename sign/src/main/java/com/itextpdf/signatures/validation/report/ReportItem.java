@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,10 +22,21 @@
  */
 package com.itextpdf.signatures.validation.report;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonNull;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonString;
+import com.itextpdf.commons.json.JsonValue;
+
 /**
  * Report item to be used for single failure or log message.
  */
-public class ReportItem {
+public class ReportItem implements IJsonSerializable {
+    private static final String JSON_KEY_REPORT_ITEM_CHECKNAME = "checkName";
+    private static final String JSON_KEY_REPORT_ITEM_MESSAGE = "message";
+    private static final String JSON_KEY_REPORT_CAUSE = "exceptionCause";
+    private static final String JSON_KEY_REPORT_STATUS = "status";
+
     private final String checkName;
     private final String message;
     private final Exception cause;
@@ -122,6 +133,60 @@ public class ReportItem {
     public ReportItem setStatus(ReportItemStatus status) {
         this.status = status;
         return this;
+    }
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public JsonValue toJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add(JSON_KEY_REPORT_ITEM_CHECKNAME, new JsonString(checkName));
+        jsonObject.add(JSON_KEY_REPORT_ITEM_MESSAGE, new JsonString(message));
+        jsonObject.add(JSON_KEY_REPORT_CAUSE,
+                cause == null ? (JsonValue) JsonNull.JSON_NULL : new JsonString(cause.getMessage()));
+        jsonObject.add(JSON_KEY_REPORT_STATUS, new JsonString(status.toString()));
+        return jsonObject;
+    }
+
+    /**
+     * Deserializes {@link JsonValue} into {@link ReportItem}.
+     *
+     * @param jsonValue {@link JsonValue} to deserialize
+     *
+     * @return deserialized {@link ReportItem}
+     */
+    public static ReportItem fromJson(JsonValue jsonValue) {
+        JsonObject reportItemJson = (JsonObject) jsonValue;
+        JsonString checkNameJson =
+                (JsonString) reportItemJson.getField(JSON_KEY_REPORT_ITEM_CHECKNAME);
+        JsonString messageJson =
+                (JsonString) reportItemJson.getField(JSON_KEY_REPORT_ITEM_MESSAGE);
+        JsonValue exceptionCauseJson = reportItemJson.getField(JSON_KEY_REPORT_CAUSE);
+        Exception exceptionCauseFromJson = null;
+        if (exceptionCauseJson instanceof JsonString) {
+            exceptionCauseFromJson = new Exception(((JsonString) exceptionCauseJson).getValue());
+        } else if (exceptionCauseJson instanceof JsonObject) {
+            JsonValue exceptionMessage =
+                    ((JsonObject) exceptionCauseJson).getField(JSON_KEY_REPORT_ITEM_MESSAGE);
+            if (exceptionMessage instanceof JsonString) {
+                exceptionCauseFromJson = new Exception(((JsonString) exceptionMessage).getValue());
+            }
+        }
+        JsonString statusJson =
+                (JsonString) reportItemJson.getField(JSON_KEY_REPORT_STATUS);
+        ReportItemStatus statusFromJson = ReportItemStatus.INVALID;
+        switch (statusJson.getValue()) {
+            case "INFO":
+                statusFromJson = ReportItemStatus.INFO;
+                break;
+            case "INDETERMINATE":
+                statusFromJson = ReportItemStatus.INDETERMINATE;
+                break;
+        }
+        return new ReportItem(checkNameJson.getValue(), messageJson.getValue(), exceptionCauseFromJson, statusFromJson);
     }
 
     /**

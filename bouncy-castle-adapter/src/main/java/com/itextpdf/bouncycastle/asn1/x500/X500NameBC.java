@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -52,14 +52,25 @@ public class X500NameBC extends ASN1EncodableBC implements IX500Name {
     }
 
 
-    // expected format CN=iTextTestOcspResponder,O=iText,C=BY
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public String getName(){
+        // expected format CN=iTextTestOcspResponder,O=iText,C=BY
         try {
             return new X500Principal(getX500Name().getEncoded()).getName();
         } catch (IOException e) {
             // should never happen
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public byte[] getEncoded() throws IOException {
+        return getX500Name().getEncoded();
     }
 }

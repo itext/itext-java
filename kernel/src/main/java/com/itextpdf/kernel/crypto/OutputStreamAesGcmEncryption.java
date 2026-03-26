@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -88,7 +88,7 @@ public class OutputStreamAesGcmEncryption extends OutputStreamEncryption {
      */
     public void write(byte[] b, int off, int len) throws IOException {
         byte[] cipherBuffer = cipher.update(b, off, len);
-        if (cipherBuffer.length != 0) {
+        if (cipherBuffer != null) {
             out.write(cipherBuffer, 0, cipherBuffer.length);
         }
     }
@@ -103,7 +103,9 @@ public class OutputStreamAesGcmEncryption extends OutputStreamEncryption {
             finished = true;
             byte[] cipherBuffer = cipher.doFinal();
             try {
-                out.write(cipherBuffer, 0, cipherBuffer.length);
+                if (cipherBuffer != null) {
+                    out.write(cipherBuffer, 0, cipherBuffer.length);
+                }
             } catch (IOException e) {
                 throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
             }

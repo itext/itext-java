@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -29,23 +29,23 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class MonospaceFontTest extends ExtendedITextTest {
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/io/font/MonospaceFontTest/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void openMono() throws java.io.IOException {
-        TrueTypeFont font = new TrueTypeFont(sourceFolder + "DejaVuSansMono.ttf");
+        TrueTypeFont font = new TrueTypeFont(FONT_FOLDER + "DejaVuSansMono.ttf");
         Assertions.assertNotNull(font.getGlyph('A'));
     }
 
     @Test
     public void openSans() throws java.io.IOException {
-        TrueTypeFont font = new TrueTypeFont(sourceFolder + "DejaVuSans.ttf");
+        TrueTypeFont font = new TrueTypeFont(FONT_FOLDER + "DejaVuSans.ttf");
         Assertions.assertNotNull(font.getGlyph('A'));
     }
 
     @Test
     public void openSerif() throws java.io.IOException {
-        TrueTypeFont font = new TrueTypeFont(sourceFolder + "DejaVuSerif.ttf");
+        TrueTypeFont font = new TrueTypeFont(FONT_FOLDER + "DejaVuSerif.ttf");
         Assertions.assertNotNull(font.getGlyph('A'));
     }
 

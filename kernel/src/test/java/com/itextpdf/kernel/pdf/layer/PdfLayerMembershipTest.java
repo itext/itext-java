@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,15 +23,19 @@
 package com.itextpdf.kernel.pdf.layer;
 
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
@@ -43,17 +47,17 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfLayerMembershipTest extends ExtendedITextTest{
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/layer/PdfLayerMembershipTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/layer/PdfLayerMembershipTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/layer/PdfLayerMembershipTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/layer/PdfLayerMembershipTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @AfterAll
     public static void afterClass() {
-        CompareTool.cleanup(destinationFolder);
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -62,8 +66,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "enabledVisibilityPolicyAllOnTest.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -79,8 +83,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
 
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
     }
 
 
@@ -90,8 +94,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "disabledVisibilityPolicyAllOnTest.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -107,8 +111,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
 
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -117,8 +121,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "enabledVisibilityPolicyAllOffTest.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -133,8 +137,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAllOff, canvas, "visibilityPolicyAllOffTest", 200, 500);
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -143,8 +147,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "disabledVisibilityPolicyAllOffTest.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -159,8 +163,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAllOff, canvas, "visibilityPolicyAllOffTest", 200, 500);
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -169,8 +173,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "enabledVisibilityPolicyAnyOnTest.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -186,8 +190,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
 
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
     }
 
 
@@ -197,8 +201,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "disabledVisibilityPolicyAnyOnTest.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -214,8 +218,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
 
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
     }
 
 
@@ -225,8 +229,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "enabledVisibilityPolicyAnyOffTest.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -241,8 +245,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAnyOn, canvas, "visibilityPolicyAnyOffTest", 200, 500);
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -251,8 +255,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "disabledVisibilityPolicyAnyOffTest.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -267,8 +271,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAnyOn, canvas, "visibilityPolicyAnyOffTest", 200, 500);
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -277,8 +281,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "enabledVisualExpressionTest01.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -306,8 +310,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAnyOn, canvas, "visualExpressionTest01", 200, 500);
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
     }
 
     @Test
@@ -316,8 +320,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String destPdf = "disabledVisualExpressionTest01.pdf";
         String cmpPdf = "cmp_" + destPdf;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + srcPdf),
-                CompareTool.createTestPdfWriter(destinationFolder + destPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + srcPdf),
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + destPdf));
 
         PdfCanvas canvas = new PdfCanvas(pdfDoc.getFirstPage());
         canvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 18);
@@ -345,8 +349,86 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         PdfLayerTestUtils.addTextInsideLayer(layerMembershipAnyOn, canvas, "visualExpressionTest01", 200, 500);
 
         pdfDoc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + destPdf,
-                sourceFolder + cmpPdf, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + destPdf,
+                SOURCE_FOLDER + cmpPdf, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void layerPropertiesPersistenceTest() throws IOException {
+        String filename = DESTINATION_FOLDER + "layerPropertiesPersistence.pdf";
+
+        // Create document with layers
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
+        PdfPage page = pdfDocument.addNewPage();
+
+        // Create a layer that is ON
+        PdfLayer layerOn = new PdfLayer("LayerOn", pdfDocument);
+        layerOn.setOn(true);
+        layerOn.setOnPanel(true);
+        layerOn.setLocked(true);
+
+        PdfLayer childLayer = new PdfLayer("ChildLayer", pdfDocument);
+        childLayer.setOn(false);
+        layerOn.addChild(childLayer);
+
+        // Create a layer that is OFF
+        PdfLayer layerOff = new PdfLayer("LayerOff", pdfDocument);
+        layerOff.setOn(false);
+        layerOff.setOnPanel(false);
+        layerOff.setLocked(true);
+
+        PdfCanvas canvas = new PdfCanvas(page);
+
+        canvas.beginLayer(layerOn);
+        canvas.setFillColor(ColorConstants.RED);
+        canvas.rectangle(100, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        canvas.beginLayer(layerOff);
+        canvas.setFillColor(ColorConstants.BLUE);
+        canvas.rectangle(350, 100, 200, 200);
+        canvas.fill();
+        canvas.endLayer();
+
+        pdfDocument.close();
+
+        // Reopen the document and verify layer states are persisted
+        PdfDocument reopenedDoc = new PdfDocument(new PdfReader(filename), new PdfWriter(new ByteArrayOutputStream()));
+
+        Assertions.assertEquals(2, reopenedDoc.getPage(1).getPdfLayers().size());
+
+        PdfLayerMembership reopenedLayerMembership = new PdfLayerMembership(reopenedDoc);
+        for (PdfLayer layer : reopenedDoc.getCatalog().getOCProperties(false).getLayers()) {
+            reopenedLayerMembership.addLayer(layer);
+        }
+
+        // Find the layers by name and verify their states
+        PdfLayer reopenedLayerOn = null;
+        PdfLayer reopenedLayerOff = null;
+        for (PdfLayer layer : reopenedLayerMembership.getLayers()) {
+            String layerName = layer.getPdfObject().getAsString(PdfName.Name).getValue();
+            if ("LayerOn".equals(layerName)) {
+                reopenedLayerOn = layer;
+            } else if ("LayerOff".equals(layerName)) {
+                reopenedLayerOff = layer;
+            }
+        }
+
+        Assertions.assertNotNull(reopenedLayerOn, "LayerOn should exist after reopening");
+        Assertions.assertNotNull(reopenedLayerOff, "LayerOff should exist after reopening");
+
+        Assertions.assertTrue(reopenedLayerOn.isOn());
+        Assertions.assertTrue(reopenedLayerOn.isOnPanel());
+        Assertions.assertTrue(reopenedLayerOn.isLocked());
+        Assertions.assertEquals(1, reopenedLayerOn.getChildren().size());
+        Assertions.assertFalse(reopenedLayerOn.getChildren().get(0).isOn());
+
+        Assertions.assertFalse(reopenedLayerOff.isOn());
+        Assertions.assertFalse(reopenedLayerOff.isOnPanel());
+        Assertions.assertTrue(reopenedLayerOff.isLocked());
+
+        reopenedDoc.close();
     }
 
 }

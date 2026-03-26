@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns4="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" Id="GETSL0001" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>5</TSLVersionIdentifier>
+        <TSLSequenceNumber>4</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/GElist</TSLType>
+        <SchemeOperatorName>
+            <Name xml:lang="en">LEPL Digital Governance Agency</Name>
+            <Name xml:lang="ka">სსიპ ციფრული მმართველობის სააგენტო</Name>
+        </SchemeOperatorName>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>22 Gorgasali Street</StreetAddress>
+                    <Locality>Tbilisi</Locality>
+                    <PostalCode>0114</PostalCode>
+                    <CountryName>GE</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="ka">
+                    <StreetAddress>გორგასლის ქუჩა 22</StreetAddress>
+                    <Locality>თბილისი</Locality>
+                    <PostalCode>0114</PostalCode>
+                    <CountryName>GE</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="en">http://www.dga.gov.ge</URI>
+                <URI xml:lang="en">mailto:info@dga.gov.ge</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeName>
+            <Name xml:lang="en">GE:The list includes information related to the qualified trust
+                service providers operating in Georgia together with information related to the
+                qualified trust services provided by them, according to the Georgian legislation</Name>
+            <Name xml:lang="ka">GE:წინამდებარე სია შეიცავს კვალიფიციური სანდო მომსახურების
+                მიმწოდებლებთან დაკავშირებულ ინფორმაციას, მათ მიერ მიწოდებულ კვალიფიციურ სანდო
+                მომსახურებებთან ერთად, საქართველოს კანონმდებლობის შესაბამისად</Name>
+        </SchemeName>
+        <SchemeInformationURI>
+            <URI xml:lang="en">http://www.dga.gov.ge</URI>
+            <URI xml:lang="ka">http://www.dga.gov.ge</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>
+            http://uri.etsi.org/TrstSvc/TrustedList/TSLType/StatusDetn/GEdetermination</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/GE</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>GE</SchemeTerritory>
+        <PolicyOrLegalNotice>
+            <TSLLegalNotice xml:lang="en">The document is provided based on Georgian legislation</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="ka">დოკუმენტი მოგეწოდებათ საქართველოს კანონმდებლობის
+                შესაბამისად</TSLLegalNotice>
+        </PolicyOrLegalNotice>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <ListIssueDateTime>2025-09-22T14:00:00Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2026-03-22T13:00:00Z</dateTime>
+        </NextUpdate>
+    </SchemeInformation>
+    <TrustServiceProviderList>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">LEPL Public Service Development Agency</Name>
+                    <Name xml:lang="ka">სსიპ სახელმწიფო სერვისების განვითარების სააგენტო</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">Public Service Development Agency</Name>
+                    <Name xml:lang="ka">სახელმწიფო სერვისების განვითარების სააგენტო</Name>
+                    <Name xml:lang="en">Civil Registry Agency</Name>
+                    <Name xml:lang="en">Ministry of Justice of Georgia</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Zviad Gamsakhurdia Sanapiro №1</StreetAddress>
+                            <Locality>Tbilisi</Locality>
+                            <PostalCode>0114</PostalCode>
+                            <CountryName>GE</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="ka">
+                            <StreetAddress>ზვიად გამსახურდიას სანაპირო N1</StreetAddress>
+                            <Locality>თბილისი</Locality>
+                            <PostalCode>0114</PostalCode>
+                            <CountryName>GE</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">https://id.ge</URI>
+                        <URI xml:lang="en">mailto:online@sda.gov.ge</URI>
+                        <URI xml:lang="en">http://www.sda.gov.ge</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">https://id.ge/pki</URI>
+                    <URI xml:lang="ka">https://id.ge/pki</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GEO Signing CA G2</Name>
+                            <Name xml:lang="ka">GEO Signing CA G2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+                                <X509Certificate>
+                                    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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SubjectName>C=GE, O=Ministry of Justice of Georgia, OU=Public
+                                    Service Development Agency, CN=GEO Signing CA G2</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SKI>ENlfGyWCrKGMCQo9Poiuq3Vwnlc=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-05-25T20:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+                                <ns5:Qualifications>
+                                    <ns5:QualificationElement>
+                                        <ns5:Qualifiers>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESig"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCStatement"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+                                        </ns5:Qualifiers>
+                                        <ns5:CriteriaList assert="all">
+                                            <ns5:KeyUsage>
+                                                <ns5:KeyUsageBit name="nonRepudiation">true</ns5:KeyUsageBit>
+                                            </ns5:KeyUsage>
+                                        </ns5:CriteriaList>
+                                    </ns5:QualificationElement>
+                                </ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="ka">http://www.dga.gov.ge/tsl/qscd-description</URI>
+                                    <InformationValue>
+<![CDATA[ გამოყენებულია კვალიფიციური ელექტრონული ხელმოწერის/შტამპის შექმნის შემდეგი საშუალებები 1) პირადობის (ბინადრობის) მოწმობა, NXP Semiconductors P5CD080 J3A კონფიგურაციით: ა) Muehlbauer IAS ვერსია 1.x ბ) Oberthur Technologies GEO_Applet_IAS_V2 2) NXP eDoc Suite v4.0 on JCOP4.5 P71 3) Veridos Suite v4.0 ]]>
+</InformationValue>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GEO Signing CA</Name>
+                            <Name xml:lang="ka">GEO Signing CA</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+                                <X509Certificate>
+                                    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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SubjectName>C=GE, O=Ministry of Justice of Georgia, OU=Civil
+                                    Registry Agency, CN=GEO Signing CA</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SKI>NJcxuuhOf4/nNydjLgYfQsmqsXE=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-05-25T20:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+                                <ns5:Qualifications>
+                                    <ns5:QualificationElement>
+                                        <ns5:Qualifiers>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESig"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCStatement"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+                                        </ns5:Qualifiers>
+                                        <ns5:CriteriaList assert="all">
+                                            <ns5:KeyUsage>
+                                                <ns5:KeyUsageBit name="nonRepudiation">true</ns5:KeyUsageBit>
+                                            </ns5:KeyUsage>
+                                        </ns5:CriteriaList>
+                                    </ns5:QualificationElement>
+                                </ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="ka">http://www.dga.gov.ge/tsl/qscd-description</URI>
+                                    <InformationValue>
+<![CDATA[ გამოყენებულია კვალიფიციური ელექტრონული ხელმოწერის/შტამპის შექმნის შემდეგი საშუალებები 1) პირადობის (ბინადრობის) მოწმობა, NXP Semiconductors P5CD080 J3A კონფიგურაციით: ა) Muehlbauer IAS ვერსია 1.x ბ) Oberthur Technologies GEO_Applet_IAS_V2 2) NXP eDoc Suite v4.0 on JCOP4.5 P71 3) Veridos Suite v4.0 ]]>
+</InformationValue>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GEO ESeal CA G2</Name>
+                            <Name xml:lang="ka">GEO ESeal CA G2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+                                <X509Certificate>
+                                    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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SubjectName>C=GE, O=Ministry of Justice of Georgia, OU=Public
+                                    Service Development Agency, CN=GEO ESeal CA G2</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SKI>uslCIKqtrClCo+Bt35g2CgXqPWU=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-06-02T20:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+                                <ns5:Qualifications>
+                                    <ns5:QualificationElement>
+                                        <ns5:Qualifiers>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForLegalPerson"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCStatement"/>
+                                        </ns5:Qualifiers>
+                                        <ns5:CriteriaList assert="all">
+                                            <ns5:KeyUsage>
+                                                <ns5:KeyUsageBit name="nonRepudiation">true</ns5:KeyUsageBit>
+                                            </ns5:KeyUsage>
+                                        </ns5:CriteriaList>
+                                    </ns5:QualificationElement>
+                                </ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="ka">http://www.dga.gov.ge/tsl/qscd-description</URI>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="ka">http://www.dga.gov.ge/tsl/qscd-description</URI>
+                                    <InformationValue>
+<![CDATA[ გამოყენებულია კვალიფიციური ელექტრონული ხელმოწერის/შტამპის შექმნის შემდეგი საშუალებები 1) Gemalto ბარათი კონფიგურაციით Application IAS V4 sur la plateforme JavaCard ouverte MultiApp V3 masquée sur le composant M7820 A11 (Version du patch : 7.0) სერტიფიკატი anssi-cc-2014/50-m01 2) SafeNet უსაფრთხოების აპარატურული მოდული LunaSA HSM 3) Oberthur Technologies ბარათი კონფიგურაციით Carte IAS ECC v1.0.1 : applet version 6179 sur ID-One Cosmo v7.0.1-n R2.0, masquée sur composants NXP P5CC081 et P5CD081, en configuration Standard ou Standard Dual 4) Thales უსაფრთხოების აპარატურული მოდული Luna Network HSM S790 5) IAS ECC V2, version 1.3 in configuration #1 on ID-One Cosmo v8.2 open platform ]]>
+</InformationValue>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GEO ESeal CA 2</Name>
+                            <Name xml:lang="ka">GEO ESeal CA 2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+                                <X509Certificate>
+                                    MIIGrjCCBJagAwIBAgIUepcE8k43H2vgocKlj9lgH8oMIsEwDQYJKoZIhvcNAQELBQAwbDEUMBIGA1UEAwwLR0VPIFJvb3QgQ0ExHjAcBgNVBAsMFUNpdmlsIFJlZ2lzdHJ5IEFnZW5jeTEnMCUGA1UECgweTWluaXN0cnkgb2YgSnVzdGljZSBvZiBHZW9yZ2lhMQswCQYDVQQGEwJHRTAeFw0yMTA0MDkxMjQ3MTVaFw0zMTA0MDcxMjQ3MTVaMHkxFTATBgNVBAMMDEdFTyBFU2VhbCBDQTEqMCgGA1UECwwhUHVibGljIFNlcnZpY2UgRGV2ZWxvcG1lbnQgQWdlbmN5MScwJQYDVQQKDB5NaW5pc3RyeSBvZiBKdXN0aWNlIG9mIEdlb3JnaWExCzAJBgNVBAYTAkdFMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAx7sL5vXYrXmMfiMRxzfgtEa3kXhqX4MiJYTuYqX9Yomnz/Vmz2pFmG9y95EN0tMy5Q2rOy5JNJ3BNf+i2syJ0Xbf6fqoC1X5GPGORmcM9kUx5ql0hcHpH3IAXccPVbzHsEtodeMJpheL1Z4SzZCM92u8sAuxKycjNMZIT0tBjF/eCOWXmYdoPpe9traJZasZ68Nhx2kb+3UzTKIQteaHKk/jCnPAQOaxPCvQM5mit4m9LcKOQqKocRgIX4ZaVGApplg56nh+LRsnGT27zjGOEVK/BsKLlyZR6urKfxmVebNuOZlftQN86CzdkO08fmmeunpqDdoR7A/XY9E0ZnzPIo2zWZVhDAHaxEIOU/lIDFuW6de7ZAAZN0exVfO99ZB2sKNWK/EliFK/KilVClO4aIK/d919fHJZzGVfNwnMofEue5CxVgB+q+M6r5sV5UVgklYlfs8YDvMFaBI34MfS2LK38Br6jsKuGSEHaW18R3gkgw7H2dWbnJt1htl+P3zLJTg8t5pKWLqzXLvX3HRtsiFsMCtM4kpA5iERv7XJ4nT9PCn8LLp+6ej7ggISMqvt3DYI5ft/tPjPcXoZPEK9O1RkUYDppVQIx6f9+dKUpcdqqbB9KqGphwRR2jJirs6bavM3hsNweWv8b0ZiRZPK282Hgv3swhNFlau1dE6a06UCAwEAAaOCATkwggE1MA8GA1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUkwBm25VR04eQeAeSIu0wb2DliL8wYwYIKwYBBQUHAQEEVzBVMC4GCCsGAQUFBzAChiJodHRwOi8vYWlhLmlkLmdlL3BraS9HRU9Sb290Q0EuY3J0MCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5jcmEuZ2Uvb2NzcDA7BgNVHSAENDAyMDAGDSsGAQQBgqZlCgcBAQAwHzAdBggrBgEFBQcCARYRaHR0cHM6Ly9pZC5nZS9wa2kwMAYDVR0fBCkwJzAloCOgIYYfaHR0cDovL2NybC5jcmEuZ2UvZ2Vvcm9vdGNhLmNybDAdBgNVHQ4EFgQU1hKMlTI04Ob9bZOUh4pceU/3ui8wDgYDVR0PAQH/BAQDAgEGMA0GCSqGSIb3DQEBCwUAA4ICAQAiEmRjjH2j0s7pgPZf5/miBO/OHLVs3XSeZeV1VBPehbBKOSMABGkd1hWvLD4eS/TNg2om4oEhzwgSfmY1p2D+5hfn5vzQrASFU25VMAPaJEsQuPuFwbtIhgufbKUUSDy04iFfEk6c5+oTu2XzUP0SqqzhzuU0vDo8SPz3UX62SfQnYkIn73Aim6lHkfOvPrWtWGi900j3E1kOvYcLiDSMlUNwYI8NtjprE+AxA2bPgomVm9BUYelABLadJmqdJF+kEPstMaQG97G8hU8QztrMLnRV8VnC66EbSRskgV8cO1mKxconGX98zi+6/Y9ERo7zpjRxyX8ZnjZ7Fc8U0CHvwDedFlpflawmYlv6dEDWn4lJ0z97q5/TQyjMu+YVFtrhBe71KczhLo0HtPbVA0n/lIXiELP6WJxMEb8dqA18LPG8h3MDQKKDgXFSMmrweQpTLbKMXH3kZsz7wjzeTeaM13WCKrP4d8pCWyIJpVyEtHRKRVSW856UW48+vMIFbThdmaPN9fhtClO1D62Asf1Im4qiqjd+05K24Fg7rdyih+YELzCEXTITfZW+tobiufAnF89bFmtt9GyV+4vn+tnoYDOdC6B3WG6j7JsT08QmUJXz71n7DJCXcZuX3sNtRkp+WDpuk7YzLdsWgu7FZw3QGnZsV4H2W5HW1D0QT3Garg==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SubjectName>C=GE, O=Ministry of Justice of Georgia, OU=Public
+                                    Service Development Agency, CN=GEO ESeal CA</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SKI>1hKMlTI04Ob9bZOUh4pceU/3ui8=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-06-02T20:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+                                <ns5:Qualifications>
+                                    <ns5:QualificationElement>
+                                        <ns5:Qualifiers>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForLegalPerson"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCStatement"/>
+                                        </ns5:Qualifiers>
+                                        <ns5:CriteriaList assert="all">
+                                            <ns5:KeyUsage>
+                                                <ns5:KeyUsageBit name="nonRepudiation">true</ns5:KeyUsageBit>
+                                            </ns5:KeyUsage>
+                                        </ns5:CriteriaList>
+                                    </ns5:QualificationElement>
+                                </ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="ka">http://www.dga.gov.ge/tsl/qscd-description</URI>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="ka">http://www.dga.gov.ge/tsl/qscd-description</URI>
+                                    <InformationValue>
+<![CDATA[ გამოყენებულია კვალიფიციური ელექტრონული ხელმოწერის/შტამპის შექმნის შემდეგი საშუალებები 1) Gemalto ბარათი კონფიგურაციით Application IAS V4 sur la plateforme JavaCard ouverte MultiApp V3 masquée sur le composant M7820 A11 (Version du patch : 7.0) სერტიფიკატი anssi-cc-2014/50-m01 2) SafeNet უსაფრთხოების აპარატურული მოდული LunaSA HSM 3) Oberthur Technologies ბარათი კონფიგურაციით Carte IAS ECC v1.0.1 : applet version 6179 sur ID-One Cosmo v7.0.1-n R2.0, masquée sur composants NXP P5CC081 et P5CD081, en configuration Standard ou Standard Dual 4) Thales უსაფრთხოების აპარატურული მოდული Luna Network HSM S790 5) IAS ECC V2, version 1.3 in configuration #1 on ID-One Cosmo v8.2 open platform ]]>
+</InformationValue>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">GEO ESeal CA</Name>
+                            <Name xml:lang="ka">GEO ESeal CA</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+                                <X509Certificate>
+                                    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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SubjectName>C=GE, O=Ministry of Justice of Georgia, OU=Public
+                                    Service Development Agency, CN=GEO ESeal CA</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SKI>yHq6LhbqWOajKn0oYcGQDHBDD/k=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-06-02T20:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+                                <ns5:Qualifications>
+                                    <ns5:QualificationElement>
+                                        <ns5:Qualifiers>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCWithQSCD"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForLegalPerson"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCForESeal"/>
+                                            <ns5:Qualifier uri="http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/QCStatement"/>
+                                        </ns5:Qualifiers>
+                                        <ns5:CriteriaList assert="all">
+                                            <ns5:KeyUsage>
+                                                <ns5:KeyUsageBit name="nonRepudiation">true</ns5:KeyUsageBit>
+                                            </ns5:KeyUsage>
+                                        </ns5:CriteriaList>
+                                    </ns5:QualificationElement>
+                                </ns5:Qualifications>
+                            </Extension>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="ka">http://www.dga.gov.ge/tsl/qscd-description</URI>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+                                <AdditionalServiceInformation>
+                                    <URI xml:lang="ka">http://www.dga.gov.ge/tsl/qscd-description</URI>
+                                    <InformationValue>
+<![CDATA[ გამოყენებულია კვალიფიციური ელექტრონული ხელმოწერის/შტამპის შექმნის შემდეგი საშუალებები 1) Gemalto ბარათი კონფიგურაციით Application IAS V4 sur la plateforme JavaCard ouverte MultiApp V3 masquée sur le composant M7820 A11 (Version du patch : 7.0) სერტიფიკატი anssi-cc-2014/50-m01 2) SafeNet უსაფრთხოების აპარატურული მოდული LunaSA HSM 3) Oberthur Technologies ბარათი კონფიგურაციით Carte IAS ECC v1.0.1 : applet version 6179 sur ID-One Cosmo v7.0.1-n R2.0, masquée sur composants NXP P5CC081 et P5CD081, en configuration Standard ou Standard Dual 4) Thales უსაფრთხოების აპარატურული მოდული Luna Network HSM S790 5) IAS ECC V2, version 1.3 in configuration #1 on ID-One Cosmo v8.2 open platform ]]>
+</InformationValue>
+                                </AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/TSA/QTST</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">SDA Time Stamping CA 2</Name>
+                            <Name xml:lang="ka">SDA Time Stamping CA 2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+                                <X509Certificate>
+                                    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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SubjectName>C=GE, O=Ministry of Justice of Georgia, OU=Public
+                                    Service Development Agency, CN=SDA TimeStamping CA</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SKI>rfInafAJ+paSfxD0jiNHHlH8DFg=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-04-08T20:00:00Z</StatusStartingTime>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/TSA/QTST</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">SDA Time Stamping CA</Name>
+                            <Name xml:lang="ka">SDA Time Stamping CA</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+                                <X509Certificate>
+                                    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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SubjectName>C=GE, O=Ministry of Justice of Georgia, OU=Public
+                                    Service Development Agency, CN=SDA TimeStamping CA</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SKI>ovTPFVEsX5uWQkgTO20QFAiWZUA=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2021-04-08T20:00:00Z</StatusStartingTime>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/TSA/QTST</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">SDA Time Stamping CA G2</Name>
+                            <Name xml:lang="ka">SDA Time Stamping CA G2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+                                <X509Certificate>
+                                    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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SubjectName>C=GE, O=Ministry of Justice of Georgia, OU=Public
+                                    Service Development Agency, CN=SDA TimeStamping CA G2</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+                                <X509SKI>hTdbURhiTQ72rzrUlWZvOMzPjt0=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                        <StatusStartingTime>2024-10-31T20:00:00Z</StatusStartingTime>
+                    </ServiceInformation>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+    </TrustServiceProviderList>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="id-12c5741fcff9bfaa3d5b3c015110d88e"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><ds:Reference Id="ref-enveloped-signature" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>Ke6TQgjM8ul4Bvw/KqDgKFBi//hX/U3GX76RCp3U4do=</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xades-id-12c5741fcff9bfaa3d5b3c015110d88e"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>o5iw760X4+Rv79gj1Zzc3Nt1NpSxh6g1CvT4OoOV8bY=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="value-id-12c5741fcff9bfaa3d5b3c015110d88e">vA+izlQACqWcVjDrkT2uPAwCH62L5jYp2CrdihBz2SERiUxKt9DpM8uHOPa8SNNpSpYXmOHcUZ9fuBawm0Uqy83LQ3vk4SxKekRUk26DValdRy26uv+dHm/zntbNpap+m0uJ5pb8O22munfxplIVRiU8jFnYPZHOGcE7PtipAe3eE4+5juacyf9kRSEGrn/ySuF7K5gLGuMxnFGnHQu7ophfVW96zE0epyjlSlMc60Svy/lPwIBSWed8fOIQL8VonGoV1ju67hqvmfroWAcQjxmYIkPUFp5+mUyUo2q7w5rtgc9zYFvVid7dKSQKff8QcD+J2WxmTC6WL/RZARSHUQ==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>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</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#id-12c5741fcff9bfaa3d5b3c015110d88e"><xades:SignedProperties Id="xades-id-12c5741fcff9bfaa3d5b3c015110d88e"><xades:SignedSignatureProperties><xades:SigningTime>2025-09-22T12:06:42Z</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>LmPSeYbAcnRu3N2g/Fkb4cHRjgL5wXKYWq4jqshszWxdveMuxB9BujoZep/RCXVKYXwhAdtzzxG4msJ8iQlpmw==</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>C=GE,O=Ministry of Justice of Georgia,OU=Public Service Development Agency,CN=GEO Signing CA G2</ds:X509IssuerName><ds:X509SerialNumber>112274364578951840340145686139831051891408421510</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#ref-enveloped-signature"><xades:MimeType>text/xml</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></TrustServiceStatusList>

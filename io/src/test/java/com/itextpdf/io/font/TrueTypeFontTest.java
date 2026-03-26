@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,14 +41,14 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("UnitTest")
 public class TrueTypeFontTest extends ExtendedITextTest {
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void notoSansJpCmapTest() throws IOException, InterruptedException {
         // 信
         char jpChar = '\u4FE1';
 
-        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansJP-Regular_charsetDataFormat0.otf");
+        FontProgram fontProgram = FontProgramFactory.createFont(FONT_FOLDER + "NotoSansJP-Regular_charsetDataFormat0.otf");
         Glyph glyph = fontProgram.getGlyph(jpChar);
 
         Assertions.assertArrayEquals(new char[] {jpChar}, glyph.getUnicodeChars());
@@ -61,7 +61,7 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         // 易
         char chChar = '\u6613';
 
-        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansSC-Regular.otf");
+        FontProgram fontProgram = FontProgramFactory.createFont(FONT_FOLDER + "NotoSansSC-Regular.otf");
         Glyph glyph = fontProgram.getGlyph(chChar);
 
         Assertions.assertArrayEquals(new char[] {chChar}, glyph.getUnicodeChars());
@@ -74,7 +74,7 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         // 易
         char chChar = '\u6613';
 
-        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansTC-Regular.otf");
+        FontProgram fontProgram = FontProgramFactory.createFont(FONT_FOLDER + "NotoSansTC-Regular.otf");
         Glyph glyph = fontProgram.getGlyph(chChar);
 
         Assertions.assertArrayEquals(new char[] {chChar}, glyph.getUnicodeChars());
@@ -89,7 +89,7 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         int charCidInFont = 20292;
         int charGidInFont = 14890;
 
-        TrueTypeFont trueTypeFontProgram = (TrueTypeFont) FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansSC-Regular.otf");
+        TrueTypeFont trueTypeFontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "NotoSansSC-Regular.otf");
 
         HashSet<Integer> glyphs = new HashSet<>(Collections.singletonList(charCidInFont));
         Set<Integer> actualResult = trueTypeFontProgram.mapGlyphsCidsToGids(glyphs);
@@ -100,21 +100,21 @@ public class TrueTypeFontTest extends ExtendedITextTest {
 
     @Test
     public void cmapPlatform0PlatEnc3Format4Test() throws IOException {
-        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "glyphs.ttf");
+        FontProgram fontProgram = FontProgramFactory.createFont(FONT_FOLDER + "glyphs.ttf");
         checkCmapTableEntry(fontProgram, 'f', 2);
         checkCmapTableEntry(fontProgram, 'i', 3);
     }
 
     @Test
     public void cmapPlatform0PlatEnc3Format6Test() throws IOException {
-        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "glyphs-fmt-6.ttf");
+        FontProgram fontProgram = FontProgramFactory.createFont(FONT_FOLDER + "glyphs-fmt-6.ttf");
         checkCmapTableEntry(fontProgram, 'f', 2);
         checkCmapTableEntry(fontProgram, 'i', 3);
     }
 
     @Test
     public void checkSxHeightTtfTest() throws IOException {
-        FontProgram fontProgram = FontProgramFactory.createFont(SOURCE_FOLDER + "glyphs-fmt-6.ttf");
+        FontProgram fontProgram = FontProgramFactory.createFont(FONT_FOLDER + "glyphs-fmt-6.ttf");
         FontMetrics metrics = fontProgram.getFontMetrics();
         int xHeight = metrics.getXHeight();
         Assertions.assertEquals(536, xHeight);
@@ -122,7 +122,7 @@ public class TrueTypeFontTest extends ExtendedITextTest {
 
     @Test
     public void containsCmapTest() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(SOURCE_FOLDER + "glyphs-fmt-6.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "glyphs-fmt-6.ttf");
         Assertions.assertEquals(1, fontProgram.getNumberOfCmaps());
         Assertions.assertTrue(fontProgram.isCmapPresent(0, 3));
         Assertions.assertFalse(fontProgram.isCmapPresent(1, 0));
@@ -131,7 +131,7 @@ public class TrueTypeFontTest extends ExtendedITextTest {
     @Test
     public void updateUsedGlyphsSetTest() throws IOException {
         TrueTypeFont trueTypeFontProgram =
-                (TrueTypeFont) FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansSC-Regular.otf");
+                (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "NotoSansSC-Regular.otf");
 
         SortedSet<Integer> usedGlyphs = new TreeSet<>();
 
@@ -151,7 +151,7 @@ public class TrueTypeFontTest extends ExtendedITextTest {
     @Test
     public void updateUsedGlyphsMapTest() throws IOException {
         TrueTypeFont trueTypeFontProgram =
-                (TrueTypeFont) FontProgramFactory.createFont(SOURCE_FOLDER + "NotoSansSC-Regular.otf");
+                (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "NotoSansSC-Regular.otf");
 
         Map<Integer, Glyph> usedGlyphs = new HashMap<>();
 

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -36,11 +36,11 @@ import org.junit.jupiter.api.Tag;
 @Tag("IntegrationTest")
 public class GsubLookupType6Test extends ExtendedITextTest {
 
-    private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/GsubLookupType6Test/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void testSubstitutionApplied() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "Padauk-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "Padauk-Regular.ttf");
         GlyphSubstitutionTableReader gsubTableReader = fontProgram.getGsubTable();
 
         List<Glyph> glyphs = Arrays.asList(fontProgram.getGlyphByCode(233),
@@ -60,7 +60,7 @@ public class GsubLookupType6Test extends ExtendedITextTest {
 
     @Test
     public void testSubstitutionNotApplied() throws IOException {
-        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(RESOURCE_FOLDER + "Padauk-Regular.ttf");
+        TrueTypeFont fontProgram = (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "Padauk-Regular.ttf");
         GlyphSubstitutionTableReader gsubTableReader = fontProgram.getGsubTable();
 
         List<Glyph> glyphs = Arrays.asList(fontProgram.getGlyphByCode(233),

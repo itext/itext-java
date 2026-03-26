@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,9 +40,6 @@ import java.util.List;
 @Tag("UnitTest")
 public class OtfReadCommonTest extends ExtendedITextTest {
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/OtfReadCommonTest/";
-
-    private static final String RESOURCE_FOLDER_2 = "./src/test/resources/com/itextpdf/io/font/otf"
-            + "/GposLookupType7Test/";
 
     @Test
     public void testReadCoverageFormat1() throws IOException {

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -44,6 +44,7 @@ import com.itextpdf.signatures.validation.report.CertificateReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
@@ -53,8 +54,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -104,6 +107,31 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                                     l -> rootCert.getSubjectX500Principal())
                     .withCertificate(rootCert)
                    ));
+    }
+
+    @Test
+    public void crossSignedChainTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        String chainName = CERTS_SRC + "crossSigned/chain.pem";
+        Certificate[] certificateChain = PemFileHelper.readFirstChain(chainName);
+        X509Certificate signingCert =
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/sign.cert.pem")[0];
+        X509Certificate rootCert =
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/r1.cert.pem")[0];
+        certificateRetriever.addTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+        rootCert =
+                (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "crossSigned/r2.cert.pem")[0];
+        certificateRetriever.addTrustedCertificates(Collections.<Certificate>singletonList(rootCert));
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        certificateRetriever.addKnownCertificates(Arrays.asList(certificateChain));
+
+        ValidationReport report = validator.validateCertificate(baseContext, signingCert,
+                TimeTestUtil.TEST_DATE_TIME);
+        Assertions.assertEquals(ValidationResult.VALID, report.getValidationResult());
     }
 
     @Test
@@ -1090,5 +1118,147 @@ public class CertificateChainValidatorTest extends ExtendedITextTest {
                         .withMessage(CertificateChainValidator.CERTIFICATE_RETRIEVER_ORIGIN)
                         .withCertificate(rootCert))
         );
+    }
+
+    @Test
+    public void iTextConstraintPermittedTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_and_apryse_permitted_cert.pem")[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_permitted_cert.pem")[0];
+        X509Certificate signingCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_signing_cert.pem")[0];
+        List<X509Certificate> chain = Arrays.asList(signingCert, intermediateCert);
+        ValidationReport validationReport = new ValidationReport();
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        validator.validateNameConstraints(validationReport, chain, rootCert);
+        Assertions.assertEquals(ValidationResult.VALID, validationReport.getValidationResult());
+    }
+
+    @Test
+    public void iTextConstraintAltNamePermittedTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_and_apryse_permitted_cert.pem")[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_permitted_cert.pem")[0];
+        X509Certificate signingCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_alt_name_cert.pem")[0];
+        List<X509Certificate> chain = Arrays.asList(signingCert, intermediateCert);
+        ValidationReport validationReport = new ValidationReport();
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        validator.validateNameConstraints(validationReport, chain, rootCert);
+        Assertions.assertEquals(ValidationResult.VALID, validationReport.getValidationResult());
+    }
+
+    @Test
+    public void apryseConstraintNotPermittedTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_and_apryse_permitted_cert.pem")[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_permitted_cert.pem")[0];
+        X509Certificate signingCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/apryse_signing_cert.pem")[0];
+        List<X509Certificate> chain = Arrays.asList(signingCert, intermediateCert);
+        ValidationReport validationReport = new ValidationReport();
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        validator.validateNameConstraints(validationReport, chain, rootCert);
+        Assertions.assertEquals(ValidationResult.INVALID, validationReport.getValidationResult());
+        Assertions.assertEquals(CertificateChainValidator.NAME_CONSTRAINT_DIRECT_NAME_VIOLATION, validationReport.getFailures().get(0).getMessage());
+    }
+
+    @Test
+    public void apryseConstraintAtlNameNotPermittedTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_and_apryse_permitted_cert.pem")[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_permitted_cert.pem")[0];
+        X509Certificate signingCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/apryse_alt_name_cert.pem")[0];
+        List<X509Certificate> chain = Arrays.asList(signingCert, intermediateCert);
+        ValidationReport validationReport = new ValidationReport();
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        validator.validateNameConstraints(validationReport, chain, rootCert);
+        Assertions.assertEquals(ValidationResult.INVALID, validationReport.getValidationResult());
+        Assertions.assertEquals(CertificateChainValidator.NAME_CONSTRAINT_ALT_NAME_VIOLATION, validationReport.getFailures().get(0).getMessage());
+    }
+
+    @Test
+    public void iTextConstraintExcludedTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_and_apryse_excluded_cert.pem")[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_excluded_cert.pem")[0];
+        X509Certificate signingCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_signing_cert.pem")[0];
+        List<X509Certificate> chain = Arrays.asList(signingCert, intermediateCert);
+        ValidationReport validationReport = new ValidationReport();
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        validator.validateNameConstraints(validationReport, chain, rootCert);
+        Assertions.assertEquals(ValidationResult.INVALID, validationReport.getValidationResult());
+        Assertions.assertEquals(CertificateChainValidator.NAME_CONSTRAINT_DIRECT_NAME_VIOLATION, validationReport.getFailures().get(0).getMessage());
+    }
+
+    @Test
+    public void apryseConstraintExcludedTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_and_apryse_excluded_cert.pem")[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_excluded_cert.pem")[0];
+        X509Certificate signingCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/apryse_signing_cert.pem")[0];
+        List<X509Certificate> chain = Arrays.asList(signingCert, intermediateCert);
+        ValidationReport validationReport = new ValidationReport();
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        validator.validateNameConstraints(validationReport, chain, rootCert);
+        Assertions.assertEquals(ValidationResult.INVALID, validationReport.getValidationResult());
+        Assertions.assertEquals(CertificateChainValidator.NAME_CONSTRAINT_DIRECT_NAME_VIOLATION, validationReport.getFailures().get(0).getMessage());
+    }
+
+    @Test
+    public void iTextConstraintPermittedAndExcludedTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_and_apryse_permitted_cert.pem")[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_excluded_cert.pem")[0];
+        X509Certificate signingCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_signing_cert.pem")[0];
+        List<X509Certificate> chain = Arrays.asList(signingCert, intermediateCert);
+        ValidationReport validationReport = new ValidationReport();
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        validator.validateNameConstraints(validationReport, chain, rootCert);
+        Assertions.assertEquals(ValidationResult.INVALID, validationReport.getValidationResult());
+        Assertions.assertEquals(CertificateChainValidator.NAME_CONSTRAINT_DIRECT_NAME_VIOLATION, validationReport.getFailures().get(0).getMessage());
+    }
+
+    @Test
+    public void corruptedAtlNameTest() throws CertificateException, IOException {
+        MockRevocationDataValidator mockRevocationDataValidator = new MockRevocationDataValidator();
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        SignatureValidationProperties properties = new SignatureValidationProperties();
+        X509Certificate rootCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_and_apryse_permitted_cert.pem")[0];
+        X509Certificate intermediateCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/itext_permitted_cert.pem")[0];
+        X509Certificate signingCert = (X509Certificate) PemFileHelper.readFirstChain(CERTS_SRC + "nameConstraint/corrupted_alt_name_cert.pem")[0];
+        List<X509Certificate> chain = Arrays.asList(signingCert, intermediateCert);
+        ValidationReport validationReport = new ValidationReport();
+
+        ValidatorChainBuilder validatorChainBuilder = setUpValidatorChain(certificateRetriever, properties, mockRevocationDataValidator);
+        CertificateChainValidator validator = validatorChainBuilder.buildCertificateChainValidator();
+        validator.validateNameConstraints(validationReport, chain, rootCert);
+        Assertions.assertEquals(ValidationResult.INVALID, validationReport.getValidationResult());
+        Assertions.assertEquals(CertificateChainValidator.NAME_CONSTRAINT_ALT_NAME_EXCEPTION, validationReport.getFailures().get(0).getMessage());
     }
 }

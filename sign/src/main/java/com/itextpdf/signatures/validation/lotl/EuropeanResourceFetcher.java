@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,12 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.json.IJsonSerializable;
+import com.itextpdf.commons.json.JsonArray;
+import com.itextpdf.commons.json.JsonObject;
+import com.itextpdf.commons.json.JsonString;
+import com.itextpdf.commons.json.JsonValue;
+import com.itextpdf.signatures.SignJsonSerializerHelper;
 import com.itextpdf.signatures.validation.EuropeanTrustedListConfigurationFactory;
 import com.itextpdf.signatures.validation.SafeCalling;
 import com.itextpdf.signatures.validation.report.ReportItem;
@@ -30,16 +36,20 @@ import com.itextpdf.signatures.validation.report.ValidationReport;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.itextpdf.signatures.validation.lotl.LotlValidator.JOURNAL_CERT_NOT_PARSABLE;
 import static com.itextpdf.signatures.validation.lotl.LotlValidator.LOTL_VALIDATION;
-
 
 /**
  * This class fetches the European Union Journal certificates from the trusted list configuration.
  * It reads the PEM certificates and returns them in a structured result.
  */
 public class EuropeanResourceFetcher {
+    private static final String JSON_KEY_CERTIFICATES = "certificates";
+    private static final String JSON_KEY_LOCAL_REPORT = "localReport";
+    private static final String JSON_KEY_CURRENTLY_SUPPORTED_PUBLICATION = "currentlySupportedPublication";
+
     /**
      * Default constructor for EuropeanResourceFetcher.
      * Initializes the fetcher without any specific configuration.
@@ -70,8 +80,8 @@ public class EuropeanResourceFetcher {
      * Represents the result of fetching European Union Journal certificates.
      * Contains a list of report items and a list of certificates.
      */
-    public static class Result {
-        private final ValidationReport localReport;
+    public static class Result implements IJsonSerializable {
+        private ValidationReport localReport;
         private List<Certificate> certificates;
         private String currentlySupportedPublication;
 
@@ -128,6 +138,49 @@ public class EuropeanResourceFetcher {
         public void setCurrentlySupportedPublication(String currentlySuppostedPublication) {
             this.currentlySupportedPublication = currentlySuppostedPublication;
         }
-    }
 
+        /**
+         * {@inheritDoc}.
+         *
+         * @return {@inheritDoc}
+         */
+        @Override
+        public JsonValue toJson() {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add(JSON_KEY_LOCAL_REPORT, localReport.toJson());
+
+            JsonArray certificatesJson = new JsonArray(certificates.stream().map(certificate ->
+                    SignJsonSerializerHelper.serializeCertificate(certificate)).collect(Collectors.toList()));
+            jsonObject.add(JSON_KEY_CERTIFICATES, certificatesJson);
+
+            jsonObject.add(JSON_KEY_CURRENTLY_SUPPORTED_PUBLICATION, new JsonString(currentlySupportedPublication));
+            return jsonObject;
+        }
+
+        /**
+         * Deserializes {@link JsonValue} into {@link EuropeanResourceFetcher.Result}.
+         *
+         * @param jsonValue {@link JsonValue} to deserialize
+         *
+         * @return deserialized {@link EuropeanResourceFetcher.Result}
+         */
+        public static EuropeanResourceFetcher.Result fromJson(JsonValue jsonValue) {
+            JsonObject europeanResourceFetcherResultJson = (JsonObject) jsonValue;
+            JsonObject localReportJson =
+                    (JsonObject) europeanResourceFetcherResultJson.getField(JSON_KEY_LOCAL_REPORT);
+            ValidationReport validationReportFromJson = ValidationReport.fromJson(localReportJson);
+
+            JsonArray certificatesJson =
+                    (JsonArray) europeanResourceFetcherResultJson.getField(JSON_KEY_CERTIFICATES);
+            List<Certificate> certificatesFromJson = certificatesJson.getValues().stream().map(certificateJson ->
+                    SignJsonSerializerHelper.deserializeCertificate(certificateJson)).collect(Collectors.toList());
+            String currentlySupportedPublicationFromJson = ((JsonString) europeanResourceFetcherResultJson.getField(
+                    JSON_KEY_CURRENTLY_SUPPORTED_PUBLICATION)).getValue();
+            EuropeanResourceFetcher.Result resultFromJson = new Result();
+            resultFromJson.localReport = validationReportFromJson;
+            resultFromJson.certificates = certificatesFromJson;
+            resultFromJson.currentlySupportedPublication = currentlySupportedPublicationFromJson;
+            return resultFromJson;
+        }
+    }
 }

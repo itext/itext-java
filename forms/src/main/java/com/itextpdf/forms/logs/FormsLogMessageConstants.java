@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -30,7 +30,7 @@ public final class FormsLogMessageConstants {
     public static final String ACROFORM_NOT_SUPPORTED_FOR_SELECT =
             "AcroForm fields creation for select fields (ComboBoxField and ListBoxField) is not supported. They will "
                     + "be flattened instead.";
-    
+
     public static final String ANNOTATION_IN_ACROFORM_DICTIONARY = "Annotation is noticed directly in fields array "
             + "of AcroForm dictionary. It violates pdf specification.";
 
@@ -85,6 +85,9 @@ public final class FormsLogMessageConstants {
             + " This form field parent reference will be invalidated.";
     public static final String DUPLICATE_EXPORT_VALUE = "More than one option with the same value. This is an invalid"
             + " state.";
+
+    public static final String ANNOTATION_WITHOUT_SUBTYPE_NOT_COPIED = "Encountered an annotation without "
+            + "a Subtype property: {0}. If there is a corresponding Acroform field, it will not be copied";
 
     private FormsLogMessageConstants() {
     }

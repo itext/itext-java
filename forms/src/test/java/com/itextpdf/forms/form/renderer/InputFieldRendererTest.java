@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -109,7 +109,7 @@ public class InputFieldRendererTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         InputFieldRenderer inputFieldRenderer = new InputFieldRenderer(new InputField(""));
         Assertions.assertNotNull(inputFieldRenderer.getConformance(pdfDocument));
-        Assertions.assertFalse(inputFieldRenderer.getConformance(pdfDocument).isPdfAOrUa());
+        Assertions.assertFalse(inputFieldRenderer.getConformance(pdfDocument).conformsToAny());
     }
 
     @Test

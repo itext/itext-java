@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -38,13 +38,13 @@ import java.io.IOException;
 public class OpenTypeFontTableReaderTest extends ExtendedITextTest {
     private static final String RESOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/otf/OpenTypeFontTableReaderTest/";
 
-    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
 
 
     private static final String CJK_JP_BOLD_PATH = FONTS_FOLDER + "NotoSansCJKjp-Bold.otf";
 
-    private static final String SANS_MYANMAR_REGULAR_PATH = RESOURCE_FOLDER + "NotoSansMyanmar-Regular.ttf";
+    private static final String SANS_MYANMAR_REGULAR_PATH = FONTS_FOLDER + "NotoSansMyanmar-Regular.ttf";
 
 
     @Test

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,7 +22,9 @@
  */
 package com.itextpdf.bouncycastle.asn1.x509;
 
+import com.itextpdf.bouncycastle.asn1.ASN1BitStringBC;
 import com.itextpdf.bouncycastle.asn1.ASN1EncodableBC;
+import com.itextpdf.commons.bouncycastle.asn1.IASN1BitString;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 
@@ -65,5 +67,12 @@ public class SubjectPublicKeyInfoBC extends ASN1EncodableBC implements ISubjectP
     @Override
     public IAlgorithmIdentifier getAlgorithm() {
         return new AlgorithmIdentifierBC(getSubjectPublicKeyInfo().getAlgorithm());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IASN1BitString getPublicKeyData() {
+        return new ASN1BitStringBC(getSubjectPublicKeyInfo().getPublicKeyData());
     }
 }

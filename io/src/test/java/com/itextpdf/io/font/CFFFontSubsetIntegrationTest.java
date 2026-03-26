@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,24 +26,21 @@ import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/CFFFontSubsetIntegrationTest/";
-    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     private static final String CJK_JP_BOLD_PATH = FONTS_FOLDER + "NotoSansCJKjp-Bold.otf";
     private static final int CJK_JP_BOLD_CFF_OFFSET = 259880;
@@ -53,11 +50,11 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
     private static final int JP_REGULAR_CFF_OFFSET = 337316;
     private static final int JP_REGULAR_CFF_LENGTH = 4210891;
 
-    private static final String PURITAN_PATH = FONTS_FOLDER + "Puritan2.otf";
+    private static final String PURITAN_PATH = FONTS_FOLDER + "Puritan-Regular.otf";
 
     @Test
     public void subsetNotoSansCjkJpBoldNoUsedGlyphsTest() throws IOException {
-        String cmpCff = SOURCE_FOLDER + "subsetNotoSansCJKjpBoldNoUsedGlyphs.cff";
+        String cmpCff = FONTS_FOLDER + "subsetNotoSansCJKjpBoldNoUsedGlyphs.cff";
 
         Set<Integer> glyphsUsed = Collections.<Integer>emptySet();
 
@@ -73,7 +70,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void subsetNotoSansCjkJpBoldTwoUsedGlyphsTest() throws IOException {
-        String cmpCff = SOURCE_FOLDER + "subsetNotoSansCJKjpBoldTwoUsedGlyphs.cff";
+        String cmpCff = FONTS_FOLDER + "subsetNotoSansCJKjpBoldTwoUsedGlyphs.cff";
 
         // In this case cid == gid for given characters.
         // \u20eab "𠺫"
@@ -105,7 +102,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
         int expectedSubsetLength = 121796;
         Assertions.assertEquals(expectedSubsetLength, cffSubsetBytes.length);
 
-        byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetNotoSansJPRegularOneUsedGlyph.cff"));
+        byte[] cmpBytes = Files.readAllBytes(Paths.get(FONTS_FOLDER + "subsetNotoSansJPRegularOneUsedGlyph.cff"));
         Assertions.assertArrayEquals(cmpBytes, cffSubsetBytes);
     }
 
@@ -117,7 +114,7 @@ public class CFFFontSubsetIntegrationTest extends ExtendedITextTest {
         byte[] cffData = new TrueTypeFont(PURITAN_PATH).getFontStreamBytes();
         byte[] cffSubsetBytes = new CFFFontSubset(cffData, glyphsUsed).Process();
         CFFFont result = new CFFFont(cffSubsetBytes);
-        int expectedCharsetLength = 255;
+        int expectedCharsetLength = 237;
         // skip over the format ID (1 byte) and the first SID (2 bytes)
         result.seek(result.fonts[0].getCharsetOffset() + 3);
         Assertions.assertEquals(expectedCharsetLength - 2, result.getCard16());

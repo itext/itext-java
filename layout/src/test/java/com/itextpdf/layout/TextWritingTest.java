@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -54,20 +54,20 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TextWritingTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TextWritingTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/TextWritingTest/";
-    public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/TextWritingTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/TextWritingTest/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void textRiseTest01() throws IOException, InterruptedException {
         // CountryChunks example
-        String outFileName = destinationFolder + "textRiseTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_textRiseTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "textRiseTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_textRiseTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -87,13 +87,13 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void textRenderingModeTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "textRenderingModeTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_textRenderingModeTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "textRenderingModeTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_textRenderingModeTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -129,13 +129,13 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void textStrokeTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "textStrokeTest.pdf";
-        String cmpFileName = sourceFolder + "cmp_textStrokeTest.pdf";
+        String outFileName = DESTINATION_FOLDER + "textStrokeTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_textStrokeTest.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDocument)) {
             Text text1 = new Text("Red stroke text via color setter")
@@ -168,13 +168,13 @@ public class TextWritingTest extends ExtendedITextTest {
             text5.setProperty(Property.STROKE_COLOR, ColorConstants.RED);
             document.add(new Paragraph().add(text5));
         }
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void textFillStrokeTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "textFillStrokeTest.pdf";
-        String cmpFileName = sourceFolder + "cmp_textFillStrokeTest.pdf";
+        String outFileName = DESTINATION_FOLDER + "textFillStrokeTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_textFillStrokeTest.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             Text text1 = new Text("Pink text with null stroke color (so font color is used)")
@@ -201,13 +201,13 @@ public class TextWritingTest extends ExtendedITextTest {
                     .setFontSize(50);
             document.add(new Paragraph().add(text3));
         }
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void leadingTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "leadingTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_leadingTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "leadingTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_leadingTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -227,13 +227,13 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void leadingTest02() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "leadingTest02.pdf";
-        String cmpFileName = sourceFolder + "cmp_leadingTest02.pdf";
+        String outFileName = DESTINATION_FOLDER + "leadingTest02.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_leadingTest02.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -244,13 +244,13 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void firstLineIndentTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "firstLineIndentTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_firstLineIndentTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "firstLineIndentTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_firstLineIndentTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -290,13 +290,13 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void charSpacingTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "charSpacingTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_charSpacingTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "charSpacingTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_charSpacingTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -313,13 +313,13 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void wordSpacingTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "wordSpacingTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_wordSpacingTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "wordSpacingTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_wordSpacingTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -337,13 +337,13 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void fontStyleSimulationTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "fontStyleSimulationTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_fontStyleSimulationTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "fontStyleSimulationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_fontStyleSimulationTest01.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -358,14 +358,14 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
 
     @Test
     public void bigWordTest01() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "bigWordTest01.pdf";
-        String cmpFileName = sourceFolder + "cmp_bigWordTest01.pdf";
+        String outFileName = DESTINATION_FOLDER + "bigWordTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_bigWordTest01.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
@@ -401,13 +401,13 @@ public class TextWritingTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void underlineTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "underline.pdf";
-        String cmpFileName = sourceFolder + "cmp_underline.pdf";
+        String outFileName = DESTINATION_FOLDER + "underline.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_underline.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -421,13 +421,13 @@ public class TextWritingTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void strokedUnderlineTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "strokedUnderline.pdf";
-        String cmpFileName = sourceFolder + "cmp_strokedUnderline.pdf";
+        String outFileName = DESTINATION_FOLDER + "strokedUnderline.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_strokedUnderline.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
@@ -464,14 +464,14 @@ public class TextWritingTest extends ExtendedITextTest {
             document.add(p4);
         }
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
     @Test
     public void lineThroughTest() throws IOException, InterruptedException {
         //TODO: update after DEVSIX-2623 fix
-        String outFileName = destinationFolder + "lineThrough.pdf";
-        String cmpFileName = sourceFolder + "cmp_lineThrough.pdf";
+        String outFileName = DESTINATION_FOLDER + "lineThrough.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_lineThrough.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
@@ -486,7 +486,7 @@ public class TextWritingTest extends ExtendedITextTest {
         document.add(n);
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -498,8 +498,8 @@ public class TextWritingTest extends ExtendedITextTest {
     @Test
     // TODO: update cmp file after fixing DEVSIX-4604
     public void leadingAndFloatInTextTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "leadingAndFloatInText.pdf";
-        String cmpFileName = sourceFolder + "cmp_leadingAndFloatInText.pdf";
+        String outFileName = DESTINATION_FOLDER + "leadingAndFloatInText.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_leadingAndFloatInText.pdf";
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
@@ -516,13 +516,13 @@ public class TextWritingTest extends ExtendedITextTest {
         document.add(p);
         document.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 
     @Test
     public void textWrappingEpsilonTest() throws IOException, InterruptedException {
-        String outFileName = destinationFolder + "textWrappingEpsilon.pdf";
-        String cmpFileName = sourceFolder + "cmp_textWrappingEpsilon.pdf";
+        String outFileName = DESTINATION_FOLDER + "textWrappingEpsilon.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_textWrappingEpsilon.pdf";
 
         PdfWriter writer = new PdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -532,7 +532,7 @@ public class TextWritingTest extends ExtendedITextTest {
         document.setLeftMargin(250.0F);
         document.setRightMargin(238.727F);
         pdfDoc.setDefaultPageSize(PageSize.LETTER);
-        PdfFont font = PdfFontFactory.createFont(sourceFolder + "../fonts/Open_Sans/OpenSans-Regular.ttf");
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "OpenSans-Regular.ttf");
 
         String text1 = "First line of some text ";
         String text2 = "Second line of some text";
@@ -553,6 +553,6 @@ public class TextWritingTest extends ExtendedITextTest {
         document.close();
         writer.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 }

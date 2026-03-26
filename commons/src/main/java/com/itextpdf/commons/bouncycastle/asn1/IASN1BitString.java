@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -33,4 +33,11 @@ public interface IASN1BitString extends IASN1Primitive, IASN1String {
      * @return int value of the wrapped ASN1BitString.
      */
     int intValue();
+
+    /**
+     * Call actual {@code getBytes} method for the wrapped ASN1BitString object.
+     *
+     * @return bytes of the wrapped ASN1BitString.
+     */
+    byte[] getBytes();
 }

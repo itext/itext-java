@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -70,11 +70,11 @@ import com.itextpdf.pdfua.checkers.utils.ua2.PdfUA2XfaChecker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class defines the requirements of the PDF/UA-2 standard and contains
@@ -140,7 +140,7 @@ public class PdfUA2Checker extends PdfUAChecker {
                 break;
             case ANNOTATION:
                 PdfAnnotationContext annotationContext = (PdfAnnotationContext) context;
-                PdfUA2AnnotationChecker.checkAnnotation(annotationContext.getAnnotation(), this.context);
+                new PdfUA2AnnotationChecker().checkSingleAnnotation(annotationContext.getAnnotation(), this.context);
                 break;
             case CANVAS_TEXT_ADDITION:
                 CanvasTextAdditionContext canvasTextAdditionContext = (CanvasTextAdditionContext) context;
@@ -152,6 +152,24 @@ public class PdfUA2Checker extends PdfUAChecker {
     @Override
     public boolean isPdfObjectReadyToFlush(PdfObject object) {
         return false;
+    }
+
+    /**
+     * Gets the PDF/UA validation context which contains common information and utilities used for PDF/UA validation.
+     *
+     * @return the PDF/UA validation context
+     */
+    protected PdfUAValidationContext getUAValidationContext() {
+        return context;
+    }
+
+    /**
+     * Gets the PDF document being validated.
+     *
+     * @return the PDF document being validated
+     */
+    protected PdfDocument getPdfDocument() {
+        return pdfDocument;
     }
 
     /**
@@ -176,6 +194,119 @@ public class PdfUA2Checker extends PdfUAChecker {
         } catch (XMPException e) {
             throw new PdfUAConformanceException(e.getMessage());
         }
+    }
+
+    /**
+     * Checks that the given PDF object and all its descendant objects recursively (if any) are compliant with PDF/UA-2
+     * standard. The check is performed on all objects except for indirect objects.
+     *
+     * @param obj the PDF object to check
+     */
+    protected void checkPdfObject(PdfObject obj) {
+        switch (obj.getType()) {
+            case PdfObject.STRING:
+                PdfUA2StringChecker.checkPdfString((PdfString) obj);
+                break;
+            case PdfObject.ARRAY:
+                checkArrayRecursively((PdfArray) obj);
+                break;
+            case PdfObject.DICTIONARY:
+            case PdfObject.STREAM:
+                checkDictionaryRecursively((PdfDictionary) obj);
+                break;
+        }
+    }
+
+    /**
+     * Validates document catalog dictionary against PDF/UA-2 standard.
+     *
+     * @param catalog {@link PdfCatalog} document catalog dictionary to check
+     */
+    protected void checkCatalog(PdfCatalog catalog) {
+        checkLang(catalog);
+        checkMetadata(catalog);
+        checkViewerPreferences(catalog);
+        checkOCProperties(catalog.getPdfObject().getAsDictionary(PdfName.OCProperties));
+        checkFormFieldsAndAnnotations(catalog);
+        PdfUA2EmbeddedFilesChecker.checkEmbeddedFiles(catalog);
+    }
+
+    /**
+     * Validates all annotations and form fields present in the document against PDF/UA-2 standard.
+     *
+     * @param catalog {@link PdfCatalog} to check form fields present in the acroform
+     */
+    protected void checkFormFieldsAndAnnotations(PdfCatalog catalog) {
+        PdfUA2FormChecker formChecker = new PdfUA2FormChecker(context);
+        formChecker.checkFormFields(catalog.getPdfObject().getAsDictionary(PdfName.AcroForm));
+        formChecker.checkWidgetAnnotations(this.pdfDocument);
+        PdfUA2LinkChecker.checkLinkAnnotations(this.pdfDocument);
+        new PdfUA2AnnotationChecker().checkAllAnnotations(this.pdfDocument);
+    }
+
+    /**
+     * Validates structure tree root dictionary against PDF/UA-2 standard.
+     *
+     * <p>
+     * Additionally, checks that within a given explicitly provided namespace, structure types are not role mapped to
+     * other structure types in the same namespace. In the StructTreeRoot RoleMap there is no explicitly provided
+     * namespace, that's why it is not checked.
+     *
+     * @param structTreeRoot {@link PdfStructTreeRoot} structure tree root dictionary to check
+     */
+    protected void checkStructureTreeRoot(PdfStructTreeRoot structTreeRoot) {
+        List<PdfNamespace> namespaces = structTreeRoot.getNamespaces();
+        for (PdfNamespace namespace : namespaces) {
+            PdfDictionary roleMap = namespace.getNamespaceRoleMap();
+            if (roleMap != null) {
+                for (Map.Entry<PdfName, PdfObject> entry : roleMap.entrySet()) {
+                    final String role = entry.getKey().getValue();
+                    final IRoleMappingResolver roleMappingResolver = pdfDocument.getTagStructureContext()
+                            .getRoleMappingResolver(role, namespace);
+
+                    int i = 0;
+                    // Reasonably large arbitrary number that will help to avoid a possible infinite loop.
+                    int maxIters = 100;
+                    while (roleMappingResolver.resolveNextMapping()) {
+                        if (++i > maxIters) {
+                            Logger logger = LoggerFactory.getLogger(PdfUA2Checker.class);
+                            logger.error(MessageFormatUtil.format(PdfUALogMessageConstants.
+                                    CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, role, namespace));
+                            break;
+                        }
+                        final PdfNamespace roleMapToNamespace = roleMappingResolver.getNamespace();
+                        if (namespace.getNamespaceName().equals(roleMapToNamespace.getNamespaceName())) {
+                            throw new PdfUAConformanceException(MessageFormatUtil.format(PdfUAExceptionMessageConstants.
+                                            STRUCTURE_TYPE_IS_ROLE_MAPPED_TO_OTHER_STRUCTURE_TYPE_IN_THE_SAME_NAMESPACE,
+                                    namespace.getNamespaceName(), role));
+                        }
+                    }
+                }
+            }
+        }
+        createTagTreeIterator(structTreeRoot).traverse();
+    }
+
+    /**
+     * Creates {@link TagTreeIterator} responsible for validation of tag tree elements.
+     *
+     * @param structTreeRoot {@link PdfStructTreeRoot} to be validated
+     *
+     * @return {@link TagTreeIterator} responsible for validation of tag tree elements
+     */
+    protected TagTreeIterator createTagTreeIterator(PdfStructTreeRoot structTreeRoot) {
+        TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
+        tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2HeadingsChecker.PdfUA2HeadingHandler(context));
+        tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2FormChecker.PdfUA2FormTagHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2AnnotationChecker.PdfUA2AnnotationHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2ListChecker.PdfUA2ListHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2NotesChecker.PdfUA2NotesHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2FormulaChecker.PdfUA2FormulaTagHandler(context));
+        tagTreeIterator.addHandler(new PdfUA2LinkChecker.PdfUA2LinkAnnotationHandler(context, pdfDocument));
+        return tagTreeIterator;
     }
 
     /**
@@ -210,21 +341,6 @@ public class PdfUA2Checker extends PdfUAChecker {
         }
     }
 
-    private void checkPdfObject(PdfObject obj) {
-        switch (obj.getType()) {
-            case PdfObject.STRING:
-                PdfUA2StringChecker.checkPdfString((PdfString) obj);
-                break;
-            case PdfObject.ARRAY:
-                checkArrayRecursively((PdfArray) obj);
-                break;
-            case PdfObject.DICTIONARY:
-            case PdfObject.STREAM:
-                checkDictionaryRecursively((PdfDictionary) obj);
-                break;
-        }
-    }
-
     private void checkArrayRecursively(PdfArray array) {
         for (int i = 0; i < array.size(); i++) {
             PdfObject object = array.get(i, false);
@@ -241,87 +357,5 @@ public class PdfUA2Checker extends PdfUAChecker {
                 checkPdfObject(object);
             }
         }
-    }
-
-    /**
-     * Validates document catalog dictionary against PDF/UA-2 standard.
-     *
-     * @param catalog {@link PdfCatalog} document catalog dictionary to check
-     */
-    private void checkCatalog(PdfCatalog catalog) {
-        checkLang(catalog);
-        checkMetadata(catalog);
-        checkViewerPreferences(catalog);
-        checkOCProperties(catalog.getPdfObject().getAsDictionary(PdfName.OCProperties));
-        checkFormFieldsAndAnnotations(catalog);
-        PdfUA2EmbeddedFilesChecker.checkEmbeddedFiles(catalog);
-    }
-
-    /**
-     * Validates all annotations and form fields present in the document against PDF/UA-2 standard.
-     *
-     * @param catalog {@link PdfCatalog} to check form fields present in the acroform
-     */
-    private void checkFormFieldsAndAnnotations(PdfCatalog catalog) {
-        PdfUA2FormChecker formChecker = new PdfUA2FormChecker(context);
-        formChecker.checkFormFields(catalog.getPdfObject().getAsDictionary(PdfName.AcroForm));
-        formChecker.checkWidgetAnnotations(this.pdfDocument);
-        PdfUA2LinkChecker.checkLinkAnnotations(this.pdfDocument);
-        PdfUA2AnnotationChecker.checkAnnotations(this.pdfDocument);
-    }
-
-    /**
-     * Validates structure tree root dictionary against PDF/UA-2 standard.
-     *
-     * <p>
-     * Additionally, checks that within a given explicitly provided namespace, structure types are not role mapped to
-     * other structure types in the same namespace. In the StructTreeRoot RoleMap there is no explicitly provided
-     * namespace, that's why it is not checked.
-     *
-     * @param structTreeRoot {@link PdfStructTreeRoot} structure tree root dictionary to check
-     */
-    private void checkStructureTreeRoot(PdfStructTreeRoot structTreeRoot) {
-        List<PdfNamespace> namespaces = structTreeRoot.getNamespaces();
-        for (PdfNamespace namespace : namespaces) {
-            PdfDictionary roleMap = namespace.getNamespaceRoleMap();
-            if (roleMap != null) {
-                for (Map.Entry<PdfName, PdfObject> entry : roleMap.entrySet()) {
-                    final String role = entry.getKey().getValue();
-                    final IRoleMappingResolver roleMappingResolver = pdfDocument.getTagStructureContext()
-                            .getRoleMappingResolver(role, namespace);
-
-                    int i = 0;
-                    // Reasonably large arbitrary number that will help to avoid a possible infinite loop.
-                    int maxIters = 100;
-                    while (roleMappingResolver.resolveNextMapping()) {
-                        if (++i > maxIters) {
-                            Logger logger = LoggerFactory.getLogger(PdfUA2Checker.class);
-                            logger.error(MessageFormatUtil.format(PdfUALogMessageConstants.
-                                    CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, role, namespace));
-                            break;
-                        }
-                        final PdfNamespace roleMapToNamespace = roleMappingResolver.getNamespace();
-                        if (namespace.getNamespaceName().equals(roleMapToNamespace.getNamespaceName())) {
-                            throw new PdfUAConformanceException(MessageFormatUtil.format(PdfUAExceptionMessageConstants.
-                                            STRUCTURE_TYPE_IS_ROLE_MAPPED_TO_OTHER_STRUCTURE_TYPE_IN_THE_SAME_NAMESPACE,
-                                    namespace.getNamespaceName(), role));
-                        }
-                    }
-                }
-            }
-        }
-
-        TagTreeIterator tagTreeIterator = new TagTreeIterator(structTreeRoot);
-        tagTreeIterator.addHandler(new GraphicsCheckUtil.GraphicsHandler(context));
-        tagTreeIterator.addHandler(new PdfUA2HeadingsChecker.PdfUA2HeadingHandler(context));
-        tagTreeIterator.addHandler(new TableCheckUtil.TableHandler(context));
-        tagTreeIterator.addHandler(new PdfUA2FormChecker.PdfUA2FormTagHandler(context));
-        tagTreeIterator.addHandler(new PdfUA2AnnotationChecker.PdfUA2AnnotationHandler(context));
-        tagTreeIterator.addHandler(new PdfUA2ListChecker.PdfUA2ListHandler(context));
-        tagTreeIterator.addHandler(new PdfUA2NotesChecker.PdfUA2NotesHandler(context));
-        tagTreeIterator.addHandler(new PdfUA2TableOfContentsChecker.PdfUA2TableOfContentsHandler(context));
-        tagTreeIterator.addHandler(new PdfUA2FormulaChecker.PdfUA2FormulaTagHandler(context));
-        tagTreeIterator.addHandler(new PdfUA2LinkChecker.PdfUA2LinkAnnotationHandler(context, pdfDocument));
-        tagTreeIterator.traverse();
     }
 }

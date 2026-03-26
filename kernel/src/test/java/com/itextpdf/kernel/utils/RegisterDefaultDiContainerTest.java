@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -30,6 +30,8 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.util.function.Supplier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -61,7 +63,7 @@ public class RegisterDefaultDiContainerTest extends ExtendedITextTest {
     @Test
     public void testWithSettingDocumentProps() {
         DocumentProperties documentProperties = new DocumentProperties();
-        documentProperties.registerDependency(IPageTreeListFactory.class, new IPageTreeTestImpl());
+        documentProperties.registerDependency(IPageTreeListFactory.class, () -> new IPageTreeTestImpl());
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()), documentProperties);
         assertTrue(pdfDocument.getDiContainer().getInstance(IPageTreeListFactory.class) instanceof IPageTreeTestImpl);
     }
@@ -77,9 +79,9 @@ public class RegisterDefaultDiContainerTest extends ExtendedITextTest {
     @Test
     public void documentPropsSetWithNullType() {
         DocumentProperties documentProperties = new DocumentProperties();
-        Object dummyObject = new Object();
+        Supplier<Object> dummySupplier = () -> new Object();
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            documentProperties.registerDependency(null, dummyObject);
+            documentProperties.registerDependency(null, dummySupplier);
         });
     }
 

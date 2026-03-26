@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -109,25 +109,10 @@ public class PdfDocument implements Closeable {
 
     protected final StampingProperties properties;
     /**
-     * List of indirect objects used in the document.
-     */
-    final PdfXrefTable xref = new PdfXrefTable();
-    private final Map<PdfIndirectReference, PdfFont> documentFonts = new HashMap<>();
-    private final Set<IEventHandler> documentHandlers = new LinkedHashSet<>();
-    private final SequenceId documentId;
-    /**
-     * To be adjusted destinations.
-     * Key - originating page on the source document
-     * Value - a hashmap of Parent pdf objects and destinations to be updated
-     */
-    private final List<DestinationMutationInfo> pendingDestinationMutations =
-            new ArrayList<DestinationMutationInfo>();
-    /**
      * PdfWriter associated with the document.
      * Not null if document opened either in writing or stamping mode.
      */
     protected PdfWriter writer = null;
-
     /**
      * PdfReader associated with the document.
      * Not null if document is opened either in reading or stamping mode.
@@ -163,6 +148,11 @@ public class PdfDocument implements Closeable {
     protected DocumentInfoHelper documentInfoHelper = new DocumentInfoHelper();
     protected DefaultFontStrategy defaultFontStrategy = new DefaultFontStrategy(this);
     protected IPdfPageFactory pdfPageFactory = new PdfPageFactory();
+
+    /**
+     * List of indirect objects used in the document.
+     */
+    final PdfXrefTable xref = new PdfXrefTable();
     /**
      * Cache of already serialized objects from this document for smart mode.
      */
@@ -171,6 +161,17 @@ public class PdfDocument implements Closeable {
      * Handler which will be used for decompression of pdf streams.
      */
     MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
+
+    private final Map<PdfIndirectReference, PdfFont> documentFonts = new HashMap<>();
+    private final Set<IEventHandler> documentHandlers = new LinkedHashSet<>();
+    private final SequenceId documentId;
+    /**
+     * To be adjusted destinations.
+     * Key - originating page on the source document
+     * Value - a hashmap of Parent pdf objects and destinations to be updated
+     */
+    private final List<DestinationMutationInfo> pendingDestinationMutations = new ArrayList<>();
+    private final DIContainer diContainer = new DIContainer();
     /**
      * Default page size.
      * New page by default will be created with this size.
@@ -199,7 +200,6 @@ public class PdfDocument implements Closeable {
     private XMPMeta xmpMetadata = null;
 
 
-    private final DIContainer diContainer = new DIContainer();
 
     /**
      * Open PDF document in reading mode.
@@ -452,7 +452,6 @@ public class PdfDocument implements Closeable {
             return reference.getRefersTo();
         }
     }
-
 
     /**
      * Get number of indirect objects in the document.
@@ -744,7 +743,6 @@ public class PdfDocument implements Closeable {
         catalog.getPageTree().removePage(pageNum);
     }
 
-
     /**
      * Gets the container containing all available dependencies.
      *
@@ -786,7 +784,6 @@ public class PdfDocument implements Closeable {
     public PdfString getOriginalDocumentId() {
         return originalDocumentId;
     }
-
 
     /**
      * Gets modified document id
@@ -997,8 +994,7 @@ public class PdfDocument implements Closeable {
                 // The following 2 operators prevent the possible inconsistency between root and info
                 // entries existing in the trailer object and corresponding fields. This inconsistency
                 // may appear when user gets trailer and explicitly sets new root or info dictionaries.
-                PdfAConformance pdfAConformance = this.getConformance().getAConformance();
-                if (pdfAConformance != null && "4".equals(pdfAConformance.getPart())) {
+                if (pdfConformance.isPdfA() && "4".equals(pdfConformance.getAConformance().getPart())) {
                     if (this.getCatalog().getPdfObject().get(PdfName.PieceInfo) != null) {
                         // Leave only ModDate as required by 6.1.3 File trailer of pdf/a-4 spec
                         getDocumentInfo().removeCreationDate();
@@ -1262,7 +1258,7 @@ public class PdfDocument implements Closeable {
     public List<PdfPage> copyPagesTo(int pageFrom, int pageTo, PdfDocument toDocument, int insertBeforePage) {
         return copyPagesTo(pageFrom, pageTo, toDocument, insertBeforePage, null);
     }
-    
+
     /**
      * Get the {@link PdfConformance}
      *
@@ -1414,7 +1410,7 @@ public class PdfDocument implements Closeable {
             page2page.put(page, newPage);
 
             if (lastCopiedPageNum >= pageNum) {
-                rangesOfPagesWithIncreasingNumbers.add(new HashMap<PdfPage, PdfPage>());
+                rangesOfPagesWithIncreasingNumbers.add(new HashMap<>());
             }
             int lastRangeInd = rangesOfPagesWithIncreasingNumbers.size() - 1;
             rangesOfPagesWithIncreasingNumbers.get(lastRangeInd).put(page, newPage);
@@ -1434,13 +1430,13 @@ public class PdfDocument implements Closeable {
         // Copying OCGs should go after copying LinkAnnotations
         if (getCatalog() != null && getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties) != null) {
             OcgPropertiesCopier.copyOCGProperties(this, toDocument, page2page);
-            if(toDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties) != null){
+            if (toDocument.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties) != null) {
                 toDocument.getCatalog().setOcgCopied(true);
             }
         }
 
         // It's important to copy tag structure after link annotations were copied, because object content items in tag
-        // structure are not copied in case if their's OBJ key is annotation and doesn't contain /P entry.
+        // structure are not copied in case if theirs OBJ key is annotation and doesn't contain /P entry.
         if (toDocument.isTagged()) {
             if (isTagged()) {
                 try {
@@ -1610,7 +1606,7 @@ public class PdfDocument implements Closeable {
     }
 
     /**
-     * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
+     * The method adds new name in the Dests NameTree. It throws an exception, if the name already exists.
      *
      * @param key   Name of the destination.
      * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
@@ -1621,7 +1617,7 @@ public class PdfDocument implements Closeable {
     }
 
     /**
-     * This methods adds new name in the Dests NameTree. It throws an exception, if the name already exists.
+     * The method adds new name in the Dests NameTree. It throws an exception, if the name already exists.
      *
      * @param key   Name of the destination.
      * @param value An object destination refers to. Must be an array or a dictionary with key /D and array.
@@ -1636,9 +1632,9 @@ public class PdfDocument implements Closeable {
     }
 
     /**
-     * Gets static copy of cross reference table.
+     * Gets static copy of cross-reference table.
      *
-     * @return a static copy of cross reference table
+     * @return a static copy of cross-reference table
      */
     public List<PdfIndirectReference> listIndirectReferences() {
         checkClosingStatus();
@@ -1807,7 +1803,8 @@ public class PdfDocument implements Closeable {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT);
         }
         if (!PdfName.EncryptedPayload.equals(((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship))) {
-            LOGGER.error(IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
+            LOGGER.error(
+                    IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
         }
         PdfEncryptedPayload encryptedPayload = PdfEncryptedPayload.extractFrom(fs);
         if (encryptedPayload == null) {
@@ -1837,7 +1834,7 @@ public class PdfDocument implements Closeable {
             return null;
         }
         Map<Integer, PdfObject> pageLabels = catalog.getPageLabelsTree(false).getNumbers();
-        if (pageLabels.size() == 0) {
+        if (pageLabels.isEmpty()) {
             return null;
         }
         String[] labelStrings = new String[getNumberOfPages()];
@@ -2068,7 +2065,7 @@ public class PdfDocument implements Closeable {
         }
         if (isClosing || flushAllowed) {
             writer.flushObject(pdfObject, canBeInObjStm);
-        } else if (pdfObject.getIndirectReference() != null)  {
+        } else if (pdfObject.getIndirectReference() != null) {
             pdfObject.getIndirectReference().setState(PdfObject.MUST_BE_FLUSHED);
         }
     }
@@ -2081,9 +2078,9 @@ public class PdfDocument implements Closeable {
      *                      or {@code null} otherwise
      */
     protected void open(PdfVersion newPdfVersion) {
-        if (properties != null){
-            for (Class<?> aClass : properties.dependencies.keySet()) {
-                diContainer.register(aClass, properties.dependencies.get(aClass));
+        if (properties != null) {
+            for (Class<?> aClass : properties.getRegisteredDependenciesClasses()) {
+                diContainer.register(aClass, properties.getDependencySupplier(aClass).get());
             }
         }
         this.fingerPrint = new FingerPrint();
@@ -2134,9 +2131,10 @@ public class PdfDocument implements Closeable {
             }
             xref.initFreeReferencesList(this);
             if (writer != null) {
-                if (writer.properties.addPdfAXmpMetadata != null || writer.properties.addPdfUaXmpMetadata != null) {
-                    pdfConformance = new PdfConformance(writer.properties.addPdfAXmpMetadata,
-                            writer.properties.addPdfUaXmpMetadata);
+                //if the writer requested a specific pdf flavour then we need to overwrite the pdfconformance
+                //so that we append the correct xmp metadata on the closing of the document of the requested flavor
+                if (writer.properties.getPdfConformance().conformsToAny()) {
+                    pdfConformance =  writer.properties.getPdfConformance();
                 }
                 enableByteArrayWritingMode();
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
@@ -2156,7 +2154,7 @@ public class PdfDocument implements Closeable {
                 }
                 getDocumentInfo().addModDate();
 
-                if (trailer == null ) {
+                if (trailer == null) {
                     trailer = new PdfDictionary();
                 }
                 // We keep the original trailer of the document to preserve the original document keys,
@@ -2296,12 +2294,12 @@ public class PdfDocument implements Closeable {
     protected XMPMeta updateDefaultXmpMetadata() throws XMPException {
         XMPMeta xmpMeta = getXmpMetadata(true);
         XmpMetaInfoConverter.appendDocumentInfoToMetadata(getDocumentInfo(), xmpMeta);
-        PdfConformance.setConformanceToXmp(xmpMeta, pdfConformance);
+        pdfConformance.setConformanceToXmp(xmpMeta);
         return xmpMeta;
     }
 
     /**
-     * List all newly added or loaded fonts
+     * List all newly added or loaded fonts.
      *
      * @return List of {@link PdfFont}.
      */
@@ -2394,7 +2392,7 @@ public class PdfDocument implements Closeable {
         try {
             structTreeRoot = new PdfStructTreeRoot(str, this);
             structParentIndex = getStructTreeRoot().getParentTreeNextKey();
-        } catch (MemoryLimitsAwareException e){
+        } catch (MemoryLimitsAwareException e) {
             throw e;
         } catch (Exception e) {
             structTreeRoot = null;
@@ -2445,9 +2443,9 @@ public class PdfDocument implements Closeable {
             if (!isAppendMode || structTreeRoot.getPdfObject().isModified()) {
                 structTreeRoot.flush();
             }
-        } catch (MemoryLimitsAwareException e){
+        } catch (MemoryLimitsAwareException e) {
             throw e;
-        } catch (Exception e) { 
+        } catch (Exception e) {
             throw new PdfException(KernelExceptionMessageConstant.TAG_STRUCTURE_FLUSHING_FAILED_IT_MIGHT_BE_CORRUPTED,
                     e);
         }
@@ -2487,6 +2485,7 @@ public class PdfDocument implements Closeable {
     }
 
     private void resolveDestinations(PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
+        // Classical for loop is used to allow pendingDestinationMutations modification during iteration
         for (int i = 0; i < pendingDestinationMutations.size(); ++i) {
             PdfDocument.DestinationMutationInfo mutation = pendingDestinationMutations.get(i);
             PdfDestination copiedDest = null;
@@ -2508,8 +2507,7 @@ public class PdfDocument implements Closeable {
      */
     private void copyOutlines(Set<PdfOutline> outlines, PdfDocument toDocument, Map<PdfPage, PdfPage> page2page) {
 
-        final Set<PdfOutline> outlinesToCopy = new HashSet<>();
-        outlinesToCopy.addAll(outlines);
+        final Set<PdfOutline> outlinesToCopy = new HashSet<>(outlines);
 
         for (PdfOutline outline : outlines) {
             getAllOutlinesToCopy(outline, outlinesToCopy);

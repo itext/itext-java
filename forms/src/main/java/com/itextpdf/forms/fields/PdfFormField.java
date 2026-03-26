@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -96,17 +96,17 @@ public class PdfFormField extends AbstractPdfFormField {
     public static final int FF_PASSWORD = makeFieldFlag(14);
 
     /**
-     * The ReadOnly flag, which specifies whether or not the field can be changed.
+     * The ReadOnly flag, which specifies whether the field can be changed.
      */
     public static final int FF_READ_ONLY = makeFieldFlag(1);
 
     /**
-     * The Required flag, which specifies whether or not the field must be filled in.
+     * The Required flag, which specifies whether the field must be filled in.
      */
     public static final int FF_REQUIRED = makeFieldFlag(2);
 
     /**
-     * The NoExport flag, which specifies whether or not exporting is forbidden.
+     * The NoExport flag, which specifies whether exporting is forbidden.
      */
     public static final int FF_NO_EXPORT = makeFieldFlag(3);
 
@@ -114,7 +114,6 @@ public class PdfFormField extends AbstractPdfFormField {
      * List of all allowable keys in form fields.
      */
     private static final Set<PdfName> FORM_FIELD_KEYS = new HashSet<>();
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormField.class);
 
@@ -157,7 +156,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * Creates a form field as a wrapper object around a {@link PdfDictionary}.
      * This {@link PdfDictionary} must be an indirect object.
      *
-     * @param pdfObject the dictionary to be wrapped, must have an indirect reference.
+     * @param pdfObject the dictionary to be wrapped, must have an indirect reference
      */
     public PdfFormField(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -196,7 +195,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Creates a minimal {@link PdfFormField}.
      *
-     * @param pdfDocument The {@link PdfDocument} instance.
+     * @param pdfDocument The {@link PdfDocument} instance
      */
     protected PdfFormField(PdfDocument pdfDocument) {
         this((PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument));
@@ -209,8 +208,8 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Creates a form field as a parent of a {@link PdfWidgetAnnotation}.
      *
-     * @param widget The widget which will be a kid of the {@link PdfFormField}.
-     * @param pdfDocument The {@link PdfDocument} instance.
+     * @param widget The widget which will be a kid of the {@link PdfFormField}
+     * @param pdfDocument The {@link PdfDocument} instance
      */
     protected PdfFormField(PdfWidgetAnnotation widget, PdfDocument pdfDocument) {
         this((PdfDictionary) new PdfDictionary().makeIndirect(pdfDocument));
@@ -225,11 +224,11 @@ public class PdfFormField extends AbstractPdfFormField {
      * Creates a (subtype of) {@link PdfFormField} object. The type of the object
      * depends on the <code>FT</code> entry in the <code>pdfObject</code> parameter.
      *
-     * @param pdfObject assumed to be either a {@link PdfDictionary}, or a
-     *                  {@link PdfIndirectReference} to a {@link PdfDictionary}.
-     * @param document  the {@link PdfDocument} to create the field in.
-     * @return a new {@link PdfFormField}, or <code>null</code> if
-     * <code>pdfObject</code> is not a form field.
+     * @param pdfObject assumed to be either a {@link PdfDictionary},
+     * or a {@link PdfIndirectReference} to a {@link PdfDictionary}
+     * @param document the {@link PdfDocument} to create the field in
+     *
+     * @return a new {@link PdfFormField}, or <code>null</code> if <code>pdfObject</code> is not a form field
      */
     public static PdfFormField makeFormField(PdfObject pdfObject, PdfDocument document) {
         if (!pdfObject.isDictionary()) {
@@ -268,11 +267,12 @@ public class PdfFormField extends AbstractPdfFormField {
      * Creates a (subtype of) {@link PdfFormField} or {@link PdfFormAnnotation} object depending on
      * <code>pdfObject</code>.
      *
-     * @param pdfObject assumed to be either a {@link PdfDictionary}, or a
-     *                  {@link PdfIndirectReference} to a {@link PdfDictionary}.
-     * @param document  the {@link PdfDocument} to create the field in.
+     * @param pdfObject assumed to be either a {@link PdfDictionary},
+     * or a {@link PdfIndirectReference} to a {@link PdfDictionary}
+     * @param document the {@link PdfDocument} to create the field in
+     *
      * @return a new {@link AbstractPdfFormField}, or <code>null</code> if
-     * <code>pdfObject</code> is not a form field and is not a widget annotation.
+     * <code>pdfObject</code> is not a form field and is not a widget annotation
      */
     public static AbstractPdfFormField makeFormFieldOrAnnotation(PdfObject pdfObject, PdfDocument document) {
         AbstractPdfFormField formField = PdfFormField.makeFormField(pdfObject, document);
@@ -282,12 +282,14 @@ public class PdfFormField extends AbstractPdfFormField {
 
         return formField;
     }
+
     /**
      * Makes a field flag by bit position. Bit positions are numbered 1 to 32.
      * But position 0 corresponds to flag 1, position 3 corresponds to flag 4 etc.
      *
-     * @param bitPosition bit position of a flag in range 1 to 32 from the pdf specification.
-     * @return corresponding field flag.
+     * @param bitPosition a bit position of a flag in range 1 to 32 from the pdf specification
+     *
+     * @return corresponding field flag
      */
     public static int makeFieldFlag(int bitPosition) {
         return (1 << (bitPosition - 1));
@@ -296,9 +298,9 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Checks if dictionary contains any of the form field keys.
      *
-     * @param dict field dictionary to check.
+     * @param dict field dictionary to check
      *
-     * @return true if it is a form field dictionary, false otherwise.
+     * @return true if it is a form field dictionary, false otherwise
      */
     public static boolean isFormField(PdfDictionary dict) {
         for (final PdfName formFieldKey : getFormFieldKeys()) {
@@ -313,7 +315,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets a set of all possible form field keys except {@code PdfName.Parent}.
      *
-     * @return a set of form field keys.
+     * @return a set of form field keys
      */
     public static Collection<PdfName> getFormFieldKeys() {
         return Collections.unmodifiableCollection(FORM_FIELD_KEYS);
@@ -323,9 +325,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * Returns the type of the form field dictionary, or of the parent
      * &lt;PdfDictionary&gt; object.
      *
-     * @param fieldDict field dictionary to get its type.
+     * @param fieldDict field dictionary to get its type
      *
-     * @return the form type, as a {@link PdfName}.
+     * @return the form type, as a {@link PdfName}
      */
     public static PdfName getFormType(PdfDictionary fieldDict) {
         PdfName formType = fieldDict.getAsName(PdfName.FT);
@@ -359,9 +361,9 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Applies {@link AccessibilityProperties} for provided form field and its annotation children.
      *
-     * @param formField    {@link PdfFormField} the form field to which the accessibility properties should be applied
+     * @param formField {@link PdfFormField} the form field to which the accessibility properties should be applied
      * @param modelElement {@link IAccessibleElement} the form field layout element with accessibility properties
-     * @param pdfDocument  {@link PdfDocument} the document to which the form field belongs
+     * @param pdfDocument {@link PdfDocument} the document to which the form field belongs
      */
     public static void applyAccessibilityProperties(PdfFormField formField, IAccessibleElement modelElement,
                                                     PdfDocument pdfDocument) {
@@ -381,10 +383,9 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
-     * Returns the type of the parent form field, or of the wrapped
-     * &lt;PdfDictionary&gt; object.
+     * Returns the type of the parent form field, or of the wrapped &lt;PdfDictionary&gt; object.
      *
-     * @return the form type, as a {@link PdfName}.
+     * @return the form type, as a {@link PdfName}
      */
     public PdfName getFormType() {
         return getFormType(getPdfObject());
@@ -393,8 +394,9 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Sets a value to the field and generating field appearance if needed.
      *
-     * @param value of the field.
-     * @return the field.
+     * @param value of the field
+     *
+     * @return the field
      */
     public PdfFormField setValue(String value) {
         PdfName formType = getFormType();
@@ -405,9 +407,10 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Sets a value to the field (and fields with the same names) and generates field appearance if needed.
      *
-     * @param value of the field.
-     * @param generateAppearance if false, appearance won't be regenerated.
-     * @return the field.
+     * @param value of the field
+     * @param generateAppearance if false, appearance won't be regenerated
+     *
+     * @return the field
      */
     public PdfFormField setValue(String value, boolean generateAppearance) {
         if (parent == null) {
@@ -428,10 +431,11 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Set text field value with given font and size.
      *
-     * @param value text value.
-     * @param font a {@link PdfFont}.
-     * @param fontSize the size of the font.
-     * @return the edited field.
+     * @param value text value
+     * @param font a {@link PdfFont}
+     * @param fontSize the size of the font
+     *
+     * @return the edited field
      */
     public PdfFormField setValue(String value, PdfFont font, float fontSize) {
         updateFontAndFontSize(font, fontSize);
@@ -442,10 +446,11 @@ public class PdfFormField extends AbstractPdfFormField {
      * Sets the field value and the display string. The display string
      * is used to build the appearance.
      *
-     * @param value the field value.
+     * @param value the field value
      * @param displayValue the string that is used for the appearance. If <CODE>null</CODE>
-     *                the <CODE>value</CODE> parameter will be used.
-     * @return the edited field.
+     * the <CODE>value</CODE> parameter will be used
+     *
+     * @return the edited field
      */
     public PdfFormField setValue(String value, String displayValue) {
         if (value == null) {
@@ -469,7 +474,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Removes the childField object of this field.
      *
-     * @param fieldName a {@link PdfFormField}, that needs to be removed from form field children.
+     * @param fieldName a {@link PdfFormField}, that needs to be removed from form field children
      */
     public void removeChild(AbstractPdfFormField fieldName) {
         childFields.remove(fieldName);
@@ -493,7 +498,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the kids of this object.
      *
-     * @return contents of the dictionary's <code>Kids</code> property, as a {@link PdfArray}.
+     * @return contents of the dictionary's <code>Kids</code> property, as a {@link PdfArray}
      */
     public PdfArray getKids() {
         return getPdfObject().getAsArray(PdfName.Kids);
@@ -502,7 +507,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the childFields of this object.
      *
-     * @return the children of the current field.
+     * @return the children of the current field
      */
     public List<AbstractPdfFormField> getChildFields() {
         return Collections.unmodifiableList(childFields);
@@ -511,13 +516,13 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets all child form fields of this form field. Annotations are not returned.
      *
-     * @return a list of {@link PdfFormField}.
+     * @return a list of {@link PdfFormField}
      */
     public List<PdfFormField> getChildFormFields() {
         List<PdfFormField> fields = new ArrayList<>();
         for (AbstractPdfFormField child : childFields) {
             if (child instanceof PdfFormField) {
-                fields.add((PdfFormField)child);
+                fields.add((PdfFormField) child);
             }
         }
 
@@ -529,7 +534,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * Gets all childFields of this object, including the children of the children
      * but not annotations.
      *
-     * @return the children of the current field and their children.
+     * @return the children of the current field and their children
      */
     public List<PdfFormField> getAllChildFormFields() {
         List<PdfFormField> allKids = new ArrayList<>();
@@ -544,14 +549,14 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets all childFields of this object, including the children of the children.
      *
-     * @return the children of the current field and their children.
+     * @return the children of the current field and their children
      */
     public List<AbstractPdfFormField> getAllChildFields() {
         List<AbstractPdfFormField> kids = this.getChildFields();
         List<AbstractPdfFormField> allKids = new ArrayList<>(kids);
         for (AbstractPdfFormField field : kids) {
             if (field instanceof PdfFormField) {
-                allKids.addAll(((PdfFormField)field).getAllChildFields());
+                allKids.addAll(((PdfFormField) field).getAllChildFields());
             }
         }
         return allKids;
@@ -560,8 +565,9 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the child field of form field. If there is no child field with such name, {@code null} is returned.
      *
-     * @param fieldName a {@link String}, name of the received field.
-     * @return the child of the current field as a {@link PdfFormField}.
+     * @param fieldName a {@link String}, name of the received field
+     *
+     * @return the child of the current field as a {@link PdfFormField}
      */
     public PdfFormField getChildField(String fieldName) {
         for (PdfFormField formField : this.getChildFormFields()) {
@@ -577,9 +583,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * Adds a new kid to the <code>Kids</code> array property from a
      * {@link AbstractPdfFormField}. Also sets the kid's <code>Parent</code> property to this object.
      *
-     * @param kid a new {@link AbstractPdfFormField} entry for the field's <code>Kids</code> array property.
+     * @param kid a new {@link AbstractPdfFormField} entry for the field's <code>Kids</code> array property
      *
-     * @return the edited {@link PdfFormField}.
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField addKid(AbstractPdfFormField kid) {
         return addKid(kid, true);
@@ -589,11 +595,11 @@ public class PdfFormField extends AbstractPdfFormField {
      * Adds a new kid to the <code>Kids</code> array property from a
      * {@link AbstractPdfFormField}. Also sets the kid's <code>Parent</code> property to this object.
      *
-     * @param kid a new {@link AbstractPdfFormField} entry for the field's <code>Kids</code> array property.
+     * @param kid a new {@link AbstractPdfFormField} entry for the field's <code>Kids</code> array property
      * @param throwExceptionOnError define whether exception (true) or log (false) is expected in case kid with
-     *                              the same name exists and merge of two kids failed.
+     * the same name exists and merge of two kids failed
      *
-     * @return the edited {@link PdfFormField}.
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField addKid(AbstractPdfFormField kid, boolean throwExceptionOnError) {
         PdfFormAnnotationUtil.separateWidgetAndField(this);
@@ -616,8 +622,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * Adds a new kid to the <code>Kids</code> array property from a
      * {@link PdfWidgetAnnotation}. Also sets the kid's <code>Parent</code> property to this object.
      *
-     * @param kid a new {@link PdfWidgetAnnotation} entry for the field's <code>Kids</code> array property.
-     * @return the edited {@link PdfFormField}.
+     * @param kid a new {@link PdfWidgetAnnotation} entry for the field's <code>Kids</code> array property
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField addKid(PdfWidgetAnnotation kid) {
         kid.setParent(getPdfObject());
@@ -630,8 +637,9 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Changes the name of the field to the specified value.
      *
-     * @param name the new field name, as a String.
-     * @return the edited {@link PdfFormField}.
+     * @param name the new field name, as a String
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setFieldName(String name) {
         put(PdfName.T, new PdfString(name));
@@ -646,7 +654,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * Gets the current field partial name.
      *
      * @return the current field partial name, as a {@link PdfString}. If the field has no partial name,
-     * an empty {@link PdfString} is returned.
+     * an empty {@link PdfString} is returned
      */
     public PdfString getPartialFieldName() {
         PdfString partialName = getPdfObject().getAsString(PdfName.T);
@@ -657,8 +665,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * Changes the alternate name of the field to the specified value. The
      * alternate is a descriptive name to be used by status messages etc.
      *
-     * @param name the new alternate name, as a String.
-     * @return the edited {@link PdfFormField}.
+     * @param name the new alternate name, as a String
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setAlternativeName(String name) {
         put(PdfName.TU, new PdfString(name));
@@ -669,7 +678,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * Gets the current alternate name. The alternate is a descriptive name to
      * be used by status messages etc.
      *
-     * @return the current alternate name, as a {@link PdfString}.
+     * @return the current alternate name, as a {@link PdfString}
      */
     public PdfString getAlternativeName() {
         return getPdfObject().getAsString(PdfName.TU);
@@ -679,8 +688,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * Changes the mapping name of the field to the specified value. The
      * mapping name can be used when exporting the form data in the document.
      *
-     * @param name the new alternate name, as a String.
-     * @return the edited field.
+     * @param name the new alternate name, as a String
+     *
+     * @return the edited field
      */
     public PdfFormField setMappingName(String name) {
         put(PdfName.TM, new PdfString(name));
@@ -691,7 +701,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * Gets the current mapping name. The mapping name can be used when
      * exporting the form data in the document.
      *
-     * @return the current mapping name, as a {@link PdfString}.
+     * @return the current mapping name, as a {@link PdfString}
      */
     public PdfString getMappingName() {
         return getPdfObject().getAsString(PdfName.TM);
@@ -701,9 +711,10 @@ public class PdfFormField extends AbstractPdfFormField {
      * Checks whether a certain flag, or any of a combination of flags, is set
      * for this form field.
      *
-     * @param flag an <code>int</code> interpreted as a series of a binary flags.
+     * @param flag an <code>int</code> interpreted as a series of a binary flags
+     *
      * @return true if any of the flags specified in the parameter is also set
-     * in the form field.
+     * in the form field
      */
     public boolean getFieldFlag(int flag) {
         return (getFieldFlags() & flag) != 0;
@@ -715,8 +726,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * enforced. To <em>replace</em> the current value, use
      * {@link #setFieldFlags(int)}.
      *
-     * @param flag an <code>int</code> interpreted as a series of a binary flags.
-     * @return the edited {@link PdfFormField}.
+     * @param flag an <code>int</code> interpreted as a series of a binary flags
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setFieldFlag(int flag) {
         return setFieldFlag(flag, true);
@@ -728,10 +740,11 @@ public class PdfFormField extends AbstractPdfFormField {
      * technically enforced. To <em>replace</em> the current value, use
      * {@link #setFieldFlags(int)}.
      *
-     * @param flag  an <code>int</code> interpreted as a series of a binary flags.
+     * @param flag an <code>int</code> interpreted as a series of a binary flags
      * @param value if <code>true</code>, adds the flag(s). if <code>false</code>,
-     *              removes the flag(s).
-     * @return the edited {@link PdfFormField}.
+     * removes the flag(s)
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setFieldFlag(int flag, boolean value) {
         int flags = getFieldFlags();
@@ -748,7 +761,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * If true, the field can contain multiple lines of text; if false, the field's text is restricted to a single line.
      *
-     * @return whether the field can span over multiple lines.
+     * @return whether the field can span over multiple lines
      */
     public boolean isMultiline() {
         return getFieldFlag(FF_MULTILINE);
@@ -759,7 +772,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * Characters typed from the keyboard should instead be echoed in some unreadable form, such as asterisks
      * or bullet characters.
      *
-     * @return whether or not the contents of the field must be obfuscated.
+     * @return whether the contents of the field must be obfuscated
      */
     public boolean isPassword() {
         return getFieldFlag(FF_PASSWORD);
@@ -770,8 +783,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * <em>replaces</em> the previous value. Compare with {@link #setFieldFlag(int)}
      * which <em>adds</em> a flag to the existing flags.
      *
-     * @param flags an <code>int</code> interpreted as a series of a binary flags.
-     * @return the edited {@link PdfFormField}.
+     * @param flags an <code>int</code> interpreted as a series of a binary flags
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setFieldFlags(int flags) {
         int oldFlags = getFieldFlags();
@@ -786,7 +800,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the current list of PDF form field flags.
      *
-     * @return the current list of flags, encoded as an <code>int</code>.
+     * @return the current list of flags, encoded as an <code>int</code>
      */
     public int getFieldFlags() {
         PdfNumber f = getPdfObject().getAsNumber(PdfName.Ff);
@@ -805,7 +819,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the current value contained in the form field.
      *
-     * @return the current value, as a {@link PdfObject}.
+     * @return the current value, as a {@link PdfObject}
      */
     public PdfObject getValue() {
         PdfObject value = getPdfObject().get(PdfName.V);
@@ -819,7 +833,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the current value contained in the form field.
      *
-     * @return the current value, as a {@link String}.
+     * @return the current value, as a {@link String}
      */
     public String getValueAsString() {
         PdfObject value = getValue();
@@ -830,7 +844,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * Gets the current display value of the form field.
      *
      * @return the current display value, as a {@link String}, if it exists.
-     * If not, returns the value as a {@link String}.
+     * If not, returns the value as a {@link String}
      */
     public String getDisplayValue() {
         if (displayValue != null) {
@@ -845,8 +859,9 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Sets the default fallback value for the form field.
      *
-     * @param value the default value.
-     * @return the edited {@link PdfFormField}.
+     * @param value the default value
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setDefaultValue(PdfObject value) {
         put(PdfName.DV, value);
@@ -856,7 +871,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the default fallback value for the form field.
      *
-     * @return the default value.
+     * @return the default value
      */
     public PdfObject getDefaultValue() {
         return getPdfObject().get(PdfName.DV);
@@ -865,9 +880,10 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Sets an additional action for the form field.
      *
-     * @param key    the dictionary key to use for storing the action.
-     * @param action the action.
-     * @return the edited {@link PdfFormField}.
+     * @param key the dictionary key to use for storing the action
+     * @param action the action
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setAdditionalAction(PdfName key, PdfAction action) {
         PdfAction.setAdditionalAction(this, key, action);
@@ -877,7 +893,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the currently additional action dictionary for the form field.
      *
-     * @return the additional action dictionary.
+     * @return the additional action dictionary
      */
     public PdfDictionary getAdditionalAction() {
         return getPdfObject().getAsDictionary(PdfName.AA);
@@ -887,8 +903,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * Sets options for the form field. Only to be used for checkboxes and radio buttons.
      *
      * @param options an array of {@link PdfString} objects that each represent
-     *                the 'on' state of one of the choices.
-     * @return the edited {@link PdfFormField}.
+     * the 'on' state of one of the choices
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setOptions(PdfArray options) {
         put(PdfName.Opt, options);
@@ -899,7 +916,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * Gets options for the form field. Should only return usable values for
      * checkboxes and radio buttons.
      *
-     * @return the options, as an {@link PdfArray} of {@link PdfString} objects.
+     * @return the options, as an {@link PdfArray} of {@link PdfString} objects
      */
     public PdfArray getOptions() {
         return getPdfObject().getAsArray(PdfName.Opt);
@@ -908,7 +925,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets all {@link PdfWidgetAnnotation} that its children refer to.
      *
-     * @return a list of {@link PdfWidgetAnnotation}.
+     * @return a list of {@link PdfWidgetAnnotation}
      */
     public List<PdfWidgetAnnotation> getWidgets() {
         List<PdfWidgetAnnotation> widgets = new ArrayList<>();
@@ -926,13 +943,13 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets all child form field's annotations {@link PdfFormAnnotation} of this form field.
      *
-     * @return a list of {@link PdfFormAnnotation}.
+     * @return a list of {@link PdfFormAnnotation}
      */
     public List<PdfFormAnnotation> getChildFormAnnotations() {
         List<PdfFormAnnotation> annots = new ArrayList<>();
         for (AbstractPdfFormField child : childFields) {
             if (child instanceof PdfFormAnnotation) {
-                annots.add((PdfFormAnnotation)child);
+                annots.add((PdfFormAnnotation) child);
             }
         }
 
@@ -942,12 +959,12 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets a single child form field's annotation {@link PdfFormAnnotation}.
      *
-     * @return {@link PdfFormAnnotation} or null if there are no child annotations.
+     * @return {@link PdfFormAnnotation} or null if there are no child annotations
      */
     public PdfFormAnnotation getFirstFormAnnotation() {
         for (AbstractPdfFormField child : childFields) {
             if (child instanceof PdfFormAnnotation) {
-                return (PdfFormAnnotation)child;
+                return (PdfFormAnnotation) child;
             }
         }
 
@@ -1011,7 +1028,7 @@ public class PdfFormField extends AbstractPdfFormField {
             put(PdfName.DA, generateDefaultAppearance(fontName, getFontSize(), color));
             // Font from DR may not be added to document through PdfResource.
             getDocument().addFont(getFont());
-        } else {
+        } else if (!PdfName.Sig.equals(getFormType())) {
             getPdfObject().remove(PdfName.DA);
             setModified();
         }
@@ -1023,7 +1040,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * 1 Centered
      * 2 Right-justified
      *
-     * @return the current justification attribute.
+     * @return the current justification attribute
      */
     public TextAlignment getJustification() {
         Integer justification = getPdfObject().getAsInt(PdfName.Q);
@@ -1039,8 +1056,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * 1 Centered
      * 2 Right-justified
      *
-     * @param justification the value to set the justification attribute to.
-     * @return the edited {@link PdfFormField}.
+     * @param justification the value to set the justification attribute to
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setJustification(TextAlignment justification) {
         if (justification != null) {
@@ -1053,7 +1071,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets a default style string, as described in "Rich Text Strings" section of Pdf spec.
      *
-     * @return the default style, as a {@link PdfString}.
+     * @return the default style, as a {@link PdfString}
      */
     public PdfString getDefaultStyle() {
         return getPdfObject().getAsString(PdfName.DS);
@@ -1062,8 +1080,9 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Sets a default style string, as described in "Rich Text Strings" section of Pdf spec.
      *
-     * @param defaultStyleString a new default style for the form field.
-     * @return the edited {@link PdfFormField}.
+     * @param defaultStyleString a new default style for the form field
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setDefaultStyle(PdfString defaultStyleString) {
         put(PdfName.DS, defaultStyleString);
@@ -1072,9 +1091,9 @@ public class PdfFormField extends AbstractPdfFormField {
 
     /**
      * Gets a rich text string, as described in "Rich Text Strings" section of Pdf spec.
-     * May be either {@link PdfStream} or {@link PdfString}.
+     * It may be either {@link PdfStream} or {@link PdfString}.
      *
-     * @return the current rich text value.
+     * @return the current rich text value
      */
     public PdfObject getRichText() {
         return getPdfObject().get(PdfName.RV);
@@ -1098,15 +1117,16 @@ public class PdfFormField extends AbstractPdfFormField {
      * Notice that in order to complete the change one should call
      * {@link #regenerateField() regenerateField} method.
      *
-     * @param checkType the new checkbox marker.
-     * @return the edited {@link PdfFormField}.
+     * @param checkType the new checkbox marker
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setCheckType(CheckBoxType checkType) {
         if (checkType == null) {
             checkType = CheckBoxType.CROSS;
         }
         this.checkType = new NullableContainer<>(checkType);
-        if (getPdfConformance() != null && getPdfConformance().isPdfAOrUa()) {
+        if (getPdfConformance() != null && getPdfConformance().conformsToAny()) {
             return this;
         }
         try {
@@ -1142,28 +1162,30 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
-     * Sets the ReadOnly flag, specifying whether or not the field can be changed.
+     * Sets the ReadOnly flag, specifying whether the field can be changed.
      *
-     * @param readOnly if <code>true</code>, then the field cannot be changed.
-     * @return the edited {@link PdfFormField}.
+     * @param readOnly if <code>true</code>, then the field cannot be changed
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setReadOnly(boolean readOnly) {
         return setFieldFlag(FF_READ_ONLY, readOnly);
     }
 
     /**
-     * Gets the ReadOnly flag, specifying whether or not the field can be changed.
+     * Gets the ReadOnly flag, specifying whether the field can be changed.
      *
-     * @return <code>true</code> if the field cannot be changed.
+     * @return <code>true</code> if the field cannot be changed
      */
     public boolean isReadOnly() {
         return getFieldFlag(FF_READ_ONLY);
     }
 
     /**
-     * Sets the Required flag, specifying whether or not the field must be filled in.
+     * Sets the Required flag, specifying whether the field must be filled in.
      *
-     * @param required if <code>true</code>, then the field must be filled in.
+     * @param required if <code>true</code>, then the field must be filled in
+     *
      * @return the edited {@link PdfFormField}.
      */
     public PdfFormField setRequired(boolean required) {
@@ -1171,19 +1193,20 @@ public class PdfFormField extends AbstractPdfFormField {
     }
 
     /**
-     * Gets the Required flag, specifying whether or not the field must be filled in.
+     * Gets the Required flag, specifying whether the field must be filled in.
      *
-     * @return <code>true</code> if the field must be filled in.
+     * @return <code>true</code> if the field must be filled in
      */
     public boolean isRequired() {
         return getFieldFlag(FF_REQUIRED);
     }
 
     /**
-     * Sets the NoExport flag, specifying whether or not exporting is forbidden.
+     * Sets the NoExport flag, specifying whether exporting is forbidden.
      *
      * @param noExport if <code>true</code>, then exporting is <em>forbidden</em>
-     * @return the edited {@link PdfFormField}.
+     *
+     * @return the edited {@link PdfFormField}
      */
     public PdfFormField setNoExport(boolean noExport) {
         return setFieldFlag(FF_NO_EXPORT, noExport);
@@ -1192,7 +1215,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Gets the NoExport attribute.
      *
-     * @return whether exporting the value following a form action is forbidden.
+     * @return whether exporting the value following a form action is forbidden
      */
     public boolean isNoExport() {
         return getFieldFlag(FF_NO_EXPORT);
@@ -1201,7 +1224,7 @@ public class PdfFormField extends AbstractPdfFormField {
     /**
      * Checks if the document that contains the field is created in reading mode.
      *
-     * @return true if reading mode is used, false otherwise.
+     * @return true if reading mode is used, false otherwise
      */
     public boolean isInReadingMode() {
         return getDocument().getWriter() == null;
@@ -1262,6 +1285,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * {@inheritDoc}
      *
      * @param color {@inheritDoc}
+     *
      * @return {@inheritDoc}
      */
     @Override
@@ -1283,33 +1307,12 @@ public class PdfFormField extends AbstractPdfFormField {
         }
     }
 
-    static String optionsArrayToString(PdfArray options) {
-        if (options == null || options.isEmpty()) {
-            return "";
-        }
-        StringBuilder sb = new StringBuilder();
-        for (PdfObject obj : options) {
-            if (obj.isString()) {
-                sb.append(((PdfString) obj).toUnicodeString()).append('\n');
-            } else if (obj.isArray()) {
-                PdfObject element = ((PdfArray) obj).size() > 1 ? ((PdfArray) obj).get(1) : null;
-                if (element != null && element.isString()) {
-                    sb.append(((PdfString) element).toUnicodeString()).append('\n');
-                }
-            } else {
-                sb.append('\n');
-            }
-        }
-        // last '\n'
-        sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
-    }
-
     /**
      * Adds a field to the children of the current field.
      *
-     * @param kid the field, which should become a child.
-     * @return the kid itself.
+     * @param kid the field, which should become a child
+     *
+     * @return the kid itself
      */
     AbstractPdfFormField setChildField(AbstractPdfFormField kid) {
         kid.setParent(this);
@@ -1321,7 +1324,7 @@ public class PdfFormField extends AbstractPdfFormField {
      * Replaces /Kids value with passed kids dictionaries, and keeps old flashed fields there.
      * Also updates childFields array for {@link PdfFormField}.
      *
-     * @param kids collection of new kids.
+     * @param kids collection of new kids
      */
     void replaceKids(Collection<AbstractPdfFormField> kids) {
         PdfArray kidsValues = new PdfArray();
@@ -1454,10 +1457,10 @@ public class PdfFormField extends AbstractPdfFormField {
         } else {
             if (PdfName.Ch.equals(formType)) {
                 if (this instanceof PdfChoiceFormField) {
-                    ((PdfChoiceFormField) this).setListSelected(new String[] {value}, false);
+                    ((PdfChoiceFormField) this).setListSelected(new String[]{value}, false);
                 } else {
                     PdfChoiceFormField choice = PdfFormCreator.createChoiceFormField(this.getPdfObject());
-                    choice.setListSelected(new String[] {value}, false);
+                    choice.setListSelected(new String[]{value}, false);
                 }
             } else {
                 put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
@@ -1477,7 +1480,9 @@ public class PdfFormField extends AbstractPdfFormField {
      * not all equal, then consider that this checkbox is mutually exclusive and do nothing, otherwise regenerate
      * normal appearance with value as on appearance state for all the widgets.
      *
-     * @param value not empty value different from "Off".
+     * @param value not empty value different from "Off"
+     *
+     * @return boolean value indicating whether checkbox appearance was generated
      */
     private boolean tryGenerateCheckboxAppearance(String value) {
         if (value == null || value.isEmpty() || PdfFormAnnotation.OFF_STATE_VALUE.equals(value)) {
@@ -1523,9 +1528,8 @@ public class PdfFormField extends AbstractPdfFormField {
 
     private boolean hasDefaultAppearance() {
         PdfName type = getFormType();
-        return type == PdfName.Tx
-                || type == PdfName.Ch
-                || (type == PdfName.Btn && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0);
+        return PdfName.Tx.equals(type) || PdfName.Ch.equals(type) ||
+                (PdfName.Btn.equals(type) && (getFieldFlags() & PdfButtonFormField.FF_PUSH_BUTTON) != 0);
     }
 
     private PdfName getUniqueFontNameForDR(PdfDictionary fontResources) {
@@ -1551,12 +1555,13 @@ public class PdfFormField extends AbstractPdfFormField {
      * Puts object directly to AcroForm dictionary.
      * It works much faster than consequent invocation of {@link PdfAcroForm#getAcroForm(PdfDocument, boolean)}
      * and {@link PdfAcroForm#getPdfObject()}.
+     *
      * <p>
      * Note, this method assume that Catalog already has AcroForm object.
      * {@link #addAcroFormToCatalog()} should be called explicitly.
      *
-     * @param acroFormKey    the key of the object.
-     * @param acroFormObject the object to add.
+     * @param acroFormKey the key of the object
+     * @param acroFormObject the object to add
      */
     private void putAcroFormObject(PdfName acroFormKey, PdfObject acroFormObject) {
         getDocument().getCatalog().getPdfObject().getAsDictionary(PdfName.AcroForm).put(acroFormKey, acroFormObject);

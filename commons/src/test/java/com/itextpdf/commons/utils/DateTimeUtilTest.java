@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,6 +24,7 @@ package com.itextpdf.commons.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -121,5 +122,36 @@ public class DateTimeUtilTest extends ExtendedITextTest {
         Date newDate = DateTimeUtil.addYearsToDate(originalDate.getTime(), -3);
 
         Assertions.assertEquals(1997, newDate.getYear());
+    }
+
+    @Test
+    public void serializeDateToISO8601Test () {
+        LocalDateTime localDateTime = LocalDateTime.of(2000, 1, 11, 12, 13, 14);
+        String actualString = DateTimeUtil.serializeDateToISO8601(localDateTime);
+        Assertions.assertEquals("2000-01-11T12:13:14", actualString);
+    }
+
+    @Test
+    public void ofEpochSecondUTCTest () {
+        //actual time 2001-09-09T01:46:40
+        long timeInSeconds = 1000000000;
+        LocalDateTime actualTime = DateTimeUtil.ofEpochSecondUTC(timeInSeconds);
+        Assertions.assertEquals(2001, actualTime.getYear());
+        Assertions.assertEquals(9, actualTime.getMonthValue());
+        Assertions.assertEquals(9, actualTime.getDayOfMonth());
+        Assertions.assertEquals(1, actualTime.getHour());
+        Assertions.assertEquals(46, actualTime.getMinute());
+        Assertions.assertEquals(40, actualTime.getSecond());
+    }
+
+    @Test
+    public void getLocalDateTimeTest () throws InterruptedException {
+        LocalDateTime expectedTime = LocalDateTime.now();
+        Thread.sleep(10);
+        LocalDateTime actualTime = DateTimeUtil.getLocalDateTime();
+        Assertions.assertEquals(expectedTime.getYear(), actualTime.getYear());
+        Assertions.assertEquals(expectedTime.getMonth(), actualTime.getMonth());
+        Assertions.assertEquals(expectedTime.getDayOfMonth(), actualTime.getDayOfMonth());
+        Assertions.assertTrue(expectedTime.isBefore(actualTime));
     }
 }

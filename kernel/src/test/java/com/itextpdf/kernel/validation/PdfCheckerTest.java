@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -182,6 +182,66 @@ public class PdfCheckerTest extends ExtendedITextTest {
             Assertions.assertEquals(
                     KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_VERSION_IDENTIFIER_REV,
                     e.getMessage());
+        }
+    }
+
+    @Test
+    public void invalidWtpdfMetadataTest() throws IOException {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "invalidWtpdfMetadata.xmp"));
+            PdfStream metadata = new PdfStream(bytes);
+            catalog.put(PdfName.Metadata, metadata);
+            catalog.put(PdfName.Type, PdfName.Metadata);
+            catalog.put(PdfName.Subtype, PdfName.XML);
+
+            Exception e = Assertions.assertThrows(PdfException.class, () ->
+                    PdfCheckersUtil.checkMetadata(catalog.getPdfObject(), PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY, EXCEPTION_SUPPLIER));
+            Assertions.assertEquals(
+                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_ACCESSIBILITY_METADATA,
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void invalidWtpdfMetadataReuseTest() throws IOException {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "invalidWtpdfMetadata.xmp"));
+            PdfStream metadata = new PdfStream(bytes);
+            catalog.put(PdfName.Metadata, metadata);
+            catalog.put(PdfName.Type, PdfName.Metadata);
+            catalog.put(PdfName.Subtype, PdfName.XML);
+
+            Exception e = Assertions.assertThrows(PdfException.class, () ->
+                    PdfCheckersUtil.checkMetadata(catalog.getPdfObject(), PdfConformance.WELL_TAGGED_PDF_FOR_REUSE, EXCEPTION_SUPPLIER));
+            Assertions.assertEquals(
+                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_REUSE_METADATA,
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void validWtpdfMetadataTest() throws IOException {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "validWtpdfMetadata.xmp"));
+            PdfStream metadata = new PdfStream(bytes);
+            catalog.put(PdfName.Metadata, metadata);
+            catalog.put(PdfName.Type, PdfName.Metadata);
+            catalog.put(PdfName.Subtype, PdfName.XML);
+
+            AssertUtil.doesNotThrow(() -> PdfCheckersUtil.checkMetadata(catalog.getPdfObject(),
+                    PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY, EXCEPTION_SUPPLIER));
         }
     }
 

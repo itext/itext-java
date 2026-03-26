@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -45,6 +45,8 @@ import java.nio.file.Paths;
 // Android-Conversion-Skip-Line (Security provider is required for working getFinalConnection through SSL on Android)
 // Android-Conversion-Replace import java.security.Security;
 // Android-Conversion-Replace import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -71,7 +73,7 @@ public class UrlUtilTest extends ExtendedITextTest {
         URLConnection finalConnection = null;
 
         try {
-            finalConnection = UrlUtil.getFinalConnection(initialUrl, 0, 0, null);
+            finalConnection = UrlUtil.getFinalConnection(initialUrl, 0, 0, null, null);
 
             Assertions.assertNotNull(finalConnection);
             Assertions.assertNotEquals(initialUrl, finalConnection.getURL());
@@ -85,7 +87,7 @@ public class UrlUtilTest extends ExtendedITextTest {
     // would be thrown.
     @Test
     public void getInputStreamOfFinalConnectionThrowExceptionTest() throws IOException {
-        URL invalidUrl = new URL("http://itextpdf");
+        URL invalidUrl = new URL("https://itextpdf");
 
         Assertions.assertThrows(UnknownHostException.class, () -> UrlUtil.getInputStreamOfFinalConnection(invalidUrl));
     }
@@ -94,11 +96,24 @@ public class UrlUtilTest extends ExtendedITextTest {
     // not be null.
     @Test
     public void getInputStreamOfFinalConnectionTest() throws IOException {
-        URL initialUrl = new URL("http://itextpdf.com");
+        URL initialUrl = new URL("https://itextpdf.com");
         InputStream streamOfFinalConnectionOfInvalidUrl = UrlUtil.getInputStreamOfFinalConnection(initialUrl);
 
         Assertions.assertNotNull(streamOfFinalConnectionOfInvalidUrl);
     }
+
+    // This test checks that when we pass valid url and trying get stream related to final redirected url, it would
+    // not be null.
+    @Test
+    public void getInputStreamOfFinalConnection2Test() throws IOException {
+        URL initialUrl = new URL("https://itextpdf.com");
+        Map<String , String> headers = new HashMap<String, String>();
+        headers.put("User-Agent", "Custom user agent");
+        InputStream streamOfFinalConnectionOfInvalidUrl = UrlUtil.getInputStreamOfFinalConnection(initialUrl, 2000, 2000, headers);
+
+        Assertions.assertNotNull(streamOfFinalConnectionOfInvalidUrl);
+    }
+
 
     @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)

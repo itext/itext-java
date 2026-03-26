@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -80,7 +80,7 @@ public final class PdfUA1FormulaChecker {
 
         /**
          * Creates a new {@link PdfUA1FormulaTagHandler} instance.
-         * @param context The validation context.
+         * @param context The validation context
          */
         public PdfUA1FormulaTagHandler(PdfUAValidationContext context) {
             super(context);

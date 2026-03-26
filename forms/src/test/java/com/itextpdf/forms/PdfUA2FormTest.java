@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -55,7 +55,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -70,6 +70,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Tag("IntegrationTest")
 public class PdfUA2FormTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/PdfUA2FormTest/";
+    public static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
     public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms//PdfUA2FormTest/";
 
     @BeforeAll
@@ -85,7 +86,7 @@ public class PdfUA2FormTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
                 PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
@@ -110,7 +111,7 @@ public class PdfUA2FormTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
                 PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
@@ -140,7 +141,7 @@ public class PdfUA2FormTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
                 PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
@@ -164,7 +165,7 @@ public class PdfUA2FormTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
                 PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
@@ -192,7 +193,7 @@ public class PdfUA2FormTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
                 PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(SOURCE_FOLDER + "FreeSans.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf",
                     "WinAnsi", EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
@@ -219,7 +220,7 @@ public class PdfUA2FormTest extends ExtendedITextTest {
     }
 
     private void compareAndValidate(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);

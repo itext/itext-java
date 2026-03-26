@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,7 +40,7 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
+import com.itextpdf.test.pdfa.VeraPdfValidator; 
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -64,14 +64,14 @@ public class PdfUA2FontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPuritan2WithUTF8Test() throws IOException, XMPException, InterruptedException {
-        String outFile = DESTINATION_FOLDER + "puritan2WithUTF8Test.pdf";
-        String cmpFile = SOURCE_FOLDER + "cmp_puritan2WithUTF8Test.pdf";
+    public void checkPuritanWithUTF8Test() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "puritanWithUTF8Test.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_puritanWithUTF8Test.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
                 PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "Puritan2.otf",
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "Puritan-Regular.otf",
                     PdfEncodings.UTF8, EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
@@ -128,7 +128,7 @@ public class PdfUA2FontTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFile, new WriterProperties().setPdfVersion(
                 PdfVersion.PDF_2_0)))){
             Document document = new Document(pdfDocument);
-            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "Open_Sans/OpenSans-Regular.ttf",
+            PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "OpenSans-Regular.ttf",
                     PdfEncodings.WINANSI, EmbeddingStrategy.FORCE_EMBEDDED);
             document.setFont(font);
             createSimplePdfUA2Document(pdfDocument);
@@ -170,7 +170,7 @@ public class PdfUA2FontTest extends ExtendedITextTest {
     }
 
     private void compareAndValidate(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);

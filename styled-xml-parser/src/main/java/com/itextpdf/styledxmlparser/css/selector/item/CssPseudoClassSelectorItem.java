@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,8 +23,12 @@
 package com.itextpdf.styledxmlparser.css.selector.item;
 
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
+import com.itextpdf.styledxmlparser.css.parse.CssSelectorParser;
 import com.itextpdf.styledxmlparser.css.selector.CssSelector;
+import com.itextpdf.styledxmlparser.css.selector.ICssSelector;
 import com.itextpdf.styledxmlparser.node.INode;
+
+import java.util.List;
 
 /**
  * {@link ICssSelectorItem} implementation for pseudo class selectors.
@@ -111,14 +115,10 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
                 return new CssPseudoClassNthOfTypeSelectorItem(arguments);
             case CommonCssConstants.NTH_LAST_OF_TYPE:
                 return new CssPseudoClassNthLastOfTypeSelectorItem(arguments);
+            case CommonCssConstants.HAS:
+                return createHasSelectorItem(arguments);
             case CommonCssConstants.NOT:
-                CssSelector selector = new CssSelector(arguments);
-                for (ICssSelectorItem item : selector.getSelectorItems()) {
-                    if (item instanceof CssPseudoClassNotSelectorItem || item instanceof CssPseudoElementSelectorItem) {
-                        return null;
-                    }
-                }
-                return new CssPseudoClassNotSelectorItem(selector);
+                return createNotSelectorItem(arguments);
             case CommonCssConstants.ROOT:
                 return CssPseudoClassRootSelectorItem.getInstance();
             case CommonCssConstants.LINK:
@@ -148,6 +148,31 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
             default:
                 return null;
         }
+    }
+
+    private static CssPseudoClassNotSelectorItem createNotSelectorItem(String arguments) {
+        CssSelector selector = new CssSelector(arguments);
+        for (ICssSelectorItem item : selector.getSelectorItems()) {
+            if (item instanceof CssPseudoClassNotSelectorItem || item instanceof CssPseudoElementSelectorItem) {
+                return null;
+            }
+        }
+        return new CssPseudoClassNotSelectorItem(selector);
+    }
+
+    private static CssPseudoClassHasSelectorItem createHasSelectorItem(String arguments) {
+        List<ICssSelector> hasSelectors = CssSelectorParser.parseCommaSeparatedSelectors(arguments);
+        for (ICssSelector hasSelector : hasSelectors) {
+            if (hasSelector instanceof CssSelector) {
+                for (ICssSelectorItem item : ((CssSelector) hasSelector).getSelectorItems()) {
+                    // Pseudo-elements are restricted as they don't make sense in :has() context.
+                    if (item instanceof CssPseudoElementSelectorItem || item instanceof CssPseudoClassHasSelectorItem) {
+                        return null;
+                    }
+                }
+            }
+        }
+        return new CssPseudoClassHasSelectorItem(hasSelectors, arguments);
     }
 
     /* (non-Javadoc)

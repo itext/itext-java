@@ -1,0 +1,8 @@
+Please notice that the following fonts are used with the mentioned below licenses.
+
+FreeSans.ttf | GPL license | GNU General Public License.txt | Based on "https://savannah.gnu.org/projects/freefont" (28.01.2026)
+NotoEmoji-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Emoji" (26.01.2026)
+NotoSansCJKtc-Light.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository "https://github.com/notofonts/noto-cjk/blob/main/Sans/OTF/TraditionalChinese/NotoSansCJKtc-Light.otf"
+NotoSans-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "https://github.com/googlefonts/noto-fonts"
+Puritan-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Puritan" (26.01.2026)
+SourceSerif4-Black.woff | OFL-1.1 |  LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Source+Serif+4" (26.01.2026)

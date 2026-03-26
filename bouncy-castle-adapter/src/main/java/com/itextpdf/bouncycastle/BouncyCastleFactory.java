@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -84,6 +84,7 @@ import com.itextpdf.bouncycastle.asn1.x509.GeneralNamesBC;
 import com.itextpdf.bouncycastle.asn1.x509.IssuingDistributionPointBC;
 import com.itextpdf.bouncycastle.asn1.x509.KeyPurposeIdBC;
 import com.itextpdf.bouncycastle.asn1.x509.KeyUsageBC;
+import com.itextpdf.bouncycastle.asn1.x509.NameConstraintsBC;
 import com.itextpdf.bouncycastle.asn1.x509.ReasonFlagsBC;
 import com.itextpdf.bouncycastle.asn1.x509.SubjectPublicKeyInfoBC;
 import com.itextpdf.bouncycastle.asn1.x509.TBSCertificateBC;
@@ -122,6 +123,7 @@ import com.itextpdf.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProvider
 import com.itextpdf.bouncycastle.operator.jcajce.JcaContentSignerBuilderBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilderBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilderBC;
+import com.itextpdf.bouncycastle.pkix.PKIXNameConstraintValidatorBC;
 import com.itextpdf.bouncycastle.tsp.TSPExceptionBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampRequestBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampRequestGeneratorBC;
@@ -178,6 +180,7 @@ import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IPKCSObjectIdentifiers;
 import com.itextpdf.commons.bouncycastle.asn1.pkcs.IRSASSAPSSParams;
+import com.itextpdf.commons.bouncycastle.asn1.pkix.IPKIXConstraintValidator;
 import com.itextpdf.commons.bouncycastle.asn1.tsp.ITSTInfo;
 import com.itextpdf.commons.bouncycastle.asn1.util.IASN1Dump;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
@@ -194,6 +197,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.IGeneralNames;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IIssuingDistributionPoint;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyPurposeId;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IKeyUsage;
+import com.itextpdf.commons.bouncycastle.asn1.x509.INameConstraints;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IReasonFlags;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
@@ -229,6 +233,7 @@ import com.itextpdf.commons.bouncycastle.crypto.modes.IGCMBlockCipher;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJcaPEMKeyConverter;
 import com.itextpdf.commons.bouncycastle.openssl.jcajce.IJceOpenSSLPKCS8DecryptorProviderBuilder;
+import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculator;
 import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
@@ -242,7 +247,6 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponseGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenGenerator;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -303,10 +307,12 @@ import org.bouncycastle.asn1.x509.CertificatePolicies;
 import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.NameConstraints;
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.bouncycastle.asn1.x509.TBSCertificate;
@@ -345,6 +351,7 @@ import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.pkix.PKIXNameConstraintValidator;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -1322,6 +1329,14 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IGeneralName createGeneralName(IASN1Encodable encodable) {
+        return new GeneralNameBC(GeneralName.getInstance(((ASN1EncodableBC) encodable).getEncodable()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IOtherHashAlgAndValue createOtherHashAlgAndValue(IAlgorithmIdentifier algorithmIdentifier,
                                                             IASN1OctetString octetString) {
         return new OtherHashAlgAndValueBC(algorithmIdentifier, octetString);
@@ -1643,6 +1658,16 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
      * {@inheritDoc}
      */
     @Override
+    public IRespID createRespID(Certificate certificate)
+            throws AbstractOperatorCreationException, AbstractOCSPException {
+        return new RespIDBC(
+                (SubjectPublicKeyInfoBC) createSubjectPublicKeyInfo(certificate.getPublicKey().getEncoded()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IBasicOCSPRespBuilder createBasicOCSPRespBuilder(IRespID respID) {
         return new BasicOCSPRespBuilderBC(respID);
     }
@@ -1752,7 +1777,8 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public ISubjectPublicKeyInfo createSubjectPublicKeyInfo(Object object) {
         return new SubjectPublicKeyInfoBC(object instanceof ASN1EncodableBC ?
-                ((ASN1EncodableBC) object).getEncodable() : object);
+                ((ASN1EncodableBC) object).getEncodable() :
+                object instanceof PublicKey ? ((PublicKey) object).getEncoded() : object);
     }
 
     /**
@@ -2013,5 +2039,21 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
             }
         }
         return qcStatements;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPKIXConstraintValidator createNameConstraintValidator() {
+        return new PKIXNameConstraintValidatorBC(new PKIXNameConstraintValidator());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public INameConstraints createNameConstraints(IASN1Primitive primitive) {
+        return new NameConstraintsBC(NameConstraints.getInstance(((ASN1PrimitiveBC) primitive).getPrimitive()));
     }
 }

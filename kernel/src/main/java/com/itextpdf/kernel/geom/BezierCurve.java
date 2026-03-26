@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -41,8 +41,8 @@ public class BezierCurve implements IShape {
      * through both (x2, y2) and (x3, y3) nor (x1, y1) = (x4, y4) we
      * use the square of the sum of the distances mentioned below in
      * compare to this field as the criterion of good approximation.
-     *     1. The distance between the line and (x2, y2)
-     *     2. The distance between the line and (x3, y3)
+     * 1. The distance between the line and (x2, y2)
+     * 2. The distance between the line and (x3, y3)
      */
     public static double distanceToleranceSquare = 0.025D;
 
@@ -82,7 +82,7 @@ public class BezierCurve implements IShape {
      * {@link #distanceToleranceManhattan}.
      *
      * @return {@link java.util.List} containing points of piecewise linear approximation
-     *         for this bezier curve.
+     * for this bezier curve.
      */
     public List<Point> getPiecewiseLinearApproximation() {
         List<Point> points = new ArrayList<>();
@@ -91,15 +91,47 @@ public class BezierCurve implements IShape {
         recursiveApproximation(controlPoints.get(0).getX(), controlPoints.get(0).getY(),
                 controlPoints.get(1).getX(), controlPoints.get(1).getY(),
                 controlPoints.get(2).getX(), controlPoints.get(2).getY(),
-                controlPoints.get(3).getX(), controlPoints.get(3).getY(), points);
+                controlPoints.get(3).getX(), controlPoints.get(3).getY(), points, curveCollinearityEpsilon,
+                distanceToleranceSquare, distanceToleranceManhattan);
+
+        points.add(controlPoints.get(controlPoints.size() - 1));
+        return points;
+    }
+
+    /**
+     * You can adjust precision of the approximation by varying the following
+     * parameters: {@link #curveCollinearityEpsilon}, {@link #distanceToleranceSquare},
+     * {@link #distanceToleranceManhattan}.
+     *
+     * @param curveCollinearityEpsilon   Epsilon for curve collinearity.
+     * @param distanceToleranceSquare    Distance tolerance square.
+     * @param distanceToleranceManhattan Distance tolerance Manhattan.
+     *
+     * @return {@link java.util.List} containing points of piecewise linear approximation
+     * for this bezier curve.
+     */
+    public List<Point> getPiecewiseLinearApproximation(
+            double curveCollinearityEpsilon,
+            double distanceToleranceSquare,
+            double distanceToleranceManhattan
+    ) {
+        List<Point> points = new ArrayList<>();
+        points.add(controlPoints.get(0));
+
+        recursiveApproximation(controlPoints.get(0).getX(), controlPoints.get(0).getY(),
+                controlPoints.get(1).getX(), controlPoints.get(1).getY(),
+                controlPoints.get(2).getX(), controlPoints.get(2).getY(),
+                controlPoints.get(3).getX(), controlPoints.get(3).getY(), points, curveCollinearityEpsilon,
+                distanceToleranceSquare, distanceToleranceManhattan);
 
         points.add(controlPoints.get(controlPoints.size() - 1));
         return points;
     }
 
     // Based on the De Casteljau's algorithm
-    private void recursiveApproximation(double x1, double y1, double x2, double y2,
-                                        double x3, double y3, double x4, double y4, List<Point> points) {
+    private static void recursiveApproximation(double x1, double y1, double x2, double y2,
+            double x3, double y3, double x4, double y4, List<Point> points,
+            double curveCollinearityEpsilon, double distanceToleranceSquare, double distanceToleranceManhattan) {
         // Subdivision using the De Casteljau's algorithm (t = 0.5)
         double x12 = (x1 + x2) / 2;
         double y12 = (y1 + y2) / 2;
@@ -142,7 +174,9 @@ public class BezierCurve implements IShape {
             }
         }
 
-        recursiveApproximation(x1, y1, x12, y12, x123, y123, x1234, y1234, points);
-        recursiveApproximation(x1234, y1234, x234, y234, x34, y34, x4, y4, points);
+        recursiveApproximation(x1, y1, x12, y12, x123, y123, x1234, y1234, points,
+                curveCollinearityEpsilon, distanceToleranceSquare, distanceToleranceManhattan);
+        recursiveApproximation(x1234, y1234, x234, y234, x34, y34, x4, y4, points,
+                curveCollinearityEpsilon, distanceToleranceSquare, distanceToleranceManhattan);
     }
 }

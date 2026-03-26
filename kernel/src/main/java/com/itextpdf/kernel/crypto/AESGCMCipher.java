@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -72,13 +72,11 @@ public class AESGCMCipher {
      * @return the new buffer with the result
      */
     public byte[] update(byte[] b, int off, int len) {
-        byte[] cipherBuffer = new byte[cipher.getUpdateOutputSize(len)];
         try {
-            cipher.processBytes(b, off, len, cipherBuffer, 0);
-        } catch (GeneralSecurityException e) {
+            return cipher.processBytes(b, off, len);
+        } catch (Exception e) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }
-        return cipherBuffer;
     }
 
     /**
@@ -89,10 +87,8 @@ public class AESGCMCipher {
      * @return final bytes array
      */
     public byte[] doFinal() {
-        byte[] cipherBuffer = new byte[cipher.getOutputSize(0)];
         try {
-            cipher.doFinal(cipherBuffer, 0);
-            return cipherBuffer;
+            return cipher.doFinal();
         } catch (GeneralSecurityException | IllegalArgumentException e) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
         }

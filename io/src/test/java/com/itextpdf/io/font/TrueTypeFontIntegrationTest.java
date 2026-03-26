@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -40,12 +40,11 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
-    private static final String SHARED_FOLDER = "./src/test/resources/com/itextpdf/io/font/sharedFontsResourceFiles/";
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/font/TrueTypeFontIntegrationTest/";
+    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
 
     @Test
     public void simpleSubsetTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SHARED_FOLDER + "NotoSans-Regular.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "NotoSans-Regular.ttf"));
         TrueTypeFont font = FontProgramFactory.createTrueTypeFont(fontBytes, false);
 
         Set<Integer> usedGlyphs = new HashSet<Integer>();
@@ -56,7 +55,7 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
         byte[] subsetFontBytes = font.getSubset(usedGlyphs, true);
 
         TrueTypeFont subsetFont = FontProgramFactory.createTrueTypeFont(subsetFontBytes, true);
-        Assertions.assertEquals(3271, font.bBoxes.length);
+        Assertions.assertEquals(4702, font.bBoxes.length);
         Assertions.assertEquals(39, subsetFont.bBoxes.length);
         Assertions.assertNotNull(subsetFont.bBoxes[36]);
         Assertions.assertNull(subsetFont.bBoxes[35]);
@@ -64,7 +63,7 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void simpleSubsetWithoutTableSubsetTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SHARED_FOLDER + "NotoSans-Regular.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "NotoSans-Regular.ttf"));
         TrueTypeFont font = FontProgramFactory.createTrueTypeFont(fontBytes, false);
 
         Set<Integer> usedGlyphs = new HashSet<Integer>();
@@ -75,7 +74,7 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
         byte[] subsetFontBytes = font.getSubset(usedGlyphs, false);
 
         TrueTypeFont subsetFont = FontProgramFactory.createTrueTypeFont(subsetFontBytes, false);
-        Assertions.assertEquals(3271, font.bBoxes.length);
+        Assertions.assertEquals(4702, font.bBoxes.length);
         Assertions.assertEquals(39, subsetFont.bBoxes.length);
         Assertions.assertNotNull(subsetFont.bBoxes[36]);
         Assertions.assertNull(subsetFont.bBoxes[35]);
@@ -83,11 +82,11 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void simpleSubsetMergeTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset1.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset1.ttf"));
         // Subset for XBC
         TrueTypeFont subset1 = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset2.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset2.ttf"));
         // Subset for ABC
         TrueTypeFont subset2 = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
@@ -114,13 +113,13 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
     public void noCommonCmapPdfTrueTypeMergeTest() throws IOException {
         // subsets are created using fonttools Python lib with the following command
         // fonttools subset ./NotoSans-Regular.ttf --text="ABC" --retain-gids --layout-features='*' --notdef-glyph --output-file=subset_abc.ttf
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_abc.ttf"));
         TrueTypeFont subsetAbc = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_def.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_def.ttf"));
         TrueTypeFont subsetDef = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_xyz.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_xyz.ttf"));
         TrueTypeFont subsetXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
         Map<TrueTypeFont, Set<Integer>> toMerge = new HashMap<TrueTypeFont, Set<Integer>>();
@@ -153,16 +152,16 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
     public void commonCmapPdfTrueTypeMergeTest() throws IOException {
         // subsets are created using fonttools Python lib with the following command
         // fonttools subset ./NotoSans-Regular.ttf --text="ABC" --retain-gids --layout-features='*' --notdef-glyph --output-file=subset_abc.ttf
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_abc.ttf"));
         TrueTypeFont subsetAbc = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc_def_xyz.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_abc_def_xyz.ttf"));
         TrueTypeFont subsetAbcDefXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_def.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_def.ttf"));
         TrueTypeFont subsetDef = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_xyz.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_xyz.ttf"));
         TrueTypeFont subsetXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
         Map<TrueTypeFont, Set<Integer>> toMerge = new HashMap<TrueTypeFont, Set<Integer>>();
@@ -207,13 +206,13 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
     public void noCommonCmapPdfType0MergeTest() throws IOException {
         // subsets are created using fonttools Python lib with the following command
         // fonttools subset ./NotoSans-Regular.ttf --text="ABC" --retain-gids --layout-features='*' --notdef-glyph --output-file=subset_abc.ttf
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_abc.ttf"));
         TrueTypeFont subsetAbc = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_def.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_def.ttf"));
         TrueTypeFont subsetDef = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_xyz.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_xyz.ttf"));
         TrueTypeFont subsetXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
         Map<TrueTypeFont, Set<Integer>> toMerge = new HashMap<TrueTypeFont, Set<Integer>>();
@@ -253,13 +252,13 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
     public void noCommonCmapUnknownPdfTypeMergeTest() throws IOException {
         // subsets are created using fonttools Python lib with the following command
         // fonttools subset ./NotoSans-Regular.ttf --text="ABC" --retain-gids --layout-features='*' --notdef-glyph --output-file=subset_abc.ttf
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_abc.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_abc.ttf"));
         TrueTypeFont subsetAbc = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_def.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_def.ttf"));
         TrueTypeFont subsetDef = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
-        fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subset_xyz.ttf"));
+        fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subset_xyz.ttf"));
         TrueTypeFont subsetXyz = FontProgramFactory.createTrueTypeFont(fontBytes, true);
 
         Map<TrueTypeFont, Set<Integer>> toMerge = new HashMap<TrueTypeFont, Set<Integer>>();
@@ -290,7 +289,7 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void tryToReadFontSubsetWithoutGlyfTableTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetWithoutGlyfTable.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subsetWithoutGlyfTable.ttf"));
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () ->
             FontProgramFactory.createTrueTypeFont(fontBytes, true));
         String exp = MessageFormatUtil.format(IoExceptionMessageConstant.TABLE_DOES_NOT_EXIST, "glyf");
@@ -299,13 +298,13 @@ public class TrueTypeFontIntegrationTest extends ExtendedITextTest {
 
     @Test
     public void readFontSubsetWithoutOs2TableTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetWithoutOsTable.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subsetWithoutOsTable.ttf"));
         AssertUtil.doesNotThrow(() -> FontProgramFactory.createTrueTypeFont(fontBytes, true));
     }
 
     @Test
     public void tryToReadFontSubsetWithoutOs2TableTest() throws IOException {
-        byte[] fontBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "subsetWithoutOsTable.ttf"));
+        byte[] fontBytes = Files.readAllBytes(Paths.get(FONT_FOLDER + "subsetWithoutOsTable.ttf"));
 
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class, () ->
                 FontProgramFactory.createTrueTypeFont(fontBytes, false));

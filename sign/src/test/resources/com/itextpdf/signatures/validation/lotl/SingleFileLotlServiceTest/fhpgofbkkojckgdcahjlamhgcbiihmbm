@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns4="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" Id="TrustServiceStatusList" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>5</TSLVersionIdentifier>
+        <TSLSequenceNumber>6</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/UYlist</TSLType>
+        <SchemeOperatorName>
+            <Name xml:lang="es">AGESIC</Name>
+            <Name xml:lang="en">AGESIC</Name>
+            <Name xml:lang="pt">AGESIC</Name>
+            <Name xml:lang="gn">AGESIC</Name>
+        </SchemeOperatorName>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="es">
+                    <StreetAddress>Liniers 1324 piso 4</StreetAddress>
+                    <Locality>Montevideo</Locality>
+                    <StateOrProvince>Montevideo</StateOrProvince>
+                    <PostalCode>11000</PostalCode>
+                    <CountryName>UY</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>Liniers 1324 piso 4</StreetAddress>
+                    <Locality>Montevideo</Locality>
+                    <StateOrProvince>Montevideo</StateOrProvince>
+                    <PostalCode>11000</PostalCode>
+                    <CountryName>UY</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="pt">
+                    <StreetAddress>Liniers 1324 piso 4</StreetAddress>
+                    <Locality>Montevideo</Locality>
+                    <StateOrProvince>Montevideo</StateOrProvince>
+                    <PostalCode>11000</PostalCode>
+                    <CountryName>UY</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="gn">
+                    <StreetAddress>Liniers 1324 piso 4</StreetAddress>
+                    <Locality>Montevideo</Locality>
+                    <StateOrProvince>Montevideo</StateOrProvince>
+                    <PostalCode>11000</PostalCode>
+                    <CountryName>UY</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="en">mailto:identificacion.electronica@agesic.gub.uy</URI>
+                <URI xml:lang="es">mailto:identificacion.electronica@agesic.gub.uy</URI>
+                <URI xml:lang="pt">mailto:identificacion.electronica@agesic.gub.uy</URI>
+                <URI xml:lang="gn">mailto:identificacion.electronica@agesic.gub.uy</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeName>
+            <Name xml:lang="en">UY: The trust list contains information related to the roots of trust of the national PKI in Uruguay according to Law 18600 of September 21, 2009.</Name>
+            <Name xml:lang="es">UY: La lista de confianza contine informción relacionada con las raíces de confianza de la PKI nacional en Uruguay de acuerdo a la Ley 18600 de 21 de setiembre de 2009.</Name>
+            <Name xml:lang="pt">UY: A lista de confiança contém informações relacionadas às raízes de confiança da PKI nacional no Uruguai de acordo com a Lei 18.600 de 21 de setembro de 2009.</Name>
+            <Name xml:lang="gn">UY: Ko lista de fideicomisos oreko marandu ojoajúva raíz de confianza PKI nacional Uruguay-pe he'iháicha Ley 18600 21 de setiembre 2009.</Name>
+        </SchemeName>
+        <SchemeInformationURI>
+            <URI xml:lang="en">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+            <URI xml:lang="es">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+            <URI xml:lang="pt">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+            <URI xml:lang="gn">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>http://uri.etsi.org/TrstSvc/TrustedList/StatusDetn/UYdetermination</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/UY</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>UY</SchemeTerritory>
+        <PolicyOrLegalNotice>
+            <TSLLegalNotice xml:lang="en">The legal framework applicable to the present implementation of this TSL (Trusted-Service Status List) is the Mercosur Agreement and the policies established by the Electronic Certification Unit</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="es">El marco legal aplicable a la presente implementación de esta TSL (Trusted-Service Status List) es el Acuerdo del Mercosur y las políticas establecidas por la Unidad de Certificación Electrónica</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="pt">O marco legal aplicável à presente implementação desta TSL (Trusted-Service Status List) é o Acordo Mercosul e as políticas estabelecidas pela Unidade de Certificação Eletrônica</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="gn">El marco legal aplicable a la presente implementación de esta TSL (Trusted-Service Status List) es el Acuerdo del Mercosur y las políticas establecidas por la Unidad de Certificación Electrónica</TSLLegalNotice>
+        </PolicyOrLegalNotice>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <PointersToOtherTSL>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>http://www.gub.uy/unidad-certificacion-electronica/sites/unidad-certificacion-electronica/files/2022-11/tsl_mb.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/MBlistofthelists</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>MB</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns4:MimeType>application/vnd.etsi.tsl+xml</ns4:MimeType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="en">Mercosur Secretariat</Name>
+                            <Name xml:lang="es">Secretaría de Mercosur</Name>
+                            <Name xml:lang="pt">Secretaria do Mercosul</Name>
+                            <Name xml:lang="gn">Secretaría del Mercosur-pe</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTypeCommunityRules>
+                            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                            <URI xml:lang="pt">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                            <URI xml:lang="es">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                            <URI xml:lang="gn">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/MB</URI>
+                        </SchemeTypeCommunityRules>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>MIIFtTCCA52gAwIBAgIQbs4yVC5nWaFbP66tp0hSejANBgkqhkiG9w0BAQsFADBtMTwwOgYDVQQDEzNBdXRvcmlkYWQgQ2VydGlmaWNhZG9yYSBkZWwgTWluaXN0ZXJpbyBkZWwgSW50ZXJpb3IxIDAeBgNVBAoTF01pbmlzdGVyaW8gZGVsIEludGVyaW9yMQswCQYDVQQGEwJVWTAeFw0xODA3MDYxODAyMjFaFw0yMzA3MDYxODAyMjFaMEgxCzAJBgNVBAYTAlVZMRQwEgYDVQQFEwtETkkzNDE5OTUwODEjMCEGA1UEAwwaSEVCRVJUIEpVTElPIFBBR1VBUyBQQVNUT1IwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCqOzfXHqaNYm8etoGZsGw5RArXmDU3rj1g9T8c5JHOh+DnlLnOXjkVaX7XjRSbMi3HWhM6vHoBPAFa4mRVuNuBUXxXQMR/2N7w0YkzQf5kRhqB+o8oA3rIyY5InFnDlozajAjT7SEpE/CNbVxrA9T3B9leOHNZtsvGiMZ8YtKnSJz5U8wJ3oyTkak0WV2LajHEo8wooBsmNI2nCIIXdG80QNUi6qvpp1H+iVGAZnFq3H+vwzkz0xUOTp/OGQmjLEQHoqGJruDgBoSAi14954aF9lyQD8unqE4nKRTf46TcziFBC5qTy2g6cHv19iTaZuTm2iXu0fVLeL2dnI3dcdrrAgMBAAGjggF0MIIBcDAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIE8DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwHQYDVR0OBBYEFMnqKm76XDxJVhaszcsRdwTKquuJME0GCCsGAQUFBwEBBEEwPzA9BggrBgEFBQcwAoYxaHR0cHM6Ly9jYS5taW50ZXJpb3IuZ3ViLnV5L2NlcnRpZmljYWRvcy9NSUNBLmNlcjAfBgNVHSMEGDAWgBSfszQ8mzqpYBDKyFkEbe2tYixI/zBqBgNVHSAEYzBhMF8GC2CGWoTirh2EiAUCMFAwTgYIKwYBBQUHAgEWQnd3dy51Y2UuZ3ViLnV5L2luZm9ybWFjaW9uLXRlY25pY2EvcG9saXRpY2FzL2NwX3BlcnNvbmFfZmlzaWNhLnBkZjA5BgNVHR8EMjAwMC6gLKAqhihodHRwczovL2NhLm1pbnRlcmlvci5ndWIudXkvY3Jscy9jcmwuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQA5JxF5rC8syHkljTe3ZjLVlPxOPXDUv2Nw165N8H16n2nmPrs8y+PL2/+KV7OgRyWbC7w47NwHnl1IAWnenXZMJ2uLvPnLUyaqw1rgd5SGJ9WFMfc/3uS0mmPg028oar79UUG/9A0Xyft+gz0KutFNjqxVeer1NnaDa+exVarzML+h7r3uxHwzYXcmeR+0acmmwYWSlClpKBA9HyTE+V+PRGhChXAwx77ZmTL2fBIh/l2gsIOYLwXabHtX9dQ6w7bNhSPUNzutrTKHfiajsDlyUT48nvy0DeiG/ypyE06Zv50mFFZOUVHo3Mgp9B57wzox8cxm12RVpB88Ek516icpRMFp8gY1WTeQqh1ebyoQtGM3Bj8TbKDK4RqIEnipsI4NOmPrAf8f3x4RF31UuN/TZs+0nlF8n0zz5cTCflQNIZeQU+ExLK3XfYhDMRYy1JtSpifN/FelE9Ft+qKr4EHI1IBQUUHQKCXLPWjIfb5lQqK5gB4uUKZ6QHxvh43H5cBNW39H7Wz6vpckbaReMJdjOWDRuhHbrdIE8jZHSo6OkA64+9V8SYLiQPYfUAI6Wz0Vn/2bXqneJjl/7LpmiwjDbx3VTHQQQj8zuHOlV3QDOH82PzZnVK6yYxMgJ8UG5ix+m17PCbOY1pgmGroXWCc3ZFqjAjVfV24mOD0BKAdkuQ==</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://www.gub.uy/unidad-certificacion-electronica/sites/unidad-certificacion-electronica/files/2022-11/tsl_uy.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/UYlist</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>UY</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns4:MimeType>application/vnd.etsi.tsl+xml</ns4:MimeType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="en">UCE</Name>
+                            <Name xml:lang="es">UCE</Name>
+                            <Name xml:lang="pt">UCE</Name>
+                            <Name xml:lang="gn">UCE</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTypeCommunityRules>
+                            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/UY</URI>
+                            <URI xml:lang="es">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/UY</URI>
+                            <URI xml:lang="pt">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/UY</URI>
+                            <URI xml:lang="gn">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/UY</URI>
+                        </SchemeTypeCommunityRules>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+        </PointersToOtherTSL>
+        <ListIssueDateTime>2025-06-12T03:00:00Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2025-12-12T02:59:59Z</dateTime>
+        </NextUpdate>
+        <DistributionPoints>
+            <URI>https://www.gub.uy/unidad-certificacion-electronica/sites/unidad-certificacion-electronica/files/2022-11/tsl_uy.xml</URI>
+        </DistributionPoints>
+    </SchemeInformation>
+    <TrustServiceProviderList>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="es">AGESIC</Name>
+                    <Name xml:lang="en">AGESIC</Name>
+                    <Name xml:lang="pt">AGESIC</Name>
+                    <Name xml:lang="gn">AGESIC</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">AGESIC</Name>
+                    <Name xml:lang="pt">AGESIC</Name>
+                    <Name xml:lang="es">AGESIC</Name>
+                    <Name xml:lang="gn">AGESIC</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Liniers 1324 Piso 3</StreetAddress>
+                            <Locality>Montevideo</Locality>
+                            <StateOrProvince>Montevideo</StateOrProvince>
+                            <PostalCode>11000</PostalCode>
+                            <CountryName>UY</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="es">
+                            <StreetAddress>Liniers 1324 Piso 3</StreetAddress>
+                            <Locality>Montevideo</Locality>
+                            <StateOrProvince>Montevideo</StateOrProvince>
+                            <PostalCode>11000</PostalCode>
+                            <CountryName>UY</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="pt">
+                            <StreetAddress>Liniers 1324 Piso 3</StreetAddress>
+                            <Locality>Montevideo</Locality>
+                            <StateOrProvince>Montevideo</StateOrProvince>
+                            <PostalCode>11000</PostalCode>
+                            <CountryName>UY</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="gn">
+                            <StreetAddress>Liniers 1324 Piso 3</StreetAddress>
+                            <Locality>Montevideo</Locality>
+                            <StateOrProvince>Montevideo</StateOrProvince>
+                            <PostalCode>11000</PostalCode>
+                            <CountryName>UY</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+                        <URI xml:lang="es">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+                        <URI xml:lang="pt">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+                        <URI xml:lang="gn">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+                    <URI xml:lang="pt">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+                    <URI xml:lang="es">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+                    <URI xml:lang="gn">https://www.gub.uy/unidad-certificacion-electronica/</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">National Root Certification Authority - Uruguay</Name>
+                            <Name xml:lang="pt">Autoridade Nacional de Certificação Raiz - Uruguai</Name>
+                            <Name xml:lang="es">Autoridad Certificadora Raíz Nacional - Uruguay</Name>
+                            <Name xml:lang="gn">Autoridad Nacional de Certificación de Raíz - Uruguay</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>C=UY, O=AGESIC, CN=Autoridad Certificadora Raíz Nacional de Uruguay</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>kp6RuFUoPXdCLDOlmF/QyayNtaM=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2022-11-07T03:00:00Z</StatusStartingTime>
+                        <TSPServiceDefinitionURI>
+                            <URI xml:lang="en">https://www.gub.uy/unidad-certificacion-electronica/comunicacion/publicaciones/declaracion-de-practicas-de-certificacion-de-la-autoridad-1</URI>
+                            <URI xml:lang="pt">https://www.gub.uy/unidad-certificacion-electronica/comunicacion/publicaciones/declaracion-de-practicas-de-certificacion-de-la-autoridad-1</URI>
+                            <URI xml:lang="es">https://www.gub.uy/unidad-certificacion-electronica/comunicacion/publicaciones/declaracion-de-practicas-de-certificacion-de-la-autoridad-1</URI>
+                            <URI xml:lang="gn">https://www.gub.uy/unidad-certificacion-electronica/comunicacion/publicaciones/declaracion-de-practicas-de-certificacion-de-la-autoridad-1</URI>
+                        </TSPServiceDefinitionURI>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/NationalRootCA-QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">National Root Certification Authority - Uruguay</Name>
+<Name xml:lang="pt">Autoridade Nacional de Certificação Raiz - Uruguai</Name>
+<Name xml:lang="es">Autoridad Certificadora Raíz Nacional - Uruguay</Name>
+<Name xml:lang="gn">Autoridad Nacional de Certificación de Raíz - Uruguay</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>C=UY, O=AGESIC, CN=Autoridad Certificadora Raíz Nacional de Uruguay</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>kp6RuFUoPXdCLDOlmF/QyayNtaM=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                            <StatusStartingTime>2011-11-03T15:02:49Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+    </TrustServiceProviderList>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="xmldsig-871c7d77-f36d-470a-8c37-908903b3db68">
+<ds:SignedInfo>
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+<ds:Reference Id="xmldsig-871c7d77-f36d-470a-8c37-908903b3db68-ref0" URI="">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+<ds:DigestValue>mEitzmTWBx7preWyNXzYd6L8kgUPXBA1txSd0Oj5Y8k=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xmldsig-871c7d77-f36d-470a-8c37-908903b3db68-signedprops">
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+<ds:DigestValue>US3zPlfGwDAAbCwERqO2vaECDjx4abewsq/a8dagt5s=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue Id="xmldsig-871c7d77-f36d-470a-8c37-908903b3db68-sigvalue">
+At6s7OBvqnyZJ+C36Z/cNay9T82UntsFIkAwMGkkNvtZ3POQfQ+im1uM7HDFjFXK+5O+9uT2Fr84
+Kws1zno1DEfXI4Q/3V1iGbGb1gHnDIuSbBVTP6ULR2XfQGrMTJjtwE0DzeF/J9KyyvzOqa8rMIIk
+8Ar+MCF+KOVEDSVRhgR847W3a7/W6eQ2Zn1m2fJ0XAPlIJJzYwR4TQkQZ+vd3Rfi7ULFTPlGr61n
+sMlGsioRf8prcCsdji9cQveD87YKKNnJbsMMaZgnsDsxLKsE+I9AnXFObJms2arQS3SYOiA1FA9i
+aHTm3HY7AE3ldnF908wmLV9Mk3OiYZcVlVhFsQ==
+</ds:SignatureValue>
+<ds:KeyInfo>
+<ds:X509Data>
+<ds:X509Certificate>
+MIIFsDCCA5igAwIBAgIQEbTm669/QzljW76Ha7c78zANBgkqhkiG9w0BAQsFADBtMTwwOgYDVQQD
+EzNBdXRvcmlkYWQgQ2VydGlmaWNhZG9yYSBkZWwgTWluaXN0ZXJpbyBkZWwgSW50ZXJpb3IxIDAe
+BgNVBAoTF01pbmlzdGVyaW8gZGVsIEludGVyaW9yMQswCQYDVQQGEwJVWTAeFw0yMjEwMjgxMTM1
+MzVaFw0yNzEwMjgxMTM1MzVaMEMxCzAJBgNVBAYTAlVZMRQwEgYDVQQFEwtETkkxNDkxODcxMDEe
+MBwGA1UEAwwVREFOSUVMIE1PUkRFQ0tJIFBVUEtPMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+CgKCAQEAqGgkil8nMl6I+QEVPlPcn0WpFn/AuR/x7VyzzrwONRCUX5CfRVkoF1Om+UaU+AuMpA2m
+EeUxxhEGcK/T306zMn/tLgHzXyaDxwUJ3dM2rO5ouOZnJDcX4EaTgfv32xNIxidCcBVKrtpTSrE8
+Uh9KtjOp+YE/rx6ING+Ms51yUM9/Q3Fz7Fl/uInuFeTTCetV01mmLpWMbxNyzyp9lwA4BcsrI8Gl
+C0umz+d/8DW+LG5BGmrT4iisUUUOgoYzLjTFXyVSw3QZof6Da4HWk4o5qw8oNBzT1c1+l5SKTYuC
++4ABDwBydPYaoEMcuM/uJ3GBv1LEXKCaZBtZpIlH2o4h8QIDAQABo4IBdDCCAXAwCQYDVR0TBAIw
+ADAOBgNVHQ8BAf8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMB0GA1UdDgQW
+BBRWN450nJy9hJTDPQpZQvyAbFm7GjBNBggrBgEFBQcBAQRBMD8wPQYIKwYBBQUHMAKGMWh0dHBz
+Oi8vY2EubWludGVyaW9yLmd1Yi51eS9jZXJ0aWZpY2Fkb3MvTUlDQS5jZXIwHwYDVR0jBBgwFoAU
+n7M0PJs6qWAQyshZBG3trWIsSP8wagYDVR0gBGMwYTBfBgtghlqE4q4dhIgFAjBQME4GCCsGAQUF
+BwIBFkJ3d3cudWNlLmd1Yi51eS9pbmZvcm1hY2lvbi10ZWNuaWNhL3BvbGl0aWNhcy9jcF9wZXJz
+b25hX2Zpc2ljYS5wZGYwOQYDVR0fBDIwMDAuoCygKoYoaHR0cHM6Ly9jYS5taW50ZXJpb3IuZ3Vi
+LnV5L2NybHMvY3JsLmNybDANBgkqhkiG9w0BAQsFAAOCAgEAuyOOA2bJvnutmUd2iTOHp0fjFHG+
+1Y+94q6KaEH1xc92rKk07fwvrZlP4SBSXCJPK9VrOsEKoXCH39Xpz6FkL1dyPbd0i4t6jY6GWxAI
+zk2ZX13R4xpZYwUOephVe8sNBmTxt4ghUe73nnU1+zrSRxGAyOt8mp3jzEtUz05tNqQq5DzvGUR8
+4YfD83KYRs3Q7EO2cyAmMTRJ8yTnlAL0osYBmL6X/MRdl/7v1SeP5hvmR5R2nkSKciuDU0glFZVz
+FmgFmMf5hLt7pFGcAooiFkpxKh9p4WM9BM85okpeFk4Pi1/hmhgKAF19t7j7XRRLFihq+bxcqEkC
+g3MZjWr+1vWlyevEV8hcF2J8QlTcm8oM9bkWyz64NXeLPaV+54g7EScEnLwA+AxB1alJfeLbYpqJ
+gtIxiWtDkZYlB2linKHhoRAHBFsrcPYxzaEJJXRbp992cP+UYR77VjO2eCiYxyhIYDDWT1f2vCgX
+ts+ftYtVLDK5ijn6F3Cup++dueyWav7c9sMgjRtqs0Pv0ybesKoJptewPP0L8IilpRQ0Hx6vqG6V
+ZYaM4SvIiO0rovMdIAIKuuj0AGBYhDa72U9YovbujpKruvCzfW9+V+TcgRqgTfTXDS9+PztHkvO9
+CHa9CdUmbtgqiEcsBL2itBWlHpmwGPTHij05OjS+d/uQuzU=
+</ds:X509Certificate>
+</ds:X509Data>
+</ds:KeyInfo>
+<ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" Target="#xmldsig-871c7d77-f36d-470a-8c37-908903b3db68"><ns3:SignedProperties Id="xmldsig-871c7d77-f36d-470a-8c37-908903b3db68-signedprops"><ns3:SignedSignatureProperties><ns3:SigningTime>2025-06-16T18:56:21.914-03:00</ns3:SigningTime><ns3:SigningCertificate><ns3:Cert><ns3:CertDigest><ns2:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ns2:DigestValue>OiZa86/zeXqQyl6JyzRzQjStFfwd6w4qs5thPawupDw=</ns2:DigestValue></ns3:CertDigest><ns3:IssuerSerial><ns2:X509IssuerName>C=UY,O=Ministerio del Interior,CN=Autoridad Certificadora del Ministerio del Interior</ns2:X509IssuerName><ns2:X509SerialNumber>23536172990020597303821786635820284915</ns2:X509SerialNumber></ns3:IssuerSerial></ns3:Cert></ns3:SigningCertificate></ns3:SignedSignatureProperties><ns3:SignedDataObjectProperties><ns3:DataObjectFormat ObjectReference="#xmldsig-871c7d77-f36d-470a-8c37-908903b3db68-ref0"><ns3:MimeType>text/xml</ns3:MimeType></ns3:DataObjectFormat></ns3:SignedDataObjectProperties></ns3:SignedProperties></xades:QualifyingProperties></ds:Object>
+</ds:Signature></TrustServiceStatusList>

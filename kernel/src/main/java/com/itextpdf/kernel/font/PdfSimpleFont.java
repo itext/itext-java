@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -51,7 +51,8 @@ import org.slf4j.LoggerFactory;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
-
+    @Deprecated
+    // Make private
     protected FontEncoding fontEncoding;
 
     /**
@@ -62,11 +63,6 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
      * The array used with single byte encodings.
      */
     protected byte[] usedGlyphs = new byte[PdfFont.SIMPLE_FONT_MAX_CHAR_CODE_VALUE + 1];
-
-    /**
-     * Currently only exists for the fonts that are parsed from the document.
-     * In the future, we might provide possibility to add custom mappings after a font has been created from a font file.
-     */
     protected CMapToUnicode toUnicode;
 
     protected PdfSimpleFont(PdfDictionary fontDictionary) {
@@ -172,6 +168,18 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
     }
 
     /**
+     * Set the font encoding.
+     *
+     * @param fontEncoding the {@link FontEncoding} to set
+     */
+    public final void setFontEncoding(FontEncoding fontEncoding) {
+        this.fontEncoding = fontEncoding;
+        if (toUnicode == null && fontEncoding != null && !fontEncoding.isFontSpecific()) {
+            this.toUnicode = CMapToUnicode.createToUnicodeCmap(this.fontEncoding);
+        }
+    }
+
+    /**
      * Get the mapping of character codes to unicode values based on /ToUnicode entry of font dictionary.
      *
      * @return the {@link CMapToUnicode} built based on /ToUnicode, or null if /ToUnicode is not available
@@ -248,6 +256,7 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 }
             }
         }
+
         bytes = ArrayUtil.shortenArray(bytes, ptr);
         for (byte b : bytes) {
             usedGlyphs[b & 0xff] = 1;

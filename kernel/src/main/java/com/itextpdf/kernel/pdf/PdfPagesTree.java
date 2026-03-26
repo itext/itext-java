@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2025 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,9 +23,9 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.datastructures.ISimpleList;
-import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 
@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +40,10 @@ import org.slf4j.LoggerFactory;
  * Algorithm for construction {@link PdfPages} tree
  */
 class PdfPagesTree {
-
     static final int DEFAULT_LEAF_SIZE = 10;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PdfPagesTree.class);
 
     private final int leafSize = DEFAULT_LEAF_SIZE;
-
     private ISimpleList<PdfIndirectReference> pageRefs;
     private List<PdfPages> parents;
     private ISimpleList<PdfPage> pages;
@@ -53,7 +51,6 @@ class PdfPagesTree {
     private boolean generated = false;
     private PdfPages root;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfPagesTree.class);
 
     /**
      * Creates a PdfPages tree.
@@ -162,7 +159,7 @@ class PdfPagesTree {
 
     /**
      * Returns the index of the first occurrence of the page in this tree
-     * specified by it's PdfDictionary, or 0 if this tree does not contain the page.
+     * specified by its PdfDictionary, or 0 if this tree does not contain the page.
      */
     public int getPageNumber(PdfDictionary pageDictionary) {
         int pageNum = pageRefs.indexOf(pageDictionary.getIndirectReference());
@@ -191,7 +188,7 @@ class PdfPagesTree {
         if (root != null) {
             // in this case we save tree structure
 
-            if (pageRefs.size() == 0) {
+            if (pageRefs.isEmpty()) {
                 pdfPages = root;
             } else {
                 loadPage(pageRefs.size() - 1);
@@ -199,7 +196,7 @@ class PdfPagesTree {
             }
         } else {
             pdfPages = parents.get(parents.size() - 1);
-            if (pdfPages.getCount() % leafSize == 0 && pageRefs.size() > 0) {
+            if (pdfPages.getCount() % leafSize == 0 && !pageRefs.isEmpty()) {
                 pdfPages = new PdfPages(pdfPages.getFrom() + pdfPages.getCount(), document);
                 parents.add(pdfPages);
             }
@@ -274,7 +271,7 @@ class PdfPagesTree {
      * @throws PdfException in case empty document
      */
     protected PdfObject generateTree() {
-        if (pageRefs.size() == 0) {
+        if (pageRefs.isEmpty()) {
             LOGGER.info(IoLogMessageConstant.ATTEMPT_TO_GENERATE_PDF_PAGES_TREE_WITHOUT_ANY_PAGES);
             document.addNewPage();
         }
@@ -284,25 +281,16 @@ class PdfPagesTree {
 
         if (root == null) {
             while (parents.size() != 1) {
-                List<PdfPages> nextParents = new ArrayList<>();
-                //dynamicLeafSize helps to avoid PdfPages leaf with only one page
-                int dynamicLeafSize = leafSize;
-                PdfPages current = null;
-                for (int i = 0; i < parents.size(); i++) {
-                    PdfPages pages = parents.get(i);
-                    int pageCount = pages.getCount();
-                    if (i % dynamicLeafSize == 0) {
-                        if (pageCount <= 1) {
-                            dynamicLeafSize++;
-                        } else {
-                            current = new PdfPages(-1, document);
-                            nextParents.add(current);
-                            dynamicLeafSize = leafSize;
-                        }
+                List<PdfPages> newParents = new ArrayList<>();
+                PdfPages currentNewParent = null;
+                for (PdfPages parent : parents) {
+                    if (currentNewParent == null || currentNewParent.getKids().size() >= leafSize) {
+                        currentNewParent = new PdfPages(-1, document);
+                        newParents.add(currentNewParent);
                     }
-                    current.addPages(pages);
+                    currentNewParent.addPages(parent);
                 }
-                parents = nextParents;
+                parents = newParents;
             }
             root = parents.get(0);
         }
@@ -401,7 +389,7 @@ class PdfPagesTree {
                 /*
                  * We don't release pdfPagesObject in the end of each loop because we enter this for-cycle only when
                  * parent has PdfPages kids.
-                 * If all of the kids are PdfPages, then there's nothing to release, because we don't release
+                 * If all the kids are PdfPages, then there's nothing to release, because we don't release
                  * PdfPages at this point.
                  * If there are kids that are instances of PdfPage, then there's no sense in releasing them:
                  * in this case ParentTreeStructure is being rebuilt by inserting an intermediate PdfPages between
@@ -476,7 +464,7 @@ class PdfPagesTree {
                 pdfPages.removeFromParent();
                 --parentIndex;
             }
-            if (parents.size() == 0) {
+            if (parents.isEmpty()) {
                 root = null;
                 parents.add(new PdfPages(0, document));
             } else {
