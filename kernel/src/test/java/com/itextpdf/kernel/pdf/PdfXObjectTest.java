@@ -28,6 +28,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.PdfLayer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -328,6 +329,140 @@ public class PdfXObjectTest extends ExtendedITextTest{
                 () -> PdfXObject.calculateProportionallyFitRectangleWithHeight(pdfXObject, 0, 0, 20)
         );
         Assertions.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
+    }
+
+    @Test
+    public void pdfFormXObjectStreamConstructorIsModifiedFlagSetTest() throws Exception {
+        String srcPdf = SOURCE_FOLDER + "formXObjectWithoutSubtype.pdf";
+        String destPdf = DESTINATION_FOLDER + "pdfFormXObjectStreamConstructorIsModifiedFlagSetTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_pdfFormXObjectStreamConstructorIsModifiedFlagSetTest.pdf";
+        PdfName formName = new PdfName("Form1");
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
+                new StampingProperties().useAppendMode())) {
+            PdfPage firstPage = pdfDocument.getFirstPage();
+            PdfResources pageResources = firstPage.getResources();
+            PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
+            PdfStream formStream = (PdfStream) xObjectDict.get(formName);
+            PdfFormXObject formXObject = new PdfFormXObject(formStream);
+            PdfCanvas canvas = new PdfCanvas(firstPage);
+            canvas.addXObjectAt(formXObject, 0, 300);
+            canvas.release();
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void pdfFormXObjectGetResourcesIsModifiedFlagSetTest() throws Exception {
+        String srcPdf = SOURCE_FOLDER + "formXObjectWithoutResources.pdf";
+        String destPdf = DESTINATION_FOLDER + "pdfFormXObjectGetResourcesIsModifiedFlagSetTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_pdfFormXObjectGetResourcesIsModifiedFlagSetTest.pdf";
+        PdfName formName = new PdfName("Form1");
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
+                new StampingProperties().useAppendMode())) {
+            PdfPage firstPage = pdfDocument.getFirstPage();
+            PdfResources pageResources = firstPage.getResources();
+            PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
+            PdfStream formStream = (PdfStream) xObjectDict.get(formName);
+            PdfFormXObject formXObject = new PdfFormXObject(formStream);
+            formXObject.getResources();
+            PdfCanvas canvas = new PdfCanvas(firstPage);
+            canvas.addXObjectAt(formXObject, 0, 300);
+            canvas.release();
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void pdfXObjectSetLayerIsModifiedFlagSetTest() throws Exception {
+        String srcPdf = SOURCE_FOLDER + "simpleFormXObject.pdf";
+        String destPdf = DESTINATION_FOLDER + "pdfXObjectSetLayerIsModifiedFlagSetTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_pdfXObjectSetLayerIsModifiedFlagSetTest.pdf";
+        PdfName formName = new PdfName("Form1");
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
+                new StampingProperties().useAppendMode())) {
+            PdfPage firstPage = pdfDocument.getFirstPage();
+            PdfResources pageResources = firstPage.getResources();
+            PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
+            PdfStream formStream = (PdfStream) xObjectDict.get(formName);
+            PdfFormXObject formXObject = new PdfFormXObject(formStream);
+            PdfLayer layer = pdfDocument.getCatalog().getOCProperties(true).getLayers().get(0);
+            formXObject.setLayer(layer);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void pdfXObjectGetAssociatedFilesIsModifiedFlagSetTest() throws Exception {
+        String srcPdf = SOURCE_FOLDER + "simpleFormXObject.pdf";
+        String destPdf = DESTINATION_FOLDER + "pdfXObjectGetAssociatedFilesIsModifiedFlagSetTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_pdfXObjectGetAssociatedFilesIsModifiedFlagSetTest.pdf";
+        PdfName formName = new PdfName("Form1");
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
+                new StampingProperties().useAppendMode())) {
+            PdfPage firstPage = pdfDocument.getFirstPage();
+            PdfResources pageResources = firstPage.getResources();
+            PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
+            PdfStream formStream = (PdfStream) xObjectDict.get(formName);
+            PdfFormXObject formXObject = new PdfFormXObject(formStream);
+            formXObject.getAssociatedFiles(true);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void pdfXObjectAddAssociatedFileIsModifiedFlagSetTest() throws Exception {
+        String srcPdf = SOURCE_FOLDER + "simpleFormXObject.pdf";
+        String destPdf = DESTINATION_FOLDER + "pdfXObjectAddAssociatedFileIsModifiedFlagSetTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_pdfXObjectAddAssociatedFileIsModifiedFlagSetTest.pdf";
+        PdfName formName = new PdfName("Form1");
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
+                new StampingProperties().useAppendMode())) {
+            PdfPage firstPage = pdfDocument.getFirstPage();
+            PdfResources pageResources = firstPage.getResources();
+            PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
+            PdfStream formStream = (PdfStream) xObjectDict.get(formName);
+            PdfFormXObject formXObject = new PdfFormXObject(formStream);
+            formXObject.addAssociatedFile(PdfFileSpec
+                    .createEmbeddedFileSpec(pdfDocument, "Associated File".getBytes(), "af.txt", PdfName.Data));
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void pdfImageXObjectPutIsModifiedSetTest() throws IOException, InterruptedException {
+        final String fileName = "pdfImageXObjectPutIsModifiedSetTest.pdf";
+        String srcPdf = SOURCE_FOLDER + fileName;
+        String destPdf = DESTINATION_FOLDER + fileName;
+        String cmpPdf = SOURCE_FOLDER + "cmp_" + fileName;
+        PdfName imageName = new PdfName("Im1");
+
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
+                new StampingProperties().useAppendMode())) {
+            PdfPage firstPage = pdfDocument.getFirstPage();
+            PdfResources pageResources = firstPage.getResources();
+            PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
+            PdfStream imageXObjectStream = (PdfStream) xObjectDict.get(imageName);
+            PdfImageXObject imageXObject = new PdfImageXObject(imageXObjectStream);
+            imageXObject.put(PdfName.AF, new PdfArray());
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
     private static class CustomPdfXObject extends PdfXObject {

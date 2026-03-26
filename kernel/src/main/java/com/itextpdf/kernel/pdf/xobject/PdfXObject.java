@@ -127,6 +127,7 @@ public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
      */
     public void setLayer(IPdfOCG layer) {
         getPdfObject().put(PdfName.OC, layer.getIndirectReference());
+        setModified();
     }
 
     /**
@@ -167,6 +168,7 @@ public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
             getPdfObject().put(PdfName.AF, afArray);
         }
         afArray.add(fs.getPdfObject());
+        setModified();
     }
 
     /**
@@ -180,6 +182,7 @@ public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
         if (afArray == null && create) {
             afArray = new PdfArray();
             getPdfObject().put(PdfName.AF, afArray);
+            setModified();
         }
         return afArray;
     }
