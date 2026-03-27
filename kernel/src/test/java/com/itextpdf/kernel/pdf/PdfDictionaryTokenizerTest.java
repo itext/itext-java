@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class PdfDictionaryTokenizerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDictionaryTokenizerTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfDictionaryTokenizerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDictionaryTokenizerTest/";
 
     @BeforeAll
     public static void beforeClass() {

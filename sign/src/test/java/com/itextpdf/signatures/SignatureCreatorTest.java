@@ -62,7 +62,7 @@ public class SignatureCreatorTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/SignatureCreatorTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/SignatureCreatorTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/SignatureCreatorTest/";
 
     private static final String SOURCE_FILE = SOURCE_FOLDER + "helloWorldDoc.pdf";
     private static final String SIGNATURE_FIELD = "Signature";

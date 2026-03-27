@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 public class PreserveAspectRatioSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/PreserveAspectRatioSvgNodeRendererIntegrationTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/PreserveAspectRatioSvgNodeRendererIntegrationTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/PreserveAspectRatioSvgNodeRendererIntegrationTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class RadialGradientSvgNodeRendererTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/RadialGradientSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/RadialGradientSvgNodeRendererTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/RadialGradientSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

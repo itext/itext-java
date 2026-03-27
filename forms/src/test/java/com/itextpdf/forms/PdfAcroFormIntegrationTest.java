@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/PdfAcroFormIntegrationTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/PdfAcroFormIntegrationTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/PdfAcroFormIntegrationTest/";
 
     @BeforeAll

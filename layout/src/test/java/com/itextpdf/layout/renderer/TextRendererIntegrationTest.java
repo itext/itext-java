@@ -74,7 +74,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TextRendererIntegrationTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TextRendererIntegrationTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/TextRendererIntegrationTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TextRendererIntegrationTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

@@ -74,7 +74,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TableTest extends AbstractTableTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/TableTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/TableTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/TableTest/";
 
     private static final String TEXT_CONTENT = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
             "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.\n" +

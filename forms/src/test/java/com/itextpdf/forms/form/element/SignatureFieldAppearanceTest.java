@@ -79,7 +79,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/SignatureFieldAppearanceTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/forms/form/element/SignatureFieldAppearanceTest/";
+            "./target/test/com/itextpdf/forms/form/element/SignatureFieldAppearanceTest/";
 
     @BeforeAll
     public static void beforeClass() {

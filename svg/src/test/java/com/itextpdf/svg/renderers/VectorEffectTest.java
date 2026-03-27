@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 public class VectorEffectTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/VectorEffectTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/VectorEffectTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/VectorEffectTest/";
 
     @BeforeAll
     public static void beforeClass() {

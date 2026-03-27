@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 public class BackgroundColorTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BackgroundColorTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/BackgroundColorTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/BackgroundColorTest/";
     public static final String cmpPrefix = "cmp_";
 
     String fileName;

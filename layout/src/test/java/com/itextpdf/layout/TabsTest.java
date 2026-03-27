@@ -58,7 +58,7 @@ import org.junit.jupiter.api.Test;
 public class TabsTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/TabsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/TabsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/TabsTest/";
 
     private static final String text0 = "The Po\u017Eega Valley is a geographic microregion\tof Croatia, located in central" +
             " Slavonia, enveloped by the Slavonian mountains. It consists of\tsouthern slopes of 984-metre (3,228 ft)" +

@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class SvgImageRendererTest extends SvgIntegrationTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/SvgImageRendererTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/SvgImageRendererTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/SvgImageRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

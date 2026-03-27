@@ -55,7 +55,7 @@ import org.junit.jupiter.api.Test;
 public class PdfDecryptingTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/kernel/crypto/PdfDecryptingTest/certs/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/crypto/PdfDecryptingTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/crypto/PdfDecryptingTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/crypto/PdfDecryptingTest/";
     private static final String PROVIDER_NAME = BouncyCastleFactoryCreator.getFactory().getProviderName();
 

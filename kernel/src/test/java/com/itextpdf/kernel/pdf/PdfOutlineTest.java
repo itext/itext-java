@@ -59,7 +59,7 @@ import org.xml.sax.SAXException;
 public class PdfOutlineTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfOutlineTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfOutlineTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfOutlineTest/";
 
 
     @BeforeAll

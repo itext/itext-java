@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfAStampingModeTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfAStampingModeTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAStampingModeTest/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfAStampingModeTest/";
 
     @BeforeAll

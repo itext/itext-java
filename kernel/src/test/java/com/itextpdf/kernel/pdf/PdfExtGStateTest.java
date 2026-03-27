@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 public class PdfExtGStateTest extends ExtendedITextTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfExtGStateTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/PdfExtGStateTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/PdfExtGStateTest/";
 
     @BeforeAll
     public static void beforeClass() {

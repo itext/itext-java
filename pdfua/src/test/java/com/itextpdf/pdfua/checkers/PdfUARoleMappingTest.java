@@ -58,7 +58,7 @@ import org.junit.jupiter.api.Test;
 public class PdfUARoleMappingTest extends ExtendedITextTest {
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUARoleMappingTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUARoleMappingTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUARoleMappingTest/";
 
     @BeforeAll
@@ -150,7 +150,6 @@ public class PdfUARoleMappingTest extends ExtendedITextTest {
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
-        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf/ua validation on Android)
     }
 
     @Test

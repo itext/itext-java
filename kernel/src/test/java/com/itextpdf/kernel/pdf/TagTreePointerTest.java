@@ -72,7 +72,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class TagTreePointerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/TagTreePointerTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/TagTreePointerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/TagTreePointerTest/";
 
     @BeforeAll
     public static void beforeClass() {

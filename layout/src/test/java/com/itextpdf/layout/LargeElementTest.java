@@ -61,7 +61,7 @@ import org.junit.jupiter.api.Test;
 public class LargeElementTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LargeElementTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/LargeElementTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/LargeElementTest/";
 
     @BeforeAll
     public static void beforeClass() {

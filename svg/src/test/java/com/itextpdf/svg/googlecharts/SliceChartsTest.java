@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class SliceChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/SliceChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/SliceChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/SliceChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

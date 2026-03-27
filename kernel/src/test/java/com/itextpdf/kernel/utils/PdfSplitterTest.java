@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 public class PdfSplitterTest extends ExtendedITextTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfSplitterTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/utils/PdfSplitterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfSplitterTest/";
 
     @BeforeAll
     public static void beforeClass() {

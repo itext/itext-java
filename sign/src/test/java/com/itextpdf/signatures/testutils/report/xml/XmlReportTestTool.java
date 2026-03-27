@@ -63,8 +63,6 @@ public class XmlReportTestTool {
         this.report = report;
         StringReader stringReader = new StringReader(report);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true); // Android-Conversion-Skip-Line (this feature is not supported in Android SDK)
-        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); // Android-Conversion-Skip-Line (this feature is not supported in Android SDK)
         dbf.setNamespaceAware(true);
 
         DocumentBuilder db = dbf.newDocumentBuilder();

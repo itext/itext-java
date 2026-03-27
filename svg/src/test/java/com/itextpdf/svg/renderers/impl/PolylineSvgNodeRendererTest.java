@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/PolylineSvgNodeRendererTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

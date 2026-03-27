@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class VisibilityTest extends SvgIntegrationTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/VisibilityTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/VisibilityTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/VisibilityTest/";
 
     @BeforeAll
     public static void beforeClass() {

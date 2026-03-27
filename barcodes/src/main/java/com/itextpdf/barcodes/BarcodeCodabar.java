@@ -351,46 +351,4 @@ public class BarcodeCodabar extends Barcode1D {
         return getBarcodeSize();
     }
 
-    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
-    /**
-     * Creates a <CODE>java.awt.Image</CODE>. This image only
-     * contains the bars without any text.
-     *
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int f = (foreground == null) ? DEFAULT_BAR_FOREGROUND_COLOR.getRGB() : foreground.getRGB();
-        int g = (background == null) ? DEFAULT_BAR_BACKGROUND_COLOR.getRGB() : background.getRGB();
-        java.awt.Canvas canvas = new java.awt.Canvas();
-
-        byte[] bars = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
-        int wide = 0;
-        for (int k = 0; k < bars.length; ++k) {
-            wide += bars[k];
-        }
-        int narrow = bars.length - wide;
-        int fullWidth = narrow + wide * (int) n;
-        boolean print = true;
-        int ptr = 0;
-        int height = (int) barHeight;
-        int[] pix = new int[fullWidth * height];
-        for (int k = 0; k < bars.length; ++k) {
-            int w = (bars[k] == 0 ? 1 : (int) n);
-            int c = g;
-            if (print) {
-                c = f;
-            }
-            print = !print;
-            for (int j = 0; j < w; ++j) {
-                pix[ptr++] = c;
-            }
-        }
-        for (int k = fullWidth; k < pix.length; k += fullWidth) {
-            System.arraycopy(pix, 0, pix, k, fullWidth);
-        }
-        return canvas.createImage(new java.awt.image.MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-    }
-    // Android-Conversion-Skip-Block-End
 }

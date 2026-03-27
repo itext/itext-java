@@ -52,7 +52,7 @@ import static com.itextpdf.pdfua.checkers.PdfUATableTest.newHeaderCell;
 @Tag("IntegrationTest")
 public class WellTaggedPdfAccessibilityTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/pdfua/wtpdf/WellTaggedPdfAccessibilityTest/";
+            "./target/test/com/itextpdf/pdfua/wtpdf/WellTaggedPdfAccessibilityTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/wtpdf"
             + "/WellTaggedPdfAccessibilityTest/";
 

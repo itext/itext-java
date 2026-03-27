@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class ScatterChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/ScatterChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/ScatterChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/ScatterChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

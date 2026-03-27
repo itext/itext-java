@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class PdfDestinationTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDestinationTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfDestinationTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDestinationTest/";
 
     @BeforeAll
     public static void beforeClass() {

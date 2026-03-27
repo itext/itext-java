@@ -49,7 +49,7 @@ import org.junit.jupiter.api.Test;
 @Tag("BouncyCastleUnitTest")
 public class PdfTwoPhaseSignerUnitTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/Pdf2PhaseSignerUnitTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/Pdf2PhaseSignerUnitTest/";
 
     @BeforeAll
     public static void before() {

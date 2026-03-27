@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class FontSelectorLayoutTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/NonBreakingHyphenTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/layout/NonBreakingHyphenTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/layout/NonBreakingHyphenTest/";
     private static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

@@ -43,7 +43,7 @@ import static com.itextpdf.test.ITextTest.createOrClearDestinationFolder;
 @Tag("IntegrationTest")
 public class RectangleIntegrationTest extends ExtendedITextTest {
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/RectangleTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/RectangleTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/RectangleTest/";
 
     @BeforeAll

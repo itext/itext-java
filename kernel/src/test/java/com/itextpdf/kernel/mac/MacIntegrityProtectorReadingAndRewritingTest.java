@@ -59,7 +59,7 @@ import org.junit.jupiter.api.Test;
 @Tag("BouncyCastleIntegrationTest")
 public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/mac/MacIntegrityProtectorReadingAndRewritingTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/mac/MacIntegrityProtectorReadingAndRewritingTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/mac/MacIntegrityProtectorReadingAndRewritingTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/kernel/mac/MacIntegrityProtectorReadingAndRewritingTest/certs/";
     private static final byte[] PASSWORD = "123".getBytes();
     private static final String PROVIDER_NAME = BouncyCastleFactoryCreator.getFactory().getProviderName();

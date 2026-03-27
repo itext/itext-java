@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class PieChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/PieChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/PieChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/PieChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -24,7 +24,6 @@ package com.itextpdf.bouncycastleconnector;
 
 import com.itextpdf.bouncycastle.BouncyCastleFactory;
 import com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant;
-import com.itextpdf.bouncycastlefips.BouncyCastleFipsFactory; // Android-Conversion-Skip-Line (BC FIPS isn't supported on Android)
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.SystemUtil;
 
@@ -107,6 +106,5 @@ public final class BouncyCastleFactoryCreator {
 
     private static void populateFactoriesMap() {
         FACTORIES.put("bouncy-castle", () -> new BouncyCastleFactory());
-        FACTORIES.put("bouncy-castle-fips", () -> new BouncyCastleFipsFactory()); // Android-Conversion-Skip-Line (BC FIPS isn't supported on Android)
     }
 }

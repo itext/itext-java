@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 public class PdfA2LayoutOcgTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2LayoutOcgTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2LayoutOcgTest/";
 
     @BeforeEach
     public void configure() {

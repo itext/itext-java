@@ -58,7 +58,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class GridContainerTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/GridContainerTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/GridContainerTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/GridContainerTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -55,7 +55,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class OverflowTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/OverflowTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/OverflowTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/OverflowTest/";
 
     @BeforeAll

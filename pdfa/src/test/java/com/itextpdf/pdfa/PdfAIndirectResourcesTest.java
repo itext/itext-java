@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfAIndirectResourcesTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/pdfs/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfAIndirectResourcesTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAIndirectResourcesTest/";
 
     @BeforeEach
     public void configure() {

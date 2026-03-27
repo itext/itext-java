@@ -48,7 +48,7 @@ import org.xml.sax.SAXException;
 public class XfdfWriterTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/XfdfWriterTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/XfdfWriterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/XfdfWriterTest/";
 
     @BeforeAll
     public static void beforeClass() {

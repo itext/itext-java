@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 public class FixedHeightTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FixedHeightTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FixedHeightTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/layout/FixedHeightTest/";
 
     private static final String textByron =
             "When a man hath no freedom to fight for at home,\n" +

@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 public class Utf8FormsTest extends ExtendedITextTest {
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/Utf8FormsTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/forms/Utf8FormsTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/forms/Utf8FormsTest/";
     private static final String FONT = FONT_FOLDER + "NotoSansCJKsc-Regular.otf";
 
     @BeforeEach

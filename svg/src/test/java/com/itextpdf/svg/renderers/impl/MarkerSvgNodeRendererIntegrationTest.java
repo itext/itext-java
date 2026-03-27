@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/MarkerSvgNodeRendererIntegrationTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/MarkerSvgNodeRendererIntegrationTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/MarkerSvgNodeRendererIntegrationTest/";
 
     private ISvgConverterProperties properties;
 

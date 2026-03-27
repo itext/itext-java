@@ -68,7 +68,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class RotationTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/RotationTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/RotationTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/RotationTest/";
     public static final String cmpPrefix = "cmp_";
 
     private static final String para1Text = "The first published account of what would evolve into the Mafia in the United States came in the spring of 1869. " +

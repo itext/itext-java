@@ -65,7 +65,7 @@ import org.junit.jupiter.api.Test;
 public class FloatTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FloatTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatTest/";
 
     private static final String shortText =
             "Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document. ";

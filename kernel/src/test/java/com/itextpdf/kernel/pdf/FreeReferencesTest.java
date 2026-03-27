@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Tag;
 
 @Tag("IntegrationTest")
 public class FreeReferencesTest extends ExtendedITextTest {
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/FreeReferencesTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/FreeReferencesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/FreeReferencesTest/";
 
     @BeforeAll

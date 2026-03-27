@@ -64,7 +64,7 @@ public class SignedDocumentWithMacTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/mac/SignedDocumentWithMacTest/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/mac/SignedDocumentWithMacTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/mac/SignedDocumentWithMacTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/mac/SignedDocumentWithMacTest/";
     private static final byte[] ENCRYPTION_PASSWORD = "123".getBytes();
     private static final char[] PRIVATE_KEY_PASSWORD = "testpassphrase".toCharArray();
 

@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfStreamTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStreamTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfStreamTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStreamTest/";
 
     @BeforeAll
     public static void before() {
@@ -86,7 +86,7 @@ public class PdfStreamTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void runLengthEncodingTest01() throws IOException {
         String srcFile = sourceFolder + "runLengthEncodedImages.pdf";
 

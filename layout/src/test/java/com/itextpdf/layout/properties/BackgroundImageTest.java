@@ -65,7 +65,7 @@ import org.junit.jupiter.api.Test;
 public class BackgroundImageTest extends ExtendedITextTest {
     private static final float DELTA = 0.0001f;
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/BackgroundImageTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/BackgroundImageTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/BackgroundImageTest/";
 
     @BeforeAll
     public static void beforeClass() {

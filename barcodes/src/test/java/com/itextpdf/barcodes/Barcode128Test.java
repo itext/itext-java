@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 public class Barcode128Test extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/barcodes/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/barcodes/Barcode128/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/barcodes/Barcode128/";
 
     @BeforeAll
     public static void beforeClass() {

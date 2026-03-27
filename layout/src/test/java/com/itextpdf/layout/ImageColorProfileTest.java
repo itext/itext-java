@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ImageColorProfileTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/ImageColorProfileTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/ImageColorProfileTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageColorProfileTest/";
 
     @BeforeAll

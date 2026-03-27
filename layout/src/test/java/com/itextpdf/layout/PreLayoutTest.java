@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Test;
 public class PreLayoutTest extends ExtendedITextTest{
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/PreLayoutTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/PreLayoutTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/PreLayoutTest/";
 
     @BeforeAll
     public static void beforeClass() {

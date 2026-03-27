@@ -87,7 +87,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class PdfUATest extends ExtendedITextTest {
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUATest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUATest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUATest/";
 
     private static final String DOG = "./src/test/resources/com/itextpdf/pdfua/img/DOG.bmp";

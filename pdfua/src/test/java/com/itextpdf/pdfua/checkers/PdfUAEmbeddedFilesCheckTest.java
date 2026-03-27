@@ -51,7 +51,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class PdfUAEmbeddedFilesCheckTest extends ExtendedITextTest {
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAEmbeddedFilesCheckTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAEmbeddedFilesCheckTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
 
     @BeforeAll

@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 public class PdfFormFieldIntegrationTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/fields/PdfFormFieldIntegrationTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms/fields/PdfFormFieldIntegrationTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms/fields/PdfFormFieldIntegrationTest/";
 
     @BeforeAll
     public static void beforeClass() {

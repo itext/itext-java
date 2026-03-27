@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfPrimitivesTest extends ExtendedITextTest{
 
-    static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfPrimitivesTest/";
+    static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfPrimitivesTest/";
     static final PdfName TestArray = new PdfName("TestArray");
     static final int DefaultArraySize = 64;
     static final int PageCount = 1000;

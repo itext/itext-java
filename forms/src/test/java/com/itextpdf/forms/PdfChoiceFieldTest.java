@@ -55,7 +55,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfChoiceFieldTest extends ExtendedITextTest {
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfChoiceFieldTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfChoiceFieldTest/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfChoiceFieldTest/";
 
     @BeforeAll

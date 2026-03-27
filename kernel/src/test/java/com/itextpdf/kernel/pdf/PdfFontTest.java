@@ -72,7 +72,7 @@ public class PdfFontTest extends ExtendedITextTest {
     private static final int PageCount = 1;
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfFontTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfFontTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfFontTest/";
 
     private static final String author = "Alexander Chingarev";
     private static final String creator = "iText";

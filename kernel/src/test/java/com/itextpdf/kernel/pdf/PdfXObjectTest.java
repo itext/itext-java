@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfXObjectTest extends ExtendedITextTest{
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfXObjectTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfXObjectTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfXObjectTest/";
 
     public static final String[] images = new String[]{SOURCE_FOLDER + "WP_20140410_001.bmp",
             SOURCE_FOLDER + "WP_20140410_001.JPC",

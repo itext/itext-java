@@ -48,7 +48,7 @@ public class ImageWidthTest extends ExtendedITextTest {
 
     private static final double EPSILON = 0.01;
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/ImageWidthTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/ImageWidthTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/ImageWidthTest/";
     public static final String imageFolder = "./src/test/resources/com/itextpdf/layout/ImageTest/";
 

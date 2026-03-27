@@ -65,7 +65,7 @@ public class RSASSAPSSTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/RSASSAPSSTest/";
     private static final String SOURCE_FILE = SOURCE_FOLDER + "helloWorldDoc.pdf";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/RSASSAPSSTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/RSASSAPSSTest/";
     private static final String SIGNATURE_FIELD = "Signature";
     private static final char[] SAMPLE_KEY_PASSPHRASE = "pdfpdfpdfsecretsecret".toCharArray();
 
