@@ -3,13 +3,13 @@
 </p>
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.itextpdf/itext-core)](https://mvnrepository.com/artifact/com.itextpdf/itext-core)
-[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://github.com/itext/itext7/blob/master/LICENSE.md)
-[![GitHub all releases](https://img.shields.io/github/downloads/itext/itext7/total)](https://github.com/itext/itext7/releases/latest)
-![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/m/itext/itext7)
+[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://github.com/itext/itext-java/blob/master/LICENSE.md)
+[![GitHub all releases](https://img.shields.io/github/downloads/itext/itext-java/total)](https://github.com/itext/itext-java/releases/latest)
+![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/m/itext/itext-java)
 
 iText Core/Community is a high-performance, battle-tested library that allows you to create, adapt,
 inspect and maintain PDF documents, allowing you to add PDF
-functionality to your software projects with ease. It is also available for .[NET][itext7net] (C#).
+functionality to your software projects with ease. It is also available for .[NET][itextdotnet] (C#).
 
 ### The key features of iText Core/Community are:
 
@@ -25,6 +25,7 @@ functionality to your software projects with ease. It is also available for .[NE
   * SVG support
 * [Addons:][all products]
   * Converting XML/HTML & CSS to PDF [repo][pdfhtml], [info][pdfhtmlproduct]
+  * Perform OCR on images and PDF documents [repo][pdfocr], [info][pdfocrproduct]
   * Redacting sensitive information in PDF documents [repo][pdfsweep], [info][pdfsweepproduct]
   * Support for international character sets (e.g. Arabic, Chinese, Hebrew, Thai, ...) [info][calligraph]
   * Optimize PDF documents for reduced file size, and increased performance [info][optimizer]
@@ -92,7 +93,7 @@ Starting from version 8.0.3 iText Core supports native image compilation using G
 ### Examples
 
 This is a small subset of examples to get you started. For more advanced examples, refer to our [Knowledge Base](https://kb.itextpdf.com/home/it7kb/examples) or the following links:
-[Examples repo](https://github.com/itext/i7js-examples), [Signing examples](https://github.com/itext/i7js-signing-examples). 
+[Examples repo](https://github.com/itext/itext-publications-examples-java), [Signing examples](https://github.com/itext/itext-publications-signing-examples-java). 
 
 Some of the output PDF files will be incorrectly displayed by the GitHub previewer, so be sure to download them to see the correct
 results.
@@ -146,10 +147,15 @@ results.
 | Convert SVG as XObject                      | [Java](https://github.com/itext/itext-publications-examples-java/blob/master/src/main/java/com/itextpdf/samples/sandbox/svg/ConvertSvgToXObject.java)                                                                                                                                                                                                                                                                                                                                                                      |
 | Convert SVG to a PDF with pdfCalligraph     | [Java](https://github.com/itext/itext-publications-examples-java/blob/master/src/main/java/com/itextpdf/samples/sandbox/svg/ConvertSvgToPdfWithPdfCalligraph.java)                                                                                                                                                                                                                                                                                                                                                         |
 | <br>                                        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| **Convert HTML and CSS to PDF**             | [Link to repo](https://github.com/itext/i7j-pdfhtml)                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Convert HTML and CSS to PDF**             | [Link to repo](https://github.com/itext/itext-pdfhtml-java)                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | Convert simple HTML doc to PDF              | [Java](https://kb.itextpdf.com/home/it7kb/ebooks/itext-7-converting-html-to-pdf-with-pdfhtml)                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | <br>                                        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| **Secure redaction of content**             | [Link to repo](https://github.com/itext/i7j-pdfsweep)                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **OCR images or PDFs**                      | [Link to repo](https://github.com/itext/itext-pdfocr-java)                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| OCR images and create PDF                   | [Using ONNX models](https://github.com/itext/itext-publications-examples-java/blob/master/src/main/java/com/itextpdf/samples/sandbox/pdfocr/onnxtr/PdfOcrOnnxTrExample.java), [using Tesseract 4](https://github.com/itext/itext-publications-examples-java/blob/master/src/main/java/com/itextpdf/samples/sandbox/pdfocr/tesseract4/PdfOcrTesseractExample.java)                                                                                                                                                          |
+| Make PDF searchable                         | [Using ONNX models](https://github.com/itext/itext-publications-examples-java/blob/develop/src/main/java/com/itextpdf/samples/sandbox/pdfocr/onnx/PdfOcrOnnxPdfAsInputExample.java), [using Tesseract 4](https://github.com/itext/itext-publications-examples-java/blob/master/src/main/java/com/itextpdf/samples/sandbox/pdfocr/tesseract4/PdfOcrTesseractPdfAsInputExample.java)                                                                                                                                         |
+| OCR images to txt file                      | [Using ONNX models](https://github.com/itext/itext-publications-examples-java/blob/develop/src/main/java/com/itextpdf/samples/sandbox/pdfocr/onnx/PdfOcrOnnxTxtFileExample.java), [using Tesseract 4](https://github.com/itext/itext-publications-examples-java/blob/master/src/main/java/com/itextpdf/samples/sandbox/pdfocr/tesseract4/PdfOcrTesseractTxtFileExample.java)                                                                                                                                               |
+| <br>                                        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **Secure redaction of content**             | [Link to repo](https://github.com/itext/itext-pdfsweep-java)                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | Redacting content                           | [Java](https://kb.itextpdf.com/home/it7kb/examples/removing-content-with-pdfsweep)                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | Redact based on regex                       | [Java](https://itextpdf.com/products/pdf-redaction-pdfsweep)                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | <br>                                        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -162,8 +168,8 @@ results.
 | **XFA flattening**                          | [Link to docs](https://itextpdf.com/products/flatten-pdf-pdfxfa)                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Flatten an XFA document                     | [Java](https://itextpdf.com/products/flatten-pdf-pdfxfa)                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | <br>                                        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| **RUPS**                                    | [Link to repo](https://github.com/itext/i7j-rups)                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| Debug a PDF                                 | [Java](https://github.com/itext/i7j-rups/releases/latest)                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| **RUPS**                                    | [Link to repo](https://github.com/itext/rups)                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Debug a PDF                                 | [Latest release](https://github.com/itext/rups/releases/latest)                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 
 ### FAQs, tutorials, etc. ###
@@ -176,7 +182,7 @@ on [Stack Overflow](https://stackoverflow.com/questions/tagged/itext+itext7), so
 
 Many people have contributed to **iText Core/Community** over the years. If you've found a bug, a mistake in documentation, or have a hot new feature you want to implement, we welcome your contributions.
 
-Small changes or fixes can be submitted as a [Pull Request](https://github.com/itext/itext7/pulls), while for major changes we request you contact us at community@apryse.com so we can better coordinate our efforts and prevent duplication of work.
+Small changes or fixes can be submitted as a [Pull Request](https://github.com/itext/itext-java/pulls), while for major changes we request you contact us at community@apryse.com so we can better coordinate our efforts and prevent duplication of work.
 
 Please read our [Contribution Guidelines][contributing] for details on code submissions, coding rules, and more.
 
@@ -200,29 +206,33 @@ Contact [Sales] for more info.
 
 [itext]: https://itextpdf.com/
 
-[github]: https://github.com/itext/itext7
+[github]: https://github.com/itext/itext-java
 
-[latest]: https://github.com/itext/itext7/releases/latest
+[latest]: https://github.com/itext/itext-java/releases/latest
 
 [sales]: https://itextpdf.com/sales
 
 [gratis]: https://en.wikipedia.org/wiki/Gratis_versus_libre
 
-[rups]: https://github.com/itext/i7j-rups
+[rups]: https://github.com/itext/rups
 
-[pdfhtml]: https://github.com/itext/i7j-pdfhtml
+[pdfhtml]: https://github.com/itext/itext-pdfhtml-java
 
-[pdfsweep]: https://github.com/itext/i7j-pdfsweep
+[pdfocr]: https://github.com/itext/itext-pdfocr-java
 
-[itext7net]: https://github.com/itext/itext7-dotnet
+[pdfsweep]: https://github.com/itext/itext-pdfsweep-java
 
-[pdfsweepproduct]: https://itextpdf.com/products/pdf-redaction-pdfsweep
+[itextdotnet]: https://github.com/itext/itext-dotnet
 
 [optimizer]: https://itextpdf.com/products/compress-pdf-pdfoptimizer
 
 [all products]: https://itextpdf.com/products
 
 [pdfhtmlproduct]: https://itextpdf.com/products/itext-pdf-html
+
+[pdfocrproduct]: https://itextpdf.com/products/pdf-ocr-text-recognition
+
+[pdfsweepproduct]: https://itextpdf.com/products/pdf-redaction-pdfsweep
 
 [xfa]: https://itextpdf.com/products/flatten-pdf-pdfxfa
 
