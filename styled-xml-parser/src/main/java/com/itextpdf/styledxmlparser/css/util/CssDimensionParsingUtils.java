@@ -54,6 +54,7 @@ public final class CssDimensionParsingUtils {
      * Parses an integer without throwing an exception if something goes wrong.
      *
      * @param str a string that might be an integer value
+     *
      * @return the integer value, or null if something went wrong
      */
     public static Integer parseInteger(String str) {
@@ -119,28 +120,31 @@ public final class CssDimensionParsingUtils {
             throw new StyledXMLParserException(MessageFormatUtil.format(StyledXMLParserException.NAN, angle));
         }
 
-        float floatValue  = Float.parseFloat(angle.substring(0, pos));
+        Float floatValue  = parseFloat(angle.substring(0, pos));
+        if (floatValue == null) {
+            throw new StyledXMLParserException(MessageFormatUtil.format(StyledXMLParserException.NAN, angle));
+        }
         String unit = angle.substring(pos);
 
         // Degrees
         if (unit.startsWith(CommonCssConstants.DEG) || unit.equals("") && CommonCssConstants.DEG
                 .equals(defaultMetric)) {
-            return (float) Math.PI * floatValue / 180f;
+            return (float) Math.PI * floatValue.floatValue() / 180f;
         }
         // Grads
         if (unit.startsWith(CommonCssConstants.GRAD) || unit.equals("") && CommonCssConstants.GRAD
                 .equals(defaultMetric)) {
-            return (float) Math.PI * floatValue / 200f;
+            return (float) Math.PI * floatValue.floatValue() / 200f;
         }
         // Radians
         if (unit.startsWith(CommonCssConstants.RAD) || unit.equals("") && CommonCssConstants.RAD
                 .equals(defaultMetric)) {
-            return floatValue;
+            return floatValue.floatValue();
         }
 
         logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNKNOWN_METRIC_ANGLE_PARSED,
                 unit.equals("") ? defaultMetric : unit));
-        return floatValue ;
+        return floatValue.floatValue();
     }
 
     /**
@@ -193,12 +197,15 @@ public final class CssDimensionParsingUtils {
         }
 
         // Use double type locally to have better precision of the result after applying arithmetic operations
-        double f = Double.parseDouble(length.substring(0, pos));
+        Double f = parseDouble(length.substring(0, pos));
+        if (f == null) {
+            throw new StyledXMLParserException(MessageFormatUtil.format(StyledXMLParserException.NAN, length));
+        }
         String unit = length.substring(pos);
 
         //points
         if (unit.startsWith(CommonCssConstants.PT) || unit.equals("") && defaultMetric.equals(CommonCssConstants.PT)) {
-            return (float) f;
+            return (float) f.doubleValue();
         }
         // inches
         if (unit.startsWith(CommonCssConstants.IN) || (unit.equals("") && defaultMetric
@@ -233,7 +240,7 @@ public final class CssDimensionParsingUtils {
 
         logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED,
                 unit.equals("") ? defaultMetric : unit));
-        return (float) f;
+        return (float) f.doubleValue();
     }
 
     /**
@@ -260,7 +267,13 @@ public final class CssDimensionParsingUtils {
             return 0f;
         }
         // Use double type locally to have better precision of the result after applying arithmetic operations
-        double f = Double.parseDouble(relativeValue.substring(0, pos));
+        Double f = parseDouble(relativeValue.substring(0, pos));
+        if (f == null) {
+            logger.info(MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.RELATIVE_VALUE_NOT_PARSED, relativeValue));
+            return 0f;
+        }
+
         String unit = relativeValue.substring(pos);
         if (unit.startsWith(CommonCssConstants.PERCENTAGE)) {
             f = baseValue * f / 100;
@@ -269,7 +282,7 @@ public final class CssDimensionParsingUtils {
         } else if (unit.startsWith(CommonCssConstants.EX)) {
             f = baseValue * f / 2;
         }
-        return (float) f;
+        return (float) f.doubleValue();
     }
 
     /**
@@ -288,8 +301,8 @@ public final class CssDimensionParsingUtils {
         // TODO (DEVSIX-3596) Add support of 'lh' 'ch' units and viewport-relative units
         if (CssTypesValidationUtils.isMetricValue(value) || CssTypesValidationUtils.isNumber(value)) {
             return new UnitValue(UnitValue.POINT, parseAbsoluteLength(value));
-        } else if (value != null && value.endsWith(CommonCssConstants.PERCENTAGE)) {
-            return new UnitValue(UnitValue.PERCENT, Float.parseFloat(value.substring(0, value.length() - 1)));
+        } else if (CssTypesValidationUtils.isPercentageValue(value)) {
+            return new UnitValue(UnitValue.PERCENT, (float) parseFloat(value.substring(0, value.length() - 1)));
         } else if (CssTypesValidationUtils.isRemValue(value)) {
             return new UnitValue(UnitValue.POINT, parseRelativeValue(value, remValue));
         } else if (CssTypesValidationUtils.isRelativeValue(value)) {
@@ -314,7 +327,7 @@ public final class CssDimensionParsingUtils {
         if (value.endsWith(CommonCssConstants.FR)) {
             value = value.substring(0, value.length() - CommonCssConstants.FR.length());
             if (CssTypesValidationUtils.isNumber(value)) {
-                return Float.parseFloat(value);
+                return parseFloat(value);
             }
         }
         return null;
@@ -428,7 +441,13 @@ public final class CssDimensionParsingUtils {
         if (pos == 0) {
             return 0f;
         }
-        double f = Double.parseDouble(resolutionStr.substring(0, pos));
+        Double f = parseDouble(resolutionStr.substring(0, pos));
+        if (f == null) {
+            logger.info(MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.RESOLUTION_NOT_PARSED, resolutionStr));
+            return 0f;
+        }
+
         String unit = resolutionStr.substring(pos);
         if (unit.startsWith(CommonCssConstants.DPCM)) {
             f *= 2.54;
@@ -438,7 +457,7 @@ public final class CssDimensionParsingUtils {
             throw new StyledXMLParserException(StyledXmlParserLogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE);
         }
 
-        return (float) f;
+        return (float) f.doubleValue();
     }
 
     /**

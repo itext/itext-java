@@ -26,10 +26,12 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.layout.properties.TransparentColor;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
@@ -76,6 +78,21 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
                 () -> CssDimensionParsingUtils.parseResolution("10incorrectUnit")
         );
         Assertions.assertEquals(StyledXmlParserLogMessageConstant.INCORRECT_RESOLUTION_UNIT_VALUE, e.getMessage());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.RESOLUTION_NOT_PARSED,
+                    logLevel = LogLevelConstants.INFO)
+    })
+    public void parseResolutionFloatParsingTest() {
+        float expected = 10f;
+        float actual = CssDimensionParsingUtils.parseResolution("10dpi");
+        Assertions.assertEquals(expected, actual, 0.01f);
+
+        expected = 0f;
+        actual = CssDimensionParsingUtils.parseResolution("10...2.1dpi");
+        Assertions.assertEquals(expected, actual, 0.01f);
     }
 
     @Test
@@ -213,6 +230,19 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void parseAbsoluteLengthFloatParsingTest() {
+        float expected = 7.5f;
+        float actual = CssDimensionParsingUtils.parseAbsoluteLength("10px", CommonCssConstants.PX);
+        Assertions.assertEquals(expected, actual, 0.01f);
+
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
+                () -> CssDimensionParsingUtils.parseAbsoluteLength("10.+++1.2px", CommonCssConstants.PX));
+        Assertions.assertEquals(
+                MessageFormatUtil.format(StyledXMLParserException.NAN, "10.+++1.2px"),
+                e.getMessage());
+    }
+
+    @Test
     public void parseDoubleIntegerValueTest(){
         Double expectedString = 5.0;
         Double actualString = CssDimensionParsingUtils.parseDouble("5");
@@ -250,6 +280,14 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
         Double actualString = CssDimensionParsingUtils.parseDouble("text");
 
         Assertions.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void parseIntegerNegativeTextTest() {
+        Integer expected = null;
+        Integer actual = CssDimensionParsingUtils.parseInteger("text");
+
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -339,5 +377,43 @@ public class CssDimensionParsingUtilsTest extends ExtendedITextTest {
         Assertions.assertNull(CssDimensionParsingUtils.parseFlex("13.3f"));
         Assertions.assertNull(CssDimensionParsingUtils.parseFlex("13.3"));
         Assertions.assertNull(CssDimensionParsingUtils.parseFlex(null));
+    }
+
+    @Test
+    public void parsePercentToPtTest() {
+        UnitValue expected = new UnitValue(UnitValue.PERCENT, 0.9f);
+        UnitValue actual = CssDimensionParsingUtils.parseLengthValueToPt("+.9%", 0, 0);
+        Assertions.assertEquals(expected, actual);
+
+        actual = CssDimensionParsingUtils.parseLengthValueToPt("10%%", 0, 0);
+        Assertions.assertNull(actual);
+    }
+
+    @Test
+    public void parseAngleFloatParsingTest() {
+        float expected = 4.71f;
+        float actual = CssDimensionParsingUtils.parseAngle("270deg", CommonCssConstants.DEG);
+        Assertions.assertEquals(expected, actual, 0.01f);
+
+        Exception e = Assertions.assertThrows(StyledXMLParserException.class,
+                () -> CssDimensionParsingUtils.parseAngle("2...51deg", CommonCssConstants.DEG));
+        Assertions.assertEquals(
+                MessageFormatUtil.format(StyledXMLParserException.NAN, "2...51deg"),
+                e.getMessage());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.RELATIVE_VALUE_NOT_PARSED,
+                    logLevel = LogLevelConstants.INFO)
+    })
+    public void parseRelativeLengthFloatParsingTest() {
+        float expected = 10f;
+        float actual = CssDimensionParsingUtils.parseRelativeValue("10%", 100f);
+        Assertions.assertEquals(expected, actual, 0.01f);
+
+        expected = 0f;
+        actual = CssDimensionParsingUtils.parseRelativeValue("10...2.1%", 100f);
+        Assertions.assertEquals(expected, actual, 0.01f);
     }
 }
