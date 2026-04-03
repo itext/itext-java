@@ -1805,6 +1805,16 @@ public class CommonCssConstants {
     public static final String HAS = "has";
 
     /**
+     * The Constant IS.
+     */
+    public static final String IS = "is";
+
+    /**
+     * The Constant WHERE.
+     */
+    public static final String WHERE = "where";
+
+    /**
      * The Constant DISABLED.
      */
     public static final String DISABLED = "disabled";

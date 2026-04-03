@@ -103,7 +103,7 @@ public final class CssSelectorParser {
      * @return a list of {@link ICssSelectorItem} objects representing the parsed components
      *         of the CSS selector
      */
-    static List<ICssSelectorItem> parseSelectorItems(String selector, boolean allowRelativeSelectorAtStart) {
+    public static List<ICssSelectorItem> parseSelectorItems(String selector, boolean allowRelativeSelectorAtStart) {
         List<ICssSelectorItem> selectorItems = new ArrayList<>();
         State state = new NoneState();
         for (int i = 0; i < selector.length(); ++i) {
@@ -140,7 +140,7 @@ public final class CssSelectorParser {
      * @param input the string to split
      * @return a list of string parts split by top-level commas
      */
-    static List<String> splitByTopLevelComma(String input) {
+    public static List<String> splitByTopLevelComma(String input) {
         return CssUtils.splitString(input, ',',
                 new EscapeGroup('(', ')'),
                 new EscapeGroup('"'),
@@ -503,6 +503,9 @@ public final class CssSelectorParser {
         protected char closure;
         protected boolean inString = false;
         protected boolean isReadyForSwitch = false;
+        // Tracks nested parentheses for pseudo-class functions like :is(...), :not(...), :where(...), :has(...)
+        // Only used when closure == ')'.
+        protected int parenthesesDepth = 0;
 
         /**
          * Constructs a new FunctionState object with the specified closure character.
@@ -533,7 +536,27 @@ public final class CssSelectorParser {
             if ((c == '"' || c == '\'') && !isEscaped) {
                 inString = !inString;
             }
-            if (c == closure && !isEscaped && !inString) {
+
+            if (isEscaped || inString) {
+                return;
+            }
+
+            if (closure == ')') {
+                if (c == '(') {
+                    parenthesesDepth++;
+                } else if (c == ')') {
+                    // Close one nesting level; function ends when we close the initial '('.
+                    if (parenthesesDepth > 0) {
+                        parenthesesDepth--;
+                    }
+                    if (parenthesesDepth == 0) {
+                        isReadyForSwitch = true;
+                    }
+                }
+                return;
+            }
+
+            if (c == closure) {
                 isReadyForSwitch = true;
             }
         }

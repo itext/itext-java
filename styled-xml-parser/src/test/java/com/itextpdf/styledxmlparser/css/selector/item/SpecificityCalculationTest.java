@@ -133,12 +133,12 @@ public class SpecificityCalculationTest extends ExtendedITextTest {
 
     @Test
     public void test20() {
-        Assertions.assertEquals(CssSpecificityConstants.CLASS_SPECIFICITY, getSpecificity(":not(p)"));
+        Assertions.assertEquals(CssSpecificityConstants.ELEMENT_SPECIFICITY, getSpecificity(":not(p)"));
     }
 
     @Test
     public void test21() {
-        Assertions.assertEquals(CssSpecificityConstants.CLASS_SPECIFICITY, getSpecificity(":not(#id)"));
+        Assertions.assertEquals(CssSpecificityConstants.ID_SPECIFICITY, getSpecificity(":not(#id)"));
     }
 
     @Test
@@ -162,6 +162,18 @@ public class SpecificityCalculationTest extends ExtendedITextTest {
     public void test25() {
         Assertions.assertEquals( CssSpecificityConstants.CLASS_SPECIFICITY * 2,
                 getSpecificity(".class_name:nth-last-of-type(2n - 3)"));
+    }
+
+    @Test
+    public void isSpecificityIsMaxOfSelectorListTest() {
+        Assertions.assertEquals(getSpecificity("#id"), getSpecificity(":is(#id, p, .c)"));
+        Assertions.assertEquals(getSpecificity(".c"), getSpecificity(":is(.c, p)"));
+    }
+
+    @Test
+    public void whereSpecificityIsAlwaysZeroTest() {
+        Assertions.assertEquals(0, getSpecificity(":where(#id, p, .c)"));
+        Assertions.assertEquals(1, getSpecificity("div:where(#id, .c, p)"));
     }
 
     @Test
