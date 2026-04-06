@@ -399,8 +399,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfAcroForm setNeedAppearances(boolean needAppearances) {
         if (VersionConforming.validatePdfVersionForDeprecatedFeatureLogError(document, PdfVersion.PDF_2_0, VersionConforming.DEPRECATED_NEED_APPEARANCES_IN_ACROFORM)) {
-            getPdfObject().remove(PdfName.NeedAppearances);
-            setModified();
+            remove(PdfName.NeedAppearances);
         } else {
             put(PdfName.NeedAppearances, PdfBoolean.valueOf(needAppearances));
         }
@@ -701,8 +700,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      */
     public void setGenerateAppearance(boolean generateAppearance) {
         if (generateAppearance) {
-            getPdfObject().remove(PdfName.NeedAppearances);
-            setModified();
+            remove(PdfName.NeedAppearances);
         }
         this.generateAppearance = generateAppearance;
     }
@@ -797,7 +795,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         PdfObject xObjectResources = xObject.getPdfObject().get(PdfName.Resources);
                         PdfObject pageResources = page.getResources().getPdfObject();
                         if (xObjectResources != null && xObjectResources == pageResources) {
-                            xObject.getPdfObject().put(PdfName.Resources,
+                            xObject.put(PdfName.Resources,
                                     initialPageResourceClones.get(document.getPageNumber(page)));
                         }
 
@@ -828,7 +826,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
             }
         }
 
-        getPdfObject().remove(PdfName.NeedAppearances);
+        remove(PdfName.NeedAppearances);
         if (fieldsForFlattening.size() == 0) {
             getFields().clear();
         }
@@ -988,7 +986,7 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
         if (fields == null) {
             LOGGER.warn(FormsLogMessageConstants.NO_FIELDS_IN_ACROFORM);
             fields = new PdfArray();
-            getPdfObject().put(PdfName.Fields, fields);
+            put(PdfName.Fields, fields);
         }
         return fields;
     }
@@ -1136,12 +1134,26 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
      * Put a key/value pair in the dictionary and overwrite previous value if it already exists.
      *
      * @param key   the key as pdf name
+     *
      * @param value the value as pdf object
      *
      * @return this {@link PdfAcroForm} instance
      */
     public PdfAcroForm put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
+        return this;
+    }
+
+    /**
+     * Removes the specified key from the {@link PdfDictionary} of the acroform.
+     *
+     * @param key key to be removed
+     *
+     * @return this {@link PdfAcroForm} instance
+     */
+    public PdfAcroForm remove(PdfName key) {
+        getPdfObject().remove(key);
         setModified();
         return this;
     }
