@@ -42,6 +42,8 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
@@ -49,6 +51,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfXObjectTest extends ExtendedITextTest{
@@ -60,6 +64,12 @@ public class PdfXObjectTest extends ExtendedITextTest{
             SOURCE_FOLDER + "WP_20140410_001.jpg",
             SOURCE_FOLDER + "WP_20140410_001.tif"};
 
+    private static Collection<Object[]> appendModes() {
+        return Arrays.asList(new Object[][]{
+                {true},
+                {false}
+        });
+    }
 
     @BeforeAll
     public static void beforeClass() {
@@ -331,15 +341,19 @@ public class PdfXObjectTest extends ExtendedITextTest{
         Assertions.assertEquals("PdfFormXObject or PdfImageXObject expected.", e.getMessage());
     }
 
-    @Test
-    public void pdfFormXObjectStreamConstructorIsModifiedFlagSetTest() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("appendModes")
+    public void pdfFormXObjectStreamConstructorIsModifiedFlagSetTest(boolean appendMode) throws Exception {
         String srcPdf = SOURCE_FOLDER + "formXObjectWithoutSubtype.pdf";
-        String destPdf = DESTINATION_FOLDER + "pdfFormXObjectStreamConstructorIsModifiedFlagSetTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_pdfFormXObjectStreamConstructorIsModifiedFlagSetTest.pdf";
+        String destPdf = DESTINATION_FOLDER + "formStreamConstructorModified.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_formStreamConstructorModified.pdf";
         PdfName formName = new PdfName("Form1");
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
-                new StampingProperties().useAppendMode())) {
+        StampingProperties props = new StampingProperties();
+        if (appendMode) {
+            props.useAppendMode();
+        }
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -354,15 +368,19 @@ public class PdfXObjectTest extends ExtendedITextTest{
                 .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
-    @Test
-    public void pdfFormXObjectGetResourcesIsModifiedFlagSetTest() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("appendModes")
+    public void pdfFormXObjectGetResourcesIsModifiedFlagSetTest(boolean appendMode) throws Exception {
         String srcPdf = SOURCE_FOLDER + "formXObjectWithoutResources.pdf";
-        String destPdf = DESTINATION_FOLDER + "pdfFormXObjectGetResourcesIsModifiedFlagSetTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_pdfFormXObjectGetResourcesIsModifiedFlagSetTest.pdf";
+        String destPdf = DESTINATION_FOLDER + "formGetResourcesModified.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_formGetResourcesModified.pdf";
         PdfName formName = new PdfName("Form1");
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
-                new StampingProperties().useAppendMode())) {
+        StampingProperties props = new StampingProperties();
+        if (appendMode) {
+            props.useAppendMode();
+        }
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -378,15 +396,19 @@ public class PdfXObjectTest extends ExtendedITextTest{
                 .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
-    @Test
-    public void pdfXObjectSetLayerIsModifiedFlagSetTest() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("appendModes")
+    public void pdfXObjectSetLayerIsModifiedFlagSetTest(boolean appendMode) throws Exception {
         String srcPdf = SOURCE_FOLDER + "simpleFormXObject.pdf";
-        String destPdf = DESTINATION_FOLDER + "pdfXObjectSetLayerIsModifiedFlagSetTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_pdfXObjectSetLayerIsModifiedFlagSetTest.pdf";
+        String destPdf = DESTINATION_FOLDER + "setLayerModified.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_setLayerModified.pdf";
         PdfName formName = new PdfName("Form1");
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
-                new StampingProperties().useAppendMode())) {
+        StampingProperties props = new StampingProperties();
+        if (appendMode) {
+            props.useAppendMode();
+        }
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -400,15 +422,19 @@ public class PdfXObjectTest extends ExtendedITextTest{
                 .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
-    @Test
-    public void pdfXObjectGetAssociatedFilesIsModifiedFlagSetTest() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("appendModes")
+    public void pdfXObjectGetAssociatedFilesIsModifiedFlagSetTest(boolean appendMode) throws Exception {
         String srcPdf = SOURCE_FOLDER + "simpleFormXObject.pdf";
-        String destPdf = DESTINATION_FOLDER + "pdfXObjectGetAssociatedFilesIsModifiedFlagSetTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_pdfXObjectGetAssociatedFilesIsModifiedFlagSetTest.pdf";
+        String destPdf = DESTINATION_FOLDER + "getAssociatedFilesModified.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_getAssociatedFilesModified.pdf";
         PdfName formName = new PdfName("Form1");
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
-                new StampingProperties().useAppendMode())) {
+        StampingProperties props = new StampingProperties();
+        if (appendMode) {
+            props.useAppendMode();
+        }
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -421,15 +447,19 @@ public class PdfXObjectTest extends ExtendedITextTest{
                 .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
-    @Test
-    public void pdfXObjectAddAssociatedFileIsModifiedFlagSetTest() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("appendModes")
+    public void pdfXObjectAddAssociatedFileIsModifiedFlagSetTest(boolean appendMode) throws Exception {
         String srcPdf = SOURCE_FOLDER + "simpleFormXObject.pdf";
-        String destPdf = DESTINATION_FOLDER + "pdfXObjectAddAssociatedFileIsModifiedFlagSetTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp_pdfXObjectAddAssociatedFileIsModifiedFlagSetTest.pdf";
+        String destPdf = DESTINATION_FOLDER + "addAssociatedFileModified.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_addAssociatedFileModified.pdf";
         PdfName formName = new PdfName("Form1");
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
-                new StampingProperties().useAppendMode())) {
+        StampingProperties props = new StampingProperties();
+        if (appendMode) {
+            props.useAppendMode();
+        }
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -443,16 +473,19 @@ public class PdfXObjectTest extends ExtendedITextTest{
                 .compareByContent(destPdf, cmpPdf, DESTINATION_FOLDER, "diff_"));
     }
 
-    @Test
-    public void pdfImageXObjectPutIsModifiedSetTest() throws IOException, InterruptedException {
-        final String fileName = "pdfImageXObjectPutIsModifiedSetTest.pdf";
-        String srcPdf = SOURCE_FOLDER + fileName;
-        String destPdf = DESTINATION_FOLDER + fileName;
-        String cmpPdf = SOURCE_FOLDER + "cmp_" + fileName;
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("appendModes")
+    public void pdfImageXObjectPutIsModifiedSetTest(boolean appendMode) throws IOException, InterruptedException {
+        String srcPdf = SOURCE_FOLDER + "imagePutModified.pdf";
+        String destPdf = DESTINATION_FOLDER + "imagePutModified.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp_imagePutModified.pdf";
         PdfName imageName = new PdfName("Im1");
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf),
-                new StampingProperties().useAppendMode())) {
+        StampingProperties props = new StampingProperties();
+        if (appendMode) {
+            props.useAppendMode();
+        }
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
