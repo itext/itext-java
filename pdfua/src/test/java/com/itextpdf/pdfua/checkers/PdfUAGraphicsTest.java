@@ -86,7 +86,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             Image img = loadImage();
             document.add(img);
         });
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("imageNoAltDescription");
         } else {
             framework.assertBothFail("imageNoAltDescription", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
@@ -111,7 +112,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             document.add(img);
         });
 
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("imageWithEmptyAltDescription");
         } else if (pdfConformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
             framework.assertBothFail("imageWithEmptyAltDescription",
@@ -190,7 +192,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             return new Div().add(img);
         });
 
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("imageWithCustomRoleAndNoDescription");
         } else {
             framework.assertBothFail("imageWithCustomRoleAndNoDescription");
@@ -219,7 +222,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             return new Div().add(img);
         });
 
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("imageCustomDoubleMapping_Throws");
         } else {
             framework.assertBothFail("imageCustomDoubleMapping_Throws");
@@ -304,7 +308,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             // will not throw in layout but will throw on close this is expected
             document.add(imgWithCaption);
         });
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("imageWithCaptionWithoutAltDescr");
         } else {
             framework.assertBothFail("imageWithCaptionWithoutAltDescr",
@@ -322,7 +327,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             img.getAccessibilityProperties().setActualText(null);
             document.add(img);
         });
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("imageWithoutActualText");
         } else {
             framework.assertBothFail("imageWithoutActualText", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
@@ -401,7 +407,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             }
             canvas.closeTag();
         });
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("canvasWithoutAltDescr");
         } else {
             framework.assertBothFail("canvasWithoutAltDescr", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
@@ -442,7 +449,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             document.add(new Div().setHeight(730).setBackgroundColor(ColorConstants.CYAN));
             document.add(img);
         });
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("overflowImage");
         } else {
             framework.assertBothFail("overflowImage");
@@ -469,7 +477,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             table.addCell(img);
             document.add(table);
         });
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("embeddedImageInTable");
         } else {
             framework.assertBothFail("embeddedImageInTable", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
@@ -487,7 +496,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             div.add(img);
             document.add(div);
         });
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("embeddedImageInDiv");
         } else {
             framework.assertBothFail("embeddedImageInDiv", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
@@ -505,7 +515,8 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             paragraph.add(img);
             document.add(paragraph);
         });
-        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !pdfConformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("embeddedImageInParagraph");
         } else {
             framework.assertBothFail("embeddedImageInParagraph", PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);

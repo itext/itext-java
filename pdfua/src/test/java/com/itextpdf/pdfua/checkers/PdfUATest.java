@@ -309,7 +309,8 @@ public class PdfUATest extends ExtendedITextTest {
             info.setTitle("English pangram");
         });
 
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("documentWithEmptyViewerPreferencesTest");
         } else {
             framework.assertBothFail("documentWithEmptyViewerPreferencesTest",
@@ -414,7 +415,8 @@ public class PdfUATest extends ExtendedITextTest {
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
 
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("pdfuaOCGPropertiesCheck01");
         } else {
             framework.assertBothFail("pdfuaOCGPropertiesCheck01",
@@ -438,7 +440,8 @@ public class PdfUATest extends ExtendedITextTest {
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
 
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("pdfuaOCGPropertiesCheck02");
         } else {
             framework.assertBothFail("pdfuaOCGPropertiesCheck02",
@@ -465,7 +468,8 @@ public class PdfUATest extends ExtendedITextTest {
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
 
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("pdfuaOCGPropertiesCheck03");
         } else {
             framework.assertBothFail("pdfuaOCGPropertiesCheck03",

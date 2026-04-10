@@ -344,12 +344,27 @@ public class PdfConformance {
         if (conformanceList == null) {
             return false;
         }
-        for (Object conformance : conformanceList) {
-            if (this.equals(conformance)) {
+        for (PdfConformance conformance : conformanceList) {
+            if (this.includes(conformance)) {
                 return true;
             }
         }
+
         return false;
+    }
+
+    /**
+     * Checks if passed conformance is fully included into this {@link PdfConformance}
+     *
+     * @param conformance the conformance to check
+     *
+     * @return {@code true} if conformance is fully included into this conformance,
+     * otherwise {@code false}
+     */
+    public boolean includes(PdfConformance conformance) {
+        return (conformance.uaConformance == null || conformance.uaConformance.equals(this.uaConformance))
+                && (conformance.aConformance == null || conformance.aConformance.equals(this.aConformance))
+                && (this.wtpdfFlag & conformance.wtpdfFlag) == conformance.wtpdfFlag;
     }
 
     /**

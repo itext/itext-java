@@ -22,7 +22,6 @@
  */
 package com.itextpdf.pdfua;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.exceptions.Pdf20ConformanceException;
 import com.itextpdf.kernel.pdf.PdfConformance;
@@ -42,6 +41,7 @@ import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -77,6 +77,10 @@ public class UaValidationTestFramework {
         conformances.add(new PdfConformance(WellTaggedPdfConformance.FOR_REUSE));
 
         conformances.add(new PdfConformance(WellTaggedPdfConformance.FOR_ACCESSIBILITY));
+
+        conformances.add(new PdfConformance(Arrays.asList(WellTaggedPdfConformance.FOR_REUSE,
+                WellTaggedPdfConformance.FOR_ACCESSIBILITY)));
+
         return conformances;
     }
 
@@ -104,9 +108,9 @@ public class UaValidationTestFramework {
     }
 
     public void assertBothFail(String filename, String expectedMsg, boolean checkDocClosing) throws IOException {
-        checkError(checkErrorLayout("itext_" + filename + conformanceToString() + ".pdf"), expectedMsg);
+        checkError(checkErrorLayout("itext_" + filename + pathSafeConformance() + ".pdf"), expectedMsg);
 
-        final String createdFileName = "vera_" + filename + conformanceToString() + ".pdf";
+        final String createdFileName = "vera_" + filename + pathSafeConformance() + ".pdf";
         veraPdfResult(createdFileName, true);
 
         if (checkDocClosing) {
@@ -116,9 +120,9 @@ public class UaValidationTestFramework {
     }
 
     public void assertBothValid(String fileName) throws IOException {
-        Exception e = checkErrorLayout("itext_" + fileName + conformanceToString() + ".pdf");
-        String veraPdf = veraPdfResult("vera_" + fileName + conformanceToString() + ".pdf", false);
-        Exception eClosing = checkErrorOnClosing("vera_" + fileName + conformanceToString() + ".pdf");
+        Exception e = checkErrorLayout("itext_" + fileName + pathSafeConformance() + ".pdf");
+        String veraPdf = veraPdfResult("vera_" + fileName + pathSafeConformance() + ".pdf", false);
+        Exception eClosing = checkErrorOnClosing("vera_" + fileName + pathSafeConformance() + ".pdf");
         if (e == null && veraPdf == null && eClosing == null) {
             return;
         }
@@ -154,13 +158,13 @@ public class UaValidationTestFramework {
     }
 
     public void assertOnlyVeraPdfFail(String filename) throws IOException {
-        veraPdfResult("vera_" + filename + conformanceToString() + ".pdf", true);
-        Exception e = checkErrorLayout("itext_" + filename + conformanceToString() + ".pdf");
+        veraPdfResult("vera_" + filename + pathSafeConformance() + ".pdf", true);
+        Exception e = checkErrorLayout("itext_" + filename + pathSafeConformance() + ".pdf");
         Assertions.assertNull(e);
     }
 
     public void assertVeraPdfValid(String filename) throws IOException {
-        String veraPdf = veraPdfResult("vera_" + filename + conformanceToString() + ".pdf", false);
+        String veraPdf = veraPdfResult("vera_" + filename + pathSafeConformance() + ".pdf", false);
         if (veraPdf == null) {
             return;
         }
@@ -168,7 +172,7 @@ public class UaValidationTestFramework {
     }
 
     public void assertOnlyITextFail(String filename, String expectedMsg) throws IOException {
-        checkError(checkErrorLayout("itext_" + filename + conformanceToString() + ".pdf"), expectedMsg);
+        checkError(checkErrorLayout("itext_" + filename + pathSafeConformance() + ".pdf"), expectedMsg);
         assertVeraPdfValid(filename);
     }
 
@@ -298,15 +302,9 @@ public class UaValidationTestFramework {
         return null;
     }
 
-    private String conformanceToString() {
-        if (conformance.getUAConformance() != null) {
-            return MessageFormatUtil.format("_UA_{0}", conformance.getUAConformance().getPart());
-        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_ACCESSIBILITY)) {
-            return "WTPDF_FOR_ACCESSIBILITY";
-        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
-            return "WTPDF_FOR_REUSE";
-        }
-        return null;
+    private String pathSafeConformance() {
+        String conformanceString = conformance.toString();
+        return conformanceString.substring(conformanceString.indexOf(":") + 1).replaceAll("[ -]", "_");
     }
 
     private static String printStackTrace(Exception e) {
