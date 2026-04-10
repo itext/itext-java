@@ -22,17 +22,17 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 
 @Tag("UnitTest")
@@ -71,7 +71,7 @@ public class FontProgramTest extends ExtendedITextTest {
         FontCache.clearSavedFonts();
         FontProgramFactory.registerFontDirectory(FONT_FOLDER);
 
-        Assertions.assertEquals(52, FontProgramFactory.getRegisteredFonts().size());
+        Assertions.assertEquals(54, FontProgramFactory.getRegisteredFonts().size());
         Assertions.assertNull(FontCache.getFont("./src/test/resources/com/itextpdf/io/font/FreeSansBold.ttf"));
         Assertions.assertTrue(FontProgramFactory.getRegisteredFonts().contains("free sans bold"));
     }

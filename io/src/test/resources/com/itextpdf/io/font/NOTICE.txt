@@ -16,6 +16,7 @@ NotoSansJP-Regular_charsetDataFormat0.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Base
 NotoSansKhmer-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "https://github.com/googlefonts/noto-fonts"
 NotoSansMyanmar-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "https://github.com/googlefonts/noto-fonts"
 NotoSansSC-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
+NotoSansSinhala-Regular.ttf | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on commit 60aa0da2ee84b11e78725b4577edc2e80b009d56 (07.03.2017) from "https://github.com/googlefonts/noto-fonts"
 NotoSansTC-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "https://github.com/googlefonts/noto-cjk"
 Padauk-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Padauk" (26.01.2026)
 Puritan-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Puritan" (26.01.2026)

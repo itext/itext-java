@@ -25,6 +25,7 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.font.otf.OpenTableLookup.GlyphIndexer;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.IOException;
 import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -64,6 +65,30 @@ public class OpenTableLookupTest extends ExtendedITextTest {
         Assertions.assertEquals(0, glyphIndexer.getLine().getIdx());
         Assertions.assertEquals(0, glyphIndexer.getLine().getStart());
         Assertions.assertEquals(1, glyphIndexer.getLine().getEnd());
+    }
+
+    @Test
+    public void lookupIndexTest() {
+        SimpleTableLookup lookup = new SimpleTableLookup();
+        Assertions.assertEquals(0, lookup.getIndexInLookupList());
+        lookup.setIndexInLookupList(1);
+        Assertions.assertEquals(1, lookup.getIndexInLookupList());
+    }
+
+    private static class SimpleTableLookup extends OpenTableLookup {
+        public SimpleTableLookup() {
+            super(null, 0, null);
+        }
+
+        @Override
+        public boolean transformOne(GlyphLine line) {
+            return false;
+        }
+
+        @Override
+        protected void readSubTable(int subTableLocation) throws IOException {
+
+        }
     }
 }
 

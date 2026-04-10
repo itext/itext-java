@@ -34,7 +34,17 @@ import java.util.Map;
  */
 public class GlyphSubstitutionTableReader extends OpenTypeFontTableReader {
 
-
+    /**
+     * Instantiates a new instance of {@link GlyphSubstitutionTableReader}.
+     *
+     * @param rf the {@code RandomAccessFileOrArray} containing the OpenType font
+     * @param gsubTableLocation the GSUB table location
+     * @param gdef the GDEF table reader
+     * @param indexGlyphMap the glyph index to glyph map
+     * @param unitsPerEm the {@code head.unitsPerEm} value from the OpenType font
+     *
+     * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading table
+     */
     public GlyphSubstitutionTableReader(RandomAccessFileOrArray rf, int gsubTableLocation, OpenTypeGdefTableReader gdef,
                                         Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) throws java.io.IOException {
         super(rf, gsubTableLocation, gdef, indexGlyphMap, unitsPerEm);

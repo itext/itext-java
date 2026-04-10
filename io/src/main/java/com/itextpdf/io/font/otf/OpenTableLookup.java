@@ -22,25 +22,70 @@
  */
 package com.itextpdf.io.font.otf;
 
-
+/**
+ * A Lookup table defines the specific conditions, type, and results of
+ * substitution or positioning actions that are used to implement a feature.
+ *
+ * <p>
+ * The data describing the actions of a lookup are contained in one or more lookup subtables.
+ * Different lookup types support different types of operation; for example, positioning
+ * adjustment on a single glyph versus positioning adjustments on pairs of glyphs.
+ *
+ * <p>
+ * For more information see <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+ */
 public abstract class OpenTableLookup {
-
+    /** Indicates to a text-processing client certain processing options to use when substituting or positioning glyphs. */
     protected int lookupFlag;
+    /** Subtables locations. */
     protected int[] subTableLocations;
+    /** OpenType font table reader. */
     protected OpenTypeFontTableReader openReader;
-    
+
+    private int indexInLookupList;
+
+    /**
+     * Instantiates a new instance of {@link OpenTableLookup}.
+     *
+     * @param openReader the OpenType font table reader
+     * @param lookupFlag the lookup flag
+     * @param subTableLocations the subtables locations
+     */
     protected OpenTableLookup(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) {
         this.lookupFlag = lookupFlag;
         this.subTableLocations = subTableLocations;
         this.openReader = openReader;
     }
-    
+
+    /**
+     * Gets the lookup flag.
+     *
+     * <p>
+     * The flag indicates to a text-processing client certain processing
+     * options to use when substituting or positioning glyphs.
+     *
+     * @return the lookup flag
+     */
     public int getLookupFlag() {
         return lookupFlag;
     }
 
+    /**
+     * Apply transformation to only one glyph from the glyph line.
+     *
+     * @param line the glyph line to transform
+     *
+     * @return {@code true} if transformation was applied, {@code false} otherwise
+     */
     public abstract boolean transformOne(GlyphLine line);
-    
+
+    /**
+     * Apply transformation to the glyph line.
+     *
+     * @param line the glyph line to transform
+     *
+     * @return {@code true} if transformation was applied, {@code false} otherwise
+     */
     public boolean transformLine(GlyphLine line) {
         boolean changed = false;
         line.setIdx(line.getStart());
@@ -50,18 +95,58 @@ public abstract class OpenTableLookup {
         return changed;
     }
 
+    /**
+     * Checks whether there is a substitution (replacement) for the specified index in {@code this} lookup table.
+     *
+     * @param index the index to check for a substitution
+     *
+     * @return {@code true} if there is substitution, {@code false} otherwise
+     */
     public boolean hasSubstitution(int index) {
         return false;
     }
 
+    /**
+     * Reads subtables.
+     *
+     * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading subtables
+     */
     protected void readSubTables() throws java.io.IOException {
         for (int subTableLocation : subTableLocations) {
             readSubTable(subTableLocation);
         }
     }
 
+    /**
+     * Reads subtable from the specified location.
+     *
+     * @param subTableLocation the subtable location
+     *
+     * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading subtable
+     */
     protected abstract void readSubTable(int subTableLocation) throws java.io.IOException;
 
+    /**
+     * Gets {@code this} lookup table index in the LookupList.
+     *
+     * @return the table index in the LookupList
+     */
+    public int getIndexInLookupList() {
+        return indexInLookupList;
+    }
+
+    /**
+     * Sets lookup table index in the LookupList.
+     *
+     * @param indexInLookupList the table index in the LookupList
+     */
+    public void setIndexInLookupList(int indexInLookupList) {
+        this.indexInLookupList = indexInLookupList;
+    }
+
+    /**
+     * Utility class to iterate over {@link GlyphLine}.
+     */
     public static class GlyphIndexer {
         private GlyphLine line;
         private Glyph glyph;
@@ -121,6 +206,12 @@ public abstract class OpenTableLookup {
             this.idx = idx;
         }
 
+        /**
+         * Reads the next glyph taking into account glyph class and lookup flag.
+         *
+         * @param openReader the OpenType reader to check glyph class against lookup flag
+         * @param lookupFlag the lookup flag
+         */
         public void nextGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
             glyph = null;
             while (++idx < line.getEnd()) {
@@ -132,6 +223,12 @@ public abstract class OpenTableLookup {
             }
         }
 
+        /**
+         * Reads the previous glyph taking into account glyph class and lookup flag.
+         *
+         * @param openReader the OpenType reader to check glyph class against lookup flag
+         * @param lookupFlag the lookup flag
+         */
         public void previousGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
             glyph = null;
             while (--idx >= line.getStart()) {
