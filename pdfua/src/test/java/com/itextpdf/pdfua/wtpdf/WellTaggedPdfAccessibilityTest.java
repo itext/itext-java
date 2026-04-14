@@ -22,13 +22,18 @@
     */
 package com.itextpdf.pdfua.wtpdf;
 
+import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.PdfCatalog;
 import com.itextpdf.kernel.pdf.PdfConformance;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WellTaggedPdfConformance;
 import com.itextpdf.kernel.pdf.WriterProperties;
+import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.checkers.PdfUATableTest;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
@@ -38,10 +43,12 @@ import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -120,5 +127,24 @@ public class WellTaggedPdfAccessibilityTest extends ExtendedITextTest {
 
         framework.addSuppliers(tableBuilder.generateFunc());
         framework.assertBothValid("wellTaggedPdfTableTest");
+    }
+
+    @Test
+    public void wellTaggedPdfXmpTwoConformanceWrongOrderTest() throws IOException {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
+            pdfDocument.addNewPage();
+            PdfCatalog catalog = pdfDocument.getCatalog();
+
+            byte[] bytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER +
+                    "wtpdfReuseAccessibilityMetadata.xmp"));
+            PdfStream metadata = new PdfStream(bytes);
+            catalog.put(PdfName.Metadata, metadata);
+            catalog.put(PdfName.Type, PdfName.Metadata);
+            catalog.put(PdfName.Subtype, PdfName.XML);
+
+            AssertUtil.doesNotThrow(() -> PdfCheckersUtil.checkMetadata(catalog.getPdfObject(),
+                    PdfConformance.WELL_TAGGED_PDF_FOR_REUSE, (msg) -> new PdfException(msg)));
+        }
     }
 }

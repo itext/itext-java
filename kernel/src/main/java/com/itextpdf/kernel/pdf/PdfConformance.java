@@ -364,7 +364,19 @@ public class PdfConformance {
     public boolean includes(PdfConformance conformance) {
         return (conformance.uaConformance == null || conformance.uaConformance.equals(this.uaConformance))
                 && (conformance.aConformance == null || conformance.aConformance.equals(this.aConformance))
-                && (this.wtpdfFlag & conformance.wtpdfFlag) == conformance.wtpdfFlag;
+                && isWellTaggedConformanceIncluded(conformance);
+    }
+
+    /**
+     * Checks if well tagged conformance part of passed conformance is included into this {@link PdfConformance}
+     *
+     * @param conformance the conformance to check
+     *
+     * @return {@code true} if well tagged conformance of this conformance is included,
+     * otherwise {@code false}
+     */
+    public boolean isWellTaggedConformanceIncluded(PdfConformance conformance) {
+        return (this.wtpdfFlag & conformance.wtpdfFlag) == conformance.wtpdfFlag;
     }
 
     /**
