@@ -303,8 +303,25 @@ public class UaValidationTestFramework {
     }
 
     private String pathSafeConformance() {
-        String conformanceString = conformance.toString();
-        return conformanceString.substring(conformanceString.indexOf(":") + 1).replaceAll("[ -]", "_");
+        StringBuilder conformanceShortString = new StringBuilder();
+
+        if (conformance.getUAConformance() != null) {
+            conformanceShortString.append("_UA_").append(conformance.getUAConformance().getPart());
+        }
+
+        if (conformance.isWtpdf()) {
+            conformanceShortString.append("_WTPDF");
+
+            if (conformance.conformsTo(WellTaggedPdfConformance.FOR_ACCESSIBILITY)) {
+                conformanceShortString.append("_A");
+            }
+
+            if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
+                conformanceShortString.append("_R");
+            }
+        }
+
+        return conformanceShortString.toString();
     }
 
     private static String printStackTrace(Exception e) {
