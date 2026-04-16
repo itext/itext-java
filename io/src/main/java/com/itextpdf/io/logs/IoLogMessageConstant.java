@@ -427,6 +427,14 @@ public final class IoLogMessageConstant {
     public static final String TYPE3_FONT_INITIALIZATION_ISSUE =
             "Type 3 font issue. Font cannot be initialized correctly.";
 
+    /**
+     * Old log message when Typography module was not found
+     *
+     * @deprecated since 9.7.0,
+     * replaced by com.itextpdf.kernel.logs.KernelLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING and
+     * com.itextpdf.kernel.logs.KernelLogMessageConstant.TYPOGRAPHY_NOT_FOUND_INFO
+     */
+    @Deprecated
     public static final String TYPOGRAPHY_NOT_FOUND = "Cannot find pdfCalligraph module, which was implicitly " +
             "required by one of the layout properties";
 

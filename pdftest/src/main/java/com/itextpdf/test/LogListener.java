@@ -33,6 +33,7 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.read.ListAppender;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,6 +175,7 @@ public class LogListener implements BeforeTestExecutionCallback, AfterTestExecut
     private void checkLogMessages(ExtensionContext context) {
         LogMessages logMessages = LoggerHelper.getTestAnnotation(context, LogMessages.class);
         int checkedMessages = 0;
+        List<ILoggingEvent> loggedMessages = new ArrayList<>(listAppender.list);
         if (logMessages != null) {
             LogMessage[] messages = logMessages.messages();
             for (LogMessage logMessage : messages) {
@@ -181,7 +183,7 @@ public class LogListener implements BeforeTestExecutionCallback, AfterTestExecut
                 if (foundCount != logMessage.count() && !logMessages.ignore() && !logMessage.ignore()) {
                     listAppender.clear();
                     LoggerHelper.failWrongMessageCount(logMessage.count(), foundCount, logMessage.messageTemplate(),
-                            context);
+                            context, loggedMessages);
                 } else {
                     checkedMessages += foundCount;
                 }
@@ -191,7 +193,7 @@ public class LogListener implements BeforeTestExecutionCallback, AfterTestExecut
         final int size = getSizeBy(getThreadId());
         if (size > checkedMessages) {
             listAppender.clear();
-            LoggerHelper.failWrongTotalCount(size, checkedMessages, context);
+            LoggerHelper.failWrongTotalCount(size, checkedMessages, context, loggedMessages);
         }
         listAppender.clear();
     }

@@ -750,7 +750,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     public void applyOtf() {
         updateFontAndText();
         Character.UnicodeScript script = this.<Character.UnicodeScript>getProperty(Property.FONT_SCRIPT);
-        if (!otfFeaturesApplied && TypographyUtils.isPdfCalligraphAvailable() && text.getStart() < text.getEnd()) {
+        if (!otfFeaturesApplied && text.getStart() < text.getEnd()) {
             final PdfDocument pdfDocument = getPdfDocument();
             final SequenceId sequenceId = pdfDocument == null ? null : pdfDocument.getDocumentIdWrapper();
             final MetaInfoContainer metaInfoContainer = this.<MetaInfoContainer>getProperty(Property.META_INFO);

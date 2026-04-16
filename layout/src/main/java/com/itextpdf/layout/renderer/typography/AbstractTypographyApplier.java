@@ -39,6 +39,8 @@ import java.util.Map;
 
 public abstract class AbstractTypographyApplier extends AbstractITextEvent {
 
+
+
     protected AbstractTypographyApplier() {
         // do nothing
     }

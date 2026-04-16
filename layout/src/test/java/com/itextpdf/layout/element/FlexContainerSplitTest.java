@@ -229,9 +229,6 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 553)
-    })
     public void rowWrapRtlStartTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "rowWrapRtlStartTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_rowWrapRtlStartTest.pdf";
@@ -251,9 +248,6 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 553)
-    })
     public void reverseRowWrapRtlStartTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "reverseRowWrapRtlStartTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_reverseRowWrapRtlStartTest.pdf";

@@ -33,6 +33,7 @@ public class TypographyUtilsTest extends ExtendedITextTest {
 
     @Test
     public void verifyPdfCalligraphIsNotAvailable() {
+        // call is irrelevant now
         Assertions.assertFalse(TypographyUtils.isPdfCalligraphAvailable());
     }
 

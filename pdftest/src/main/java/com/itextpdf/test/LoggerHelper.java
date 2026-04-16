@@ -29,6 +29,7 @@ import ch.qos.logback.core.Appender;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.lang.annotation.Annotation;
@@ -47,16 +48,72 @@ public class LoggerHelper {
         return annotation;
     }
 
-    static void failWrongMessageCount(int expected, int actual, String messageTemplate, ExtensionContext context) {
-        Assertions.fail(MessageFormat.format("{0}:{1} Expected to find {2}, but found {3} messages with the following content: \"{4}\"",
-                context.getRequiredTestClass().getName(), context.getRequiredTestMethod().getName(), expected, actual, messageTemplate));
+    static void failWrongMessageCount(int expected, int actual, String messageTemplate, ExtensionContext context,
+            List<ILoggingEvent> loggedMessages) {
+        Assertions.fail(MessageFormat.format("{0}:{1} Expected to find {2}, but found {3}"
+                        + " messages with the following content: \"{4}\"\nActual messages:\n{5}",
+                context.getRequiredTestClass().getName(), context.getRequiredTestMethod().getName(), expected, actual,
+                messageTemplate, createActualLogsMessage(loggedMessages)));
     }
 
-    static void failWrongTotalCount(int expected, int actual, ExtensionContext context) {
-        Assertions.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging - {2} messages",
+    static void failWrongTotalCount(int expected, int actual, ExtensionContext context,
+            List<ILoggingEvent> loggedMessages) {
+        Assertions.fail(MessageFormat.format("{0}.{1}: The test does not check the message logging"
+                        + " - {2} messages\nActual messages:\n{3}",
                 context.getRequiredTestClass().getName(),
                 context.getRequiredTestMethod().getName(),
-                expected - actual));
+                expected - actual, createActualLogsMessage(loggedMessages)));
+    }
+
+    private static String createActualLogsMessage(List<ILoggingEvent> loggedMessages) {
+        if (loggedMessages.isEmpty()) {
+            return "No messages were logged.";
+        }
+        StringBuilder sb = new StringBuilder();
+        loggedMessages.sort((m1, m2) -> compareEvents(m1, m2));
+        ILoggingEvent prevMessage = null;
+        int count = 0;
+        for (ILoggingEvent event : loggedMessages) {
+            if (prevMessage == null || compareEvents(event, prevMessage) == 0) {
+                count++;
+            } else {
+                sb.append('\t')
+                        .append("Occurrences: ").append(count).append(" - ")
+                        .append(prevMessage.getLoggerName()).append(" - ")
+                        .append(prevMessage.getLevel()).append(" : ")
+                        .append(prevMessage.getFormattedMessage())
+                        .append("\n");
+                count=0;
+            }
+            prevMessage = event;
+        }
+        sb.append('\t')
+                .append("Occurrences: ").append(count).append(" - ")
+                .append(prevMessage.getLoggerName()).append(" - ")
+                .append(prevMessage.getLevel()).append(" : ")
+                .append(prevMessage.getFormattedMessage())
+                .append("\n");
+        return sb.toString();
+    }
+
+    private static int compareEvents(ILoggingEvent m1, ILoggingEvent m2) {
+        if (m1 == null && m2 == null) {
+            return 0;
+        }
+        if (m1 == null && m2 != null) {
+            return -1;
+        }
+        if (m2 == null && m1 != null) {
+            return 1;
+        }
+        int result = m1.getLoggerName().compareTo(m2.getLoggerName());
+        if (result == 0) {
+            result = Integer.compare(m1.getLevel().toInt(), m2.getLevel().toInt());
+        }
+        if (result == 0) {
+            result = m1.getFormattedMessage().compareTo(m2.getFormattedMessage());
+        }
+        return result;
     }
 
     /*

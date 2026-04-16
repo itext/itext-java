@@ -551,11 +551,13 @@
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
                 <file path="com/itextpdf/signatures/CertificateUtil.java"/>
             </fileset>
-            <fileset reason="EnumSet generics mapping problems">
+            <fileset reason="Enum generics mapping problems">
                 <file path="com/itextpdf/signatures/validation/context/ValidatorContexts.java" />
                 <file path="com/itextpdf/signatures/validation/context/TimeBasedContexts.java" />
                 <file path="com/itextpdf/signatures/validation/context/CertificateSources.java" />
                 <file path="com/itextpdf/signatures/validation/SignatureValidationProperties.java" />
+                <file path="com/itextpdf/layout/renderer/typography/ScriptInfoData.java" />
+
             </fileset>
             <fileset reason="Xml tooling is not translatable">
                 <file path="com/itextpdf/signatures/validation/report/xml/XmlReportGenerator.java"/>

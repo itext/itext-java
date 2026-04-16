@@ -37,6 +37,15 @@ public final class LayoutLogMessageConstant {
     public static final String SECTION_BREAK_UNEXPECTED = "Unexpected use of SectionBreakRenderer detected, " +
             "which may indicate an issue with layout processing.";
 
+    public static final String TYPOGRAPHY_NOT_FOUND_WARNING = "Cannot find typography module (pdfCalligraph), "
+            + "which was implicitly required by {0}. "
+            + "See https://itextpdf.com/products/pdfcalligraph for more information.";
+
+    public static final String TYPOGRAPHY_NOT_FOUND_INFO = "Cannot find pdfCalligraph module, "
+            + "some languages in {0} might require this module when the following OpenTypeFont features are "
+            + "obligatory for text rendering {1}";
+
+
     private LayoutLogMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly.
     }

@@ -98,7 +98,6 @@ public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 
 	@ParameterizedTest(name = PARAMETERS_NAME_PATTERN)
 	@MethodSource("baseDirectionAndSymbolAlignmentProperties")
-	@LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.TYPOGRAPHY_NOT_FOUND, count = 8)})
 	public void defaultListIemPositionAlignmentTest(BaseDirection listBaseDirection, BaseDirection listItemBaseDirection,
 			ListSymbolAlignment listSymbolAlignment, ListSymbolPosition listSymbolPosition, Integer comparisonPdfId)
 			throws IOException, InterruptedException {
