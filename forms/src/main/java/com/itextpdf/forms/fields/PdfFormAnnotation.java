@@ -745,13 +745,18 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             return;
         }
         // Rotation
-        PdfPage page = getWidget().getPage();
-        final int pageRotation = page == null ? 0 : page.getRotation();
-        final int additionalFieldRotation =
-                ((PdfSignatureFormField) parent).isPageRotationIgnored() ? 0 : -pageRotation;
-        final int fieldRotation = getRotation() + additionalFieldRotation;
-        PdfArray matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
-        rectangle = applyRotation(fieldRotation + pageRotation, rectangle);
+        PdfArray matrix;
+        if (((PdfSignatureFormField) parent).isPageRotationIgnored()) {
+            PdfPage page = getWidget().getPage();
+            final int pageRotation = page == null ? 0 : page.getRotation();
+            final int additionalFieldRotation = 0;
+            final int fieldRotation = getRotation() + additionalFieldRotation;
+            matrix = getRotationMatrix(fieldRotation, rectangle.getHeight(), rectangle.getWidth());
+            rectangle = applyRotation(fieldRotation + pageRotation, rectangle);
+        } else {
+            matrix = getRotationMatrix(getRotation(), rectangle.getHeight(), rectangle.getWidth());
+            rectangle = applyRotation(getRotation(), rectangle);
+        }
 
         createSigField();
         setModelElementProperties(rectangle);
@@ -1520,17 +1525,19 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
         PdfFormXObject n2LayerXObject = new PdfFormXObject(new Rectangle(0, 0, width, height));
         Canvas n2LayerCanvas = new Canvas(n2LayerXObject, this.getDocument());
 
-        PdfPage page = getWidget().getPage();
-        int rotation = page == null ? 0 : page.getRotation();
-        float squeezeTransformation = height / width;
-        if (rotation == 90) {
-            n2LayerCanvas.getPdfCanvas()
-                    .concatMatrix(0, squeezeTransformation, -1 / squeezeTransformation, 0, width, 0);
-        } else if (rotation == 180) {
-            n2LayerCanvas.getPdfCanvas().concatMatrix(-1, 0, 0, -1, width, height);
-        } else if (rotation == 270) {
-            n2LayerCanvas.getPdfCanvas()
-                    .concatMatrix(0, -squeezeTransformation, 1 / squeezeTransformation, 0, 0, height);
+        if (((PdfSignatureFormField) parent).isPageRotationIgnored()) {
+            PdfPage page = getWidget().getPage();
+            int rotation = page == null ? 0 : page.getRotation();
+            float squeezeTransformation = height / width;
+            if (rotation == 90) {
+                n2LayerCanvas.getPdfCanvas()
+                        .concatMatrix(0, squeezeTransformation, -1 / squeezeTransformation, 0, width, 0);
+            } else if (rotation == 180) {
+                n2LayerCanvas.getPdfCanvas().concatMatrix(-1, 0, 0, -1, width, height);
+            } else if (rotation == 270) {
+                n2LayerCanvas.getPdfCanvas()
+                        .concatMatrix(0, -squeezeTransformation, 1 / squeezeTransformation, 0, 0, height);
+            }
         }
         n2LayerCanvas.add(formFieldElement);
         // We need to draw waitingDrawingElements (drawn inside close method), but the close method

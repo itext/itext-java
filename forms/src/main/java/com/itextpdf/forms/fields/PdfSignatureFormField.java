@@ -163,10 +163,21 @@ public class PdfSignatureFormField extends PdfFormField {
      * <p>
      * Default value is {@code true}.
      *
-     * @param ignore boolean value to set.
+     * @param ignore boolean value to set
      *
-     * @return this same {@link PdfSignatureFormField} instance.
+     * @return this same {@link PdfSignatureFormField} instance
+     *
+     * @deprecated if you have rotated pages but want to ignore that rotation when adding a new field,
+     * you need to disable this broken feature and negate page rotation by modifying form field rectangle
+     * and field rotation properties using {@link PdfFormAnnotation#setRotation(int)}.
+     * An example code explaining how to do it can be found at
+     * <a href="https://github.com/itext/itext-publications-examples-java/blob/develop/src/main/java/com/itextpdf/samples/sandbox/signatures/appearance/SignatureAppearancePageRotationAgnosticExample.java">
+     * SignatureAppearancePageRotationAgnosticExample for Java</a>
+     * and
+     * <a href="https://github.com/itext/itext-publications-samples-dotnet/blob/develop/itext/itext.samples/itext/samples/sandbox/signatures/appearance/SignatureAppearancePageRotationAgnosticExample.cs">
+     * SignatureAppearancePageRotationAgnosticExample for C#</a>.
      */
+    @Deprecated
     public PdfSignatureFormField setIgnorePageRotation(boolean ignore) {
         this.ignorePageRotation = ignore;
         return this;
