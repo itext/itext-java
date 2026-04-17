@@ -1,0 +1,1091 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><TrustServiceStatusList xmlns="http://uri.etsi.org/02231/v2#" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://uri.etsi.org/02231/v2/additionaltypes#" xmlns:ns4="http://uri.etsi.org/01903/v1.3.2#" xmlns:ns5="http://uri.etsi.org/TrstSvc/SvcInfoExt/eSigDir-1999-93-EC-TrustedList/#" xmlns:ns6="http://uri.etsi.org/01903/v1.4.1#" TSLTag="http://uri.etsi.org/19612/TSLTag">
+    <SchemeInformation>
+        <TSLVersionIdentifier>5</TSLVersionIdentifier>
+        <TSLSequenceNumber>47</TSLSequenceNumber>
+        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUgeneric</TSLType>
+        <SchemeOperatorName>
+            <Name xml:lang="en">Office for Communications</Name>
+            <Name xml:lang="de">Amt für Kommunikation</Name>
+        </SchemeOperatorName>
+        <SchemeOperatorAddress>
+            <PostalAddresses>
+                <PostalAddress xml:lang="en">
+                    <StreetAddress>Äulestrasse 51</StreetAddress>
+                    <Locality>Vaduz</Locality>
+                    <PostalCode>9490</PostalCode>
+                    <CountryName>LI</CountryName>
+                </PostalAddress>
+                <PostalAddress xml:lang="de">
+                    <StreetAddress>Äulestrasse 51</StreetAddress>
+                    <Locality>Vaduz</Locality>
+                    <PostalCode>9490</PostalCode>
+                    <CountryName>LI</CountryName>
+                </PostalAddress>
+            </PostalAddresses>
+            <ElectronicAddress>
+                <URI xml:lang="en">mailto:info.ak@llv.li</URI>
+                <URI xml:lang="en">http://www.llv.li/#/1833/english-information</URI>
+                <URI xml:lang="de">http://www.llv.li/#/11109/amt-fur-kommunikation</URI>
+            </ElectronicAddress>
+        </SchemeOperatorAddress>
+        <SchemeName>
+            <Name xml:lang="en">LI:Trusted list including information related to the qualified trust service providers which are supervised by the issuing Member State, together with information related to the qualified trust services provided by them, in accordance with the relevant provisions laid down in Regulation (EU) No 910/2014 of the European Parliament and of the Council of 23 July 2014 on electronic identification and trust services for electronic transactions in the internal market and repealing Directive 1999/93/EC.</Name>
+            <Name xml:lang="de">LI:Vertrauensliste mit Angaben zu den qualifizierten Vertrauensdiensteanbietern, die vom ausstellenden Mitgliedstaat beaufsichtigt werden, sowie Angaben zu den von ihnen angebotenen qualifizierten Vertrauensdiensten gemäß der Verordnung (EU) Nr. 910/2014 des Europäischen Parlaments und des Rates vom 23. Juli 2014 über die elektronische Identifizierung und Vertrauensdienste für elektronische Transaktionen im Binnenmarkt und zur Aufhebung der Richtlinie 1999/93/EG.</Name>
+        </SchemeName>
+        <SchemeInformationURI>
+            <URI xml:lang="en">http://www.llv.li/#/12063/trusted-list-of-supervisedaccredited-certification-service-providers</URI>
+            <URI xml:lang="de">http://www.llv.li/#/12296/vertrauenswurdige-liste-der-beaufsichtigten-bzw-akkreditierten-zertifizierungsdiensteanbieter</URI>
+        </SchemeInformationURI>
+        <StatusDeterminationApproach>http://uri.etsi.org/TrstSvc/TrustedList/StatusDetn/EUappropriate</StatusDeterminationApproach>
+        <SchemeTypeCommunityRules>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/EUcommon</URI>
+            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/LI</URI>
+        </SchemeTypeCommunityRules>
+        <SchemeTerritory>LI</SchemeTerritory>
+        <PolicyOrLegalNotice>
+            <TSLLegalNotice xml:lang="en">The applicable legal framework for the present trusted list is Regulation (EU) No 910/2014 of the European Parliament and of the Council of 23 July 2014 on electronic identification and trust services for electronic transactions in the internal market and repealing Directive 1999/93/EC.</TSLLegalNotice>
+            <TSLLegalNotice xml:lang="de">Der für diese Vertrauenslisten geltende Rechtsrahmen ist die Verordnung (EU) Nr. 910/2014 des Europäischen Parlaments und des Rates vom 23. Juli 2014 über elektronische Identifizierung und Vertrauensdienste für elektronische Transaktionen im Binnenmarkt und zur Aufhebung der Richtlinie 1999/93/EG.</TSLLegalNotice>
+        </PolicyOrLegalNotice>
+        <HistoricalInformationPeriod>65535</HistoricalInformationPeriod>
+        <PointersToOtherTSL>
+            <OtherTSLPointer>
+                <ServiceDigitalIdentities>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                    <ServiceDigitalIdentity>
+                        <DigitalId>
+                            <X509Certificate>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</X509Certificate>
+                        </DigitalId>
+                    </ServiceDigitalIdentity>
+                </ServiceDigitalIdentities>
+                <TSLLocation>https://ec.europa.eu/tools/lotl/eu-lotl.xml</TSLLocation>
+                <AdditionalInformation>
+                    <OtherInformation>
+                        <TSLType>http://uri.etsi.org/TrstSvc/TrustedList/TSLType/EUlistofthelists</TSLType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTerritory>EU</SchemeTerritory>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <ns3:MimeType>application/vnd.etsi.tsl+xml</ns3:MimeType>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeOperatorName>
+                            <Name xml:lang="en">European Commission</Name>
+                            <Name xml:lang="de">Europäische Kommission</Name>
+                        </SchemeOperatorName>
+                    </OtherInformation>
+                    <OtherInformation>
+                        <SchemeTypeCommunityRules>
+                            <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/EUlistofthelists</URI>
+                        </SchemeTypeCommunityRules>
+                    </OtherInformation>
+                </AdditionalInformation>
+            </OtherTSLPointer>
+        </PointersToOtherTSL>
+        <ListIssueDateTime>2026-02-06T08:32:49Z</ListIssueDateTime>
+        <NextUpdate>
+            <dateTime>2026-08-06T07:32:49Z</dateTime>
+        </NextUpdate>
+        <DistributionPoints>
+            <URI>https://www.llv.li/files/ak/xml-llv-ak-tsl.xml</URI>
+        </DistributionPoints>
+    </SchemeInformation>
+    <TrustServiceProviderList>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">Liechtensteinische Post AG</Name>
+                    <Name xml:lang="de">Liechtensteinische Post AG</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">NTRLI-FL-0002.000.966-5</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Städtle 18</StreetAddress>
+                            <Locality>Vaduz</Locality>
+                            <PostalCode>9490</PostalCode>
+                            <CountryName>LI</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="de">
+                            <StreetAddress>Städtle 18</StreetAddress>
+                            <Locality>Vaduz</Locality>
+                            <PostalCode>9490</PostalCode>
+                            <CountryName>LI</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:info@post.li</URI>
+                        <URI xml:lang="en">http://www.post.li/</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://www.llv.li/#/112176</URI>
+                    <URI xml:lang="de">http://www.llv.li/#/1823</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/PKC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Liechtenstein Post Advanced CA</Name>
+                            <Name xml:lang="de">Liechtenstein Post Advanced CA</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Liechtenstein Post Advanced CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/deprecatedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">http://www.llv.li/#/112176/electronic-signature</URI>
+                            <URI xml:lang="de">http://www.llv.li/#/1823/elektronische-signatur</URI>
+                        </SchemeServiceDefinitionURI>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+<ns3:TakenOverBy>
+    <ns3:URI xml:lang="en">http://www.llv.li/#/112176/electronic-signature</ns3:URI>
+    <ns3:TSPName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </ns3:TSPName>
+    <SchemeOperatorName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </SchemeOperatorName>
+    <SchemeTerritory>LI</SchemeTerritory>
+</ns3:TakenOverBy>
+                            </Extension>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/PKC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Advanced CA</Name>
+<Name xml:lang="de">Liechtenstein Post Advanced CA</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Advanced CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>ByAYmXTB6KvKsLWCPqwl2xVy8nY=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionceased</ServiceStatus>
+                            <StatusStartingTime>2016-06-30T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="false">
+    <ns3:TakenOverBy>
+        <ns3:URI xml:lang="en">http://www.llv.li/#/112176/electronic-signature</ns3:URI>
+        <ns3:TSPName>
+            <Name xml:lang="en">Office for Communications</Name>
+            <Name xml:lang="de">Amt für Kommunikation</Name>
+        </ns3:TSPName>
+        <SchemeOperatorName>
+            <Name xml:lang="en">Office for Communications</Name>
+            <Name xml:lang="de">Amt für Kommunikation</Name>
+        </SchemeOperatorName>
+        <SchemeTerritory>LI</SchemeTerritory>
+    </ns3:TakenOverBy>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/PKC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Advanced CA</Name>
+<Name xml:lang="de">Liechtenstein Post Advanced CA</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Advanced CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>ByAYmXTB6KvKsLWCPqwl2xVy8nY=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionincessation</ServiceStatus>
+                            <StatusStartingTime>2012-12-31T23:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="false">
+    <ns3:TakenOverBy>
+        <ns3:URI xml:lang="en">http://www.llv.li/#/112176/electronic-signature</ns3:URI>
+        <ns3:TSPName>
+            <Name xml:lang="en">Office for Communications</Name>
+            <Name xml:lang="de">Amt für Kommunikation</Name>
+        </ns3:TSPName>
+        <SchemeOperatorName>
+            <Name xml:lang="en">Office for Communications</Name>
+            <Name xml:lang="de">Amt für Kommunikation</Name>
+        </SchemeOperatorName>
+        <SchemeTerritory>LI</SchemeTerritory>
+    </ns3:TakenOverBy>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/PKC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Advanced CA (1st certificate)</Name>
+<Name xml:lang="de">Liechtenstein Post Advanced CA (1. Zertifikat)</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Advanced CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>ByAYmXTB6KvKsLWCPqwl2xVy8nY=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionincessation</ServiceStatus>
+                            <StatusStartingTime>2012-12-31T23:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/PKC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Advanced CA (1st certificate)</Name>
+<Name xml:lang="de">Liechtenstein Post Advanced CA (1. Zertifikat)</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Advanced CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>ByAYmXTB6KvKsLWCPqwl2xVy8nY=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision</ServiceStatus>
+                            <StatusStartingTime>2008-06-22T22:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Liechtenstein Post Qualified CA</Name>
+                            <Name xml:lang="de">Liechtenstein Post Qualified CA</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIFzDCCBLSgAwIBAgIEQh/SqDANBgkqhkiG9w0BAQUFADB/MQswCQYDVQQGEwJCTTEZMBcGA1UEChMQUXVvVmFkaXMgTGltaXRlZDElMCMGA1UECxMcUm9vdCBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTEuMCwGA1UEAxMlUXVvVmFkaXMgUm9vdCBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0wODA0MDExNzAwMTZaFw0xODA0MDExNjU5NTVaMIGGMQswCQYDVQQGEwJMSTEjMCEGA1UEChMaTGllY2h0ZW5zdGVpbmlzY2hlIFBvc3QgQUcxKDAmBgNVBAsTH0lzc3VpbmcgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxKDAmBgNVBAMTH0xpZWNodGVuc3RlaW4gUG9zdCBRdWFsaWZpZWQgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCbo9YsIjx/1103dPHE2oV4luDAtRQZadLdirJvOg7geHWes3HwaAHP9J3kERfW49TJ9xEI7femajBnnaTf7JSB1pCkiSjvGjDdisFFhmawTl01W5M3WHOLwYW4OWoZZuLaxscaZdT3DfbsQXGM0RCjT4oTB1nlcNpM7MhL00HtgmLKL4XMAPso/93ukggGA7e/gGy85LpWq5L610XuSCqYG6oXJAdLY245JC4uIcQ6g3zsWJyanI1i+Voa5k+O1x/Wa4IT68Sn8MzeUtQfrdaNRCmoXtWk4TQyCaCjSUDCq2+3W11+MmKJ2C7I3sMGjZXQex0EbTEp6OFFXa7qaAvFAgMBAAGjggJGMIICQjAPBgNVHRMBAf8EBTADAQH/MDoGCCsGAQUFBwEBBC4wLDAqBggrBgEFBQcwAYYeaHR0cDovL29jc3AucXVvdmFkaXNnbG9iYWwuY29tMCQGCCsGAQUFBwEDBBgwFjAKBggrBgEFBQcLAjAIBgYEAI5GAQEwgewGA1UdIASB5DCB4TCB3gYJKwYBBAG+WAABMIHQMIGeBggrBgEFBQcCAjCBkRqBjlJlbGlhbmNlIG9uIHRoZSBRdW9WYWRpcyBSb290IENlcnRpZmljYXRlIGJ5IGFueSBwYXJ0eSBhc3N1bWVzIGFjY2VwdGFuY2Ugb2YgdGhlIFF1b1ZhZGlzIENlcnRpZmljYXRlIFBvbGljeS9DZXJ0aWZpY2F0aW9uIFByYWN0aWNlIFN0YXRlbWVudC4wLQYIKwYBBQUHAgEWIWh0dHA6Ly93d3cucXVvdmFkaXNnbG9iYWwuY29tL2NwczAOBgNVHQ8BAf8EBAMCAQYwga4GA1UdIwSBpjCBo4AUi0tt7dMpuQYZ7Dk5qfCXhGrL79+hgYSkgYEwfzELMAkGA1UEBhMCQk0xGTAXBgNVBAoTEFF1b1ZhZGlzIExpbWl0ZWQxJTAjBgNVBAsTHFJvb3QgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxLjAsBgNVBAMTJVF1b1ZhZGlzIFJvb3QgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHmCBDq2UIswHQYDVR0OBBYEFPsbkJP9mNp/kmoaRiY20fOPhwDgMA0GCSqGSIb3DQEBBQUAA4IBAQAMjen6jwZcvQ+KN0wXdeyWzu1qOO+hNgbXs8R1PyhmU5siPs0+T5miLpYRg1jVbTi7R+wYuEfH5FsRtFywJa3WE1AAcg9iopI5bXg/CqgExCsvcDLPaXlyeFiLnmlX+rnb6PvH0wwc9q5LtW28/iZcllarSuDZFZTpRORPZGK4f6og1kpaf6YWHV2NBhwn19lW2nYWRYn1G1bYZqoGX55Qn1EhgY7eNJOseXJRrQXiwxka2p9D/PyjV510+qL1vMms7MDzDf9e9nWnE339aHRPxQBSltLymHIBWd6hUxsT5HunH9EDPidwiRaieif2iFsK717OFJDTD/6yc0g1P+8T</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Liechtenstein Post Qualified CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                        <SchemeServiceDefinitionURI>
+                            <URI xml:lang="en">http://www.llv.li/#/112176/electronic-signature</URI>
+                            <URI xml:lang="de">http://www.llv.li/#/1823/elektronische-signatur</URI>
+                        </SchemeServiceDefinitionURI>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+<ns3:TakenOverBy>
+    <ns3:URI xml:lang="en">http://www.llv.li/#/112176/electronic-signature</ns3:URI>
+    <ns3:TSPName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </ns3:TSPName>
+    <SchemeOperatorName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </SchemeOperatorName>
+    <SchemeTerritory>LI</SchemeTerritory>
+</ns3:TakenOverBy>
+                            </Extension>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Qualified CA</Name>
+<Name xml:lang="de">Liechtenstein Post Qualified CA</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Qualified CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>+xuQk/2Y2n+SahpGJjbR84+HAOA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionceased</ServiceStatus>
+                            <StatusStartingTime>2016-06-30T00:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="false">
+    <ns3:TakenOverBy>
+        <ns3:URI xml:lang="en">http://www.llv.li/#/112176/electronic-signature</ns3:URI>
+        <ns3:TSPName>
+            <Name xml:lang="en">Office for Communications</Name>
+            <Name xml:lang="de">Amt für Kommunikation</Name>
+        </ns3:TSPName>
+        <SchemeOperatorName>
+            <Name xml:lang="en">Office for Communications</Name>
+            <Name xml:lang="de">Amt für Kommunikation</Name>
+        </SchemeOperatorName>
+        <SchemeTerritory>LI</SchemeTerritory>
+    </ns3:TakenOverBy>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Qualified CA</Name>
+<Name xml:lang="de">Liechtenstein Post Qualified CA</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Qualified CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>+xuQk/2Y2n+SahpGJjbR84+HAOA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionincessation</ServiceStatus>
+                            <StatusStartingTime>2012-12-31T23:00:02Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="false">
+    <ns3:TakenOverBy>
+        <ns3:URI xml:lang="en">http://www.llv.li/#/112176/electronic-signature</ns3:URI>
+        <ns3:TSPName>
+            <Name xml:lang="en">Office for Communications</Name>
+            <Name xml:lang="de">Amt für Kommunikation</Name>
+        </ns3:TSPName>
+        <SchemeOperatorName>
+            <Name xml:lang="en">Office for Communications</Name>
+            <Name xml:lang="de">Amt für Kommunikation</Name>
+        </SchemeOperatorName>
+        <SchemeTerritory>LI</SchemeTerritory>
+    </ns3:TakenOverBy>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Qualified CA</Name>
+<Name xml:lang="de">Liechtenstein Post Qualified CA</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Qualified CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>+xuQk/2Y2n+SahpGJjbR84+HAOA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/supervisionincessation</ServiceStatus>
+                            <StatusStartingTime>2012-12-31T23:00:02Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Qualified CA</Name>
+<Name xml:lang="de">Liechtenstein Post Qualified CA</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Qualified CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>+xuQk/2Y2n+SahpGJjbR84+HAOA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision</ServiceStatus>
+                            <StatusStartingTime>2012-12-31T23:00:01Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Qualified CA</Name>
+<Name xml:lang="de">Liechtenstein Post Qualified CA</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Qualified CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>+xuQk/2Y2n+SahpGJjbR84+HAOA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accreditationrevoked</ServiceStatus>
+                            <StatusStartingTime>2012-12-31T23:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Qualified CA</Name>
+<Name xml:lang="de">Liechtenstein Post Qualified CA</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Qualified CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>+xuQk/2Y2n+SahpGJjbR84+HAOA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited</ServiceStatus>
+                            <StatusStartingTime>2009-09-14T22:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Liechtenstein Post Qualified CA</Name>
+<Name xml:lang="de">Liechtenstein Post Qualified CA</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Liechtenstein Post Qualified CA, OU=Issuing Certification Authority, O=Liechtensteinische Post AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>+xuQk/2Y2n+SahpGJjbR84+HAOA=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision</ServiceStatus>
+                            <StatusStartingTime>2008-06-22T22:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">FLZ-Anstalt</Name>
+                    <Name xml:lang="de">FLZ-Anstalt</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">NTRLI-FL-0002.292.302-7</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Wirtschaftspark 25</StreetAddress>
+                            <Locality>Eschen</Locality>
+                            <PostalCode>9492</PostalCode>
+                            <CountryName>LI</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="de">
+                            <StreetAddress>Wirtschaftspark 25</StreetAddress>
+                            <Locality>Eschen</Locality>
+                            <PostalCode>9492</PostalCode>
+                            <CountryName>LI</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:office@flz.li</URI>
+                        <URI xml:lang="en">http://www.flz.li/FLZ/CompanyProfile.aspx</URI>
+                        <URI xml:lang="de">http://www.flz.li/</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://www.flz.li/FLZ/CompanyProfile.aspx</URI>
+                    <URI xml:lang="de">http://www.flz.li/docs/</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">lisign-qualified-01</Name>
+                            <Name xml:lang="de">lisign-qualified-01</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIESjCCAzKgAwIBAgIDFE4dMA0GCSqGSIb3DQEBBQUAMIGLMQswCQYDVQQGEwJBVDFIMEYGA1UECgw/QS1UcnVzdCBHZXMuIGYuIFNpY2hlcmhlaXRzc3lzdGVtZSBpbSBlbGVrdHIuIERhdGVudmVya2VociBHbWJIMRgwFgYDVQQLDA9BLVRydXN0LVF1YWwtMDMxGDAWBgNVBAMMD0EtVHJ1c3QtUXVhbC0wMzAeFw0xNDA3MDExMTQxNTBaFw0yNDA3MDEwOTQxNTBaMF8xCzAJBgNVBAYTAkxJMRQwEgYDVQQKDAtGTFotQW5zdGFsdDEcMBoGA1UECwwTbGlzaWduLXF1YWxpZmllZC0wMTEcMBoGA1UEAwwTbGlzaWduLXF1YWxpZmllZC0wMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAL+0GB3KTcRzT/joYdEBHAWsjyWABPRFBSD5UWewtycG3Q2LiqNIe/bIz1DHvGCY5Bb7SQIMoKko4/0WvEg/Rl1VJ0ghvQGhuWvQNvWhG5G8qdHThXaVEhi7mm7bmKCAJFSQnd8yasxVhcYz9vqs0DAHl2sqU4gV4A7xho2FTPZMqUs2iPiPZivPNv2+o2IrJYJsqtzPVcbCo3l5hlimv4S6pRTb7eUrICZRlZa3eT6sWBTc8Off532waPDduGF6z/O/r8pA61x9CrIavDAF4Gp8GuGi+ffPxBTsHNeOXKBYR8on/llR40Mpo4MUM+7/P9L27WmrvRmjdKZmUgnmEicCAwEAAaOB4TCB3jAPBgNVHRMBAf8EBTADAQH/MBEGA1UdDgQKBAhIbLbZ/C6I7TATBgNVHSMEDDAKgAhGBt838sI3EDAOBgNVHQ8BAf8EBAMCAQYwgZIGA1UdHwSBijCBhzCBhKCBgaB/hn1sZGFwOi8vbGRhcC5hLXRydXN0LmF0L291PUEtVHJ1c3QtUXVhbC0wMyxvPUEtVHJ1c3QsYz1BVD9jZXJ0aWZpY2F0ZXJldm9jYXRpb25saXN0P2Jhc2U/b2JqZWN0Y2xhc3M9ZWlkQ2VydGlmaWNhdGlvbkF1dGhvcml0eTANBgkqhkiG9w0BAQUFAAOCAQEANTq+GiIBGVrxPSYRhXFBNWfVOld0aslzrkK1rta/0b96d11gW5rPg422aOg04UxRsMCyB+T9EpN4LDIxyuHK0wPhTQ/1LNZ+YYXEiBXgjUHBcXCG89AIfCN3/y7WQ26xnh48BjOq6EO8UJmxndlW3NIIberBp4PFlFjBskfUjIBZVIYSEdyZuBmLJ6pURRm6OECMpJzw6vGm78YvTH8NmYYdJdvEgKUcFW0LpGBVpQz4Sx+1AeaJYU37LmJc7KhzGQCCpk1wCtfTg9XMDFrxhRdoYtEXda+d+dsEp0A5NtDLP5rNTQk6h75KGoBGZH4wbnpJhOw0GWT0wKvhJGFjkA==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=lisign-qualified-01, OU=lisign-qualified-01, O=FLZ-Anstalt, C=LI</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>SGy22fwuiO0=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2022-04-25T08:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+<ns3:TakenOverBy>
+    <ns3:URI xml:lang="en">https://www.flz.li/</ns3:URI>
+    <ns3:TSPName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </ns3:TSPName>
+    <SchemeOperatorName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </SchemeOperatorName>
+    <SchemeTerritory>LI</SchemeTerritory>
+</ns3:TakenOverBy>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">lisign-qualified-01</Name>
+<Name xml:lang="de">lisign-qualified-01</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=lisign-qualified-01, OU=lisign-qualified-01, O=FLZ-Anstalt, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>SGy22fwuiO0=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2019-07-15T22:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">lisign-qualified-01</Name>
+<Name xml:lang="de">lisign-qualified-01</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=lisign-qualified-01, OU=lisign-qualified-01, O=FLZ-Anstalt, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>SGy22fwuiO0=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">lisign-qualified-01</Name>
+<Name xml:lang="de">lisign-qualified-01</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=lisign-qualified-01, OU=lisign-qualified-01, O=FLZ-Anstalt, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>SGy22fwuiO0=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/accredited</ServiceStatus>
+                            <StatusStartingTime>2009-09-14T22:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">lisign-qualified-01</Name>
+<Name xml:lang="de">lisign-qualified-01</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=lisign-qualified-01, OU=lisign-qualified-01, O=FLZ-Anstalt, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>SGy22fwuiO0=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision</ServiceStatus>
+                            <StatusStartingTime>2008-08-25T22:00:00Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">lisign-qualified-05</Name>
+                            <Name xml:lang="de">lisign-qualified-05</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIF7zCCA9egAwIBAgIDD83eMA0GCSqGSIb3DQEBCwUAMIGLMQswCQYDVQQGEwJBVDFIMEYGA1UECgw/QS1UcnVzdCBHZXMuIGYuIFNpY2hlcmhlaXRzc3lzdGVtZSBpbSBlbGVrdHIuIERhdGVudmVya2VociBHbWJIMRgwFgYDVQQLDA9BLVRydXN0LVJvb3QtMDUxGDAWBgNVBAMMD0EtVHJ1c3QtUm9vdC0wNTAeFw0xMzA5MjMxMzUyNDVaFw0yMzA5MjAxMTUyNDVaMF8xCzAJBgNVBAYTAkxJMRQwEgYDVQQKDAtGTFotQW5zdGFsdDEcMBoGA1UECwwTbGlzaWduLXF1YWxpZmllZC0wNTEcMBoGA1UEAwwTbGlzaWduLXF1YWxpZmllZC0wNTCCAiAwDQYJKoZIhvcNAQEBBQADggINADCCAggCggIBAIjC/iX4zB3bscVa/9EP3wcQwnzM4dcU0jYes2ZWDeblGNUZlvByATyUdfxeHZAa99DCKRoiIS3V8TYj/78i83/Tl39fVLP9SSolTtABK/ns7gS70vTdDYezGVxkQelRzsMwnp9R67UW+sAWm+u2kVoYlW2e9rnz9HDa8pc7qNGBHNm0G9deTPhGvkhqI+I68be76L5JlL+S0i4j0QOXl426vw9+nY5vz8JjocEudymaFtQF22cTglbu1U7Q/skbGc8MVd7qqMZVHrxnrQCIhhvWFZ36Wgw+Fuv7e3Fv/khxmK9XhmYfpjuut67cOG2sjlB3ZWfbmqrElEx5n+MGDycq3bxGT7QFjmEoXXlyYN5FcG1ICVsZyR82uQksUxISJmCFejA6TcVRRHhdTR87yVCY/Ksthz03vWTyEYJRpVlOSQKSaNZC0gKw5tIcZVRcAe3kHPtvdYeeeyZCQFZUE5R/1upo1NXLHIj4dAwXidqzgRpRfkniQdBlVNQzIuDYj7hfW7UNpbqY+UE7GwFC8oGoITjgEIMl1g+tjKv72oGtNcJdexsyBNDHodqIFCV/9Li/7TfFUMV4/c5Mzoql98APlg7gU79ePj8SBD0yBBGUy+tyqQnEvTm67qIE+BMdznPj8np/3VtXxg04IiJyP4o2rNDBs/+q+CCwfUm47pMRAgEDo4GIMIGFMDoGA1UdHwQzMDEwL6AtoCuGKWh0dHA6Ly9jcmwuYS10cnVzdC5hdC9jcmwvQS1UcnVzdC1Sb290LTA1MBMGA1UdIwQMMAqACED5uWe+A9IIMA8GA1UdEwEB/wQFMAMBAf8wEQYDVR0OBAoECEZatN+A1a7UMA4GA1UdDwEB/wQEAwIBBjANBgkqhkiG9w0BAQsFAAOCAgEAmT19LVGpnwX4t/Z7c4qELzBGrWFC1s7uz0mvg87OOQx7j3Ky8XaYYP5AmecGGwoBSj2l1kK3rNXGlZyhcs/HEl+VNTfgNMzQUmbVhp1Lf/j53OtrtV7EJkC3ucO+s9LvyjGgrhsZlCAewBboAknEEqTI1VUgb/772FfqNlx/ILZdS1UENJN5Z6v+FY/EZNoa0U5xNw6XB6Fo4k+A/rc41xcTvXaeWXDON6yMN8AiBTtkyPS9vHcKq59s8Nq9ttsMaegr3T4jejFqdboSpWaXUOadOQ7wlTuOzQCdptjI9UMhwppz/UMiNSFYSyqk+TBksGIiwRP2MRmt5BnPgSA5U5ZdBi1Ra4+wmrBOg0r49D0aJcjr3FLZTnjj8j7DFUUl/QojAMVnov17/Vpj//0VTeg6Cvk0u9HOlFjSibUzf6k1NctVG4FT7U+Ml7tPW4ZYU5SIZieVdRM7HhAUEYbZedTdVGFP4HzITltWqx3w7s/meXFIoG1jQPQaKRQnkP/29mYdaMJabEkN9e7FFpTIH4Bx5gZnhXVN69I5eQNDQ+2hkp/wpYt47B9e2+veeXTMTvvGD7TKCM9gSmJYoKE4f9u6PWXO8x/p7CHeYbJrW/Hx1XbRX3A1xFO4uhDTUsYwCRnOjERdSfsg5yJiLB29vdxwoxi8i1WkLNvV6zBnT5A=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=lisign-qualified-05, OU=lisign-qualified-05, O=FLZ-Anstalt, C=LI</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>Rlq034DVrtQ=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2022-04-25T08:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+<ns3:TakenOverBy>
+    <ns3:URI xml:lang="en">https://www.flz.li/</ns3:URI>
+    <ns3:TSPName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </ns3:TSPName>
+    <SchemeOperatorName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </SchemeOperatorName>
+    <SchemeTerritory>LI</SchemeTerritory>
+</ns3:TakenOverBy>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">lisign-qualified-05</Name>
+<Name xml:lang="de">lisign-qualified-05</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=lisign-qualified-05, OU=lisign-qualified-05, O=FLZ-Anstalt, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>Rlq034DVrtQ=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2019-01-22T23:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">lisign-qualified-mobile-07</Name>
+                            <Name xml:lang="de">lisign-qualified-mobile-07</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=lisign-qualified-mobile-07, OU=lisign-qualified-mobile-07, O=FLZ-Anstalt, C=LI</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>RyE2MXJkoiQ=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2022-04-25T08:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                            <Extension Critical="false">
+<ns3:TakenOverBy>
+    <ns3:URI xml:lang="en">https://www.flz.li/</ns3:URI>
+    <ns3:TSPName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </ns3:TSPName>
+    <SchemeOperatorName>
+        <Name xml:lang="en">Office for Communications</Name>
+        <Name xml:lang="de">Amt für Kommunikation</Name>
+    </SchemeOperatorName>
+    <SchemeTerritory>LI</SchemeTerritory>
+</ns3:TakenOverBy>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">lisign-qualified-mobile-07</Name>
+<Name xml:lang="de">lisign-qualified-mobile-07</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=lisign-qualified-mobile-07, OU=lisign-qualified-mobile-07, O=FLZ-Anstalt, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>RyE2MXJkoiQ=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2019-02-12T23:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">Office for Communications</Name>
+                    <Name xml:lang="de">Amt für Kommunikation</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">NTRLI-AK-1</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Äulestrasse 51</StreetAddress>
+                            <Locality>Vaduz</Locality>
+                            <PostalCode>9490</PostalCode>
+                            <CountryName>LI</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="de">
+                            <StreetAddress>Äulestrasse 51</StreetAddress>
+                            <Locality>Vaduz</Locality>
+                            <PostalCode>9490</PostalCode>
+                            <CountryName>LI</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:info.ak@llv.li</URI>
+                        <URI xml:lang="en">http://www.llv.li/#/1833/english-information</URI>
+                        <URI xml:lang="de">http://www.llv.li/#/11109/amt-fur-kommunikation</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">http://www.llv.li/#/12063/trusted-list-of-supervisedaccredited-certification-service-providers</URI>
+                    <URI xml:lang="de">http://www.llv.li/#/12296/vertrauenswurdige-liste-der-beaufsichtigten-bzw-akkreditierten-zertifizierungsdiensteanbieter</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/PKC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Trusted List CA 1</Name>
+                            <Name xml:lang="de">Vertrauenswürdige Liste CA 1</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIDcjCCAlqgAwIBAgIJANTUGRuX+NGSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAkxJMR8wHQYDVQQKDBZBbXQgZsO8ciBLb21tdW5pa2F0aW9uMRowGAYDVQQDExFUcnVzdGVkIExpc3QgQ0EgMTAeFw0xNDAyMDcxMzU2MzRaFw0xOTAyMDcxMzU2MzRaMEoxCzAJBgNVBAYTAkxJMR8wHQYDVQQKDBZBbXQgZsO8ciBLb21tdW5pa2F0aW9uMRowGAYDVQQDExFUcnVzdGVkIExpc3QgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKoHlzqZ0O0p/gwUgsgjc7/6IXDNVy4re9F1+GyVWqRqRzo8EYmloCnPkwcQ8Be9EJrldznuxsA3Pq1VJn0QHR/17OXbemfO/M0TRlhSs/97oJxJHzveqSnbF9V6zWjD+HYr9Z/3GZXJ/IjRi3jnMidtcodBVTtX95hFcaiQM9dTxc+ZNTrIR8vap2H/gr2kxgAHRIJKfDckUN9JPzwxrRD+6oPJeGiK8mh5fKnzto5L4ixX627bBuHa5uHGw7q5uDtlqhi5MCRH12bHT9NYtBMorCk4i1x6vL8qiqqnz58KxdyZD4Khu5BLV/0TiXdm6eqsMdd2XPDOU1vExNiGih0CAwEAAaNbMFkwHQYDVR0OBBYEFP1jbZk6PKL8QB/DFq6sVyuQJFSqMA4GA1UdDwEB/wQEAwIBBjAXBgNVHSAEEDAOMAwGCmCDNgoKAAABAQAwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAPrpQtKTF160dbaEtndkuB7qqxAQbzow8nAX+v9Mqh9oCUo4xAd4YJr/lhj5Ha/MTFzFV6E/QLskk+wpi2XPOnpyk2tVSYEE2IecAG7HvALkNhI7gO8kUMPS/XfJ3HCzsMyy1/NpnpJF+6XgGZ45pxdhJNWS3IMkB/q4LNwkhFd9vT7Tg9VpJ4HfD98X31mfAjmpEUkEazFhFnrbGi/45N7WpaJvPn3pyPuFWu22IP1CmGhSwu9yW9y8Y0WePLbcF0DJPXr7tQsnhG5HhiO8mh0z98wQbzuL+Vn0fbp++XN4CIwEqdMfRucrxTpSBKshiXlJZG3ndwSDrlIBFLeAwDA==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Trusted List CA 1, O=Amt für Kommunikation, C=LI</X509SubjectName>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2016-06-30T22:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/PKC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">Trusted List CA 1</Name>
+<Name xml:lang="de">Vertrauenswürdige Liste CA 1</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=Trusted List CA 1, O=Amt für Kommunikation, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>/WNtmTo8ovxAH8MWrqxXK5AkVKo=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/undersupervision</ServiceStatus>
+                            <StatusStartingTime>2014-02-07T13:56:34Z</StatusStartingTime>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/PKC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Trusted List CA 2</Name>
+                            <Name xml:lang="de">Vertrauensliste CA 2</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIFWTCCA0GgAwIBAgIJAI+SzWSfaU5aMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAkxJMR8wHQYDVQQKDBZBbXQgZsO8ciBLb21tdW5pa2F0aW9uMRowGAYDVQQDDBFUcnVzdGVkIExpc3QgQ0EgMjAeFw0xNzAyMDIxMzQwMTJaFw0yNzAyMDIxMzQwMTJaMEoxCzAJBgNVBAYTAkxJMR8wHQYDVQQKDBZBbXQgZsO8ciBLb21tdW5pa2F0aW9uMRowGAYDVQQDDBFUcnVzdGVkIExpc3QgQ0EgMjCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAJewnASfzS/Xd23gvG1HMfNk0jlxZnoqA6h0J4R95SDYAQkfEe64NN8k0epFGUg/Xv9UdiT9SKf9ZJgnfIx0v2GPu7k5pUPmLeUnqTyR8UVQjXYE13Fego0SyXhHOqeYWLRvT0lPgKXaHfu6nWa3J/wukR2ExbNcgLMav+OplnvaB5KSGTvUKmIsL3RWEr44FTvUTBH1Mg/A2hZgQO9swwoGI2ZhiGl5vM7U9FfG+OfYjoNGFrH4DyH7W8DpNiXk0Wv64xCB9L9ZK6Kzh0vl7l5cmYqQa+621okeXI8UaVfcwAlCOhqo0QP8NIbYBE28uq1yu6n2ipV5WaX8V8ZyW1AShLaGTr/3aYoxgl9WnrX9rJ03lSBZJbs0uEc9ukd6tomaxpJ2ZCZhDalUjAMfG0m//6oZzAWldlFH8NkVcmphFbpUI9iKEbeU2aYXonfsdSnzNQQYG5LMP+5cGT1nwyMM1OCrxv7LBRca9++mptoNNDqIfstXQeRdkJRSQ8nepUnU7LPRgB1D0MreUcOxMbkuQIqk3uEzo5PFJfbFYZBzOVB3AtgIBP/faW2VxVEARqpVO1ekDVJ6kXCADYxFGID/5CPH7qSw8iQ1VcAxOlMiZy6ibYQNHYqWhR7Gfbd3wupMgV0Elvi+Ej3/UzBjMg4MR7LhPRAiQTeQW76DZj2nAgMBAAGjQjBAMB0GA1UdDgQWBBTG2mXm55J92fwQlZQ79ib12GSGcTAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBBjANBgkqhkiG9w0BAQsFAAOCAgEASJVH6NhSBjiTrJ1vMHG7bt2J2bfuWZM2RUYiNTv5R789bzGQtGtSz/psEBcWTqs8Nh1igfh8IHwKC31p2qCyOzxWwbcDwo6euVorZ48ma6zgufcdV3zoS+pEuR0rmfFSRTYQJJcs6PzyUZP0IzBAw4SHAO4pinKMTuPwPQgjynNcfFKVCIgvuH29Ac5Dv3bMjaO4pNDs5dexLUx/Osb58/Pb11xd9tHHs2SlS0gagDW/NRAg8fl6SCJERD6Qt7mYsOKOXR8Rme83TRKfZvZmpr9BQOS3TnAz1+p2c2eW5oWZrH9SYwrLh8y/GnPSh3erO7gGO+8nGTGFS03QXaLa49QRkFZWQ8aKTFRE5gdxhl/P/W2yOZb4PogTiFdOfF2wU4+cYNLPUNiWBFDXDgkcQelkErBx0rGYWdD9eElwFZG/sB5OU714m5MTioe05Ra0X3EN3OHA1imw4G7viOMC83jS5jC07tgDEv055rF710So06iU3YwFNsb9Qr8ey2pIlBnyS2tQUpS/vEdv/U8frnqmbZv6achsq7iSN2vEaiVI+/IGFuLQR5bZp2bfTRJDFsCTFA/gok6bERJyDlDVhGsFYFf6PMcVk/dBKqqT98VTV9YbnKIWjXKmwZkE18oerQN37AGScl5H+0Jlgu26bLRlNLe87NLs8BZa/gA37Hw=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Trusted List CA 2, O=Amt für Kommunikation, C=LI</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>xtpl5ueSfdn8EJWUO/Ym9dhkhnE=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2017-02-01T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/PKC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">Trusted List CA 3</Name>
+                            <Name xml:lang="de">Vertrauensliste CA 3</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIFZDCCA0ygAwIBAgIUTWbZ5WFKiJrgv3gMgrNGZxpMmaYwDQYJKoZIhvcNAQELBQAwSjELMAkGA1UEBhMCTEkxHzAdBgNVBAoMFkFtdCBmw7xyIEtvbW11bmlrYXRpb24xGjAYBgNVBAMMEVRydXN0ZWQgTGlzdCBDQSAzMB4XDTI0MTEyODExMjE1NFoXDTM0MTEyODExMjE1NFowSjELMAkGA1UEBhMCTEkxHzAdBgNVBAoMFkFtdCBmw7xyIEtvbW11bmlrYXRpb24xGjAYBgNVBAMMEVRydXN0ZWQgTGlzdCBDQSAzMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAoemdRG1UV24RDKxpz8pmn101CjtsTH3JGpUTMZknxXQ8zj9wJ2mi/3rf4/9q6MNBK/uKJ4JaUGnyB7JjvM5MIPZwEtGpmrb4OMXDzUcWpeN+JkV8oFGlZw4QVceZvtwyQvWUJCS15TipC87JxkaWyostSFsPtfS/XVofZ0T5SHNy6qjQ1SdmCbB9/jqJeSdkaB5vQbPTYbQ9MoenpoNP8Rpzb5OrzzuaK95TaGKp6XLa2g01VRjTVzcw4V29RplsJYZGdFQts5gN08cGl/FW6JzuNjiQasn2r1SrgXQb2NGmunYwglJgQbYd+TJTltSR7i9PsTxsFSjA3B8ZWLEe+bYr2UTGHLlVSvSv2oOJjRCzSWV2N94IJ10gckbLnfVxQQrRd3WMAKPuMm0krY8pTPkRtBNQb+r/CWzuQqzyw/CiGVjmIG8n1+7WVvZUBYHUilPu4byPyRJf5YLaLdpyp5Iw8/98Dt5U+jZhXGDwVsEbcpTHTUOjbJH9aHThBpxx6nwQMd8GytQ62xyk0Q8T02vEf2OUVIvC1+CM/qV91dKvbb1/oSN+VgeVDjwsHsWMxL4tgHQaA6EjQ+bbjp9yKtxTPuhAybcJBWTjNeZJCeAtMj/NFWEKmrv8nxuAnSGcTDy6FLK37L6EC4rw6EMYWedCEQ6uGYYNo8HK7nAy0GMCAwEAAaNCMEAwHQYDVR0OBBYEFF40vDjqLEA+28VKipOIGDJEMKcyMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgEGMA0GCSqGSIb3DQEBCwUAA4ICAQBznWMxdcO6cR3uP4y/zoi6kTPYTTdBQA0lJxdcrCpbuu79MWB4dEmktIs/Vgul6xRF2/zSd4cJ75fCvIUjksiqlqH/1GG+/Ms5PE8jg6LJ3hpANEYJAkgxnVIK3qDk8RKpwaG6QIxi0lo2eV9XtXLw/V/m5h7cgW5whZOH7Am4+MUm0vNT2he3AzJIKcI/itkiSGYAiBTALj6bySOBwrbyKiwuHKhsxYoUbm4utFAFMEnU0Yn8KjDA2jolurAgPaZLUu0pCJjsechJrHMAWWSZ4xn+s9LspyHcVGV23Yd/to6XoMmG/wFVbJgk/MXwWuRusXkFk2RCkntRDQ0gpboysyQYBgxlMBEG0Dbtid58OSKWXlLPFVdBe+oUHV/n6tIYWaDuI8jPlDTgQr5P1sFmWeu9oRpsMiOFiT6vOv5hddThSGvy0Yp9zjiSVJ3+HQqkVzwWXjqyX9GzeCpDYTxFKcCM0SfycHDR0uqN3c6E3gY5rN5M04PkL9w8XvECYYqNfE5y0cQpnbrkW/Eb5nNa7sxubcpV+5TcvgDvL076Vc3BEhIHShQA3DnG7jAu4r0/xKgKD2iy9keKbnsWfbd0IRRE+cENwoJDD39Fj5hQdZESmJQLJanIEZIOLot/6GlMN6JF5vFU8V3o2sc8n0T/rzdP0dLVbzFFSIbJSxReaQ==</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=Trusted List CA 3, O=Amt für Kommunikation, C=LI</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>XjS8OOosQD7bxUqKk4gYMkQwpzI=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/recognisedatnationallevel</ServiceStatus>
+                        <StatusStartingTime>2024-11-28T14:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="false">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSeals</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+        <TrustServiceProvider>
+            <TSPInformation>
+                <TSPName>
+                    <Name xml:lang="en">SwissSign AG</Name>
+                    <Name xml:lang="de">SwissSign AG</Name>
+                </TSPName>
+                <TSPTradeName>
+                    <Name xml:lang="en">NTRLI-FL-0002.523.017-8</Name>
+                </TSPTradeName>
+                <TSPAddress>
+                    <PostalAddresses>
+                        <PostalAddress xml:lang="en">
+                            <StreetAddress>Meierhofstrasse 5</StreetAddress>
+                            <Locality>Vaduz</Locality>
+                            <PostalCode>9490</PostalCode>
+                            <CountryName>LI</CountryName>
+                        </PostalAddress>
+                        <PostalAddress xml:lang="de">
+                            <StreetAddress>Meierhofstrasse 5</StreetAddress>
+                            <Locality>Vaduz</Locality>
+                            <PostalCode>9490</PostalCode>
+                            <CountryName>LI</CountryName>
+                        </PostalAddress>
+                    </PostalAddresses>
+                    <ElectronicAddress>
+                        <URI xml:lang="en">mailto:helpdesk@swisssign.com</URI>
+                        <URI xml:lang="en">https://www.swisssign.com/en/li/</URI>
+                        <URI xml:lang="de">https://www.swisssign.com/de/li/</URI>
+                    </ElectronicAddress>
+                </TSPAddress>
+                <TSPInformationURI>
+                    <URI xml:lang="en">https://repository.swisssign.com/en</URI>
+                    <URI xml:lang="de">https://repository.swisssign.com/de</URI>
+                </TSPInformationURI>
+            </TSPInformation>
+            <TSPServices>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">SwissSign LI Qualified Platinum CA 2016 - G22</Name>
+                            <Name xml:lang="de">SwissSign LI Qualified Platinum CA 2016 - G22</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>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</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=SwissSign LI Qualified Platinum CA 2016 - G22, O=SwissSign AG, C=LI</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>8CIl6FKXYCQ+bmN+XGHyHIG/x54=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2020-02-04T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">SwissSign LI Qualified Platinum CA 2016 - G22</Name>
+<Name xml:lang="de">SwissSign LI Qualified Platinum CA 2016 - G22</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=SwissSign LI Qualified Platinum CA 2016 - G22, O=SwissSign AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>8CIl6FKXYCQ+bmN+XGHyHIG/x54=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2016-12-07T01:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+                <TSPService>
+                    <ServiceInformation>
+                        <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                        <ServiceName>
+                            <Name xml:lang="en">SwissSign LI Platinum Qualified CA 2016 - G3</Name>
+                            <Name xml:lang="de">SwissSign LI Platinum Qualified CA 2016 - G3</Name>
+                        </ServiceName>
+                        <ServiceDigitalIdentity>
+                            <DigitalId>
+<X509Certificate>MIIHijCCBXKgAwIBAgIPIj1e6FhmBmsxKrnaQV+ZMA0GCSqGSIb3DQEBCwUAME4xCzAJBgNVBAYTAkNIMRUwEwYDVQQKEwxTd2lzc1NpZ24gQUcxKDAmBgNVBAMTH1N3aXNzU2lnbiBQbGF0aW51bSBSb290IENBIC0gRzMwHhcNMTYwNjE1MDgwNzM0WhcNMzEwNjEyMDgwNzM0WjBbMQswCQYDVQQGEwJMSTEVMBMGA1UEChMMU3dpc3NTaWduIEFHMTUwMwYDVQQDEyxTd2lzc1NpZ24gTEkgUGxhdGludW0gUXVhbGlmaWVkIENBIDIwMTYgLSBHMzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANXVi1NBx62LS40zetWZPu+Ng7BJQeQa4eE9Z8UfBvJJMuLA9Ans27m80dRLyFB1FLicnqz7oUeW/ZitEkuVolL/m3ezWTeD5zZJTMxoBgXqjyn260msODAy7L9pPuEdgVk3Cx9k6Z93uRCD82v1+Sa2pDj6SOVNQhAgKVW8gnewRM9TOUiZbnI4kFwEzBUAd29BKMWtWiCuoNxaRWvYwAeqhPKWWCovdPGkWtDVqrobH//iBq5G6EZ9/xCUcJV/dl76qFpOhBcA7v515w8K18mlVzks+t8cE5eDofRGHlemxktNABBVd2R0dX/kW9xnKEWkfQDQ5FLF7ner4zRbU2ECAwEAAaOCA1YwggNSMA4GA1UdDwEB/wQEAwIBBjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBTwDvW26vsgGns5GVsnqrOEtyjMNzAfBgNVHSMEGDAWgBRWKj+QWPQXWhSy1wgbhVtUalQaKDCB/wYDVR0fBIH3MIH0MEegRaBDhkFodHRwOi8vY3JsLnN3aXNzc2lnbi5uZXQvNTYyQTNGOTA1OEY0MTc1QTE0QjJENzA4MUI4NTVCNTQ2QTU0MUEyODCBqKCBpaCBooaBn2xkYXA6Ly9kaXJlY3Rvcnkuc3dpc3NzaWduLm5ldC9DTj01NjJBM0Y5MDU4RjQxNzVBMTRCMkQ3MDgxQjg1NUI1NDZBNTQxQTI4JTJDTz1Td2lzc1NpZ24lMkNDPUNIP2NlcnRpZmljYXRlUmV2b2NhdGlvbkxpc3Q/YmFzZT9vYmplY3RDbGFzcz1jUkxEaXN0cmlidXRpb25Qb2ludDCB8AYDVR0gBIHoMIHlMIHiBglghXQBWQEBBwEwgdQwTAYIKwYBBQUHAgEWQGh0dHA6Ly9yZXBvc2l0b3J5LnN3aXNzc2lnbi5jb20vU3dpc3NTaWduLUxJLVBsYXRpbnVtLUNQLUNQUy5wZGYwgYMGCCsGAQUFBwICMHcadVRoaXMgaXMgYSBjZXJ0aWZpY2F0aW9uIGF1dGhvcml0eSB0aGF0IGlzc3VlcyBxdWFsaWZpZWQgY2VydGlmaWNhdGVzIGFjY29yZGluZyB0byBMaWNodGVuc3RlaW4gZGlnaXRhbCBzaWduYXR1cmUgbGF3LjCB0gYIKwYBBQUHAQEEgcUwgcIwZAYIKwYBBQUHMAKGWGh0dHA6Ly9zd2lzc3NpZ24ubmV0L2NnaS1iaW4vYXV0aG9yaXR5L2Rvd25sb2FkLzU2MkEzRjkwNThGNDE3NUExNEIyRDcwODFCODU1QjU0NkE1NDFBMjgwWgYIKwYBBQUHMAGGTmh0dHA6Ly9wbGF0aW51bS1nMy5vY3NwLnN3aXNzc2lnbi5uZXQvNTYyQTNGOTA1OEY0MTc1QTE0QjJENzA4MUI4NTVCNTQ2QTU0MUEyODAiBggrBgEFBQcBAwQWMBQwCAYGBACORgEBMAgGBgQAjkYBBDANBgkqhkiG9w0BAQsFAAOCAgEAFzisIu5+9hSoeiGyXVgH5oHXLQKgS2iUplmF8X2VqeBU2IVHHdjIt+zzPXF+xkwPpzcahDbyJ117QRy1CJa1LFBw6q8Z0sejVYYSKoKnU3J3rVFSQ4NhY8ghnGVM+HRdcPkcH7D9ywoUxV0BFmWtUwc0De77oUVzM8/uzmFrkifyq1tgcVbpMt5/Uy5WsHazA24/p36zNVcLPisBtu4/0dXosCpV7ZMexskQX7gH+jjMmZWmDEkmMg+OYPgESNJy4PgN7Srv73PRLBG+n1lFxZkWYg+p2gb4EyH0iZxSTul37EIJ7LB5j3MWvZYOTh4FuD8soFr4QWPDF3QE5IQpkkfaLB6+zF45GXEcnQtRFuFiAUwdqT3ZD3ujREESv9AOTiO9rHBJ4+xBKGa0F4qGsg9yhvHt7HYA7oPSe4VRZeRgAiHujU6g+/6eLorXD5ua1Wa+ssiObI/nuAWfKdbsuTtSGCK3IyscFMyfzDa0aMeOx1lVamTs5U+ucUHXqjsBhzvscxhUM46C0LavIAhdvJGZmhfO1uvvgCrImYsQ+EUKQLAuQ2TO8WxOVsNX0TGXcUpArKxUR7SJOyCR0GbA8xllcDDn9Ta9BBS0xR/YvwxrfsBQJ+9/v01CGPpIzrWym84U7yf0xy90r5Wl6la4DnsavF2pP2cvn4ootdE9JKQ=</X509Certificate>
+                            </DigitalId>
+                            <DigitalId>
+<X509SubjectName>CN=SwissSign LI Platinum Qualified CA 2016 - G3, O=SwissSign AG, C=LI</X509SubjectName>
+                            </DigitalId>
+                            <DigitalId>
+<X509SKI>8A71tur7IBp7ORlbJ6qzhLcozDc=</X509SKI>
+                            </DigitalId>
+                        </ServiceDigitalIdentity>
+                        <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn</ServiceStatus>
+                        <StatusStartingTime>2020-02-04T23:00:00Z</StatusStartingTime>
+                        <ServiceInformationExtensions>
+                            <Extension Critical="true">
+<AdditionalServiceInformation>
+    <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+</AdditionalServiceInformation>
+                            </Extension>
+                        </ServiceInformationExtensions>
+                    </ServiceInformation>
+                    <ServiceHistory>
+                        <ServiceHistoryInstance>
+                            <ServiceTypeIdentifier>http://uri.etsi.org/TrstSvc/Svctype/CA/QC</ServiceTypeIdentifier>
+                            <ServiceName>
+<Name xml:lang="en">SwissSign LI Platinum Qualified CA 2016 - G3</Name>
+<Name xml:lang="de">SwissSign LI Platinum Qualified CA 2016 - G3</Name>
+                            </ServiceName>
+                            <ServiceDigitalIdentity>
+<DigitalId>
+    <X509SubjectName>CN=SwissSign LI Platinum Qualified CA 2016 - G3, O=SwissSign AG, C=LI</X509SubjectName>
+</DigitalId>
+<DigitalId>
+    <X509SKI>8A71tur7IBp7ORlbJ6qzhLcozDc=</X509SKI>
+</DigitalId>
+                            </ServiceDigitalIdentity>
+                            <ServiceStatus>http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted</ServiceStatus>
+                            <StatusStartingTime>2016-12-07T01:00:00Z</StatusStartingTime>
+                            <ServiceInformationExtensions>
+<Extension Critical="true">
+    <AdditionalServiceInformation>
+        <URI xml:lang="en">http://uri.etsi.org/TrstSvc/TrustedList/SvcInfoExt/ForeSignatures</URI>
+    </AdditionalServiceInformation>
+</Extension>
+                            </ServiceInformationExtensions>
+                        </ServiceHistoryInstance>
+                    </ServiceHistory>
+                </TSPService>
+            </TSPServices>
+        </TrustServiceProvider>
+    </TrustServiceProviderList>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="id-94d39bd21add3786ab47d3ab8085ca2d"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512"/><ds:Reference Id="tl_signing_tool" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>NYLLkejiE/yE7M4zsAc4lV0TQ9P8nsMsR6Kmo8hwC4I/lyRsJDn5odhHZYapOgpQ+eN34hwrAgba1GEQmwnP6g==</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xades-id-94d39bd21add3786ab47d3ab8085ca2d"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>P1WQMqsEQD0lJzpo6/IJ4106RVZkeJ6PyrbyvL5gYcNP8NVAkrjAkGCTTgmvfvAwGAQq6NHGIaR9G/yrNW/8wQ==</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="value-id-94d39bd21add3786ab47d3ab8085ca2d">KAQEvy5XDSBoAhelIqwVrc0fw+QPQDJfwstP0irMDoLSgxgiidXKTCLaEDBhLFLcbY0JapCvjIsViRi3BvRgoQoPcXUOOT7mmHqn2y9iVynIHqUqb3gibYy+sBqqRSlslY7UlnZjyIT7Vkt5BX8MpqHwtzizdr8n1U4RF0bpcKpJ9ORZ+1VHyck46CN6nRfaXfHWErg/nQGHoVayDFew913s+h4/7rZ8xkF4NnZo88apnapojqPxoUsCpw1hdcY1yO2ST1Kw1hL9IVBqzj1aBrhPF5hOvqA86lLwoLEANtC+RpHEC69b93lY+pURkdA6X9WqBs3IEamKXPz1WhxzoktAMGh3/o6mdINFMC+ZlxFWaP03fq015I0VHVdB9CeOd0XofZ2wKnX1T3mbFG/z79oHox6MOJv+Kje28AeG7tDUEOudXPCfbMEGIwYyA1IW1HQNqftDIydXcul9krIQrVVRd1S1gw26CVWXqQzee58cIpjVq2GYle4t6LsFrEkc</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIIFvTCCA6WgAwIBAgIUWYfQNmYtVM/i0XC58kyqNbS6uNIwDQYJKoZIhvcNAQELBQAwSjELMAkGA1UEBhMCTEkxHzAdBgNVBAoMFkFtdCBmw7xyIEtvbW11bmlrYXRpb24xGjAYBgNVBAMMEVRydXN0ZWQgTGlzdCBDQSAzMB4XDTI0MTEyODEyMDYyMloXDTI4MTEyODEyMDYyMlowRzELMAkGA1UEBhMCTEkxHzAdBgNVBAoMFkFtdCBmw7xyIEtvbW11bmlrYXRpb24xFzAVBgNVBAMMDlRydXN0ZWQgTGlzdCA4MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAuYRnM8ispVhg/ojMqPi+LxpRHDWIR4QYnKhoOMxY2DdI80MJB/YZlgNEu4c618GS3MGXsOaZxXLbMlerpT5YV1jaROF2E4Yzsy4Ag4rzWxP9V5AelPLy9OEb+ktOy/pn/NHshzllzXH4Rw1tIJrboAALXQQNGAwtNFeEym2OzMAZoFQzTuXgmZXxhyLJpOV5A0fIsiwRbHNvAnwCCPMZhFxL8akxFOJhr6NTvWZBqXV36hxa40ssSQYyPfBj7R2S1zyt1cpS2VVhwBSMMjtWJRuVDeOsOamGzl+Ht+4e4ZN91JcgTmWGexnY4AfcbY70Hp8Q824Z14KKCtINEFIVTz5TJ493s/URAGYxV5autPWpE4+PeBXurk5zQ/ueC7JaX+/IieHl089H0v0ujbURgqQCGYqNcKKZFJm2ZlNpdIQW4ahVIxEp6OOg3xYEQKbm7sX0yHEzTsaFrvustdScpGtsZQ6HvyZD6OO9DHYtu8BU/mFIppLPDVGAjFIxNoCPAgMBAAGjggEcMIIBGDAfBgNVHSMEGDAWgBReNLw46ixAPtvFSoqTiBgyRDCnMjAdBgNVHQ4EFgQULhSirHsRPRUVX2FFWxpaILjPfqgwDgYDVR0PAQH/BAQDAgeAMBcGA1UdIAQQMA4wDAYKYIM2CgoAAAEBADAJBgNVHRMEAjAAMBEGA1UdJQQKMAgGBgQAkTcDADBBBgNVHR8EOjA4MDagNKAyhjBodHRwczovL3d3dy5sbHYubGkvZmlsZXMvYWsvY3JsLWxsdi1hay10bGNhMy5jcmwwTAYIKwYBBQUHAQEEQDA+MDwGCCsGAQUFBzAChjBodHRwczovL3d3dy5sbHYubGkvZmlsZXMvYWsvY2VyLWxsdi1hay10bGNhMy5jZXIwDQYJKoZIhvcNAQELBQADggIBACslEdLXgQadhzM5Ub9yHDQREZEfxXxvfMrFRDrJZwrztn+Xhr4rnZjkU1PVsHD39l7IeoDDm9rdMzyXeWBGQq8Iab7B3KvqOZIDuvblg14b2rjolvBz1ffuB1gSV54Mb0OALaJ7e670zhOt9IOwBRgPs/Xc7BZEuoL8bbcH5x8g7aLrT5JSeTfdTJtBdPnBMJqdjls1PUbfp4kxxrseL4H2dSELggXX7We1WFFt0rpzyX5iFjXhuVfRH4G/UB/npp9WUUB45Cy33cg1aRhEKgFuiTYqx5hmpp49iG/cvTlQ9ou3kWZgUMv3B+j8a9ZFDje5gy+2mFDb95B16Uimb54E7i7YoLJTZ5H8fhGXluyrd/KJvq69Dvvgq/pXjZQWU2byMgINaMJLlKmu3kIH0o/NrEhdMgcw3ZPwvW68mFBXL/lt0vtraPMDeTc5AluIHAmKDtiCY2vkP8j7Sr17h2pZVvnlRcNMJwNAf7h7yjH/IqHJsojbgUmV0dALFMfwHUVSKRaHQ0Sa2ZUvbNP6cCoY7LM2sRhCM7D/9PRPvMzLWFRqN6ndt4Y2iHUIuCekGL/VZVU3AyKc6sBfbqEgSbIthMcf3ofCUifBn1SbaIcydsgbkhQtIyqPK22XZTGjjF29G5qI8i30I+lEDTHyJ5ZNmSs0I+mklWtd54hnZ10b</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#id-94d39bd21add3786ab47d3ab8085ca2d"><xades:SignedProperties Id="xades-id-94d39bd21add3786ab47d3ab8085ca2d"><xades:SignedSignatureProperties><xades:SigningTime>2026-02-06T08:42:32Z</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>W9VR6MPdCSywhOuGSz15dfWeAqFdy6q1qqOes5+qRRRuMxIU4rugu+Nn9a6sm71Znes/OSEXyeEFQRNmsiji2A==</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>CN=Trusted List CA 3,O=Amt für Kommunikation,C=LI</ds:X509IssuerName><ds:X509SerialNumber>511128917071661600764365295407735506449783765202</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#tl_signing_tool"><xades:MimeType>text/xml</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></TrustServiceStatusList>

@@ -37,12 +37,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -54,7 +48,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import static com.itextpdf.signatures.logs.SignLogMessageConstant.OJ_TRANSITION_PERIOD;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("BouncyCastleIntegrationTest")
@@ -64,6 +63,9 @@ public class LotlValidatorTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER_LOTL_FILES = "./src/test/resources/com/itextpdf/signatures/validation" +
             "/lotl/LotlState2025_08_08/";
+
+    private static final String SOURCE_FOLDER_LOTL_2026_FILES = "./src/test/resources/com/itextpdf/signatures/validation" +
+            "/lotl/LotlState2026_04_17/";
 
     @BeforeAll
     public static void beforeAll() {
@@ -234,8 +236,10 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 new EuropeanResourceFetcher() {
                     @Override
                     public Result getEUJournalCertificates() {
-                        Result result = super.getEUJournalCertificates();
+                        Result result = new Result();
                         result.setCertificates(Collections.<Certificate>emptyList());
+                        result.setCurrentlySupportedPublication(
+                                "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2019.276.01.0001.01.ENG");
                         return result;
                     }
                 })) {
@@ -243,6 +247,16 @@ public class LotlValidatorTest extends ExtendedITextTest {
             e = assertThrows(PdfException.class, () -> service.initializeCache());
         }
         Assertions.assertEquals(LotlValidator.LOTL_VALIDATION_UNSUCCESSFUL, e.getMessage());
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = OJ_TRANSITION_PERIOD))
+    public void europeanReleaseVersion2026_04_17Test() {
+        try (LotlService service = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_2026_FILES));
+            service.initializeCache();
+            AssertUtil.doesNotThrow(() -> service.getLotlValidator().validate());
+        }
     }
 
     @Test
@@ -307,8 +321,10 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 @Override
                 protected List<String> getPivotsUrlList(byte[] lotlXml) {
                     return Arrays.asList(new String[] {
-                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-378.xml",
                             "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test",
+                            "https://eur-lex.europa.eu/eli/C/2026/1944/oj",
+                            "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml",
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-335.xml",
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-300.xml",
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-282.xml",
