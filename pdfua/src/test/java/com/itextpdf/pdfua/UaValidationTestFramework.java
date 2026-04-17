@@ -302,7 +302,7 @@ public class UaValidationTestFramework {
         return null;
     }
 
-    private String pathSafeConformance() {
+    public String pathSafeConformance() {
         StringBuilder conformanceShortString = new StringBuilder();
 
         if (conformance.getUAConformance() != null) {

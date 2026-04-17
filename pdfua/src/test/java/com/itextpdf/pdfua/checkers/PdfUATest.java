@@ -242,7 +242,8 @@ public class PdfUATest extends ExtendedITextTest {
     @MethodSource("data")
     public void documentWithInvalidLangEntryTest(PdfConformance conformance) throws IOException {
         UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
-        PdfDocument pdfDoc = framework.createPdfDocument(null, DESTINATION_FOLDER + "invalidLang.pdf",
+        PdfDocument pdfDoc = framework.createPdfDocument(null,
+                DESTINATION_FOLDER + "invalidLang" + framework.pathSafeConformance() + ".pdf",
                 "English pangram", "inv:alid");
         Exception e = Assertions.assertThrows(PdfException.class, () -> pdfDoc.close());
         Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY, e.getMessage());
