@@ -1,0 +1,14 @@
+name: "Create rebased branch"
+
+on:
+  pull_request:
+    branches:
+      - develop  
+    types:
+      - assigned
+      - synchronize
+
+jobs:
+    call-createrebase:
+      uses: XodoDocs/itext-github-workflows/.github/workflows/createrebase.yml@master
+      secrets: inherit
