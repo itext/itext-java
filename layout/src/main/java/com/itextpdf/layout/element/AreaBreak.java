@@ -47,15 +47,17 @@ public class AreaBreak extends AbstractElement<AreaBreak> {
 
     /**
      * Creates an AreaBreak that terminates a specified area type.
+     *
      * @param areaBreakType an {@link AreaBreakType area break type}
      */
     public AreaBreak(AreaBreakType areaBreakType) {
         setProperty(Property.AREA_BREAK_TYPE, areaBreakType);
     }
-    
+
     /**
      * Creates an AreaBreak. The new content area will have the specified page
      * size.
+     *
      * @param pageSize the size of the new content area
      */
     public AreaBreak(PageSize pageSize) {
@@ -65,7 +67,8 @@ public class AreaBreak extends AbstractElement<AreaBreak> {
 
     /**
      * Gets the page size.
-     * @return the {@link PageSize page size} of the next content area.
+     *
+     * @return the {@link PageSize page size} of the next content area
      */
     public PageSize getPageSize() {
         return pageSize;
@@ -73,7 +76,8 @@ public class AreaBreak extends AbstractElement<AreaBreak> {
 
     /**
      * Sets the page size.
-     * @param pageSize the new {@link PageSize page size} of the next content area.
+     *
+     * @param pageSize the new {@link PageSize page size} of the next content area
      */
     public void setPageSize(PageSize pageSize) {
         this.pageSize = pageSize;
@@ -81,6 +85,7 @@ public class AreaBreak extends AbstractElement<AreaBreak> {
 
     /**
      * Gets the type of area that this AreaBreak will terminate.
+     *
      * @return the current {@link AreaBreakType area break type}
      */
     public AreaBreakType getType() {

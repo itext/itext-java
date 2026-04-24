@@ -235,10 +235,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 } else {
                     if (layoutResult != LayoutResult.NOTHING) {
                         LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, bfcHeightCorrection, marginsCollapsingEnabled);
-                        return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
+                        return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null)
+                                .setAreaBreak(result.getAreaBreak()).setSectionBreak(result.getSectionBreak());
                     } else {
                         floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
-                        return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
+                        return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing())
+                                .setAreaBreak(result.getAreaBreak()).setSectionBreak(result.getSectionBreak());
                     }
                 }
             }
@@ -302,7 +304,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 }
 
                 // have more areas
-                if (currentAreaPos + 1 < areas.size() && !(result.getAreaBreak() != null && result.getAreaBreak().getType() == AreaBreakType.NEXT_PAGE)) {
+                if (currentAreaPos + 1 < areas.size() &&
+                        !((result.getAreaBreak() != null && result.getAreaBreak().getType() == AreaBreakType.NEXT_PAGE)
+                        || result.getSectionBreak() != null)) {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         childRenderers.set(childPos, result.getSplitRenderer());
                         childRenderers.add(childPos + 1, result.getOverflowRenderer());
@@ -959,10 +963,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
             } else {
                 if (layoutResult != LayoutResult.NOTHING) {
                     LayoutArea editedArea = FloatingHelper.adjustResultOccupiedAreaForFloatAndClear(this, layoutContext.getFloatRendererAreas(), layoutContext.getArea().getBBox(), clearHeightCorrection, marginsCollapsingEnabled);
-                    return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null).setAreaBreak(result.getAreaBreak());
+                    return new LayoutResult(layoutResult, editedArea, splitRenderer, overflowRenderer, null)
+                            .setAreaBreak(result.getAreaBreak()).setSectionBreak(result.getSectionBreak());
                 } else {
                     floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
-                    return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
+                    return new LayoutResult(layoutResult, null, null, overflowRenderer, result.getCauseOfNothing())
+                            .setAreaBreak(result.getAreaBreak()).setSectionBreak(result.getSectionBreak());
                 }
             }
         }

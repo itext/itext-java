@@ -157,7 +157,8 @@ public abstract class RootRenderer extends AbstractRenderer {
                                     ""));
                         }
                     } else {
-                        if (currentArea.isEmptyArea() && result.getAreaBreak() == null) {
+                        if (currentArea.isEmptyArea() && result.getAreaBreak() == null &&
+                                result.getSectionBreak() == null) {
                             boolean keepTogetherChanged = tryDisableKeepTogether(result,
                                     rendererIsFloat, rootRendererStateHandler);
 

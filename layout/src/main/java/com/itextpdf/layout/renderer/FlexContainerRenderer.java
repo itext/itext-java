@@ -376,11 +376,11 @@ public class FlexContainerRenderer extends DivRenderer {
         applyBorderBox(occupiedArea.getBBox(), borders, true);
         applyMargins(occupiedArea.getBBox(), true);
         if (splitRenderer == null || splitRenderer.getChildRenderers().isEmpty()) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer,
-                    result.getCauseOfNothing()).setAreaBreak(result.getAreaBreak());
+            return new LayoutResult(LayoutResult.NOTHING, null, null, overflowRenderer, result.getCauseOfNothing())
+                    .setAreaBreak(result.getAreaBreak()).setSectionBreak(result.getSectionBreak());
         } else {
-            return new LayoutResult(LayoutResult.PARTIAL, layoutContext.getArea(), splitRenderer,
-                    overflowRenderer, null).setAreaBreak(result.getAreaBreak());
+            return new LayoutResult(LayoutResult.PARTIAL, layoutContext.getArea(), splitRenderer, overflowRenderer,
+                    null).setAreaBreak(result.getAreaBreak()).setSectionBreak(result.getSectionBreak());
         }
     }
 

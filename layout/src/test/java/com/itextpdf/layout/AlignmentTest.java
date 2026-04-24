@@ -596,7 +596,6 @@ public class AlignmentTest extends ExtendedITextTest {
         addInlineBlockFloatAndText(doc, text);
 
         doc.close();
-        doc.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }

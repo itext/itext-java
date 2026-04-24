@@ -337,7 +337,6 @@ public class BorderTest extends ExtendedITextTest {
         img.setBorder(new SolidBorder(50));
         img.setRotationAngle(Math.PI / 6);
         doc.add(img);
-        doc.close();
 
         closeDocumentAndCompareOutputs(doc, fileName);
     }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -30,11 +31,20 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
+import com.itextpdf.layout.element.SectionBreak;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Document is the default root element when creating a self-sufficient PDF. It
@@ -47,6 +57,9 @@ import com.itextpdf.layout.renderer.RootRenderer;
  * {@link #setRenderer(com.itextpdf.layout.renderer.DocumentRenderer) }.
  */
 public class Document extends RootElement<Document> {
+    private final Map<Integer, PageMarginBoxes> pageMargins = new HashMap<>();
+    private final List<Tuple2<Predicate<Integer>, PageMarginBoxes>> pageMarginsRules = new ArrayList<>();
+    private final List<Function<Integer, PageMarginBoxes>> pageMarginsFunctions = new ArrayList<>();
 
     /**
      * Creates a document from a {@link PdfDocument}. Initializes the first page
@@ -62,7 +75,7 @@ public class Document extends RootElement<Document> {
      * Creates a document from a {@link PdfDocument} with a manually set {@link
      * PageSize}.
      *
-     * @param pdfDoc   the in-memory representation of the PDF document
+     * @param pdfDoc the in-memory representation of the PDF document
      * @param pageSize the page size
      */
     public Document(PdfDocument pdfDoc, PageSize pageSize) {
@@ -73,10 +86,10 @@ public class Document extends RootElement<Document> {
      * Creates a document from a {@link PdfDocument} with a manually set {@link
      * PageSize}.
      *
-     * @param pdfDoc         the in-memory representation of the PDF document
-     * @param pageSize       the page size
+     * @param pdfDoc the in-memory representation of the PDF document
+     * @param pageSize the page size
      * @param immediateFlush if true, write pages and page-related instructions
-     *                       to the {@link PdfDocument} as soon as possible.
+     * to the {@link PdfDocument} as soon as possible.
      */
     public Document(PdfDocument pdfDoc, PageSize pageSize, boolean immediateFlush) {
         super();
@@ -102,12 +115,31 @@ public class Document extends RootElement<Document> {
      * to be the size specified in the argument.
      *
      * @param areaBreak an {@link AreaBreak}, optionally with a specified size
+     *
      * @return this element
      */
     public Document add(AreaBreak areaBreak) {
         checkClosingStatus();
         childElements.add(areaBreak);
         ensureRootRendererNotNull().addChild(areaBreak.createRendererSubTree());
+        if (immediateFlush) {
+            childElements.remove(childElements.size() - 1);
+        }
+        return this;
+    }
+
+    /**
+     * Terminates the current page if it's not the first one in the document.
+     * Sets the page size and/or page margins specified in the arguments for the next page.
+     *
+     * @param sectionBreak {@link SectionBreak}, optionally with a specified page size and/or page margins
+     *
+     * @return this same {@link Document} instance
+     */
+    public Document add(SectionBreak sectionBreak) {
+        checkClosingStatus();
+        childElements.add(sectionBreak);
+        ensureRootRendererNotNull().addChild(sectionBreak.createRendererSubTree());
         if (immediateFlush) {
             childElements.remove(childElements.size() - 1);
         }
@@ -266,9 +298,9 @@ public class Document extends RootElement<Document> {
     /**
      * Convenience method to set all margins with one method.
      *
-     * @param topMargin    the upper margin
-     * @param rightMargin  the right margin
-     * @param leftMargin   the left margin
+     * @param topMargin the upper margin
+     * @param rightMargin the right margin
+     * @param leftMargin the left margin
      * @param bottomMargin the lower margin
      */
     public void setMargins(float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
@@ -279,10 +311,121 @@ public class Document extends RootElement<Document> {
     }
 
     /**
+     * Gets page margins by specified page number.
+     *
+     * @param pageNumber number of the page to get margins for
+     *
+     * @return {@link PageMarginBoxes} page margins
+     */
+    public PageMarginBoxes getPageMargins(int pageNumber) {
+        if (pageMargins.containsKey(pageNumber)) {
+            return pageMargins.get(pageNumber);
+        }
+
+        for (Tuple2<Predicate<Integer>, PageMarginBoxes> rule : pageMarginsRules) {
+            if (rule.getFirst().test(pageNumber)) {
+                PageMarginBoxes pageMarginBoxes = rule.getSecond();
+                return pageMarginBoxes != null ? new PageMarginBoxes(pageMarginBoxes) : null;
+            }
+        }
+
+        for (Function<Integer, PageMarginBoxes> function : pageMarginsFunctions) {
+            PageMarginBoxes pageMarginBoxes = function.apply(pageNumber);
+            if (pageMarginBoxes != null) {
+                return pageMarginBoxes;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Sets page margins for page with provided number.
+     *
+     * @param pageNumber number of the page to set margins for
+     * @param margins {@link PageMarginBoxes} page margins to set
+     *
+     * @return this same {@link Document} instance
+     */
+    public Document setPageMargins(int pageNumber, PageMarginBoxes margins) {
+        pageMargins.put(pageNumber, margins);
+        return this;
+    }
+
+    /**
+     * Sets page margins for page based on provided condition for page number.
+     *
+     * @param condition matching rule with page number as argument
+     * @param margins {@link PageMarginBoxes} page margins to set
+     *
+     * @return this same {@link Document} instance
+     */
+    public Document setPageMargins(Predicate<Integer> condition, PageMarginBoxes margins) {
+        pageMarginsRules.add(new Tuple2<>(condition, margins));
+        return this;
+    }
+
+    /**
+     * Sets page margins for page based on provided function for page number.
+     *
+     * @param function function with page number as argument, return {@code null} in case result should be ignored
+     * and {@link PageMarginBoxes} page margins return value
+     *
+     * @return this same {@link Document} instance
+     */
+    public Document setPageMargins(Function<Integer, PageMarginBoxes> function) {
+        this.pageMarginsFunctions.add(function);
+        return this;
+    }
+
+    /**
+     * Checks whether page margins have been specified for the given page number.
+     *
+     * <p>
+     * This method returns {@code true} if the margins for the page are determined by
+     * any of the following mechanisms (in order of precedence):
+     * <ol>
+     *   <li>Explicitly set margins for page number via {@link #setPageMargins(int, PageMarginBoxes)}
+     *   <li>Matching rule set via {@link #setPageMargins(Predicate, PageMarginBoxes)}
+     *   <li>Function set via {@link #setPageMargins(Function)}
+     * </ol>
+     *
+     * <p>
+     * NOTE: the method returns {@code true} even if the value produced by the mechanisms is {@code null}.
+     * Only when none of the above apply and the default static margins are used, this method returns {@code false}.
+     *
+     * @param pageNumber the page number to check
+     *
+     * @return {@code true} if margins for the page are defined explicitly by page number,
+     * by matching rule or by function, {@code false} otherwise
+     */
+    public boolean isPageMarginsSpecified(int pageNumber) {
+        if (pageMargins.containsKey(pageNumber)) {
+            return true;
+        }
+
+        for (Tuple2<Predicate<Integer>, PageMarginBoxes> rule : pageMarginsRules) {
+            if (rule.getFirst().test(pageNumber)) {
+                return true;
+            }
+        }
+
+        for (Function<Integer, PageMarginBoxes> function : pageMarginsFunctions) {
+            PageMarginBoxes pageMarginBoxes = function.apply(pageNumber);
+            if (pageMarginBoxes != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the area that will actually be used to write on the page, given
      * the current margins. Does not have any side effects on the document.
      *
      * @param pageSize the size of the page to
+     *
      * @return a {@link Rectangle} with the required dimensions and origin point
      */
     public Rectangle getPageEffectiveArea(PageSize pageSize) {

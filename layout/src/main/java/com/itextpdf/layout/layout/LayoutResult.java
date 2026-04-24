@@ -23,6 +23,7 @@
 package com.itextpdf.layout.layout;
 
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.SectionBreak;
 import com.itextpdf.layout.renderer.IRenderer;
 
 /**
@@ -76,6 +77,12 @@ public class LayoutResult {
      * The first renderer to produce {@link LayoutResult#NOTHING} during {@link IRenderer#layout(LayoutContext)}.
      */
     protected IRenderer causeOfNothing;
+
+    /**
+     * The {@link SectionBreak} that that terminates the current page content
+     * and creates a new page, optionally with a specified page size and/or page margins.
+     */
+    private SectionBreak sectionBreak;
 
     /**
      * Creates the {@link LayoutResult result of {@link IRenderer#layout(LayoutContext) layouting}}.
@@ -184,10 +191,34 @@ public class LayoutResult {
      * Sets areaBreak value.
      *
      * @param areaBreak the areaBreak value
-     * @return the areaBreak value
+     *
+     * @return current {@link LayoutResult} instance
      */
     public LayoutResult setAreaBreak(AreaBreak areaBreak) {
         this.areaBreak = areaBreak;
+        return this;
+    }
+
+    /**
+     * Gets {@link SectionBreak} value.
+     *
+     * @return the {@link SectionBreak} value that terminates the current page content
+     * and creates a new page, optionally with a specified page size and/or page margins
+     */
+    public SectionBreak getSectionBreak() {
+        return sectionBreak;
+    }
+
+    /**
+     * Sets {@link SectionBreak} value.
+     *
+     * @param sectionBreak the {@link SectionBreak} value that terminates the current page content
+     * and creates a new page, optionally with a specified page size and/or page margins
+     *
+     * @return current {@link LayoutResult} instance
+     */
+    public LayoutResult setSectionBreak(SectionBreak sectionBreak) {
+        this.sectionBreak = sectionBreak;
         return this;
     }
 
@@ -223,6 +254,7 @@ public class LayoutResult {
         return "LayoutResult{" +
                 status +
                 ", areaBreak=" + areaBreak +
+                (sectionBreak == null ? "" : (", sectionBreak=" + sectionBreak)) +
                 ", occupiedArea=" + occupiedArea +
                 '}';
     }
