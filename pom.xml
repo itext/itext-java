@@ -110,7 +110,7 @@
     <surefire.version>3.0.0-M3</surefire.version>
     <apache.santuario.version>3.0.6</apache.santuario.version>
 
-    <sharpen.version>1.0</sharpen.version>
+    <sharpen.version>1.1</sharpen.version>
     <sharpen.builddotnet>false</sharpen.builddotnet>
     <sharpen.showdiff>false</sharpen.showdiff>
     <sharpen.phase>none</sharpen.phase>
@@ -824,6 +824,13 @@
           <version>${sharpen.version}</version>
           <scope>provided</scope>
         </dependency>
+
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>sharpen-core</artifactId>
+          <version>${sharpen.version}</version>
+          <scope>provided</scope>
+        </dependency>
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>standard-framework-mapping</artifactId>
@@ -888,6 +895,12 @@
         <dependency>
           <groupId>sharpen</groupId>
           <artifactId>sharpen-config</artifactId>
+          <version>${sharpen.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>sharpen</groupId>
+          <artifactId>sharpen-core</artifactId>
           <version>${sharpen.version}</version>
           <scope>provided</scope>
         </dependency>

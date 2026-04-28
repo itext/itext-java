@@ -296,14 +296,12 @@ public class CompareToolTest extends ExtendedITextTest {
     public void convertDocInfoToStringsTest() throws IOException {
         String inPdf = sourceFolder + "test.pdf";
 
-        class TestCompareTool extends CompareTool {
+        CompareTool compareTool = new CompareTool() {
             @Override
             protected String[] convertDocInfoToStrings(PdfDocumentInfo info) {
                 return super.convertDocInfoToStrings(info);
             }
-        }
-
-        CompareTool compareTool = new TestCompareTool();
+        };
         try (PdfReader reader = new PdfReader(inPdf, compareTool.getOutReaderProperties());
                 PdfDocument doc = new PdfDocument(reader)) {
             String[] docInfo = compareTool.convertDocInfoToStrings(doc.getDocumentInfo());
@@ -312,7 +310,7 @@ public class CompareToolTest extends ExtendedITextTest {
             Assertions.assertEquals("test file", docInfo[2]);
             Assertions.assertEquals("new job", docInfo[3]);
             Assertions.assertEquals("Adobe Acrobat Pro DC (64-bit) <version>", docInfo[4]);
-                }
+        }
     }
 
     @Test
