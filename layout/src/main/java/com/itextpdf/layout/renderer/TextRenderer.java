@@ -1622,7 +1622,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return Character.UnicodeScript.THAI == glyphScript
                 || Character.UnicodeScript.KHMER == glyphScript
                 || Character.UnicodeScript.LAO == glyphScript
-                || Character.UnicodeScript.MYANMAR == glyphScript;
+                || Character.UnicodeScript.MYANMAR == glyphScript
+                || Character.UnicodeScript.TIBETAN == glyphScript;
     }
 
     @Override

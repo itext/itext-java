@@ -130,7 +130,7 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     }
 
     @Test
-    @Disabled("Flaky access on ci") // Android-Conversion-Skip-Line
+    @Disabled("TODO DEVSIX-9938 - Flaky access on ci") // Android-Conversion-Skip-Line
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void loadWithRequestAndHeaders() throws IOException {
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
