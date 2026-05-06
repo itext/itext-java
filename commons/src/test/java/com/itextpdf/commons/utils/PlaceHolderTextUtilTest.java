@@ -39,31 +39,56 @@ public class PlaceHolderTextUtilTest extends ExtendedITextTest {
         int amountOfCharacters = 24;
         String result = PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.CHARACTERS, amountOfCharacters);
         assertEquals(amountOfCharacters, result.length());
-        assertEquals(result, "Portable Document Format");
+        assertEquals(getExpectedPlaceHolderTextByCharacters(amountOfCharacters), result);
     }
 
 
     @Test
     public void GetPlaceHolderByCharactersTextOverflow() {
-        int amountOfCharacters = 31222 + 24;
+        int amountOfCharacters = PlaceHolderTextUtil.TEMPLATE.length() + 24;
         String result = PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.CHARACTERS, amountOfCharacters);
         assertEquals(amountOfCharacters, result.length());
-        assertTrue(result.endsWith("Portable Document Format"));
+        assertEquals(getExpectedPlaceHolderTextByCharacters(amountOfCharacters), result);
+        assertTrue(result.endsWith(getExpectedPlaceHolderTextByCharacters(24)));
     }
 
     @Test
     public void GetPlaceHolderByWordsTextSimple() {
         int amountOfWords = 5;
         String result = PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords);
-        assertEquals(44, result.length());
+        assertEquals(getExpectedPlaceHolderTextByWords(amountOfWords), result);
     }
 
 
     @Test
     public void GetPlaceHolderByWordsTextOverflow() {
-        int amountOfCharacters = 4000;
-        String result = PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfCharacters);
-        assertEquals(25472, result.length());
+        int amountOfWords = PlaceHolderTextUtil.TEMPLATE.split(" ").length + 5;
+        String result = PlaceHolderTextUtil.getPlaceHolderText(PlaceHolderTextBy.WORDS, amountOfWords);
+        assertEquals(getExpectedPlaceHolderTextByWords(amountOfWords), result);
+        assertTrue(result.endsWith(getExpectedPlaceHolderTextByWords(5)));
     }
+
+    private static String getExpectedPlaceHolderTextByWords(int amount) {
+        final String[] words = PlaceHolderTextUtil.TEMPLATE.split(" ");
+        final StringBuilder sb = new StringBuilder(amount * 5);
+        for (int i = 0; i < amount; i++) {
+            sb.append(words[i % words.length]);
+            if (i + 1 == amount) {
+                break;
+            }
+            sb.append(' ');
+        }
+        return sb.toString();
+    }
+
+    private static String getExpectedPlaceHolderTextByCharacters(int amount) {
+        final String template = PlaceHolderTextUtil.TEMPLATE;
+        final StringBuilder sb = new StringBuilder(amount);
+        for (int i = 0; i < amount; i++) {
+            sb.append(template.charAt(i % template.length()));
+        }
+        return sb.toString();
+    }
+
 
 }
