@@ -83,8 +83,12 @@ public class CssSelector extends AbstractCssSelector {
      * Checks if the node not matches all the selectors.
      *
      * @param element the node
+     *
      * @return true, if node doesn't match all the selectors
+     *
+     * @deprecated can be replaced with proper {@link CssSelector#matches(INode)} use.
      */
+    @Deprecated
     public boolean notMatches(INode element) {
         int counter = 0;
         while (counter != selectorItems.size()) {
