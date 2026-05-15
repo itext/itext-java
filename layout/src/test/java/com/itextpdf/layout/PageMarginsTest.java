@@ -28,6 +28,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
@@ -48,9 +49,11 @@ import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
+import com.itextpdf.layout.testutil.PageMarginsTestUtil;
 import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -90,8 +93,8 @@ public class PageMarginsTest extends ExtendedITextTest {
              Document document = new Document(pdfDocument)) {
             pdfDocument.addNewPage();
 
-            List<PageMarginContent> elements = getPageMargins1();
-            List<PageMarginContent> elements2 = getPageMargins2();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+            List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
 
             Paragraph p = new Paragraph(TEXT_BYRON);
             for (int i = 0; i < 5; i++) {
@@ -172,8 +175,8 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            List<PageMarginContent> elements = getPageMargins1();
-            List<PageMarginContent> elements2 = getPageMargins2();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+            List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
 
             Paragraph p = new Paragraph(TEXT_BYRON);
 
@@ -242,8 +245,8 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            List<PageMarginContent> elements = getPageMargins1();
-            List<PageMarginContent> elements2 = getPageMargins2();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+            List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
 
             Paragraph p = new Paragraph(TEXT_BYRON);
 
@@ -273,7 +276,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            List<PageMarginContent> elements = getPageMargins1();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
 
             Paragraph p = new Paragraph(TEXT_BYRON);
             for (int i = 0; i < 5; i++) {
@@ -308,7 +311,7 @@ public class PageMarginsTest extends ExtendedITextTest {
                 p.add(TEXT_BYRON);
             }
 
-            List<PageMarginContent> pageMargins = getPageMargins1();
+            List<PageMarginContent> pageMargins = PageMarginsTestUtil.getPageMargins1();
             SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(pageMargins));
             SectionBreak sectionBreak1 = new SectionBreak(new PageMarginBoxes(pageMargins));
             SectionBreak sectionBreak2 = new SectionBreak(PageSize.A3, new PageMarginBoxes(pageMargins));
@@ -333,8 +336,8 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            List<PageMarginContent> elements = getPageMargins1();
-            List<PageMarginContent> elements2 = getPageMargins2();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+            List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
 
             Paragraph p = new Paragraph(TEXT_BYRON);
 
@@ -372,7 +375,7 @@ public class PageMarginsTest extends ExtendedITextTest {
             // Set static margins
             document.setMargins(100, 100, 100, 100);
 
-            List<PageMarginContent> elements = getPageMargins1();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
 
             List<PageMarginContent> elements3 = new ArrayList<>();
             elements3.add(new PageMarginContent(MarginBoxName.BOTTOM, new Div()
@@ -409,8 +412,8 @@ public class PageMarginsTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            List<PageMarginContent> elements = getPageMargins1();
-            List<PageMarginContent> elements2 = getPageMargins2();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+            List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
             document.setPageMargins(1, new PageMarginBoxes(elements));
             document.setPageMargins(pageNum -> pageNum % 2 == 0, new PageMarginBoxes(elements2));
             document.setPageMargins(pageNum -> {
@@ -455,8 +458,8 @@ public class PageMarginsTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            List<PageMarginContent> elements = getPageMargins1();
-            List<PageMarginContent> elements2 = getPageMargins2();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+            List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
 
             document.setPageMargins(pageNum -> pageNum > 0 && pageNum % 2 == 0, new PageMarginBoxes(elements));
             SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements2));
@@ -514,7 +517,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            List<PageMarginContent> elements = getPageMargins1();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
 
             Paragraph p = new Paragraph(TEXT_BYRON);
 
@@ -542,7 +545,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             pdfDocument.setTagged();
-            List<PageMarginContent> elements = getPageMargins1();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
 
             Paragraph p = new Paragraph(TEXT_BYRON);
 
@@ -575,33 +578,6 @@ public class PageMarginsTest extends ExtendedITextTest {
         values = "footertext;blurb";
         addFooterTable(columnNum, values, document);
         AssertUtil.doesNotThrow(() -> document.close());
-    }
-
-    private static List<PageMarginContent> getPageMargins1() {
-        List<PageMarginContent> elements = new ArrayList<>();
-        elements.add(new PageMarginContent(MarginBoxName.TOP, new Div()
-                .add(new Paragraph("TEST TOP MARGIN")).setBackgroundColor(ColorConstants.PINK).setHeight(200)));
-        elements.add(new PageMarginContent(MarginBoxName.RIGHT, new Div()
-                .add(new Paragraph("TEST RIGHT MARGIN")).setBackgroundColor(ColorConstants.YELLOW).setWidth(200)));
-        elements.add(new PageMarginContent(MarginBoxName.BOTTOM, new Div()
-                .add(new Paragraph("TEST BOTTOM MARGIN\nTEST BOTTOM MARGIN\nTEST BOTTOM MARGIN"))
-                .setBackgroundColor(ColorConstants.GREEN)));
-        elements.add(new PageMarginContent(MarginBoxName.LEFT, new Div()
-                .add(new Paragraph("TEST LEFT MARGIN, TEST LEFT MARGIN")).setBackgroundColor(ColorConstants.BLUE)));
-        return elements;
-    }
-
-    private static List<PageMarginContent> getPageMargins2() {
-        List<PageMarginContent> elements2 = new ArrayList<>();
-        elements2.add(new PageMarginContent(MarginBoxName.TOP, new Div()
-                .add(new Paragraph("TEST TOP MARGIN")).setBackgroundColor(ColorConstants.LIGHT_GRAY).setHeight(100)));
-        elements2.add(new PageMarginContent(MarginBoxName.RIGHT, new Div()
-                .add(new Paragraph("TEST RIGHT MARGIN")).setBackgroundColor(ColorConstants.CYAN)));
-        elements2.add(new PageMarginContent(MarginBoxName.BOTTOM, new Div()
-                .add(new Paragraph("TEST BOTTOM MARGIN")).setBackgroundColor(ColorConstants.ORANGE)));
-        elements2.add(new PageMarginContent(MarginBoxName.LEFT, new Div()
-                .add(new Paragraph("TEST LEFT MARGIN")).setBackgroundColor(ColorConstants.RED).setWidth(100)));
-        return elements2;
     }
 
     private void addFooterTable(int numColumns, String values, Document document) {
