@@ -32,7 +32,6 @@ import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -255,7 +254,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         try (LotlService service = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
             service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_2026_FILES));
             service.initializeCache();
-            AssertUtil.doesNotThrow(() -> service.getLotlValidator().validate());
+            Assertions.assertDoesNotThrow(() -> service.getLotlValidator().validate());
         }
     }
 
@@ -414,7 +413,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         try (LotlService service = new EuropeanLotlService(lotlFetchingProperties)) {
             service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
             service.initializeCache();
-            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+            Assertions.assertDoesNotThrow(() -> service.tryAndRefreshCache());
         }
     }
 
@@ -442,7 +441,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                     throw new RuntimeException("Simulated failure");
                 }
             });
-            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+            Assertions.assertDoesNotThrow(() -> service.tryAndRefreshCache());
         }
     }
 
@@ -502,7 +501,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 }
             });
 
-            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+            Assertions.assertDoesNotThrow(() -> service.tryAndRefreshCache());
         }
     }
 
@@ -528,7 +527,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 }
             });
 
-            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+            Assertions.assertDoesNotThrow(() -> service.tryAndRefreshCache());
         }
     }
 
@@ -552,7 +551,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 }
             });
 
-            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+            Assertions.assertDoesNotThrow(() -> service.tryAndRefreshCache());
         }
     }
 
@@ -575,7 +574,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 }
             });
 
-            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+            Assertions.assertDoesNotThrow(() -> service.tryAndRefreshCache());
         }
     }
 
@@ -598,7 +597,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                 }
             });
 
-            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+            Assertions.assertDoesNotThrow(() -> service.tryAndRefreshCache());
         }
     }
 
@@ -680,7 +679,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                     lotlFetchingProperties.getOnCountryFetchFailureStrategy()));
 
             service.tryAndRefreshCache();
-            AssertUtil.doesNotThrow(() -> service.getLotlValidator().validate());
+            Assertions.assertDoesNotThrow(() -> service.getLotlValidator().validate());
         }
     }
 
@@ -840,7 +839,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             };
             service.withCountrySpecificLotlFetcher(lotlFetcher);
             service.initializeCache();
-            AssertUtil.doesNotThrow(() -> service.getLotlValidator().validate());
+            Assertions.assertDoesNotThrow(() -> service.getLotlValidator().validate());
         }
     }
 
@@ -871,7 +870,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
         try (LotlService lotlService = new EuropeanLotlService(p)) {
 
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
-            AssertUtil.doesNotThrow(() -> lotlService.initializeCache());
+            Assertions.assertDoesNotThrow(() -> lotlService.initializeCache());
         }
     }
 

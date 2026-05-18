@@ -31,7 +31,6 @@ import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.XMPUtils;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -301,7 +300,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
                 + "   </rdf:RDF>\n"
                 + "</x:xmpmeta>";
 
-        AssertUtil.doesNotThrow(
+        Assertions.assertDoesNotThrow(
                 () -> XMPMetaFactory.parseFromBuffer(xmp.getBytes(StandardCharsets.UTF_8)));
     }
 
@@ -344,7 +343,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
                 + "   </rdf:RDF>\n"
                 + "</x:xmpmeta>";
 
-        AssertUtil.doesNotThrow(
+        Assertions.assertDoesNotThrow(
                 () -> XMPMetaFactory.parseFromBuffer(xmp.getBytes(StandardCharsets.UTF_8)));
     }
 
@@ -389,7 +388,7 @@ public class XMPMetadataTest extends ExtendedITextTest{
                 + "   </rdf:RDF>\n"
                 + "</x:xmpmeta>";
 
-        AssertUtil.doesNotThrow(
+        Assertions.assertDoesNotThrow(
                 () -> XMPMetaFactory.parseFromBuffer(xmp.getBytes(StandardCharsets.UTF_8)));
     }
 

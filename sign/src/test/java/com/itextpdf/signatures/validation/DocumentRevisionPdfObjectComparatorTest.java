@@ -25,10 +25,10 @@ package com.itextpdf.signatures.validation;
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.HashSet;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +46,7 @@ public class DocumentRevisionPdfObjectComparatorTest extends ExtendedITextTest {
         stream2.setData(new byte[] {0x01, 0x02, 0x03});
         stream2.put(PdfName.Filter, PdfName.JBIG2Decode);
 
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             DocumentRevisionPdfObjectComparator.comparePdfObjects(stream1, stream2,
                     new Tuple2<>(new HashSet<>(), new HashSet<>()));
         });

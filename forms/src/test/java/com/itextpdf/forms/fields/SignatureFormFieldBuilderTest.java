@@ -33,7 +33,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
@@ -77,7 +76,7 @@ public class SignatureFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createSignatureWithIncorrectNameTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        AssertUtil.doesNotThrow(() -> new SignatureFormFieldBuilder(pdfDoc, "incorrect.name")
+        Assertions.assertDoesNotThrow(() -> new SignatureFormFieldBuilder(pdfDoc, "incorrect.name")
                 .setWidgetRectangle(DUMMY_RECTANGLE).createSignature());
     }
 

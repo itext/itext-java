@@ -25,7 +25,6 @@ package com.itextpdf.signatures.validation.lotl;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.report.ValidationReport;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -120,7 +119,7 @@ public class SingleFileLotlServiceTest extends ExtendedITextTest {
     public void countryNamesIgnoredTest() {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         props.setCountryNames("AR");
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             LotlService lotlService = new SingleFileLotlService(props,
                     new CountrySpecificLotl("AR", "https://pki.jgm.gov.ar/TSL/tsl-AR.xml",
                     "application/vnd.etsi.tsl+xml"),

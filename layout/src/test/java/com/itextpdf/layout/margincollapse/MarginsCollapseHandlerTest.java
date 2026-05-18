@@ -28,13 +28,13 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class MarginsCollapseHandlerTest extends ExtendedITextTest {
@@ -51,7 +51,7 @@ public class MarginsCollapseHandlerTest extends ExtendedITextTest {
         paragraphRenderer.getModelElement().setProperty(Property.MARGIN_BOTTOM, UnitValue.createPercentValue(0f));
 
         MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(paragraphRenderer, null);
-        AssertUtil.doesNotThrow(() -> marginsCollapseHandler.startMarginsCollapse(rectangle));
+        Assertions.assertDoesNotThrow(() -> marginsCollapseHandler.startMarginsCollapse(rectangle));
     }
 
     @Test
@@ -66,6 +66,6 @@ public class MarginsCollapseHandlerTest extends ExtendedITextTest {
         paragraphRenderer.getModelElement().setProperty(Property.PADDING_BOTTOM, UnitValue.createPercentValue(0f));
 
         MarginsCollapseHandler marginsCollapseHandler = new MarginsCollapseHandler(paragraphRenderer, null);
-        AssertUtil.doesNotThrow(() -> marginsCollapseHandler.startMarginsCollapse(rectangle));
+        Assertions.assertDoesNotThrow(() -> marginsCollapseHandler.startMarginsCollapse(rectangle));
     }
 }

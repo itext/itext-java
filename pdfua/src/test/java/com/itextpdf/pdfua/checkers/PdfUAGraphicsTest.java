@@ -45,13 +45,13 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.checkers.utils.LayoutCheckUtil;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -96,7 +96,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
 
     @Test
     public void layoutCheckUtilTest() {
-        AssertUtil.doesNotThrow(() -> new LayoutCheckUtil(null).checkRenderer(null));
+        Assertions.assertDoesNotThrow(() -> new LayoutCheckUtil(null).checkRenderer(null));
     }
 
     @ParameterizedTest

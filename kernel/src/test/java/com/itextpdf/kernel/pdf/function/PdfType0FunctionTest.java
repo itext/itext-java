@@ -27,12 +27,11 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfType0FunctionTest extends ExtendedITextTest {
@@ -187,7 +186,7 @@ public class PdfType0FunctionTest extends ExtendedITextTest {
     @Test
     public void testSimpleValidPdfFunction() {
         AbstractPdfFunction<PdfStream> function = generateSimplePdfFunction(new byte[] {0}, 1);
-        AssertUtil.doesNotThrow(() -> function.calculate(new double[] {0}));
+        Assertions.assertDoesNotThrow(() -> function.calculate(new double[] {0}));
     }
 
 

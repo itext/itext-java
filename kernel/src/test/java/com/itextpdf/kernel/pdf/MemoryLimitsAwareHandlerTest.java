@@ -26,16 +26,13 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
@@ -172,7 +169,7 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         final MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
         final int capacityToSet = 2;
 
-        AssertUtil.doesNotThrow(() -> memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacityToSet));
+        Assertions.assertDoesNotThrow(() -> memoryLimitsAwareHandler.checkIfXrefStructureExceedsTheLimit(capacityToSet));
     }
 
     @Test

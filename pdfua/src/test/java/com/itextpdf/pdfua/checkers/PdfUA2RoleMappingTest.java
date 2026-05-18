@@ -48,7 +48,6 @@ import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.pdfua.PdfUA2TestPdfDocument;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
@@ -96,7 +95,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
 
         showText(chapter, page1);
 
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
@@ -124,7 +123,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
 
         showText(chapter, page1);
 
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
@@ -154,7 +153,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
 
         showText(expression, page1);
 
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
@@ -179,7 +178,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
 
         showText(chapter, page1);
 
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
@@ -211,7 +210,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
 
         showText(chapter, page1);
 
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
@@ -241,7 +240,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
 
         showText(chapter, page1);
 
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 
@@ -464,7 +463,7 @@ public class PdfUA2RoleMappingTest extends ExtendedITextTest {
         showText(chapter, page1);
 
         // This case is valid according to VeraPDF.
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
         Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); 
     }
 

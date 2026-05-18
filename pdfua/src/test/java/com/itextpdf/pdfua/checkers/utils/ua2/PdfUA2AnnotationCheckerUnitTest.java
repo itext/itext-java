@@ -51,7 +51,6 @@ import com.itextpdf.pdfua.PdfUAConfig;
 import com.itextpdf.pdfua.PdfUADocument;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
@@ -76,7 +75,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
     public void basicLineAnnotation() {
         PdfLineAnnotation lineAnnotation = new PdfLineAnnotation(new Rectangle(0, 0, 100, 100), new float[]{2, 3});
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(lineAnnotation.getPdfObject(), parent);
         });
     }
@@ -85,7 +84,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
     public void basicSquareAnnotation() {
         PdfSquareAnnotation squareAnnotation = new PdfSquareAnnotation(new Rectangle(0, 0, 100, 100));
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(squareAnnotation.getPdfObject(), parent);
         });
     }
@@ -94,7 +93,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
     public void basicCircleAnnotation() {
         PdfCircleAnnotation circleAnnotation = new PdfCircleAnnotation(new Rectangle(0, 0, 100, 100));
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(circleAnnotation.getPdfObject(), parent);
         });
     }
@@ -105,7 +104,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
         annotation.put(PdfName.Subtype, PdfName.Polygon);
         PdfAnnotation annot = PdfAnnotation.makeAnnotation(annotation);
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annot.getPdfObject(), parent);
         });
     }
@@ -116,7 +115,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
         annotation.put(PdfName.Subtype, PdfName.PolyLine);
         PdfAnnotation annot = PdfAnnotation.makeAnnotation(annotation);
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annot.getPdfObject(), parent);
         });
     }
@@ -127,7 +126,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
         annotation.put(PdfName.Subtype, PdfName.Highlight);
         PdfAnnotation annot = PdfAnnotation.makeAnnotation(annotation);
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annot.getPdfObject(), parent);
         });
     }
@@ -138,7 +137,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
         annotation.put(PdfName.Subtype, PdfName.Underline);
         PdfAnnotation annot = PdfAnnotation.makeAnnotation(annotation);
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annot.getPdfObject(), parent);
         });
     }
@@ -149,7 +148,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
         annotation.put(PdfName.Subtype, PdfName.Squiggly);
         PdfAnnotation annot = PdfAnnotation.makeAnnotation(annotation);
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annot.getPdfObject(), parent);
         });
     }
@@ -160,7 +159,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
         annotation.put(PdfName.Subtype, PdfName.StrikeOut);
         PdfAnnotation annot = PdfAnnotation.makeAnnotation(annotation);
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annot.getPdfObject(), parent);
         });
     }
@@ -169,7 +168,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
     public void basicCaretAnnotation() {
         PdfCaretAnnotation annotation = new PdfCaretAnnotation(new Rectangle(2, 2, 100, 100));
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annotation.getPdfObject(), parent);
         });
     }
@@ -200,7 +199,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
         PdfInkAnnotation annotation = new PdfInkAnnotation(new Rectangle(2, 2, 100, 100));
         annotation.setContents("Test");
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annotation.getPdfObject(), parent);
         });
     }
@@ -219,7 +218,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
     public void basicFileAttachment() {
         PdfFileAttachmentAnnotation annotation = new PdfFileAttachmentAnnotation(new Rectangle(2, 2, 100, 100));
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annotation.getPdfObject(), parent);
         });
     }
@@ -283,7 +282,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
     public void basicWatermark() {
         PdfWatermarkAnnotation annot = new PdfWatermarkAnnotation(new Rectangle(0, 0, 100, 100));
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annot.getPdfObject(), parent);
         });
     }
@@ -292,7 +291,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
     public void basicRedaction() {
         PdfRedactAnnotation annot = new PdfRedactAnnotation(new Rectangle(0, 0, 100, 100));
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annot.getPdfObject(), parent);
         });
     }
@@ -303,7 +302,7 @@ public class PdfUA2AnnotationCheckerUnitTest extends ExtendedITextTest {
         annotation.put(PdfName.Subtype, PdfName.Projection);
         PdfAnnotation annot = PdfAnnotation.makeAnnotation(annotation);
         PdfStructElem parent = new PdfStructElem(null, PdfName.Annot);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfUA2AnnotationChecker().checkSingleAnnotation(annot.getPdfObject(), parent);
         });
     }

@@ -22,8 +22,8 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -56,7 +56,6 @@ import com.itextpdf.layout.properties.BackgroundRepeat;
 import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -66,8 +65,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -678,7 +677,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
             DivRenderer divRenderer = new DivRenderer(new Div());
             divRenderer.childRenderers.add(null);
 
-            AssertUtil.doesNotThrow(() -> renderer.linkRenderToDocument(divRenderer, doc.getPdfDocument()));
+            Assertions.assertDoesNotThrow(() -> renderer.linkRenderToDocument(divRenderer, doc.getPdfDocument()));
         }
     }
 

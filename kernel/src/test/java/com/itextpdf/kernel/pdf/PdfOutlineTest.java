@@ -35,7 +35,6 @@ import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -531,7 +530,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
             outlineDictionary.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
             first.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
 
-            AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
+            Assertions.assertDoesNotThrow(() -> pdfDocument.getCatalog()
                     .constructOutlines(outlineDictionary, new EmptyNameTree()));
         }
     }
@@ -679,7 +678,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
             first.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
             second.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
 
-            AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
+            Assertions.assertDoesNotThrow(() -> pdfDocument.getCatalog()
                     .constructOutlines(outlineDictionary, new EmptyNameTree()));
             PdfOutline resultedOutline = pdfDocument.getOutlines(false);
             Assertions.assertEquals(2, resultedOutline.getAllChildren().size());
@@ -710,7 +709,7 @@ public class PdfOutlineTest extends ExtendedITextTest {
             outlineDictionary.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
             first.put(PdfName.Title, new PdfString("title", PdfEncodings.UNICODE_BIG));
 
-            AssertUtil.doesNotThrow(() -> pdfDocument.getCatalog()
+            Assertions.assertDoesNotThrow(() -> pdfDocument.getCatalog()
                     .constructOutlines(outlineDictionary, new EmptyNameTree()));
             PdfOutline resultedOutline = pdfDocument.getOutlines(false);
             Assertions.assertEquals(1, resultedOutline.getAllChildren().size());

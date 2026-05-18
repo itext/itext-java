@@ -38,7 +38,6 @@ import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -130,14 +129,14 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
 
             access.publicAddEvent(document.getDocumentIdWrapper(), getEvent("unknown product", document.getDocumentIdWrapper()));
 
-            AssertUtil.doesNotThrow(() -> new FlushPdfDocumentEvent(document).doAction());
+            Assertions.assertDoesNotThrow(() -> new FlushPdfDocumentEvent(document).doAction());
         }
     }
 
     @Test
     public void doActionNullDocumentTest() {
         FlushPdfDocumentEvent closeEvent = new FlushPdfDocumentEvent(null);
-        AssertUtil.doesNotThrow(() -> closeEvent.doAction());
+        Assertions.assertDoesNotThrow(() -> closeEvent.doAction());
     }
 
     @Test
@@ -147,7 +146,7 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
                 productData.getVersion() + " \u00a9" + productData.getSinceCopyrightYear() + "-"
                 + productData.getToCopyrightYear() + " Apryse Group NV";
         try (PdfDocument document = new DummyPdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
-            AssertUtil.doesNotThrow(() -> new FlushPdfDocumentEvent(document).doAction());
+            Assertions.assertDoesNotThrow(() -> new FlushPdfDocumentEvent(document).doAction());
             Assertions.assertTrue(document.getDocumentInfo().getProducer()
                     .contains(expectedProducer));
         }

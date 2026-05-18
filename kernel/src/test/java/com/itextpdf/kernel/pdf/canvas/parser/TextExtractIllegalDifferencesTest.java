@@ -25,15 +25,14 @@ package com.itextpdf.kernel.pdf.canvas.parser;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
-
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class TextExtractIllegalDifferencesTest extends ExtendedITextTest {
@@ -44,7 +43,7 @@ public class TextExtractIllegalDifferencesTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES))
     public void illegalDifference() throws IOException {
         try (PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "illegalDifference.pdf"))) {
-            AssertUtil.doesNotThrow(() -> PdfTextExtractor.getTextFromPage(pdf.getFirstPage()));
+            Assertions.assertDoesNotThrow(() -> PdfTextExtractor.getTextFromPage(pdf.getFirstPage()));
         }
     }
 
@@ -52,7 +51,7 @@ public class TextExtractIllegalDifferencesTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES, count = 2))
     public void illegalDifferenceType3Font() throws IOException {
         try (PdfDocument pdf = new PdfDocument(new PdfReader(sourceFolder + "illegalDifferenceType3Font.pdf"))) {
-            AssertUtil.doesNotThrow(() -> PdfTextExtractor.getTextFromPage(pdf.getFirstPage()));
+            Assertions.assertDoesNotThrow(() -> PdfTextExtractor.getTextFromPage(pdf.getFirstPage()));
         }
     }
 }

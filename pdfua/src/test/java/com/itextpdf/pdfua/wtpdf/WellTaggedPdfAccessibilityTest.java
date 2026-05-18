@@ -37,7 +37,6 @@ import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.checkers.PdfUATableTest;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
@@ -48,7 +47,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -75,7 +73,7 @@ public class WellTaggedPdfAccessibilityTest extends ExtendedITextTest {
                     logLevel = LogLevelConstants.WARN)
     })
     public void openNotWellTaggedPdfDocumentTest() {
-        AssertUtil.doesNotThrow(() ->
+        Assertions.assertDoesNotThrow(() ->
                 new WellTaggedPdfDocument(
                         new PdfReader(SOURCE_FOLDER + "usualPdf.pdf"),
                         new PdfWriter(new ByteArrayOutputStream()),
@@ -143,7 +141,7 @@ public class WellTaggedPdfAccessibilityTest extends ExtendedITextTest {
             catalog.put(PdfName.Type, PdfName.Metadata);
             catalog.put(PdfName.Subtype, PdfName.XML);
 
-            AssertUtil.doesNotThrow(() -> PdfCheckersUtil.checkMetadata(catalog.getPdfObject(),
+            Assertions.assertDoesNotThrow(() -> PdfCheckersUtil.checkMetadata(catalog.getPdfObject(),
                     PdfConformance.WELL_TAGGED_PDF_FOR_REUSE, (msg) -> new PdfException(msg)));
         }
     }

@@ -44,7 +44,6 @@ import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.pdf.function.PdfType4Function;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
@@ -388,7 +387,7 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
 
         Color color = new PatternColor(pattern);
 
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             pdfA2Checker.checkColor(null, color, new PdfDictionary(), true, null);
         });
     }
@@ -405,7 +404,7 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
 
         Color color = new PatternColor(pattern);
 
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             pdfA2Checker.checkColor(null, color, new PdfDictionary(), true, null);
         });
     }
@@ -422,7 +421,7 @@ public class PdfA2CheckerTest extends ExtendedITextTest {
 
         Color color = new PatternColor(pattern);
 
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             pdfA2Checker.checkColor(new UpdateCanvasGraphicsState(new PdfDictionary()),
                     color, new PdfDictionary(), true, null);
         });

@@ -33,8 +33,8 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ public class Pdf20CheckerTest extends ExtendedITextTest {
         Pdf20Checker.ParentChildRelationshipHandler handler = new Pdf20Checker.ParentChildRelationshipHandler(
                 doc.getTagStructureContext());
         PdfStructTreeRoot root = new PdfStructTreeRoot(doc);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             handler.processElement(root);
         });
     }
@@ -115,7 +115,7 @@ public class Pdf20CheckerTest extends ExtendedITextTest {
 
         PdfMcrNumber n = new PdfMcrNumber(new PdfNumber(10), new PdfStructElem(new PdfDictionary()));
 
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             handler.processElement(n);
         });
 

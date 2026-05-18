@@ -34,7 +34,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
@@ -83,7 +82,7 @@ public class TextFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createTextWithIncorrectNameTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        AssertUtil.doesNotThrow(() -> new TextFormFieldBuilder(pdfDoc, "incorrect.name")
+        Assertions.assertDoesNotThrow(() -> new TextFormFieldBuilder(pdfDoc, "incorrect.name")
                 .setWidgetRectangle(DUMMY_RECTANGLE).createText());
     }
 
@@ -125,7 +124,7 @@ public class TextFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createMultilineTextWithIncorrectNameTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        AssertUtil.doesNotThrow(() -> new TextFormFieldBuilder(pdfDoc, "incorrect.name")
+        Assertions.assertDoesNotThrow(() -> new TextFormFieldBuilder(pdfDoc, "incorrect.name")
                 .setWidgetRectangle(DUMMY_RECTANGLE).createMultilineText());
     }
 

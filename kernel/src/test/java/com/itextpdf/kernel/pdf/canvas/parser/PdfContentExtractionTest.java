@@ -28,13 +28,12 @@ import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperBridge;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperException;
 import com.itextpdf.kernel.pdf.canvas.parser.clipper.ClipperExceptionConstant;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 @Tag("IntegrationTest")
 public class PdfContentExtractionTest extends ExtendedITextTest {
@@ -51,7 +50,7 @@ public class PdfContentExtractionTest extends ExtendedITextTest {
         // for internal purposes
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputFileName))) {
             PdfDocumentContentParser contentParser = new PdfDocumentContentParser(pdfDocument);
-            AssertUtil.doesNotThrow(() -> contentParser.processContent(1, new LocationTextExtractionStrategy()));
+            Assertions.assertDoesNotThrow(() -> contentParser.processContent(1, new LocationTextExtractionStrategy()));
         }
     }
 

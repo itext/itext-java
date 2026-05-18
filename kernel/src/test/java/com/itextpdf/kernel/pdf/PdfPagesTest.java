@@ -39,7 +39,6 @@ import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -55,8 +54,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -91,7 +90,7 @@ public class PdfPagesTest extends ExtendedITextTest {
          PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hugeNumberOfPagesWithOnePage.pdf"),
                  new PdfWriter(new ByteArrayOutputStream()));
          PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
-         AssertUtil.doesNotThrow(() -> pdfDoc.addPage(1, page));
+         Assertions.assertDoesNotThrow(() -> pdfDoc.addPage(1, page));
     }
 
     @Test
@@ -99,7 +98,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "countDontCorrespondToReal.pdf"),
                 new PdfWriter(new ByteArrayOutputStream()));
         PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
-        AssertUtil.doesNotThrow(() -> pdfDoc.addPage(1, page));
+        Assertions.assertDoesNotThrow(() -> pdfDoc.addPage(1, page));
 
         // we don't expect that Count will be different from real number of pages
         Assertions.assertThrows(NullPointerException.class, () -> pdfDoc.close());
@@ -616,7 +615,7 @@ public class PdfPagesTest extends ExtendedITextTest {
              PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
              PdfDocument pdfDocument = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
         ) {
-            AssertUtil.doesNotThrow(() -> pdfDocument.close());
+            Assertions.assertDoesNotThrow(() -> pdfDocument.close());
         }
     }
 
@@ -811,7 +810,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assertions.assertEquals(1,
                 pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
 
-        AssertUtil.doesNotThrow(() -> pdfDocument.close());
+        Assertions.assertDoesNotThrow(() -> pdfDocument.close());
     }
 
     @Test

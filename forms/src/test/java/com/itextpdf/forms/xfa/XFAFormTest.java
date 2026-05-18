@@ -29,7 +29,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -98,7 +97,7 @@ public class XFAFormTest extends ExtendedITextTest {
     public void readXFAFormTest() throws IOException {
         String inFileName = sourceFolder + "formTemplate.pdf";
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName));
-        AssertUtil.doesNotThrow(() -> PdfFormCreator.getAcroForm(pdfDocument, true));
+        Assertions.assertDoesNotThrow(() -> PdfFormCreator.getAcroForm(pdfDocument, true));
     }
 
     @Test

@@ -27,11 +27,11 @@ import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.data.CommonsProductData;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class UnderAgplITextProductEventProcessorTest extends ExtendedITextTest {
@@ -40,6 +40,6 @@ public class UnderAgplITextProductEventProcessorTest extends ExtendedITextTest {
     public void messageIsNotLoggedTest() {
         UnderAgplITextProductEventProcessor testProcessor = new UnderAgplITextProductEventProcessor(ProductNameConstant.ITEXT_CORE);
         ITextTestEvent e = new ITextTestEvent(new SequenceId(), CommonsProductData.getInstance(), null, "test event");
-        AssertUtil.doesNotThrow(() -> testProcessor.onEvent(new ConfirmEvent(e)));
+        Assertions.assertDoesNotThrow(() -> testProcessor.onEvent(new ConfirmEvent(e)));
     }
 }

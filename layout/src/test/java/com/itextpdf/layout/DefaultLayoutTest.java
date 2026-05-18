@@ -42,7 +42,6 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
@@ -249,7 +248,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
         Document document = new Document(pdfDocument);
-        AssertUtil.doesNotThrow(() -> document.close());
+        Assertions.assertDoesNotThrow(() -> document.close());
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
@@ -264,7 +263,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
         ParagraphAdderHandler handler = new ParagraphAdderHandler();
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, handler);
-        AssertUtil.doesNotThrow(() -> pdfDocument.close());
+        Assertions.assertDoesNotThrow(() -> pdfDocument.close());
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }
@@ -273,7 +272,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     public void checkPageSizeOfClosedEmptyDocumentTest() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(baos));
-        AssertUtil.doesNotThrow(() -> pdfDocument.close());
+        Assertions.assertDoesNotThrow(() -> pdfDocument.close());
         byte[] bytes = baos.toByteArray();
         baos.close();
 
@@ -294,7 +293,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
 
         PageRemoverHandler handler = new PageRemoverHandler();
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, handler);
-        AssertUtil.doesNotThrow(() -> pdfDocument.close());
+        Assertions.assertDoesNotThrow(() -> pdfDocument.close());
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
     }

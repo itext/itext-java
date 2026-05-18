@@ -22,7 +22,6 @@
  */
 package com.itextpdf.io.source;
 
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
@@ -38,8 +37,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class ByteBufferRandomAccessSourceTest extends ExtendedITextTest {
@@ -49,13 +48,13 @@ public class ByteBufferRandomAccessSourceTest extends ExtendedITextTest {
     @Test
     public void heapByteBufferTest() {
         IRandomAccessSource source = new ByteBufferRandomAccessSource(ByteBuffer.allocate(10));
-        AssertUtil.doesNotThrow(source::close);
+        Assertions.assertDoesNotThrow(source::close);
     }
 
     @Test
     public void nullByteBufferTest() {
         IRandomAccessSource source = new ByteBufferRandomAccessSource(null);
-        AssertUtil.doesNotThrow(source::close);
+        Assertions.assertDoesNotThrow(source::close);
     }
 
     @Test
@@ -68,10 +67,10 @@ public class ByteBufferRandomAccessSourceTest extends ExtendedITextTest {
             source = new ByteBufferRandomAccessSource(
                     channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size()));
         }
-        AssertUtil.doesNotThrow(() -> source.get(0));
+        Assertions.assertDoesNotThrow(() -> source.get(0));
 
         source.close();
-        AssertUtil.doesNotThrow(() -> source.get(0));
+        Assertions.assertDoesNotThrow(() -> source.get(0));
 
         ByteBufferRandomAccessSource.enableByteBufferMemoryUnmapping();
     }

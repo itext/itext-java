@@ -25,7 +25,6 @@ package com.itextpdf.io.image;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -33,8 +32,9 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class JpegImageHelperTest extends ExtendedITextTest {
@@ -57,7 +57,7 @@ public class JpegImageHelperTest extends ExtendedITextTest {
                     icc[i][j] = (byte) j;
                 }
             }
-            AssertUtil.doesNotThrow(() -> JpegImageHelper.attemptToSetIccProfileToImage(icc, img));
+            Assertions.assertDoesNotThrow(() -> JpegImageHelper.attemptToSetIccProfileToImage(icc, img));
         }
     }
 
@@ -66,7 +66,7 @@ public class JpegImageHelperTest extends ExtendedITextTest {
         try (InputStream fis = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "WP_20140410_001.jpg")) {
             byte[][] icc = new byte[][] {null, null};
             ImageData img = ImageDataFactory.createJpeg(StreamUtil.inputStreamToArray(fis));
-            AssertUtil.doesNotThrow(() -> JpegImageHelper.attemptToSetIccProfileToImage(icc, img));
+            Assertions.assertDoesNotThrow(() -> JpegImageHelper.attemptToSetIccProfileToImage(icc, img));
         }
     }
 }

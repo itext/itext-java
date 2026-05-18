@@ -28,19 +28,17 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Tag("IntegrationTest")
 public class PdfOutputStreamTest extends ExtendedITextTest {
@@ -84,7 +82,7 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
                 PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton",
                         "test.txt", null, null));
 
-        AssertUtil.doesNotThrow(() -> document.close());
+        Assertions.assertDoesNotThrow(() -> document.close());
     }
 
     @Test
@@ -100,7 +98,7 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
                 PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton",
                         "test.txt", null, null));
 
-        AssertUtil.doesNotThrow(() -> document.close());
+        Assertions.assertDoesNotThrow(() -> document.close());
     }
 
     @Test

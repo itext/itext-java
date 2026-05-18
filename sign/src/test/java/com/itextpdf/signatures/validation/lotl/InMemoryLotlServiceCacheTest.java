@@ -24,19 +24,16 @@ package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -149,7 +146,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
         // Simulate staleness by waiting longer than the max allowed staleness
         Thread.sleep(500);
         cache.setCountrySpecificLotlResult(result);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
 
             cache.getCountrySpecificLotls();
         });
@@ -221,7 +218,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
 
         cache.setEuropeanResourceFetcherResult(result);
 
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             cache.getEUJournalCertificates();
         });
     }
@@ -326,7 +323,7 @@ public class InMemoryLotlServiceCacheTest extends ExtendedITextTest {
         Thread.sleep(500);
         cache.setAllValues(lotlResult, europeanResult, pivotResult, countrySpecificLotlCache);
 
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             cache.getLotlResult();
             cache.getEUJournalCertificates();
             cache.getPivotResult();

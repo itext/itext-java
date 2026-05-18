@@ -50,7 +50,6 @@ import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -577,7 +576,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         columnNum = 2;
         values = "footertext;blurb";
         addFooterTable(columnNum, values, document);
-        AssertUtil.doesNotThrow(() -> document.close());
+        Assertions.assertDoesNotThrow(() -> document.close());
     }
 
     private void addFooterTable(int numColumns, String values, Document document) {

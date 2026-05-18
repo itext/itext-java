@@ -26,7 +26,6 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -99,14 +98,14 @@ public class ImageDecompressionBombTest extends ExtendedITextTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("smallHeaderLargeDataSource")
     public void smallHeaderLargeDataImagesTest(String fileName) {
-        AssertUtil.doesNotThrow(() -> processImage(fileName));
+        Assertions.assertDoesNotThrow(() -> processImage(fileName));
     }
 
     @Disabled("DEVSIX-9835: OutOfMemoryError when processing PNG images with small reported dimensions but large actual data")
     @ParameterizedTest(name = "{0}")
     @MethodSource("bombImagesSource")
     public void embeddedBombImageBytesFromPdfTest(String fileName) {
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             String pdfPath = createPdfWithImage(fileName);
             byte[] bytes = readEmbeddedImageBytes(pdfPath);
 

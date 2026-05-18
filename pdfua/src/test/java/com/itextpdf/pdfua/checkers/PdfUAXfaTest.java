@@ -29,7 +29,6 @@ import com.itextpdf.pdfua.PdfUA2TestPdfDocument;
 import com.itextpdf.pdfua.PdfUATestPdfDocument;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
@@ -78,7 +77,7 @@ public class PdfUAXfaTest extends ExtendedITextTest {
                 new PdfReader(input),
                 new PdfWriter(output));
 
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
 
         final String result = new VeraPdfValidator().validate(output);  
         Assertions.assertNull(result); 

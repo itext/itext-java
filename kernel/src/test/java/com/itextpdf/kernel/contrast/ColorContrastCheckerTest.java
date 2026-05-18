@@ -35,7 +35,6 @@ import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.ValidationType;
 import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -46,8 +45,11 @@ import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("IntegrationTest")
 public class ColorContrastCheckerTest extends ExtendedITextTest {
@@ -55,7 +57,7 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
     @Test
     public void testSetMinimalPercentualCoverageValid() {
         ColorContrastChecker checker = new ColorContrastChecker(false, false);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             checker.setMinimalPercentualCoverage(0.5);
         });
     }
@@ -63,7 +65,7 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
     @Test
     public void testSetMinimalPercentualCoverageZero() {
         ColorContrastChecker checker = new ColorContrastChecker(false, false);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             checker.setMinimalPercentualCoverage(0.0);
         });
     }
@@ -71,7 +73,7 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
     @Test
     public void testSetMinimalPercentualCoverageOne() {
         ColorContrastChecker checker = new ColorContrastChecker(false, false);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             checker.setMinimalPercentualCoverage(1.0);
         });
     }
@@ -112,7 +114,7 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
             LogLevelConstants.WARN))
     public void testSetCheckWcagAAFalseLogsWarningWhenBothDisabled() {
         ColorContrastChecker checker = new ColorContrastChecker(false, false);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             checker.setCheckWcagAAA(false);
             checker.setCheckWcagAA(false);
         });
@@ -125,7 +127,7 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
             LogLevelConstants.WARN))
     public void testSetCheckWcagAAAFalseLogsWarningWhenBothDisabled() {
         ColorContrastChecker checker = new ColorContrastChecker(false, false);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             checker.setCheckWcagAAA(false);
             checker.setCheckWcagAA(false);
         });
@@ -146,7 +148,7 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
                 return ValidationType.PDF_DOCUMENT;
             }
         };
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             checker.validate(context);
         });
     }
@@ -167,7 +169,7 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
         PdfPageValidationContext context = new PdfPageValidationContext(page);
 
         // Should not throw exception - black on white is compliant
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             checker.validate(context);
         });
 
@@ -448,7 +450,7 @@ public class ColorContrastCheckerTest extends ExtendedITextTest {
         PdfPageValidationContext context = new PdfPageValidationContext(page);
 
         // Should not throw exception with logging mode
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             checker.validate(context);
         });
 

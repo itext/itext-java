@@ -25,13 +25,12 @@ package com.itextpdf.commons.actions.producer;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.util.Date;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
@@ -107,7 +106,7 @@ public class CurrentDatePlaceholderPopulatorTest extends ExtendedITextTest {
 
     @Test
     public void validComponentsTest() {
-        AssertUtil.doesNotThrow(() -> populator.populate(null, "dd MM MMM MMMM yy yyyy HH mm ss"));
+        Assertions.assertDoesNotThrow(() -> populator.populate(null, "dd MM MMM MMMM yy yyyy HH mm ss"));
     }
 
     @Test

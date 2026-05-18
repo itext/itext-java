@@ -38,7 +38,6 @@ import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationContainer;
 import com.itextpdf.kernel.validation.ValidationType;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -441,7 +440,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
     public void checkEmptyIsoConformanceTest() {
         try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             IValidationContext validationContext = new PdfDocumentValidationContext(doc, doc.getDocumentFonts());
-            AssertUtil.doesNotThrow(() -> doc.checkIsoConformance(validationContext));
+            Assertions.assertDoesNotThrow(() -> doc.checkIsoConformance(validationContext));
         }
     }
 
@@ -461,7 +460,7 @@ public class PdfDocumentUnitTest extends ExtendedITextTest {
 
     @Test
     public void documentInfoHelperTest() {
-        AssertUtil.doesNotThrow(() -> new CheckDocumentInfoHelperPdfDocument(
+        Assertions.assertDoesNotThrow(() -> new CheckDocumentInfoHelperPdfDocument(
                 new PdfWriter(new ByteArrayOutputStream())));
     }
 

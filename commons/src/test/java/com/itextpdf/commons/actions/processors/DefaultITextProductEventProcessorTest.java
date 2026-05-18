@@ -27,15 +27,14 @@ import com.itextpdf.commons.actions.data.CommonsProductData;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class DefaultITextProductEventProcessorTest extends ExtendedITextTest {
@@ -52,7 +51,7 @@ public class DefaultITextProductEventProcessorTest extends ExtendedITextTest {
     public void messageIsLoggedTest() {
         TestDefaultITextProductEventProcessor testProcessor = new TestDefaultITextProductEventProcessor();
         ITextTestEvent e = new ITextTestEvent(new SequenceId(), CommonsProductData.getInstance(), null, "test event");
-        AssertUtil.doesNotThrow(() -> testProcessor.onEvent(new ConfirmEvent(e)));
+        Assertions.assertDoesNotThrow(() -> testProcessor.onEvent(new ConfirmEvent(e)));
     }
 
     @Test
@@ -68,7 +67,7 @@ public class DefaultITextProductEventProcessorTest extends ExtendedITextTest {
         TestDefaultITextProductEventProcessor testProcessor = new TestDefaultITextProductEventProcessor();
         ITextTestEvent e = new ITextTestEvent(new SequenceId(), CommonsProductData.getInstance(), null, "test event");
         for (int i = 0; i < iterationsNumber; ++i) {
-            AssertUtil.doesNotThrow(() -> testProcessor.onEvent(new ConfirmEvent(e)));
+            Assertions.assertDoesNotThrow(() -> testProcessor.onEvent(new ConfirmEvent(e)));
         }
     }
 

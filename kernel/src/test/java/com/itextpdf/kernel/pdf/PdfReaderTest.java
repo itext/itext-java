@@ -48,7 +48,6 @@ import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -2301,7 +2300,7 @@ public class PdfReaderTest extends ExtendedITextTest {
             RASInputStream rasInputStream = new RASInputStream(randomAccessSource);
 
             try (PdfReader reader = new PdfReader(rasInputStream)) {
-                AssertUtil.doesNotThrow(() -> new PdfDocument(reader));
+                Assertions.assertDoesNotThrow(() -> new PdfDocument(reader));
             }
         }
     }
@@ -2432,7 +2431,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         String fileName = SOURCE_FOLDER + "cycledReferencesInXrefTables.pdf";
 
         try (PdfReader pdfReader = new PdfReader(fileName)) {
-            AssertUtil.doesNotThrow(() -> new PdfDocument(pdfReader));
+            Assertions.assertDoesNotThrow(() -> new PdfDocument(pdfReader));
 
             Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
             Assertions.assertTrue(pdfReader.hasRebuiltXref());
@@ -2446,7 +2445,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         String fileName = SOURCE_FOLDER + "xrefTablePointsItself.pdf";
 
         try (PdfReader pdfReader = new PdfReader(fileName)) {
-            AssertUtil.doesNotThrow(() -> new PdfDocument(pdfReader));
+            Assertions.assertDoesNotThrow(() -> new PdfDocument(pdfReader));
 
             Assertions.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
             Assertions.assertTrue(pdfReader.hasRebuiltXref());
@@ -2505,9 +2504,9 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(new ByteArrayInputStream(createPdfDocumentForTest()))) {
             reader.setStrictnessLevel(StrictnessLevel.LENIENT);
 
-            AssertUtil.doesNotThrow(() -> reader.getXrefPrev(numberXrefPrev));
+            Assertions.assertDoesNotThrow(() -> reader.getXrefPrev(numberXrefPrev));
 
-            AssertUtil.doesNotThrow(() -> reader.getXrefPrev(indirectReferenceXrefPrev));
+            Assertions.assertDoesNotThrow(() -> reader.getXrefPrev(indirectReferenceXrefPrev));
 
             // Check string xref prev with StrictnessLevel#LENIENT.
             Exception exception = Assertions.assertThrows(InvalidXRefPrevException.class,
@@ -2535,7 +2534,7 @@ public class PdfReaderTest extends ExtendedITextTest {
         try (PdfReader reader = new PdfReader(new ByteArrayInputStream(createPdfDocumentForTest()))) {
             reader.setStrictnessLevel(StrictnessLevel.CONSERVATIVE);
 
-            AssertUtil.doesNotThrow(() -> reader.getXrefPrev(numberXrefPrev));
+            Assertions.assertDoesNotThrow(() -> reader.getXrefPrev(numberXrefPrev));
 
             // Check indirect reference to number xref prev with StrictnessLevel#CONSERVATIVE.
             Exception exception = Assertions.assertThrows(InvalidXRefPrevException.class,

@@ -32,7 +32,6 @@ import com.itextpdf.signatures.validation.lotl.criteria.PolicySetCriteria;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayInputStream;
@@ -44,9 +43,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("UnitTest")
 public class LotlCacheDataV1Test extends ExtendedITextTest {
@@ -581,7 +586,7 @@ public class LotlCacheDataV1Test extends ExtendedITextTest {
 
         byte[] serializedData = bos.toByteArray();
         assertNotNull(serializedData, "Serialized data should not be null");
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             LotlCacheDataV1.deserialize(new ByteArrayInputStream(serializedData));
         }, "Deserialization should not throw an exception");
     }

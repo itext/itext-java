@@ -24,10 +24,11 @@ package com.itextpdf.kernel.xmp.impl;
 
 import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.options.PropertyOptions;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class XMPNodeTest extends ExtendedITextTest {
@@ -36,7 +37,7 @@ public class XMPNodeTest extends ExtendedITextTest {
         XMPNode node = new XMPNode("rdf:RDF", "idk", new PropertyOptions());
         node.addChild(new XMPNode("rdf:Description", "idk", new PropertyOptions()));
         for (Object object : node.getUnmodifiableChildren()) {
-            AssertUtil.doesNotThrow(() ->
+            Assertions.assertDoesNotThrow(() ->
                     node.addChild(new XMPNode("xmp:Authors", "itext", new PropertyOptions().setArrayAlternate(true))));
         }
     }

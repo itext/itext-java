@@ -6,11 +6,11 @@ package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.parser.Parser;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the DocumentType node
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Tag;
 public class DocumentTypeTest extends ExtendedITextTest {
     @Test
     public void constructorValidationOkWithBlankName() {
-        AssertUtil.doesNotThrow(() -> new DocumentType("","", ""));
+        Assertions.assertDoesNotThrow(() -> new DocumentType("","", ""));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class DocumentTypeTest extends ExtendedITextTest {
 
     @Test
     public void constructorValidationOkWithBlankPublicAndSystemIds() {
-        AssertUtil.doesNotThrow(() -> new DocumentType("html","", ""));
+        Assertions.assertDoesNotThrow(() -> new DocumentType("html","", ""));
     }
 
     @Test public void outerHtmlGeneration() {

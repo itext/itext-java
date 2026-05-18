@@ -27,7 +27,6 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -55,19 +54,15 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.pdfa.VeraPdfValidator; 
+import com.itextpdf.test.pdfa.VeraPdfValidator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -441,7 +436,7 @@ public class PdfAFontTest extends ExtendedITextTest {
         pdfArray.add(new PdfNumber(1));
         pdfArray.add(new PdfString("\u898B\u7A4D\u3082\u308A"));
         // PdfCanvas#showText(PdfArray) doesn't contain any checks.
-        AssertUtil.doesNotThrow(() -> canvas.showText(pdfArray));
+        Assertions.assertDoesNotThrow(() -> canvas.showText(pdfArray));
     }
 
     @Test

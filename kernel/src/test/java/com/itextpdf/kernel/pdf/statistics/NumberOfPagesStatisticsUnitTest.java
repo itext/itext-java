@@ -25,7 +25,6 @@ package com.itextpdf.kernel.pdf.statistics;
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -33,8 +32,8 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.util.Collections;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
@@ -59,7 +58,7 @@ public class NumberOfPagesStatisticsUnitTest extends ExtendedITextTest {
 
     @Test
     public void zeroNumberOfPagesTest() {
-        AssertUtil.doesNotThrow(() -> new NumberOfPagesStatisticsEvent(0, ITextCoreProductData.getInstance()));
+        Assertions.assertDoesNotThrow(() -> new NumberOfPagesStatisticsEvent(0, ITextCoreProductData.getInstance()));
     }
 
     @Test

@@ -23,20 +23,18 @@
 package com.itextpdf.io.source;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
-
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class HighPrecisionOutputStreamTest extends ExtendedITextTest {
@@ -271,7 +269,7 @@ public class HighPrecisionOutputStreamTest extends ExtendedITextTest {
 
     @Test
     public void gettersAndSettersTest() throws IOException {
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             //testing that stream is not closed, if setCloseStream is false
             HighPrecisionOutputStream<OutputStream> stream
                     = new HighPrecisionOutputStream<>(null);
@@ -308,7 +306,7 @@ public class HighPrecisionOutputStreamTest extends ExtendedITextTest {
 
     @Test
     public void resetTestNoException() throws IOException {
-            AssertUtil.doesNotThrow(() -> {
+            Assertions.assertDoesNotThrow(() -> {
                 try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                         HighPrecisionOutputStream<ByteArrayOutputStream> stream
                                 = new HighPrecisionOutputStream<>(bytes)) {

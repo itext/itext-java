@@ -29,7 +29,6 @@ import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.ecosystem.TestConfigurationEvent;
 import com.itextpdf.commons.exceptions.AggregatedException;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -37,8 +36,8 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class EventManagerTest extends ExtendedITextTest {
@@ -53,7 +52,7 @@ public class EventManagerTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = TestConfigurationEvent.MESSAGE)
     })
     public void configurationEventTest() {
-        AssertUtil.doesNotThrow(() -> EventManager.getInstance().onEvent(new TestConfigurationEvent()));
+        Assertions.assertDoesNotThrow(() -> EventManager.getInstance().onEvent(new TestConfigurationEvent()));
     }
 
     @Test

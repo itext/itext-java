@@ -31,7 +31,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.FilteredEventListener;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -67,7 +66,7 @@ public class PdfCanvasProcessorUnitTest extends ExtendedITextTest {
         PdfCanvasProcessor processor = new PdfCanvasProcessor(new SimpleTextExtractionStrategy());
         List<PdfObject> operands = Collections.singletonList((PdfObject) new PdfLiteral("Tm"));
         PdfLiteral operator = new PdfLiteral("Tm");
-        AssertUtil.doesNotThrow(() -> processor.invokeOperator(operator, operands));
+        Assertions.assertDoesNotThrow(() -> processor.invokeOperator(operator, operands));
     }
 
     @Test
@@ -83,7 +82,7 @@ public class PdfCanvasProcessorUnitTest extends ExtendedITextTest {
         operands.add((PdfObject) new PdfNumber(1));
         operands.add((PdfObject) new PdfLiteral("Tm"));
         PdfLiteral operator = new PdfLiteral("Tm");
-        AssertUtil.doesNotThrow(() -> processor.invokeOperator(operator, operands));
+        Assertions.assertDoesNotThrow(() -> processor.invokeOperator(operator, operands));
     }
 
     @Test
@@ -102,7 +101,7 @@ public class PdfCanvasProcessorUnitTest extends ExtendedITextTest {
         operands.add((PdfObject) new PdfNumber(10));
         operands.add((PdfObject) new PdfLiteral("Tm"));
         PdfLiteral operator = new PdfLiteral("Tm");
-        AssertUtil.doesNotThrow(() -> processor.invokeOperator(operator, operands));
+        Assertions.assertDoesNotThrow(() -> processor.invokeOperator(operator, operands));
     }
 
     @Test
@@ -113,7 +112,7 @@ public class PdfCanvasProcessorUnitTest extends ExtendedITextTest {
         PdfCanvasProcessor processor = new PdfCanvasProcessor(new LocationTextExtractionStrategy());
         List<PdfObject> operands = Collections.singletonList((PdfObject) new PdfLiteral("M"));
         PdfLiteral operator = new PdfLiteral("M");
-        AssertUtil.doesNotThrow(() -> processor.invokeOperator(operator, operands));
+        Assertions.assertDoesNotThrow(() -> processor.invokeOperator(operator, operands));
     }
 
     @Test
@@ -127,6 +126,6 @@ public class PdfCanvasProcessorUnitTest extends ExtendedITextTest {
         operands.add((PdfObject) new PdfNumber(10));
         operands.add((PdfObject) new PdfLiteral("M"));
         PdfLiteral operator = new PdfLiteral("M");
-        AssertUtil.doesNotThrow(() -> processor.invokeOperator(operator, operands));
+        Assertions.assertDoesNotThrow(() -> processor.invokeOperator(operator, operands));
     }
 }

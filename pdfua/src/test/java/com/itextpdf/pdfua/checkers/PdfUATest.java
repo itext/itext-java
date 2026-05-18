@@ -67,7 +67,6 @@ import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -164,7 +163,7 @@ public class PdfUATest extends ExtendedITextTest {
             screen.setAction(action);
             screen.setContents("screen annotation");
             page.addAnnotation(screen);
-            AssertUtil.doesNotThrow(() -> {
+            Assertions.assertDoesNotThrow(() -> {
                 page.flush();
             });
         });

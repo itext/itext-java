@@ -24,17 +24,16 @@ package com.itextpdf.io.resolver.resource;
 
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.exceptions.ReadingByteLimitException;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class LimitedInputStreamTest extends ExtendedITextTest {
@@ -45,7 +44,7 @@ public class LimitedInputStreamTest extends ExtendedITextTest {
             // The user can call the reading methods as many times as he want, and if the
             // stream has been read, then should not throw an ReadingByteLimitException exception
             for (int i = 0; i < 101; i++) {
-                AssertUtil.doesNotThrow(
+                Assertions.assertDoesNotThrow(
                         () -> stream.read()
                 );
             }
@@ -57,10 +56,10 @@ public class LimitedInputStreamTest extends ExtendedITextTest {
         try (InputStream stream = new LimitedInputStream(new TestStreamGenerator().openStream(), 100);) {
             // The user can call the reading methods as many times as he want, and if the
             // stream has been read, then should not throw an ReadingByteLimitException exception
-            AssertUtil.doesNotThrow(
+            Assertions.assertDoesNotThrow(
                     () -> stream.read(new byte[100])
             );
-            AssertUtil.doesNotThrow(
+            Assertions.assertDoesNotThrow(
                     () -> stream.read(new byte[1])
             );
         }
@@ -71,10 +70,10 @@ public class LimitedInputStreamTest extends ExtendedITextTest {
         try (InputStream stream = new LimitedInputStream(new TestStreamGenerator().openStream(), 100);) {
             // The user can call the reading methods as many times as he want, and if the
             // stream has been read, then should not throw an ReadingByteLimitException exception
-            AssertUtil.doesNotThrow(() -> {
+            Assertions.assertDoesNotThrow(() -> {
                 stream.read(new byte[100], 0, 100);
             });
-            AssertUtil.doesNotThrow(() -> {
+            Assertions.assertDoesNotThrow(() -> {
                 stream.read(new byte[1], 0, 1);
             });
         }

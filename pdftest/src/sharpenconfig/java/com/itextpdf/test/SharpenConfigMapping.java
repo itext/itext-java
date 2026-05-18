@@ -68,8 +68,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.removeMethod("com.itextpdf.test.ITextTest.restoreCryptographyRestrictions");
 
         configurator.mapType("com.itextpdf.test.LoggerHelper", "iText.Test.LogListenerHelper");
-        configurator.mapMethod("com.itextpdf.test.AssertUtil.doesNotThrow", "NUnit.Framework.Assert.DoesNotThrow",
-                false);
 
         // getCurrentTimeDate is mapped to the GetCurrentUtcTime because the returned value is ultimately used for the
         // date comparison, however dates comparison must be done using UTC time in c#
@@ -153,6 +151,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("org.junit.jupiter.api.Assertions.assertNotSame", "NUnit.Framework.Assert.AreNotSame");
         configurator.mapMethod("org.junit.jupiter.api.Assertions.fail", "NUnit.Framework.Assert.Fail");
         configurator.mapMethod("org.junit.jupiter.api.Assumptions.assumeTrue", "NUnit.Framework.Assume.That");
+        configurator.mapMethod("org.junit.jupiter.api.Assertions.assertDoesNotThrow", "NUnit.Framework.Assert.DoesNotThrow");
         configurator.mapType("org.junit.jupiter.api.Assumptions", "NUnit.Framework.Assume");
         configurator.mapType("org.junit.jupiter.api.Assertions", "NUnit.Framework.Assert");
         configurator.mapType("org.junit.jupiter.api.BeforeEach", "NUnit.Framework.SetUp");

@@ -23,10 +23,10 @@
 package com.itextpdf.svg.processors.impl;
 
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Attributes;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.styledxmlparser.node.INode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
@@ -35,8 +35,8 @@ import com.itextpdf.svg.dummy.processors.impl.DummySvgConverterProperties;
 import com.itextpdf.svg.dummy.renderers.impl.DummyBranchSvgNodeRenderer;
 import com.itextpdf.svg.dummy.renderers.impl.DummySvgNodeRenderer;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
-import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.ISvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
@@ -44,7 +44,6 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -241,7 +240,7 @@ public class DefaultSvgProcessorUnitTest extends ExtendedITextTest {
         ISvgConverterProperties scp = new SvgConverterProperties();
         dsp.performSetup(root, scp);
         // below method must not throw a NullPointerException
-        AssertUtil.doesNotThrow(() -> dsp.executeDepthFirstTraversal(root));
+        Assertions.assertDoesNotThrow(() -> dsp.executeDepthFirstTraversal(root));
     }
 
     @Test
