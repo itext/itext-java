@@ -1,6 +1,5 @@
 package com.itextpdf.layout.properties.margins;
 
-import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 
@@ -9,12 +8,8 @@ import java.util.Objects;
 /**
  * Class to store information about page margin content represented by {@link IElement} linked to {@link MarginBoxName}.
  */
-public class PageMarginContent {
-
+public class PageMarginContent extends AbstractPageContent {
     private final MarginBoxName marginBoxName;
-    private final IElement marginContent;
-
-    private Rectangle pageMarginBoxRectangle;
 
     /**
      * Creates new {@link PageMarginContent} instance.
@@ -23,8 +18,8 @@ public class PageMarginContent {
      * @param marginContent {@link IElement} layout element with margin content
      */
     public PageMarginContent(MarginBoxName marginBoxName, IElement marginContent) {
+        super(marginContent);
         this.marginBoxName = marginBoxName;
-        this.marginContent = marginContent;
     }
 
     /**
@@ -37,14 +32,7 @@ public class PageMarginContent {
      * @param marginInPoints <code>float</code> specifying the margin in points
      */
     public PageMarginContent(MarginBoxName marginBoxName, float marginInPoints) {
-        this.marginBoxName = marginBoxName;
-        Div staticMarginContent = new Div();
-        if (marginBoxName == MarginBoxName.TOP || marginBoxName == MarginBoxName.BOTTOM) {
-            staticMarginContent.setHeight(marginInPoints);
-        } else if (marginBoxName == MarginBoxName.LEFT || marginBoxName == MarginBoxName.RIGHT) {
-            staticMarginContent.setWidth(marginInPoints);
-        }
-        this.marginContent = staticMarginContent;
+        this(marginBoxName, getStaticMarginContent(marginBoxName, marginInPoints));
     }
 
     /**
@@ -53,9 +41,8 @@ public class PageMarginContent {
      * @param other {@link PageMarginContent} instance to copy
      */
     public PageMarginContent(PageMarginContent other) {
+        super(other);
         this.marginBoxName = other.marginBoxName;
-        this.marginContent = other.marginContent;
-        this.pageMarginBoxRectangle = other.pageMarginBoxRectangle;
     }
 
     /**
@@ -68,30 +55,21 @@ public class PageMarginContent {
     }
 
     /**
-     * Returns renderer for layout element representing page margin content.
+     * Creates {@link Div} layout element of the fixed size to represent a static margin.
      *
-     * @return {@link IElement} layout element for page margin content
-     */
-    public IElement getMarginContent() {
-        return marginContent;
-    }
-
-    /**
-     * Sets the rectangle in which page margin box contents are shown.
+     * @param marginBoxName {@link MarginBoxName} specifying margin name based on its location on the page
+     * @param marginInPoints {@code float} specifying the margin in points
      *
-     * @param pageMarginBoxRectangle {@link Rectangle} defining position and dimensions of the margin box content area
+     * @return {@link Div} layout element with static size
      */
-    void setPageMarginBoxRectangle(Rectangle pageMarginBoxRectangle) {
-        this.pageMarginBoxRectangle = pageMarginBoxRectangle;
-    }
-
-    /**
-     * Gets the rectangle in which page margin box contents should be shown.
-     *
-     * @return the {@link Rectangle} defining position and dimensions of the margin box content area
-     */
-    Rectangle getPageMarginBoxRectangle() {
-        return pageMarginBoxRectangle;
+    private static Div getStaticMarginContent(MarginBoxName marginBoxName, float marginInPoints) {
+        Div staticMarginContent = new Div();
+        if (marginBoxName == MarginBoxName.TOP || marginBoxName == MarginBoxName.BOTTOM) {
+            staticMarginContent.setHeight(marginInPoints);
+        } else if (marginBoxName == MarginBoxName.LEFT || marginBoxName == MarginBoxName.RIGHT) {
+            staticMarginContent.setWidth(marginInPoints);
+        }
+        return staticMarginContent;
     }
 
     @Override
@@ -103,11 +81,11 @@ public class PageMarginContent {
             return false;
         }
         PageMarginContent that = (PageMarginContent) o;
-        return Objects.equals(marginBoxName, that.marginBoxName) && Objects.equals(marginContent, that.marginContent);
+        return Objects.equals(marginBoxName, that.marginBoxName) && Objects.equals(getContent(), that.getContent());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash((Object) marginBoxName, marginContent);
+        return Objects.hash((Object) marginBoxName, getContent());
     }
 }

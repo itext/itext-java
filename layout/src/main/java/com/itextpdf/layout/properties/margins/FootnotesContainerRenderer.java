@@ -20,24 +20,27 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.layout.logs;
+package com.itextpdf.layout.properties.margins;
+
+import com.itextpdf.layout.renderer.BlockRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 
 /**
- * Class containing constants to be used in layout.
+ * Represents a renderer for the {@link FootnotesContainer} layout element.
  */
-public final class LayoutLogMessageConstant {
+class FootnotesContainerRenderer extends BlockRenderer {
 
-    public static final String AREA_BREAK_UNEXPECTED = "Unexpected use of AreaBreakRenderer detected, which may indicate an issue with layout processing.";
+    /**
+     * Creates new {@link FootnotesContainerRenderer} from its corresponding layout object.
+     *
+     * @param modelElement the {@link FootnotesContainer} which this object should manage
+     */
+    public FootnotesContainerRenderer(FootnotesContainer modelElement) {
+        super(modelElement);
+    }
 
-    public static final String ELEMENT_DOES_NOT_FIT_AREA = "Element does not fit current area. {0}";
-
-    public static final String PAGE_CONTENT_CANNOT_BE_DRAWN =
-            "Page {0} content cannot be drawn for page {1}.";
-
-    public static final String SECTION_BREAK_UNEXPECTED = "Unexpected use of SectionBreakRenderer detected, " +
-            "which may indicate an issue with layout processing.";
-
-    private LayoutLogMessageConstant() {
-        // Private constructor will prevent the instantiation of this class directly.
+    @Override
+    public IRenderer getNextRenderer() {
+        return new FootnotesContainerRenderer((FootnotesContainer) modelElement);
     }
 }

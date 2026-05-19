@@ -242,7 +242,7 @@ public final class Property {
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that
      * are lower in the document's hierarchy. Most inherited properties are
-     * related to textual operations. Indicates whether or not this type of property is inheritable.
+     * related to textual operations. Indicates whether this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
     private static final int MAX_INHERITED_PROPERTY_ID = 157;

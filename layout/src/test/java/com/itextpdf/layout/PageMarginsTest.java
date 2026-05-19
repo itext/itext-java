@@ -22,8 +22,10 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -34,15 +36,23 @@ import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
 import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.layout.borders.DashedBorder;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.Footnote;
+import com.itextpdf.layout.element.FootnoteAnchor;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.SectionBreak;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.margins.FootnotesUtil;
 import com.itextpdf.layout.properties.margins.MarginBoxName;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
@@ -51,8 +61,6 @@ import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -60,7 +68,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Tag("IntegrationTest")
@@ -78,9 +88,239 @@ public class PageMarginsTest extends ExtendedITextTest {
             "Then battle for Freedom wherever you can,\n" +
             "    And, if not shot or hanged, you'll get knighted.";
 
+    private static final String DOG = "./src/test/resources/com/itextpdf/layout/PageMarginsTest/DOG.bmp";
+
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @Test
+    public void footnoteTest() throws IOException, InterruptedException {
+        String fileName = "footnote";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.CYAN);
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            Footnote footnote2 = new Footnote(new Paragraph("Footnote text 2").setMargin(0));
+            footnote2.setBackgroundColor(ColorConstants.ORANGE);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("[2]", footnote2);
+            Footnote footnote3 = new Footnote("Footnote text 3\nSecond line\nThird line\nFourth line");
+            footnote3.setBackgroundColor(ColorConstants.RED);
+            FootnoteAnchor anchor3 = new FootnoteAnchor("[3]", footnote3);
+
+            Paragraph p = new Paragraph(TEXT_BYRON);
+            p.add(anchor);
+            p.add("\n\n");
+            p.add(TEXT_BYRON);
+            p.add(anchor2);
+            p.add("\n\n");
+            p.add(TEXT_BYRON);
+            p.add(anchor3);
+
+            for (int i = 0; i < 5; i++) {
+                p.add("\n\n");
+                p.add(TEXT_BYRON);
+            }
+
+            SectionBreak sectionBreak = new SectionBreak()
+                    .setPageMargins(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
+
+            Div div1 = new Div();
+            div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+            document.add(sectionBreak);
+            document.add(div1);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+    @Test
+    public void footnoteInTableTest() throws IOException, InterruptedException {
+        String fileName = "footnoteInTable";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.PINK);
+            FootnoteAnchor anchor = new FootnoteAnchor(new Text("1").setFontSize(6).setTextRise(7), footnote);
+            Footnote footnote2 = new Footnote("Footnote text 2");
+            footnote2.setBackgroundColor(ColorConstants.YELLOW);
+            FootnoteAnchor anchor2 = new FootnoteAnchor(new Text("2").setFontSize(6).setTextRise(7), footnote2);
+
+            Image img = loadImage();
+            Table table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            table.addCell(img);
+            document.add(table);
+
+            footnote = new Footnote("Footnote text 3");
+            footnote.setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 2));
+            anchor = new FootnoteAnchor(new Text("3").setFontSize(6).setTextRise(7), footnote);
+            footnote2 = new Footnote("Footnote text 4");
+            footnote2.setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 2));
+            anchor2 = new FootnoteAnchor(new Text("4").setFontSize(6).setTextRise(7), footnote2);
+            table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            table.addCell(img);
+
+            document.add(new Paragraph(TEXT_BYRON + "\n\n" + TEXT_BYRON + "\n\n" + "Two more \nlines"));
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+    @Test
+    public void footnoteInTableFooterTest() throws IOException, InterruptedException {
+        String fileName = "footnoteInTableFooter";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.PINK);
+            FootnoteAnchor anchor = new FootnoteAnchor(new Text("1").setFontSize(6).setTextRise(7), footnote);
+            Footnote footnote2 = new Footnote("Footnote text 2");
+            footnote2.setBackgroundColor(ColorConstants.YELLOW);
+            FootnoteAnchor anchor2 = new FootnoteAnchor(new Text("2").setFontSize(6).setTextRise(7), footnote2);
+
+            Image img = loadImage();
+            Table table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            table.addCell(img);
+            document.add(table);
+
+            footnote = new Footnote("Footnote text 3");
+            footnote.setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 2));
+            anchor = new FootnoteAnchor(new Text("3").setFontSize(6).setTextRise(7), footnote);
+            footnote2 = new Footnote("Footnote text 4");
+            footnote2.setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 2));
+            anchor2 = new FootnoteAnchor(new Text("4").setFontSize(6).setTextRise(7), footnote2);
+            table = new Table(4);
+            for (int i = 0; i < 24; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 1) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 23) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i < 4) {
+                    table.addHeaderCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.CYAN, 2)));
+                } else if (i > 19) {
+                    table.addFooterCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.BLUE, 2)));
+                } else {
+                    table.addCell(paragraph);
+                }
+            }
+
+            document.add(new Paragraph(TEXT_BYRON + "\n\n" + TEXT_BYRON + "\n\n" + "Two more \nlines"));
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+    @Test
+    public void footnoteInTableHeaderTest() throws IOException, InterruptedException {
+        String fileName = "footnoteInTableHeader";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.PINK);
+            FootnoteAnchor anchor = new FootnoteAnchor(new Text("1").setFontSize(6).setTextRise(7), footnote);
+            Footnote footnote2 = new Footnote("Footnote text 2");
+            footnote2.setBackgroundColor(ColorConstants.YELLOW);
+            FootnoteAnchor anchor2 = new FootnoteAnchor(new Text("2").setFontSize(6).setTextRise(7), footnote2);
+
+            Image img = loadImage();
+            Table table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            table.addCell(img);
+            document.add(table);
+
+            footnote = new Footnote("Footnote text 3");
+            footnote.setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 2));
+            anchor = new FootnoteAnchor(new Text("3").setFontSize(6).setTextRise(7), footnote);
+            footnote2 = new Footnote("Footnote text 4");
+            footnote2.setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 2));
+            anchor2 = new FootnoteAnchor(new Text("4").setFontSize(6).setTextRise(7), footnote2);
+            table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 1) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i < 4) {
+                    table.addHeaderCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 2)));
+                } else {
+                    table.addCell(paragraph);
+                }
+            }
+            table.addCell(img);
+
+            document.add(new Paragraph(TEXT_BYRON + "\n\n" + TEXT_BYRON + "\n\n" + "Two more \nlines"));
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
     }
 
     @Test
@@ -565,32 +805,37 @@ public class PageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void staticPageMarginContentTest() throws IOException, InterruptedException {
-        String fileName = "staticPageMarginContent";
+    public void footnoteNotLinkedToElementTest() throws IOException, InterruptedException {
+        String fileName = "footnoteNotLinkedToElement";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDocument)) {
+             Document document = new Document(pdfDocument)) {
 
-            List<PageMarginContent> elements = Arrays.asList(
-                    new PageMarginContent(MarginBoxName.TOP, 30),
-                    new PageMarginContent(MarginBoxName.RIGHT, 60),
-                    new PageMarginContent(MarginBoxName.BOTTOM, 200.5f),
-                    new PageMarginContent(MarginBoxName.LEFT, 150)
-            );
+            Footnote footnote = new Footnote(TEXT_BYRON);
+            footnote.setBackgroundColor(ColorConstants.CYAN);
 
             Paragraph p = new Paragraph(TEXT_BYRON);
-            for (int i = 0; i < 5; i++) {
-                p.add(TEXT_BYRON);
+
+            Footnote paragraphFootnote = new Footnote("Footnote text");
+            paragraphFootnote.setBackgroundColor(ColorConstants.RED);
+            FootnoteAnchor anchor = new FootnoteAnchor("1", paragraphFootnote);
+            p.add(anchor);
+
+            for (int i = 0; i < 3; i++) {
+                p.add("\n\n").add(TEXT_BYRON);
             }
 
-            SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
+            PageMarginBoxes pageMarginBoxes = new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1());
+            SectionBreak sectionBreak = new SectionBreak().setPageMargins(pageMarginBoxes);
+
+            // This API is not supposed to be used by the users, but this util class can't be hidden.
+            FootnotesUtil.addFootnotesToPage(1, Collections.singletonList(footnote), pageMarginBoxes);
 
             Div div1 = new Div();
-            div1.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
-
-            document.add(sectionBreak)
-                    .add(div1);
+            div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+            document.add(sectionBreak);
+            document.add(div1);
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
@@ -598,36 +843,55 @@ public class PageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void staticAndDynamicPageMarginContentTest() throws IOException, InterruptedException {
-        String fileName = "staticAndDynamicPageMarginContent";
+    public void footnotesOneByOneTest() throws IOException, InterruptedException {
+        String fileName = "footnotesOneByOne";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDocument)) {
-
-            List<PageMarginContent> elements = Arrays.asList(
-                    new PageMarginContent(MarginBoxName.TOP, new Div()
-                        .add(new Paragraph("TEST TOP MARGIN"))
-                        .setBackgroundColor(ColorConstants.PINK).setHeight(100)),
-                    new PageMarginContent(MarginBoxName.RIGHT, new Div()
-                        .add(new Paragraph("TEST RIGHT MARGIN")
-                        .setBackgroundColor(ColorConstants.YELLOW).setWidth(150))),
-                    new PageMarginContent(MarginBoxName.BOTTOM, 200),
-                    new PageMarginContent(MarginBoxName.LEFT, 50)
-            );
+             Document document = new Document(pdfDocument)) {
+            pdfDocument.setTagged();
 
             Paragraph p = new Paragraph(TEXT_BYRON);
-            for (int i = 0; i < 5; i++) {
-                p.add(TEXT_BYRON);
+            for (int i = 0; i < 2; i++) {
+                p.add("\n\n").add(TEXT_BYRON);
             }
 
-            SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
+            Footnote footnote1 = new Footnote(TEXT_BYRON);
+            footnote1.setBackgroundColor(ColorConstants.YELLOW);
+            FootnoteAnchor anchor1 = new FootnoteAnchor("1", footnote1);
+            Footnote footnote2 = new Footnote(TEXT_BYRON);
+            footnote2.setBackgroundColor(ColorConstants.PINK);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("2", footnote2);
+            p.add(anchor1).add(anchor2);
 
-            Div div1 = new Div();
-            div1.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
+            Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 3));
+            document.add(div);
+        }
 
-            document.add(sectionBreak)
-                    .add(div1);
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+    @Test
+    public void imageAsFootnoteAnchorTest() throws IOException, InterruptedException {
+        String fileName = "imageAsFootnoteAnchor";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            pdfDocument.setTagged();
+
+            Footnote footnote = new Footnote(TEXT_BYRON);
+            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+
+            Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bulb.gif"));
+            image.setWidth(15);
+            FootnoteAnchor anchor = new FootnoteAnchor(image, footnote);
+
+            Paragraph p = new Paragraph(TEXT_BYRON).add(anchor).add(TEXT_BYRON);
+
+            Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 3));
+            document.add(div);
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
@@ -647,6 +911,14 @@ public class PageMarginsTest extends ExtendedITextTest {
         values = "footertext;blurb";
         addFooterTable(columnNum, values, document);
         Assertions.assertDoesNotThrow(() -> document.close());
+    }
+
+    private static Image loadImage() {
+        try {
+            return new Image(ImageDataFactory.create(DOG));
+        } catch (MalformedURLException e) {
+            throw new PdfException(e.getMessage());
+        }
     }
 
     private void addFooterTable(int numColumns, String values, Document document) {

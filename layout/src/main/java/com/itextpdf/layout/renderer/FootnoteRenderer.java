@@ -22,38 +22,25 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.element.Footnote;
 
 /**
- * Represents a renderer for the {@link Div} layout element.
+ * Renderer for {@link Footnote} representing a footnote placed at the bottom of the page.
  */
-public class DivRenderer extends BlockRenderer {
+public class FootnoteRenderer extends BlockRenderer {
 
     /**
-     * Creates a DivRenderer from its corresponding layout object.
+     * Creates a {@link FootnoteRenderer} from its corresponding layout object.
      *
-     * @param modelElement the {@link com.itextpdf.layout.element.Div} which this object should manage
+     * @param modelElement the {@link Footnote} which this object should manage
      */
-    public DivRenderer(Div modelElement) {
+    public FootnoteRenderer(Footnote modelElement) {
         super(modelElement);
     }
 
-    /**
-     * Gets a new instance of this class to be used as a next renderer, after this renderer is used, if
-     * {@link #layout(LayoutContext)} is called more than once.
-     *
-     * <p>
-     * If a renderer overflows to the next area, iText uses this method to create a renderer
-     * for the overflow part. So if one wants to extend {@link DivRenderer}, one should override
-     * this method: otherwise the default method will be used and thus the default rather than the custom
-     * renderer will be created.
-     *
-     * @return new renderer instance
-     */
     @Override
     public IRenderer getNextRenderer() {
-        logWarningIfGetNextRendererNotOverridden(DivRenderer.class, this.getClass());
-        return new DivRenderer((Div) modelElement);
+        logWarningIfGetNextRendererNotOverridden(FootnoteRenderer.class, this.getClass());
+        return new FootnoteRenderer((Footnote) modelElement);
     }
 }

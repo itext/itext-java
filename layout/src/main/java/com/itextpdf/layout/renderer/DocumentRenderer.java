@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentRenderer extends RootRenderer {
+    final FootnotesCounterHandler footnotesCounterHandler = new FootnotesCounterHandler();
 
     protected Document document;
     protected List<Integer> wrappedContentPage = new ArrayList<>();

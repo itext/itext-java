@@ -20,24 +20,35 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.layout.logs;
+package com.itextpdf.layout.properties.margins;
+
+import com.itextpdf.layout.element.Footnote;
+
+import java.util.List;
 
 /**
- * Class containing constants to be used in layout.
+ * Utility class to process footnotes for internal usage only.
  */
-public final class LayoutLogMessageConstant {
+public final class FootnotesUtil {
 
-    public static final String AREA_BREAK_UNEXPECTED = "Unexpected use of AreaBreakRenderer detected, which may indicate an issue with layout processing.";
-
-    public static final String ELEMENT_DOES_NOT_FIT_AREA = "Element does not fit current area. {0}";
-
-    public static final String PAGE_CONTENT_CANNOT_BE_DRAWN =
-            "Page {0} content cannot be drawn for page {1}.";
-
-    public static final String SECTION_BREAK_UNEXPECTED = "Unexpected use of SectionBreakRenderer detected, " +
-            "which may indicate an issue with layout processing.";
-
-    private LayoutLogMessageConstant() {
+    private FootnotesUtil() {
         // Private constructor will prevent the instantiation of this class directly.
+    }
+
+    /**
+     * Adds provided footnotes to the specified page via {@link PageMarginBoxes}.
+     *
+     * @param pageNum page number
+     * @param footnotesToAdd list of {@link Footnote} instance to add
+     * @param pageMarginBoxes {@link PageMarginBoxes} for the page
+     */
+    public static void addFootnotesToPage(int pageNum, List<Footnote> footnotesToAdd, PageMarginBoxes pageMarginBoxes) {
+        // TODO DEVSIX-9981 We want to be able to customize this container by user.
+        FootnotesContainer footnotesContainer = new FootnotesContainer();
+        for (Footnote footnote : footnotesToAdd) {
+            footnotesContainer.add(footnote);
+        }
+        PageFootnotesContent pageFootnotesContent = new PageFootnotesContent(footnotesContainer).setPageNumber(pageNum);
+        pageMarginBoxes.addFootnotes(pageFootnotesContent);
     }
 }

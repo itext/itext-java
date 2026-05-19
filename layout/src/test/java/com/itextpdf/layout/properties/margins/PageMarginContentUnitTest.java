@@ -25,7 +25,6 @@ package com.itextpdf.layout.properties.margins;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,26 +35,26 @@ public class PageMarginContentUnitTest extends ExtendedITextTest {
     @Test
     public void staticMarginsConstructorTest() {
         PageMarginContent pageMarginContentTop = new PageMarginContent(MarginBoxName.TOP, 100);
-        UnitValue topMarginHeight = ((Div) pageMarginContentTop.getMarginContent()).getHeight();
-        UnitValue topMarginWidth = ((Div) pageMarginContentTop.getMarginContent()).getWidth();
+        UnitValue topMarginHeight = ((Div) pageMarginContentTop.getContent()).getHeight();
+        UnitValue topMarginWidth = ((Div) pageMarginContentTop.getContent()).getWidth();
         Assertions.assertEquals(100, topMarginHeight.getValue());
         Assertions.assertNull(topMarginWidth);
 
         PageMarginContent pageMarginContentBottom = new PageMarginContent(MarginBoxName.BOTTOM, 150);
-        UnitValue bottomMarginHeight = ((Div) pageMarginContentBottom.getMarginContent()).getHeight();
-        UnitValue bottomMarginWidth = ((Div) pageMarginContentBottom.getMarginContent()).getWidth();
+        UnitValue bottomMarginHeight = ((Div) pageMarginContentBottom.getContent()).getHeight();
+        UnitValue bottomMarginWidth = ((Div) pageMarginContentBottom.getContent()).getWidth();
         Assertions.assertEquals(150, bottomMarginHeight.getValue());
         Assertions.assertNull(bottomMarginWidth);
 
         PageMarginContent pageMarginContentLeft = new PageMarginContent(MarginBoxName.LEFT, 60);
-        UnitValue leftMarginHeight = ((Div) pageMarginContentLeft.getMarginContent()).getHeight();
-        UnitValue leftMarginWidth = ((Div) pageMarginContentLeft.getMarginContent()).getWidth();
+        UnitValue leftMarginHeight = ((Div) pageMarginContentLeft.getContent()).getHeight();
+        UnitValue leftMarginWidth = ((Div) pageMarginContentLeft.getContent()).getWidth();
         Assertions.assertNull(leftMarginHeight);
         Assertions.assertEquals(60, leftMarginWidth.getValue());
 
         PageMarginContent pageMarginContentRight = new PageMarginContent(MarginBoxName.RIGHT, 200);
-        UnitValue rightMarginHeight = ((Div) pageMarginContentRight.getMarginContent()).getHeight();
-        UnitValue rightMarginWidth = ((Div) pageMarginContentRight.getMarginContent()).getWidth();
+        UnitValue rightMarginHeight = ((Div) pageMarginContentRight.getContent()).getHeight();
+        UnitValue rightMarginWidth = ((Div) pageMarginContentRight.getContent()).getWidth();
         Assertions.assertNull(rightMarginHeight);
         Assertions.assertEquals(200, rightMarginWidth.getValue());
     }

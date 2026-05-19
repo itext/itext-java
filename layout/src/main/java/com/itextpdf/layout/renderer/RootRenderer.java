@@ -29,7 +29,9 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.IPropertyContainer;
+import com.itextpdf.layout.element.Footnote;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -41,13 +43,18 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.margins.FootnotesUtil;
+import com.itextpdf.layout.properties.margins.PageMarginBoxes;
+import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class RootRenderer extends AbstractRenderer {
@@ -121,9 +128,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
             while (clearanceOverflowsToNextPage || (currentArea != null && renderer != null
-                    && (result = renderer.setParent(this)
-                    .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas)))
-                    .getStatus() != LayoutResult.FULL)) {
+                    && (result = layoutChild(renderer, childMarginsInfo)).getStatus() != LayoutResult.FULL)) {
                 boolean currentAreaNeedsToBeUpdated = false;
                 if (clearanceOverflowsToNextPage) {
                     result = new LayoutResult(LayoutResult.NOTHING, null, null, renderer);
@@ -260,10 +265,94 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
     }
 
+    private LayoutResult layoutChild(IRenderer renderer, MarginsCollapseInfo childMarginsInfo) {
+        FootnotesCounterHandler footnotesCounterHandler = FootnotesCounterHandler.getFootnotesCounterHandler(this);
+        if (footnotesCounterHandler != null) {
+            footnotesCounterHandler.reset();
+        }
+
+        LayoutResult layoutResult = renderer.setParent(this)
+                .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas));
+
+        if (footnotesCounterHandler == null) {
+            return layoutResult;
+        }
+
+        // Process footnotes that were collected during renderer layout.
+        Map<Footnote, Float> footnotes = footnotesCounterHandler.collectFootnotes(currentArea);
+        int footnoteAnchorsNum = footnotes.size();
+        if (footnoteAnchorsNum == 0) {
+            return layoutResult;
+        }
+
+        boolean footnotesPlaced = false;
+        float decreasedHeight = 0;
+        boolean footnotesNumDefined = false;
+        int footnotesNum = 0;
+        while (!footnotesPlaced) {
+            if (footnotesNumDefined) {
+                decreasedHeight = 0;
+            } else {
+                // Restore initial current area.
+                currentArea.getBBox().moveDown(decreasedHeight).increaseHeight(decreasedHeight);
+                // Decrease current area from the bottom to the height of footnotes.
+                footnotesNum = footnoteAnchorsNum;
+                decreasedHeight = 0;
+                for (Float footnoteHeight : footnotes.values()) {
+                    currentArea.getBBox().moveUp((float) footnoteHeight).decreaseHeight((float) footnoteHeight);
+                    decreasedHeight += (float) footnoteHeight;
+                }
+            }
+
+            footnotesCounterHandler.reset();
+            layoutResult = renderer.setParent(this)
+                    .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas));
+
+            footnotes = footnotesCounterHandler.collectFootnotes(currentArea);
+            footnoteAnchorsNum = footnotes.size();
+
+            // Number of the placed anchors == number of footnotes we reserved the space for before the layout
+            footnotesPlaced = footnoteAnchorsNum == footnotesNum;
+            if (footnoteAnchorsNum > footnotesNum) {
+                footnotesNumDefined = true;
+                // Decrease current area from the bottom until extra anchor will be moved to the next page.
+                currentArea.getBBox().moveUp(1).decreaseHeight(1);
+            }
+        }
+
+        PageMarginBoxes pageMarginBoxes = null;
+        Document document = new Document(this.getPdfDocument());
+        DocumentRenderer documentRenderer = new DocumentRenderer(document);
+        if (this instanceof DocumentRenderer) {
+            documentRenderer = (DocumentRenderer) this;
+            document = (Document) documentRenderer.getModelElement();
+            pageMarginBoxes = document.getPageMargins(currentArea.getPageNumber());
+        }
+
+        List<Footnote> footnotesContainer = new ArrayList<>();
+        float footnotesHeight = 0;
+        for (Map.Entry<Footnote, Float> entry : footnotes.entrySet()) {
+            Footnote footnote = entry.getKey();
+            footnotesContainer.add(footnote);
+            footnotesHeight += (float) entry.getValue();
+        }
+        int pageNum = currentArea.getPageNumber();
+        if (pageMarginBoxes == null) {
+            pageMarginBoxes = new PageMarginBoxes(Collections.<PageMarginContent>emptyList());
+            document.setPageMargins(currentArea.getPageNumber(), pageMarginBoxes);
+        }
+        FootnotesUtil.addFootnotesToPage(pageNum, footnotesContainer, pageMarginBoxes);
+
+        documentRenderer.setProperty(Property.MARGIN_BOTTOM,
+                documentRenderer.getPropertyAsFloat(Property.MARGIN_BOTTOM) + footnotesHeight);
+
+        return layoutResult;
+    }
+
     /**
      * Draws (flushes) the content.
      *
-     * @see #draw(com.itextpdf.layout.renderer.DrawContext)
+     * @see #draw(DrawContext)
      */
     public void flush() {
         for (IRenderer resultRenderer : childRenderers) {

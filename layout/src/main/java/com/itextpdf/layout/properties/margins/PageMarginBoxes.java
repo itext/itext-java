@@ -8,6 +8,7 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Footnote;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -33,12 +34,13 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Class to store information about all page margin boxes for single page.
+ * Class to store information about all page margin boxes for a single page.
  */
 public class PageMarginBoxes {
     private static final Logger LOGGER = LoggerFactory.getLogger(PageMarginBoxes.class);
 
     private final Map<MarginBoxName, PageMarginContent> margins = new LinkedHashMap<>();
+    private final Map<Integer, PageFootnotesContent> footnotes = new LinkedHashMap<>();
 
     private float[] marginSizes = new float[4];
 
@@ -62,6 +64,9 @@ public class PageMarginBoxes {
     public PageMarginBoxes(PageMarginBoxes other) {
         for (Map.Entry<MarginBoxName, PageMarginContent> margin : other.margins.entrySet()) {
             this.margins.put(margin.getKey(), new PageMarginContent(margin.getValue()));
+        }
+        for (Map.Entry<Integer, PageFootnotesContent> footnote : other.footnotes.entrySet()) {
+            this.footnotes.put(footnote.getKey(), new PageFootnotesContent(footnote.getValue()));
         }
         this.marginSizes = other.marginSizes;
     }
@@ -88,7 +93,7 @@ public class PageMarginBoxes {
             // Margin box elements have overflow property set to HIDDEN, therefore it is expected to neither get
             // LayoutResult other than FULL nor get no split renderer (result NOTHING) even if result is not FULL.
             LOGGER.error(MessageFormatUtil.format(
-                    LayoutLogMessageConstant.PAGE_MARGIN_BOX_CONTENT_CANNOT_BE_DRAWN, marginBoxName, pageNumber));
+                    LayoutLogMessageConstant.PAGE_CONTENT_CANNOT_BE_DRAWN, marginBoxName, pageNumber));
             return;
         }
 
@@ -136,26 +141,26 @@ public class PageMarginBoxes {
     }
 
     /**
-     * Gets rid of all page breaks that might have occurred inside page margin boxes
-     * because of the running/layout elements.
+     * Adds footnotes for the page.
      *
-     * @param renderer the root renderer of the renderers subtree
+     * @param content {@link PageFootnotesContent} representing footnotes
+     *
+     * @return this same {@link PageMarginBoxes} instance
      */
-    private static void removePageBreaks(IRenderer renderer) {
-        List<IRenderer> pageBreaks = null;
-        for (IRenderer child : renderer.getChildRenderers()) {
-            if (child instanceof AreaBreakRenderer || child instanceof SectionBreakRenderer) {
-                if (pageBreaks == null) {
-                    pageBreaks = new ArrayList<>();
-                }
-                pageBreaks.add(child);
-            } else {
-                removePageBreaks(child);
-            }
+    PageMarginBoxes addFootnotes(PageFootnotesContent content) {
+        int pageNum = content.getPageNumber();
+        if (this.footnotes.containsKey(pageNum)) {
+            PageFootnotesContent existing = this.footnotes.get(pageNum);
+            IElement existingFootnotes = existing.getContent();
+            IElement newFootnotes = content.getContent();
+            // TODO DEVSIX-9981 We want to be able to customize this container by user.
+            FootnotesContainer combined = new FootnotesContainer();
+            collectFootnotes(combined, existingFootnotes);
+            collectFootnotes(combined, newFootnotes);
+            content = new PageFootnotesContent(combined).setPageNumber(pageNum);
         }
-        if (pageBreaks != null) {
-            renderer.getChildRenderers().removeAll(pageBreaks);
-        }
+        this.footnotes.put(pageNum, content);
+        return this;
     }
 
     /**
@@ -212,19 +217,19 @@ public class PageMarginBoxes {
         MinMaxWidth leftMinMaxWidth = null;
 
         if (topM != null) {
-            IRenderer topMargin = topM.getMarginContent().createRendererSubTree();
+            IRenderer topMargin = topM.getContent().createRendererSubTree();
             top = topMargin.setParent(documentRenderer).layout(new LayoutContext(new LayoutArea(pageNumber, pageSize)));
         }
         if (rightM != null) {
-            IRenderer rightMargin = rightM.getMarginContent().createRendererSubTree();
+            IRenderer rightMargin = rightM.getContent().createRendererSubTree();
             rightMinMaxWidth = ((AbstractRenderer) rightMargin.setParent(documentRenderer)).getMinMaxWidth();
         }
         if (bottomM != null) {
-            IRenderer bottomMargin = bottomM.getMarginContent().createRendererSubTree();
+            IRenderer bottomMargin = bottomM.getContent().createRendererSubTree();
             bottom = bottomMargin.setParent(documentRenderer).layout(new LayoutContext(new LayoutArea(pageNumber, pageSize)));
         }
         if (leftM != null) {
-            IRenderer leftMargin = leftM.getMarginContent().createRendererSubTree();
+            IRenderer leftMargin = leftM.getContent().createRendererSubTree();
             leftMinMaxWidth = ((AbstractRenderer) leftMargin.setParent(documentRenderer)).getMinMaxWidth();
         }
 
@@ -232,29 +237,43 @@ public class PageMarginBoxes {
         // Save rectangles for all renderers.
         float leftMargin = leftMinMaxWidth == null ? document.getLeftMargin() : leftMinMaxWidth.getMinWidth();
         float rightMargin = rightMinMaxWidth == null ? document.getRightMargin() : rightMinMaxWidth.getMinWidth();
-        Rectangle topBBox = top == null ?
-                new Rectangle(document.getLeftMargin(),
-                        pageSize.getTop() - document.getTopMargin(), pageSize.getWidth(), document.getTopMargin())
+        Rectangle topBBox = top == null ? new Rectangle(0,
+                pageSize.getTop() - document.getTopMargin(), pageSize.getWidth(), document.getTopMargin())
                 : top.getOccupiedArea().getBBox();
         Rectangle bottomBBox = bottom == null ?
-                new Rectangle(document.getLeftMargin(), 0, pageSize.getWidth(), document.getBottomMargin())
+                new Rectangle(0, 0, pageSize.getWidth(), document.getBottomMargin())
                 : bottom.getOccupiedArea().getBBox();
 
         if (topM != null) {
-            topM.setPageMarginBoxRectangle(new Rectangle(leftMargin, topBBox.getY(),
-                    topBBox.getWidth() - rightMargin - leftMargin, topBBox.getHeight()));
+            topM.setRectangle(new Rectangle(leftMargin, topBBox.getY(),
+                    pageSize.getWidth() - rightMargin - leftMargin, topBBox.getHeight()));
         }
         if (rightM != null) {
-            rightM.setPageMarginBoxRectangle(new Rectangle(pageSize.getRight() - rightMargin, bottomBBox.getHeight(),
+            rightM.setRectangle(new Rectangle(pageSize.getRight() - rightMargin, bottomBBox.getHeight(),
                     rightMargin, pageSize.getHeight() - topBBox.getHeight() - bottomBBox.getHeight()));
         }
         if (bottomM != null) {
-            bottomM.setPageMarginBoxRectangle(new Rectangle(leftMargin, 0,
-                    bottomBBox.getWidth() - rightMargin - leftMargin, bottomBBox.getHeight()));
+            bottomM.setRectangle(new Rectangle(leftMargin, 0,
+                    pageSize.getWidth() - rightMargin - leftMargin, bottomBBox.getHeight()));
         }
         if (leftM != null) {
-            leftM.setPageMarginBoxRectangle(new Rectangle(0, bottomBBox.getHeight(),
+            leftM.setRectangle(new Rectangle(0, bottomBBox.getHeight(),
                     leftMargin, pageSize.getHeight() - topBBox.getHeight() - bottomBBox.getHeight()));
+        }
+
+        PageFootnotesContent footnotes = this.getFootnotes(pageNumber);
+        if (footnotes != null) {
+            Rectangle footnotesRect = new Rectangle(leftMargin, bottomBBox.getHeight(),
+                    pageSize.getWidth() - rightMargin - leftMargin,
+                    pageSize.getHeight() - topBBox.getHeight() - bottomBBox.getHeight());
+
+            IRenderer footnotesRenderer = footnotes.getContent().createRendererSubTree();
+            LayoutResult footnotesResult = footnotesRenderer.setParent(documentRenderer)
+                    .layout(new LayoutContext(new LayoutArea(pageNumber, footnotesRect)));
+            footnotesRect.setHeight(footnotesResult.getOccupiedArea().getBBox().getHeight());
+            footnotes.setRectangle(footnotesRect);
+
+            bottomBBox.increaseHeight(footnotes.getRectangle().getHeight());
         }
 
         return new float[]{topBBox.getHeight(), rightMargin, bottomBBox.getHeight(), leftMargin};
@@ -268,18 +287,12 @@ public class PageMarginBoxes {
      * @param pageNumber page number
      */
     public void draw(DocumentRenderer documentRenderer, PdfDocument document, int pageNumber) {
+        PageFootnotesContent footnotes = this.getFootnotes(pageNumber);
+        if (footnotes != null) {
+            drawPageContent(documentRenderer, document, pageNumber, footnotes);
+        }
         for (PageMarginContent margin : margins.values()) {
-            Rectangle rect = margin.getPageMarginBoxRectangle();
-            if (rect == null) {
-                // Margins weren't layouted, we can get here if page is added manually and is empty.
-                layout(documentRenderer, pageNumber, document.getPage(pageNumber).getPageSize());
-                rect = margin.getPageMarginBoxRectangle();
-            }
-            IElement element = margin.getMarginContent();
-            MarginBoxName marginBoxName = margin.getMarginBoxName();
-            setPageMarginTagRole(element);
-            IRenderer renderer = createRendererFromElement(element, documentRenderer, document);
-            draw(renderer, rect, documentRenderer, document, pageNumber, marginBoxName.name());
+            drawPageContent(documentRenderer, document, pageNumber, margin);
         }
     }
 
@@ -292,6 +305,60 @@ public class PageMarginBoxes {
         if (element instanceof IAccessibleElement) {
             ((IAccessibleElement) element).getAccessibilityProperties().setRole(StandardRoles.ARTIFACT);
         }
+    }
+
+    /**
+     * Gets rid of all page breaks that might have occurred inside page margin boxes
+     * because of the running/layout elements.
+     *
+     * @param renderer the root renderer of the renderers subtree
+     */
+    private static void removePageBreaks(IRenderer renderer) {
+        List<IRenderer> pageBreaks = null;
+        for (IRenderer child : renderer.getChildRenderers()) {
+            if (child instanceof AreaBreakRenderer || child instanceof SectionBreakRenderer) {
+                if (pageBreaks == null) {
+                    pageBreaks = new ArrayList<>();
+                }
+                pageBreaks.add(child);
+            } else {
+                removePageBreaks(child);
+            }
+        }
+        if (pageBreaks != null) {
+            renderer.getChildRenderers().removeAll(pageBreaks);
+        }
+    }
+
+    private static void collectFootnotes(FootnotesContainer container, IElement footnotes) {
+        if (footnotes instanceof FootnotesContainer) {
+            for (IElement element : ((FootnotesContainer) footnotes).getChildren()) {
+                if (element instanceof Footnote) {
+                    container.add((Footnote) element);
+                }
+            }
+        }
+    }
+
+    private PageFootnotesContent getFootnotes(int pageNumber) {
+        return this.footnotes.get(pageNumber);
+    }
+
+    private void drawPageContent(DocumentRenderer documentRenderer, PdfDocument document, int pageNumber,
+                                 AbstractPageContent pageContent) {
+        Rectangle rect = pageContent.getRectangle();
+        if (rect == null) {
+            // Margins weren't layouted, we can get here if page is added manually and is empty.
+            // Or in case footnotes are added.
+            layout(documentRenderer, pageNumber, document.getPage(pageNumber).getPageSize());
+            rect = pageContent.getRectangle();
+        }
+        IElement element = pageContent.getContent();
+        setPageMarginTagRole(element);
+        String name = pageContent instanceof PageMarginContent ?
+                (((PageMarginContent) pageContent).getMarginBoxName().name() + " margin box") : "footnotes";
+        IRenderer renderer = createRendererFromElement(element, documentRenderer, document);
+        draw(renderer, rect, documentRenderer, document, pageNumber, name);
     }
 
     @Override

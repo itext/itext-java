@@ -107,6 +107,18 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     /**
+     * Adds the {@link FootnoteAnchor} element to this {@link Paragraph}.
+     *
+     * @param footnoteAnchor the footnote anchor to be added
+     *
+     * @return this same {@link Paragraph} instance
+     */
+    public Paragraph add(FootnoteAnchor footnoteAnchor) {
+        childElements.add(footnoteAnchor);
+        return this;
+    }
+
+    /**
      * Adds a {@link java.util.List} of layout elements to this {@link Paragraph}.
      *
      * @param elements the content to be added
