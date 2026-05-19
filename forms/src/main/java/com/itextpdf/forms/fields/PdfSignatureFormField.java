@@ -157,25 +157,29 @@ public class PdfSignatureFormField extends PdfFormField {
         return this;
     }
 
+    // TODO DEVSIX-9984 Replace documentation links to directories with links to files
     /**
      * Sets the boolean value which indicates if page rotation should be ignored for the signature appearance.
      *
      * <p>
      * Default value is {@code true}.
      *
+     * <p>
+     * If you have rotated pages but want to ignore that rotation when adding a new field,
+     * you need to disable this broken feature and negate page rotation by modifying form field rectangle
+     * and field rotation properties using {@link PdfFormAnnotation#setRotation(int)}.
+     * An example code explaining how to do it can be found in SignatureAppearancePageRotationAgnosticExample sample in
+     * <a href="https://github.com/itext/itext-publications-examples-java/blob/develop/src/main/java/com/itextpdf/samples/sandbox/signatures/appearance">
+     * Java samples repository</a>
+     * and
+     * <a href="https://github.com/itext/itext-publications-samples-dotnet/blob/develop/itext/itext.samples/itext/samples/sandbox/signatures/appearance">
+     * C# samples repository</a>.
+     *
      * @param ignore boolean value to set
      *
      * @return this same {@link PdfSignatureFormField} instance
      *
-     * @deprecated if you have rotated pages but want to ignore that rotation when adding a new field,
-     * you need to disable this broken feature and negate page rotation by modifying form field rectangle
-     * and field rotation properties using {@link PdfFormAnnotation#setRotation(int)}.
-     * An example code explaining how to do it can be found at
-     * <a href="https://github.com/itext/itext-publications-examples-java/blob/develop/src/main/java/com/itextpdf/samples/sandbox/signatures/appearance/SignatureAppearancePageRotationAgnosticExample.java">
-     * SignatureAppearancePageRotationAgnosticExample for Java</a>
-     * and
-     * <a href="https://github.com/itext/itext-publications-samples-dotnet/blob/develop/itext/itext.samples/itext/samples/sandbox/signatures/appearance/SignatureAppearancePageRotationAgnosticExample.cs">
-     * SignatureAppearancePageRotationAgnosticExample for C#</a>.
+     * @deprecated Functionality is deprecated, see documentation for more information.
      */
     @Deprecated
     public PdfSignatureFormField setIgnorePageRotation(boolean ignore) {
