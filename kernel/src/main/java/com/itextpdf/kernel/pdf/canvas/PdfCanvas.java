@@ -772,7 +772,7 @@ public class PdfCanvas {
             int sub = glyphLinePart.getStart();
             for (int i = glyphLinePart.getStart(); i < glyphLinePart.getEnd(); i++) {
                 Glyph glyph = text.get(i);
-                if (glyph.hasOffsets()) {
+                if (glyph.hasOffsets() || glyph.getAnchorDelta() != 0) {
                     if (i - 1 - sub >= 0) {
                         font.writeText(text, sub, i - 1, contentStream.getOutputStream());
                         contentStream.getOutputStream().writeBytes(Tj);
@@ -785,41 +785,42 @@ public class PdfCanvas {
                     }
                     float xPlacement = Float.NaN;
                     float yPlacement = Float.NaN;
-                    if (glyph.hasPlacement()) {
-
-                        {
-                            float xPlacementAddition = 0;
-                            int currentGlyphIndex = i;
-                            Glyph currentGlyph = text.get(i);
-                            // if xPlacement is not zero, anchorDelta is expected to be non-zero as well
-                            while (currentGlyph != null && (currentGlyph.getAnchorDelta() != 0)) {
-                                xPlacementAddition += currentGlyph.getXPlacement();
-                                if (currentGlyph.getAnchorDelta() == 0) {
-                                    break;
-                                } else {
-                                    currentGlyphIndex += currentGlyph.getAnchorDelta();
-                                    currentGlyph = text.get(currentGlyphIndex);
-                                }
+                    // Apply offsets
+                    if (glyph.hasPlacement() || glyph.getAnchorDelta() != 0) {
+                        // Calculating x offset
+                        float xPlacementAddition = 0;
+                        int currentGlyphIndex = i;
+                        Glyph currentGlyph = text.get(i);
+                        while (currentGlyph != null) {
+                            xPlacementAddition += currentGlyph.getXPlacement();
+                            if (currentGlyph.getAnchorDelta() == 0) {
+                                break;
+                            } else {
+                                currentGlyphIndex += currentGlyph.getAnchorDelta();
+                                currentGlyph = text.get(currentGlyphIndex);
                             }
-                            xPlacement = -getSubrangeWidth(text, currentGlyphIndex, i) + xPlacementAddition * fontSize * scaling;
+                        }
+                        xPlacement = (xPlacementAddition * fontSize * scaling);
+                        if (glyph.getAnchorDelta() != 0) {
+                            xPlacement -= getSubrangeWidth(text, currentGlyphIndex, i);
                         }
 
-                        {
-                            float yPlacementAddition = 0;
-                            int currentGlyphIndex = i;
-                            Glyph currentGlyph = text.get(i);
-                            while (currentGlyph != null && currentGlyph.getYPlacement() != 0) {
-                                yPlacementAddition += currentGlyph.getYPlacement();
-                                if (currentGlyph.getAnchorDelta() == 0) {
-                                    break;
-                                } else {
-                                    currentGlyphIndex += currentGlyph.getAnchorDelta();
-                                    currentGlyph = text.get(currentGlyphIndex);
-                                }
+                        // Calculating y offset
+                        float yPlacementAddition = 0;
+                        currentGlyphIndex = i;
+                        currentGlyph = text.get(i);
+                        while (currentGlyph != null) {
+                            yPlacementAddition += currentGlyph.getYPlacement();
+                            if (currentGlyph.getAnchorDelta() == 0) {
+                                break;
+                            } else {
+                                currentGlyphIndex += currentGlyph.getAnchorDelta();
+                                currentGlyph = text.get(currentGlyphIndex);
                             }
-                            yPlacement = -getSubrangeYDelta(text, currentGlyphIndex, i) + yPlacementAddition * fontSize;
                         }
+                        yPlacement = (yPlacementAddition * fontSize) - getSubrangeYDelta(text, currentGlyphIndex, i);
 
+                        // Writing x and y offset
                         contentStream.getOutputStream()
                                 .writeFloat(xPlacement, true)
                                 .writeSpace()
@@ -827,8 +828,12 @@ public class PdfCanvas {
                                 .writeSpace()
                                 .writeBytes(Td);
                     }
+
+                    // Write text
                     font.writeText(text, i, i, contentStream.getOutputStream());
                     contentStream.getOutputStream().writeBytes(Tj);
+
+                    // Reverting x and y offset (if it has been written)
                     if (!Float.isNaN(xPlacement)) {
                         contentStream.getOutputStream()
                                 .writeFloat(-xPlacement, true)
@@ -838,10 +843,14 @@ public class PdfCanvas {
                                 .writeBytes(Td);
 
                     }
+
+                    // Apply advance offsets
                     if (glyph.hasAdvance()) {
+                        // Let's explicitly ignore width of glyphs with placement if they also
+                        // have xAdvance, since their width doesn't affect text cursor position
+                        float xAdvance = (glyph.getAnchorDelta() == 0 ? glyph.getWidth() : 0) + glyph.getXAdvance();
                         contentStream.getOutputStream()
-                                // Let's explicitly ignore width of glyphs with placement if they also have xAdvance, since their width doesn't affect text cursor position.
-                                .writeFloat((((glyph.hasPlacement() ? 0 : glyph.getWidth()) + glyph.getXAdvance()) * fontSize + charSpacing + getWordSpacingAddition(glyph)) * scaling, true)
+                                .writeFloat((xAdvance * fontSize + charSpacing + getWordSpacingAddition(glyph)) * scaling, true)
                                 .writeSpace()
                                 .writeFloat(glyph.getYAdvance() * fontSize, true)
                                 .writeSpace()
@@ -882,7 +891,7 @@ public class PdfCanvas {
 
     /**
      * Finds horizontal distance between the start of the `from` glyph and end of `to` glyph.
-     * Glyphs with placement are ignored.
+     * Glyphs with anchor delta are ignored.
      * XAdvance is not taken into account neither before `from` nor after `to` glyphs.
      */
     private float getSubrangeWidth(GlyphLine text, int from, int to) {
@@ -892,7 +901,7 @@ public class PdfCanvas {
         float width = 0;
         for (int iter = from; iter <= to; iter++) {
             Glyph glyph = text.get(iter);
-            if (!glyph.hasPlacement()) {
+            if (glyph.getAnchorDelta() == 0) {
                 width += (glyph.getWidth() * fontSize + charSpacing + getWordSpacingAddition(glyph)) * scaling;
             }
 

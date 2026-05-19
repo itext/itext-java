@@ -27,13 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Lookup Type 1: Single Adjustment Positioning Subtable
  */
 public class GposLookupType1 extends OpenTableLookup {
 
-    private Map<Integer, GposValueRecord> valueRecordMap = new HashMap<>();
+    private final Map<Integer, GposValueRecord> valueRecordMap = new HashMap<>();
 
     public GposLookupType1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
             throws java.io.IOException {
@@ -57,6 +56,8 @@ public class GposLookupType1 extends OpenTableLookup {
             Glyph newGlyph = new Glyph(line.get(line.getIdx()));
             newGlyph.setXAdvance((short)(newGlyph.getXAdvance() + valueRecord.getXAdvance()));
             newGlyph.setYAdvance((short)(newGlyph.getYAdvance() + valueRecord.getYAdvance()));
+            newGlyph.setXPlacement((short)(newGlyph.getXPlacement() + valueRecord.getXPlacement()));
+            newGlyph.setYPlacement((short)(newGlyph.getYPlacement() + valueRecord.getYPlacement()));
             line.set(line.getIdx(), newGlyph);
             positionApplied = true;
         }

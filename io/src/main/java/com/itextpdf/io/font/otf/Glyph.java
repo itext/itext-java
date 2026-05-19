@@ -22,8 +22,8 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.util.TextUtil;
 
 import java.util.Arrays;
 
@@ -139,7 +139,20 @@ public class Glyph {
     }
 
     /**
-     * Copy a Glyph and assign new placement and advance offsets and a new index delta to base glyph
+     * Copy a Glyph and assign new advance offsets.
+     *
+     * @param glyph Glyph to copy
+     * @param xAdvance x - advance offset
+     * @param yAdvance y - advance offset
+     */
+    public Glyph(Glyph glyph, int xAdvance, int yAdvance) {
+        this(glyph);
+        this.xAdvance = (short) xAdvance;
+        this.yAdvance = (short) yAdvance;
+    }
+
+    /**
+     * Copy a Glyph and assign new placement and advance offsets and a new index delta to base glyph.
      *
      * @param glyph Glyph to copy
      * @param xPlacement x - placement offset
@@ -149,11 +162,9 @@ public class Glyph {
      * @param anchorDelta Index delta to base glyph. If after a glyph there are several anchored glyphs we should know we to find base glyph.
      */
     public Glyph(Glyph glyph, int xPlacement, int yPlacement, int xAdvance, int yAdvance, int anchorDelta) {
-        this(glyph);
+        this(glyph, xAdvance, yAdvance);
         this.xPlacement = (short) xPlacement;
         this.yPlacement = (short) yPlacement;
-        this.xAdvance = (short) xAdvance;
-        this.yAdvance = (short) yAdvance;
         this.anchorDelta = (short) anchorDelta;
     }
 
@@ -236,23 +247,51 @@ public class Glyph {
         this.yAdvance = yAdvance;
     }
 
+    /**
+     * Gets the index delta to base glyph.
+     *
+     * @return the index delta to base glyph
+     */
     public short getAnchorDelta() {
+        // Non-zero value potentially means that the glyph is mark (isMark is never used, seems as something to improve).
         return anchorDelta;
     }
 
+    /**
+     * Sets the index delta to base glyph.
+     *
+     * @param anchorDelta the index delta to base glyph to be set
+     */
     public void setAnchorDelta(short anchorDelta) {
         this.anchorDelta = anchorDelta;
     }
 
+    /**
+     * Checks whether the glyph has any offsets either own or advance or both at the same time.
+     *
+     * <p>
+     * See {@link #hasPlacement()} and {@link #hasAdvance()}.
+     *
+     * @return {@code true} if glyph has any offsets, {@code false} otherwise
+     */
     public boolean hasOffsets() {
         return hasAdvance() || hasPlacement();
     }
 
-    // In case some of placement values are not zero we always expect anchorDelta to be non-zero
+    /**
+     * Checks whether the glyph has own offsets: either for X axis or Y axis or both at the same time.
+     *
+     * @return {@code true} if glyph has any own offsets, {@code false} otherwise
+     */
     public boolean hasPlacement() {
-        return anchorDelta != 0;
+        return xPlacement != 0 || yPlacement != 0;
     }
 
+    /**
+     * Checks whether the glyph has advance offsets: either for X axis or Y axis or both at the same time.
+     *
+     * @return {@code true} if glyph has any advance offsets, {@code false} otherwise
+     */
     public boolean hasAdvance() {
         return xAdvance != 0 || yAdvance != 0;
     }
@@ -269,8 +308,9 @@ public class Glyph {
     /**
      * Two Glyphs are equal if their unicode characters, code and normalized width are equal.
      *
-     * @param obj The object
-     * @return True if this equals obj cast to Glyph, false otherwise.
+     * @param obj еhe object
+     *
+     * @return {@code true} if this equals obj cast to Glyph, false otherwise
      */
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -287,6 +327,7 @@ public class Glyph {
      * Gets a Unicode string corresponding to this glyph. In general case it might consist of many characters.
      * If this glyph does not have a valid unicode ({@link #hasValidUnicode()}), then a string consisting of a special
      * Unicode '\ufffd' character is returned.
+     *
      * @return the Unicode string that corresponds to this glyph
      */
     public String getUnicodeString() {
@@ -301,6 +342,7 @@ public class Glyph {
      * Gets Unicode char sequence corresponding to this glyph. In general case it might consist of many characters.
      * If this glyph does not have a valid unicode ({@link #hasValidUnicode()}), then a special
      * Unicode '\ufffd' character is returned.
+     *
      * @return the Unicode char sequence that corresponds to this glyph
      */
     public char[] getUnicodeChars() {

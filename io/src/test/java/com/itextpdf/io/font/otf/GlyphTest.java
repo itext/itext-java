@@ -24,16 +24,15 @@ package com.itextpdf.io.font.otf;
 
 import com.itextpdf.test.ExtendedITextTest;
 
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class GlyphTest extends ExtendedITextTest {
 
     @Test
-    public void hasPlacementIfAnchorDeltaNonZeroTest() {
+    public void notHasPlacementIfAnchorDeltaNonZeroTest() {
         Glyph glyph = createDummyGlyph();
 
         Assertions.assertEquals(0, glyph.getXPlacement());
@@ -42,12 +41,14 @@ public class GlyphTest extends ExtendedITextTest {
         Assertions.assertFalse(glyph.hasPlacement());
 
         glyph.setAnchorDelta((short) 10);
+        Assertions.assertFalse(glyph.hasPlacement());
 
+        glyph.setXPlacement((short) 10);
         Assertions.assertTrue(glyph.hasPlacement());
     }
 
     @Test
-    public void hasOffsetsIfAnchorDeltaNonZeroTest() {
+    public void notHasOffsetsIfAnchorDeltaNonZeroTest() {
         Glyph glyph = createDummyGlyph();
 
         Assertions.assertEquals(0, glyph.getXPlacement());
@@ -56,7 +57,9 @@ public class GlyphTest extends ExtendedITextTest {
         Assertions.assertFalse(glyph.hasOffsets());
 
         glyph.setAnchorDelta((short) 10);
+        Assertions.assertFalse(glyph.hasOffsets());
 
+        glyph.setYPlacement((short) 10);
         Assertions.assertTrue(glyph.hasOffsets());
     }
 

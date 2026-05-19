@@ -102,10 +102,10 @@ public class GposLookupType2 extends OpenTableLookup {
                     PairValueFormat pv = m.get(gi.getGlyph().getCode());
                     if (pv != null) {
                         Glyph g2 = gi.getGlyph();
-                        line.set(line.getIdx(), new Glyph(g1, 0, 0, pv.getFirst().getXAdvance(),
-                                pv.getFirst().getYAdvance(), 0));
-                        line.set(gi.getIdx(), new Glyph(g2, 0, 0, pv.getSecond().getXAdvance(),
-                                pv.getSecond().getYAdvance(), 0));
+                        line.set(line.getIdx(), new Glyph(g1, pv.getFirst().getXAdvance(),
+                                pv.getFirst().getYAdvance()));
+                        line.set(gi.getIdx(), new Glyph(g2, pv.getSecond().getXAdvance(),
+                                pv.getSecond().getYAdvance()));
                         line.setIdx(gi.getIdx());
                         changed = true;
                     }
@@ -174,8 +174,8 @@ public class GposLookupType2 extends OpenTableLookup {
             if (c2 >= pvs.length)
                 return false;
             PairValueFormat pv = pvs[c2];
-            line.set(line.getIdx(), new Glyph(g1, 0, 0, pv.getFirst().getXAdvance(), pv.getFirst().getYAdvance(), 0));
-            line.set(gi.getIdx(), new Glyph(g2, 0, 0, pv.getSecond().getXAdvance(), pv.getSecond().getYAdvance(), 0));
+            line.set(line.getIdx(), new Glyph(g1, pv.getFirst().getXAdvance(), pv.getFirst().getYAdvance()));
+            line.set(gi.getIdx(), new Glyph(g2, pv.getSecond().getXAdvance(), pv.getSecond().getYAdvance()));
             line.setIdx(gi.getIdx());
             return true;
         }

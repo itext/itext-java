@@ -93,8 +93,7 @@ public class GposLookupType4 extends OpenTableLookup {
                 yPlacement -= markAnchor.getYCoordinate();
             }
             line.set(line.getIdx(), new Glyph(line.get(line.getIdx()),
-                    xPlacement, yPlacement,
-                    0, 0, gi.getIdx() - line.getIdx()));
+                    xPlacement, yPlacement, 0, 0, gi.getIdx() - line.getIdx()));
             changed = true;
             break;
         }

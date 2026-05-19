@@ -74,8 +74,6 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.splitting.BreakAllSplitCharacters;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,6 +81,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
@@ -1326,7 +1326,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         int count = 0;
         for (int i = line.getStart(); i < line.getEnd(); i++) {
             Glyph glyph = line.get(i);
-            if (!glyph.hasPlacement()) {
+            if (glyph.getAnchorDelta() == 0) {
                 count++;
             }
         }
