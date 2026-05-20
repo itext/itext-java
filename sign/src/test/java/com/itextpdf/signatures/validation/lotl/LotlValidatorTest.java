@@ -47,11 +47,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
 import static com.itextpdf.signatures.logs.SignLogMessageConstant.OJ_TRANSITION_PERIOD;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -249,9 +251,27 @@ public class LotlValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = OJ_TRANSITION_PERIOD))
-    public void europeanReleaseVersion2026_04_17Test() {
+    public void europeanReleaseVersion2026_04_17_TransitionPeriod_Test() {
         try (LotlService service = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_2026_FILES));
+            service.initializeCache();
+            Assertions.assertDoesNotThrow(() -> service.getLotlValidator().validate());
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = OJ_TRANSITION_PERIOD))
+    public void europeanReleaseVersion2026_04_17_TransitionPeriod_dependency_not_updated_Test() {
+        try (LotlService service = new EuropeanLotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
+            service.withEuropeanResourceFetcher(new EuropeanResourceFetcher() {
+                //With current transition state we need to simulate not loading latest eu-resources-dependency
+                @Override
+                public Result getEUJournalCertificates() {
+                    Result r = super.getEUJournalCertificates();
+                    r.setCurrentlySupportedPublication("https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test");
+                    return r;
+                }
+            });
             service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_2026_FILES));
             service.initializeCache();
             Assertions.assertDoesNotThrow(() -> service.getLotlValidator().validate());
@@ -288,7 +308,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             PivotFetcher customPivotFetcher = new PivotFetcher(lotlService) {
                 @Override
                 protected List<String> getPivotsUrlList(byte[] lotlXml) {
-                    return Arrays.asList(new String[] {
+                    return Arrays.asList(new String[]{
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-341.xml",
                             "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test",
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-335.xml",
@@ -309,8 +329,8 @@ public class LotlValidatorTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = SignLogMessageConstant.OJ_TRANSITION_PERIOD))
     public void mainLotlFileContainsTwoJournalsAndNewOneIsUsedTest() {
+        //Test should not log as latest one is used
         LotlFetchingProperties lotlFetchingProperties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         lotlFetchingProperties.setCountryNames("DE");
@@ -319,7 +339,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             PivotFetcher customPivotFetcher = new PivotFetcher(lotlService) {
                 @Override
                 protected List<String> getPivotsUrlList(byte[] lotlXml) {
-                    return Arrays.asList(new String[] {
+                    return Arrays.asList(new String[]{
                             "https://ec.europa.eu/tools/lotl/eu-lotl-pivot-378.xml",
                             "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.9999.999.99.9999.99.ENG.test",
                             "https://eur-lex.europa.eu/eli/C/2026/1944/oj",
@@ -659,7 +679,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
             service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
                 @Override
                 public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
-                        LotlService lotlService) {
+                                                                                  LotlService lotlService) {
                     HashMap<String, Result> result = new HashMap<>();
                     Result r = new Result();
                     r.getLocalReport().addReportItem(new ReportItem(LotlValidator.LOTL_VALIDATION,
@@ -709,7 +729,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
 
                 @Override
                 public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
-                        LotlService lotlService) {
+                                                                                  LotlService lotlService) {
                     if (firstTime) {
                         firstTime = false;
                         return super.getAndValidateCountrySpecificLotlFiles(lotlXml, lotlService);
@@ -782,7 +802,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
 
                 @Override
                 public Map<String, Result> getAndValidateCountrySpecificLotlFiles(byte[] lotlXml,
-                        LotlService lotlService) {
+                                                                                  LotlService lotlService) {
                     if (firstTime) {
                         firstTime = false;
                         return super.getAndValidateCountrySpecificLotlFiles(lotlXml, lotlService);
