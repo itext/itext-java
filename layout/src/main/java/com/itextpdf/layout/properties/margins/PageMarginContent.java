@@ -1,6 +1,7 @@
 package com.itextpdf.layout.properties.margins;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IElement;
 
 import java.util.Objects;
@@ -24,6 +25,26 @@ public class PageMarginContent {
     public PageMarginContent(MarginBoxName marginBoxName, IElement marginContent) {
         this.marginBoxName = marginBoxName;
         this.marginContent = marginContent;
+    }
+
+    /**
+     * Creates new {@link PageMarginContent} instance.
+     *
+     * <p>
+     * The margin will have the specified size in points.
+     *
+     * @param marginBoxName {@link MarginBoxName} specifying margin name based on its location on the page
+     * @param marginInPoints <code>float</code> specifying the margin in points
+     */
+    public PageMarginContent(MarginBoxName marginBoxName, float marginInPoints) {
+        this.marginBoxName = marginBoxName;
+        Div staticMarginContent = new Div();
+        if (marginBoxName == MarginBoxName.TOP || marginBoxName == MarginBoxName.BOTTOM) {
+            staticMarginContent.setHeight(marginInPoints);
+        } else if (marginBoxName == MarginBoxName.LEFT || marginBoxName == MarginBoxName.RIGHT) {
+            staticMarginContent.setWidth(marginInPoints);
+        }
+        this.marginContent = staticMarginContent;
     }
 
     /**

@@ -28,7 +28,6 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
@@ -53,6 +52,7 @@ import com.itextpdf.layout.testutil.PageMarginsTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -558,6 +558,76 @@ public class PageMarginsTest extends ExtendedITextTest {
             document.add(div1)
                     .add(sectionBreak)
                     .add(div2);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+    @Test
+    public void staticPageMarginContentTest() throws IOException, InterruptedException {
+        String fileName = "staticPageMarginContent";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+
+            List<PageMarginContent> elements = Arrays.asList(
+                    new PageMarginContent(MarginBoxName.TOP, 30),
+                    new PageMarginContent(MarginBoxName.RIGHT, 60),
+                    new PageMarginContent(MarginBoxName.BOTTOM, 200.5f),
+                    new PageMarginContent(MarginBoxName.LEFT, 150)
+            );
+
+            Paragraph p = new Paragraph(TEXT_BYRON);
+            for (int i = 0; i < 5; i++) {
+                p.add(TEXT_BYRON);
+            }
+
+            SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
+
+            Div div1 = new Div();
+            div1.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
+
+            document.add(sectionBreak)
+                    .add(div1);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+    @Test
+    public void staticAndDynamicPageMarginContentTest() throws IOException, InterruptedException {
+        String fileName = "staticAndDynamicPageMarginContent";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+
+            List<PageMarginContent> elements = Arrays.asList(
+                    new PageMarginContent(MarginBoxName.TOP, new Div()
+                        .add(new Paragraph("TEST TOP MARGIN"))
+                        .setBackgroundColor(ColorConstants.PINK).setHeight(100)),
+                    new PageMarginContent(MarginBoxName.RIGHT, new Div()
+                        .add(new Paragraph("TEST RIGHT MARGIN")
+                        .setBackgroundColor(ColorConstants.YELLOW).setWidth(150))),
+                    new PageMarginContent(MarginBoxName.BOTTOM, 200),
+                    new PageMarginContent(MarginBoxName.LEFT, 50)
+            );
+
+            Paragraph p = new Paragraph(TEXT_BYRON);
+            for (int i = 0; i < 5; i++) {
+                p.add(TEXT_BYRON);
+            }
+
+            SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
+
+            Div div1 = new Div();
+            div1.add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
+
+            document.add(sectionBreak)
+                    .add(div1);
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
