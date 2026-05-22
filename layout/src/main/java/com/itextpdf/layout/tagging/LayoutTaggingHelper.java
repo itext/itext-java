@@ -37,6 +37,7 @@ import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.renderer.SectionBreakRenderer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -126,7 +127,7 @@ public class LayoutTaggingHelper {
     }
 
     public void addKidsHint(IPropertyContainer parent, Iterable<? extends IPropertyContainer> newKids, int insertIndex) {
-        if (parent instanceof AreaBreakRenderer) {
+        if (parent instanceof AreaBreakRenderer || parent instanceof SectionBreakRenderer) {
             return;
         }
 

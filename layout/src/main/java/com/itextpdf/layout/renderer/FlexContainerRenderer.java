@@ -28,6 +28,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
@@ -48,8 +49,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FlexContainerRenderer extends DivRenderer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlexContainerRenderer.class);
 
     /**
      * Used for caching purposes in FlexUtil
@@ -557,13 +562,23 @@ public class FlexContainerRenderer extends DivRenderer {
      */
     @Override
     public void addChild(IRenderer renderer) {
+        if (renderer instanceof AreaBreakRenderer || renderer instanceof SectionBreakRenderer) {
+            LOGGER.warn(
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
+            return;
+        }
+
+        // TODO DEVSIX-10004: Remove after the change
+        boolean rendererRemoved = RendererRemovalUtil.removeAreaBreakAndSectionBreakDescendants(renderer);
+        if (rendererRemoved) {
+            LOGGER.warn(LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
+        }
+
         // TODO DEVSIX-5087 Since overflow-fit is an internal iText overflow value, we do not need to support if
         // for html/css objects, such as flex. As for now we will set VISIBLE by default, however, while working
         // on the ticket one may come to some more satifactory approach
-        if (!(renderer instanceof AreaBreakRenderer)) {
-            renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
-            super.addChild(renderer);
-        }
+        renderer.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+        super.addChild(renderer);
     }
 
     private static void orderChildRenderers(List<IRenderer> renderers) {

@@ -34,6 +34,8 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
+
+import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +80,10 @@ public class SectionBreakRenderer implements IRenderer {
         boolean pageMarginsChanged = false;
         boolean pageSizeChanged = false;
         int pageNumber = layoutContext.getArea().getPageNumber();
+        if (pageNumber == 0) {
+            LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_LAYOUT_ON_PAGE_0);
+            pageNumber = 1;
+        }
         IRenderer parentRenderer = getParent();
         while (parentRenderer != null) {
             if (parentRenderer instanceof DocumentRenderer) {
@@ -104,7 +110,7 @@ public class SectionBreakRenderer implements IRenderer {
             parentRenderer = parentRenderer.getParent();
         }
         // We're interested only in bottom coordinate of the already placed content.
-        LayoutArea updatedArea = new LayoutArea(layoutContext.getArea().getPageNumber(),
+        LayoutArea updatedArea = new LayoutArea(pageNumber,
                 new Rectangle(0, layoutContext.getArea().getBBox().getTop(), 0, 0));
         SectionBreakUtil.breakPage(sectionBreak, pageSizeChanged || (anythingPlaced && pageMarginsChanged));
         return new LayoutResult(LayoutResult.NOTHING, anythingPlaced ? updatedArea : null, null, null, this)
@@ -147,7 +153,7 @@ public class SectionBreakRenderer implements IRenderer {
     }
 
     /**
-     * Throws an UnsupportedOperationException because instances of this
+     * Always returns <code>null</code> because instances of this
      * class are only used for terminating the current page content.
      *
      * @param property {@inheritDoc}
@@ -158,7 +164,7 @@ public class SectionBreakRenderer implements IRenderer {
      */
     @Override
     public <T1> T1 getProperty(int property, T1 defaultValue) {
-        throw new UnsupportedOperationException();
+        return (T1) (Object) null;
     }
 
     @Override
@@ -211,7 +217,7 @@ public class SectionBreakRenderer implements IRenderer {
 
     @Override
     public List<IRenderer> getChildRenderers() {
-        return null;
+        return Collections.<IRenderer>emptyList();
     }
 
     @Override

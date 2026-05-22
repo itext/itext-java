@@ -49,7 +49,8 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     public void addChildTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assertions.assertNull(areaBreakRenderer.getChildRenderers());
+        Assertions.assertNotNull(areaBreakRenderer.getChildRenderers());
+        Assertions.assertTrue(areaBreakRenderer.getChildRenderers().isEmpty());
         Assertions.assertDoesNotThrow(() -> areaBreakRenderer.addChild(new TextRenderer(new Text("Test"))));
     }
 
@@ -125,8 +126,7 @@ public class AreaBreakRendererUnitTest extends ExtendedITextTest {
     public void getPropertyWithDefaultValueTestUnsupported() {
         AreaBreakRenderer areaBreakRenderer = new AreaBreakRenderer(new AreaBreak());
 
-        Assertions.assertThrows(UnsupportedOperationException.class,
-                () -> areaBreakRenderer.getProperty(Property.BORDER_BOTTOM_LEFT_RADIUS, 3));
+        Assertions.assertNull(areaBreakRenderer.<Integer>getProperty(Property.BORDER_BOTTOM_LEFT_RADIUS, 3));
     }
 
     @Test

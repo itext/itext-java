@@ -45,6 +45,23 @@ public final class LayoutLogMessageConstant {
             + "some languages in {0} might require this module when the following OpenTypeFont features are "
             + "obligatory for text rendering {1}";
 
+    public static final String FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK =
+            "Flex container should not contain area break or section break.";
+
+    public static final String GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK =
+            "Grid container should not contain area break or section break.";
+
+    public static final String GRID_ITEM_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK =
+            "Grid item should not contain area break or section break.";
+
+    public static final String SECTION_BREAK_LAYOUT_ON_PAGE_0 = "An attempt to layout SectionBreak on page 0 "
+            + "happened, which may indicate that SectionBreak was added to an element that does not support it.";
+
+    public static final String FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL =
+            "Flex item layout result isn't full, but it must be. The cross size of the flex item will be 0.";
+
+    public static final String FLEX_ITEM_CONTAINS_AREA_BREAK_OR_SECTION_BREAK = "Flex item contains AreaBreak or "
+            + "SectionBreak causing unexpected layout result. The cross size of the flex item will be 0.";
 
     private LayoutLogMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly.

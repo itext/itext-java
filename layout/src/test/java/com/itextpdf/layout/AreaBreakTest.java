@@ -32,6 +32,7 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.FlexContainerRenderer;
@@ -39,6 +40,8 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.ProhibitedTagRelationsResolver;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -74,6 +77,10 @@ public class AreaBreakTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
+    })
     public void areaBreakInsideFlexContainerTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "areaBreakInsideFlexContainer.pdf";
         String cmpFileName = sourceFolder + "cmp_areaBreakInsideFlexContainer.pdf";

@@ -22,7 +22,6 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.PageSize;
@@ -30,9 +29,11 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.SectionBreak;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.FlexDirectionPropertyValue;
 import com.itextpdf.layout.properties.FlexWrapPropertyValue;
@@ -56,7 +57,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -498,10 +498,16 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-9976: Update test after fix.
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED))
-    public void sectionBreakInsideFlexContainerThrowsTest() {
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
+    })
+    public void sectionBreakInsideFlexContainerTest() throws IOException, InterruptedException {
+        String fileName = "sectionBreakInsideFlexContainer";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createRowFlexContainer();
@@ -509,16 +515,24 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             flex.add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1())));
             flex.add(coloredDiv("ITEM B", new DeviceRgb(209, 247, 29)));
 
-            Assertions.assertThrows(UnsupportedOperationException.class,
-                    () -> document.add(flex),
-                    "Expected UnsupportedOperationException when SectionBreak is a flex child");
+            document.add(flex);
         }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
     }
 
     @Test
-    //TODO DEVSIX-9976: Update test after fix.
-    public void sectionBreakOnFlexItemChildThrowsTest() {
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
+    })
+    public void sectionBreakOnFlexItemChildTest() throws IOException, InterruptedException {
+        String fileName = "sectionBreakOnFlexItemChild";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createRowFlexContainer();
@@ -532,18 +546,18 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
 
             flex.add(item);
 
-            Assertions.assertThrows(RuntimeException.class,
-                    () -> document.add(flex),
-                    "Expected a RuntimeException when SectionBreak is nested inside a flex item");
+            document.add(flex);
         }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT),
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED),
-            @LogMessage(messageTemplate = IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
     })
-    //TODO DEVSIX-9976: Update test after fix.
     public void areaBreakOnFlexItemChildTest() throws IOException, InterruptedException {
         String fileName = "flexItemChildAreaBreak";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -573,7 +587,10 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-9976: Update test after fix.
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
+    })
     public void areaBreakInFlexWithDocumentMarginsTest()
             throws IOException, InterruptedException {
         String fileName = "flexAreaBreakDocMargins";
@@ -587,9 +604,9 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
                     new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
 
             Div flex = createColumnFlexContainer();
-            flex.add(coloredDiv("FLEX - PAGE 1", new DeviceRgb(65, 151, 29)));
+            flex.add(coloredDiv("Before break.", new DeviceRgb(65, 151, 29)));
             flex.add(new AreaBreak());
-            flex.add(coloredDiv("FLEX - PAGE 2", new DeviceRgb(209, 247, 29)));
+            flex.add(coloredDiv("After break.", new DeviceRgb(209, 247, 29)));
 
             document.add(flex);
         }
@@ -599,7 +616,10 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-9976: Update test after fix.
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
+    })
     public void areaBreakInFlexThenSectionBreakTest()
             throws IOException, InterruptedException {
         String fileName = "flexAreaBreakThenSectionBreak";
@@ -610,13 +630,13 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createColumnFlexContainer();
-            flex.add(coloredDiv("FLEX - PAGE 1", new DeviceRgb(65, 151, 29)));
+            flex.add(coloredDiv("Before break.", new DeviceRgb(65, 151, 29)));
             flex.add(new AreaBreak());
-            flex.add(coloredDiv("FLEX - PAGE 2", new DeviceRgb(209, 247, 29)));
+            flex.add(coloredDiv("After break.", new DeviceRgb(209, 247, 29)));
 
             document.add(flex);
             document.add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins2())));
-            document.add(new Paragraph("Page 3 — margins2 active after section break."));
+            document.add(new Paragraph("Page 2 — margins2 active after section break."));
         }
 
         Assertions.assertNull(new CompareTool()
@@ -624,7 +644,11 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-9976: Update test after fix.
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK,
+                    count = 2)
+    })
     public void multipleAreaBreaksInNestedFlexWithDocumentMarginsTest()
             throws IOException, InterruptedException {
         String fileName = "nestedFlexMultiAreaBreakDocMargins";
@@ -665,11 +689,10 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT),
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED),
-            @LogMessage(messageTemplate = IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, count = 2)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
     })
-    //TODO DEVSIX-9976: Update test after fix.
     public void areaBreakOnNestedFlexItemWithDocumentMarginsTest()
             throws IOException, InterruptedException {
         String fileName = "nestedFlexItemAreaBreakDocMargins";
@@ -708,7 +731,10 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-9976: Update test after fix.
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
+    })
     public void areaBreakWithPageSizeInFlexWithDocumentMarginsTest()
             throws IOException, InterruptedException {
         String fileName = "flexAreaBreakPageSizeDocMargins";
@@ -907,6 +933,54 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             document.add(flex2);
             document.add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1())));
             document.add(new Paragraph("Third section — same margins again."));
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    // TODO DEVSIX-10004: Update test after fix.
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED, count = 3),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED, count = 11),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_LAYOUT_ON_PAGE_0)})
+    public void flexWithTableHeaderAndFooterWithAreaBreakAndSectionBreakTest() throws IOException, InterruptedException {
+        String fileName = "flexWithTableHeaderAndFooter";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+
+            Div flex = createRowFlexContainer();
+
+            Table table = new Table(3);
+
+            Cell headerCell = new Cell().add(new Div()
+                    .add(new Paragraph("Before section break"))
+                    .add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1())))
+                    .add(new Paragraph("After section break")));
+            table.addHeaderCell(headerCell);
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+
+            table.addCell("Table cell content 1");
+            table.addCell("Table cell content 2");
+            table.addCell("Table cell content 3");
+
+            Cell footerCell = new Cell().add(new Div()
+                    .add(new Paragraph("Before area break"))
+                    .add(new AreaBreak())
+                    .add(new Paragraph("After area break")));
+            table.addFooterCell(footerCell);
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+
+            flex.add(table);
+            flex.add(coloredDiv("Second element", new DeviceRgb(65, 151, 29)));
+            document.add(flex);
         }
 
         Assertions.assertNull(new CompareTool()

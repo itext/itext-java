@@ -29,6 +29,7 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,7 +127,7 @@ public class AreaBreakRenderer implements IRenderer {
      */
     @Override
     public <T1> T1 getProperty(int property, T1 defaultValue) {
-        throw new UnsupportedOperationException();
+        return (T1) (Object) null;
     }
 
     /**
@@ -160,7 +161,7 @@ public class AreaBreakRenderer implements IRenderer {
 
     @Override
     public List<IRenderer> getChildRenderers() {
-        return null;
+        return Collections.<IRenderer>emptyList();
     }
 
     @Override

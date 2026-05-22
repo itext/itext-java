@@ -190,6 +190,7 @@ public final class IoLogMessageConstant {
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on "
             + "failed.";
 
+    @Deprecated
     public static final String FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL =
             "Flex item layout result isn't full, but it must be. The cross size of the flex item will be 0.";
 

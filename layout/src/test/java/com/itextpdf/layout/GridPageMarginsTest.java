@@ -22,7 +22,6 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.PageSize;
@@ -30,10 +29,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.GridContainer;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.SectionBreak;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -56,7 +57,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -533,10 +533,10 @@ public class GridPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED),
-            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 13)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
     })
-    //TODO DEVSIX-9976: Update test after fix.
     public void areaBreakInsideNestedGridCellWithDocumentMarginsTest()
             throws IOException, InterruptedException {
         String fileName = "nestedGridCellAreaBreakDocMargins";
@@ -559,7 +559,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             Div breakCell = new Div()
                     .add(new Paragraph("Before break."))
                     .add(new AreaBreak())
-                    .add(new Paragraph("After break — should be on even page with margins1."));
+                    .add(new Paragraph("After break."));
             innerLeft.add(breakCell);
             innerLeft.add(coloredDiv("LEFT-4", new DeviceRgb(78, 151, 205)));
 
@@ -724,11 +724,16 @@ public class GridPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED, count = 3)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
     })
-    //TODO DEVSIX-9976: Update test after fix.
-    public void areaBreakDirectlyInsideGridContainerTest() {
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    public void areaBreakDirectlyInsideGridContainerTest() throws IOException, InterruptedException {
+        String fileName = "areaBreakDirectlyInsideGridContainer";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -743,18 +748,24 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             grid.add(coloredDiv("AFTER-2", new DeviceRgb(200, 100, 100)));
             grid.add(coloredDiv("AFTER-3", new DeviceRgb(100, 200, 100)));
 
-            Assertions.assertThrows(NullPointerException.class,
-                    () -> document.add(grid),
-                    "Expected NPE when AreaBreak is directly added inside a grid cell");
+            document.add(grid);
         }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED, count = 3)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
     })
-    //TODO DEVSIX-9976: Update test after fix.
-    public void sectionBreakDirectlyInsideGridContainerTest() {
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+    public void sectionBreakDirectlyInsideGridContainerTest() throws IOException, InterruptedException {
+        String fileName = "sectionBreakDirectlyInsideGridContainer";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -769,17 +780,18 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             grid.add(coloredDiv("AFTER-2", new DeviceRgb(200, 100, 100)));
             grid.add(coloredDiv("AFTER-3", new DeviceRgb(100, 200, 100)));
 
-            Assertions.assertThrows(NullPointerException.class,
-                    () -> document.add(grid),
-                    "Expected NPE when SectionBreak is nested inside a grid cell");
+            document.add(grid);
         }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED),
-            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 13)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
     })
-    //TODO DEVSIX-9976: Update test after fix.
     public void sectionBreakInsideNestedGridCellTest() throws IOException, InterruptedException {
         String fileName = "sectionBreakInNestedGrid";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -814,10 +826,10 @@ public class GridPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED),
-            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 13)
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate =
+                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
     })
-    //TODO DEVSIX-9976: Update test after fix.
     public void areaBreakInsideNestedGridCellTest() throws IOException, InterruptedException {
         String fileName = "areaBreakInNestedGrid";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -894,6 +906,52 @@ public class GridPageMarginsTest extends ExtendedITextTest {
 
             document.add(outer);
             document.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 4)));
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    // TODO DEVSIX-10004: Update test after fix.
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED, count = 5),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED, count = 21)})
+    public void gridWithTableHeaderAndFooterWithAreaBreakAndSectionBreakTest() throws IOException, InterruptedException {
+        String fileName = "gridWithTableHeaderAndFooter";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+
+            GridContainer gridContainer = createTwoColumnGrid();
+
+            Table table = new Table(3);
+
+            Cell headerCell = new Cell().add(new Div()
+                    .add(new Paragraph("Before section break"))
+                    .add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1())))
+                    .add(new Paragraph("After section break")));
+            table.addHeaderCell(headerCell);
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+
+            table.addCell("Table cell content 1");
+            table.addCell("Table cell content 2");
+            table.addCell("Table cell content 3");
+
+            Cell footerCell = new Cell().add(new Div()
+                    .add(new Paragraph("Before area break"))
+                    .add(new AreaBreak())
+                    .add(new Paragraph("After area break")));
+            table.addFooterCell(footerCell);
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+
+            gridContainer.add(table);
+            gridContainer.add(coloredDiv("Second column div", new DeviceRgb(65, 151, 29)));
+            document.add(gridContainer);
         }
 
         Assertions.assertNull(new CompareTool()
