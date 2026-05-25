@@ -325,9 +325,10 @@ public abstract class ImageData {
     /**
      * Load data from URL. url must be not null.
      * Note, this method doesn't check if data or url is null.
-     * @throws java.io.IOException
+     *
+     * @throws java.io.IOException if an I/O error occurs.
      */
-    void loadData() throws java.io.IOException {
+    protected void loadData() throws java.io.IOException {
         RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(url));
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         StreamUtil.transferBytes(raf, stream);

@@ -168,6 +168,9 @@
             <fileset reason="CloseableByteArrayOutputStream cannot be trivially ported into MemoryStream">
                 <file path="com/itextpdf/io/util/CloseableByteArrayOutputStream.java"/>
             </fileset>
+            <fileset reason="Java and .net have different WebP log messages">
+                <file path="com/itextpdf/io/image/WebPLogMessageConstant.java"/>
+            </fileset>
             <!-- barcodes -->
             <file path="com/itextpdf/barcodes/BarcodeMultiThreadingTest.java"/>
 
@@ -653,6 +656,11 @@
                 <file path="com/itextpdf/brotlicompressor/BrotliOutputStream.java"/>
                 <file path="com/itextpdf/brotlicompressor/BrotliOutputStreamTest.java"/>
             </fileset>
+
+            <!-- webp-image-support -->
+            <fileset reason="Java implementations is based on twelve-monkeys while .Net utilizes Skia">
+                <file path="com/itextpdf/webpimagesupport/WebPImageData.java"/>
+            </fileset>
         </java>
     </ignored>
      <resource>
@@ -759,6 +767,13 @@
 		<fileset reason="Juunit specific files">
             <file path="junit-platform.properties"/>
         </fileset>
+
+         <!-- webp-image-support -->
+         <fileset reason="Java implementations is based on twelve-monkeys while .Net utilizes Skia, so results may differ">
+             <file path="com/itextpdf/webpimagesupport/image/cmp_lossyWebPImagePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_animatedWebPImagePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_opaqueWebPImagePdf.pdf"/>
+         </fileset>
     </resource>
     <src>
         <module name="pdftest" />

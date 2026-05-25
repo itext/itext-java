@@ -181,6 +181,7 @@ public final class IoExceptionMessageConstant {
     public static final String UNSUPPORTED_BOX_SIZE_EQ_EQ_0 = "Unsupported box size == 0.";
     public static final String UNSUPPORTED_ENCODING_EXCEPTION = "Unsupported encoding exception.";
     public static final String UNSUPPORTED_JPEG_MARKER = "{0} unsupported jpeg marker {1}.";
+    public static final String WEBP_IMAGE_EXCEPTION = "WebP image exception.";
     public static final String WRITE_FAILED = "Writing woff2 exception";
     public static final String ENCODING_ERROR = "Error during encoding the following code point: {0} in characterset:" +
             " {1}";

@@ -20,19 +20,51 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.io.image;
+package com.itextpdf.webpimagesupport;
 
-public enum ImageType {
-    JPEG,
-    PNG,
-    GIF,
-    BMP,
-    TIFF,
-    WMF,
-    PS,
-    JPEG2000,
-    JBIG2,
-    RAW,
-    WEBP,
-    NONE
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.AbstractWebPLoader;
+import com.itextpdf.io.image.ImageDataFactory;
+
+import java.net.URL;
+
+/**
+ * The class for WebP image data handling and plugging in webp-image-support module.
+ */
+final class WebPLoader extends AbstractWebPLoader {
+
+    private WebPLoader() {
+        // do nothing
+    }
+
+    /**
+     * Register webp-image-support module.
+     */
+    public static void registerForIo() {
+        ImageDataFactory.setWebPLoaderInstance(new WebPLoader());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ImageData getImageData(byte[] bytes) {
+        return new WebPImageData(bytes);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ImageData getImageData(URL url) {
+        return new WebPImageData(url);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean isWebPSupported() {
+        return true;
+    }
 }

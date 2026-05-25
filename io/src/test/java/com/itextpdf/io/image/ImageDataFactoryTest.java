@@ -29,6 +29,9 @@ import com.itextpdf.test.ExtendedITextTest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -96,4 +99,18 @@ public class ImageDataFactoryTest extends ExtendedITextTest {
         }
     }
 
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = WebPLogMessageConstant.WEBP_NOT_FOUND))
+    public void isWebPSupportedTypeTest() {
+        Assertions.assertFalse(ImageDataFactory.isSupportedType(ImageType.WEBP));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = WebPLogMessageConstant.WEBP_NOT_FOUND))
+    public void readWebPImageTest() {
+        byte[] webpImageDummy = new byte[]{(byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F',
+                0x00, 0x00, 0x00, 0x00, (byte) 'W', (byte) 'E', (byte) 'B', (byte) 'P', 0};
+        ImageData imageData = ImageDataFactory.createWebP(webpImageDummy);
+        Assertions.assertNull(imageData);
+    }
 }

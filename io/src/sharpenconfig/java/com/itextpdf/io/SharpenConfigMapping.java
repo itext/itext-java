@@ -23,6 +23,7 @@
 package com.itextpdf.io;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -85,6 +86,11 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
         configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.io.image.ImageDataFactory.create(java.awt.Image,java.awt.Color)", "!NETSTANDARD2_0");
         configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.io.image.ImageDataFactory.create(java.awt.Image,java.awt.Color,boolean)", "!NETSTANDARD2_0");
+        configurator.mapStringLiteral("com.itextpdf.io.image.ImageDataFactory.WEBP_PACKAGE", "iText.Webpimagesupport.");
+        configurator.mapStringLiteral("com.itextpdf.io.image.ImageDataFactory.WEBP_APPLIER", "WebPLoader,itext.webp-image-support");
+        configurator.mapStringLiteral("com.itextpdf.io.image.ImageDataFactory.WEBP_APPLIER_INITIALIZE", "RegisterForIo");
+        configurator.mapMethodToCustomMember("com.itextpdf.io.image.ImageDataFactory.getWebPClass", "GetWebPClass", SharpenConfigCustomMembers.getWebPClass);
+        configurator.addCustomUsingDeclaration("com.itextpdf.io.image.ImageDataFactory", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "Microsoft.Extensions.Logging", "iText.Commons"));
     }
 
     @Override

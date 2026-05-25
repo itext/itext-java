@@ -22,17 +22,42 @@
  */
 package com.itextpdf.io.image;
 
-public enum ImageType {
-    JPEG,
-    PNG,
-    GIF,
-    BMP,
-    TIFF,
-    WMF,
-    PS,
-    JPEG2000,
-    JBIG2,
-    RAW,
-    WEBP,
-    NONE
+import java.net.URL;
+
+/**
+ * An abstract class to control WebP image data handling.
+ */
+public abstract class AbstractWebPLoader {
+
+    /**
+     * Creates an instance of {@link AbstractWebPLoader}.
+     */
+    protected AbstractWebPLoader() {
+        // do nothing
+    }
+
+    /**
+     * Gets {@link ImageData} from provided WebP raw image bytes.
+     *
+     * @param bytes raw bytes to create WebP image data from
+     *
+     * @return a new WebP {@link ImageData} from raw bytes
+     */
+    protected abstract ImageData getImageData(byte[] bytes);
+
+    /**
+     * Gets {@link ImageData} from provided WebP URL.
+     *
+     * @param url URL to create WebP image data from
+     *
+     * @return a new WebP {@link ImageData} from URL
+     */
+    protected abstract ImageData getImageData(URL url);
+
+    /**
+     * Checks if webp-image-support module is loaded.
+     *
+     * @return {@code true} if webp-image-support module is loaded
+     */
+    protected abstract boolean isWebPSupported();
 }

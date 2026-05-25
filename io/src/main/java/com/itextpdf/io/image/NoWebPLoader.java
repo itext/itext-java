@@ -22,17 +22,48 @@
  */
 package com.itextpdf.io.image;
 
-public enum ImageType {
-    JPEG,
-    PNG,
-    GIF,
-    BMP,
-    TIFF,
-    WMF,
-    PS,
-    JPEG2000,
-    JBIG2,
-    RAW,
-    WEBP,
-    NONE
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+
+/**
+ * A no-op class for WebP image data handling.
+ */
+public final class NoWebPLoader extends AbstractWebPLoader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NoWebPLoader.class);
+
+    /**
+     * Standard constructor.
+     */
+    NoWebPLoader() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ImageData getImageData(byte[] bytes) {
+        LOGGER.warn(WebPLogMessageConstant.WEBP_NOT_FOUND);
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ImageData getImageData(URL url) {
+        LOGGER.warn(WebPLogMessageConstant.WEBP_NOT_FOUND);
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean isWebPSupported() {
+        LOGGER.warn(WebPLogMessageConstant.WEBP_NOT_FOUND);
+        return false;
+    }
 }

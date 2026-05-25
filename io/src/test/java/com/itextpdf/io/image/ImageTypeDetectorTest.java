@@ -27,6 +27,7 @@ import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -138,6 +139,20 @@ public class ImageTypeDetectorTest extends ExtendedITextTest {
     public void testBytesWmf() throws IOException {
         testBytes(StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(SOURCE_FOLDER + IMAGE_NAME + ".wmf")),
                 ImageType.WMF);
+    }
+
+    @Test
+    public void webPByteTest() {
+        byte[] webpImageDummy = new byte[]{(byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F',
+                0x00, 0x00, 0x00, 0x00, (byte) 'W', (byte) 'E', (byte) 'B', (byte) 'P', 0};
+        testBytes(webpImageDummy, ImageType.WEBP);
+    }
+
+    @Test
+    public void webPStreamTest() {
+        byte[] webpImageDummy = new byte[]{(byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F',
+                0x00, 0x00, 0x00, 0x00, (byte) 'W', (byte) 'E', (byte) 'B', (byte) 'P', 0};
+        testStream(new ByteArrayInputStream(webpImageDummy), ImageType.WEBP);
     }
 
     private static void testURL(URL location, ImageType expectedType) {
