@@ -27,11 +27,13 @@ import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.Footnote;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -47,6 +49,7 @@ import com.itextpdf.layout.properties.margins.FootnotesUtil;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import com.itextpdf.layout.utils.LayoutInfiniteLoopResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +66,8 @@ public abstract class RootRenderer extends AbstractRenderer {
      * The Logger instance.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(RootRenderer.class);
+
+    private static final int MAX_AMOUNT_OF_ELEMENT_LAYOUTS = 1_000_000;
 
     protected boolean immediateFlush = true;
     protected RootLayoutArea currentArea;
@@ -127,8 +132,18 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled && currentArea != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
+            int rendererLayoutCounter = 0;
             while (clearanceOverflowsToNextPage || (currentArea != null && renderer != null
                     && (result = layoutChild(renderer, childMarginsInfo)).getStatus() != LayoutResult.FULL)) {
+                rendererLayoutCounter++;
+                LayoutInfiniteLoopResolver loopResolver =
+                        getPdfDocument().getDiContainer().getInstance(LayoutInfiniteLoopResolver.class);
+                int limit = loopResolver == null ?
+                        MAX_AMOUNT_OF_ELEMENT_LAYOUTS : loopResolver.getMaxPagesCountForSingleElement();
+                if (rendererLayoutCounter > limit) {
+                    throw new PdfException(
+                            MessageFormatUtil.format(LayoutExceptionMessageConstant.INFINITE_LOOP_DETECTED, limit / 3));
+                }
                 boolean currentAreaNeedsToBeUpdated = false;
                 if (clearanceOverflowsToNextPage) {
                     result = new LayoutResult(LayoutResult.NOTHING, null, null, renderer);
