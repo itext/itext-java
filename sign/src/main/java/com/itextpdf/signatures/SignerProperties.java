@@ -36,8 +36,22 @@ import java.util.Calendar;
  */
 public class SignerProperties {
     /**
-     * This string could be used to create the {@link SignatureFieldAppearance} instance which will be used for signing
-     * since its ID will be ignored anyway in that case, and specified ID won't override the field name.
+     * A placeholder string used as a parameter when creating a {@link SignatureFieldAppearance} instance
+     * for signing operations via {@link #setSignatureAppearance(SignatureFieldAppearance)}.
+     *
+     * <p>
+     * The ID parameter of {@link SignatureFieldAppearance#SignatureFieldAppearance(String)} is ignored
+     * in signing contexts, as the actual form field name is set via {@link #setFieldName(String)} or
+     * generated automatically by {@link PdfSigner#getNewSigFieldName()}.
+     *
+     * <p>
+     * This same constructor serves a dual purpose: when used via the layout module for creating new
+     * interactive signature form fields (without embedding an actual signature), the ID parameter
+     * serves as the form field name. However, when used for complete signature creation
+     * (e.g., via {@link PdfSigner}), the ID parameter is ignored.
+     *
+     * <p>
+     * The "IGNORED" in the constant name emphasizes that this parameter is intentionally ignored in signing contexts.
      *
      * @see #setSignatureAppearance(SignatureFieldAppearance)
      */
@@ -85,8 +99,12 @@ public class SignerProperties {
 
     /**
      * Sets the signature field layout element to customize the appearance of the signature.
-     * ID specified for {@link SignatureFieldAppearance} will be ignored and won't override field name, so
-     * {@link #IGNORED_ID} could be used. To specify signature name use {@link SignerProperties#setFieldName}.
+     *
+     * <p>
+     * The ID parameter of {@link SignatureFieldAppearance#SignatureFieldAppearance(String)} is ignored
+     * in signing contexts, as the actual form field name is set via {@link #setFieldName(String)} or
+     * generated automatically by {@link PdfSigner#getNewSigFieldName()}. So {@link #IGNORED_ID} could be used
+     * as a placeholder when creating a {@link SignatureFieldAppearance} instance for this method.
      *
      * <p>
      * Note that if {@link SignedAppearanceText} was set as the content (or part of the content)
