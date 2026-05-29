@@ -22,6 +22,8 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.exceptions.ITextException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.report.ValidationReport;
@@ -30,6 +32,8 @@ import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collections;
@@ -124,6 +128,41 @@ public class SingleFileLotlServiceTest extends ExtendedITextTest {
                     new CountrySpecificLotl("AR", "https://pki.jgm.gov.ar/TSL/tsl-AR.xml",
                     "application/vnd.etsi.tsl+xml"),
                     Collections.singletonList(argentinaCertificate));
+        });
+    }
+
+    @Test
+    public void serDeserTest(){
+        LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
+        SingleFileLotlService lotlService = new SingleFileLotlService(props,new CountrySpecificLotl() ,
+                Collections.singletonList(argentinaCertificate));
+        lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER));
+        Assertions.assertDoesNotThrow(() ->{
+            lotlService.loadFromCache(new ByteArrayInputStream("{}".getBytes(StandardCharsets.UTF_8)));
+        });
+    }
+
+    @Test
+    public void serDeserTestThrows(){
+        LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
+        SingleFileLotlService lotlService = new SingleFileLotlService(props,new CountrySpecificLotl() ,
+                Collections.singletonList(argentinaCertificate));
+        lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER));
+        Assertions.assertThrows(PdfException.class, ()->{
+            lotlService.loadFromCache(null);
+        });
+    }
+
+
+    @Test
+    public void serDeserTestInvalidJson(){
+        LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
+        SingleFileLotlService lotlService = new SingleFileLotlService(props,new CountrySpecificLotl() ,
+                Collections.singletonList(argentinaCertificate));
+        lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER));
+
+        Assertions.assertThrows(ITextException.class, ()->{
+            lotlService.loadFromCache(new ByteArrayInputStream("{".getBytes(StandardCharsets.UTF_8)));
         });
     }
 

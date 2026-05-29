@@ -90,7 +90,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapStringLiteral("com.itextpdf.io.image.ImageDataFactory.WEBP_APPLIER", "WebPLoader,itext.webp-image-support");
         configurator.mapStringLiteral("com.itextpdf.io.image.ImageDataFactory.WEBP_APPLIER_INITIALIZE", "RegisterForIo");
         configurator.mapMethodToCustomMember("com.itextpdf.io.image.ImageDataFactory.getWebPClass", "GetWebPClass", SharpenConfigCustomMembers.getWebPClass);
-        configurator.addCustomUsingDeclaration("com.itextpdf.io.image.ImageDataFactory", Arrays.asList("System.IO", "System.Reflection", "Microsoft.Extensions.Logging", "iText.Commons"));
+
+        configurator.addCustomUsingDeclaration("com.itextpdf.io.image.ImageDataFactory", Arrays.asList("System.IO", "System.Reflection", "Microsoft.Extensions.Logging", "iText.Commons", "iText.Commons.Internal.Runtime"));
     }
 
     @Override

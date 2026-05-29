@@ -23,6 +23,7 @@
 package com.itextpdf.layout;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -76,6 +77,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethodToCustomMember("com.itextpdf.layout.renderer.TypographyUtils.getTypographyClass", "GetTypographyClass", SharpenConfigCustomMembers.getTypographyClass);
         configurator.mapMethodToCustomMember("com.itextpdf.layout.layout.LayoutArea.clone", "Clone", SharpenConfigCustomMembers.cloneLayoutArea);
         configurator.mapMethodToCustomMember("com.itextpdf.layout.margincollapse.MarginsCollapse.clone", "Clone", SharpenConfigCustomMembers.cloneMarginsCollapse);
+        configurator.addFullName("iText.Layout.Font.Range");
+        configurator.addCustomUsingDeclaration("com.itextpdf.layout.renderer.TypographyUtils", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "Microsoft.Extensions.Logging", "iText.Commons" , "iText.Commons", "iText.Commons.Internal.Runtime"));
     }
 
     @Override

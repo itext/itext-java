@@ -228,7 +228,7 @@ public class BrotliOutputStreamTest extends ExtendedITextTest {
 
             byte[] buffer = new byte[1024];
             int len;
-            while ((len = brotliStream.read(buffer)) != -1) {
+            while ((len = brotliStream.read(buffer, 0, buffer.length)) > 0) {
                 decompressed.write(buffer, 0, len);
             }
 

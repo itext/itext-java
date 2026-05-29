@@ -159,9 +159,12 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
         configurator.mapMethodParametersOrder("com.itextpdf.kernel.crypto.CryptoUtil.getMessageDigest", "1");
         configurator.mapMethodParametersOrder("com.itextpdf.kernel.crypto.CryptoUtil.getMessageDigest(java.lang.String,java.lang.String)", "1");
-        //BouncyCastleWrappersConfigUtils.applyMappingConfiguration(configurator);
 
         configurator.addCustomUsingDeclaration("com.itextpdf.kernel.contrast.ContrastAnalyzer", Arrays.asList("Paths = System.Collections.Generic.List<System.Collections.Generic.List<iText.Kernel.Pdf.Canvas.Parser.ClipperLib.IntPoint>>"));
+        configurator.addCustomUsingDeclaration("com.itextpdf.kernel.pdf.PdfDictionaryEntrySet.removeAll", Collections.singletonList("iText.Commons.Internal.Runtime"));
+        configurator.addCustomUsingDeclaration("com.itextpdf.kernel.pdf.PdfDictionaryTest", Collections.singletonList("iText.Commons.Internal.Runtime"));
+        configurator.addCustomUsingDeclaration("com.itextpdf.kernel.colors.DeviceRgb", Arrays.asList("iText.Commons.Utils"));
+        configurator.mapMethod("com.itextpdf.kernel.pdf.annot.PdfSoundAnnotation.correctWavFile", "iText.Commons.Utils.JavaUtil.CorrectWavFile", false);
     }
 
     @Override

@@ -145,7 +145,7 @@ public abstract class ITextTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[8192];
         int read;
-        while ((read = input.read(buffer)) != -1) {
+        while ((read = input.read(buffer, 0, buffer.length)) > 0) {
             output.write(buffer, 0, read);
         }
         input.close();

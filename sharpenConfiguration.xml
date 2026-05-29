@@ -532,7 +532,6 @@
                 <file path="com/itextpdf/signatures/DigestAlgorithmsManualTest.java"/>
             </fileset>
             <fileset reason="SignatureMechanisms.getAlgorithm works differently for passed oid = null">
-                <file path="com/itextpdf/signatures/SignatureMechanismsManualTest.java"/>
             </fileset>
             <fileset reason="Some of the algorithms are not supported on .NET and the result is thus different. The tests with the identical result are in PdfPKCS7Test.">
                 <file path="com/itextpdf/signatures/PdfPKCS7ManuallyPortedTest.java"/>

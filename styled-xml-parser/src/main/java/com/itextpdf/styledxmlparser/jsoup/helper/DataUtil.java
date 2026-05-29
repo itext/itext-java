@@ -106,7 +106,7 @@ public final class DataUtil {
     static void crossStreams(final InputStream in, final OutputStream out) throws IOException {
         final byte[] buffer = new byte[bufferSize];
         int len;
-        while ((len = in.read(buffer)) != -1) {
+        while ((len = in.read(buffer, 0, buffer.length)) > 0) {
             out.write(buffer, 0, len);
         }
     }

@@ -169,6 +169,7 @@ public final class SignExceptionMessageConstant {
     public static final String SIGNATURE_NAME_NOT_PROVIDED =
             "Signature validation name needs to be provided with QualifiedValidator#startSignatureValidation method.";
     public static final String NO_SIGNATURE_WITH_THAT_NAME = "Signature field with {0} name was not found in the document.";
+    public static final String OID_SHALL_NOT_BE_NULL= "oid can not be null";
 
     private SignExceptionMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly
