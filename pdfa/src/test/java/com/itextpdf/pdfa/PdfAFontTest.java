@@ -272,58 +272,53 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test01() {
         // encoding must not be specified
         // Here we produced valid pdfa files in the past by silently removing not valid symbols
         // But right now we check for used glyphs which don't exist in the font and throw exception
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test01.pdf", "Symbols1.ttf", "", PdfAConformance.PDF_A_1B)
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test01.pdf", "iTextSymbolicFont.ttf", "", PdfAConformance.PDF_A_1B)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
                 e.getMessage());
     }
 
     @Test
-    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test02() {
         // if you specify encoding, symbolic font is treated as non-symbolic
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test02.pdf", "Symbols1.ttf", PdfEncodings.MACROMAN, PdfAConformance.PDF_A_1B)
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test02.pdf", "iTextSymbolicFont.ttf", PdfEncodings.MACROMAN, PdfAConformance.PDF_A_1B)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
                 e.getMessage());
     }
 
     @Test
-    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test03() {
         // if you specify encoding, symbolic font is treated as non-symbolic
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "Symbols1.ttf", "ISO-8859-1", PdfAConformance.PDF_A_1B)
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "iTextSymbolicFont.ttf", "ISO-8859-1", PdfAConformance.PDF_A_1B)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
                 e.getMessage());
     }
 
     @Test
-    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test04() {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test04.pdf", "Symbols1.ttf", PdfEncodings.WINANSI, PdfAConformance.PDF_A_1B)
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test04.pdf", "iTextSymbolicFont.ttf", PdfEncodings.WINANSI, PdfAConformance.PDF_A_1B)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
                 e.getMessage());
     }
 
     @Test
-    // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
     public void symbolicTtfCharEncodingsPdfA1Test05() {
         // Identity-H behaviour should be the same as the default one, starting from 7.2
         // Here we produced valid pdfa files in the past by silently removing not valid symbols
         // But right now we check for used glyphs which don't exist in the font and throw exception
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
-                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test05.pdf", "Symbols1.ttf", PdfEncodings.IDENTITY_H, PdfAConformance.PDF_A_1B)
+                () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test05.pdf", "iTextSymbolicFont.ttf", PdfEncodings.IDENTITY_H, PdfAConformance.PDF_A_1B)
         );
         Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
                 e.getMessage());

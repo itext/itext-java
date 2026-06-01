@@ -122,11 +122,10 @@ public class FontSelectorTestsUtil {
 
     public static IFontSelectorStrategy createStrategyWithSymbolFont(IFontSelectorStrategyFactory factory) {
         final FontProvider fontProvider = new FontProvider();
-        // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
-        fontProvider.addFont(FONTS_FOLDER + "Symbols1.ttf");
+        fontProvider.addFont(FONTS_FOLDER + "iTextSymbolicFont.ttf");
         fontProvider.setFontSelectorStrategyFactory(factory);
         List<String> fontFamilies = new ArrayList<>();
-        fontFamilies.add("Symbols1");
+        fontFamilies.add("iTextSymbolicFont");
         return fontProvider.createFontSelectorStrategy(fontFamilies, new FontCharacteristics(), null);
     }
 }
